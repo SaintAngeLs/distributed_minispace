@@ -42,5 +42,5 @@ jobs:
               # If branch does not exist locally, create it tracking the remote
               git checkout -b $branch origin/$branch
             fi
-            git push azure $branch:$branch --force
+            git push azure $branch:$branch --force -v
           done
