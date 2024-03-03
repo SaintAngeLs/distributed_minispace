@@ -1,0 +1,12 @@
+@url = http://localhost:5015
+@customerId = 00000000-0000-0000-0000-000000000000
+@parcelId = 00000000-0000-0000-0000-000000000000
+
+###
+POST {{url}}/orders
+Content-Type: application/json
+
+{
+  "parcelId": "{{parcelId}}",
+  "customerId": "{{customerId}}"
+}

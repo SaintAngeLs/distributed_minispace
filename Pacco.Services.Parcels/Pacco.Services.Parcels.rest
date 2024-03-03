@@ -1,0 +1,27 @@
+@url = http://localhost:5007
+@parcelId = 00000000-0000-0000-0000-000000000000
+@customerId = 00000000-0000-0000-0000-000000000000
+
+###
+GET {{url}}/parcels?customerId={{customerId}}
+
+###
+GET {{url}}/parcels/{{parcelId}}
+
+###
+GET {{url}}/parcels/volume?parcelIds=["{{parcelId}}"]
+
+###
+POST {{url}}/parcels
+Content-Type: application/json
+
+{
+  "customerId": "{{customerId}}",
+  "variant": "weapon",
+  "size": "large",
+  "name": "Parcel #1",
+  "description": "My parcel #1"
+}
+
+###
+DELETE {{url}}/parcels/{{parcelId}}

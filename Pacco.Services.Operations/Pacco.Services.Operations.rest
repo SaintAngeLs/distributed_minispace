@@ -1,0 +1,5 @@
+@url = http://localhost:5005
+@operationId = 00000000-0000-0000-0000-000000000000
+
+###
+GET {{url}}/operations/{{operationId}}

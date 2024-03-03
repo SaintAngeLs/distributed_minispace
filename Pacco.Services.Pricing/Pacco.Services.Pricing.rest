@@ -1,0 +1,6 @@
+@url = http://localhost:5008
+@customerId = 00000000-0000-0000-0000-000000000000
+@orderPrice = 0
+
+###
+GET {{url}}/pricing?customerId={{customerId}}&orderPrice={{orderPrice}}

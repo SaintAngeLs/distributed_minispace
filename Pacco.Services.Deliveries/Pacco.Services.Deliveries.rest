@@ -1,0 +1,43 @@
+@url = http://localhost:5003
+@deliveryId = 00000000-0000-0000-0000-000000000000
+@orderId = 00000000-0000-0000-0000-000000000000
+
+###
+GET {{url}}/deliveries/{{deliveryId}}
+
+###
+POST {{url}}/deliveries
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "description": "Delivery description",
+  "dateTime": "2019-10-10"
+}
+
+###
+POST {{url}}/deliveries/{{deliveryId}}/fail
+Content-Type: application/json
+
+{
+  "id": "{{deliveryId}}",
+  "reason": "Delivery failed"
+}
+
+###
+POST {{url}}/deliveries/{{deliveryId}}/complete
+Content-Type: application/json
+
+{
+  "id": "{{deliveryId}}"
+}
+
+###
+POST {{url}}/deliveries/{{deliveryId}}/registrations
+Content-Type: application/json
+
+{
+  "id": "{{deliveryId}}",
+  "description": "Delivery registration description",
+  "dateTime": "2019-10-10"
+}

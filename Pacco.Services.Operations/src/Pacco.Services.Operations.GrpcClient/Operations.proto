@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package Services.Operations;
+
+service GrpcOperationsService {
+    rpc GetOperation (GetOperationRequest) returns (GetOperationResponse) {}
+    rpc SubscribeOperations (Empty) returns (stream GetOperationResponse) {}
+}
+
+message Empty {
+}
+
+message GetOperationRequest {
+    string id = 1;
+}
+
+message GetOperationResponse {
+    string id = 1;
+    string userId = 2;
+    string name = 3;
+    string state = 4;
+    string code = 5;
+    string reason = 6;
+}

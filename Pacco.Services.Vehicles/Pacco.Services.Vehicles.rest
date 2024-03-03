@@ -1,0 +1,36 @@
+@url = http://localhost:5009
+@vehicleId = 00000000-0000-0000-0000-000000000000
+
+###
+GET {{url}}/vehicles?payloadCapacity=0&loadingCapacity=0&variants=1
+
+###
+GET {{url}}/vehicles/{{vehicleId}}
+
+###
+POST {{url}}/vehicles
+Content-Type: application/json
+
+{
+  "brand": "Brand",
+  "model": "Model",
+  "description": "Vehicle description",
+  "payloadCapacity": 1000,
+  "loadingCapacity": 1000,
+  "pricePerService": 100,
+  "variants": 1
+}
+
+###
+PUT {{url}}/vehicles/{{vehicleId}}
+Content-Type: application/json
+
+{
+  "id": "{{vehicleId}}",
+  "description": "Updated vehicle description",
+  "pricePerService": 150,
+  "variants": 2
+}
+
+###
+DELETE {{url}}/vehicles/{{vehicleId}}

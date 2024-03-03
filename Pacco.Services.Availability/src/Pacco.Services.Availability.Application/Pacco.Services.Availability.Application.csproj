@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Convey" Version="0.4.*" />
+        <PackageReference Include="Convey.CQRS.Commands" Version="0.4.*" />
+        <PackageReference Include="Convey.CQRS.Events" Version="0.4.*" />
+        <PackageReference Include="Convey.CQRS.Queries" Version="0.4.*" />
+        <PackageReference Include="Convey.MessageBrokers" Version="0.4.*" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Pacco.Services.Availability.Core\Pacco.Services.Availability.Core.csproj" />
+    </ItemGroup>
+
+</Project>

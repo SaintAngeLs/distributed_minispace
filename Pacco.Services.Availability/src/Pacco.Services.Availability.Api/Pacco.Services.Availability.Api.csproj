@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Pacco.Services.Availability.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Convey" Version="0.4.*" />
+    <PackageReference Include="Convey.Logging" Version="0.4.*" />
+    <PackageReference Include="Convey.WebApi" Version="0.4.*" />
+    <PackageReference Include="Convey.WebApi.CQRS" Version="0.4.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pacco.Services.Availability.Infrastructure\Pacco.Services.Availability.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="certs\**" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+
+</Project>

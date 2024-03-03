@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pacoo SignalR</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+  <div class="container"> 
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Pacoo SignalR messages</h3>
+        <div class="form-group">
+          <input type="text" class="form-control" id="jwt" placeholder="JWT">
+        </div>
+        <button id="connect" class="btn btn-primary">Connect</button>
+        <hr/>
+        <ul class="list-group" id="messages">
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="js/signalr.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

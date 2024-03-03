@@ -1,0 +1,45 @@
+@url = http://localhost:5006
+@orderId = 00000000-0000-0000-0000-000000000000
+@parcelId = 00000000-0000-0000-0000-000000000000
+@customerId = 00000000-0000-0000-0000-000000000000
+@vehicleId = 00000000-0000-0000-0000-000000000000
+@deliveryDate = 2020-01-10
+
+###
+GET {{url}}/orders?customerId={{customerId}}
+
+###
+GET {{url}}/orders/{{orderId}}
+
+###
+POST {{url}}/orders
+Content-Type: application/json
+
+{
+  "customerId": "{{customerId}}"
+}
+
+###
+DELETE {{url}}/orders/{{orderId}}
+
+###
+POST {{url}}/orders/{{orderId}}/parcels/{{parcelId}}
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "parcelId": "{{parcelId}}"
+}
+
+###
+POST {{url}}/orders/{{orderId}}/vehicles/{{vehicleId}}
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "vehicleId": "{{vehicleId}}",
+  "deliveryDate": "{{deliveryDate}}"
+}
+
+###
+DELETE {{url}}/orders/{{orderId}}/parcels/{{parcelId}}
