@@ -1,0 +1,46 @@
+name: Sync to Azure DevOps Repository
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  Sync:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_DEVOPS_PAT: ${{ secrets.AZUREDEVOPSPAT }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0  # Fetch all branches
+
+      - name: Configuring git
+        run: |
+          git config --global user.email "voznesenskijandrej5@gmail.com"
+          git config --global user.name "Andrii Voznesenskyi"
+
+      - name: Adding Azure DevOps remote repository
+        run: |
+          git remote add azure https://AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO.git
+
+      #      git remote add azure https://01174367:$AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO.git
+         
+      # - name: Fetching from Azure DevOps
+      #   run: |
+      #     git fetch azure  --depth=2147483647
+
+      - name: Checkout and push all branches to Azure DevOps
+        run: |
+          for branch in $(git branch -a | grep 'remotes/origin/' | sed 's/remotes\/origin\///'); do
+            if git rev-parse --verify $branch > /dev/null 2>&1; then
+              # If branch exists locally, just checkout
+              git checkout $branch
+            else
+              # If branch does not exist locally, create it tracking the remote
+              git checkout -b $branch origin/$branch
+            fi
+            git push azure $branch:$branch --force
+          done
