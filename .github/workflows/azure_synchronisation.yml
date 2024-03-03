@@ -32,15 +32,18 @@ jobs:
       #   run: |
       #     git fetch azure  --depth=2147483647
 
-      - name: Checkout and push all branches to Azure DevOps
-        run: |
-          for branch in $(git branch -a | grep 'remotes/origin/' | sed 's/remotes\/origin\///'); do
-            if git rev-parse --verify $branch > /dev/null 2>&1; then
-              # If branch exists locally, just checkout
-              git checkout $branch
-            else
-              # If branch does not exist locally, create it tracking the remote
-              git checkout -b $branch origin/$branch
-            fi
-            git push azure $branch:$branch --force -v
-          done
+      - name: Push all branches to Azure DevOps
+        run: git push azure --all --force
+
+      # - name: Checkout and push all branches to Azure DevOps
+      #   run: |
+      #     for branch in $(git branch -a | grep 'remotes/origin/' | sed 's/remotes\/origin\///'); do
+      #       if git rev-parse --verify $branch > /dev/null 2>&1; then
+      #         # If branch exists locally, just checkout
+      #         git checkout $branch
+      #       else
+      #         # If branch does not exist locally, create it tracking the remote
+      #         git checkout -b $branch origin/$branch
+      #       fi
+      #       git push azure $branch:$branch --force -v
+      #     done
