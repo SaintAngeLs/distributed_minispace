@@ -24,7 +24,7 @@ jobs:
 
       - name: Adding Azure DevOps remote repository
         run: |
-          git remote add azure https://AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO.git
+          git remote add azure https://01174367:AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO.git
 
       #      git remote add azure https://01174367:$AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO.git
          
