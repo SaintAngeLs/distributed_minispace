@@ -1,0 +1,22 @@
+@page "/identity"
+@using Pacco.Web.Areas.Identity
+@using Pacco.Web.Shared
+@model Pacco.Web.Areas.Identity.Identity_razor
+@inject IdentityComponent IdentityComponent
+
+@{
+    Layout = null;
+//    Layout = MainLayout;
+}
+
+<h1>Identity</h1>
+
+@functions
+{
+
+    protected async Task OnInitializedAsync()
+    {
+        await IdentityComponent.OnInit();
+    }
+
+}
