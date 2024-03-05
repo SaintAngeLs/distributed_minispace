@@ -1,0 +1,27 @@
+name: .NET MiniSpace Microservice build c. integration
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30  
+    strategy:
+      matrix:
+        project: [ 
+          'MiniSpace.APIGateway/src/MiniSpace.APIGateway',
+          'MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api',
+          'MiniSpace.Web/src/MiniSpace.Web',
+          ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'
+    - name: Build and Test ${{ matrix.project }}
+      run: |
+        cd ${{ matrix.project }}
+        dotnet restore
+        dotnet build --no-restore
+        # dotnet test --no-build --if-present --verbosity normal 
