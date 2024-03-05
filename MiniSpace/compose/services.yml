@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   api-gateway:
-    image: devmentors/minispace.apigateway
+    image: adrianvsaint/minispace.apigateway
     container_name: api-gateway
     restart: unless-stopped
     environment:
@@ -13,7 +13,7 @@ services:
       - minispace
 
   identity-service:
-    image: devmentors/minispace.services.identity
+    image: adrianvsaint/minispace.services.identity
     container_name: identity-service
     restart: unless-stopped
     ports:
