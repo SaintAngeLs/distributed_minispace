@@ -29,15 +29,10 @@ jobs:
         run: |
           git remote add azure https://$AZURE_DEVOPS_USERNAME:$AZURE_DEVOPS_PASSWORD@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO
 
-      #      git remote add azure https://01174367:$AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO.git
-         
-      # - name: Fetching from Azure DevOps
-      #   run: |
-      #     git fetch azure  --depth=2147483647
-
       - name: Push all branches to Azure DevOps
         run: git push azure --all --force
 
+      # # Important branches anlizer:
       # - name: Checkout and push all branches to Azure DevOps
       #   run: |
       #     for branch in $(git branch -a | grep 'remotes/origin/' | sed 's/remotes\/origin\///'); do
