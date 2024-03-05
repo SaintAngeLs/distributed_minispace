@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Pacco.Web.Data;
+using MiniSpace.Web.Data;
 
 namespace MiniSpace.Web
 {
