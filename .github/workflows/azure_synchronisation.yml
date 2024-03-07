@@ -38,10 +38,21 @@ jobs:
 
       - name: Push pull requests to Azure DevOps
         run: |
+          # Fetch the pull request refs
+          git fetch origin +refs/pull/*:refs/remotes/origin/pr/*
+          # Push each pull request ref to Azure DevOps
           for ref in $(git for-each-ref --format='%(refname)' refs/remotes/origin/pr/*); do
-            pr_ref=${ref#refs/remotes/origin/}
-            git push azure $ref:refs/heads/$pr_ref --force
+            pr_ref=${ref#refs/remotes/origin/pr/}
+            # Split the ref by / and get the PR number
+            IFS='/' read -ra ADDR <<< "$pr_ref"
+            pr_number=${ADDR[0]}
+            # Check out the PR head branch
+            git fetch origin pull/$pr_number/head:pr-$pr_number
+            git checkout pr-$pr_number
+            # Push the PR head branch to Azure as a branch named pr-{PR number}
+            git push azure pr-$pr_number:refs/heads/pr-$pr_number --force
           done
+
 
       # # Important branches anlizer:
       # - name: Checkout and push all branches to Azure DevOps
