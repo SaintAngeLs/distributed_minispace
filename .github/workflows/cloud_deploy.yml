@@ -44,7 +44,6 @@ jobs:
     - name: Test SSH Connection
       run: |
         ssh -vvv ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
-      
     # - name: Stop and Remove Containers
     #   run: |
     #     ssh root@${{ secrets.DROPLET_IP }} "docker ps -q --filter network=swiftparcel-network | xargs -r docker stop && docker ps -a -q --filter network=swiftparcel-network | xargs -r docker rm"
