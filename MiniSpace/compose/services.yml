@@ -20,6 +20,15 @@ services:
       - 5004:80
     networks:
       - minispace
+    
+  identity-service:
+    image: adrianvsaint/minispace.web
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - 5606:80
+    networks:
+      - minispace
 
 networks:
   minispace:
