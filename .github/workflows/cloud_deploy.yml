@@ -1,0 +1,57 @@
+name: Deploy to Cloud
+
+on:
+  push:
+    branches:
+      - project_setup 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # - name: Set up SSH
+    #   run: |
+    #     mkdir -p ~/.ssh/
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+    #     cat ~/.ssh/known_hosts # Add this line to confirm that the key is added
+
+    - name: Check the structure
+      run: |
+        pwd
+        ls -la
+
+    - name: Docker Login
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Run dockerize_all.sh
+      run: |
+        chmod +x ./MiniSpace/scripts/dockerize-all.sh
+        ./SwiftParcel/scripts/dockerize-all.sh
+
+    - name: Check the structure 2
+      run: |
+        pwd
+        ls -la
+
+    # - name: Test SSH Connection
+    #   run: |
+    #     ssh -vvv root@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
+      
+    # - name: Stop and Remove Containers
+    #   run: |
+    #     ssh root@${{ secrets.DROPLET_IP }} "docker ps -q --filter network=swiftparcel-network | xargs -r docker stop && docker ps -a -q --filter network=swiftparcel-network | xargs -r docker rm"
+
+    # - name: Clean up existing Cloud networks
+    #   run: |
+    #     ssh root@${{ secrets.DROPLET_IP }} "docker network rm swiftparcel-network || true"
+
+    # - name: Deploy to Cloud
+    #   run: |
+    #     scp -r ./SwiftParcel/d-docker-compose root@${{ secrets.DROPLET_IP }}:${{ secrets.CLOUD_PROJECT_PATH }}
+    #     ssh root@${{ secrets.DROPLET_IP }} "cd ${{ secrets.CLOUD_PROJECT_PATH }}/SwiftParcel/d-docker-compose && docker-compose -f ${{ secrets.CLOUD_DEPLOYMENT_FILE }} pull && docker-compose -f ${{ secrets.CLOUD_DEPLOYMENT_FILE }} up -d --force-recreate"

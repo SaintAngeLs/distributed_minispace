@@ -24,8 +24,8 @@ jobs:
 
       - name: Adding Azure DevOps remote repository
         env:
-          AZURE_DEVOPS_USERNAME: ${{ secrets.AZURE_DEVOPS_USERNAME }}  # Use the secret for the username
-          AZURE_DEVOPS_PASSWORD: ${{ secrets.AZURE_DEVOPS_PASSWORD }}  # Use the secret for the password/PAT
+          AZURE_DEVOPS_USERNAME: ${{ secrets.AZURE_DEVOPS_USERNAME }}
+          AZURE_DEVOPS_PASSWORD: ${{ secrets.AZURE_DEVOPS_PASSWORD }} 
         run: |
           git remote add azure https://$AZURE_DEVOPS_USERNAME:$AZURE_DEVOPS_PASSWORD@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO
 
