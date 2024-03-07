@@ -10,7 +10,7 @@ for dir in "${directories[@]}"; do
     echo "Processing $dir..."
 
     if [ -f "$dir/scripts/dockerize-tag-push.sh" ]; then
-        chmod +x /scripts/dockerize-tag-push.sh
+        chmod +x "$dir/scripts/dockerize-tag-push.sh"
         echo " ========================================================================================================== "
         (cd "$dir/scripts" && ./dockerize-tag-push.sh)
         echo " ========================================================================================================== "
