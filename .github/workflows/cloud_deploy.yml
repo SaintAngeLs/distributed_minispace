@@ -43,7 +43,7 @@ jobs:
 
     - name: Test SSH Connection
       run: |
-        ssh -vvv {{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
+        ssh -vvv ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
       
     # - name: Stop and Remove Containers
     #   run: |
