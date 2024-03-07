@@ -2,7 +2,7 @@
 
 export ASPNETCORE_ENVIRONMENT=Development
 
-cd MiniSpace.APIGateway
+cd ..
 
 docker build -t minispace.web:latest .
 
