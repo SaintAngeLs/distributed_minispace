@@ -47,8 +47,10 @@ jobs:
 
     - name: Copy and recreate deployment files
       run: |
-        scp ./MiniSpace/compose/infrastructure.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
-        scp ./MiniSpace/compose/services.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp -r ./MiniSpace/compose/infrastructure.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp -r ./MiniSpace/compose/services.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp -r ./MiniSpace/compose/prometheus ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp -r ./MiniSpace/compose/rabbitmq ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
 
     - name: Deploy containers with the services images and infrastructure
       run: |
