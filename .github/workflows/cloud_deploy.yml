@@ -34,7 +34,7 @@ jobs:
     - name: Run dockerize_all.sh
       run: |
         chmod +x ./MiniSpace/scripts/dockerize-all.sh
-        ./SwiftParcel/scripts/dockerize-all.sh
+        ./MiniSpace/scripts/dockerize-all.sh
 
     - name: Check the structure 2
       run: |
