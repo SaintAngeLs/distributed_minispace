@@ -44,6 +44,12 @@ jobs:
     - name: Test SSH Connection
       run: |
         ssh -vvv ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
+
+    - name: Copy and recreate deployment files
+      run: |
+        scp ./MiniSpace/compose/infrastructure.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp ./MiniSpace/compose/services.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+
     # - name: Stop and Remove Containers
     #   run: |
     #     ssh root@${{ secrets.DROPLET_IP }} "docker ps -q --filter network=swiftparcel-network | xargs -r docker stop && docker ps -a -q --filter network=swiftparcel-network | xargs -r docker rm"
