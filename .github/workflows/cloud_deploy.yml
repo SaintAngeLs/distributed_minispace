@@ -12,13 +12,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # - name: Set up SSH
-    #   run: |
-    #     mkdir -p ~/.ssh/
-    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-    #     chmod 600 ~/.ssh/id_rsa
-    #     ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
-    #     cat ~/.ssh/known_hosts # Add this line to confirm that the key is added
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+        cat ~/.ssh/known_hosts # Add this line to confirm that the key is added
 
     - name: Check the structure
       run: |
@@ -41,9 +41,9 @@ jobs:
         pwd
         ls -la
 
-    # - name: Test SSH Connection
-    #   run: |
-    #     ssh -vvv root@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
+    - name: Test SSH Connection
+      run: |
+        ssh -vvv {{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
       
     # - name: Stop and Remove Containers
     #   run: |
