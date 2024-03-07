@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - '*'
+  pull_request: 
 
 jobs:
   Sync:
@@ -31,6 +32,16 @@ jobs:
 
       - name: Push all branches to Azure DevOps
         run: git push azure --all --force
+
+      - name: Push all tags to Azure DevOps
+        run: git push azure --tags --force
+
+      - name: Push pull requests to Azure DevOps
+        run: |
+          for ref in $(git for-each-ref --format='%(refname)' refs/remotes/origin/pr/*); do
+            pr_ref=${ref#refs/remotes/origin/}
+            git push azure $ref:refs/heads/$pr_ref --force
+          done
 
       # # Important branches anlizer:
       # - name: Checkout and push all branches to Azure DevOps
