@@ -21,7 +21,7 @@ services:
     networks:
       - minispace
     
-  identity-service:
+  web:
     image: adrianvsaint/minispace.web
     container_name: web
     restart: unless-stopped

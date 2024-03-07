@@ -50,6 +50,15 @@ jobs:
         scp ./MiniSpace/compose/infrastructure.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
         scp ./MiniSpace/compose/services.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
 
+    - name: Deploy containers with the services images and infrastructure
+      run: |
+        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+          cd /root/social_net_app
+          docker-compose -f infrastructure.yml up -d
+          docker-compose -f services.yml up -d
+          docker ps -a
+        EOF
+
     # - name: Stop and Remove Containers
     #   run: |
     #     ssh root@${{ secrets.DROPLET_IP }} "docker ps -q --filter network=swiftparcel-network | xargs -r docker stop && docker ps -a -q --filter network=swiftparcel-network | xargs -r docker rm"
