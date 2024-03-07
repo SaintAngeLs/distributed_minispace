@@ -24,6 +24,8 @@ jobs:
       run: |
         pwd
         ls -la
+        cd ./MiniSpace/scripts/ 
+        ls -la
 
     - name: Docker Login
       run: |
