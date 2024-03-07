@@ -52,15 +52,23 @@ jobs:
         scp -r ./MiniSpace/compose/prometheus ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
         scp -r ./MiniSpace/compose/rabbitmq ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
 
-    - name: Deploy containers with the services images and infrastructure
+    - name: Deploy containers with the infrastructure images
       run: |
         ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
           cd /root/social_net_app
           docker-compose -f infrastructure.yml up -d
+          docker ps -a
+        EOF
+
+    - name: Deploy containers with the services images
+      run: |
+        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+          cd /root/social_net_app
           docker-compose -f services.yml up -d
           docker ps -a
         EOF
 
+   
     # - name: Stop and Remove Containers
     #   run: |
     #     ssh root@${{ secrets.DROPLET_IP }} "docker ps -q --filter network=swiftparcel-network | xargs -r docker stop && docker ps -a -q --filter network=swiftparcel-network | xargs -r docker rm"
