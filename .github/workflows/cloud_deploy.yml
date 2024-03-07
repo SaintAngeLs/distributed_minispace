@@ -3,7 +3,7 @@ name: Deploy to Cloud
 on:
   push:
     branches:
-      - dev
+      - project_setup
 
 jobs:
   deploy:
