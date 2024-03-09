@@ -1,0 +1,56 @@
+global:
+  scrape_interval:     5s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 5s # Evaluate rules every 15 seconds. The default is every 1 minute.
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway']
+
+  - job_name: 'availability-service'
+    static_configs:
+      - targets: ['availability-service']
+
+  - job_name: 'customers-service'
+    static_configs:
+      - targets: ['customers-service']
+
+  - job_name: 'deliveries-service'
+    static_configs:
+      - targets: ['deliveries-service']
+
+  - job_name: 'identity-service'
+    static_configs:
+      - targets: ['identity-service']
+
+  - job_name: 'operations-service'
+    static_configs:
+      - targets: ['operations-service']
+
+  - job_name: 'orders-service'
+    static_configs:
+      - targets: ['orders-service']
+
+  - job_name: 'ordermaker-service'
+    static_configs:
+      - targets: ['ordermaker-service']
+
+  - job_name: 'parcels-service'
+    static_configs:
+      - targets: ['parcels-service']
+      
+  - job_name: 'pricing-service'
+    static_configs:
+      - targets: ['pricing-service']
+
+  - job_name: 'vehicles-service'
+    static_configs:
+      - targets: ['vehicles-service']
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']

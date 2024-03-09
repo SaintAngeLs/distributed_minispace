@@ -1,0 +1,136 @@
+auth:
+  enabled: true
+  global: false
+  claims:
+    role: http://schemas.microsoft.com/ws/2008/06/identity/claims/role
+
+http:
+  retries: 2
+  interval: 2.0
+  exponential: true
+
+useForwardedHeaders: true
+passQueryString: true
+forwardRequestHeaders: true
+forwardResponseHeaders: true
+generateRequestId: true
+generateTraceId: true
+useLocalUrl: false
+loadBalancer:
+  enabled: false
+  url: fabio:9999
+
+extensions:
+  customErrors:
+    includeExceptionMessage: true
+
+  cors:
+    allowCredentials: true
+    allowedOrigins:
+      - '*'
+    allowedMethods:
+      - post
+      - put
+      - delete
+    allowedHeaders:
+      - '*'
+    exposedHeaders:
+      - Request-ID
+      - Resource-ID
+      - Trace-ID
+      - Total-Count
+
+  jwt:
+    issuerSigningKey: eiquief5phee9pazo0Faegaez9gohThailiur5woy2befiech1oarai4aiLi6ahVecah3ie9Aiz6Peij
+    validIssuer: minispace
+    validateAudience: false
+    validateIssuer: true
+    validateLifetime: true
+
+  swagger:
+    name: MiniSpace
+    reDocEnabled: false
+    title: MiniSpace API
+    version: v1
+    routePrefix: docs
+    includeSecurity: true
+
+  rabbitmq:
+    enabled: true
+    connectionName: api-gateway
+    hostnames:
+      - rabbitmq
+    port: 5672
+    virtualHost: /
+    username: guest
+    password: guest
+    requestedConnectionTimeout: 3000
+    socketReadTimeout: 3000
+    socketWriteTimeout: 3000
+    requestedHeartbeat: 60
+    exchange:
+      declareExchange: true
+      durable: true
+      autoDelete: false
+      type: topic
+    messageContext:
+      enabled: true
+      header: message_context
+    logger:
+      enabled: true
+    spanContextHeader: span_context
+
+  tracing:
+    serviceName: api-gateway
+    udpHost: jaeger
+    udpPort: 6831
+    maxPacketSize: 0
+    sampler: const
+    useEmptyTracer: false
+
+modules:
+  home:
+    routes:
+      - upstream: /
+        method: GET
+        use: return_value
+        returnValue: Welcome to MiniSpace API [async]!
+
+  identity:
+    path: identity
+    routes:
+      - upstream: /users/{userId}
+        method: GET
+        use: downstream
+        downstream: identity-service/users/{userId}
+        auth: true
+        claims:
+          role: admin
+    
+      - upstream: /me
+        method: GET
+        use: downstream
+        downstream: identity-service/me
+        auth: true
+
+      - upstream: /sign-up
+        method: POST
+        use: downstream
+        downstream: identity-service/sign-up
+        auth: false
+        resourceId:
+          property: userId
+          generate: true
+    
+      - upstream: /sign-in
+        method: POST
+        auth: false
+        use: downstream
+        downstream: identity-service/sign-in
+        responseHeaders:
+          content-type: application/json
+
+    services:
+      identity-service:
+        localUrl: localhost:5004
+        url: identity-service
