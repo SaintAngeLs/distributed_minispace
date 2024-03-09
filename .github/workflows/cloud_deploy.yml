@@ -1,0 +1,86 @@
+name: Deploy to Cloud
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+        cat ~/.ssh/known_hosts # Add this line to confirm that the key is added
+
+    - name: Check the structure
+      run: |
+        pwd
+        ls -la
+        cd ./MiniSpace/scripts/ 
+        ls -la
+
+    - name: Docker Login
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Run dockerize_all.sh
+      run: |
+        chmod +x ./MiniSpace/scripts/dockerize-all.sh
+        ./MiniSpace/scripts/dockerize-all.sh
+
+    - name: Check the structure 2
+      run: |
+        pwd
+        ls -la
+
+    - name: Test SSH Connection
+      run: |
+        ssh -vvv ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
+
+    - name: Copy and recreate deployment files
+      run: |
+        scp -r ./MiniSpace/compose/infrastructure.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp -r ./MiniSpace/compose/services.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp -r ./MiniSpace/compose/prometheus ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+        scp -r ./MiniSpace/compose/rabbitmq ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+
+    - name: Deploy containers with the infrastructure images
+      run: |
+        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+          cd /root/social_net_app
+          docker-compose -f infrastructure.yml up -d
+          docker ps -a
+        EOF
+
+    - name: Deploy containers with the services images
+      run: |
+        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+          cd /root/social_net_app
+          docker-compose -f services.yml up -d
+          docker ps -a
+        EOF
+
+   
+    # - name: Stop and Remove Containers
+    #   run: |
+    #     ssh root@${{ secrets.DROPLET_IP }} "docker ps -q --filter network=swiftparcel-network | xargs -r docker stop && docker ps -a -q --filter network=swiftparcel-network | xargs -r docker rm"
+
+    # - name: Clean up existing Cloud networks
+    #   run: |
+    #     ssh root@${{ secrets.DROPLET_IP }} "docker network rm swiftparcel-network || true"
+
+    # - name: Deploy to Cloud
+    #   run: |
+    #     scp -r ./SwiftParcel/d-docker-compose root@${{ secrets.DROPLET_IP }}:${{ secrets.CLOUD_PROJECT_PATH }}
+    #     ssh root@${{ secrets.DROPLET_IP }} "cd ${{ secrets.CLOUD_PROJECT_PATH }}/SwiftParcel/d-docker-compose && docker-compose -f ${{ secrets.CLOUD_DEPLOYMENT_FILE }} pull && docker-compose -f ${{ secrets.CLOUD_DEPLOYMENT_FILE }} up -d --force-recreate"

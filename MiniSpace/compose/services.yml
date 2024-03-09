@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  api-gateway:
+    image: adrianvsaint/minispace.apigateway
+    container_name: api-gateway
+    restart: unless-stopped
+    environment:
+      - NTRADA_CONFIG=ntrada-async.docker.yml
+    ports:
+      - 5000:80
+    networks:
+      - minispace
+
+  identity-service:
+    image: adrianvsaint/minispace.services.identity
+    container_name: identity-service
+    restart: unless-stopped
+    ports:
+      - 5004:80
+    networks:
+      - minispace
+    
+  web:
+    image: adrianvsaint/minispace.web
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - 5606:80
+    networks:
+      - minispace
+
+networks:
+  minispace:
+    name: minispace-network
+    external: true

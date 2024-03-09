@@ -1,0 +1,49 @@
+@url = http://localhost:5004
+@accessToken = secret
+@refreshToken = secret
+
+###
+POST {{url}}/sign-up
+Content-Type: application/json
+
+{
+  "email": "pacco-user1@mailinator.com",
+  "password": "secret"
+}
+
+###
+POST {{url}}/sign-in
+Content-Type: application/json
+
+{
+  "email": "pacco-user1@mailinator.com",
+  "password": "secret"
+}
+
+###
+GET {{url}}/me
+Authorization: Bearer {{accessToken}}
+
+###
+POST {{url}}/refresh-tokens/use
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}",
+}
+
+###
+POST {{url}}/refresh-tokens/revoke
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}",
+}
+
+###
+POST {{url}}/access-tokens/revoke
+Content-Type: application/json
+
+{
+  "accessToken": "{{accessToken}}",
+}
