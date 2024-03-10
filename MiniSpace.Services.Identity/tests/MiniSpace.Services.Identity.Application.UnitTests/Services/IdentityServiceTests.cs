@@ -1,21 +1,22 @@
-﻿using System;
+﻿using Xunit;
+using Moq;
+using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Convey.Auth;
+using Convey.CQRS.Events;
 using Microsoft.Extensions.Logging;
-using SwiftParcel.Services.Identity.Application.Commands;
-using SwiftParcel.Services.Identity.Application.Events;
-using SwiftParcel.Services.Identity.Application.Services;
-using SwiftParcel.Services.Identity.Application.UserDTO;
-using SwiftParcel.Services.Identity.Core.Entities;
-using SwiftParcel.Services.Identity.Core.Exceptions;
-using SwiftParcel.Services.Identity.Core.Repositories;
-using SwiftParcel.Services.Identity.Identity.Application.Services;
-using SwiftParcel.Services.Identity.Identity.Application.UserDTO;
+using MiniSpace.Services.Identity.Application.Commands;
+using MiniSpace.Services.Identity.Application.Events;
+using MiniSpace.Services.Identity.Application.Services;
+using MiniSpace.Services.Identity.Core.Entities;
+using MiniSpace.Services.Identity.Core.Exceptions;
+using MiniSpace.Services.Identity.Core.Repositories;
+using MiniSpace.Services.Identity.Application.Services.Identity;
+using MiniSpace.Services.Identity.Application.DTO;
 
-namespace SwiftParcel.Services.Identity.Application.UnitTests.Services
+namespace MiniSpace.Services.Identity.Application.UnitTests.Services
 {
     public class IdentityServiceTests
     {
@@ -153,7 +154,8 @@ namespace SwiftParcel.Services.Identity.Application.UnitTests.Services
             _mockUserRepository.Setup(x => x.GetAsync(command.Email)).ReturnsAsync(() => null);
             _mockPasswordService.Setup(x => x.Hash(command.Password)).Returns("hashedPassword");
             _mockUserRepository.Setup(x => x.AddAsync(It.IsAny<User>())).Callback<User>(x => user = x);
-            _mockMessageBroker.Setup(x => x.PublishAsync(It.IsAny<SignedUp>())).Callback<SignedUp>(x => signedUp = x);
+            _mockMessageBroker.Setup(x => x.PublishAsync(It.IsAny<SignedUp>()))
+                .Callback<IEnumerable<IEvent>>(x => signedUp = x.First() as SignedUp);
 
             //Act
             await _identityService.SignUpAsync(command);

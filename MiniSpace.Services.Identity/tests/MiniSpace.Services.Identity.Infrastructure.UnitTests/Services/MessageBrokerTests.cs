@@ -1,24 +1,20 @@
 ﻿using Xunit;
 using Moq;
-using FluentAssertions;
+using Convey.CQRS.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Convey.CQRS.Events;
 using Convey.MessageBrokers;
 using Convey.MessageBrokers.Outbox;
 using Convey.MessageBrokers.RabbitMQ;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
-using SwiftParcel.Services.Identity.Application.Events;
-using SwiftParcel.Services.Identity.Application.Services;
-using SwiftParcel.Services.Identity.Infrastructure.Services;
+using MiniSpace.Services.Identity.Application.Events;
+using MiniSpace.Services.Identity.Application.Services;
+using MiniSpace.Services.Identity.Infrastructure.Services;
 
-
-namespace SwiftParcel.Identity.Services.Infrastructure.UnitTests.Services
+namespace MiniSpace.Services.Identity.Infrastructure.UnitTests.Services
 {
     public class MessageBrokerTests
     {

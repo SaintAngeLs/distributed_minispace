@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Xunit;
+using Moq;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using SwiftParcel.Services.Identity.Application.Commands;
-using SwiftParcel.Services.Identity.Application.Commands.Handlers;
-using SwiftParcel.Services.Identity.Identity.Application.Services;
+using MiniSpace.Services.Identity.Application.Commands;
+using MiniSpace.Services.Identity.Application.Commands.Handlers;
+using MiniSpace.Services.Identity.Application.Services;
 
-namespace SwiftParcel.Services.Identity.Application.UnitTests.Commands.Handlers
+namespace MiniSpace.Services.Identity.Application.UnitTests.Commands.Handlers
 {
     public class SignUpHandlerTests
     {

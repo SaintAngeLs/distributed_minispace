@@ -1,16 +1,18 @@
-﻿using System;
+﻿using Xunit;
+using Moq;
+using FluentAssertions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using SwiftParcel.Services.Identity.Application.Services;
-using SwiftParcel.Services.Identity.Core.Entities;
-using SwiftParcel.Services.Identity.Core.Repositories;
-using SwiftParcel.Services.Identity.Core.Exceptions;
-using SwiftParcel.Services.Identity.Application.UserDTO;
-using SwiftParcel.Services.Identity.Application.Exceptions;
+using MiniSpace.Services.Identity.Application.Services;
+using MiniSpace.Services.Identity.Core.Entities;
+using MiniSpace.Services.Identity.Core.Repositories;
+using MiniSpace.Services.Identity.Core.Exceptions;
+using MiniSpace.Services.Identity.Application.DTO;
+using MiniSpace.Services.Identity.Application.Exceptions;
+using MiniSpace.Services.Identity.Application.Services.Identity;
 
-namespace SwiftParcel.Services.Identity.Application.UnitTests.Services
+namespace MiniSpace.Services.Identity.Application.UnitTests.Services
 {
     public class RefreshTokenServiceTests
     {
@@ -18,13 +20,13 @@ namespace SwiftParcel.Services.Identity.Application.UnitTests.Services
         private readonly Mock<IRefreshTokenRepository> _mockRefreshTokenRepository;
         private readonly Mock<IUserRepository> _mockUserRepository;
         private readonly Mock<IJwtProvider> _mockJwtProvider;
-        private readonly Mock<IRgen> _mockRgen;
+        private readonly Mock<IRng> _mockRgen;
         public RefreshTokenServiceTests()
         {
             _mockRefreshTokenRepository = new Mock<IRefreshTokenRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
             _mockJwtProvider = new Mock<IJwtProvider>();
-            _mockRgen = new Mock<IRgen>();
+            _mockRgen = new Mock<IRng>();
 
             _refreshTokenService = new RefreshTokenService(
                 _mockRefreshTokenRepository.Object,
