@@ -1,7 +1,9 @@
 ## Student life activity app - Mini Space
 
 ## General description
-Mini Space will be a multitier application built with [.NET](https://dotnet.microsoft.com/en-us). Its target is to create web interface for students to browse events and sign up for them, create own activities and interact with other students. Application focuses on cultural, educational and social events available for academic community.
+- [ ] Will be a multitier application built with [.NET](https://dotnet.microsoft.com/en-us)
+- [ ] Targets to create web interface for students to browse events and sign up for them, create own activities and interact with other students
+- [ ] Focuses on cultural, educational and social events available for academic community
 
 ## Frontend
 - [ ] Created with [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - single-page web application framework being a part of the .NET ecosystem
@@ -9,8 +11,7 @@ Mini Space will be a multitier application built with [.NET](https://dotnet.micr
 - [ ] Runs in the same security sandbox as JavaScript frameworks like Angular, React or Vue
 
 ## Backend
-- [ ] Written in C#
-- [ ] Created with [Convey](https://github.com/snatch-dev/Convey) - lightweight set of libraries for building .NET microservices
+- [ ] Written in C#, created with [Convey](https://github.com/snatch-dev/Convey) - lightweight set of libraries for building .NET microservices
 - [ ] Based on concept of microservice architecture
 - [ ] CQRS pattern - using a different model to update data than the model to read data
 - [ ] Will be composed of the following services:
