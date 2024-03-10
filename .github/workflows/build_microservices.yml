@@ -39,16 +39,17 @@ jobs:
           echo "Restoring test projects in ${{ matrix.test_dir }}"
           find ${{ matrix.test_dir }} -name '*.csproj' -exec dotnet restore {} \;
 
-      - name: Run tests in ${{ matrix.test_dir }}
+      - name: Run tests and collect coverage in ${{ matrix.test_dir }}
         if: matrix.test_dir != ''
         run: |
-          echo "Running tests in ${{ matrix.test_dir }}"
-          set -e  # Ensure that the shell exits immediately if any command returns a non-zero status
-          find ${{ matrix.test_dir }} -name '*.csproj' -exec sh -c 'dotnet test "{}" --no-restore --verbosity normal || exit 1' \;
+          echo "Running tests and collecting coverage in ${{ matrix.test_dir }}"
+          find ${{ matrix.test_dir }} -name '*.csproj' -exec sh -c 'dotnet test "{}" --no-restore --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura || exit 1' \;
+
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: '**/coverage.cobertura.xml'
           slug: SaintAngeLs/p_software_engineering_2
 
