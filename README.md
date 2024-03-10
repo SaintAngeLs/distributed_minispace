@@ -24,7 +24,7 @@
     - [ ] Friend Service
     - [ ] Post Service
     - [ ] Organizer Service
-- [ ] API.Gateway created with [Ntrada](https://github.com/snatch-dev/Ntrada) to clip endpoints from microservices to be accessible by one port
+- [ ] API Gateway created with [Ntrada](https://github.com/snatch-dev/Ntrada) to clip endpoints from microservices to be accessible by one port
 
 ## Infrastructure
 - [ ] [MongoDB](https://www.mongodb.com/products/platform/cloud) - document-oriented database
