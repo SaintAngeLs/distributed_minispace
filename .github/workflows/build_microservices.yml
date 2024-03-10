@@ -19,19 +19,21 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.0.x'
+
       - name: Restore dependencies for ${{ matrix.project }}
         run: dotnet restore ${{ matrix.project }}
+
+      - name: Build ${{ matrix.project }}
+        run: dotnet build ${{ matrix.project }} --no-restore  
+
       - name: Restore dependencies for test projects in ${{ matrix.test_dir }}
         if: matrix.test_dir != ''
         run: |
           echo "Restoring test projects in ${{ matrix.test_dir }}"
-          find ${{ matrix.test_dir }} -name '*.csproj'
           find ${{ matrix.test_dir }} -name '*.csproj' -exec dotnet restore {} \;
-      - name: Build ${{ matrix.project }}
-        run: dotnet build ${{ matrix.project }} --no-restore
+
       - name: Run tests in ${{ matrix.test_dir }}
         if: matrix.test_dir != ''
         run: |
           echo "Running tests in ${{ matrix.test_dir }}"
-          find ${{ matrix.test_dir }} -name '*.csproj' -exec echo "Testing {}" \;
-          find ${{ matrix.test_dir }} -name '*.csproj' -exec dotnet test {} --no-build --verbosity normal \;
+          find ${{ matrix.test_dir }} -name '*.csproj' -exec dotnet test {} --no-restore --verbosity normal \; 
