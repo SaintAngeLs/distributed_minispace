@@ -10,6 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MiniSpace.Web.Data;
+using MiniSpace.Web.Models.Identity;
+using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.HttpClients;
+
 
 namespace MiniSpace.Web
 {
@@ -29,6 +33,22 @@ namespace MiniSpace.Web
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+
+            var httpClientOptions = Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
+    
+            // Register HttpClientOptions as a singleton
+            services.AddSingleton(httpClientOptions);
+
+            // Register IHttpClient to resolve to CustomHttpClient
+            services.AddHttpClient<IHttpClient, CustomHttpClient>((serviceProvider, client) =>
+            {
+                var options = serviceProvider.GetRequiredService<HttpClientOptions>();
+                client.BaseAddress = new Uri(options.ApiUrl); 
+                // Additional HttpClient configuration as needed
+            });
+
+
+            services.AddScoped<IIdentityService, IdentityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

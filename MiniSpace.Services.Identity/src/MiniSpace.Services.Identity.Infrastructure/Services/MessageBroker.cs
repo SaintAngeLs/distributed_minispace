@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Convey.CQRS.Events;
 using Convey.MessageBrokers;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using OpenTracing;
 using MiniSpace.Services.Identity.Application.Services;
 
+[assembly: InternalsVisibleTo("MiniSpace.Services.Identity.Infrastructure.UnitTests")]
 namespace MiniSpace.Services.Identity.Infrastructure.Services
 {
     internal sealed class MessageBroker : IMessageBroker
