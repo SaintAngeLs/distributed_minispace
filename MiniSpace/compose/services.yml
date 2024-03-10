@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   api-gateway:
-    image: adrianvsaint/minispace.apigateway
+    image: adrianvsaint/minispace.apigateway:latest
     container_name: api-gateway
     restart: unless-stopped
     environment:
@@ -13,7 +13,7 @@ services:
       - minispace
 
   identity-service:
-    image: adrianvsaint/minispace.services.identity
+    image: adrianvsaint/minispace.services.identity:latest
     container_name: identity-service
     restart: unless-stopped
     ports:
@@ -22,7 +22,7 @@ services:
       - minispace
     
   web:
-    image: adrianvsaint/minispace.web
+    image: adrianvsaint/minispace.web:latest
     container_name: web
     restart: unless-stopped
     ports:
