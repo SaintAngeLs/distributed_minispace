@@ -51,5 +51,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: SaintAngeLs/p_software_engineering_2
-          fail_ci_if_error: true
 
