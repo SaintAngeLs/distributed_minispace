@@ -1,23 +1,26 @@
 ## Student life activity app - Mini Space
 
 ## General description
-Mini Space will be a multitier application built with [.NET 8](https://dotnet.microsoft.com/en-us). Its target is to create web interface for students to browse events and sign up for them, create own activities and interact with other students. Application focuses on cultural, educational and social events available for academic community.
+Mini Space will be a multitier application built with [.NET](https://dotnet.microsoft.com/en-us). Its target is to create web interface for students to browse events and sign up for them, create own activities and interact with other students. Application focuses on cultural, educational and social events available for academic community.
 
 ## Frontend
-- [ ] Created with [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
+- [ ] Created with [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - single-page web application framework being a part of the .NET ecosystem
 - [ ] Written in C#, can run in the browser by using [WebAssembly](https://webassembly.org)
 - [ ] Runs in the same security sandbox as JavaScript frameworks like Angular, React or Vue
 
 ## Backend
-- [ ] Written in C#, created with [Convey](https://github.com/snatch-dev/Convey) - lightweight set of libraries for building .NET microservices
+- [ ] Written in C#
+- [ ] Created with [Convey](https://github.com/snatch-dev/Convey) - lightweight set of libraries for building .NET microservices
 - [ ] Based on concept of microservice architecture
 - [ ] CQRS pattern - using a different model to update data than the model to read data
 - [ ] Will be composed of the following services:
-    - [ ] Identity Service - authentication and authorization of all users
-    - [ ] User Service - storing information about users
-    - [ ] Event Service 
+    - [ ] Identity Service
+    - [ ] User Service
+    - [ ] Event Service
     - [ ] Events Service
+    - [ ] Reports Service
     - [ ] Notifications Service
+    - [ ] Friend Service
     - [ ] Post Service
     - [ ] Organizer Service
 - [ ] API.Gateway created with [Ntrada](https://github.com/snatch-dev/Ntrada) to clip endpoints from microservices to be accessible by one port
