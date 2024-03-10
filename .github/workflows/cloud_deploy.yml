@@ -62,6 +62,13 @@ jobs:
           docker-compose -f infrastructure.yml up -d
           docker ps -a
         EOF
+        
+    - name: Pull latest images for services
+      run: |
+        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+          cd /root/social_net_app
+          docker-compose -f services.yml pull
+        EOF
 
     - name: Deploy containers with the services images
       run: |
