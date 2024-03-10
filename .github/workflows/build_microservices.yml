@@ -31,7 +31,7 @@ jobs:
         if: matrix.test_dir != ''
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '6.0.x'
 
       - name: Restore dependencies for test projects in ${{ matrix.test_dir }}
         if: matrix.test_dir != ''
