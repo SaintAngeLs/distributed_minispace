@@ -1,7 +1,7 @@
 ## Student life activity app - Mini Space
 
 ## General description
-- [ ] Will be a multitier application built with [.NET](https://dotnet.microsoft.com/en-us)
+- [ ] Multitier application built with [.NET](https://dotnet.microsoft.com/en-us)
 - [ ] Targets to create web interface for students to browse events and sign up for them, create own activities and interact with other students
 - [ ] Focuses on cultural, educational and social events available for academic community
 
