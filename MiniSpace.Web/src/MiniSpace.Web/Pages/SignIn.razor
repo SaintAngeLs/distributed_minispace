@@ -1,0 +1,33 @@
+@page "/signin"
+@using MiniSpace.Web.Models.Identity
+@using MiniSpace.Web.Areas.Identity
+@inject IIdentityService IdentityService
+
+<h3>Login</h3>
+
+<EditForm Model="@signInModel" OnValidSubmit="HandleSignIn">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <InputText id="email" class="form-control" @bind-Value="signInModel.Email" />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <InputText id="password" class="form-control" @bind-Value="signInModel.Password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
+
+@code {
+    private SignInModel signInModel = new SignInModel();
+
+    private async Task HandleSignIn()
+    {
+        var jwtDto = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+        // Implement logic after successful sign-in, such as navigating to a dashboard or showing a success message
+    }
+}
