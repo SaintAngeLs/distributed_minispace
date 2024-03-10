@@ -1,4 +1,4 @@
-name: .NET MiniSpace Microservice build c. integration
+name: .NET MiniSpace Microservice build & integration
 
 on: [push, pull_request]
 
@@ -8,20 +8,27 @@ jobs:
     timeout-minutes: 30  
     strategy:
       matrix:
-        project: [ 
-          'MiniSpace.APIGateway/src/MiniSpace.APIGateway',
-          'MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api',
-          'MiniSpace.Web/src/MiniSpace.Web',
-          ]
+        include:
+          - project: 'MiniSpace.APIGateway/src/MiniSpace.APIGateway'
+            test: ''
+          - project: 'MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api'
+            test: 'MiniSpace.Services.Identity/tests'
+          - project: 'MiniSpace.Web/src/MiniSpace.Web'
+            test: ''
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '8.0.x'
-    - name: Build and Test ${{ matrix.project }}
-      run: |
-        cd ${{ matrix.project }}
-        dotnet restore
-        dotnet build --no-restore
-        dotnet test --no-build --if-present --verbosity normal 
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore dependencies
+        run: |
+          dotnet restore ${{ matrix.project }}
+          if [ -n "${{ matrix.test }}" ]; then dotnet restore ${{ matrix.test }}; fi
+      - name: Build ${{ matrix.project }}
+        run: |
+          dotnet build ${{ matrix.project }} --no-restore
+      - name: Test ${{ matrix.test }}
+        if: matrix.test != ''
+        run: |
+          dotnet test ${{ matrix.test }} --no-build --verbosity normal
