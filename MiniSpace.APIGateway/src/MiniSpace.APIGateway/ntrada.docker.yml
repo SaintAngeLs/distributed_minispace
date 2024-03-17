@@ -18,7 +18,7 @@ generateTraceId: true
 useLocalUrl: false
 loadBalancer:
   enabled: false
-  url: fabio:9999
+  url: faibo:9999
 
 extensions:
   customErrors:
