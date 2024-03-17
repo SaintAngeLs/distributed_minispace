@@ -86,17 +86,14 @@ namespace MiniSpace.Web.HttpClients
         .WaitAndRetryAsync(_options.Retries, r => TimeSpan.FromSeconds(Math.Pow(2, r)))
         .ExecuteAsync(async () =>
         {
-            // Check if the BaseAddress is set and if the uri is not a full URL
             if (_client.BaseAddress != null && !Uri.IsWellFormedUriString(uri, UriKind.Absolute))
             {
-                // If the uri does not start with a slash, add it to ensure proper URL construction
                 if (!uri.StartsWith("/")) uri = "/" + uri;
-                // Combine BaseAddress with the uri
+
                 uri = new Uri(_client.BaseAddress, uri).ToString();
             }
             else if (!Uri.IsWellFormedUriString(uri, UriKind.Absolute))
             {
-                // If the uri is not a full URL and there's no BaseAddress, log an error or handle accordingly
                 _logger.LogError($"The provided URI '{uri}' is not a valid absolute URL and no BaseAddress is set.");
                 return default;
             }

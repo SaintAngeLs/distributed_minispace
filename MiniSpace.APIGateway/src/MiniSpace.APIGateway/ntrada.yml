@@ -18,7 +18,7 @@ generateTraceId: true
 useLocalUrl: true
 loadBalancer:
   enabled: false
-  url: localhost:9999
+  url: faibo:9999
 
 extensions:
   customErrors:
@@ -27,11 +27,13 @@ extensions:
   cors:
     allowCredentials: true
     allowedOrigins:
-      - '*'
+      - 'http://localhost:5606'
     allowedMethods:
-      - post
-      - put
-      - delete
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
     allowedHeaders:
       - '*'
     exposedHeaders:
@@ -42,10 +44,10 @@ extensions:
 
   jwt:
     issuerSigningKey: eiquief5phee9pazo0Faegaez9gohThailiur5woy2befiech1oarai4aiLi6ahVecah3ie9Aiz6Peij
-    validIssuer: pacco
+    validIssuer: minispace
     validateAudience: false
-    validateIssuer: true
-    validateLifetime: true
+    validateIssuer: false
+    validateLifetime: false
 
   swagger:
     name: MiniSpace
@@ -73,7 +75,7 @@ modules:
           
     
   identity:
-    path: identity
+    path: /identity
     routes:
       - upstream: /users/{userId}
         method: GET
@@ -103,8 +105,8 @@ modules:
         use: downstream
         downstream: identity-service/sign-in
         auth: false
-        responseHeaders:
-          content-type: application/json
+
+        
     
     services:
       identity-service:
