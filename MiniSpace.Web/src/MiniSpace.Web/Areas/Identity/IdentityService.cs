@@ -20,7 +20,7 @@ namespace MiniSpace.Web.Areas.Identity
         }
 
         public Task SignUpAsync(string email, string password, string role = "user")
-            => _httpClient.PostAsync("identity-service/sign-up", new {email, password, role});
+            => _httpClient.PostAsync("identity/sign-up", new {email, password, role});
 
         public Task<JwtDto> SignInAsync(string email, string password)
             => _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new {email, password});
