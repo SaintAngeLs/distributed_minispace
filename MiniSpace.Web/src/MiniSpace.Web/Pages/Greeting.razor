@@ -1,0 +1,25 @@
+@page "/greeting"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h1>Greeting</h1>
+
+
+@if (userName != null)
+{
+    <p>Hello, @userName!</p>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private string userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        userName = authState.User.Identity.Name; 
+    }
+}

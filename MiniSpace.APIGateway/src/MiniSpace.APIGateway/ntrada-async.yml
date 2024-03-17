@@ -127,8 +127,7 @@ modules:
         auth: false
         use: downstream
         downstream: identity-service/sign-in
-        responseHeaders:
-          content-type: application/json
+        
 
     services:
       identity-service:
