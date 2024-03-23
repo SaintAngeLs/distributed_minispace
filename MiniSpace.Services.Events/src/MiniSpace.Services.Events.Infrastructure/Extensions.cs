@@ -33,7 +33,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-//using MiniSpace.Services.Events.Application;
+using MiniSpace.Services.Events.Application;
 //using MiniSpace.Services.Events.Application.Commands;
 //using MiniSpace.Services.Events.Application.Services;
 //using MiniSpace.Services.Events.Application.Services.Identity;
@@ -53,12 +53,6 @@ namespace MiniSpace.Services.Events.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            //builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
-            //builder.Services.AddSingleton<IPasswordService, PasswordService>();
-            //builder.Services.AddSingleton<IPasswordHasher<IPasswordService>, PasswordHasher<IPasswordService>>();
-            //builder.Services.AddTransient<IIdentityService, IdentityService>();
-            //builder.Services.AddTransient<IRefreshTokenService, RefreshTokenService>();
-            //builder.Services.AddSingleton<IRng, Rng>();
             //builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             //builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             //builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -96,7 +90,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UseConvey()
                 .UseAccessTokenValidator()
                 //.UseMongo()
-                //.UsePublicContracts<ContractAttribute>()
+                .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseAuthentication()
                 .UseRabbitMq();
