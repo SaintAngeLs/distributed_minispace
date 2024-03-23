@@ -18,4 +18,8 @@
     <ProjectReference Include="..\MiniSpace.Services.Students.Core\MiniSpace.Services.Students.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\Handlers\" />
+  </ItemGroup>
+
 </Project>
