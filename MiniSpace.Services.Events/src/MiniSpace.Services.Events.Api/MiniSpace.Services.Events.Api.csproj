@@ -6,8 +6,15 @@
     <RootNamespace>MiniSpace.Services.Identity.Api</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Convey" Version="0.4.*" />
+    <PackageReference Include="Convey.Logging" Version="0.4.*" />
+    <PackageReference Include="Convey.WebApi" Version="0.4.*" />
+    <PackageReference Include="Convey.WebApi.CQRS" Version="0.4.*" />
+  </ItemGroup>  
 
   <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Events.Infrastructure\MiniSpace.Services.Events.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
