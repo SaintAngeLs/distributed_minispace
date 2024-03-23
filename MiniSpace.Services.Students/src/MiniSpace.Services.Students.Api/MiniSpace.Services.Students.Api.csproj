@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>MiniSpace.Services.Students.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Convey" Version="0.4.*" />
+    <PackageReference Include="Convey.Logging" Version="0.4.*" />
+    <PackageReference Include="Convey.WebApi" Version="0.4.*" />
+    <PackageReference Include="Convey.WebApi.CQRS" Version="0.4.*" />
+  </ItemGroup>  
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Students.Infrastructure\MiniSpace.Services.Students.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

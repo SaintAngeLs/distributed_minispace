@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+<ItemGroup>
+    <PackageReference Include="Convey" Version="1.1.448" />
+    <PackageReference Include="Convey.Auth" Version="1.1.448" />
+    <PackageReference Include="Convey.CQRS.Queries" Version="1.1.448" />
+    <PackageReference Include="Convey.Discovery.Consul" Version="1.1.448" />
+    <PackageReference Include="Convey.HTTP" Version="1.1.448" />
+    <PackageReference Include="Convey.LoadBalancing.Fabio" Version="1.1.448" />
+    <PackageReference Include="Convey.Logging" Version="1.1.448" />
+    <PackageReference Include="Convey.Logging.CQRS" Version="1.1.448" />
+    <PackageReference Include="Convey.MessageBrokers" Version="1.1.448" />
+    <PackageReference Include="Convey.MessageBrokers.CQRS" Version="1.1.448" />
+    <PackageReference Include="Convey.MessageBrokers.Outbox" Version="1.1.448" />
+    <PackageReference Include="Convey.MessageBrokers.Outbox.Mongo" Version="1.1.448" />
+    <PackageReference Include="Convey.MessageBrokers.RabbitMQ" Version="1.1.448" />
+    <PackageReference Include="Convey.Metrics.AppMetrics" Version="1.1.448" />
+    <PackageReference Include="Convey.Persistence.MongoDB" Version="1.1.448" />
+    <PackageReference Include="Convey.Persistence.Redis" Version="1.1.448" />
+    <PackageReference Include="Convey.Secrets.Vault" Version="1.1.448" />
+    <PackageReference Include="Convey.Security" Version="1.1.448" />
+    <PackageReference Include="Convey.Tracing.Jaeger" Version="1.1.448" />
+    <PackageReference Include="Convey.Tracing.Jaeger.RabbitMQ" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi.Security" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi.Swagger" Version="1.1.448" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Students.Application\MiniSpace.Services.Students.Application.csproj" />
+  </ItemGroup>
+
+</Project>
