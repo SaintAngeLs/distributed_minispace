@@ -15,10 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MiniSpace.Services.Students.Infrastructure\MiniSpace.Services.Students.Infrastructure.csproj" />
-  </ItemGroup>  
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
