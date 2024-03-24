@@ -39,7 +39,7 @@ using MiniSpace.Services.Students.Core.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Contexts;
 using MiniSpace.Services.Students.Infrastructure.Decorators;
 using MiniSpace.Services.Students.Infrastructure.Exceptions;
-// using MiniSpace.Services.Students.Infrastructure.Logging;
+using MiniSpace.Services.Students.Infrastructure.Logging;
 // using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 // using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Services;
@@ -73,7 +73,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
-                //.AddHandlersLogging()
+                .AddHandlersLogging()
                 //.AddMongoRepository<StudentDocument, Guid>("Students")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
