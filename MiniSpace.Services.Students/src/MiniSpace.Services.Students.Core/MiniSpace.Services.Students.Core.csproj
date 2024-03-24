@@ -7,12 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\" />
+    <Compile Remove="Exceptions\UnauthorizedStudentAccessException.cs" />
+    <Compile Remove="Exceptions\StudentNotFoundException.cs" />
+    <Compile Remove="Events\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Exceptions\UnauthorizedStudentAccessException.cs" />
-    <Compile Remove="Exceptions\StudentNotFoundException.cs" />
+    <EmbeddedResource Remove="Events\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Events\**" />
   </ItemGroup>
 
 </Project>

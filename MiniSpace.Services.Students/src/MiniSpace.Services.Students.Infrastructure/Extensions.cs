@@ -37,7 +37,7 @@ using MiniSpace.Services.Students.Application.Commands;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Repositories;
 // using MiniSpace.Services.Students.Core.Services;
-// using MiniSpace.Services.Students.Infrastructure.Contexts;
+using MiniSpace.Services.Students.Infrastructure.Contexts;
 // using MiniSpace.Services.Students.Infrastructure.Decorators;
 // using MiniSpace.Services.Students.Infrastructure.Exceptions;
 // using MiniSpace.Services.Students.Infrastructure.Logging;
@@ -100,40 +100,40 @@ namespace MiniSpace.Services.Students.Infrastructure
             return app;
         }
 
-        // internal static CorrelationContext GetCorrelationContext(this IHttpContextAccessor accessor)
-        //     => accessor.HttpContext?.Request.Headers.TryGetValue("Correlation-Context", out var json) is true
-        //         ? JsonConvert.DeserializeObject<CorrelationContext>(json.FirstOrDefault())
-        //         : null;
-        //
-        // internal static IDictionary<string, object> GetHeadersToForward(this IMessageProperties messageProperties)
-        // {
-        //     const string sagaHeader = "Saga";
-        //     if (messageProperties?.Headers is null || !messageProperties.Headers.TryGetValue(sagaHeader, out var saga))
-        //     {
-        //         return null;
-        //     }
-        //
-        //     return saga is null
-        //         ? null
-        //         : new Dictionary<string, object>
-        //         {
-        //             [sagaHeader] = saga
-        //         };
-        // }
-        //
-        // internal static string GetSpanContext(this IMessageProperties messageProperties, string header)
-        // {
-        //     if (messageProperties is null)
-        //     {
-        //         return string.Empty;
-        //     }
-        //
-        //     if (messageProperties.Headers.TryGetValue(header, out var span) && span is byte[] spanBytes)
-        //     {
-        //         return Encoding.UTF8.GetString(spanBytes);
-        //     }
-        //
-        //     return string.Empty;
-        // }
+        internal static CorrelationContext GetCorrelationContext(this IHttpContextAccessor accessor)
+            => accessor.HttpContext?.Request.Headers.TryGetValue("Correlation-Context", out var json) is true
+                ? JsonConvert.DeserializeObject<CorrelationContext>(json.FirstOrDefault())
+                : null;
+        
+        internal static IDictionary<string, object> GetHeadersToForward(this IMessageProperties messageProperties)
+        {
+            const string sagaHeader = "Saga";
+            if (messageProperties?.Headers is null || !messageProperties.Headers.TryGetValue(sagaHeader, out var saga))
+            {
+                return null;
+            }
+        
+            return saga is null
+                ? null
+                : new Dictionary<string, object>
+                {
+                    [sagaHeader] = saga
+                };
+        }
+        
+        internal static string GetSpanContext(this IMessageProperties messageProperties, string header)
+        {
+            if (messageProperties is null)
+            {
+                return string.Empty;
+            }
+        
+            if (messageProperties.Headers.TryGetValue(header, out var span) && span is byte[] spanBytes)
+            {
+                return Encoding.UTF8.GetString(spanBytes);
+            }
+        
+            return string.Empty;
+        }
     }
 }
