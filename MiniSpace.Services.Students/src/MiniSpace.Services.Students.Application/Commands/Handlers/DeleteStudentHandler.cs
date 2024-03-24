@@ -33,11 +33,11 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.Id);
             }
 
-            // var identity = _appContext.Identity;
-            // if (identity.Id != student.Id)
-            // {
-            //     throw new UnauthorizedStudentAccessException(command.Id, identity.Id);
-            // }
+            var identity = _appContext.Identity;
+            if (identity.Id != student.Id)
+            {
+                throw new UnauthorizedStudentAccessException(command.Id, identity.Id);
+            }
 
             // await _studentRepository.DeleteAsync(command.Id);
 
