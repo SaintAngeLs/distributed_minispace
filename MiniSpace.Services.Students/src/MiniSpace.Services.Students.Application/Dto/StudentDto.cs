@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Application.Dto
 {
-    public class CustomerDto
+    public class StudentDto
     {
         public Guid Id { get; set; }
         public string Username { get; set; }

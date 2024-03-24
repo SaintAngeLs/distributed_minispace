@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Students.Application;
-// using MiniSpace.Services.Students.Application.Commands;
-// using MiniSpace.Services.Students.Application.Queries;
-// using MiniSpace.Services.Students.Application.Services;
+using MiniSpace.Services.Students.Application.Commands;
+using MiniSpace.Services.Students.Application.Dto;
+using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Infrastructure;
 
 namespace MiniSpace.Services.Students.Api
@@ -31,9 +31,9 @@ namespace MiniSpace.Services.Students.Api
                     .UseInfrastructure()
                     .UseEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        // .Get<GetStudent, StudentDto>("user/{userId}")
-                        // .Put<UpdateStudent>("user/{userId}")
-                        // .Delete<DeleteStudent>("user/{userId}")
+                        .Get<GetStudent, StudentDto>("user/{userId}")
+                        .Put<UpdateStudent>("user/{userId}")
+                        .Delete<DeleteStudent>("user/{userId}")
                     ))
                 .UseLogging()
                 .Build()
