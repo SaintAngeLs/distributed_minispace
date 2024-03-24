@@ -22,4 +22,16 @@
     <Folder Include="Commands\Handlers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="IAppContext.cs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="IAppContext.cs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="IAppContext.cs\**" />
+  </ItemGroup>
+
 </Project>
