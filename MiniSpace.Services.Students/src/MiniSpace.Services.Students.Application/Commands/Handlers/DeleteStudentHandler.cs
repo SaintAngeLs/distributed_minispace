@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
-//using MiniSpace.Services.Students.Application.Events;
+using MiniSpace.Services.Students.Application.Events;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Repositories;
@@ -41,7 +41,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
             await _studentRepository.DeleteAsync(command.Id);
 
-            // await _messageBroker.PublishAsync(new StudentDeleted(command.Id));
+            await _messageBroker.PublishAsync(new StudentDeleted(command.Id));
         }
     }    
 }
