@@ -32,14 +32,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Students.Application;
 using MiniSpace.Services.Students.Application.Commands;
-// using MiniSpace.Services.Students.Application.Events.External;
-// using MiniSpace.Services.Students.Application.Events.External.Handlers;
+using MiniSpace.Services.Students.Application.Events.External;
+using MiniSpace.Services.Students.Application.Events.External.Handlers;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Repositories;
-// using MiniSpace.Services.Students.Core.Services;
 using MiniSpace.Services.Students.Infrastructure.Contexts;
 using MiniSpace.Services.Students.Infrastructure.Decorators;
-// using MiniSpace.Services.Students.Infrastructure.Exceptions;
+using MiniSpace.Services.Students.Infrastructure.Exceptions;
 // using MiniSpace.Services.Students.Infrastructure.Logging;
 // using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 // using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
@@ -61,7 +60,7 @@ namespace MiniSpace.Services.Students.Infrastructure
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
             return builder
-                //.AddErrorHandler<ExceptionToResponseMapper>()
+                .AddErrorHandler<ExceptionToResponseMapper>()
                 .AddQueryHandlers()
                 .AddInMemoryQueryDispatcher()
                 .AddHttpClient()
@@ -69,7 +68,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddFabio()
                 .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
                 .AddMessageOutbox(o => o.AddMongo())
-                //.AddExceptionToMessageMapper<ExceptionToMessageMapper>()
+                .AddExceptionToMessageMapper<ExceptionToMessageMapper>()
                 .AddMongo()
                 .AddRedis()
                 .AddMetrics()
