@@ -7,7 +7,6 @@ using Convey.CQRS.Commands;
 //using MiniSpace.Services.Students.Application.Events;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Services;
-using MiniSpace.Services.Students.Core.Exceptions;
 using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers

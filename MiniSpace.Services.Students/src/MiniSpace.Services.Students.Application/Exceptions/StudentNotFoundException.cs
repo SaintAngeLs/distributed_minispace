@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MiniSpace.Services.Students.Core.Exceptions
+namespace MiniSpace.Services.Students.Application.Exceptions
 {
-    public class StudentNotFoundException : DomainException
+    public class StudentNotFoundException : AppException
     {
         public override string Code { get; } = "student_not_found";
         public Guid Id { get; }
@@ -14,5 +14,5 @@ namespace MiniSpace.Services.Students.Core.Exceptions
         {
             Id = id;
         }
-    }
+    }    
 }

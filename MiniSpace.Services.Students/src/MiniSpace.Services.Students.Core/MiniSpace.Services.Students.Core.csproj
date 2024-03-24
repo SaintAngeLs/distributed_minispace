@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Remove="Exceptions\UnauthorizedStudentAccessException.cs" />
+    <Compile Remove="Exceptions\StudentNotFoundException.cs" />
   </ItemGroup>
 
 </Project>
