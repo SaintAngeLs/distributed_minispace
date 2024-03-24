@@ -16,17 +16,18 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public bool EmailNotifications { get; private set; }
+        public bool IsBanned { get; private set; }
         public bool IsOrganizer { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
         public Student(Guid id, string username, string password, string email, DateTime createdAt)
-            : this(id, username, password, email, createdAt, 0, string.Empty,
-                string.Empty, null, false, false)
+            : this(id, username, password, email, createdAt, 0, string.Empty, 
+                string.Empty, null, false, false, false)
         {}
 
         public Student(Guid id, string username, string password, string email, DateTime createdAt,
             int friends, string profileImage, string description, DateTime? dateOfBirth,
-            bool emailNotifications, bool isOrganizer)
+            bool emailNotifications, bool isBanned, bool isOrganizer)
         {
             Id = id;
             Username = username;
@@ -38,7 +39,12 @@ namespace MiniSpace.Services.Students.Core.Entities
             Description = description;
             DateOfBirth = dateOfBirth;
             EmailNotifications = emailNotifications;
+            IsBanned = isBanned;
             IsOrganizer = isOrganizer;
         }
+
+        public void SetIsBanned(bool isBanned) => IsBanned = isBanned;
+
+        public void SetIsOrganizer(bool isOrganizer) => IsOrganizer = isOrganizer;
     }    
 }
