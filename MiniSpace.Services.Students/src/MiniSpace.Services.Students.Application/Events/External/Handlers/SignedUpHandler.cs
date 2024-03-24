@@ -28,20 +28,20 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 
         public async Task HandleAsync(SignedUp @event, CancellationToken cancellationToken = default)
         {
-            // if (@event.Role != RequiredRole)
-            // {
-            //     throw new InvalidRoleException(@event.UserId, @event.Role, RequiredRole);
-            // }
+            if (@event.Role != RequiredRole)
+            {
+                throw new InvalidRoleException(@event.UserId, @event.Role, RequiredRole);
+            }
 
-            // var student = await _studentRepository.GetAsync(@event.UserId);
-            // if (student is {})
-            // {
-            //     throw new StudentAlreadyCreatedException(student.Id);
-            // }
+            var student = await _studentRepository.GetAsync(@event.UserId);
+            if (student != null)
+            {
+                throw new StudentAlreadyCreatedException(student.Id);
+            }
 
-            var student = new Student(@event.UserId, @event.Username, @event.Password,
+            var newStudent = new Student(@event.UserId, @event.Username, @event.Password,
                 @event.Email, _dateTimeProvider.Now);
-            await _studentRepository.AddAsync(student);
+            await _studentRepository.AddAsync(newStudent);
         }
     }    
 }
