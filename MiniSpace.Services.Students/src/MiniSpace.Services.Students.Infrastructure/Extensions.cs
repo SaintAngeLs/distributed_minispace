@@ -38,7 +38,7 @@ using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Repositories;
 // using MiniSpace.Services.Students.Core.Services;
 using MiniSpace.Services.Students.Infrastructure.Contexts;
-// using MiniSpace.Services.Students.Infrastructure.Decorators;
+using MiniSpace.Services.Students.Infrastructure.Decorators;
 // using MiniSpace.Services.Students.Infrastructure.Exceptions;
 // using MiniSpace.Services.Students.Infrastructure.Logging;
 // using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
@@ -58,8 +58,8 @@ namespace MiniSpace.Services.Students.Infrastructure
             // builder.Services.AddSingleton<IVipPolicy, VipPolicy>();
             // builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             // builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
-            // builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
-            // builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
+            builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
+            builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
             return builder
                 //.AddErrorHandler<ExceptionToResponseMapper>()
