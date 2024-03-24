@@ -55,9 +55,8 @@ namespace MiniSpace.Services.Students.Infrastructure
             // builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             // builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             // builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            // builder.Services.AddSingleton<IVipPolicy, VipPolicy>();
-            // builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
-            // builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
+            builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
+            builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 

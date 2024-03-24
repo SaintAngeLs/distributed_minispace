@@ -11,7 +11,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Contexts
         public Guid Id { get; }
         public string Role { get; } = string.Empty;
         public bool IsAuthenticated { get; }
-
+        public bool IsAdmin { get; }
         public IDictionary<string, string> Claims { get; } = new Dictionary<string, string>();
 
         internal IdentityContext()
@@ -28,6 +28,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Contexts
             Id = Guid.TryParse(id, out var userId) ? userId : Guid.Empty;
             Role = role ?? string.Empty;
             IsAuthenticated = isAuthenticated;
+            IsAdmin = Role.Equals("admin", StringComparison.InvariantCultureIgnoreCase);
             Claims = claims ?? new Dictionary<string, string>();
         }
         
