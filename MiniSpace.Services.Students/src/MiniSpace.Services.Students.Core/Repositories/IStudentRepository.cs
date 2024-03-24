@@ -11,5 +11,6 @@ namespace MiniSpace.Services.Students.Core.Repositories
         Task<Student> GetAsync(Guid id);
         Task AddAsync(Student student);
         Task UpdateAsync(Student student);
+        Task DeleteAsync(Guid id);
     }
 }

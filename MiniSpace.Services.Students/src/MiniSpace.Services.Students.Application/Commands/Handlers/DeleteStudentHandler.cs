@@ -39,7 +39,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new UnauthorizedStudentAccessException(command.Id, identity.Id);
             }
 
-            // await _studentRepository.DeleteAsync(command.Id);
+            await _studentRepository.DeleteAsync(command.Id);
 
             // await _messageBroker.PublishAsync(new StudentDeleted(command.Id));
         }
