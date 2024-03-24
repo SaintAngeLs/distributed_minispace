@@ -10,4 +10,8 @@
     <Folder Include="Events\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Exceptions\UnauthorizedStudentAccessException.cs" />
+  </ItemGroup>
+
 </Project>
