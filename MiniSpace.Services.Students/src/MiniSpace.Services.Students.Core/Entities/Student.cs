@@ -8,6 +8,9 @@ namespace MiniSpace.Services.Students.Core.Entities
 {
     public class Student : AggregateRoot
     {
+        private ISet<Guid> _interestedInEvents = new HashSet<Guid>();
+        private ISet<Guid> _signedUpEvents = new HashSet<Guid>();
+        
         public string Username { get; private set; }
         public string Password { get; private set; }
         public string Email { get; private set; }
@@ -20,6 +23,17 @@ namespace MiniSpace.Services.Students.Core.Entities
         public bool IsOrganizer { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
+        public IEnumerable<Guid> InterestedInEvents
+        {
+            get => _interestedInEvents;
+            set => _interestedInEvents = new HashSet<Guid>(value);
+        }
+        public IEnumerable<Guid> SignedUpEvents
+        {
+            get => _signedUpEvents;
+            set => _signedUpEvents = new HashSet<Guid>(value);
+        }
+        
         public Student(Guid id, string username, string password, string email, DateTime createdAt)
             : this(id, username, password, email, createdAt, 0, string.Empty, 
                 string.Empty, null, false, false, false)
@@ -46,5 +60,25 @@ namespace MiniSpace.Services.Students.Core.Entities
         public void SetIsBanned(bool isBanned) => IsBanned = isBanned;
 
         public void SetIsOrganizer(bool isOrganizer) => IsOrganizer = isOrganizer;
+
+        public void AddInterestedInEvent(Guid eventId)
+        {
+            if (eventId == Guid.Empty)
+            {
+                return;
+            }
+
+            _interestedInEvents.Add(eventId);
+        }
+
+        public void AddSignedUpEvent(Guid eventId)
+        {
+            if (eventId == Guid.Empty)
+            {
+                return;
+            }
+
+            _signedUpEvents.Add(eventId);
+        }
     }    
 }
