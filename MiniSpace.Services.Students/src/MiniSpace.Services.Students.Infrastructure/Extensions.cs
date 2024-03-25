@@ -89,11 +89,12 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseCertificateAuthentication()
-                .UseRabbitMq();
-                // .SubscribeCommand<CompleteStudentRegistration>()
-                // .SubscribeCommand<ChangeStudentstate>()
-                // .SubscribeEvent<SignedUp>()
-                // .SubscribeEvent<OrderCompleted>();
+                .UseRabbitMq()
+                .SubscribeCommand<UpdateStudent>()
+                .SubscribeCommand<DeleteStudent>()
+                .SubscribeEvent<SignedUp>()
+                .SubscribeEvent<EventInterestedIn>()
+                .SubscribeEvent<EventSignedUp>();
 
             return app;
         }

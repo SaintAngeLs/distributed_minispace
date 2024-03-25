@@ -26,6 +26,18 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
                     {
                         After = "Created a new student with id: {UserId}."
                     }
+                },
+                {
+                    typeof(EventInterestedIn), new HandlerLogTemplate
+                    {
+                        After = "A student with id: {StudentId} has been interested in the event with id: {EventId}."
+                    }
+                },
+                {
+                    typeof(EventSignedUp), new HandlerLogTemplate
+                    {
+                        After = "A student with id: {StudentId} has signed up for the event with id: {EventId}."
+                    }
                 }
             };
         
