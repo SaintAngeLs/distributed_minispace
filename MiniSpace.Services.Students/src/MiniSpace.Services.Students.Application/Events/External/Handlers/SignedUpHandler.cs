@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Convey.CQRS.Events;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Students.Application.Exceptions;
@@ -13,7 +9,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
     public class SignedUpHandler : IEventHandler<SignedUp>
     {
-        private const string RequiredRole = "student";
+        private const string RequiredRole = "user";
         private readonly IStudentRepository _studentRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
@@ -36,7 +32,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             }
 
             var student = await _studentRepository.GetAsync(@event.UserId);
-            if (student != null)
+            if (student is not null)
             {
                 throw new StudentAlreadyCreatedException(student.Id);
             }
