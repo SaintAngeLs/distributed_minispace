@@ -40,8 +40,8 @@ using MiniSpace.Services.Students.Infrastructure.Contexts;
 using MiniSpace.Services.Students.Infrastructure.Decorators;
 using MiniSpace.Services.Students.Infrastructure.Exceptions;
 using MiniSpace.Services.Students.Infrastructure.Logging;
-// using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
-// using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Services;
 
 namespace MiniSpace.Services.Students.Infrastructure
@@ -50,7 +50,7 @@ namespace MiniSpace.Services.Students.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            // builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             // builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -74,7 +74,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                //.AddMongoRepository<StudentDocument, Guid>("Students")
+                .AddMongoRepository<StudentDocument, Guid>("Students")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
