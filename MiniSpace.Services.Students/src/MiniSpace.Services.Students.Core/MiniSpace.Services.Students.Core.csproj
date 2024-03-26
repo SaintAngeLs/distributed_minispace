@@ -6,18 +6,4 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Exceptions\UnauthorizedStudentAccessException.cs" />
-    <Compile Remove="Exceptions\StudentNotFoundException.cs" />
-    <Compile Remove="Events\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Events\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Events\**" />
-  </ItemGroup>
-
 </Project>

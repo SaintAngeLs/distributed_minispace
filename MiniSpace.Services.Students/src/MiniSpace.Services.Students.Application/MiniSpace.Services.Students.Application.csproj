@@ -18,16 +18,4 @@
     <ProjectReference Include="..\MiniSpace.Services.Students.Core\MiniSpace.Services.Students.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="IAppContext.cs\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="IAppContext.cs\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="IAppContext.cs\**" />
-  </ItemGroup>
-
 </Project>
