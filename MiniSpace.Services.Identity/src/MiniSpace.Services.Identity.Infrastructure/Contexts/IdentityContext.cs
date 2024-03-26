@@ -10,6 +10,8 @@ namespace MiniSpace.Services.Identity.Infrastructure.Contexts
         public string Role { get; } = string.Empty;
         public bool IsAuthenticated { get; }
         public bool IsAdmin { get; }
+        public bool IsBanned { get; }
+        public bool IsOrganizer { get; }
         public IDictionary<string, string> Claims { get; } = new Dictionary<string, string>();
 
         internal IdentityContext()
@@ -27,7 +29,9 @@ namespace MiniSpace.Services.Identity.Infrastructure.Contexts
             Role = role ?? string.Empty;
             IsAuthenticated = isAuthenticated;
             IsAdmin = Role.Equals("admin", StringComparison.InvariantCultureIgnoreCase);
+            IsBanned = Role.Equals("banned", StringComparison.InvariantCultureIgnoreCase);
             Claims = claims ?? new Dictionary<string, string>();
+            IsOrganizer = Claims["permissions"] == "organize_events";
         }
         
         internal static IIdentityContext Empty => new IdentityContext();

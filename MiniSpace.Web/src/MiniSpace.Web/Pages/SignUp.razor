@@ -37,7 +37,8 @@
 
     private async Task HandleSignUp()
     {
-        await IdentityService.SignUpAsync(signUpModel.Email, signUpModel.Password, "user");
+        var organizerPermission = new List<string> { "organize_events" };
+        await IdentityService.SignUpAsync(signUpModel.Email, signUpModel.Password, "user", organizerPermission);
         // Handle the post-sign-up logic, such as redirection or displaying a success message
     }
 }
