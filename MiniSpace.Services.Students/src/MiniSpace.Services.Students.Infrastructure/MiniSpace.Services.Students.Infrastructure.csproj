@@ -40,8 +40,4 @@
     <Compile Remove="Services\EventMapper.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mongo\Documents\" />
-  </ItemGroup>
-
 </Project>
