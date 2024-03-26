@@ -36,8 +36,4 @@
     <ProjectReference Include="..\MiniSpace.Services.Students.Application\MiniSpace.Services.Students.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Services\EventMapper.cs" />
-  </ItemGroup>
-
 </Project>

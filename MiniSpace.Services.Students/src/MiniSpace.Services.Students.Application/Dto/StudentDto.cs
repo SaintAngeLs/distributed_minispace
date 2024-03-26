@@ -9,6 +9,7 @@ namespace MiniSpace.Services.Students.Application.Dto
     {
         public Guid Id { get; set; }
         public string Username { get; set; }
+        public string Password { get; set; }
         public string Email { get; set; }
         public int Friends { get; set; }
         public string ProfileImage { get; set; }
