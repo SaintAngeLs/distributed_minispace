@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Convey.MessageBrokers.RabbitMQ;
-using Microsoft.AspNetCore.Mvc;
 using MiniSpace.Services.Students.Application.Commands;
 using MiniSpace.Services.Students.Application.Events.Rejected;
 using MiniSpace.Services.Students.Application.Events.External;
 using MiniSpace.Services.Students.Application.Exceptions;
-using MiniSpace.Services.Students.Core;
-using MiniSpace.Services.Students.Core.Exceptions;
 
 namespace MiniSpace.Services.Students.Infrastructure.Exceptions
 {

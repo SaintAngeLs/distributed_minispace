@@ -1,5 +1,4 @@
 using Convey.Types;
-using MiniSpace.Services.Students.Core.Entities;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 {

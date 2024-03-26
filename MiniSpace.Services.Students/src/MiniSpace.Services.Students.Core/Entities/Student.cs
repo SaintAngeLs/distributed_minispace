@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MiniSpace.Services.Students.Core.Exceptions;
-
 namespace MiniSpace.Services.Students.Core.Entities
 {
     public class Student : AggregateRoot

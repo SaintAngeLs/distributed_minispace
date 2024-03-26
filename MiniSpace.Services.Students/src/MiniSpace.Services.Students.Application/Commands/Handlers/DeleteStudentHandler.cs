@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Students.Application.Events;
 using MiniSpace.Services.Students.Application.Exceptions;
