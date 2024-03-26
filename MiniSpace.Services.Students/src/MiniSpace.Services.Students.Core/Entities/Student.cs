@@ -36,12 +36,14 @@ namespace MiniSpace.Services.Students.Core.Entities
         
         public Student(Guid id, string username, string password, string email, DateTime createdAt)
             : this(id, username, password, email, createdAt, 0, string.Empty, 
-                string.Empty, null, false, false, false)
+                string.Empty, null, false, false, false,
+                Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
         {}
 
         public Student(Guid id, string username, string password, string email, DateTime createdAt,
             int friends, string profileImage, string description, DateTime? dateOfBirth,
-            bool emailNotifications, bool isBanned, bool isOrganizer)
+            bool emailNotifications, bool isBanned, bool isOrganizer,
+            IEnumerable<Guid> interestedInEvents = null, IEnumerable<Guid> signedUpEvents = null)
         {
             Id = id;
             Username = username;
@@ -55,6 +57,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             EmailNotifications = emailNotifications;
             IsBanned = isBanned;
             IsOrganizer = isOrganizer;
+            InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
+            SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
         }
 
         public void SetIsBanned(bool isBanned) => IsBanned = isBanned;

@@ -18,5 +18,7 @@ namespace MiniSpace.Services.Students.Application.Dto
         public bool IsBanned { get; set; }
         public bool IsOrganizer { get; set; }
         public DateTime CreatedAt { get; set; }
+        public IEnumerable<Guid> InterestedInEvents { get; set; }
+        public IEnumerable<Guid> SignedUpEvents { get; set; }
     }    
 }
