@@ -1,4 +1,5 @@
 using Convey.Types;
+using MiniSpace.Services.Students.Core.Entities;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 {
@@ -13,6 +14,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public string Description { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public bool EmailNotifications { get; set; }
+        public State State { get; set; }
         public DateTime CreatedAt { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }

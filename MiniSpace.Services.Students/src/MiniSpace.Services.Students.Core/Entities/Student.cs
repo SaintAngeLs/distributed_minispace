@@ -1,3 +1,5 @@
+using MiniSpace.Services.Students.Core.Events;
+
 namespace MiniSpace.Services.Students.Core.Entities
 {
     public class Student : AggregateRoot
@@ -14,6 +16,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public bool EmailNotifications { get; private set; }
+        public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
         public IEnumerable<Guid> InterestedInEvents
@@ -29,12 +32,12 @@ namespace MiniSpace.Services.Students.Core.Entities
         
         public Student(Guid id, string email, DateTime createdAt)
             : this(id, email, createdAt, string.Empty, string.Empty, 0, string.Empty, string.Empty,
-                null, false, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
+                null, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
         {}
     
-        public Student(Guid id, string email, DateTime createdAt, string name, string surname,
-            int friends, string profileImage, string description, DateTime? dateOfBirth, bool emailNotifications,
-            IEnumerable<Guid> interestedInEvents = null, IEnumerable<Guid> signedUpEvents = null)
+        public Student(Guid id, string email, DateTime createdAt, string name, string surname, int friends,
+            string profileImage, string description, DateTime? dateOfBirth, bool emailNotifications,
+            State state, IEnumerable<Guid> interestedInEvents = null, IEnumerable<Guid> signedUpEvents = null)
         {
             Id = id;
             Email = email;
@@ -46,6 +49,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             Description = description;
             DateOfBirth = dateOfBirth;
             EmailNotifications = emailNotifications;
+            State = state;
             InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
         }
@@ -54,6 +58,18 @@ namespace MiniSpace.Services.Students.Core.Entities
             string description, DateTime dateOfBirth, bool emailNotifications)
         {
             
+        }
+
+        public void SetUnknown() => SetState(State.Unknown);
+        public void SetIncomplete() => SetState(State.Incomplete);
+        public void SetValid() => SetState(State.Valid);
+        public void SetBanned() => SetState(State.Banned);
+        
+        private void SetState(State state)
+        {
+            var previousState = State;
+            State = state;
+            AddEvent(new StudentStateChanged(this, previousState));
         }
         
         public void SetIsBanned(bool isBanned) {}
