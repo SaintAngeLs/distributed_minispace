@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 SignedUpEvents = entity.SignedUpEvents
             };
 
-        public static StudentDto AsDto(this StudentDocument document, bool isBanned, bool isOrganizer)
+        public static StudentDto AsDto(this StudentDocument document)
             => new StudentDto()
             {
                 Id = document.Id,
@@ -40,8 +40,6 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 Description = document.Description,
                 DateOfBirth = document.DateOfBirth,
                 EmailNotifications = document.EmailNotifications,
-                IsBanned = isBanned,
-                IsOrganizer = isOrganizer,
                 CreatedAt = document.CreatedAt,
                 InterestedInEvents = document.InterestedInEvents,
                 SignedUpEvents = document.SignedUpEvents
