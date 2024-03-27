@@ -37,8 +37,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 throw new StudentAlreadyCreatedException(student.Id);
             }
 
-            var newStudent = new Student(@event.UserId, @event.Username, @event.Password,
-                @event.Email, _dateTimeProvider.Now);
+            var newStudent = new Student(@event.UserId, @event.Email, _dateTimeProvider.Now);
             await _studentRepository.AddAsync(newStudent);
             
             await _messageBroker.PublishAsync(new StudentCreated(newStudent.Id));

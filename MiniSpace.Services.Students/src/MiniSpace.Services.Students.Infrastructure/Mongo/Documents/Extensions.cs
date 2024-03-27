@@ -6,25 +6,23 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.Username, document.Password, document.Email,
-                document.CreatedAt, document.Friends, document.ProfileImage, document.Description,
-                document.DateOfBirth, document.EmailNotifications, document.IsBanned, document.IsOrganizer,
+            => new Student(document.Id, document.Email, document.CreatedAt,
+                document.Name, document.Surname, document.Friends, document.ProfileImage,
+                document.Description, document.DateOfBirth, document.EmailNotifications,
                 document.InterestedInEvents, document.SignedUpEvents);
 
         public static StudentDocument AsDocument(this Student entity)
             => new StudentDocument()
             {
                 Id = entity.Id,
-                Username = entity.Username,
-                Password = entity.Password,
                 Email = entity.Email,
+                Name = entity.Name,
+                Surname = entity.Surname,
                 Friends = entity.Friends,
                 ProfileImage = entity.ProfileImage,
                 Description = entity.Description,
                 DateOfBirth = entity.DateOfBirth,
                 EmailNotifications = entity.EmailNotifications,
-                IsBanned = entity.IsBanned,
-                IsOrganizer = entity.IsOrganizer,
                 CreatedAt = entity.CreatedAt,
                 InterestedInEvents = entity.InterestedInEvents,
                 SignedUpEvents = entity.SignedUpEvents
@@ -34,16 +32,16 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             => new StudentDto()
             {
                 Id = document.Id,
-                Username = document.Username,
-                Password = document.Password,
                 Email = document.Email,
+                Name = document.Name,
+                Surname = document.Surname,
                 Friends = document.Friends,
                 ProfileImage = document.ProfileImage,
                 Description = document.Description,
                 DateOfBirth = document.DateOfBirth,
                 EmailNotifications = document.EmailNotifications,
-                IsBanned = document.IsBanned,
-                IsOrganizer = document.IsOrganizer,
+                IsBanned = false,
+                IsOrganizer = false,
                 CreatedAt = document.CreatedAt,
                 InterestedInEvents = document.InterestedInEvents,
                 SignedUpEvents = document.SignedUpEvents
