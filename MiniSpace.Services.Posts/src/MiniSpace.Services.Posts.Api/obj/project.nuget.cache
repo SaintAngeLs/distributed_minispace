@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "nIjZ28GeLQtzwtU8jSbhvW1+YHhyMY4gmcGaJr0bh9Ltkfg33VnR7O0+sskBD+2YbMKoo+PAQZW4iXkaGYsy6Q==",
+  "success": true,
+  "projectFilePath": "/home/oleg/Desktop/wut_se_2/se_repo/p_software_engineering_2/MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/MiniSpace.Services.Posts.Api.csproj",
+  "expectedPackageFiles": [
+    "/home/oleg/.nuget/packages/microsoft.aspnetcore.openapi/7.0.17/microsoft.aspnetcore.openapi.7.0.17.nupkg.sha512",
+    "/home/oleg/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "/home/oleg/.nuget/packages/microsoft.openapi/1.4.3/microsoft.openapi.1.4.3.nupkg.sha512",
+    "/home/oleg/.nuget/packages/swashbuckle.aspnetcore/6.5.0/swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
+    "/home/oleg/.nuget/packages/swashbuckle.aspnetcore.swagger/6.5.0/swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
+    "/home/oleg/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.5.0/swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
+    "/home/oleg/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.5.0/swashbuckle.aspnetcore.swaggerui.6.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}
