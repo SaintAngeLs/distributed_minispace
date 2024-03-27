@@ -50,6 +50,12 @@ namespace MiniSpace.Services.Students.Core.Entities
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
         }
 
+        public void CompleteRegistration(string name, string surname, string profileImage,
+            string description, DateTime dateOfBirth, bool emailNotifications)
+        {
+            
+        }
+        
         public void SetIsBanned(bool isBanned) {}
 
         public void SetIsOrganizer(bool isOrganizer) {}
