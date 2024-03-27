@@ -74,6 +74,7 @@ modules:
         returnValue: Welcome to MiniSpace API!
           
     
+
   identity:
     path: /identity
     routes:
@@ -106,10 +107,321 @@ modules:
         downstream: identity-service/sign-in
         auth: false
 
-        
-    
     services:
       identity-service:
         localUrl: localhost:5004
         url: identity-service
       
+
+
+  reports:
+    path: /reports
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: reports-service/reports
+        auth: true
+
+      - upstream: /
+        method: GET
+        use: downstream
+        downstream: reports-service/reports
+        auth: true
+
+      - upstream: /
+        method: PUT
+        use: downstream
+        downstream: reports-service/reports
+        auth: true
+
+      - upstream: /{reportId}
+        method: GET
+        use: downstream
+        downstream: reports-service/reports/{reportId}
+        auth: true
+
+    services:
+      reports-service:
+        localUrl: localhost:5005
+        url: reports-service
+
+
+
+  notifications:
+    path: /notifications
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: notifications-service/notification
+        auth: true
+
+      - upstream: /{userId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notification/{userId}
+        auth: true
+
+    services:
+      notifications-service:
+        localUrl: localhost:5006
+        url: notifications-service
+
+
+
+  students:
+    path: /user
+    routes:
+      - upstream: /{userId}
+        method: GET
+        use: downstream
+        downstream: students-service/user/{userId}
+        auth: true
+
+      - upstream: /{userId}
+        method: PUT
+        use: downstream
+        downstream: students-service/user/{userId}
+        auth: true
+
+      - upstream: /{userId}
+        method: DELETE
+        use: downstream
+        downstream: students-service/user/{userId}
+        auth: true
+
+
+    services:
+      students-service:
+        localUrl: localhost:5007
+        url: students-service
+
+
+
+  events:
+    path: /
+    routes:
+      - upstream: /event
+        method: POST
+        use: downstream
+        downstream: events-service/event
+        auth: true
+
+      - upstream: /event
+        method: PUT
+        use: downstream
+        downstream: events-service/event
+        auth: true
+
+      - upstream: /event/{eventId}
+        method: GET
+        use: downstream
+        downstream: events-service/event/{eventId}
+        auth: true
+
+      - upstream: /event/{eventId}
+        method: DELETE
+        use: downstream
+        downstream: events-service/event/{eventId}
+        auth: true
+
+      - upstream: /events
+        method: POST
+        use: downstream
+        downstream: events-service/events
+        auth: true
+
+      - upstream: /events/sign
+        method: POST
+        use: downstream
+        downstream: events-service/events/sign
+        auth: true
+
+      - upstream: /organizer/{organizerId}/events
+        method: GET
+        use: downstream
+        downstream: events-service/events/{organizerId}
+        auth: true
+
+    services:
+      events-service:
+        localUrl: localhost:5008
+        url: events-service
+
+
+
+  comments:
+      path: /comment
+      routes:
+        - upstream: /
+          method: POST
+          use: downstream
+          downstream: comments-service/comment
+          auth: true
+
+        - upstream: /{commentId}
+          method: PUT
+          use: downstream
+          downstream: comments-service/comment/{commentId}
+          auth: true
+
+        - upstream: /
+          method: GET
+          use: downstream
+          downstream: comments-service/comment
+          auth: true
+
+        - upstream: /{commentId}
+          method: DELETE
+          use: downstream
+          downstream: comments-service/comment/{commentId}
+          auth: true
+
+        - upstream: /{commentId}like
+          method: POST
+          use: downstream
+          downstream: comments-service/comment/{commentId}/like
+          auth: true
+
+      services:
+        comments-service:
+          localUrl: localhost:5009
+          url: comments-service
+
+
+
+  reactions:
+      path: /reaction
+      routes:
+        - upstream: /
+          method: POST
+          use: downstream
+          downstream: reactions-service/reaction
+          auth: true
+
+        - upstream: /
+          method: DELETE
+          use: downstream
+          downstream: reactions-service/reaction
+          auth: true
+
+        - upstream: /
+          method: GET
+          use: downstream
+          downstream: reactions-service/reaction
+          auth: true
+
+      services:
+        reactions-service:
+          localUrl: localhost:5010
+          url: reactions-service
+
+
+
+  statistics:
+      path: /statistics
+      routes:
+        - upstream: /
+          method: GET
+          use: downstream
+          downstream: statistics-service/statistics
+          auth: true
+
+        - upstream: /rating
+          method: GET
+          use: downstream
+          downstream: statistics-service/statistics/rating
+          auth: true
+
+        - upstream: /rating
+          method: POST
+          use: downstream
+          downstream: statistics-service/statistics/rating
+          auth: true
+
+      services:
+        statistics-service:
+          localUrl: localhost:5011
+          url: statistics-service
+
+
+
+  friends:
+    path: /friend
+    routes:
+      - upstream: /
+        method: GET
+        use: downstream
+        downstream: friends-service/friend
+        auth: true
+
+      - upstream: /{userId}
+        method: POST
+        use: downstream
+        downstream: friends-service/friend/{userId}
+        auth: true
+
+      - upstream: /notYet
+        method: GET
+        use: downstream
+        downstream: friends-service/friend/notYet
+        auth: true
+
+      - upstream: /pending
+        method: POST
+        use: downstream
+        downstream: friends-service/friend/pending
+        auth: true
+
+      - upstream: /pending
+        method: GET
+        use: downstream
+        downstream: friends-service/friend/pending
+        auth: true
+
+      - upstream: /{userId}/invite
+        method: POST
+        use: downstream
+        downstream: friends-service/friend/{userId}/invite
+        auth: true
+
+    services:
+      friends-service:
+        localUrl: localhost:5012
+        url: friends-service
+
+
+
+  posts:
+    path: /post
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: posts-service/post
+        auth: true
+
+      - upstream: /{postId}
+        method: PUT
+        use: downstream
+        downstream: posts-service/post/{postId}
+        auth: true
+
+      - upstream: /
+        method: GET
+        use: downstream
+        downstream: posts-service/post
+        auth: true
+
+      - upstream: /{postId}
+        method: DELETE
+        use: downstream
+        downstream: posts-service/post/{postId}
+        auth: true
+
+
+    services:
+      posts-service:
+        localUrl: localhost:5013
+        url: posts-service
