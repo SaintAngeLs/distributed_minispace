@@ -8,6 +8,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string Email { get; private set; }
         public string Name { get; private set; }
         public string Surname { get; private set; }
+        public string FullName => $"{Name} {Surname}";
         public int Friends { get; private set; }
         public string ProfileImage { get; private set; }
         public string Description { get; private set; }
