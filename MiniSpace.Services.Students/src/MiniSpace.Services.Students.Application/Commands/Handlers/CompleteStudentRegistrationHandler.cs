@@ -9,13 +9,15 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
     public class CompleteStudentRegistrationHandler : ICommandHandler<CompleteStudentRegistration>
     {
         private readonly IStudentRepository _studentRepository;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public CompleteStudentRegistrationHandler(IStudentRepository studentRepository, IEventMapper eventMapper,
-            IMessageBroker messageBroker)
+        public CompleteStudentRegistrationHandler(IStudentRepository studentRepository, 
+            IDateTimeProvider dateTimeProvider, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _studentRepository = studentRepository;
+            _dateTimeProvider = dateTimeProvider;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
         }
@@ -29,7 +31,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             }
             
             student.CompleteRegistration(command.Name, command.Surname, command.ProfileImage,
-                command.Description, command.DateOfBirth, command.EmailNotifications);
+                command.Description, command.DateOfBirth, _dateTimeProvider.Now, command.EmailNotifications);
             await _studentRepository.UpdateAsync(student);
             
             var events = _eventMapper.MapAll(student.Events);

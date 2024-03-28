@@ -1,4 +1,5 @@
 using MiniSpace.Services.Students.Core.Events;
+using MiniSpace.Services.Students.Core.Exceptions;
 
 namespace MiniSpace.Services.Students.Core.Entities
 {
@@ -54,12 +55,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
         }
 
-        public void CompleteRegistration(string name, string surname, string profileImage,
-            string description, DateTime dateOfBirth, bool emailNotifications)
-        {
-            
-        }
-
         public void SetUnknown() => SetState(State.Unknown);
         public void SetIncomplete() => SetState(State.Incomplete);
         public void SetValid() => SetState(State.Valid);
@@ -70,6 +65,62 @@ namespace MiniSpace.Services.Students.Core.Entities
             var previousState = State;
             State = state;
             AddEvent(new StudentStateChanged(this, previousState));
+        }
+        
+        public void CompleteRegistration(string name, string surname, string profileImage,
+            string description, DateTime dateOfBirth, DateTime now, bool emailNotifications)
+        {
+            CheckFullName(name, surname);
+            CheckProfileImage(profileImage);
+            CheckDescription(description);
+            CheckDateOfBirth(dateOfBirth, now);
+            
+            if (State != State.Incomplete)
+            {
+                throw new CannotChangeStudentStateException(Id, State);
+            }
+
+            Name = name;
+            Surname = surname;
+            ProfileImage = profileImage;
+            Description = description;
+            DateOfBirth = dateOfBirth;
+            EmailNotifications = emailNotifications;
+            
+            State = State.Valid;
+            AddEvent(new StudentRegistrationCompleted(this));
+        }
+
+        private void CheckFullName(string name, string surname)
+        {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(surname))
+            {
+                throw new InvalidStudentFullNameException(Id, $"{name} {surname}");
+            }
+        }
+
+        private void CheckProfileImage(string profileImage)
+        {
+            if (string.IsNullOrWhiteSpace(profileImage))
+            {
+                throw new InvalidStudentProfileImageException(Id, profileImage);
+            }
+        }
+
+        private void CheckDescription(string description)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                throw new InvalidStudentDescriptionException(Id, description);
+            }
+        }
+
+        private void CheckDateOfBirth(DateTime dateOfBirth, DateTime now)
+        {
+            if (dateOfBirth >= now)
+            {
+                throw new InvalidStudentDateOfBirthException(dateOfBirth, now);
+            }
         }
         
         public void SetIsBanned(bool isBanned) {}
