@@ -29,8 +29,13 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             {
                 throw new StudentNotFoundException(command.StudentId);
             }
+
+            if (student.State is Core.Entities.State.Valid)
+            {
+                throw new StudentAlreadyRegisteredException(command.StudentId);
+            }
             
-            student.CompleteRegistration(command.Name, command.Surname, command.ProfileImage,
+            student.CompleteRegistration(command.FirstName, command.LastName, command.ProfileImage,
                 command.Description, command.DateOfBirth, _dateTimeProvider.Now, command.EmailNotifications);
             await _studentRepository.UpdateAsync(student);
             
