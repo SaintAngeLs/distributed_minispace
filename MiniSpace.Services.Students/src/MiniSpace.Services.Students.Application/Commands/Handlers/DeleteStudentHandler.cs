@@ -22,21 +22,21 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
         public async Task HandleAsync(DeleteStudent command, CancellationToken cancellationToken = default)
         {
-            var student = await _studentRepository.GetAsync(command.Id);
+            var student = await _studentRepository.GetAsync(command.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(command.Id);
+                throw new StudentNotFoundException(command.StudentId);
             }
 
             var identity = _appContext.Identity;
-            if (identity.Id != student.Id)
+            if (identity.IsAuthenticated && identity.Id != student.Id && !identity.IsAdmin)
             {
-                throw new UnauthorizedStudentAccessException(command.Id, identity.Id);
+                throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
             }
 
-            await _studentRepository.DeleteAsync(command.Id);
+            await _studentRepository.DeleteAsync(command.StudentId);
 
-            await _messageBroker.PublishAsync(new StudentDeleted(command.Id));
+            await _messageBroker.PublishAsync(new StudentDeleted(command.StudentId));
         }
     }    
 }

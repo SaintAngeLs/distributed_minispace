@@ -24,12 +24,12 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
                 },
                 StudentNotFoundException ex => message switch
                 {
-                    DeleteStudent command => new DeleteStudentRejected(command.Id, ex.Message, ex.Code),
+                    DeleteStudent command => new DeleteStudentRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
                 UnauthorizedStudentAccessException ex => message switch
                 {
-                    DeleteStudent command => new DeleteStudentRejected(command.Id, ex.Message, ex.Code),
+                    DeleteStudent command => new DeleteStudentRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
                 _ => null
