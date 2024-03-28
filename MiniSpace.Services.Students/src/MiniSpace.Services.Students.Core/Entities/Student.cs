@@ -9,10 +9,10 @@ namespace MiniSpace.Services.Students.Core.Entities
         private ISet<Guid> _signedUpEvents = new HashSet<Guid>();
         
         public string Email { get; private set; }
-        public string Name { get; private set; }
-        public string Surname { get; private set; }
-        public string FullName => $"{Name} {Surname}";
-        public int Friends { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
+        public string FullName => $"{FirstName} {LastName}";
+        public int NumberOfFriends { get; private set; }
         public string ProfileImage { get; private set; }
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
@@ -36,16 +36,17 @@ namespace MiniSpace.Services.Students.Core.Entities
                 null, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
         {}
     
-        public Student(Guid id, string email, DateTime createdAt, string name, string surname, int friends,
-            string profileImage, string description, DateTime? dateOfBirth, bool emailNotifications,
-            State state, IEnumerable<Guid> interestedInEvents = null, IEnumerable<Guid> signedUpEvents = null)
+        public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
+            int numberOfFriends, string profileImage, string description, DateTime? dateOfBirth,
+            bool emailNotifications, State state, IEnumerable<Guid> interestedInEvents = null,
+            IEnumerable<Guid> signedUpEvents = null)
         {
             Id = id;
             Email = email;
             CreatedAt = createdAt;
-            Name = name;
-            Surname = surname;
-            Friends = friends;
+            FirstName = firstName;
+            LastName = lastName;
+            NumberOfFriends = numberOfFriends;
             ProfileImage = profileImage;
             Description = description;
             DateOfBirth = dateOfBirth;
@@ -67,10 +68,10 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentStateChanged(this, previousState));
         }
         
-        public void CompleteRegistration(string name, string surname, string profileImage,
+        public void CompleteRegistration(string firstName, string lastName, string profileImage,
             string description, DateTime dateOfBirth, DateTime now, bool emailNotifications)
         {
-            CheckFullName(name, surname);
+            CheckFullName(firstName, lastName);
             CheckProfileImage(profileImage);
             CheckDescription(description);
             CheckDateOfBirth(dateOfBirth, now);
@@ -80,8 +81,8 @@ namespace MiniSpace.Services.Students.Core.Entities
                 throw new CannotChangeStudentStateException(Id, State);
             }
 
-            Name = name;
-            Surname = surname;
+            FirstName = firstName;
+            LastName = lastName;
             ProfileImage = profileImage;
             Description = description;
             DateOfBirth = dateOfBirth;
@@ -91,11 +92,11 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-        private void CheckFullName(string name, string surname)
+        private void CheckFullName(string firstName, string lastName)
         {
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(surname))
+            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
             {
-                throw new InvalidStudentFullNameException(Id, $"{name} {surname}");
+                throw new InvalidStudentFullNameException(Id, $"{firstName} {lastName}");
             }
         }
 
@@ -119,7 +120,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         {
             if (dateOfBirth >= now)
             {
-                throw new InvalidStudentDateOfBirthException(dateOfBirth, now);
+                throw new InvalidStudentDateOfBirthException(Id, dateOfBirth, now);
             }
         }
         

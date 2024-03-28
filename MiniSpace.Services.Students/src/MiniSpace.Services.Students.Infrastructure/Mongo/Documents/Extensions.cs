@@ -6,8 +6,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.Email, document.CreatedAt,
-                document.Name, document.Surname, document.Friends, document.ProfileImage,
+            => new Student(document.Id, document.Email, document.CreatedAt, document.FirstName,
+                document.LastName, document.NumberOfFriends, document.ProfileImage,
                 document.Description, document.DateOfBirth, document.EmailNotifications,
                 document.State, document.InterestedInEvents, document.SignedUpEvents);
 
@@ -16,9 +16,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             {
                 Id = entity.Id,
                 Email = entity.Email,
-                Name = entity.Name,
-                Surname = entity.Surname,
-                Friends = entity.Friends,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                NumberOfFriends = entity.NumberOfFriends,
                 ProfileImage = entity.ProfileImage,
                 Description = entity.Description,
                 DateOfBirth = entity.DateOfBirth,
@@ -34,9 +34,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             {
                 Id = document.Id,
                 Email = document.Email,
-                Name = document.Name,
-                Surname = document.Surname,
-                Friends = document.Friends,
+                FirstName = document.FirstName,
+                LastName = document.LastName,
+                NumberOfFriends = document.NumberOfFriends,
                 ProfileImage = document.ProfileImage,
                 Description = document.Description,
                 DateOfBirth = document.DateOfBirth,
