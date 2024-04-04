@@ -30,12 +30,12 @@ namespace MiniSpace.Services.Students.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Get<GetStudent, StudentDto>("user/{userId}")
-                        .Put<UpdateStudent>("user/{userId}")
-                        .Delete<DeleteStudent>("user/{userId}")
+                        .Get<GetStudent, StudentDto>("user/{studentId}")
+                        .Put<UpdateStudent>("user/{studentId}")
+                        .Delete<DeleteStudent>("user/{studentId}")
                         .Post<CompleteStudentRegistration>("user",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"user/{cmd.StudentId}"))
-                        .Put<ChangeStudentState>("user/{userId}/state/{state}",
+                        .Put<ChangeStudentState>("user/{studentId}/state/{state}",
                             afterDispatch: (cmd, ctx) => ctx.Response.NoContent())))
                 .UseLogging()
                 .Build()
