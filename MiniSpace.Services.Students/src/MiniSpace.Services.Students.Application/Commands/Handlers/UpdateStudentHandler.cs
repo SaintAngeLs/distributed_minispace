@@ -21,14 +21,13 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
         
         public async Task HandleAsync(UpdateStudent command, CancellationToken cancellationToken = default)
         {
-            var student = await _studentRepository.GetAsync(command.Id);
+            var student = await _studentRepository.GetAsync(command.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(command.Id);
+                throw new StudentNotFoundException(command.StudentId);
             }
             
-            student.SetIsBanned(command.IsBanned);
-            student.SetIsOrganizer(command.CanCreateEvents);
+            student.Update(command.ProfileImage, command.Description, command.EmailNotifications);
             await _studentRepository.UpdateAsync(student);
 
             var events = _eventMapper.MapAll(student.Events);

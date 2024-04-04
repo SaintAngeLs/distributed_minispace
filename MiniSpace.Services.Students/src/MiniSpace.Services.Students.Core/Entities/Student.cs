@@ -92,6 +92,23 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
+        public void Update(string profileImage, string description, bool emailNotifications)
+        {
+            CheckProfileImage(profileImage);
+            CheckDescription(description);
+
+            if (State != State.Valid)
+            {
+                throw new CannotUpdateStudentException(Id);
+            }
+            
+            ProfileImage = profileImage;
+            Description = description;
+            EmailNotifications = emailNotifications;
+            
+            AddEvent(new StudentUpdated(this));
+        }
+        
         private void CheckFullName(string firstName, string lastName)
         {
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
@@ -123,10 +140,6 @@ namespace MiniSpace.Services.Students.Core.Entities
                 throw new InvalidStudentDateOfBirthException(Id, dateOfBirth, now);
             }
         }
-        
-        public void SetIsBanned(bool isBanned) {}
-
-        public void SetIsOrganizer(bool isOrganizer) {}
 
         public void AddInterestedInEvent(Guid eventId)
         {

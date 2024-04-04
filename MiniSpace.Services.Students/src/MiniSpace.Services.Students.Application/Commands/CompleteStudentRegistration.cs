@@ -7,7 +7,6 @@ namespace MiniSpace.Services.Students.Application.Commands
         public Guid StudentId { get; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
-        public string FullName => $"{FirstName} {LastName}";
         public string ProfileImage { get; private set; }
         public string Description { get; private set; }
         public DateTime DateOfBirth { get; private set; }

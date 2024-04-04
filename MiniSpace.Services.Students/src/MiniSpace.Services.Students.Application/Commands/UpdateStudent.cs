@@ -4,15 +4,17 @@ namespace MiniSpace.Services.Students.Application.Commands
 {
     public class UpdateStudent : ICommand
     {
-        public Guid Id { get; }
-        public bool IsBanned { get; private set; }
-        public bool CanCreateEvents { get; private set; }
-
-        public UpdateStudent(Guid id, bool isBanned, bool canCreateEvents)
+        public Guid StudentId { get; }
+        public string ProfileImage { get; private set; }
+        public string Description { get; private set; }
+        public bool EmailNotifications { get; private set; }
+        
+        public UpdateStudent(Guid studentId, string profileImage, string description, bool emailNotifications)
         {
-            Id = id;
-            IsBanned = isBanned;
-            CanCreateEvents = canCreateEvents;
+            StudentId = studentId;
+            ProfileImage = profileImage;
+            Description = description;
+            EmailNotifications = emailNotifications;
         }
     }    
 }
