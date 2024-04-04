@@ -3,6 +3,7 @@ using Convey;
 using Convey.Logging;
 using Convey.Types;
 using Convey.WebApi;
+using Convey.WebApi.CQRS;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,12 +28,15 @@ namespace MiniSpace.Services.Students.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseEndpoints(endpoints => endpoints
+                    .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetStudent, StudentDto>("user/{userId}")
                         .Put<UpdateStudent>("user/{userId}")
                         .Delete<DeleteStudent>("user/{userId}")
-                    ))
+                        .Post<CompleteStudentRegistration>("user",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"user/{cmd.StudentId}"))
+                        .Put<ChangeStudentState>("user/{userId}/state/{state}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())))
                 .UseLogging()
                 .Build()
                 .RunAsync();
