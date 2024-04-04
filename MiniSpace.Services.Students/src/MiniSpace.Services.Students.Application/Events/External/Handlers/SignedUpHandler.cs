@@ -12,15 +12,13 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
         private const string RequiredRole = "user";
         private readonly IStudentRepository _studentRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IMessageBroker _messageBroker;
         private readonly ILogger<SignedUpHandler> _logger;
         
         public SignedUpHandler(IStudentRepository studentRepository, IDateTimeProvider dateTimeProvider,
-            IMessageBroker messageBroker, ILogger<SignedUpHandler> logger)
+            ILogger<SignedUpHandler> logger)
         {
             _studentRepository = studentRepository;
             _dateTimeProvider = dateTimeProvider;
-            _messageBroker = messageBroker;
             _logger = logger;
         }
 
@@ -39,8 +37,6 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 
             var newStudent = new Student(@event.UserId, @event.Email, _dateTimeProvider.Now);
             await _studentRepository.AddAsync(newStudent);
-            
-            await _messageBroker.PublishAsync(new StudentCreated(newStudent.Id));
         }
     }    
 }
