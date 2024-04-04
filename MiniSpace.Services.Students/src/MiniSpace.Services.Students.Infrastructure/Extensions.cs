@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Students.Infrastructure
         {
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            // builder.Services.AddSingleton<IEventMapper, EventMapper>();
+            builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
@@ -88,6 +88,8 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<UpdateStudent>()
                 .SubscribeCommand<DeleteStudent>()
+                .SubscribeCommand<CompleteStudentRegistration>()
+                .SubscribeCommand<ChangeStudentState>()
                 .SubscribeEvent<SignedUp>()
                 .SubscribeEvent<EventInterestedIn>()
                 .SubscribeEvent<EventSignedUp>();

@@ -12,13 +12,25 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
                 {
                     typeof(UpdateStudent),  new HandlerLogTemplate
                     {
-                        After = "Updated the student with id: {Id}."
+                        After = "Updated the student with id: {StudentId}."
                     }
                 },
                 {
                     typeof(DeleteStudent), new HandlerLogTemplate
                     {
-                        After = "Deleted the student with id: {Id}."
+                        After = "Deleted the student with id: {StudentId}."
+                    }
+                },
+                {
+                    typeof(CompleteStudentRegistration), new HandlerLogTemplate
+                    {
+                        After = "Completed a registration for the student with id: {StudentId}."
+                    }
+                },
+                {
+                    typeof(ChangeStudentState), new HandlerLogTemplate
+                    {
+                        After = "Changed a student with id: {StudentId} state to: {State}."
                     }
                 },
                 {
