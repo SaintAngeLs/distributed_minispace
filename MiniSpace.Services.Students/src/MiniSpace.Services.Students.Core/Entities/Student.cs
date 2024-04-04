@@ -55,8 +55,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
         }
-
-        public void SetUnknown() => SetState(State.Unknown);
+        
         public void SetIncomplete() => SetState(State.Incomplete);
         public void SetValid() => SetState(State.Valid);
         public void SetBanned() => SetState(State.Banned);
