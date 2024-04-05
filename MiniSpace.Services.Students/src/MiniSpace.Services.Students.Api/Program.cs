@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Convey;
 using Convey.Logging;
@@ -30,6 +31,7 @@ namespace MiniSpace.Services.Students.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        .Get<GetStudents, IEnumerable<StudentDto>>("students")
                         .Get<GetStudent, StudentDto>("students/{studentId}")
                         .Put<UpdateStudent>("students/{studentId}")
                         .Delete<DeleteStudent>("students/{studentId}")
