@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
             if (student.State == state)
             {
-                return;
+                throw new StudentStateAlreadySetException(student.Id, state);
             }
 
             switch (state)

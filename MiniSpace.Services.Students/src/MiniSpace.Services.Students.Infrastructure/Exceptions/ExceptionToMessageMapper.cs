@@ -76,6 +76,12 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
                     UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
+                StudentStateAlreadySetException ex => message switch
+                {
+                    ChangeStudentState _ => new ChangeStudentStateRejected(ex.Id,
+                        ex.State.ToString().ToLowerInvariant(), ex.Message, ex.Code),
+                    _ => null
+                },
                 UnauthorizedStudentAccessException ex => message switch
                 {
                     DeleteStudent command => new DeleteStudentRejected(command.StudentId, ex.Message, ex.Code),
