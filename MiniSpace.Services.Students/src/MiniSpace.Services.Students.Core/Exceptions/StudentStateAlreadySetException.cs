@@ -4,7 +4,7 @@ namespace MiniSpace.Services.Students.Core.Exceptions
 {
     public class StudentStateAlreadySetException : DomainException
     {
-        public override string Code { get; } = "student_state_already_changed";
+        public override string Code { get; } = "student_state_already_set";
         public Guid Id { get; }
         public State State { get; }
 
