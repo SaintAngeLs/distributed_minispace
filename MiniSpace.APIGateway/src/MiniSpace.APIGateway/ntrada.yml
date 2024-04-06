@@ -154,13 +154,13 @@ modules:
       - upstream: /
         method: POST
         use: downstream
-        downstream: notifications-service/notification
+        downstream: notifications-service/notifications
         auth: true
 
       - upstream: /{userId}
         method: GET
         use: downstream
-        downstream: notifications-service/notification/{userId}
+        downstream: notifications-service/notifications/{userId}
         auth: true
 
     services:
@@ -171,25 +171,47 @@ modules:
 
 
   students:
-    path: /user
+    path: /students
     routes:
-      - upstream: /{userId}
+      - upstream: /
         method: GET
         use: downstream
-        downstream: students-service/user/{userId}
+        downstream: students-service/students
+        auth: true
+        claims:
+          role: admin
+
+      - upstream: /{studentId}
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}
         auth: true
 
-      - upstream: /{userId}
+      - upstream: /{studentId}
         method: PUT
         use: downstream
-        downstream: students-service/user/{userId}
+        downstream: students-service/students/{studentId}
         auth: true
 
-      - upstream: /{userId}
+      - upstream: /{studentId}
         method: DELETE
         use: downstream
-        downstream: students-service/user/{userId}
+        downstream: students-service/students/{studentId}
         auth: true
+
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: students-service/students
+        auth: true
+
+      - upstream: /{studentId}/state/{state}
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{studentId}/state/{state}
+        auth: true
+        claims:
+          role: admin
 
 
     services:
@@ -200,45 +222,51 @@ modules:
 
 
   events:
-    path: /
+    path: /events
     routes:
-      - upstream: /event
-        method: POST
-        use: downstream
-        downstream: events-service/event
-        auth: true
-
-      - upstream: /event
-        method: PUT
-        use: downstream
-        downstream: events-service/event
-        auth: true
-
-      - upstream: /event/{eventId}
-        method: GET
-        use: downstream
-        downstream: events-service/event/{eventId}
-        auth: true
-
-      - upstream: /event/{eventId}
-        method: DELETE
-        use: downstream
-        downstream: events-service/event/{eventId}
-        auth: true
-
-      - upstream: /events
+      - upstream: /
         method: POST
         use: downstream
         downstream: events-service/events
         auth: true
 
-      - upstream: /events/sign
+      - upstream: /
+        method: PUT
+        use: downstream
+        downstream: events-service/events
+        auth: true
+
+      - upstream: /{eventId}
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}
+        auth: true
+
+      - upstream: /{eventId}
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}
+        auth: true
+
+      - upstream: /filter
+        method: POST
+        use: downstream
+        downstream: events-service/events/filter
+        auth: true
+
+      - upstream: /showInterest
+        method: POST
+        use: downstream
+        downstream: events-service/events/showInterest
+        auth: true
+
+      - upstream: /sign
         method: POST
         use: downstream
         downstream: events-service/events/sign
         auth: true
 
-      - upstream: /organizer/{organizerId}/events
+      - upstream: /{organizerId}
         method: GET
         use: downstream
         downstream: events-service/events/{organizerId}
@@ -252,36 +280,36 @@ modules:
 
 
   comments:
-      path: /comment
+      path: /comments
       routes:
         - upstream: /
           method: POST
           use: downstream
-          downstream: comments-service/comment
+          downstream: comments-service/comments
           auth: true
 
         - upstream: /{commentId}
           method: PUT
           use: downstream
-          downstream: comments-service/comment/{commentId}
+          downstream: comments-service/comments/{commentId}
           auth: true
 
         - upstream: /
           method: GET
           use: downstream
-          downstream: comments-service/comment
+          downstream: comments-service/comments
           auth: true
 
         - upstream: /{commentId}
           method: DELETE
           use: downstream
-          downstream: comments-service/comment/{commentId}
+          downstream: comments-service/comments/{commentId}
           auth: true
 
         - upstream: /{commentId}like
           method: POST
           use: downstream
-          downstream: comments-service/comment/{commentId}/like
+          downstream: comments-service/comments/{commentId}/like
           auth: true
 
       services:
@@ -292,24 +320,24 @@ modules:
 
 
   reactions:
-      path: /reaction
+      path: /reactions
       routes:
         - upstream: /
           method: POST
           use: downstream
-          downstream: reactions-service/reaction
+          downstream: reactions-service/reactions
           auth: true
 
         - upstream: /
           method: DELETE
           use: downstream
-          downstream: reactions-service/reaction
+          downstream: reactions-service/reactions
           auth: true
 
         - upstream: /
           method: GET
           use: downstream
-          downstream: reactions-service/reaction
+          downstream: reactions-service/reactions
           auth: true
 
       services:
@@ -348,42 +376,42 @@ modules:
 
 
   friends:
-    path: /friend
+    path: /friends
     routes:
       - upstream: /
         method: GET
         use: downstream
-        downstream: friends-service/friend
+        downstream: friends-service/friends
         auth: true
 
       - upstream: /{userId}
         method: POST
         use: downstream
-        downstream: friends-service/friend/{userId}
+        downstream: friends-service/friends/{userId}
         auth: true
 
       - upstream: /notYet
         method: GET
         use: downstream
-        downstream: friends-service/friend/notYet
+        downstream: friends-service/friends/notYet
         auth: true
 
       - upstream: /pending
         method: POST
         use: downstream
-        downstream: friends-service/friend/pending
+        downstream: friends-service/friends/pending
         auth: true
 
       - upstream: /pending
         method: GET
         use: downstream
-        downstream: friends-service/friend/pending
+        downstream: friends-service/friends/pending
         auth: true
 
       - upstream: /{userId}/invite
         method: POST
         use: downstream
-        downstream: friends-service/friend/{userId}/invite
+        downstream: friends-service/friends/{userId}/invite
         auth: true
 
     services:
@@ -394,30 +422,30 @@ modules:
 
 
   posts:
-    path: /post
+    path: /posts
     routes:
       - upstream: /
         method: POST
         use: downstream
-        downstream: posts-service/post
+        downstream: posts-service/posts
         auth: true
 
       - upstream: /{postId}
         method: PUT
         use: downstream
-        downstream: posts-service/post/{postId}
+        downstream: posts-service/posts/{postId}
         auth: true
 
       - upstream: /
         method: GET
         use: downstream
-        downstream: posts-service/post
+        downstream: posts-service/posts
         auth: true
 
       - upstream: /{postId}
         method: DELETE
         use: downstream
-        downstream: posts-service/post/{postId}
+        downstream: posts-service/posts/{postId}
         auth: true
 
 
