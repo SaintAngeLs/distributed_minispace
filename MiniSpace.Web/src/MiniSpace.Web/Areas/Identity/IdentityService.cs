@@ -8,7 +8,7 @@ namespace MiniSpace.Web.Areas.Identity
     class IdentityService : IIdentityService
     {
         private readonly IHttpClient _httpClient;
-        private JwtDto JwtDto;
+        public JwtDto JwtDto { get; private set; }
         public bool IsAuthenticated { get; private set; }
         
         public IdentityService(IHttpClient httpClient)
