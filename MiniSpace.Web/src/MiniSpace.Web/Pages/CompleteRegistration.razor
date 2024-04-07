@@ -51,8 +51,7 @@
         if (IdentityService.IsAuthenticated)
         {
             var userDto = await IdentityService.GetAccountAsync();
-            var studentDto = await StudentsService.GetStudentAsync(userDto.Id);
-            completeRegistrationModel.StudentId = studentDto.Id;
+            completeRegistrationModel.StudentId = userDto.Id;
             completeRegistrationModel.ProfileImage = "null";
             completeRegistrationModel.DateOfBirth = DateTime.Now;
         }

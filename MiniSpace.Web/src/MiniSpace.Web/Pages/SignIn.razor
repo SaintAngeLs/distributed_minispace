@@ -1,9 +1,10 @@
 @page "/signin"
 @using MiniSpace.Web.Models.Identity
 @using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Web.Areas.Students
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
-
 
 <h3>Login</h3>
 
@@ -40,7 +41,10 @@
         var jwtDto = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
         if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
         {
-            NavigationManager.NavigateTo("/account");
+            var userDto = await IdentityService.GetAccountAsync();
+            var studentDto = await StudentsService.GetStudentAsync(userDto.Id);
+
+            NavigationManager.NavigateTo(studentDto.State == "incomplete" ? "/signup/complete" : "/account");
         }
         else
         {
