@@ -29,6 +29,11 @@
         @if (IdentityService.IsAuthenticated)
         {
             <li class="nav-item px-3">
+                <NavLink class="nav-link" href="account">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Your Account
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
                 <button class="nav-link btn btn-link" @onclick="SignOut">
                     <span class="oi oi-account-logout" aria-hidden="true"></span> Sign Out
                 </button>
