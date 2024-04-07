@@ -3,10 +3,11 @@
 @using MiniSpace.Web.DTO
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
 
 <h1>Data of your account:</h1>
 
-@if (email != null)
+@if (studentDto.Id != Guid.Empty)
 {
     <div class="container">
         <div class="row">
@@ -90,6 +91,12 @@
             </div>
         </div>
     </div>
+    
+    <div>&nbsp;</div>
+    
+    <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/account/update")'>
+        Update account
+    </button>
 }
 else
 {
@@ -97,7 +104,6 @@ else
 }
 
 @code {
-    private string email;
     private StudentDto studentDto = new();
     
     protected override async Task OnInitializedAsync()
@@ -106,7 +112,6 @@ else
         {
             var userDto = await IdentityService.GetAccountAsync();
             studentDto = await StudentsService.GetStudentAsync(userDto.Id);
-            email = studentDto.Email;
         }
     }
 }

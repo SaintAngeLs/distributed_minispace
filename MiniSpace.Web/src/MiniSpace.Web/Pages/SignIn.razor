@@ -40,7 +40,7 @@
         var jwtDto = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
         if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
         {
-            NavigationManager.NavigateTo("/greeting");
+            NavigationManager.NavigateTo("/account");
         }
         else
         {
