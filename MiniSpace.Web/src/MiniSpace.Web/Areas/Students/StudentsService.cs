@@ -17,15 +17,18 @@ namespace MiniSpace.Web.Areas.Students
             _identityService = identityService;
         }
         
-        public Task<UserDto> GetStudentAsync(Guid studentId)
+        public Task<StudentDto> GetStudentAsync(Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<UserDto>($"students/{studentId}");
+            return _httpClient.GetAsync<StudentDto>($"students/{studentId}");
         }
 
         public Task UpdateStudentAsync(Guid studentId, string profileImage, string description, bool emailNotifications)
-            => _httpClient.PutAsync($"students/{studentId}", new {studentId, profileImage,
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.PutAsync($"students/{studentId}", new {studentId, profileImage,
                 description, emailNotifications});
+        }
 
         public Task CompleteStudentRegistrationAsync(Guid studentId, string firstName, string lastName,
             string profileImage, string description, DateTime dateOfBirth, bool emailNotifications)
