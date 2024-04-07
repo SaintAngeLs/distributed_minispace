@@ -1,6 +1,6 @@
 ﻿@* @inject HttpClient Http *@
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">MiniSpace.Web</a>
@@ -26,7 +26,7 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </li>
-        @if (isUserAuthenticated)
+        @if (IdentityService.IsAuthenticated)
         {
             <li class="nav-item px-3">
                 <button class="nav-link btn btn-link" @onclick="SignOut">
@@ -56,8 +56,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        isUserAuthenticated = authState.User.Identity.IsAuthenticated;
+        isUserAuthenticated = IdentityService.IsAuthenticated;
     }
     string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
@@ -68,5 +67,7 @@
     void SignOut()
     {
         // Implement your sign-out logic here, e.g., redirect to sign-out path, clear authentication state
+        IdentityService.Logout();
+        NavigationManager.NavigateTo("");
     }
 }
