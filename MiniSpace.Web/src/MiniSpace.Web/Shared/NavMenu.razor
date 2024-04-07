@@ -52,6 +52,10 @@
                 </NavLink>
             </li>
         }
+        <li class="nav-item px-3">
+            <InputCheckbox id="is-user-authenticated" class="form-control" hidden="true"
+                           @bind-Value="isUserAuthenticated" />
+        </li>
     </ul>
 </div>
 
@@ -61,6 +65,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        NavigationManager.LocationChanged += LocationChanged;
         isUserAuthenticated = IdentityService.IsAuthenticated;
     }
     string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -69,6 +74,12 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+    
+    void LocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+    
     void SignOut()
     {
         // Implement your sign-out logic here, e.g., redirect to sign-out path, clear authentication state
