@@ -1,6 +1,7 @@
 @page "/signup"
 @using MiniSpace.Web.Areas.Identity
 @inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 <h3>Sign Up</h3>
 
@@ -13,19 +14,20 @@
         <InputNumber id="studentId" class="form-control" @bind-Value="signUpModel.StudentId" />
     </div> *@
 
+@*
     <div class="form-group">
         <label for="username">Username:</label>
         <InputText id="username" class="form-control" @bind-Value="signUpModel.Username" />
-    </div>
-
-    <div class="form-group">
-        <label for="password">Password:</label>
-        <InputText id="password" type="password" class="form-control" @bind-Value="signUpModel.Password" />
-    </div>
+    </div> *@
 
     <div class="form-group">
         <label for="email">Email:</label>
         <InputText id="email" type="email" class="form-control" @bind-Value="signUpModel.Email" />
+    </div>
+    
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="signUpModel.Password" />
     </div>
 
     <button type="submit" class="btn btn-primary">Sign Up</button>
@@ -40,5 +42,6 @@
         var organizerPermission = new List<string> { "organize_events" };
         await IdentityService.SignUpAsync(signUpModel.Email, signUpModel.Password, "user", organizerPermission);
         // Handle the post-sign-up logic, such as redirection or displaying a success message
+        NavigationManager.NavigateTo("/signup/complete");
     }
 }

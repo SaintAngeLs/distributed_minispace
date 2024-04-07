@@ -94,9 +94,18 @@
     
     <div>&nbsp;</div>
     
-    <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/account/update")'>
-        Update account
-    </button>
+    @if (studentDto.State == "incomplete")
+    {
+        <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/signup/complete")'>
+            Complete Registration
+        </button>
+    }
+    else
+    {
+        <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/account/update")'>
+            Update account
+        </button>   
+    }
 }
 else
 {
