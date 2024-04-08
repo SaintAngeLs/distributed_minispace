@@ -191,6 +191,8 @@ modules:
         method: PUT
         use: downstream
         downstream: students-service/students/{studentId}
+        bind:
+          - studentId:{studentId}
         auth: true
 
       - upstream: /{studentId}
@@ -209,6 +211,9 @@ modules:
         method: PUT
         use: downstream
         downstream: students-service/students/{studentId}/state/{state}
+        bind:
+          - studentId:{studentId}
+          - state:{state}
         auth: true
         claims:
           role: admin
@@ -248,10 +253,10 @@ modules:
         downstream: events-service/events/{eventId}
         auth: true
 
-      - upstream: /filter
+      - upstream: /search
         method: POST
         use: downstream
-        downstream: events-service/events/filter
+        downstream: events-service/events/search
         auth: true
 
       - upstream: /showInterest
@@ -292,6 +297,8 @@ modules:
           method: PUT
           use: downstream
           downstream: comments-service/comments/{commentId}
+          bind:
+            - commentId:{commentId}
           auth: true
 
         - upstream: /
@@ -306,10 +313,12 @@ modules:
           downstream: comments-service/comments/{commentId}
           auth: true
 
-        - upstream: /{commentId}like
+        - upstream: /{commentId}/like
           method: POST
           use: downstream
           downstream: comments-service/comments/{commentId}/like
+          bind:
+            - commentId:{commentId}
           auth: true
 
       services:
@@ -388,6 +397,8 @@ modules:
         method: POST
         use: downstream
         downstream: friends-service/friends/{userId}
+        bind:
+          - userId:{userId}
         auth: true
 
       - upstream: /notYet
@@ -412,6 +423,8 @@ modules:
         method: POST
         use: downstream
         downstream: friends-service/friends/{userId}/invite
+        bind:
+          - userId:{userId}
         auth: true
 
     services:
@@ -434,6 +447,8 @@ modules:
         method: PUT
         use: downstream
         downstream: posts-service/posts/{postId}
+        bind:
+          - postId:{postId}
         auth: true
 
       - upstream: /
