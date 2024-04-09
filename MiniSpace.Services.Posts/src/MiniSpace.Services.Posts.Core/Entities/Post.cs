@@ -1,3 +1,5 @@
+using MiniSpace.Services.Posts.Core.Exceptions;
+
 namespace MiniSpace.Services.Posts.Core.Entities
 {
     public class Post : AggregateRoot
@@ -16,15 +18,38 @@ namespace MiniSpace.Services.Posts.Core.Entities
             MediaContent = mediaContent;
         }
 
-        public static Post Create(AggregateId id, Guid eventId, Guid studentId,
+        public Post Create(AggregateId id, Guid eventId, Guid studentId,
             string textContent, string mediaContent)
         {
+            CheckTextContent(textContent);
+            CheckMediaContent(mediaContent);
+            
             return new Post(id, eventId, studentId, textContent, mediaContent);
         }
 
         public void Update(string textContent, string mediaContent)
         {
-            
+            CheckTextContent(textContent);
+            CheckMediaContent(mediaContent);
+
+            TextContent = textContent;
+            MediaContent = mediaContent;
+        }
+        
+        private void CheckTextContent(string textContent)
+        {
+            if (string.IsNullOrWhiteSpace(textContent))
+            {
+                throw new InvalidPostTextContentException(Id, textContent);
+            }
+        }
+        
+        private void CheckMediaContent(string mediaContent)
+        {
+            if (string.IsNullOrWhiteSpace(mediaContent))
+            {
+                throw new InvalidPostMediaContentException(Id, mediaContent);
+            }
         }
     }    
 }
