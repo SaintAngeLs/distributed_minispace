@@ -26,6 +26,32 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 DominantReaction = document.Reactions.GroupBy(r => r.Type).OrderByDescending(g => g.Count())
                     .Select(g => g.Key.ToString()).FirstOrDefault()
             };
+        
+        public static Event AsEntity(this EventDocument document)
+            => new Event(document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
+                document.Location, document.Capacity, document.Fee, document.Category, document.Status, 
+                document.Organizers, document.InterestedStudents, document.RegisteredStudents, document.Reactions, 
+                document.Ratings);
+        
+        public static EventDocument AsDocument(this Event entity)
+            => new EventDocument
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Description = entity.Description,
+                StartDate = entity.StartDate,
+                EndDate = entity.EndDate,
+                Location = entity.Location,
+                Organizers = entity.Organizers,
+                InterestedStudents = entity.InterestedStudents,
+                RegisteredStudents = entity.RegisteredStudents,
+                Capacity = entity.Capacity,
+                Fee = entity.Fee,
+                Category = entity.Category,
+                Status = entity.Status,
+                Reactions = entity.Reactions,
+                Ratings = entity.Ratings
+            };
 
         public static AddressDto AsDto(this Address entity)
             => new AddressDto
@@ -37,6 +63,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 City = entity.City,
                 ZipCode = entity.ZipCode
             };
+        
+        public static Address AsEntity(this AddressDto dto)
+            => new Address(dto.BuildingName, dto.Street, dto.BuildingNumber, dto.ApartmentNumber, dto.City, dto.ZipCode);
         
         public static OrganizerDto AsDto(this Organizer entity)
             => new OrganizerDto

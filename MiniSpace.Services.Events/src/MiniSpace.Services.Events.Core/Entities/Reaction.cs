@@ -8,10 +8,10 @@
     
     public enum ReactionType
     {
+        Love,
         Like,
         Okay,
-        Hate,
-        Wow,
-        Love
+        Dislike,
+        Hate
     }
 }

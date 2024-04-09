@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MiniSpace.Services.Events.Core.Entities
 {
@@ -52,7 +54,10 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, Status status)
+            Address location, int capacity, decimal fee, Category category, Status status, 
+            IEnumerable<Organizer> organizers = null, IEnumerable<Student> interestedStudents = null, 
+            IEnumerable<Student> registeredStudents = null, IEnumerable<Reaction> reactions = null,
+            IEnumerable<Rating> ratings = null)
         {
             Id = id;
             Name = name;
@@ -64,6 +69,11 @@ namespace MiniSpace.Services.Events.Core.Entities
             Fee = fee;
             Category = category;
             Status = status;
+            Organizers = organizers ?? Enumerable.Empty<Organizer>();
+            InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
+            RegisteredStudents = registeredStudents ?? Enumerable.Empty<Student>();
+            Reactions = reactions ?? Enumerable.Empty<Reaction>();
+            Ratings = ratings ?? Enumerable.Empty<Rating>();
         }
     }
 }
