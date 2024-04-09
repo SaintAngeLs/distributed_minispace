@@ -2,13 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>MiniSpace.Services.Posts.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.17" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Convey" Version="1.1.448" />
+    <PackageReference Include="Convey.Logging" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Posts.Infrastructure\MiniSpace.Services.Posts.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
