@@ -31,6 +31,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MiniSpace.Services.Events.Application\MiniSpace.Services.Events.Application.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Events.Core\MiniSpace.Services.Events.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mongo\Repositories\" />
   </ItemGroup>
 
 </Project>
