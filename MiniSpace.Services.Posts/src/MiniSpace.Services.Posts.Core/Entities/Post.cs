@@ -21,5 +21,10 @@ namespace MiniSpace.Services.Posts.Core.Entities
         {
             return new Post(id, eventId, studentId, textContent, mediaContent);
         }
+
+        public void Update(string textContent, string mediaContent)
+        {
+            
+        }
     }    
 }
