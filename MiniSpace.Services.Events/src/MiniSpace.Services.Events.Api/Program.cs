@@ -1,18 +1,19 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Convey;
+using Convey.Secrets.Vault;
 using Convey.Logging;
 using Convey.Types;
 using Convey.WebApi;
+using Convey.WebApi.CQRS;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Events.Application;
-//using MiniSpace.Services.Events.Application.Commands;
-//using MiniSpace.Services.Events.Application.Queries;
-//using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Application.Commands;
+using MiniSpace.Services.Events.Application.DTO;
+using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Infrastructure;
 
 namespace MiniSpace.Services.Identity.Api
@@ -29,13 +30,13 @@ namespace MiniSpace.Services.Identity.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseEndpoints(endpoints => endpoints
+                    .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        //.Get<GetEvent, EventDto>("events/{eventsId}")
+                        .Get<GetEvent, EventDto>("events/{eventsId}")
                         //.Get<GetEventsOrganizer, IEnumerable<EventDto>>("events/organizer/{organizerId}")
                         //.Put<UpdateEvent>("events/{eventId}")
-                        // .Post<CreateEvent>("events",
-                        //     afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))
+                        .Post<AddEvent>("events", 
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"orders/{cmd.EventId}"))
                         //.Post<SignToEvent>("events/{eventId}/sign")
                         //.Post<FilterEvents>("events/filter")
                         //.Delete<DeleteEvent>("events/{eventsId}")
