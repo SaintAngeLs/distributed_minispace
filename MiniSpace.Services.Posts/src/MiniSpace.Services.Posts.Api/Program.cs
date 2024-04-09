@@ -13,7 +13,7 @@ using MiniSpace.Services.Posts.Application;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Queries;
-using MiniSpace.Services.Posts.Infrastructure;
+//using MiniSpace.Services.Posts.Infrastructure;
 
 namespace MiniSpace.Services.Posts.Api
 {
@@ -25,10 +25,10 @@ namespace MiniSpace.Services.Posts.Api
                     .AddConvey()
                     .AddWebApi()
                     .AddApplication()
-                    .AddInfrastructure()
+                    //.AddInfrastructure()
                     .Build())
                 .Configure(app => app
-                    .UseInfrastructure()
+                    //.UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetPosts, IEnumerable<PostDto>>("posts")
