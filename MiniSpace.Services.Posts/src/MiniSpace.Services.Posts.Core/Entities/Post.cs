@@ -15,5 +15,11 @@ namespace MiniSpace.Services.Posts.Core.Entities
             TextContent = textContent;
             MediaContent = mediaContent;
         }
+
+        public static Post Create(AggregateId id, Guid eventId, Guid studentId,
+            string textContent, string mediaContent)
+        {
+            return new Post(id, eventId, studentId, textContent, mediaContent);
+        }
     }    
 }
