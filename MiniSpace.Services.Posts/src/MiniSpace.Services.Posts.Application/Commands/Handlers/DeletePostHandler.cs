@@ -6,13 +6,13 @@ using MiniSpace.Services.Posts.Core.Repositories;
 
 namespace MiniSpace.Services.Posts.Application.Commands.Handlers
 {
-    public class UpdatePostHandler : ICommandHandler<UpdatePost>
+    public class DeletePostHandler : ICommandHandler<DeletePost>
     {
         private readonly IPostRepository _postRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
         
-        public UpdatePostHandler(IPostRepository postRepository, IAppContext appContext,
+        public DeletePostHandler(IPostRepository postRepository, IAppContext appContext,
             IMessageBroker messageBroker)
         {
             _postRepository = postRepository;
@@ -20,7 +20,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(UpdatePost command, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(DeletePost command, CancellationToken cancellationToken = default)
         {
             var post = await _postRepository.GetAsync(command.PostId);
             if (post is null)
@@ -34,10 +34,9 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new UnauthorizedPostAccessException(command.PostId, identity.Id);
             }
             
-            post.Update(command.TextContent, command.MediaContent);
-            await _postRepository.UpdateAsync(post);
+            await _postRepository.DeleteAsync(command.PostId);
 
-            await _messageBroker.PublishAsync(new PostUpdated(command.PostId));
+            await _messageBroker.PublishAsync(new PostDeleted(command.PostId));
         }
     }    
 }
