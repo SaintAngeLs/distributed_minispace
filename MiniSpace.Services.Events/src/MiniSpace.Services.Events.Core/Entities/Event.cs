@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MiniSpace.Services.Events.Core.Exceptions;
 
 namespace MiniSpace.Services.Events.Core.Entities
 {
@@ -54,7 +55,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, Status status, 
+            Address location, int capacity, decimal fee, Category category,  
             IEnumerable<Organizer> organizers = null, IEnumerable<Student> interestedStudents = null, 
             IEnumerable<Student> registeredStudents = null, IEnumerable<Reaction> reactions = null,
             IEnumerable<Rating> ratings = null)
@@ -68,12 +69,22 @@ namespace MiniSpace.Services.Events.Core.Entities
             Capacity = capacity;
             Fee = fee;
             Category = category;
-            Status = status;
+            // TODO: Add status
             Organizers = organizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
             RegisteredStudents = registeredStudents ?? Enumerable.Empty<Student>();
             Reactions = reactions ?? Enumerable.Empty<Reaction>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
+        }
+        
+        public void AddOrganizer(Organizer organizer)
+        {
+            if (Organizers.Any(o => o.Id == organizer.Id))
+            {
+                throw new OrganizerAlreadyAddedException(organizer.Id);
+            }
+
+            _organizers.Add(organizer);
         }
     }
 }

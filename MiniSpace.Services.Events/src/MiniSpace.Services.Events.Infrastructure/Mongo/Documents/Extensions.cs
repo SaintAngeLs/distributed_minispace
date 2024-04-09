@@ -29,7 +29,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         
         public static Event AsEntity(this EventDocument document)
             => new Event(document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
-                document.Location, document.Capacity, document.Fee, document.Category, document.Status, 
+                document.Location, document.Capacity, document.Fee, document.Category, 
                 document.Organizers, document.InterestedStudents, document.RegisteredStudents, document.Reactions, 
                 document.Ratings);
         

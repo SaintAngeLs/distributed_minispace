@@ -34,18 +34,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Events.Application;
-//using MiniSpace.Services.Events.Application.Commands;
-//using MiniSpace.Services.Events.Application.Services;
-//using MiniSpace.Services.Events.Application.Services.Identity;
-//using MiniSpace.Services.Events.Core.Repositories;
-//using MiniSpace.Services.Events.Infrastructure.Auth;
+using MiniSpace.Services.Events.Application.Commands;
+using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Core.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Contexts;
-//using MiniSpace.Services.Events.Infrastructure.Decorators;
-//using MiniSpace.Services.Events.Infrastructure.Exceptions;
-//using MiniSpace.Services.Events.Infrastructure.Mongo;
-//using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
-//using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
-//using MiniSpace.Services.Events.Infrastructure.Services;
+using MiniSpace.Services.Events.Infrastructure.Mongo;
+using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Events.Infrastructure.Services;
 
 namespace MiniSpace.Services.Events.Infrastructure
 {
@@ -53,11 +49,10 @@ namespace MiniSpace.Services.Events.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            //builder.Services.AddTransient<IMessageBroker, MessageBroker>();
-            //builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
-            //builder.Services.AddTransient<IUserRepository, UserRepository>();
-            //builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
-            //builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
+            builder.Services.AddTransient<IMessageBroker, MessageBroker>();
+            builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
+            builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
+            builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             //builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             //builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
@@ -76,7 +71,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
-                //.AddMongoRepository<RefreshTokenDocument, Guid>("refreshTokens")
+                .AddMongoRepository<EventDocument, Guid>("events")
                 //.AddMongoRepository<UserDocument, Guid>("users")
                 .AddWebApiSwaggerDocs()
                 .AddSecurity();
@@ -93,8 +88,8 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseAuthentication()
-                .UseRabbitMq();
-                //.SubscribeCommand<SignUp>();
+                .UseRabbitMq()
+                .SubscribeCommand<AddEvent>();
 
             return app;
         }
