@@ -1,0 +1,17 @@
+﻿using System;
+using Convey.CQRS.Events;
+using Convey.MessageBrokers;
+
+namespace MiniSpace.Services.Events.Application.Events.External
+{
+    [Message("students")]
+    public class StudentCreated : IEvent
+    {
+        public Guid StudentId { get; }
+
+        public StudentCreated(Guid studentId)
+        {
+            StudentId = studentId;
+        }
+    }
+}

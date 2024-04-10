@@ -7,7 +7,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static EventDto AsDto(this EventDocument document)
-            => new EventDto
+            => new ()
             {
                 Id = document.Id,
                 Name = document.Name,
@@ -28,13 +28,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
             };
         
         public static Event AsEntity(this EventDocument document)
-            => new Event(document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
+            => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
                 document.Location, document.Capacity, document.Fee, document.Category, document.Status, document.PublishDate,
                 document.Organizers, document.InterestedStudents, document.RegisteredStudents, document.Reactions, 
                 document.Ratings);
         
         public static EventDocument AsDocument(this Event entity)
-            => new EventDocument
+            => new ()
             {
                 Id = entity.Id,
                 Name = entity.Name,
@@ -55,7 +55,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
             };
 
         public static AddressDto AsDto(this Address entity)
-            => new AddressDto
+            => new ()
             {
                 BuildingName = entity.BuildingName,
                 Street = entity.Street,
@@ -66,15 +66,25 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
             };
         
         public static Address AsEntity(this AddressDto dto)
-            => new Address(dto.BuildingName, dto.Street, dto.BuildingNumber, dto.ApartmentNumber, dto.City, dto.ZipCode);
+            => new (dto.BuildingName, dto.Street, dto.BuildingNumber, dto.ApartmentNumber, dto.City, dto.ZipCode);
         
         public static OrganizerDto AsDto(this Organizer entity)
-            => new OrganizerDto
+            => new ()
             {
                 Id = entity.Id,
                 Name = entity.Name,
                 Email = entity.Email,
                 Organization = entity.Organization
             };
+        
+        public static StudentDocument AsDocument(this Student entity)
+            => new ()
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+            };
+        
+        public static Student AsEntity(this StudentDocument document)
+            => new (document.Id, document.Name);
     }
 }

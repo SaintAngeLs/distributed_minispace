@@ -53,6 +53,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddSingleton<IEventValidator, EventValidator>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
+            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             //builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
@@ -74,7 +75,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddMongoRepository<EventDocument, Guid>("events")
-                //.AddMongoRepository<UserDocument, Guid>("users")
+                .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
                 .AddSecurity();
         }
