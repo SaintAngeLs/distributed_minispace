@@ -1,9 +1,6 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
-using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
@@ -17,7 +14,6 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         private readonly IEventMapper _eventMapper;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IEventValidator _eventValidator;
-        private readonly string _expectedFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
         
         public AddEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, IEventMapper eventMapper,
             IDateTimeProvider dateTimeProvider, IEventValidator eventValidator)
@@ -48,8 +44,8 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
-            var activity = new Event(command.EventId, command.Name, command.Description,
-                startDate, endDate, address, command.Capacity, command.Fee, category, status, publishDate);
+            var activity = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
+                address, command.Capacity, command.Fee, category, status, publishDate, command.OrganizerId);
             
             await _eventRepository.AddAsync(activity);
             var events = _eventMapper.MapAll(activity.Events);

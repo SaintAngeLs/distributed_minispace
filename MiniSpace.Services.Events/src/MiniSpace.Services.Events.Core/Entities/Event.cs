@@ -79,6 +79,15 @@ namespace MiniSpace.Services.Events.Core.Entities
             PublishDate = publishDate;
         }
         
+        public static Event Create(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
+            Address location, int capacity, decimal fee, Category category, Status status, DateTime publishDate, Guid organizerId)
+        {
+            var organizer = new Organizer(organizerId, "", "", "");
+            var activity = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, status, publishDate);
+            activity.AddOrganizer(organizer);
+            return activity;
+        }
+        
         public void AddOrganizer(Organizer organizer)
         {
             if (Organizers.Any(o => o.Id == organizer.Id))

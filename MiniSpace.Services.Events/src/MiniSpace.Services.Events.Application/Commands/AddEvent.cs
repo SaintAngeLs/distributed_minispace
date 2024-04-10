@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Events.Application.Commands
     {
         public Guid EventId { get; }
         public string Name { get; }
-        public string OrganizerId { get; }
+        public Guid OrganizerId { get; }
         public string StartDate { get; }
         public string EndDate { get; }
         public string BuildingName { get; }
@@ -21,9 +21,11 @@ namespace MiniSpace.Services.Events.Application.Commands
         public int Capacity { get; }
         public decimal Fee { get; }
         public string Category { get; }
-        public string? PublishDate { get; }
+        public string PublishDate { get; }
 
-        public AddEvent(Guid eventId, string name, string organizerId, string startDate, string endDate, string buildingName, string street, string buildingNumber, string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee, string category, string? publishDate)
+        public AddEvent(Guid eventId, string name, Guid organizerId, string startDate, string endDate, 
+            string buildingName, string street, string buildingNumber, string apartmentNumber, string city, 
+            string zipCode, string description, int capacity, decimal fee, string category, string publishDate)
         {
             EventId = eventId == Guid.Empty ? Guid.NewGuid() : eventId;
             Name = name;
