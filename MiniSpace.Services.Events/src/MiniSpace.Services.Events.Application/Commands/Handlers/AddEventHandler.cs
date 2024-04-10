@@ -44,11 +44,12 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
-            var activity = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
+            var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
                 address, command.Capacity, command.Fee, category, status, publishDate, command.OrganizerId);
             
-            await _eventRepository.AddAsync(activity);
-            var events = _eventMapper.MapAll(activity.Events);
+            await _eventRepository.AddAsync(@event);
+            // TODO: update mapper
+            var events = _eventMapper.MapAll(@event.Events);
             await _messageBroker.PublishAsync(events.ToArray());
         }
     }

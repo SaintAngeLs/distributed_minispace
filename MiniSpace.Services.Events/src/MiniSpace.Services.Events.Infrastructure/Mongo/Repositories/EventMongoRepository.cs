@@ -19,13 +19,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 
         public async Task<Event> GetAsync(Guid id)
         {
-            var activity = await _repository.GetAsync(o => o.Id == id);
+            var @event = await _repository.GetAsync(o => o.Id == id);
 
-            return activity?.AsEntity();
+            return @event?.AsEntity();
         }
 
-        public Task AddAsync(Event activity) => _repository.AddAsync(activity.AsDocument());
-        public Task UpdateAsync(Event activity) => _repository.UpdateAsync(activity.AsDocument());
+        public Task AddAsync(Event @event) => _repository.AddAsync(@event.AsDocument());
+        public Task UpdateAsync(Event @event) => _repository.UpdateAsync(@event.AsDocument());
         public Task DeleteAsync(Guid id) => _repository.DeleteAsync(id);
     }
 }

@@ -15,7 +15,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public AddressDto Location { get; set; }
         //public string Image { get; set; }
         public int InterestedStudents { get; set; }
-        public int RegisteredStudents { get; set; }
+        public int SignedUpStudents { get; set; }
         public int Capacity { get; set; }
         public decimal Fee { get; set; }
         public string Category { get; set; }

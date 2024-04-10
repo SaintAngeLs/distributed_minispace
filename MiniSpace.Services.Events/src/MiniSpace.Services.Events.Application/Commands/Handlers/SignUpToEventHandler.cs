@@ -1,7 +1,10 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Events.Application.Events;
+using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Core.Exceptions;
 using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
@@ -33,12 +36,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.StudentId);
             }
 
-            if (@event.RegisteredStudents.Any(s => s.Id == student.Id))
-            {
-                return;
-            }
-
-            @event.RegisterStudent(student);
+            @event.SignUpStudent(student);
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new StudentSignedUpToEvent(@event.Id, student.Id));
         }

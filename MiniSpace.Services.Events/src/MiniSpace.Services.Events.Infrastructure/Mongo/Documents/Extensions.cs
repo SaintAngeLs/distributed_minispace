@@ -17,7 +17,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Organizers = document.Organizers.Select(x => x.AsDto()),
                 Location = document.Location.AsDto(),
                 InterestedStudents = document.InterestedStudents.Count(),
-                RegisteredStudents = document.RegisteredStudents.Count(),
+                SignedUpStudents = document.SignedUpStudents.Count(),
                 Capacity = document.Capacity,
                 Fee = document.Fee,
                 Category = document.Category.ToString(),
@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public static Event AsEntity(this EventDocument document)
             => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
                 document.Location, document.Capacity, document.Fee, document.Category, document.Status, document.PublishDate,
-                document.Organizers, document.InterestedStudents, document.RegisteredStudents, document.Reactions, 
+                document.Organizers, document.InterestedStudents, document.SignedUpStudents, document.Reactions, 
                 document.Ratings);
         
         public static EventDocument AsDocument(this Event entity)
@@ -44,7 +44,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Location = entity.Location,
                 Organizers = entity.Organizers,
                 InterestedStudents = entity.InterestedStudents,
-                RegisteredStudents = entity.RegisteredStudents,
+                SignedUpStudents = entity.SignedUpStudents,
                 Capacity = entity.Capacity,
                 Fee = entity.Fee,
                 Category = entity.Category,

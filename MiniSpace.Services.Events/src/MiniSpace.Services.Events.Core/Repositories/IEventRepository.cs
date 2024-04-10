@@ -7,8 +7,8 @@ namespace MiniSpace.Services.Events.Core.Repositories
     public interface IEventRepository
     {
         Task<Event> GetAsync(Guid id);
-        Task AddAsync(Event activity);
-        Task UpdateAsync(Event activity);
+        Task AddAsync(Event @event);
+        Task UpdateAsync(Event @event);
         Task DeleteAsync(Guid id);
     }
 }

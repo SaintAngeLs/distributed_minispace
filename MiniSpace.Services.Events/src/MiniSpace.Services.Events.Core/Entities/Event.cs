@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Events.Core.Entities
     {
         private ISet<Organizer> _organizers = new HashSet<Organizer>();
         private ISet<Student> _interestedStudents = new HashSet<Student>();
-        private ISet<Student> _registeredStudents = new HashSet<Student>();
+        private ISet<Student> _signedUpStudents = new HashSet<Student>();
         private ISet<Reaction> _reactions = new HashSet<Reaction>();
         private ISet<Rating> _ratings = new HashSet<Rating>();
         public string Name { get; private set; }
@@ -37,10 +37,10 @@ namespace MiniSpace.Services.Events.Core.Entities
             private set => _interestedStudents = new HashSet<Student>(value);
         }
         
-        public IEnumerable<Student> RegisteredStudents
+        public IEnumerable<Student> SignedUpStudents
         {
-            get => _registeredStudents;
-            private set => _registeredStudents = new HashSet<Student>(value);
+            get => _signedUpStudents;
+            private set => _signedUpStudents = new HashSet<Student>(value);
         }
         
         public IEnumerable<Reaction> Reactions
@@ -58,7 +58,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
             Address location, int capacity, decimal fee, Category category, Status status, DateTime publishDate, 
             IEnumerable<Organizer> organizers = null, IEnumerable<Student> interestedStudents = null, 
-            IEnumerable<Student> registeredStudents = null, IEnumerable<Reaction> reactions = null,
+            IEnumerable<Student> signedUpStudents = null, IEnumerable<Reaction> reactions = null,
             IEnumerable<Rating> ratings = null)
         {
             Id = id;
@@ -73,7 +73,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             Status = status;
             Organizers = organizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
-            RegisteredStudents = registeredStudents ?? Enumerable.Empty<Student>();
+            SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Student>();
             Reactions = reactions ?? Enumerable.Empty<Reaction>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
             PublishDate = publishDate;
@@ -83,9 +83,9 @@ namespace MiniSpace.Services.Events.Core.Entities
             Address location, int capacity, decimal fee, Category category, Status status, DateTime publishDate, Guid organizerId)
         {
             var organizer = new Organizer(organizerId, "", "", "");
-            var activity = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, status, publishDate);
-            activity.AddOrganizer(organizer);
-            return activity;
+            var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, status, publishDate);
+            @event.AddOrganizer(organizer);
+            return @event;
         }
         
         public void AddOrganizer(Organizer organizer)
@@ -96,6 +96,21 @@ namespace MiniSpace.Services.Events.Core.Entities
             }
 
             _organizers.Add(organizer);
+        }
+        
+        public void SignUpStudent(Student student)
+        {
+            if (SignedUpStudents.Any(s => s.Id == student.Id))
+            {
+                throw new StudentAlreadySignedUpException(student.Id, Id);
+            }
+
+            if (SignedUpStudents.Count() >= Capacity)
+            {
+                throw new EventCapacityExceededException(Id, Capacity);
+            }
+
+            _signedUpStudents.Add(student);
         }
     }
 }
