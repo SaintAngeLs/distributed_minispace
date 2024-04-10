@@ -112,5 +112,15 @@ namespace MiniSpace.Services.Events.Core.Entities
 
             _signedUpStudents.Add(student);
         }
+        
+        public void ShowStudentInterest(Student student)
+        {
+            if (InterestedStudents.Any(s => s.Id == student.Id))
+            {
+                throw new StudentAlreadyInterestedInEventException(student.Id, Id);
+            }
+
+            _interestedStudents.Add(student);
+        }
     }
 }
