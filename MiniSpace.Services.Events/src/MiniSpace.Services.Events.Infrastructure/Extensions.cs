@@ -49,6 +49,8 @@ namespace MiniSpace.Services.Events.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
+            builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            builder.Services.AddSingleton<IEventValidator, EventValidator>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();

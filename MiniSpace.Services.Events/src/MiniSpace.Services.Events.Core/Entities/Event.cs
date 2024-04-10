@@ -23,6 +23,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         public decimal Fee { get; private set; }
         public Category Category { get; private set; }
         public Status Status { get; private set; }
+        public DateTime PublishDate { get; private set; }
         
         public IEnumerable<Organizer> Organizers
         {
@@ -55,7 +56,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category,  
+            Address location, int capacity, decimal fee, Category category, Status status, DateTime publishDate, 
             IEnumerable<Organizer> organizers = null, IEnumerable<Student> interestedStudents = null, 
             IEnumerable<Student> registeredStudents = null, IEnumerable<Reaction> reactions = null,
             IEnumerable<Rating> ratings = null)
@@ -69,12 +70,13 @@ namespace MiniSpace.Services.Events.Core.Entities
             Capacity = capacity;
             Fee = fee;
             Category = category;
-            // TODO: Add status
+            Status = status;
             Organizers = organizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
             RegisteredStudents = registeredStudents ?? Enumerable.Empty<Student>();
             Reactions = reactions ?? Enumerable.Empty<Reaction>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
+            PublishDate = publishDate;
         }
         
         public void AddOrganizer(Organizer organizer)

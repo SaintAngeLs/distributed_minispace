@@ -1,16 +1,10 @@
 ﻿namespace MiniSpace.Services.Events.Application.Exceptions
 {
-    public class InvalidEventDateTimeException : AppException
+    public class InvalidEventDateTimeException(string element, string value)
+        : AppException($"Event DateTime property `{element}` is invalid: {value}.")
     {
         public override string Code { get; } = "invalid_event_date_time";
-        public string Element { get; }
-        public string Value { get; }
-
-        public InvalidEventDateTimeException(string element, string value) 
-            : base($"Event DateTime property `{element}` is invalid: {value}.")
-        {
-            Element = element;
-            Value = value;
-        }
+        public string Element { get; } = element;
+        public string Value { get; } = value;
     }
 }

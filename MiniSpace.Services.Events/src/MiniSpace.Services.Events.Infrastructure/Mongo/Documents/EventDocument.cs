@@ -22,6 +22,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public decimal Fee { get; set; }
         public Category Category { get; set; }
         public Status Status { get; set; }
+        public DateTime PublishDate { get; set; }
         public IEnumerable<Reaction> Reactions { get; set; }
         public IEnumerable<Rating> Ratings { get; set; }
     }

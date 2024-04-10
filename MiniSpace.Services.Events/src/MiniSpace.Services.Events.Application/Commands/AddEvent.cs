@@ -21,5 +21,26 @@ namespace MiniSpace.Services.Events.Application.Commands
         public int Capacity { get; }
         public decimal Fee { get; }
         public string Category { get; }
+        public string? PublishDate { get; }
+
+        public AddEvent(Guid eventId, string name, string organizerId, string startDate, string endDate, string buildingName, string street, string buildingNumber, string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee, string category, string? publishDate)
+        {
+            EventId = eventId == Guid.Empty ? Guid.NewGuid() : eventId;
+            Name = name;
+            OrganizerId = organizerId;
+            StartDate = startDate;
+            EndDate = endDate;
+            BuildingName = buildingName;
+            Street = street;
+            BuildingNumber = buildingNumber;
+            ApartmentNumber = apartmentNumber;
+            City = city;
+            ZipCode = zipCode;
+            Description = description;
+            Capacity = capacity;
+            Fee = fee;
+            Category = category;
+            PublishDate = publishDate;
+        }
     }
 }

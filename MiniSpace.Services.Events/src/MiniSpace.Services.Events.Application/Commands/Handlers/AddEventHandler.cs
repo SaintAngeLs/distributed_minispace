@@ -15,36 +15,45 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         private readonly IEventRepository _eventRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IEventMapper _eventMapper;
+        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IEventValidator _eventValidator;
         private readonly string _expectedFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
         
-        public AddEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, IEventMapper eventMapper)
+        public AddEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, IEventMapper eventMapper,
+            IDateTimeProvider dateTimeProvider, IEventValidator eventValidator)
         {
             _eventRepository = eventRepository;
             _messageBroker = messageBroker;
             _eventMapper = eventMapper;
+            _dateTimeProvider = dateTimeProvider;
+            _eventValidator = eventValidator;
         }
         
         public async Task HandleAsync(AddEvent command)
         {
-            if (!Enum.TryParse<Category>(command.Category, true, out var category))
+            var category = _eventValidator.ParseCategory(command.Category);
+            var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
+            var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
+            var now = _dateTimeProvider.Now;
+            _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
+            _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
+            var publishDate = now;
+            var status = Status.Published;
+            if (command.PublishDate != null)
             {
-                throw new InvalidEventCategoryException(command.Category);
-            }
-            if (!DateTime.TryParseExact(command.StartDate, _expectedFormat, CultureInfo.InvariantCulture, 
-                    DateTimeStyles.None, out DateTime startDate))
-            {
-                throw new InvalidEventDateTimeException("event_start_date",command.StartDate);
-            }
-            if (!DateTime.TryParseExact(command.EndDate, _expectedFormat, CultureInfo.InvariantCulture, 
-                    DateTimeStyles.None, out DateTime endDate))
-            {
-                throw new InvalidEventDateTimeException("event_end_date", command.EndDate);
+                publishDate = _eventValidator.ParseDate(command.PublishDate, "event_publish_date");
+                _eventValidator.ValidateDates(now, publishDate, "now", "event_publish_date");
+                status = Status.ToBePublished;
             }
             
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
             var activity = new Event(command.EventId, command.Name, command.Description,
-                startDate, endDate, address, command.Capacity, command.Fee, category);
+                startDate, endDate, address, command.Capacity, command.Fee, category, status, publishDate);
+            
+            await _eventRepository.AddAsync(activity);
+            var events = _eventMapper.MapAll(activity.Events);
+            await _messageBroker.PublishAsync(events.ToArray());
         }
     }
 }
