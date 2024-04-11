@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
@@ -14,25 +16,34 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         private readonly IEventMapper _eventMapper;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IEventValidator _eventValidator;
+        private readonly IAppContext _appContext;
         
         public AddEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, IEventMapper eventMapper,
-            IDateTimeProvider dateTimeProvider, IEventValidator eventValidator)
+            IDateTimeProvider dateTimeProvider, IEventValidator eventValidator, IAppContext appContext)
         {
             _eventRepository = eventRepository;
             _messageBroker = messageBroker;
             _eventMapper = eventMapper;
             _dateTimeProvider = dateTimeProvider;
             _eventValidator = eventValidator;
+            _appContext = appContext;
         }
         
         public async Task HandleAsync(AddEvent command)
         {
+            var identity = _appContext.Identity;
+            if (!identity.IsOrganizer)
+                throw new AuthorizedUserIsNotAnOrganizerException(identity.Id);
+            if(identity.Id != command.OrganizerId)
+                throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
+            
             var category = _eventValidator.ParseCategory(command.Category);
             var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
             var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
             var now = _dateTimeProvider.Now;
             _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
+            
             var publishDate = now;
             var status = State.Published;
             if (command.PublishDate != null)
