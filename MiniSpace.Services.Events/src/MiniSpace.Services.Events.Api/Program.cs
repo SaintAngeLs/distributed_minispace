@@ -39,6 +39,7 @@ namespace MiniSpace.Services.Identity.Api
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"orders/{cmd.EventId}"))
                         .Post<SignUpToEvent>("events/{eventId}/sign-up")
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
+                        .Post<RateEvent>("events/{eventId}/rate")
                         //.Post<FilterEvents>("events/filter")
                         //.Delete<DeleteEvent>("events/{eventsId}")
                     ))

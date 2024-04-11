@@ -113,5 +113,25 @@ namespace MiniSpace.Services.Events.Core.Entities
 
             _interestedStudents.Add(student);
         }
+        
+        public void Rate(Guid studentId, int rating)
+        {
+            if(_signedUpStudents.All(s => s.Id != studentId))
+            {
+                throw new StudentNotSignedUpForEventException(Id ,studentId);
+            }
+            
+            if (rating < 1 || rating > 5)
+            {
+                throw new InvalidRatingValueException(rating);
+            }
+
+            if (_ratings.Any(r => r.StudentId == studentId))
+            {
+                throw new StudentAlreadyRatedEventException(Id, studentId);
+            }
+
+            _ratings.Add(new Rating(studentId, rating));
+        }
     }
 }
