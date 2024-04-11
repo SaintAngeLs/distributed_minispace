@@ -20,7 +20,5 @@ namespace MiniSpace.Services.Events.Application.DTO
         public decimal Fee { get; set; }
         public string Category { get; set; }
         public string Status { get; set; }
-        public int Reactions { get; set; }
-        public string DominantReaction { get; set; }
     }
 }

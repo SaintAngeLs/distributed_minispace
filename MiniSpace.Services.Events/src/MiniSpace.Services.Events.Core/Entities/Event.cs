@@ -11,7 +11,6 @@ namespace MiniSpace.Services.Events.Core.Entities
         private ISet<Organizer> _organizers = new HashSet<Organizer>();
         private ISet<Student> _interestedStudents = new HashSet<Student>();
         private ISet<Student> _signedUpStudents = new HashSet<Student>();
-        private ISet<Reaction> _reactions = new HashSet<Reaction>();
         private ISet<Rating> _ratings = new HashSet<Rating>();
         public string Name { get; private set; }
         public string Description { get; private set; }
@@ -43,12 +42,6 @@ namespace MiniSpace.Services.Events.Core.Entities
             private set => _signedUpStudents = new HashSet<Student>(value);
         }
         
-        public IEnumerable<Reaction> Reactions
-        {
-            get => _reactions;
-            private set => _reactions = new HashSet<Reaction>(value);
-        }
-        
         public IEnumerable<Rating> Ratings
         {
             get => _ratings;
@@ -58,8 +51,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
             Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, 
             IEnumerable<Organizer> organizers = null, IEnumerable<Student> interestedStudents = null, 
-            IEnumerable<Student> signedUpStudents = null, IEnumerable<Reaction> reactions = null,
-            IEnumerable<Rating> ratings = null)
+            IEnumerable<Student> signedUpStudents = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
             Name = name;
@@ -74,7 +66,6 @@ namespace MiniSpace.Services.Events.Core.Entities
             Organizers = organizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
             SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Student>();
-            Reactions = reactions ?? Enumerable.Empty<Reaction>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
             PublishDate = publishDate;
         }

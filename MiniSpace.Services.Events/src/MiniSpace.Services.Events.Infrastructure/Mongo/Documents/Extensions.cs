@@ -21,17 +21,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Capacity = document.Capacity,
                 Fee = document.Fee,
                 Category = document.Category.ToString(),
-                Status = document.State.ToString(),
-                Reactions = document.Reactions.Count(),
-                DominantReaction = document.Reactions.GroupBy(r => r.Type).OrderByDescending(g => g.Count())
-                    .Select(g => g.Key.ToString()).FirstOrDefault()
+                Status = document.State.ToString()
             };
         
         public static Event AsEntity(this EventDocument document)
             => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
                 document.Location, document.Capacity, document.Fee, document.Category, document.State, document.PublishDate,
-                document.Organizers, document.InterestedStudents, document.SignedUpStudents, document.Reactions, 
-                document.Ratings);
+                document.Organizers, document.InterestedStudents, document.SignedUpStudents, document.Ratings);
         
         public static EventDocument AsDocument(this Event entity)
             => new ()
@@ -50,7 +46,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Category = entity.Category,
                 State = entity.State,
                 PublishDate = entity.PublishDate,
-                Reactions = entity.Reactions,
                 Ratings = entity.Ratings
             };
 
