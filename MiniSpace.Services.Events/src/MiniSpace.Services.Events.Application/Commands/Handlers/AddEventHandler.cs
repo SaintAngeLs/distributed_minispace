@@ -34,12 +34,12 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
             var publishDate = now;
-            var status = Status.Published;
+            var status = State.Published;
             if (command.PublishDate != null)
             {
                 publishDate = _eventValidator.ParseDate(command.PublishDate, "event_publish_date");
                 _eventValidator.ValidateDates(now, publishDate, "now", "event_publish_date");
-                status = Status.ToBePublished;
+                status = State.ToBePublished;
             }
             
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 

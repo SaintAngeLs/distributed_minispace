@@ -1,6 +1,6 @@
 ﻿namespace MiniSpace.Services.Events.Core.Entities
 {
-    public enum Status
+    public enum State
     {
         ToBePublished,
         Published,

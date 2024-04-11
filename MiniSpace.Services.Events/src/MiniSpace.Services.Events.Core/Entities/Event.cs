@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         public int Capacity { get; private set; }
         public decimal Fee { get; private set; }
         public Category Category { get; private set; }
-        public Status Status { get; private set; }
+        public State State { get; private set; }
         public DateTime PublishDate { get; private set; }
         
         public IEnumerable<Organizer> Organizers
@@ -56,7 +56,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, Status status, DateTime publishDate, 
+            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, 
             IEnumerable<Organizer> organizers = null, IEnumerable<Student> interestedStudents = null, 
             IEnumerable<Student> signedUpStudents = null, IEnumerable<Reaction> reactions = null,
             IEnumerable<Rating> ratings = null)
@@ -70,7 +70,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             Capacity = capacity;
             Fee = fee;
             Category = category;
-            Status = status;
+            State = state;
             Organizers = organizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
             SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Student>();
@@ -80,10 +80,10 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
         
         public static Event Create(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, Status status, DateTime publishDate, Guid organizerId)
+            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, Guid organizerId)
         {
             var organizer = new Organizer(organizerId, "", "", "");
-            var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, status, publishDate);
+            var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, state, publishDate);
             @event.AddOrganizer(organizer);
             return @event;
         }
