@@ -41,7 +41,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
                         //.Post<FilterEvents>("events/filter")
-                        //.Delete<DeleteEvent>("events/{eventsId}")
+                        .Delete<DeleteEvent>("events/{eventsId}")
                     ))
                 .UseLogging()
                 .Build()

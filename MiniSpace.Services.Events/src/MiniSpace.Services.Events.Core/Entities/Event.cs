@@ -8,12 +8,13 @@ namespace MiniSpace.Services.Events.Core.Entities
 {
     public class Event: AggregateRoot
     {
-        private ISet<Organizer> _organizers = new HashSet<Organizer>();
+        private ISet<Organizer> _coOrganizers = new HashSet<Organizer>();
         private ISet<Student> _interestedStudents = new HashSet<Student>();
         private ISet<Student> _signedUpStudents = new HashSet<Student>();
         private ISet<Rating> _ratings = new HashSet<Rating>();
         public string Name { get; private set; }
         public string Description { get; private set; }
+        public Organizer Organizer { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public Address Location { get; private set; }
@@ -24,10 +25,10 @@ namespace MiniSpace.Services.Events.Core.Entities
         public State State { get; private set; }
         public DateTime PublishDate { get; private set; }
         
-        public IEnumerable<Organizer> Organizers
+        public IEnumerable<Organizer> CoOrganizers
         {
-            get => _organizers;
-            private set => _organizers = new HashSet<Organizer>(value);
+            get => _coOrganizers;
+            private set => _coOrganizers = new HashSet<Organizer>(value);
         }
         
         public IEnumerable<Student> InterestedStudents
@@ -49,8 +50,8 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, 
-            IEnumerable<Organizer> organizers = null, IEnumerable<Student> interestedStudents = null, 
+            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate,
+            Organizer organizer, IEnumerable<Organizer> coOrganizers = null, IEnumerable<Student> interestedStudents = null, 
             IEnumerable<Student> signedUpStudents = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
@@ -63,7 +64,8 @@ namespace MiniSpace.Services.Events.Core.Entities
             Fee = fee;
             Category = category;
             State = state;
-            Organizers = organizers ?? Enumerable.Empty<Organizer>();
+            Organizer = organizer;
+            CoOrganizers = coOrganizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
             SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Student>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
@@ -74,19 +76,19 @@ namespace MiniSpace.Services.Events.Core.Entities
             Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, Guid organizerId)
         {
             var organizer = new Organizer(organizerId, "", "", "");
-            var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, state, publishDate);
-            @event.AddOrganizer(organizer);
+            var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, 
+                state, publishDate, organizer);
             return @event;
         }
         
         public void AddOrganizer(Organizer organizer)
         {
-            if (Organizers.Any(o => o.Id == organizer.Id))
+            if (CoOrganizers.Any(o => o.Id == organizer.Id))
             {
                 throw new OrganizerAlreadyAddedException(organizer.Id);
             }
 
-            _organizers.Add(organizer);
+            _coOrganizers.Add(organizer);
         }
         
         public void SignUpStudent(Student student)

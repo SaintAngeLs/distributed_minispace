@@ -11,9 +11,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public Organizer Organizer { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public IEnumerable<Organizer> Organizers { get; set; }
+        public IEnumerable<Organizer> CoOrganizers { get; set; }
         public Address Location { get; set; }
         //public string Image { get; set; }
         public IEnumerable<Student> InterestedStudents { get; set; }

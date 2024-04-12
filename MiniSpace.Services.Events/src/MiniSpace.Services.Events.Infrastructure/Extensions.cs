@@ -74,6 +74,8 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
+                // TODO: add logging
+                //.AddHandlersLogging()
                 .AddMongoRepository<EventDocument, Guid>("events")
                 .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()

@@ -9,9 +9,10 @@ namespace MiniSpace.Services.Events.Application.DTO
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public OrganizerDto Organizer { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public IEnumerable<OrganizerDto> Organizers { get; set; }
+        public IEnumerable<OrganizerDto> CoOrganizers { get; set; }
         public AddressDto Location { get; set; }
         //public string Image { get; set; }
         public int InterestedStudents { get; set; }
