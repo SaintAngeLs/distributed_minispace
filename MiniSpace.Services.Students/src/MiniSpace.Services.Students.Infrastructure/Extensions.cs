@@ -70,7 +70,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("Students")
+                .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -91,8 +91,8 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeCommand<CompleteStudentRegistration>()
                 .SubscribeCommand<ChangeStudentState>()
                 .SubscribeEvent<SignedUp>()
-                .SubscribeEvent<EventInterestedIn>()
-                .SubscribeEvent<EventSignedUp>();
+                .SubscribeEvent<StudentShowedInterestInEvent>()
+                .SubscribeEvent<StudentSignedUpToEvent>();
 
             return app;
         }

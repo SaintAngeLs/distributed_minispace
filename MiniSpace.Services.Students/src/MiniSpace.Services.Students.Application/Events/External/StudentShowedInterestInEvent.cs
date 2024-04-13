@@ -4,12 +4,12 @@ using Convey.MessageBrokers;
 namespace MiniSpace.Services.Students.Application.Events.External
 {
     [Message("events")]
-    public class EventInterestedIn : IEvent
+    public class StudentShowedInterestInEvent : IEvent
     {
         public Guid EventId { get; }
         public Guid StudentId { get; }
 
-        public EventInterestedIn(Guid eventId, Guid studentId)
+        public StudentShowedInterestInEvent(Guid eventId, Guid studentId)
         {
             EventId = eventId;
             StudentId = studentId;
