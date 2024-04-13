@@ -12,13 +12,15 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
     {
         private readonly IPostRepository _postRepository;
         private readonly IAppContext _appContext;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
         
         public ChangePostStateHandler(IPostRepository postRepository, IAppContext appContext,
-            IMessageBroker messageBroker)
+            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
         {
             _postRepository = postRepository;
             _appContext = appContext;
+            _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
         }
         
@@ -28,6 +30,12 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             if (post is null)
             {
                 throw new PostNotFoundException(command.PostId);
+            }
+            
+            var identity = _appContext.Identity;
+            if (identity.IsAuthenticated && identity.Id != post.StudentId && !identity.IsAdmin)
+            {
+                throw new UnauthorizedPostAccessException(command.PostId, identity.Id);
             }
             
             if (!Enum.TryParse<State>(command.State, true, out var newState))
@@ -45,7 +53,8 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             switch (newState)
             {
                 case State.ToBePublished:
-                    post.SetToBePublished(command.PublishDate ?? throw new ArgumentNullException());
+                    post.SetToBePublished(command.PublishDate ?? throw new ArgumentNullException(),
+                        _dateTimeProvider.Now);
                     break;
                 case State.Published:
                     post.SetPublished();
@@ -59,6 +68,8 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 case State.Reported:
                     post.SetReported();
                     break;
+                default:
+                    throw new InvalidPostStateException(post.State.ToString().ToLowerInvariant());
             }
             
             await _postRepository.UpdateAsync(post);

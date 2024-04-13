@@ -12,13 +12,15 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
     {
         private readonly IPostRepository _postRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
 
         public CreatePostHandler(IPostRepository postRepository, IStudentRepository studentRepository,
-            IMessageBroker messageBroker)
+            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
         {
             _postRepository = postRepository;
             _studentRepository = studentRepository;
+            _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
         }
 
@@ -34,8 +36,8 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new InvalidPostStateException(command.State);
             }
             
-            var post = Post.Create(command.PostId, command.EventId, command.StudentId,
-                command.TextContent, command.MediaContent, state, command.PublishDate);
+            var post = Post.Create(command.PostId, command.EventId, command.StudentId, command.TextContent,
+                command.MediaContent, _dateTimeProvider.Now, state, command.PublishDate);
             await _postRepository.AddAsync(post);
             
             await _messageBroker.PublishAsync(new PostCreated(command.PostId));
