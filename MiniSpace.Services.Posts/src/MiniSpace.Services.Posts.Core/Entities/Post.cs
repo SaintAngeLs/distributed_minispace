@@ -23,6 +23,16 @@ namespace MiniSpace.Services.Posts.Core.Entities
             PublishDate = publishDate;
         }
 
+        public void SetToBePublished(DateTime publishDate)
+        {
+            State = State.ToBePublished;
+            PublishDate = publishDate;
+        }
+        public void SetPublished() => State = State.Published;
+        public void SetInDraft() => State = State.InDraft;
+        public void SetHidden() => State = State.Hidden;
+        public void SetReported() => State = State.Reported;
+        
         public static Post Create(AggregateId id, Guid eventId, Guid studentId, string textContent,
             string mediaContent, State state, DateTime? publishDate)
         {

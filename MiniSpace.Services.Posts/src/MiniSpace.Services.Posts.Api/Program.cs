@@ -34,7 +34,10 @@ namespace MiniSpace.Services.Posts.Api
                         .Get<GetPosts, IEnumerable<PostDto>>("posts")
                         .Put<UpdatePost>("posts/{postId}")
                         .Delete<DeletePost>("posts/{postId}")
-                        .Post<CreatePost>("posts")
+                        .Post<CreatePost>("posts",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"posts/{cmd.PostId}"))
+                        .Put<ChangePostState>("posts/{postId}/state/{state}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
                     ))
                 .UseLogging()
                 .Build()
