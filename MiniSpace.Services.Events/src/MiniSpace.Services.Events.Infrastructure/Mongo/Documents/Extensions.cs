@@ -78,10 +78,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
             => new ()
             {
                 Id = entity.Id,
-                Name = entity.Name,
             };
         
         public static Student AsEntity(this StudentDocument document)
-            => new (document.Id, document.Name);
+            => new (document.Id);
     }
 }

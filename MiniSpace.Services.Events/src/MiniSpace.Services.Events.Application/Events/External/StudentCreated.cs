@@ -8,10 +8,12 @@ namespace MiniSpace.Services.Events.Application.Events.External
     public class StudentCreated : IEvent
     {
         public Guid StudentId { get; }
+        public string Name { get; }
 
-        public StudentCreated(Guid studentId)
+        public StudentCreated(Guid studentId, string name)
         {
             StudentId = studentId;
+            Name = name;
         }
     }
 }
