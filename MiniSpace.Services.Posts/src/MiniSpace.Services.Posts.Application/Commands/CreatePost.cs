@@ -9,14 +9,19 @@ namespace MiniSpace.Services.Posts.Application.Commands
         public Guid StudentId { get; }
         public string TextContent { get; }
         public string MediaContent { get; }
+        public string State { get; }
+        public DateTime? PublishDate { get; }
 
-        public CreatePost(Guid postId, Guid eventId, Guid studentId, string textContent, string mediaContent)
+        public CreatePost(Guid postId, Guid eventId, Guid studentId, string textContent,
+            string mediaContent, string state, DateTime? publishDate)
         {
             PostId = postId == Guid.Empty ? Guid.NewGuid() : postId;
             EventId = eventId;
             StudentId = studentId;
             TextContent = textContent;
             MediaContent = mediaContent;
+            State = state;
+            PublishDate = publishDate;
         }
     }    
 }

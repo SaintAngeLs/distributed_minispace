@@ -8,23 +8,28 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public Guid StudentId { get; private set; }
         public string TextContent { get; private set; }
         public string MediaContent { get; private set; }
+        public State State { get; private set; }
+        public DateTime? PublishDate { get; private set; }
 
-        public Post(Guid id, Guid eventId, Guid studentId, string textContent, string mediaContent)
+        public Post(Guid id, Guid eventId, Guid studentId, string textContent,
+            string mediaContent, State state, DateTime? publishDate)
         {
             Id = id;
             EventId = eventId;
             StudentId = studentId;
             TextContent = textContent;
             MediaContent = mediaContent;
+            State = state;
+            PublishDate = publishDate;
         }
 
-        public static Post Create(AggregateId id, Guid eventId, Guid studentId,
-            string textContent, string mediaContent)
+        public static Post Create(AggregateId id, Guid eventId, Guid studentId, string textContent,
+            string mediaContent, State state, DateTime? publishDate)
         {
             CheckTextContent(id, textContent);
             CheckMediaContent(id, mediaContent);
             
-            return new Post(id, eventId, studentId, textContent, mediaContent);
+            return new Post(id, eventId, studentId, textContent, mediaContent, state, publishDate);
         }
 
         public void Update(string textContent, string mediaContent)

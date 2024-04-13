@@ -3,6 +3,7 @@ using MiniSpace.Services.Posts.Application.Events;
 using MiniSpace.Services.Posts.Application.Exceptions;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Core.Entities;
+using MiniSpace.Services.Posts.Core.Exceptions;
 using MiniSpace.Services.Posts.Core.Repositories;
 
 namespace MiniSpace.Services.Posts.Application.Commands.Handlers
@@ -28,8 +29,13 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.StudentId);
             }
 
+            if (!Enum.TryParse<State>(command.State, true, out var state))
+            {
+                throw new InvalidPostStateException(command.State);
+            }
+            
             var post = Post.Create(command.PostId, command.EventId, command.StudentId,
-                command.TextContent, command.MediaContent);
+                command.TextContent, command.MediaContent, state, command.PublishDate);
             await _postRepository.AddAsync(post);
             
             await _messageBroker.PublishAsync(new PostCreated(command.PostId));
