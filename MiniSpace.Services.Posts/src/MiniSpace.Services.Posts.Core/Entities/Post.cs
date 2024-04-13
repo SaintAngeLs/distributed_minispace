@@ -26,34 +26,24 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public static Post Create(AggregateId id, Guid eventId, Guid studentId, string textContent,
             string mediaContent, State state, DateTime? publishDate)
         {
-            CheckTextContent(id, textContent);
-            CheckMediaContent(id, mediaContent);
+            CheckContent(id, textContent, mediaContent);
             
             return new Post(id, eventId, studentId, textContent, mediaContent, state, publishDate);
         }
 
         public void Update(string textContent, string mediaContent)
         {
-            CheckTextContent(Id, textContent);
-            CheckMediaContent(Id, mediaContent);
+            CheckContent(Id, textContent, mediaContent);
 
             TextContent = textContent;
             MediaContent = mediaContent;
         }
-        
-        private static void CheckTextContent(AggregateId id, string textContent)
+
+        private static void CheckContent(AggregateId id, string textContent, string mediaContent)
         {
-            if (string.IsNullOrWhiteSpace(textContent))
+            if (string.IsNullOrWhiteSpace(textContent) && string.IsNullOrWhiteSpace(mediaContent))
             {
-                throw new InvalidPostTextContentException(id, textContent);
-            }
-        }
-        
-        private static void CheckMediaContent(AggregateId id, string mediaContent)
-        {
-            if (string.IsNullOrWhiteSpace(mediaContent))
-            {
-                throw new InvalidPostMediaContentException(id, mediaContent);
+                throw new InvalidPostContentException(id);
             }
         }
     }    
