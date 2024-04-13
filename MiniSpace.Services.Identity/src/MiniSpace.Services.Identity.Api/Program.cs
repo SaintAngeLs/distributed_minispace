@@ -71,7 +71,6 @@ namespace MiniSpace.Services.Identity.Api
                         })
                     ))
                 .UseLogging()
-                .UseVault()
                 .Build()
                 .RunAsync();
 
