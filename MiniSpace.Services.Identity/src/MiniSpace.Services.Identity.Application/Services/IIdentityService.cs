@@ -10,5 +10,7 @@ namespace MiniSpace.Services.Identity.Application.Services
         Task<UserDto> GetAsync(Guid id);
         Task<AuthDto> SignInAsync(SignIn command);
         Task SignUpAsync(SignUp command);
+        Task GrantOrganizerRightsAsync(GrantOrganizerRights command);
+        Task RevokeOrganizerRightsAsync(RevokeOrganizerRights command);
     }
 }
