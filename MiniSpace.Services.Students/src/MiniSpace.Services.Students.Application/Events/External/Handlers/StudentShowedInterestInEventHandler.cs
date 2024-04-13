@@ -5,13 +5,13 @@ using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
-    public class EventSignedUpHandler : IEventHandler<EventSignedUp>
+    public class StudentShowedInterestInEventHandler : IEventHandler<StudentShowedInterestInEvent>
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public EventSignedUpHandler(IStudentRepository studentRepository,
+        public StudentShowedInterestInEventHandler(IStudentRepository studentRepository,
             IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _studentRepository = studentRepository;
@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(EventSignedUp @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(StudentShowedInterestInEvent @event, CancellationToken cancellationToken)
         {
             var student = await _studentRepository.GetAsync(@event.StudentId);
             if (student is null)
@@ -27,11 +27,11 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 throw new StudentNotFoundException(@event.StudentId);
             }
             
-            student.AddSignedUpEvent(@event.EventId);
+            student.AddInterestedInEvent(@event.EventId);
             await _studentRepository.UpdateAsync(student);
             
             var events = _eventMapper.MapAll(student.Events);
             await _messageBroker.PublishAsync(events.ToArray());
         }
-    }
+    }    
 }

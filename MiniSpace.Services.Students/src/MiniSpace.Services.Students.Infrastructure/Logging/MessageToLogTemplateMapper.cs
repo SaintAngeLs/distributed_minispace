@@ -40,13 +40,13 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
                     }
                 },
                 {
-                    typeof(EventInterestedIn), new HandlerLogTemplate
+                    typeof(StudentShowedInterestInEvent), new HandlerLogTemplate
                     {
                         After = "A student with id: {StudentId} has been interested in the event with id: {EventId}."
                     }
                 },
                 {
-                    typeof(EventSignedUp), new HandlerLogTemplate
+                    typeof(StudentSignedUpToEvent), new HandlerLogTemplate
                     {
                         After = "A student with id: {StudentId} has signed up for the event with id: {EventId}."
                     }

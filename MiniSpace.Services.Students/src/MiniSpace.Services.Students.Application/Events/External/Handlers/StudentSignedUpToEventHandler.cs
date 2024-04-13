@@ -5,13 +5,13 @@ using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
-    public class EventInterestedInHandler : IEventHandler<EventInterestedIn>
+    public class StudentSignedUpToEventHandler : IEventHandler<StudentSignedUpToEvent>
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public EventInterestedInHandler(IStudentRepository studentRepository,
+        public StudentSignedUpToEventHandler(IStudentRepository studentRepository,
             IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _studentRepository = studentRepository;
@@ -19,19 +19,19 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(EventInterestedIn @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(StudentSignedUpToEvent studentSignedUpToEvent, CancellationToken cancellationToken)
         {
-            var student = await _studentRepository.GetAsync(@event.StudentId);
+            var student = await _studentRepository.GetAsync(studentSignedUpToEvent.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(@event.StudentId);
+                throw new StudentNotFoundException(studentSignedUpToEvent.StudentId);
             }
             
-            student.AddInterestedInEvent(@event.EventId);
+            student.AddSignedUpEvent(studentSignedUpToEvent.EventId);
             await _studentRepository.UpdateAsync(student);
             
             var events = _eventMapper.MapAll(student.Events);
             await _messageBroker.PublishAsync(events.ToArray());
         }
-    }    
+    }
 }
