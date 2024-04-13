@@ -70,7 +70,9 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             var claims = user.Permissions.Any()
                 ? new Dictionary<string, IEnumerable<string>>
                 {
-                    ["permissions"] = user.Permissions
+                    ["permissions"] = user.Permissions,
+                    //["name"] 
+                    ["email"] = new [] { user.Email }
                 }
                 : null;
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
