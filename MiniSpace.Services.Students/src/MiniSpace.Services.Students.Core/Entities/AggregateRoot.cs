@@ -1,3 +1,5 @@
+using MiniSpace.Services.Students.Core.Events;
+
 namespace MiniSpace.Services.Students.Core.Entities
 {
     public abstract class AggregateRoot

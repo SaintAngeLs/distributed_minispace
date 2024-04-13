@@ -1,5 +1,5 @@
 using Convey.CQRS.Events;
-using MiniSpace.Services.Students.Core;
+using MiniSpace.Services.Students.Core.Events;
 
 namespace MiniSpace.Services.Students.Application.Services
 {
