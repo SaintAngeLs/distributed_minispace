@@ -165,5 +165,7 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void Ban() => IsBanned = true;
         public void Unban() => IsBanned = false;
+        public void GrantOrganizerRights() => IsOrganizer = true;
+        public void RevokeOrganizerRights() => IsOrganizer = false;
     }    
 }
