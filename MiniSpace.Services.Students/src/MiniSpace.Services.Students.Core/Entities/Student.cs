@@ -17,6 +17,8 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public bool EmailNotifications { get; private set; }
+        public bool IsBanned { get; private set; }
+        public bool IsOrganizer { get; private set; }
         public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
@@ -32,16 +34,16 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
 
         public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
-            : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty,
-                null, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
+            : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
+                false, false, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
         {
             CheckFullName(firstName, lastName);
         }
     
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             int numberOfFriends, string profileImage, string description, DateTime? dateOfBirth,
-            bool emailNotifications, State state, IEnumerable<Guid> interestedInEvents = null,
-            IEnumerable<Guid> signedUpEvents = null)
+            bool emailNotifications, bool isBanned, bool isOrganizer, State state,
+            IEnumerable<Guid> interestedInEvents = null, IEnumerable<Guid> signedUpEvents = null)
         {
             Id = id;
             Email = email;
@@ -53,6 +55,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             Description = description;
             DateOfBirth = dateOfBirth;
             EmailNotifications = emailNotifications;
+            IsBanned = isBanned;
+            IsOrganizer = isOrganizer;
             State = state;
             InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
