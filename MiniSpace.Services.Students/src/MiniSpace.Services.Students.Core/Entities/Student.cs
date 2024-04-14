@@ -162,5 +162,8 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             _signedUpEvents.Add(eventId);
         }
+
+        public void Ban() => IsBanned = true;
+        public void Unban() => IsBanned = false;
     }    
 }
