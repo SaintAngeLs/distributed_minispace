@@ -31,8 +31,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             set => _signedUpEvents = new HashSet<Guid>(value);
         }
         
-        public Student(Guid id, string email, DateTime createdAt)
-            : this(id, email, createdAt, string.Empty, string.Empty, 0, string.Empty, string.Empty,
+        public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
+            : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty,
                 null, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
         {}
     
