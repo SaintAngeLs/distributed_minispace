@@ -145,7 +145,8 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignUp(
                 Guid.NewGuid(),
-                "name",
+                "fitstName",
+                "lastName",
                 "validEmail@gmail.com",
                 "password",
                 "",
@@ -167,7 +168,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             user.Password.Should().NotBe(command.Password);
             user.Password.Should().Be("hashedPassword");
             signedUp.Should().NotBeNull();
-            signedUp.Should().BeEquivalentTo(new SignedUp(user.Id, user.Email, user.Role));
+            signedUp.Should().BeEquivalentTo(new SignedUp(user.Id, command.FirstName, command.LastName, user.Email, user.Role));
             _mockUserRepository.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Once);
             _mockMessageBroker.Verify(x => x.PublishAsync(It.IsAny<SignedUp>()), Times.Once);
         }
@@ -178,7 +179,8 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignUp(
                  Guid.NewGuid(),
-                 "name",
+                 "firstName",
+                 "lastName",
                  "invalidEmail",
                  "password",
                  "user",
@@ -195,12 +197,13 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignUp(
                  Guid.NewGuid(),
-                 "name",
+                 "firstName",
+                 "lastName",
                  "emailInUse@gmail.com",
                  "password",
                  "user",
                  new List<string>());
-            var user = new User(Guid.NewGuid(), command.Name, command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
+            var user = new User(Guid.NewGuid(), $"{command.FirstName} {command.LastName}", command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
             _mockUserRepository.Setup(x => x.GetAsync(command.Email)).ReturnsAsync(user);
 
             //Act and Assert
