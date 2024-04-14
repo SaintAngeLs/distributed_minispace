@@ -1,6 +1,7 @@
 @page "/signup"
 @using MiniSpace.Web.Areas.Identity
 @inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 <h3>Sign Up</h3>
 
@@ -48,7 +49,15 @@
     private async Task HandleSignUp()
     {
         var organizerPermission = new List<string> { "organize_events" };
-        await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
-            signUpModel.Password, "user", organizerPermission);
+        try
+        {
+            await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
+                signUpModel.Password, "user", organizerPermission);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            
+        }
     }
 }
