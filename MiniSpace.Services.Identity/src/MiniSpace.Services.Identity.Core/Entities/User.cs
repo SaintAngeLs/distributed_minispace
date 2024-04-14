@@ -66,6 +66,27 @@ namespace MiniSpace.Services.Identity.Core.Entities
             permissionsList.Remove(UserPermissions.OrganizeEvents);
             Permissions = permissionsList;
         }
+        
+        public void Ban()
+        {
+            if (Role == Entities.Role.Banned || Role == Entities.Role.Admin)
+            {
+                throw new UserCannotBeBannedException(Id, Role);
+            }
+
+            Role = Entities.Role.Banned;
+            RevokeOrganizerRights();
+        }
+        
+        public void Unban()
+        {
+            if (Role != Entities.Role.Banned)
+            {
+                throw new UserIsNotBannedException(Id, Role);
+            }
+
+            Role = Entities.Role.User;
+        }
     }
 
     public static class UserPermissions

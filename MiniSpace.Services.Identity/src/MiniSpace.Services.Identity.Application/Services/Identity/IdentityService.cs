@@ -140,5 +140,37 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _logger.LogInformation($"Revoked organizer rights from the user with id: {user.Id}.");
             await _messageBroker.PublishAsync(new OrganizerRightsRevoked(user.Id));
         }
+        
+        public async Task BanUserAsync(BanUser command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user is null)
+            {
+                _logger.LogError($"User with id: {command.UserId} was not found.");
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            user.Ban();
+            await _userRepository.UpdateAsync(user);
+            
+            _logger.LogInformation($"Banned the user with id: {user.Id}.");
+            await _messageBroker.PublishAsync(new UserBanned(user.Id));
+        }
+        
+        public async Task UnbanUserAsync(UnbanUser command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user is null)
+            {
+                _logger.LogError($"User with id: {command.UserId} was not found.");
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            user.Unban();
+            await _userRepository.UpdateAsync(user);
+            
+            _logger.LogInformation($"Unbanned the user with id: {user.Id}.");
+            await _messageBroker.PublishAsync(new UserUnbanned(user.Id));
+        }
     }
 }

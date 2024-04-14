@@ -12,5 +12,7 @@ namespace MiniSpace.Services.Identity.Application.Services
         Task SignUpAsync(SignUp command);
         Task GrantOrganizerRightsAsync(GrantOrganizerRights command);
         Task RevokeOrganizerRightsAsync(RevokeOrganizerRights command);
+        Task BanUserAsync(BanUser command);
+        Task UnbanUserAsync(UnbanUser command);
     }
 }
