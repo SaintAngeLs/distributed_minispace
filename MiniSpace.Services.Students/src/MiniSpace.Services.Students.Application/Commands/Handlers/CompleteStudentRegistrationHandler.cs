@@ -35,8 +35,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new StudentAlreadyRegisteredException(command.StudentId);
             }
             
-            student.CompleteRegistration(command.FirstName, command.LastName, command.ProfileImage,
-                command.Description, command.DateOfBirth, _dateTimeProvider.Now, command.EmailNotifications);
+            student.CompleteRegistration(command.ProfileImage, command.Description,
+                command.DateOfBirth, _dateTimeProvider.Now, command.EmailNotifications);
             await _studentRepository.UpdateAsync(student);
             
             var events = _eventMapper.MapAll(student.Events);

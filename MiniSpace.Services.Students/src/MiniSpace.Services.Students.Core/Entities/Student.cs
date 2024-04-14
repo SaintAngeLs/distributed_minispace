@@ -30,11 +30,13 @@ namespace MiniSpace.Services.Students.Core.Entities
             get => _signedUpEvents;
             set => _signedUpEvents = new HashSet<Guid>(value);
         }
-        
+
         public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
             : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty,
                 null, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
-        {}
+        {
+            CheckFullName(firstName, lastName);
+        }
     
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             int numberOfFriends, string profileImage, string description, DateTime? dateOfBirth,
@@ -67,10 +69,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentStateChanged(this, previousState));
         }
         
-        public void CompleteRegistration(string firstName, string lastName, string profileImage,
-            string description, DateTime dateOfBirth, DateTime now, bool emailNotifications)
+        public void CompleteRegistration(string profileImage, string description,
+            DateTime dateOfBirth, DateTime now, bool emailNotifications)
         {
-            CheckFullName(firstName, lastName);
             CheckProfileImage(profileImage);
             CheckDescription(description);
             CheckDateOfBirth(dateOfBirth, now);
@@ -79,9 +80,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             {
                 throw new CannotChangeStudentStateException(Id, State);
             }
-
-            FirstName = firstName;
-            LastName = lastName;
+            
             ProfileImage = profileImage;
             Description = description;
             DateOfBirth = dateOfBirth;
