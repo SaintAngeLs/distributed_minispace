@@ -50,7 +50,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
         {
             //Arrange
             var userId = Guid.NewGuid();
-            var user = new User(userId, "test@gmail.com", "password", "user", DateTime.UtcNow, new List<string>());
+            var user = new User(userId, "name", "test@gmail.com", "password", "user", DateTime.UtcNow, new List<string>());
             _mockUserRepository.Setup(x => x.GetAsync(userId)).ReturnsAsync(user);
 
             //Act
@@ -82,7 +82,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignIn("validEmail@gmail.com", "password");
             var userId = Guid.NewGuid();
-            var user = new User(userId, command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
+            var user = new User(userId, "name", command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
             var authDto = new AuthDto();
             _mockUserRepository.Setup(x => x.GetAsync(command.Email)).ReturnsAsync(user);
             _mockPasswordService.Setup(x => x.IsValid(user.Password, command.Password)).Returns(true);
@@ -130,7 +130,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignIn("validEmail@gmail.com", "invalidPassword");
             var userId = Guid.NewGuid();
-            var user = new User(userId, command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
+            var user = new User(userId, "name", command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
             _mockUserRepository.Setup(x => x.GetAsync(command.Email)).ReturnsAsync(user);
             _mockPasswordService.Setup(x => x.IsValid(user.Password, command.Password)).Returns(false);
 
@@ -145,6 +145,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignUp(
                 Guid.NewGuid(),
+                "name",
                 "validEmail@gmail.com",
                 "password",
                 "",
@@ -177,6 +178,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignUp(
                  Guid.NewGuid(),
+                 "name",
                  "invalidEmail",
                  "password",
                  "user",
@@ -193,11 +195,12 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var command = new SignUp(
                  Guid.NewGuid(),
+                 "name",
                  "emailInUse@gmail.com",
                  "password",
                  "user",
                  new List<string>());
-            var user = new User(Guid.NewGuid(), command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
+            var user = new User(Guid.NewGuid(), command.Name, command.Email, command.Password, "user", DateTime.UtcNow, new List<string>());
             _mockUserRepository.Setup(x => x.GetAsync(command.Email)).ReturnsAsync(user);
 
             //Act and Assert
