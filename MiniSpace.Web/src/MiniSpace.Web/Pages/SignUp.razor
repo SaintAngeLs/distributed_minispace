@@ -17,13 +17,13 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="name">Name:</label>
-                <InputText type="text" id="name" class="form-control" @bind-Value="signUpModel.Name" />
+                <InputText type="text" id="name" class="form-control" @bind-Value="signUpModel.FirstName" />
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label for="surname">Surname:</label>
-                <InputText type="text" id="surname" class="form-control" @bind-Value="signUpModel.Surname" />
+                <InputText type="text" id="surname" class="form-control" @bind-Value="signUpModel.LastName" />
             </div>
         </div>
     </div>
@@ -48,7 +48,7 @@
     private async Task HandleSignUp()
     {
         var organizerPermission = new List<string> { "organize_events" };
-        await IdentityService.SignUpAsync($"{signUpModel.Name} {signUpModel.Surname}", signUpModel.Email,
+        await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
             signUpModel.Password, "user", organizerPermission);
     }
 }
