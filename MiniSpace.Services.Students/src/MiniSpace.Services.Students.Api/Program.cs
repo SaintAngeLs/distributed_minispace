@@ -38,7 +38,8 @@ namespace MiniSpace.Services.Students.Api
                         .Post<CompleteStudentRegistration>("students",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))
                         .Put<ChangeStudentState>("students/{studentId}/state/{state}",
-                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())))
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")))
                 .UseLogging()
                 .Build()
                 .RunAsync();
