@@ -50,6 +50,30 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
                     {
                         After = "A student with id: {StudentId} has signed up for the event with id: {EventId}."
                     }
+                },
+                {
+                    typeof(UserBanned), new HandlerLogTemplate
+                    {
+                        After = "A student with id: {UserId} has been banned."
+                    }
+                },
+                {
+                    typeof(UserUnbanned), new HandlerLogTemplate
+                    {
+                        After = "A student with id: {UserId} has been unbanned."
+                    }
+                },
+                {
+                    typeof(OrganizerRightsGranted), new HandlerLogTemplate
+                    {
+                        After = "Organizer rights has been granted for student with id: {UserId}."
+                    }
+                },
+                {
+                    typeof(OrganizerRightsRevoked), new HandlerLogTemplate
+                    {
+                        After = "Organizer rights has been revoked for student with id: {UserId}."
+                    }
                 }
             };
         

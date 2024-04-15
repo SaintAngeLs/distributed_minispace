@@ -17,6 +17,8 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public bool EmailNotifications { get; private set; }
+        public bool IsBanned { get; private set; }
+        public bool CanBeOrganizer { get; private set; }
         public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
@@ -30,16 +32,18 @@ namespace MiniSpace.Services.Students.Core.Entities
             get => _signedUpEvents;
             set => _signedUpEvents = new HashSet<Guid>(value);
         }
-        
-        public Student(Guid id, string email, DateTime createdAt)
-            : this(id, email, createdAt, string.Empty, string.Empty, 0, string.Empty, string.Empty,
-                null, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
-        {}
+
+        public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
+            : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
+                false, false, true, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
+        {
+            CheckFullName(firstName, lastName);
+        }
     
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             int numberOfFriends, string profileImage, string description, DateTime? dateOfBirth,
-            bool emailNotifications, State state, IEnumerable<Guid> interestedInEvents = null,
-            IEnumerable<Guid> signedUpEvents = null)
+            bool emailNotifications, bool isBanned, bool canBeOrganizer, State state,
+            IEnumerable<Guid> interestedInEvents = null, IEnumerable<Guid> signedUpEvents = null)
         {
             Id = id;
             Email = email;
@@ -51,6 +55,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             Description = description;
             DateOfBirth = dateOfBirth;
             EmailNotifications = emailNotifications;
+            IsBanned = isBanned;
+            CanBeOrganizer = canBeOrganizer;
             State = state;
             InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
@@ -67,10 +73,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentStateChanged(this, previousState));
         }
         
-        public void CompleteRegistration(string firstName, string lastName, string profileImage,
-            string description, DateTime dateOfBirth, DateTime now, bool emailNotifications)
+        public void CompleteRegistration(string profileImage, string description,
+            DateTime dateOfBirth, DateTime now, bool emailNotifications)
         {
-            CheckFullName(firstName, lastName);
             CheckProfileImage(profileImage);
             CheckDescription(description);
             CheckDateOfBirth(dateOfBirth, now);
@@ -79,9 +84,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             {
                 throw new CannotChangeStudentStateException(Id, State);
             }
-
-            FirstName = firstName;
-            LastName = lastName;
+            
             ProfileImage = profileImage;
             Description = description;
             DateOfBirth = dateOfBirth;
@@ -159,5 +162,10 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             _signedUpEvents.Add(eventId);
         }
+
+        public void Ban() => IsBanned = true;
+        public void Unban() => IsBanned = false;
+        public void GrantOrganizerRights() => CanBeOrganizer = true;
+        public void RevokeOrganizerRights() => CanBeOrganizer = false;
     }    
 }
