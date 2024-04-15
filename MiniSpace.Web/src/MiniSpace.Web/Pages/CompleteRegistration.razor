@@ -1,0 +1,65 @@
+@page "/signup/complete"
+@using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.Models.Students
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+
+<h3>Complete your registration</h3>
+
+<EditForm Model="@completeRegistrationModel" OnValidSubmit="HandleCompleteRegistration">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <InputText id="description" class="form-control" @bind-Value="completeRegistrationModel.Description" />
+    </div>
+    
+    <div class="form-group">
+        <label for="date-of-birth">Date of birth:</label>
+        <InputDate id="date-of-birth" class="form-control" @bind-Value:format="dd-MM-yyyy"
+                       @bind-Value="completeRegistrationModel.DateOfBirth" />
+    </div>
+    
+    <div class="form-group">
+        <label for="email-notifications">Email notifications:</label>
+        <InputCheckbox id="email-notifications" class="form-control"
+                       @bind-Value="completeRegistrationModel.EmailNotifications" />
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Complete registration</button>
+</EditForm>
+
+
+@code {
+    private CompleteRegistrationModel completeRegistrationModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            var userDto = await IdentityService.GetAccountAsync();
+            completeRegistrationModel.StudentId = userDto.Id;
+            completeRegistrationModel.ProfileImage = "null";
+            completeRegistrationModel.DateOfBirth = DateTime.Now;
+        }
+    }
+    
+    private async Task HandleCompleteRegistration()
+    {
+        await StudentsService.CompleteStudentRegistrationAsync(completeRegistrationModel.StudentId,
+            completeRegistrationModel.ProfileImage, completeRegistrationModel.Description,
+            completeRegistrationModel.DateOfBirth, completeRegistrationModel.EmailNotifications);
+        // Handle the post-sign-up logic, such as redirection or displaying a success message
+        if (IdentityService.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/account");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
+}

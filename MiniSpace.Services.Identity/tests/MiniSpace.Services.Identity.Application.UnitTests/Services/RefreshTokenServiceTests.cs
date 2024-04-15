@@ -87,7 +87,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Arrange
             var refreshToken = "validToken";
             var token = new RefreshToken(new AggregateId(), Guid.NewGuid(), refreshToken, DateTime.UtcNow);
-            var user = new User(Guid.NewGuid(), "test@gmail.com", "password", "user", DateTime.UtcNow, new List<string>());
+            var user = new User(Guid.NewGuid(), "name", "test@gmail.com", "password", "user", DateTime.UtcNow, new List<string>());
             _mockRefreshTokenRepository.Setup(x => x.GetAsync(refreshToken)).ReturnsAsync(token);
             _mockUserRepository.Setup(x => x.GetAsync(token.UserId)).ReturnsAsync(user);
             _mockJwtProvider.Setup(x => x.Create(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, IEnumerable<string>>>()))

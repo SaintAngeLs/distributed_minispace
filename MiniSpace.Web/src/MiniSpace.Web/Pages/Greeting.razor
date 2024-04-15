@@ -1,13 +1,13 @@
 @page "/greeting"
 @using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IIdentityService IdentityService
 
 <h1>Greeting</h1>
 
 
-@if (userName != null)
+@if (email != null)
 {
-    <p>Hello, @userName!</p>
+    <p>Hello, @email!</p>
 }
 else
 {
@@ -15,11 +15,15 @@ else
 }
 
 @code {
-    private string userName;
+    private string email;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        userName = authState.User.Identity.Name; 
+        if (IdentityService.IsAuthenticated)
+        {
+            var userDto = await IdentityService.GetAccountAsync();
+            email = userDto.Email;   
+            StateHasChanged();
+        }
     }
 }

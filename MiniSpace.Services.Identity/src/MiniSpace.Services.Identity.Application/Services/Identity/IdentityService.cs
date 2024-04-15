@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Identity.Application.Commands;
 using MiniSpace.Services.Identity.Application.DTO;
 using MiniSpace.Services.Identity.Application.Events;
+using MiniSpace.Services.Identity.Application.Exceptions;
 using MiniSpace.Services.Identity.Core.Entities;
 using MiniSpace.Services.Identity.Core.Exceptions;
 using MiniSpace.Services.Identity.Core.Repositories;
@@ -70,7 +71,9 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             var claims = user.Permissions.Any()
                 ? new Dictionary<string, IEnumerable<string>>
                 {
-                    ["permissions"] = user.Permissions
+                    ["permissions"] = user.Permissions,
+                    ["name"] = new [] { user.Name },
+                    ["email"] = new [] { user.Email }
                 }
                 : null;
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
@@ -99,11 +102,77 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
             var role = string.IsNullOrWhiteSpace(command.Role) ? "user" : command.Role.ToLowerInvariant();
             var password = _passwordService.Hash(command.Password);
-            user = new User(command.UserId, command.Email, password, role, DateTime.UtcNow, command.Permissions);
+            user = new User(command.UserId, $"{command.FirstName} {command.LastName}", command.Email, password,
+                role, DateTime.UtcNow, command.Permissions);
             await _userRepository.AddAsync(user);
             
             _logger.LogInformation($"Created an account for the user with id: {user.Id}.");
-            await _messageBroker.PublishAsync(new SignedUp(user.Id, user.Email, user.Role));
+            await _messageBroker.PublishAsync(new SignedUp(user.Id, command.FirstName, command.LastName, 
+                user.Email, user.Role));
+        }
+        
+        public async Task GrantOrganizerRightsAsync(GrantOrganizerRights command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user is null)
+            {
+                _logger.LogError($"User with id: {command.UserId} was not found.");
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            user.GrantOrganizerRights();
+            await _userRepository.UpdateAsync(user);
+            
+            _logger.LogInformation($"Granted organizer rights to the user with id: {user.Id}.");
+            await _messageBroker.PublishAsync(new OrganizerRightsGranted(user.Id));
+        }
+        
+        public async Task RevokeOrganizerRightsAsync(RevokeOrganizerRights command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user is null)
+            {
+                _logger.LogError($"User with id: {command.UserId} was not found.");
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            user.RevokeOrganizerRights();
+            await _userRepository.UpdateAsync(user);
+            
+            _logger.LogInformation($"Revoked organizer rights from the user with id: {user.Id}.");
+            await _messageBroker.PublishAsync(new OrganizerRightsRevoked(user.Id));
+        }
+        
+        public async Task BanUserAsync(BanUser command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user is null)
+            {
+                _logger.LogError($"User with id: {command.UserId} was not found.");
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            user.Ban();
+            await _userRepository.UpdateAsync(user);
+            
+            _logger.LogInformation($"Banned the user with id: {user.Id}.");
+            await _messageBroker.PublishAsync(new UserBanned(user.Id));
+        }
+        
+        public async Task UnbanUserAsync(UnbanUser command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user is null)
+            {
+                _logger.LogError($"User with id: {command.UserId} was not found.");
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            user.Unban();
+            await _userRepository.UpdateAsync(user);
+            
+            _logger.LogInformation($"Unbanned the user with id: {user.Id}.");
+            await _messageBroker.PublishAsync(new UserUnbanned(user.Id));
         }
     }
 }
