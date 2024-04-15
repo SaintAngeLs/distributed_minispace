@@ -53,7 +53,7 @@
         {
             await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
                 signUpModel.Password, "user", organizerPermission);
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/signin");
         }
         catch (Exception ex)
         {
