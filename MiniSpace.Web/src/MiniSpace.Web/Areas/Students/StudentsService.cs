@@ -30,9 +30,9 @@ namespace MiniSpace.Web.Areas.Students
                 description, emailNotifications});
         }
 
-        public Task CompleteStudentRegistrationAsync(Guid studentId, string firstName, string lastName,
-            string profileImage, string description, DateTime dateOfBirth, bool emailNotifications)
-            => _httpClient.PostAsync("students", new {studentId, firstName, lastName, profileImage,
+        public Task CompleteStudentRegistrationAsync(Guid studentId, string profileImage,
+            string description, DateTime dateOfBirth, bool emailNotifications)
+            => _httpClient.PostAsync("students", new {studentId, profileImage,
                 description, dateOfBirth, emailNotifications});
     }    
 }

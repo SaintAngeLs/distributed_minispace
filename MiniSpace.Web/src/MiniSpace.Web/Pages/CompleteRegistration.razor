@@ -13,16 +13,6 @@
     <ValidationSummary />
     
     <div class="form-group">
-        <label for="firstname">Firstname:</label>
-        <InputText id="firstname" class="form-control" @bind-Value="completeRegistrationModel.FirstName" />
-    </div>
-
-    <div class="form-group">
-        <label for="lastname">Lastname:</label>
-        <InputText id="lastname" class="form-control" @bind-Value="completeRegistrationModel.LastName" />
-    </div>
-    
-    <div class="form-group">
         <label for="description">Description:</label>
         <InputText id="description" class="form-control" @bind-Value="completeRegistrationModel.Description" />
     </div>
@@ -60,7 +50,6 @@
     private async Task HandleCompleteRegistration()
     {
         await StudentsService.CompleteStudentRegistrationAsync(completeRegistrationModel.StudentId,
-            completeRegistrationModel.FirstName, completeRegistrationModel.LastName,
             completeRegistrationModel.ProfileImage, completeRegistrationModel.Description,
             completeRegistrationModel.DateOfBirth, completeRegistrationModel.EmailNotifications);
         // Handle the post-sign-up logic, such as redirection or displaying a success message
