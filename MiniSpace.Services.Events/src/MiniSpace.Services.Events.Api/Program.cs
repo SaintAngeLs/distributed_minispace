@@ -40,7 +40,9 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<SignUpToEvent>("events/{eventId}/sign-up")
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
-                        //.Post<FilterEvents>("events/filter")
+                        //.Post<SearchEvents>("events/search")
+                        // TODO: Add query for student latest enrolled events
+                        //.Post<>
                         .Delete<DeleteEvent>("events/{eventsId}")
                     ))
                 .UseLogging()
