@@ -9,8 +9,8 @@ namespace MiniSpace.Services.Events.Core.Entities
     public class Event: AggregateRoot
     {
         private ISet<Organizer> _coOrganizers = new HashSet<Organizer>();
-        private ISet<Student> _interestedStudents = new HashSet<Student>();
-        private ISet<Student> _signedUpStudents = new HashSet<Student>();
+        private ISet<Participant> _interestedStudents = new HashSet<Participant>();
+        private ISet<Participant> _signedUpStudents = new HashSet<Participant>();
         private ISet<Rating> _ratings = new HashSet<Rating>();
         public string Name { get; private set; }
         public string Description { get; private set; }
@@ -31,16 +31,16 @@ namespace MiniSpace.Services.Events.Core.Entities
             private set => _coOrganizers = new HashSet<Organizer>(value);
         }
         
-        public IEnumerable<Student> InterestedStudents
+        public IEnumerable<Participant> InterestedStudents
         {
             get => _interestedStudents;
-            private set => _interestedStudents = new HashSet<Student>(value);
+            private set => _interestedStudents = new HashSet<Participant>(value);
         }
         
-        public IEnumerable<Student> SignedUpStudents
+        public IEnumerable<Participant> SignedUpStudents
         {
             get => _signedUpStudents;
-            private set => _signedUpStudents = new HashSet<Student>(value);
+            private set => _signedUpStudents = new HashSet<Participant>(value);
         }
         
         public IEnumerable<Rating> Ratings
@@ -51,8 +51,8 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
             Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate,
-            Organizer organizer, IEnumerable<Organizer> coOrganizers = null, IEnumerable<Student> interestedStudents = null, 
-            IEnumerable<Student> signedUpStudents = null, IEnumerable<Rating> ratings = null)
+            Organizer organizer, IEnumerable<Organizer> coOrganizers = null, IEnumerable<Participant> interestedStudents = null, 
+            IEnumerable<Participant> signedUpStudents = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
             Name = name;
@@ -66,8 +66,8 @@ namespace MiniSpace.Services.Events.Core.Entities
             State = state;
             Organizer = organizer;
             CoOrganizers = coOrganizers ?? Enumerable.Empty<Organizer>();
-            InterestedStudents = interestedStudents ?? Enumerable.Empty<Student>();
-            SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Student>();
+            InterestedStudents = interestedStudents ?? Enumerable.Empty<Participant>();
+            SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Participant>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
             PublishDate = publishDate;
         }
@@ -91,11 +91,11 @@ namespace MiniSpace.Services.Events.Core.Entities
             _coOrganizers.Add(organizer);
         }
         
-        public void SignUpStudent(Student student)
+        public void SignUpStudent(Participant participant)
         {
-            if (SignedUpStudents.Any(s => s.Id == student.Id))
+            if (SignedUpStudents.Any(p => p.StudentId == participant.StudentId))
             {
-                throw new StudentAlreadySignedUpException(student.Id, Id);
+                throw new StudentAlreadySignedUpException(participant.StudentId, Id);
             }
 
             if (SignedUpStudents.Count() >= Capacity)
@@ -103,22 +103,22 @@ namespace MiniSpace.Services.Events.Core.Entities
                 throw new EventCapacityExceededException(Id, Capacity);
             }
 
-            _signedUpStudents.Add(student);
+            _signedUpStudents.Add(participant);
         }
         
-        public void ShowStudentInterest(Student student)
+        public void ShowStudentInterest(Participant participant)
         {
-            if (InterestedStudents.Any(s => s.Id == student.Id))
+            if (InterestedStudents.Any(p => p.StudentId == participant.StudentId))
             {
-                throw new StudentAlreadyInterestedInEventException(student.Id, Id);
+                throw new StudentAlreadyInterestedInEventException(participant.StudentId, Id);
             }
 
-            _interestedStudents.Add(student);
+            _interestedStudents.Add(participant);
         }
         
         public void Rate(Guid studentId, int rating)
         {
-            if(_signedUpStudents.All(s => s.Id != studentId))
+            if(_signedUpStudents.All(p => p.StudentId != studentId))
             {
                 throw new StudentNotSignedUpForEventException(Id ,studentId);
             }

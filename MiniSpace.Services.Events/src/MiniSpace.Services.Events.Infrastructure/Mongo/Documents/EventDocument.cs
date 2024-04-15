@@ -17,8 +17,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public IEnumerable<Organizer> CoOrganizers { get; set; }
         public Address Location { get; set; }
         //public string Image { get; set; }
-        public IEnumerable<Student> InterestedStudents { get; set; }
-        public IEnumerable<Student> SignedUpStudents { get; set; }
+        public IEnumerable<Participant> InterestedStudents { get; set; }
+        public IEnumerable<Participant> SignedUpStudents { get; set; }
         public int Capacity { get; set; }
         public decimal Fee { get; set; }
         public Category Category { get; set; }
