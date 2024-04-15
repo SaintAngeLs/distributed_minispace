@@ -6,8 +6,11 @@ namespace MiniSpace.Web.Areas.Identity
 {
     public interface IIdentityService
     {
-        Task<UserDto> GetAccountAsync(string jwt);
+        public JwtDto JwtDto { get; }
+        bool IsAuthenticated { get; }
+        Task<UserDto> GetAccountAsync();
         Task SignUpAsync(string email, string password, string role = "user", IEnumerable<string> permissions = null);
         Task<JwtDto> SignInAsync(string email, string password);
+        void Logout();
     }
 }

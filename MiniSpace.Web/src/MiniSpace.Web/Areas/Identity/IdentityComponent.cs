@@ -23,7 +23,7 @@ namespace MiniSpace.Web.Areas.Identity
         public Task<JwtDto> SignInAsync(string email, string password)
             => _identityService.SignInAsync(email, password);
 
-        public Task<UserDto> GetAccount(string jwt)
-            => _identityService.GetAccountAsync(jwt);
+        public Task<UserDto> GetAccount()
+            => _identityService.GetAccountAsync();
     }
 }
