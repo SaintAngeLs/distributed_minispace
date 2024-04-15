@@ -2,6 +2,7 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Posts.Application.Events;
 using MiniSpace.Services.Posts.Application.Exceptions;
 using MiniSpace.Services.Posts.Application.Services;
+using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;
 
 namespace MiniSpace.Services.Posts.Application.Commands.Handlers
@@ -32,6 +33,11 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             if (identity.IsAuthenticated && identity.Id != post.StudentId && !identity.IsAdmin)
             {
                 throw new UnauthorizedPostAccessException(command.PostId, identity.Id);
+            }
+            
+            if (!identity.IsAdmin && post.State == State.Reported)
+            {
+                throw new UnauthorizedPostOperationException(command.PostId, identity.Id);
             }
             
             post.Update(command.TextContent, command.MediaContent);

@@ -43,17 +43,22 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new InvalidPostStateException(command.State);
             }
 
-            if (post.State == newState)
+            if (!identity.IsAdmin && post.State == State.Reported)
+            {
+                throw new UnauthorizedPostOperationException(command.PostId, identity.Id);
+            }
+            
+            if (post.State == newState && post.State != State.ToBePublished)
             {
                 throw new PostStateAlreadySetException(post.Id, newState);
             }
-
+            
             var previousState = post.State.ToString().ToLowerInvariant();
 
             switch (newState)
             {
                 case State.ToBePublished:
-                    post.SetToBePublished(command.PublishDate ?? throw new ArgumentNullException(),
+                    post.SetToBePublished(command.PublishDate ?? throw new PublishDateNullException(command.PostId),
                         _dateTimeProvider.Now);
                     break;
                 case State.Published:

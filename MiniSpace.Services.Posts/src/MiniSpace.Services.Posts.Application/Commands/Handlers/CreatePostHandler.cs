@@ -35,6 +35,14 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             {
                 throw new InvalidPostStateException(command.State);
             }
+
+            switch (state)
+            {
+                case State.Hidden or State.Reported:
+                    throw new NotAllowedPostStateException(command.PostId, state);
+                case State.ToBePublished when command.PublishDate is null:
+                    throw new PublishDateNullException(command.PostId);
+            }
             
             var post = Post.Create(command.PostId, command.EventId, command.StudentId, command.TextContent,
                 command.MediaContent, _dateTimeProvider.Now, state, command.PublishDate);

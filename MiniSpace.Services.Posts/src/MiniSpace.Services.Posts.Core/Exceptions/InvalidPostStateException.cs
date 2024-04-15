@@ -1,5 +1,3 @@
-using MiniSpace.Services.Posts.Core.Entities;
-
 namespace MiniSpace.Services.Posts.Core.Exceptions
 {
     public class InvalidPostStateException : DomainException
