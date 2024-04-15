@@ -17,8 +17,8 @@ namespace MiniSpace.Web.Areas.Identity
             return Task.CompletedTask;
         }
 
-        public Task SignUpAsync(string email, string password, string role = "user")
-            => _identityService.SignUpAsync(email, password, role);
+        public Task SignUpAsync(string firstName, string lastName, string email, string password, string role = "user")
+            => _identityService.SignUpAsync(firstName, lastName, email, password, role);
         
         public Task<JwtDto> SignInAsync(string email, string password)
             => _identityService.SignInAsync(email, password);

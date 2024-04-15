@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MiniSpace.Web.Data;
+//using MiniSpace.Web.Data;
 using MiniSpace.Web.Models.Identity;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.Areas.Students;
@@ -33,7 +33,6 @@ namespace MiniSpace.Web
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
             var httpClientOptions = Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
     
