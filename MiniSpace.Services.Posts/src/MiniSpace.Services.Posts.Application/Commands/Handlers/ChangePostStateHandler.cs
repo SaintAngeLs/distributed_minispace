@@ -58,7 +58,8 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             switch (newState)
             {
                 case State.ToBePublished:
-                    post.SetToBePublished(command.PublishDate ?? throw new PublishDateNullException(command.PostId),
+                    post.SetToBePublished(command.PublishDate
+                                          ?? throw new PublishDateNullException(command.PostId, newState),
                         _dateTimeProvider.Now);
                     break;
                 case State.Published:

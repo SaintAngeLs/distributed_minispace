@@ -31,21 +31,21 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.StudentId);
             }
 
-            if (!Enum.TryParse<State>(command.State, true, out var state))
+            if (!Enum.TryParse<State>(command.State, true, out var newState))
             {
                 throw new InvalidPostStateException(command.State);
             }
 
-            switch (state)
+            switch (newState)
             {
                 case State.Hidden or State.Reported:
-                    throw new NotAllowedPostStateException(command.PostId, state);
+                    throw new NotAllowedPostStateException(command.PostId, newState);
                 case State.ToBePublished when command.PublishDate is null:
-                    throw new PublishDateNullException(command.PostId);
+                    throw new PublishDateNullException(command.PostId, newState);
             }
             
             var post = Post.Create(command.PostId, command.EventId, command.StudentId, command.TextContent,
-                command.MediaContent, _dateTimeProvider.Now, state, command.PublishDate);
+                command.MediaContent, _dateTimeProvider.Now, newState, command.PublishDate);
             await _postRepository.AddAsync(post);
             
             await _messageBroker.PublishAsync(new PostCreated(command.PostId));

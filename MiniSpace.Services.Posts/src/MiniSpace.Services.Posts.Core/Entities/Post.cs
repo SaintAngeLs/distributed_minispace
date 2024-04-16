@@ -27,7 +27,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
 
         public void SetToBePublished(DateTime publishDate, DateTime now)
         {
-            CheckPublishDate(Id, publishDate, now);
+            CheckPublishDate(Id, State.ToBePublished, publishDate, now);
             State = State.ToBePublished;
             PublishDate = publishDate;
         }
@@ -80,11 +80,11 @@ namespace MiniSpace.Services.Posts.Core.Entities
             }
         }
 
-        private static void CheckPublishDate(AggregateId id, DateTime publishDate, DateTime now)
+        private static void CheckPublishDate(AggregateId id, State state, DateTime publishDate, DateTime now)
         {
             if (publishDate <= now)
             {
-                throw new InvalidPostPublishDateException(id, publishDate, now);
+                throw new InvalidPostPublishDateException(id, state, publishDate, now);
             }
         }
     }    
