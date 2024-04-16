@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.DTO
 {
@@ -21,5 +23,27 @@ namespace MiniSpace.Services.Events.Application.DTO
         public decimal Fee { get; set; }
         public string Category { get; set; }
         public string Status { get; set; }
+        
+        public EventDto()
+        {
+        }
+
+        public EventDto(Event @event)
+        {
+            Id = @event.Id;
+            Name = @event.Name;
+            Description = @event.Description;
+            Organizer = new OrganizerDto(@event.Organizer);
+            StartDate = @event.StartDate;
+            EndDate = @event.EndDate;
+            CoOrganizers = @event.CoOrganizers.Select(x => new OrganizerDto(x));
+            Location = new AddressDto(@event.Location);
+            InterestedStudents = @event.InterestedStudents.Count();
+            SignedUpStudents = @event.SignedUpStudents.Count();
+            Capacity = @event.Capacity;
+            Fee = @event.Fee;
+            Category = @event.Category.ToString();
+            Status = @event.State.ToString();
+        }
     }
 }

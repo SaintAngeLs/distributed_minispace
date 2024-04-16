@@ -35,5 +35,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
                 throw new InvalidEventDateTimeOrderException(earlierDate, laterDate,
                     earlierDateField, laterDateField);
         }
+        
+        public (int pageNumber, int pageSize) PageFilter(int pageNumber, int pageSize)
+        {
+            pageNumber = pageNumber < 0 ? 0 : pageNumber;
+            pageSize = pageSize > 10 ? 10 : pageSize;
+            return (pageNumber, pageSize);
+        }
     }
 }

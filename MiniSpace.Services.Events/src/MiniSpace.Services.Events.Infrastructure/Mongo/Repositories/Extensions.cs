@@ -84,11 +84,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
-        public static SortDefinition<EventDocument> ToSortDefinition(this SortDto sort)
+        public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
             var sortDefinitionBuilder = Builders<EventDocument>.Sort;
-            var sortDefinition = sort.SortBy
-                .Select(sortBy => sort.Direction == "asc"
+            var sortDefinition = sortByArguments
+                .Select(sortBy => direction == "asc"
                     ? sortDefinitionBuilder.Ascending(sortBy)
                     : sortDefinitionBuilder.Descending(sortBy));
             var sortCombined = sortDefinitionBuilder.Combine(sortDefinition);

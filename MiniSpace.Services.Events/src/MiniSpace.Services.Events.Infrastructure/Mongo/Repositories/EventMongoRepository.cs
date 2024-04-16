@@ -28,11 +28,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return @event?.AsEntity();
         }
 
-        public async Task<PagedResponse<IEnumerable<EventDto>>> BrowseAsync(int pageNumber, int pageSize, string name, string organizer, 
-            DateTime dateFrom, DateTime dateTo, SortDto sortDto)
+        public async Task<Tuple<IEnumerable<Event>,int,int,int,int>> BrowseAsync(int pageNumber, int pageSize, string name, string organizer, 
+            DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, string direction)
         {
             var filterDefinition = Repositories.Extensions.ToFilterDefinition(name, organizer, dateFrom, dateTo);
-            var sortDefinition = sortDto.ToSortDefinition();
+            var sortDefinition = Repositories.Extensions.ToSortDefinition(sortBy, direction);
             
             var pagedEvents = await _repository.Collection.AggregateByPage(
                 filterDefinition,
@@ -40,7 +40,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 pageNumber,
                 pageSize);
             
-            return new PagedResponse<IEnumerable<EventDto>>(pagedEvents.data.Select(e => e.AsDto()), 
+            return new Tuple<IEnumerable<Event>,int,int,int,int>(pagedEvents.data.Select(e => e.AsEntity()), 
                 pageNumber, pageSize, pagedEvents.totalPages, pagedEvents.totalElements);
         }
 
