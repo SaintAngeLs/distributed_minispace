@@ -107,6 +107,38 @@ modules:
         downstream: identity-service/sign-in
         auth: false
 
+      - upstream: /users/{userId}/organizer-rights
+        method: POST
+        use: downstream
+        downstream: identity-service/users/{userId}/organizer-rights
+        auth: true
+        claims:
+          role: admin
+
+      - upstream: /users/{userId}/organizer-rights
+        method: DELETE
+        use: downstream
+        downstream: identity-service/users/{userId}/organizer-rights
+        auth: true
+        claims:
+          role: admin
+
+      - upstream: /users/{userId}/ban
+        method: POST
+        use: downstream
+        downstream: identity-service/users/{userId}/ban
+        auth: true
+        claims:
+          role: admin
+
+      - upstream: /users/{userId}/ban
+        method: DELETE
+        use: downstream
+        downstream: identity-service/users/{userId}/ban
+        auth: true
+        claims:
+          role: admin
+
     services:
       identity-service:
         localUrl: localhost:5004
@@ -218,6 +250,11 @@ modules:
         claims:
           role: admin
 
+      - upstream: /{studentId}/events
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/events
+        auth: true
 
     services:
       students-service:
@@ -235,10 +272,10 @@ modules:
         downstream: events-service/events
         auth: true
 
-      - upstream: /
+      - upstream: /{eventId}
         method: PUT
         use: downstream
-        downstream: events-service/events
+        downstream: events-service/events/{eventId}
         auth: true
 
       - upstream: /{eventId}
@@ -259,22 +296,28 @@ modules:
         downstream: events-service/events/search
         auth: true
 
-      - upstream: /showInterest
+      - upstream: /{eventId}/show-interest
         method: POST
         use: downstream
-        downstream: events-service/events/showInterest
+        downstream: events-service/events/{eventId}/show-interest
         auth: true
 
-      - upstream: /sign
+      - upstream: /{eventId}/sign-up
         method: POST
         use: downstream
-        downstream: events-service/events/sign
+        downstream: events-service/events/{eventId}/sign-up
         auth: true
 
-      - upstream: /{organizerId}
+      - upstream: /{eventId}/rate
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/rate
+        auth: true
+
+      - upstream: /organizer/{organizerId}
         method: GET
         use: downstream
-        downstream: events-service/events/{organizerId}
+        downstream: events-service/events/organizer/{organizerId}
         auth: true
 
     services:
@@ -449,6 +492,15 @@ modules:
         downstream: posts-service/posts/{postId}
         bind:
           - postId:{postId}
+        auth: true
+
+      - upstream: /{postId}/state/{state}
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{postId}/state/{state}
+        bind:
+          - postId:{postId}
+          - state:{state}
         auth: true
 
       - upstream: /
