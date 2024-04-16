@@ -29,21 +29,74 @@ using Newtonsoft.Json;
 using MiniSpace.Services.Posts.Application;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Events.External;
-using MiniSpace.Services.Posts.Application.Events.External.Handlers;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Core.Repositories;
 using MiniSpace.Services.Posts.Infrastructure.Contexts;
-// using MiniSpace.Services.Posts.Infrastructure.Decorators;
-// using MiniSpace.Services.Posts.Infrastructure.Exceptions;
-// using MiniSpace.Services.Posts.Infrastructure.Logging;
-// using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
-// using MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories;
-// using MiniSpace.Services.Posts.Infrastructure.Services;
+using MiniSpace.Services.Posts.Infrastructure.Decorators;
+using MiniSpace.Services.Posts.Infrastructure.Exceptions;
+using MiniSpace.Services.Posts.Infrastructure.Logging;
+using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Posts.Infrastructure.Services;
 
 namespace MiniSpace.Services.Posts.Infrastructure
 {
     public static class Extensions
     {
+        public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
+        {
+            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
+            builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            builder.Services.AddSingleton<IEventMapper, EventMapper>();
+            builder.Services.AddTransient<IMessageBroker, MessageBroker>();
+            builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
+            builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
+            builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
+            builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
+
+            return builder
+                .AddErrorHandler<ExceptionToResponseMapper>()
+                .AddQueryHandlers()
+                .AddInMemoryQueryDispatcher()
+                .AddHttpClient()
+                .AddConsul()
+                .AddFabio()
+                .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
+                .AddMessageOutbox(o => o.AddMongo())
+                .AddExceptionToMessageMapper<ExceptionToMessageMapper>()
+                .AddMongo()
+                .AddRedis()
+                .AddMetrics()
+                .AddJaeger()
+                .AddHandlersLogging()
+                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<PostDocument, Guid>("posts")
+                .AddWebApiSwaggerDocs()
+                .AddCertificateAuthentication()
+                .AddSecurity();
+        }
+
+        public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app)
+        {
+            app.UseErrorHandler()
+                .UseSwaggerDocs()
+                .UseJaeger()
+                .UseConvey()
+                .UsePublicContracts<ContractAttribute>()
+                .UseMetrics()
+                .UseCertificateAuthentication()
+                .UseRabbitMq()
+                .SubscribeCommand<UpdatePost>()
+                .SubscribeCommand<DeletePost>()
+                .SubscribeCommand<CreatePost>()
+                .SubscribeCommand<ChangePostState>()
+                .SubscribeEvent<StudentCreated>()
+                .SubscribeEvent<StudentDeleted>();
+
+            return app;
+        }
+        
         internal static CorrelationContext GetCorrelationContext(this IHttpContextAccessor accessor)
             => accessor.HttpContext?.Request.Headers.TryGetValue("Correlation-Context", out var json) is true
                 ? JsonConvert.DeserializeObject<CorrelationContext>(json.FirstOrDefault())

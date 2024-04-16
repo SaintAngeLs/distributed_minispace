@@ -25,10 +25,10 @@ namespace MiniSpace.Services.Posts.Api
                     .AddConvey()
                     .AddWebApi()
                     .AddApplication()
-                    //.AddInfrastructure()
+                    .AddInfrastructure()
                     .Build())
                 .Configure(app => app
-                    //.UseInfrastructure()
+                    .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetPosts, IEnumerable<PostDto>>("posts")
