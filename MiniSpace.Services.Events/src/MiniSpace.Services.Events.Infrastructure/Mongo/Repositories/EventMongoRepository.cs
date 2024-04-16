@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Events.Application.DTO;
+using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
@@ -26,7 +28,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return @event?.AsEntity();
         }
 
-        public async Task<> BrowseAsync(int pageNumber, int pageSize, string name, string organizer, 
+        public async Task<PagedResponse<IEnumerable<EventDto>>> BrowseAsync(int pageNumber, int pageSize, string name, string organizer, 
             DateTime dateFrom, DateTime dateTo, SortDto sortDto)
         {
             var filterDefinition = Repositories.Extensions.ToFilterDefinition(name, organizer, dateFrom, dateTo);
@@ -38,7 +40,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 pageNumber,
                 pageSize);
             
-            return pagedEvents;
+            return new PagedResponse<IEnumerable<EventDto>>(pagedEvents.data.Select(e => e.AsDto()), 
+                pageNumber, pageSize, pagedEvents.totalPages, pagedEvents.totalElements);
         }
 
         public Task AddAsync(Event @event) => _repository.AddAsync(@event.AsDocument());

@@ -11,7 +11,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {
     public static class Extensions
     {
-        public static async Task<(int totalPages, IReadOnlyList<TDocument> data)> AggregateByPage<TDocument>(
+        public static async Task<(int totalPages, int totalElements, IReadOnlyList<TDocument> data)> AggregateByPage<TDocument>(
             this IMongoCollection<TDocument> collection,
             FilterDefinition<TDocument> filterDefinition,
             SortDefinition<TDocument> sortDefinition,
@@ -50,7 +50,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 .Facets.First(x => x.Name == "data")
                 .Output<TDocument>();
 
-            return (totalPages, data);
+            return (totalPages, (int)count, data);
         }
         
         public static FilterDefinition<EventDocument> ToFilterDefinition(string name, string organizer, 
