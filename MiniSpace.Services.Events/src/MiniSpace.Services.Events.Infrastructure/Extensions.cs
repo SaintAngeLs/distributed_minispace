@@ -40,6 +40,7 @@ using MiniSpace.Services.Events.Application.Services.Events;
 using MiniSpace.Services.Events.Core.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Contexts;
 using MiniSpace.Services.Events.Infrastructure.Decorators;
+using MiniSpace.Services.Events.Infrastructure.Exceptions;
 using MiniSpace.Services.Events.Infrastructure.Mongo;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
@@ -63,7 +64,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
             return builder
-                //.AddErrorHandler<ExceptionToResponseMapper>()
+                .AddErrorHandler<ExceptionToResponseMapper>()
                 .AddQueryHandlers()
                 .AddInMemoryQueryDispatcher()
                 .AddJwt()
