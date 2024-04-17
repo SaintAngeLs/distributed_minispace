@@ -17,9 +17,5 @@
   <ItemGroup>
     <ProjectReference Include="..\MiniSpace.Services.Events.Core\MiniSpace.Services.Events.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Events\Rejected\" />
-  </ItemGroup>
   
 </Project>
