@@ -14,6 +14,7 @@ using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Queries;
+using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Infrastructure;
 
 namespace MiniSpace.Services.Identity.Api
@@ -40,7 +41,11 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<SignUpToEvent>("events/{eventId}/sign-up")
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
-                        .Post<SearchEvents>("events/search")
+                        .Post<SearchEvents>("events/search", async (cmd, ctx) =>
+                        {
+                            var pagedResult = await ctx.RequestServices.GetService<IEventService>().SignInAsync(cmd);
+                            await ctx.Response.WriteJsonAsync(pagedResult);
+                        })
                         // TODO: Add query for student latest enrolled events
                         //.Post<>
                         .Delete<DeleteEvent>("events/{eventsId}")
