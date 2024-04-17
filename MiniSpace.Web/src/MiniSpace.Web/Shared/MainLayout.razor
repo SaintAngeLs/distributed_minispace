@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 <div class="sidebar">
     <NavMenu />
@@ -6,10 +8,35 @@
 
 <div class="main">
     <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
+        @if (IdentityService.IsAuthenticated)
+        {
+            <button class="nav-link btn btn-link" @onclick="SignOut">
+                <span class="oi oi-account-logout" aria-hidden="true"></span> Sign Out
+            </button>
+        }
+        else
+        {
+            <NavLink class="nav-link" href="signin">
+                <span class="oi oi-account-login" aria-hidden="true"></span> Sign In
+            </NavLink>
+            <NavLink class="nav-link" href="signup">
+                <span class="oi oi-pencil" aria-hidden="true"></span> Sign Up
+            </NavLink>
+        }
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+
+@code{
+
+    void SignOut()
+    {
+        // Implement your sign-out logic here, e.g., redirect to sign-out path, clear authentication state
+        IdentityService.Logout();
+        NavigationManager.NavigateTo("");
+    }
+
+}
