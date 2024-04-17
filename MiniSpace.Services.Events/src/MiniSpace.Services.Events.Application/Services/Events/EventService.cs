@@ -26,11 +26,11 @@ namespace MiniSpace.Services.Events.Application.Services.Events
         {
             var dateTo = DateTime.MinValue;
             var dateFrom = DateTime.MinValue;
-            if(command.DateTo != null)
+            if(command.DateTo != string.Empty)
             {
                 _eventValidator.ParseDate(command.DateTo, "DateTo");
             }
-            if(command.DateFrom != null)
+            if(command.DateFrom != string.Empty)
             {
                 _eventValidator.ParseDate(command.DateFrom, "DateFrom");
             }

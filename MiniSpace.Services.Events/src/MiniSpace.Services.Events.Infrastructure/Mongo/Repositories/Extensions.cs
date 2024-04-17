@@ -86,8 +86,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         
         public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
+            var sort = sortByArguments.ToList();
+            if(!sort.Any())
+            {
+                sort.Add("StartDate");
+            }
             var sortDefinitionBuilder = Builders<EventDocument>.Sort;
-            var sortDefinition = sortByArguments
+            var sortDefinition = sort
                 .Select(sortBy => direction == "asc"
                     ? sortDefinitionBuilder.Ascending(sortBy)
                     : sortDefinitionBuilder.Descending(sortBy));

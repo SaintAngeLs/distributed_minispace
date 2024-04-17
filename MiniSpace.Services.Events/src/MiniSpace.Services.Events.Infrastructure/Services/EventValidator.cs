@@ -42,5 +42,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             pageSize = pageSize > 10 ? 10 : pageSize;
             return (pageNumber, pageSize);
         }
+        
+        // TODO: Add Address validation
     }
 }
