@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Logging
                 {
                     typeof(CreatePost),  new HandlerLogTemplate
                     {
-                        After = "Updated the post with id: {PostId}."
+                        After = "Created the post with id: {PostId}."
                     }
                 },
                 {
