@@ -15,6 +15,7 @@ using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Infrastructure;
 
 namespace MiniSpace.Services.Identity.Api
@@ -48,7 +49,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
                         // TODO: Add query for student latest enrolled events
-                        .Get<GetStudentEvents, IEnumerable<EventDto>>("events/student/{studentId}")
+                        .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
                         .Delete<DeleteEvent>("events/{eventsId}")
                     )
                 )
