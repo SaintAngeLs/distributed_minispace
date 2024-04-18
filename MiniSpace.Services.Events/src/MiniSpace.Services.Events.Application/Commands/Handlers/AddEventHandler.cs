@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Core.Entities;
@@ -56,13 +57,12 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
+            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, string.Empty);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
-                address, command.Capacity, command.Fee, category, status, publishDate, command.OrganizerId);
+                address, command.Capacity, command.Fee, category, status, publishDate, organizer);
             
             await _eventRepository.AddAsync(@event);
-            // TODO: update mapper
-            var events = _eventMapper.MapAll(@event.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
+            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id));
         }
     }
 }

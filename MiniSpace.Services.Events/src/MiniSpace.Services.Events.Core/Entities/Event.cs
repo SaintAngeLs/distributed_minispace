@@ -73,9 +73,8 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
         
         public static Event Create(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, Guid organizerId)
+            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, Organizer organizer)
         {
-            var organizer = new Organizer(organizerId, "", "", "");
             var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, 
                 state, publishDate, organizer);
             return @event;
