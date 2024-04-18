@@ -46,6 +46,7 @@ using MiniSpace.Services.Events.Infrastructure.Mongo;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Services;
+using MiniSpace.Services.Events.Infrastructure.Services.Clients;
 
 namespace MiniSpace.Services.Events.Infrastructure
 {
@@ -61,7 +62,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
-            builder.Services.AddTransient<IStudentsServiceClient, IStudentsServiceClient>();
+            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
