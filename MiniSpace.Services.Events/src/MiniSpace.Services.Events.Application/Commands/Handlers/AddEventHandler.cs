@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Exceptions;
@@ -29,7 +30,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _appContext = appContext;
         }
         
-        public async Task HandleAsync(AddEvent command)
+        public async Task HandleAsync(AddEvent command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
             if (!identity.IsOrganizer)

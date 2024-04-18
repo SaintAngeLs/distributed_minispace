@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
@@ -21,7 +22,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(DeleteEvent command)
+        public async Task HandleAsync(DeleteEvent command, CancellationToken cancellationToken)
         {
             var @event = await _eventRepository.GetAsync(command.EventId);
             if (@event is null)

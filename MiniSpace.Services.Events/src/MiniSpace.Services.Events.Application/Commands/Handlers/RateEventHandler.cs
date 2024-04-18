@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Core.Repositories;
@@ -16,7 +17,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _studentRepository = studentRepository;
         }
 
-        public async Task HandleAsync(RateEvent command)
+        public async Task HandleAsync(RateEvent command, CancellationToken cancellationToken)
         {
             var @event = await _eventRepository.GetAsync(command.EventId);
             if (@event is null)

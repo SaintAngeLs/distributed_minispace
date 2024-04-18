@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
@@ -16,7 +17,7 @@ namespace MiniSpace.Services.Events.Application.Events.External.Handlers
             _studentRepository = studentRepository;
         }
         
-        public async Task HandleAsync(StudentCreated @event)
+        public async Task HandleAsync(StudentCreated @event, CancellationToken cancellationToken)
         {
             if (await _studentRepository.ExistsAsync(@event.StudentId))
             {

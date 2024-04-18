@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
@@ -26,7 +27,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _appContext = appContext;
         }
 
-        public async Task HandleAsync(SignUpToEvent command)
+        public async Task HandleAsync(SignUpToEvent command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != command.StudentId)
