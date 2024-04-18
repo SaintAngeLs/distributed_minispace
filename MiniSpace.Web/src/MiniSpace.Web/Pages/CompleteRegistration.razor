@@ -2,39 +2,83 @@
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.Models.Students
+@using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 
 <h3>Complete your registration</h3>
 
-<EditForm Model="@completeRegistrationModel" OnValidSubmit="HandleCompleteRegistration">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    
-    <div class="form-group">
-        <label for="description">Description:</label>
-        <InputText id="description" class="form-control" @bind-Value="completeRegistrationModel.Description" />
-    </div>
-    
-    <div class="form-group">
-        <label for="date-of-birth">Date of birth:</label>
-        <InputDate id="date-of-birth" class="form-control" @bind-Value:format="dd-MM-yyyy"
-                       @bind-Value="completeRegistrationModel.DateOfBirth" />
-    </div>
-    
-    <div class="form-group">
-        <label for="email-notifications">Email notifications:</label>
-        <InputCheckbox id="email-notifications" class="form-control"
-                       @bind-Value="completeRegistrationModel.EmailNotifications" />
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Complete registration</button>
-</EditForm>
+<RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
+             Shade="Shade.Lighter">
+    Failed to load image.
+</RadzenAlert>
 
+<RadzenTemplateForm Data="@completeRegistrationModel"
+                    Submit="@(async (CompleteRegistrationModel args) => { await HandleCompleteRegistration(); })">
+    <RadzenFieldset>
+        <RadzenStack Gap="1rem">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenLabel Text="Description:" Component="description" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="9">
+                    <RadzenTextBox Style="width: 100%;" Name="description"
+                                   @bind-Value="completeRegistrationModel.Description" />
+                    <RadzenRequiredValidator Component="description" Text="Description is required" Popup=@popup
+                                             Style="position: absolute"/>
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenLabel Text="Date of birth:" Component="date-of-birth" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="9">
+                    <RadzenDatePicker Style="width: 100%;" Name="date-of-birth" ShowCalendarWeek
+                                      @bind-Value="completeRegistrationModel.DateOfBirth" />
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenLabel Text="Profile image:" Component="profile-image" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="9">
+                    <RadzenFileInput Style="width: 100%;" Name="profile-image"
+                                     @bind-FileName=@fileName @bind-FileSize=@fileSize TValue="string" class="w-100"
+                                     @bind-Value=@completeRegistrationModel.ProfileImage
+                                     Change=@(args => OnChange(args, "FileInput"))
+                                     Error=@(args => OnError(args, "FileInput"))
+                                     InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})" />
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenLabel Text="Email notifications:" Component="email-notifications" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="9">
+                    <RadzenCheckBox Style="width: 100%;" Name="email-notifications"
+                                    @bind-Value="completeRegistrationModel.EmailNotifications" />
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Complete registration"/>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenFieldset>
+</RadzenTemplateForm>
 
 @code {
     private CompleteRegistrationModel completeRegistrationModel = new();
+    private string fileName;
+    private long? fileSize;
+    private bool showError = false;
+    private bool popup;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,5 +105,17 @@
         {
             NavigationManager.NavigateTo("/signin");
         }
+    }
+    
+    void OnChange(string value, string name)
+    {
+        showError = true;
+        StateHasChanged(); // Force the component to re-render
+    }
+
+    void OnError(UploadErrorEventArgs args, string name)
+    {
+        showError = true;
+        StateHasChanged(); // Force the component to re-render
     }
 }
