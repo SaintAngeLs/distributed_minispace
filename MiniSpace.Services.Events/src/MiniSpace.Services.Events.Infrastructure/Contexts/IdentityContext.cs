@@ -32,10 +32,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Contexts
             IsAuthenticated = isAuthenticated;
             IsAdmin = Role.Equals("admin", StringComparison.InvariantCultureIgnoreCase);
             IsBanned = Role.Equals("banned", StringComparison.InvariantCultureIgnoreCase);
+            IsOrganizer = Role.Equals("organizer", StringComparison.InvariantCultureIgnoreCase);
             Claims = claims ?? new Dictionary<string, string>();
             Name = Claims.TryGetValue("name", out var name) ? name : string.Empty;
-            Email = Claims.TryGetValue("email", out var email) ? email : string.Empty;
-            IsOrganizer = Claims["permissions"] == "organize_events";
+            Email = Claims.TryGetValue("e-mail", out var email) ? email : string.Empty;
         }
         
         internal static IIdentityContext Empty => new IdentityContext();
