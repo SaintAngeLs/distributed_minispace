@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task<EventDto> HandleAsync(GetEvent query)
+        public async Task<EventDto> HandleAsync(GetEvent query, CancellationToken cancellationToken)
         {
             var document = await _eventRepository.GetAsync(p => p.Id == query.EventId);
 

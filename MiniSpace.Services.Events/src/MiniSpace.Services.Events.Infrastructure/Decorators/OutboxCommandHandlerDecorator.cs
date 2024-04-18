@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using Convey.MessageBrokers;
@@ -29,7 +30,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Decorators
                 : messageProperties.MessageId;
         }
 
-        public Task HandleAsync(TCommand command)
+        public Task HandleAsync(TCommand command, CancellationToken cancellationToken)
             => _enabled
                 ? _outbox.HandleAsync(_messageId, () => _handler.HandleAsync(command))
                 : _handler.HandleAsync(command);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
@@ -30,7 +31,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             _appContext = appContext;
         }
 
-        public async Task<PagedResponse<IEnumerable<EventDto>>> HandleAsync(GetStudentEvents query)
+        public async Task<PagedResponse<IEnumerable<EventDto>>> HandleAsync(GetStudentEvents query, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != query.StudentId)

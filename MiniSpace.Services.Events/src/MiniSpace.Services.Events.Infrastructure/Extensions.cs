@@ -42,6 +42,7 @@ using MiniSpace.Services.Events.Core.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Contexts;
 using MiniSpace.Services.Events.Infrastructure.Decorators;
 using MiniSpace.Services.Events.Infrastructure.Exceptions;
+using MiniSpace.Services.Events.Infrastructure.Logging;
 using MiniSpace.Services.Events.Infrastructure.Mongo;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
@@ -63,6 +64,8 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
+            // TODO: add background worker
+            //builder.Services.AddHostedService<>()
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
@@ -82,8 +85,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
-                // TODO: add logging
-                //.AddHandlersLogging()
+                .AddHandlersLogging()
                 .AddMongoRepository<EventDocument, Guid>("events")
                 .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
