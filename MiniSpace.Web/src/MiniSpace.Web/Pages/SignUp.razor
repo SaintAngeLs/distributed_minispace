@@ -15,6 +15,8 @@
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="9">
                     <RadzenTextBox Style="width: 100%;" Name="name" @bind-Value="signUpModel.Name" />
+                    <RadzenRequiredValidator Component="name" Text="Name is required" Popup=@popup
+                                             Style="position: absolute"/>
                 </RadzenColumn>
             </RadzenRow>
             
@@ -24,6 +26,8 @@
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="9">
                     <RadzenTextBox Style="width: 100%;" Name="surname" @bind-Value="signUpModel.Surname" />
+                    <RadzenRequiredValidator Component="surname" Text="Surname is required" Popup=@popup
+                                             Style="position: absolute"/>
                 </RadzenColumn>
             </RadzenRow>
             
@@ -33,6 +37,10 @@
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="9">
                     <RadzenTextBox Style="width: 100%;" Name="email" @bind-Value="signUpModel.Email" />
+                    <RadzenRequiredValidator Component="email" Text="Email is required" Popup=@popup
+                                                                 Style="position: absolute"/>
+                    <RadzenEmailValidator Component="email" Text="Email is invalid" Popup=@popup
+                                             Style="position: absolute"/>
                 </RadzenColumn>
             </RadzenRow>
             
@@ -42,6 +50,8 @@
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="9">
                     <RadzenPassword Style="width: 100%;" Name="password" @bind-Value="signUpModel.Password" />
+                    <RadzenRequiredValidator Component="password" Text="Password is required" Popup=@popup
+                                             Style="position: absolute"/>                    
                 </RadzenColumn>
             </RadzenRow>
             
@@ -56,7 +66,8 @@
 
 @code {
     private SignUpModel signUpModel = new SignUpModel();
-
+    private bool popup;
+    
     private async Task HandleSignUp()
     {
         var organizerPermission = new List<string> { "organize_events" };

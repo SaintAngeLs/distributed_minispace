@@ -19,8 +19,8 @@
                     }
                     else
                     {
-                        <RadzenMenuItem Text="Sign In" Path="signin" Icon="account_circle"/>
-                        <RadzenMenuItem Text="Sign Up" Path="signup" Icon="account_circle"/>
+                        <RadzenMenuItem Text="Sign In" Path="signin" Icon="exit_to_app"/>
+                        <RadzenMenuItem Text="Sign Up" Path="signup" Icon="assignment_ind"/>
                     }
                 </RadzenStack>
             </RadzenMenu>
@@ -32,7 +32,7 @@
             <RadzenPanelMenuItem Text="Home" Path="" Icon="home" />
             @if (IdentityService.IsAuthenticated)
             {
-                <RadzenPanelMenuItem Text="Users" Path="account" Icon="account_box" />
+                <RadzenPanelMenuItem Text="Your account" Path="account" Icon="account_box" />
             }
         </RadzenPanelMenu>
     </RadzenSidebar>
