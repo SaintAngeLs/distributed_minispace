@@ -73,7 +73,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 {
                     ["permissions"] = user.Permissions,
                     ["name"] = new [] { user.Name },
-                    ["email"] = new [] { user.Email }
+                    ["e-mail"] = new [] { user.Email }
                 }
                 : null;
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
