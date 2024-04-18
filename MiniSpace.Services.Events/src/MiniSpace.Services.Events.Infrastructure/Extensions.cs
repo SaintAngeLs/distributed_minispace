@@ -36,6 +36,7 @@ using Newtonsoft.Json;
 using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Application.Services.Events;
 using MiniSpace.Services.Events.Core.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Contexts;
@@ -60,6 +61,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
+            builder.Services.AddTransient<IStudentsServiceClient, IStudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
@@ -72,7 +74,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddHttpClient()
                 .AddConsul()
                 .AddFabio()
-                //.AddExceptionToMessageMapper<ExceptionToMessageMapper>()
+                .AddExceptionToMessageMapper<ExceptionToMessageMapper>()
                 .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
                 .AddMessageOutbox(o => o.AddMongo())
                 .AddMongo()

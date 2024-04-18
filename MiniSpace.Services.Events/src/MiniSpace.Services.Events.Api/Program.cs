@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
                         // TODO: Add query for student latest enrolled events
-                        //.Post<>
+                        .Get<GetStudentEvents, IEnumerable<EventDto>>("events/student/{studentId}")
                         .Delete<DeleteEvent>("events/{eventsId}")
                     )
                 )
