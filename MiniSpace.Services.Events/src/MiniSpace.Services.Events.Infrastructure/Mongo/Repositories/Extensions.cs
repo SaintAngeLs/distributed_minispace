@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
@@ -61,14 +62,14 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Name, 
-                    new BsonRegularExpression($".*{name}*."));
+                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Name,
+                    new BsonRegularExpression(new Regex($".*{name}.*", RegexOptions.IgnoreCase)));
             }
 
             if (!string.IsNullOrWhiteSpace(organizer))
-            {
+            {   
                 filterDefinition &= filterDefinitionBuilder.Regex(x => x.Organizer.Name, 
-                    new BsonRegularExpression($".*{organizer}*."));
+                    new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
             }
 
             if (dateFrom != DateTime.MinValue)
