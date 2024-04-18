@@ -29,9 +29,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         }
 
         public async Task<Tuple<IEnumerable<Event>,int,int,int,int>> BrowseAsync(int pageNumber, int pageSize, string name, string organizer, 
-            DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, string direction)
+            DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, string direction, State state, 
+            IEnumerable<Guid> eventIds = null)
         {
-            var filterDefinition = Repositories.Extensions.ToFilterDefinition(name, organizer, dateFrom, dateTo);
+            var filterDefinition = Repositories.Extensions.ToFilterDefinition(name, organizer, dateFrom, dateTo, state, eventIds);
             var sortDefinition = Repositories.Extensions.ToSortDefinition(sortBy, direction);
             
             var pagedEvents = await _repository.Collection.AggregateByPage(

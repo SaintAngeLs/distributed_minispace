@@ -22,7 +22,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Capacity = document.Capacity,
                 Fee = document.Fee,
                 Category = document.Category.ToString(),
-                Status = document.State.ToString()
+                Status = document.State.ToString(),
+                PublishDate = document.PublishDate
             };
         
         public static Event AsEntity(this EventDocument document)

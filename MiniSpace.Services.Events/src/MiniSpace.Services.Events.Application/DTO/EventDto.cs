@@ -23,6 +23,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public decimal Fee { get; set; }
         public string Category { get; set; }
         public string Status { get; set; }
+        public DateTime PublishDate { get; set; }
         
         public EventDto()
         {
@@ -44,6 +45,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             Fee = @event.Fee;
             Category = @event.Category.ToString();
             Status = @event.State.ToString();
+            PublishDate = @event.PublishDate;
         }
     }
 }

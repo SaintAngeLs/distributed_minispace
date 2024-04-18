@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Wrappers;
+using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Services.Events
@@ -38,7 +39,7 @@ namespace MiniSpace.Services.Events.Application.Services.Events
             
             var result = await _eventRepository.BrowseAsync(
                 pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, 
-                command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
+                command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction, State.Published);
             
             var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e)), 
                 result.Item2, result.Item3, result.Item4, result.Item5);

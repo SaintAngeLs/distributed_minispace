@@ -13,6 +13,7 @@ namespace MiniSpace.Services.Events.Core.Repositories
         Task UpdateAsync(Event @event);
         Task DeleteAsync(Guid id);
         Task<Tuple<IEnumerable<Event>,int,int,int,int>> BrowseAsync(int pageNumber, int pageSize, string name,
-            string organizer, DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, string direction);
+            string organizer, DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, string direction,
+            State state, IEnumerable<Guid> eventIds = null);
     }
 }

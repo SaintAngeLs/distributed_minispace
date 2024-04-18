@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MiniSpace.Services.Events.Application.DTO;
+using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -55,10 +56,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         }
         
         public static FilterDefinition<EventDocument> ToFilterDefinition(string name, string organizer, 
-            DateTime dateFrom, DateTime dateTo)
+            DateTime dateFrom, DateTime dateTo, State state, IEnumerable<Guid> eventIds = null)
         {
             var filterDefinitionBuilder = Builders<EventDocument>.Filter;
             var filterDefinition = filterDefinitionBuilder.Empty;
+            filterDefinition &= filterDefinitionBuilder.Eq(x => x.State, state);
 
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -82,6 +84,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 filterDefinition &= filterDefinitionBuilder.Lte(x => x.EndDate, dateTo);
             }
 
+            if (eventIds != null)
+            {
+                filterDefinition &= filterDefinitionBuilder.In(x => x.Id, eventIds);
+            }
+
             return filterDefinition;
         }
         
@@ -90,7 +97,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             var sort = sortByArguments.ToList();
             if(!sort.Any())
             {
-                sort.Add("StartDate");
+                sort.Add("PublishDate");
             }
             var sortDefinitionBuilder = Builders<EventDocument>.Sort;
             var sortDefinition = sort
