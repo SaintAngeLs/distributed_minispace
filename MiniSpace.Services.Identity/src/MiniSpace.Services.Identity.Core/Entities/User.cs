@@ -48,23 +48,22 @@ namespace MiniSpace.Services.Identity.Core.Entities
         
         public void GrantOrganizerRights()
         {
-            if (Permissions.Contains(UserPermissions.OrganizeEvents))
+            if (Role != Entities.Role.User)
             {
-                throw new UserAlreadyAnOrganizerException(Id);
+                throw new UserCannotBecomeAnOrganizerException(Id, Role);
             }
-            Permissions = Permissions.Append(UserPermissions.OrganizeEvents);
+
+            Role = Entities.Role.Organizer;
         }
         
         public void RevokeOrganizerRights()
         {
-            if (!Permissions.Contains(UserPermissions.OrganizeEvents))
+            if (Role != Entities.Role.Organizer)
             {
                 throw new UserIsNotAnOrganizerException(Id);
             }
 
-            var permissionsList = Permissions.ToList();
-            permissionsList.Remove(UserPermissions.OrganizeEvents);
-            Permissions = permissionsList;
+            Role = Entities.Role.User;
         }
         
         public void Ban()
@@ -75,7 +74,6 @@ namespace MiniSpace.Services.Identity.Core.Entities
             }
 
             Role = Entities.Role.Banned;
-            RevokeOrganizerRights();
         }
         
         public void Unban()
