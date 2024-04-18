@@ -11,22 +11,22 @@
         <RadzenStack Gap="1rem">
             <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="3">
-                    <RadzenLabel Text="Name:" Component="name" />
+                    <RadzenLabel Text="Firstname:" Component="firstname" />
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="9">
-                    <RadzenTextBox Style="width: 100%;" Name="name" @bind-Value="signUpModel.Name" />
-                    <RadzenRequiredValidator Component="name" Text="Name is required" Popup=@popup
+                    <RadzenTextBox Style="width: 100%;" Name="firstname" @bind-Value="signUpModel.FirstName" />
+                    <RadzenRequiredValidator Component="firstname" Text="Firstname is required" Popup=@popup
                                              Style="position: absolute"/>
                 </RadzenColumn>
             </RadzenRow>
             
             <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="3">
-                    <RadzenLabel Text="Surname:" Component="surname" />
+                    <RadzenLabel Text="Lastname:" Component="lastname" />
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="9">
-                    <RadzenTextBox Style="width: 100%;" Name="surname" @bind-Value="signUpModel.Surname" />
-                    <RadzenRequiredValidator Component="surname" Text="Surname is required" Popup=@popup
+                    <RadzenTextBox Style="width: 100%;" Name="lastname" @bind-Value="signUpModel.LastName" />
+                    <RadzenRequiredValidator Component="lastname" Text="Lastname is required" Popup=@popup
                                              Style="position: absolute"/>
                 </RadzenColumn>
             </RadzenRow>
@@ -73,7 +73,7 @@
         var organizerPermission = new List<string> { "organize_events" };
         try
         {
-            await IdentityService.SignUpAsync(signUpModel.Name, signUpModel.Surname, signUpModel.Email,
+            await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
                 signUpModel.Password, "user", organizerPermission);
             NavigationManager.NavigateTo("/signin");
         }

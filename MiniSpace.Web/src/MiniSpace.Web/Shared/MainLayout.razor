@@ -29,10 +29,12 @@
     
     <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Path="" Icon="home" />
+            <RadzenPanelMenuItem Text="Home" Icon="home"
+                                 Click="@(() => NavigationManager.NavigateTo(""))" />
             @if (IdentityService.IsAuthenticated)
             {
-                <RadzenPanelMenuItem Text="Your account" Path="account" Icon="account_box" />
+                <RadzenPanelMenuItem Text="Account" Icon="account_box"
+                                     Click="@(() => NavigationManager.NavigateTo("account"))" />
             }
         </RadzenPanelMenu>
     </RadzenSidebar>
@@ -54,5 +56,5 @@
         IdentityService.Logout();
         NavigationManager.NavigateTo("");
     }
-
+    
 }
