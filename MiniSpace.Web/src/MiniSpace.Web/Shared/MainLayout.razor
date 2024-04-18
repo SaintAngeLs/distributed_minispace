@@ -1,40 +1,53 @@
-﻿@inherits LayoutComponentBase
+﻿@using Radzen
+@inherits LayoutComponentBase
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 
-<div class="sidebar">
-    <NavMenu />
-</div>
-
-<div class="main">
-    <div class="top-row px-4">
-        @if (IdentityService.IsAuthenticated)
-        {
-            <RadzenButton Click=@SignOut >
-                <span class="oi oi-account-logout" aria-hidden="true"></span> Sign Out
-            </RadzenButton>
-            <button class="nav-link btn btn-link" @onclick="SignOut">
-                <span class="oi oi-account-logout" aria-hidden="true"></span> Sign Out
-            </button>
-        }
-        else
-        {
-            <NavLink class="nav-link" href="signin">
-                <span class="oi oi-account-login" aria-hidden="true"></span> Sign In
-            </NavLink>
-            <NavLink class="nav-link" href="signup">
-                <span class="oi oi-pencil" aria-hidden="true"></span> Sign Up
-            </NavLink>
-        }
-    </div>
-
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+<RadzenLayout style="margin: -8.0px; width: 105%; text-align: center;"> 
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
+                     Style="width: 98.5%;">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)"/>
+                <RadzenLabel Text="MiniSpace"/>
+            </RadzenStack>
+            <RadzenMenu>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5em">
+                    @if (IdentityService.IsAuthenticated)
+                    {
+                        <RadzenMenuItem Text="Sign Out" Click=@SignOut Icon="exit_to_app"/>
+                    }
+                    else
+                    {
+                        <RadzenMenuItem Text="Sign In" Path="signin" Icon="account_circle"/>
+                        <RadzenMenuItem Text="Sign Up" Path="signup" Icon="account_circle"/>
+                    }
+                </RadzenStack>
+            </RadzenMenu>
+        </RadzenStack>
+    </RadzenHeader>
+    
+    <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Path="" Icon="home" />
+            @if (IdentityService.IsAuthenticated)
+            {
+                <RadzenPanelMenuItem Text="Users" Path="account" Icon="account_box" />
+            }
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    
+    <RadzenBody style="margin: -12.0px;">
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+</RadzenLayout>
 
 @code{
 
+    bool _sidebarExpanded = true;
+    
     void SignOut()
     {
         // Implement your sign-out logic here, e.g., redirect to sign-out path, clear authentication state
