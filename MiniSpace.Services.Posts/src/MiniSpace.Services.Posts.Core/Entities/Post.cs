@@ -56,6 +56,17 @@ namespace MiniSpace.Services.Posts.Core.Entities
             PublishDate = null;
         }
 
+        public bool UpdateState(DateTime now)
+        {
+            if (State == State.ToBePublished && PublishDate <= now)
+            {
+                SetPublished();
+                return true;
+            }
+            
+            return false;
+        }
+        
         public static Post Create(AggregateId id, Guid eventId, Guid studentId, string textContent,
             string mediaContent, DateTime createdAt, State state, DateTime? publishDate)
         {
@@ -71,7 +82,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
             TextContent = textContent;
             MediaContent = mediaContent;
         }
-
+        
         private static void CheckContent(AggregateId id, string textContent, string mediaContent)
         {
             if (string.IsNullOrWhiteSpace(textContent) && string.IsNullOrWhiteSpace(mediaContent))

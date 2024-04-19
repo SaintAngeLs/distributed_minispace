@@ -38,6 +38,7 @@ using MiniSpace.Services.Posts.Infrastructure.Logging;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Posts.Infrastructure.Services;
+using MiniSpace.Services.Posts.Infrastructure.Services.Workers;
 
 namespace MiniSpace.Services.Posts.Infrastructure
 {
@@ -54,6 +55,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
+            builder.Services.AddHostedService<PostStateUpdaterWorker>();
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()

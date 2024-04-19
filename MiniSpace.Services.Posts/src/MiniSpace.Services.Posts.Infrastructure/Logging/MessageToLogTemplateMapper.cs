@@ -1,5 +1,6 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Posts.Application.Commands;
+using MiniSpace.Services.Posts.Application.Events;
 using MiniSpace.Services.Posts.Application.Events.External;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Logging
@@ -44,7 +45,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Logging
                     {
                         After = "Deleted a student with id: {StudentId}."
                     }
-                }
+                },
+                {
+                    typeof(PostsStateUpdated),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Updated state of posts at: {Now}."
+                    }
+                },
             };
         
         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class

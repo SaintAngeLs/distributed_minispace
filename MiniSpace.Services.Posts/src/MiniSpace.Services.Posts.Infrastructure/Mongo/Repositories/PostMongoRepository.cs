@@ -2,6 +2,8 @@ using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 {
@@ -21,6 +23,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
             return post?.AsEntity();
         }
 
+        public async Task<IEnumerable<Post>> GetToUpdateAsync()
+        {
+            var posts = _repository.Collection.AsQueryable();
+            var postsToUpdate = await posts.Where(e 
+                => e.State == State.ToBePublished || e.State == State.Published).ToListAsync();
+            return postsToUpdate.Select(e => e.AsEntity());
+        }
+        
         public Task AddAsync(Post post)
             => _repository.AddAsync(post.AsDocument());
 
