@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Convey;
-using Convey.Auth;
 using Convey.CQRS.Commands;
 using Convey.CQRS.Events;
 using Convey.CQRS.Queries;
@@ -27,7 +26,6 @@ using Convey.WebApi;
 using Convey.WebApi.CQRS;
 using Convey.WebApi.Swagger;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +33,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Application.Commands;
+using MiniSpace.Services.Events.Application.Events;
+using MiniSpace.Services.Events.Application.Events.External;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Application.Services.Events;
@@ -74,7 +74,6 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddErrorHandler<ExceptionToResponseMapper>()
                 .AddQueryHandlers()
                 .AddInMemoryQueryDispatcher()
-                .AddJwt()
                 .AddHttpClient()
                 .AddConsul()
                 .AddFabio()
@@ -98,22 +97,19 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UseSwaggerDocs()
                 .UseJaeger()
                 .UseConvey()
-                .UseAccessTokenValidator()
                 //.UseMongo()
                 .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<AddEvent>();
+                .SubscribeCommand<AddEvent>()
+                .SubscribeCommand<DeleteEvent>()
+                .SubscribeCommand<RateEvent>()
+                .SubscribeCommand<SignUpToEvent>()
+                .SubscribeCommand<ShowInterestInEvent>()
+                .SubscribeEvent<StudentCreated>();
 
             return app;
-        }
-
-        public static async Task<Guid> AuthenticateUsingJwtAsync(this HttpContext context)
-        {
-            var authentication = await context.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-
-            return authentication.Succeeded ? Guid.Parse(authentication.Principal.Identity.Name) : Guid.Empty;
         }
 
         internal static CorrelationContext GetCorrelationContext(this IHttpContextAccessor accessor)
