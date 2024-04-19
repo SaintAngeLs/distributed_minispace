@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Events.Application.Commands;
+using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Events.External;
 using MiniSpace.Services.Events.Application.Exceptions;
 
@@ -52,6 +53,20 @@ namespace MiniSpace.Services.Events.Infrastructure.Logging
                     new HandlerLogTemplate
                     {
                         After = "Student with id: {StudentId} signed up to event with id: {EventId}."
+                    }
+                },
+                {
+                    typeof(EventBackgroundWorkerStarted),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Background worker with name: {Name} has started."
+                    }
+                },
+                {
+                    typeof(EventBackgroundWorkerStopped),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Background worker with name: {Name} has stopped."
                     }
                 },
                 {

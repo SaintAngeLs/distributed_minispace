@@ -48,6 +48,7 @@ using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Services;
 using MiniSpace.Services.Events.Infrastructure.Services.Clients;
+using MiniSpace.Services.Events.Infrastructure.Services.Workers;
 
 namespace MiniSpace.Services.Events.Infrastructure
 {
@@ -64,8 +65,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
-            // TODO: add background worker
-            //builder.Services.AddHostedService<>()
+            builder.Services.AddHostedService<EventStateUpdaterWorker>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
