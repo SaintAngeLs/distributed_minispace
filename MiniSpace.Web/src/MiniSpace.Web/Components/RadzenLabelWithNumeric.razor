@@ -1,11 +1,11 @@
 @using Radzen
 
-<RadzenRow AlignItems="AlignItems.Center">
+<RadzenRow AlignItems="AlignItems.Center" Style="height: 3.5em">
     <RadzenColumn Size="12" SizeMD="3">
         <RadzenLabel Text="@LabelText" Component="@Id" />
     </RadzenColumn>
     <RadzenColumn Size="12" SizeMD="9">
-        <RadzenTextBox Style="width: 100%;" Disabled="@Disabled" Name="@Id"
+        <RadzenNumeric Style="width: 82%;" Disabled="@Disabled" Name="@Id"
                        @bind-Value="Value" />
     </RadzenColumn>
 </RadzenRow>
@@ -17,7 +17,7 @@
     [Parameter]
     public string LabelText { get; set; }
     [Parameter]
-    public string Value { get; set; }
+    public int Value { get; set; }
     [Parameter]
     public bool Disabled { get; set; }
 }
