@@ -56,17 +56,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Logging
                     }
                 },
                 {
-                    typeof(EventBackgroundWorkerStarted),     
+                    typeof(UpdateEventsState),     
                     new HandlerLogTemplate
                     {
-                        After = "Background worker with name: {Name} has started."
-                    }
-                },
-                {
-                    typeof(EventBackgroundWorkerStopped),     
-                    new HandlerLogTemplate
-                    {
-                        After = "Background worker with name: {Name} has stopped."
+                        After = "Events' state updated at: {Now}."
                     }
                 },
                 {

@@ -134,5 +134,31 @@ namespace MiniSpace.Services.Events.Core.Entities
 
             _ratings.Add(new Rating(studentId, rating));
         }
+
+        public bool UpdateState(DateTime now)
+        {
+            if(State == State.ToBePublished && PublishDate <= now)
+            {
+                ChangeState(State.Published);
+            }
+            else if (State == State.Published && EndDate <= now)
+            {
+                ChangeState(State.Archived);
+            }
+            else
+                return false;
+
+            return true;
+        }
+        
+        private void ChangeState(State state)
+        {
+            if (State == state)
+            {
+                return;
+            }
+
+            State = state;
+        }
     }
 }

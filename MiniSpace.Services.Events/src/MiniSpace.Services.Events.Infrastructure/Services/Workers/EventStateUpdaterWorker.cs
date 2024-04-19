@@ -15,12 +15,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Workers
     {
         private readonly IMessageBroker _messageBroker;
         private readonly ICommandDispatcher _commandDispatcher;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly TimeSpan _updateInterval = TimeSpan.FromMinutes(10);
         
-        public EventStateUpdaterWorker(IMessageBroker messageBroker, ICommandDispatcher commandDispatcher)
+        public EventStateUpdaterWorker(IMessageBroker messageBroker, ICommandDispatcher commandDispatcher,
+            IDateTimeProvider dateTimeProvider)
         {
             _messageBroker = messageBroker;
             _commandDispatcher = commandDispatcher;
+            _dateTimeProvider = dateTimeProvider;
         }
         
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,7 +33,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Workers
             {
                 try
                 {
-                    await _commandDispatcher.SendAsync(new UpdateEventsState(), stoppingToken);
+                    await _commandDispatcher.SendAsync(new UpdateEventsState(_dateTimeProvider.Now), stoppingToken);
                     await Task.Delay(_updateInterval, stoppingToken);
                 }
                 catch (TaskCanceledException)

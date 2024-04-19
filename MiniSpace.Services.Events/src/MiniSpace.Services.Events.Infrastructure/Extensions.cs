@@ -65,10 +65,10 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
-            builder.Services.AddHostedService<EventStateUpdaterWorker>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
+            builder.Services.AddHostedService<EventStateUpdaterWorker>();
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
