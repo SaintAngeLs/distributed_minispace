@@ -19,7 +19,7 @@
                                 Value="@studentDto.Email" Disabled="true" />
 
         <RadzenLabelWithTextBox Id="description" LabelText="Description:"
-                                Value="@studentDto.Description" Disabled=@editionDisabled />
+                                @bind-Value="@studentDto.Description" Disabled=@editionDisabled />
 
         <RadzenLabelWithTextBox Id="state" LabelText="State:"
                                 Value="@studentDto.State" Disabled="true" />
@@ -34,7 +34,7 @@
                                    Value="@studentDto.CreatedAt" Disabled="true" />
 
         <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
-                                 Value="@studentDto.EmailNotifications" Disabled=@editionDisabled />
+                                 @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled />
 
         @if (studentDto.State == "incomplete")
         {

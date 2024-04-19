@@ -1,6 +1,7 @@
 @page "/signup/complete"
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.Components
 @using MiniSpace.Web.Models.Students
 @using Radzen
 @inject IIdentityService IdentityService
@@ -18,55 +19,34 @@
                     Submit="@(async (CompleteRegistrationModel args) => { await HandleCompleteRegistration(); })">
     <RadzenFieldset>
         <RadzenStack Gap="1rem">
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="3">
-                    <RadzenLabel Text="Description:" Component="description" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
-                    <RadzenTextBox Style="width: 100%;" Name="description"
-                                   @bind-Value="completeRegistrationModel.Description" />
-                    <RadzenRequiredValidator Component="description" Text="Description is required" Popup=@popup
-                                             Style="position: absolute"/>
-                </RadzenColumn>
-            </RadzenRow>
+            <RadzenLabelWithTextBox Id="description" LabelText="Description:" Disabled="false"
+                                    @bind-Value="@completeRegistrationModel.Description"
+                                    ValueRequired="true" Popup=@popup />
             
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="3">
-                    <RadzenLabel Text="Date of birth:" Component="date-of-birth" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
-                    <RadzenDatePicker Style="width: 100%;" Name="date-of-birth" ShowCalendarWeek
-                                      @bind-Value="completeRegistrationModel.DateOfBirth" />
-                </RadzenColumn>
-            </RadzenRow>
+            <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:" Disabled="false"
+                                       @bind-Value="@completeRegistrationModel.DateOfBirth" />
             
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="3">
-                    <RadzenLabel Text="Profile image:" Component="profile-image" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
-                    <RadzenFileInput Style="width: 100%;" Name="profile-image"
-                                     @bind-FileName=@fileName @bind-FileSize=@fileSize TValue="string" class="w-100"
-                                     @bind-Value=@completeRegistrationModel.ProfileImage
-                                     Change=@(args => OnChange(args, "FileInput"))
-                                     Error=@(args => OnError(args, "FileInput"))
-                                     InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})" />
-                </RadzenColumn>
-            </RadzenRow>
+            @* <RadzenRow AlignItems="AlignItems.Center"> *@
+            @*     <RadzenColumn Size="12" SizeMD="3"> *@
+            @*         <RadzenLabel Text="Profile image:" Component="profile-image" /> *@
+            @*     </RadzenColumn> *@
+            @*     <RadzenColumn Size="12" SizeMD="9"> *@
+            @*         <RadzenFileInput Style="width: 100%;" Name="profile-image" *@
+            @*                          @bind-FileName=@fileName @bind-FileSize=@fileSize TValue="string" class="w-100" *@
+            @*                          @bind-Value=@completeRegistrationModel.ProfileImage *@
+            @*                          Change=@(args => OnChange(args, "FileInput")) *@
+            @*                          Error=@(args => OnError(args, "FileInput")) *@
+            @*                          InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})" /> *@
+            @*     </RadzenColumn> *@
+            @* </RadzenRow> *@
             
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="3">
-                    <RadzenLabel Text="Email notifications:" Component="email-notifications" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
-                    <RadzenCheckBox Style="width: 100%;" Name="email-notifications"
-                                    @bind-Value="completeRegistrationModel.EmailNotifications" />
-                </RadzenColumn>
-            </RadzenRow>
+            <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:" Disabled="false"
+                                     @bind-Value="@completeRegistrationModel.EmailNotifications" />
             
             <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="12">
-                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Complete registration"/>
+                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large"
+                                  Text="Complete registration" class="rz-border-radius-3"/>
                 </RadzenColumn>
             </RadzenRow>
         </RadzenStack>

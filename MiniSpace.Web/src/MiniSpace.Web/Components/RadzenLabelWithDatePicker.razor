@@ -1,12 +1,12 @@
 @using Radzen
 
-<RadzenRow AlignItems="AlignItems.Center" Style="height: 3.5em">
+<RadzenRow AlignItems="AlignItems.Center" Style="height: 5em">
     <RadzenColumn Size="12" SizeMD="3">
         <RadzenLabel Text="@LabelText" Component="@Id" />
     </RadzenColumn>
     <RadzenColumn Size="12" SizeMD="9">
         <RadzenDatePicker Style="width: 82%;" Disabled="@Disabled" Name="@Id"
-                       @bind-Value="Value" DateFormat="dd-MM-yyyy" />
+                       @bind-Value="@Value" DateFormat="dd-MM-yyyy" />
     </RadzenColumn>
 </RadzenRow>
 
@@ -17,7 +17,28 @@
     [Parameter]
     public string LabelText { get; set; }
     [Parameter]
-    public DateTime Value { get; set; }
-    [Parameter]
     public bool Disabled { get; set; }
+    [Parameter]
+    public DateTime Value
+    {
+        get => _value;
+        set 
+        { 
+            if (!Equals(value, _value))
+            {
+                _value = value;
+                if (ValueChanged.HasDelegate)
+                    ValueChanged.InvokeAsync(_value);
+            }
+        }
+    }
+    [Parameter]
+    public EventCallback<DateTime> ValueChanged { get; set; }
+    
+    private DateTime _value;
+
+    protected override void OnParametersSet()
+    {
+        _value = Value;
+    }
 }
