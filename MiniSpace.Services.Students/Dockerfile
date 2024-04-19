@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN dotnet publish src/MiniSpace.APIGateway -c Release -o out
+RUN dotnet publish src/MiniSpace.Services.Students.Api -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
@@ -14,4 +14,4 @@ ENV ASPNETCORE_URLS=http://*:80
 ENV ASPNETCORE_ENVIRONMENT=docker
 ENV NTRADA_CONFIG=ntrada.docker
 
-ENTRYPOINT ["dotnet", "MiniSpace.APIGateway.dll"]
+ENTRYPOINT ["dotnet", "MiniSpace.Services.Students.Api.dll"]

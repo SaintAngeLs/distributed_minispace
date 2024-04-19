@@ -20,6 +20,24 @@ services:
       - 5004:80
     networks:
       - minispace
+
+  students-service:
+    image: adrianvsaint/minispace.services.students:latest
+    container_name: students-service
+    restart: unless-stopped
+    ports:
+      - 5007:80
+    networks:
+      - minispace
+
+  events-service:
+    image: adrianvsaint/minispace.services.events:latest
+    container_name: events-service
+    restart: unless-stopped
+    ports:
+      - 5008:80
+    networks:
+      - minispace
     
   web:
     image: adrianvsaint/minispace.web:latest
