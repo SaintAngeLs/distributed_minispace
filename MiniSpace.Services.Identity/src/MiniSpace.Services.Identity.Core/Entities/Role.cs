@@ -5,6 +5,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public const string User = "user";
         public const string Admin = "admin";
         public const string Banned = "banned";
+        public const string Organizer = "organizer";
 
         public static bool IsValid(string role)
         {
@@ -15,7 +16,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
 
             role = role.ToLowerInvariant();
 
-            return role == User || role == Admin || role == Banned;
+            return role == User || role == Admin || role == Banned || role == Organizer;
         }
     }
 }
