@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MiniSpace.Web.Areas.Events;
 //using MiniSpace.Web.Data;
 using MiniSpace.Web.Models.Identity;
 using MiniSpace.Web.Areas.Identity;
@@ -50,6 +51,7 @@ namespace MiniSpace.Web
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IStudentsService, StudentsService>();
+            services.AddScoped<IEventsService, EventsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
