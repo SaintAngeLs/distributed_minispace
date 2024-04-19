@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export ASPNETCORE_ENVIRONMENT=Development
+export ASPNETCORE_ENVIRONMENT=docker
 
 cd ..
 
