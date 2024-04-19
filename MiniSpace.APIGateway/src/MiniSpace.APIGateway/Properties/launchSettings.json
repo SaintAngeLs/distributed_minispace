@@ -14,7 +14,7 @@
         "ASPNETCORE_ENVIRONMENT": "local"
       }
     },
-    "Pacco.APIGateway": {
+    "MiniSpace.APIGateway": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5000",

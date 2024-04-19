@@ -40,17 +40,17 @@ namespace MiniSpace.Services.Identity.Api
                             await ctx.Response.WriteJsonAsync(pagedResult);
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
-                        .Get<GetEvent, EventDto>("events/{eventsId}")
+                        .Get<GetEvent, EventDto>("events/{eventId}")
                         //.Get<GetEventsOrganizer, IEnumerable<EventDto>>("events/organizer/{organizerId}")
                         //.Put<UpdateEvent>("events/{eventId}")
                         .Post<AddEvent>("events", 
-                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"orders/{cmd.EventId}"))
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))
                         .Post<SignUpToEvent>("events/{eventId}/sign-up")
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
                         // TODO: Add query for student latest enrolled events
                         .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
-                        .Delete<DeleteEvent>("events/{eventsId}")
+                        .Delete<DeleteEvent>("events/{eventId}")
                     )
                 )
                 .UseLogging()

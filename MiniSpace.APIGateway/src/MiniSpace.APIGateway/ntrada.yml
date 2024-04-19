@@ -230,10 +230,10 @@ modules:
         downstream: events-service/events
         auth: true
 
-      - upstream: /
+      - upstream: /{eventId}
         method: PUT
         use: downstream
-        downstream: events-service/events
+        downstream: events-service/events/{eventId}
         auth: true
 
       - upstream: /{eventId}
@@ -252,22 +252,22 @@ modules:
         use: downstream
         downstream: events-service/events/search
 
-      - upstream: /show-interest
+      - upstream: /{eventId}/show-interest
         method: POST
         use: downstream
-        downstream: events-service/events/show-interest
+        downstream: events-service/events/{eventId}/show-interest
         auth: true
 
-      - upstream: /sign-up
+      - upstream: /{eventId}/sign-up
         method: POST
         use: downstream
-        downstream: events-service/events/sign-up
+        downstream: events-service/events/{eventId}/sign-up
         auth: true
 
-      - upstream: /{organizerId}
+      - upstream: /organizer/{organizerId}
         method: GET
         use: downstream
-        downstream: events-service/events/{organizerId}
+        downstream: events-service/events/organizer/{organizerId}
         auth: true
 
     services:
