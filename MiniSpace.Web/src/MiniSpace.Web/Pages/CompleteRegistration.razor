@@ -3,6 +3,7 @@
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.Components
 @using MiniSpace.Web.Models.Students
+@using System.IO
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
@@ -26,19 +27,15 @@
             <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:" Disabled="false"
                                        @bind-Value="@completeRegistrationModel.DateOfBirth" />
             
-            @* <RadzenRow AlignItems="AlignItems.Center"> *@
-            @*     <RadzenColumn Size="12" SizeMD="3"> *@
-            @*         <RadzenLabel Text="Profile image:" Component="profile-image" /> *@
-            @*     </RadzenColumn> *@
-            @*     <RadzenColumn Size="12" SizeMD="9"> *@
-            @*         <RadzenFileInput Style="width: 100%;" Name="profile-image" *@
-            @*                          @bind-FileName=@fileName @bind-FileSize=@fileSize TValue="string" class="w-100" *@
-            @*                          @bind-Value=@completeRegistrationModel.ProfileImage *@
-            @*                          Change=@(args => OnChange(args, "FileInput")) *@
-            @*                          Error=@(args => OnError(args, "FileInput")) *@
-            @*                          InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})" /> *@
-            @*     </RadzenColumn> *@
-            @* </RadzenRow> *@
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenLabel Text="Profile image:" Component="profile-image" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="9">
+                    <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100"
+                                    InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})" />
+                </RadzenColumn>
+            </RadzenRow>
             
             <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:" Disabled="false"
                                      @bind-Value="@completeRegistrationModel.EmailNotifications" />
@@ -46,7 +43,7 @@
             <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="12">
                     <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large"
-                                  Text="Complete registration" class="rz-border-radius-3"/>
+                                  Text="Complete registration" />
                 </RadzenColumn>
             </RadzenRow>
         </RadzenStack>
@@ -89,7 +86,7 @@
     
     void OnChange(string value, string name)
     {
-        showError = true;
+        showError = false;
         StateHasChanged(); // Force the component to re-render
     }
 
@@ -97,5 +94,42 @@
     {
         showError = true;
         StateHasChanged(); // Force the component to re-render
+    }
+    
+    async void OnClientChange(UploadChangeEventArgs args)
+    {
+        Console.WriteLine("Client-side upload changed");
+
+        foreach (var file in args.Files)
+        {
+            Console.WriteLine($"File: {file.Name} / {file.Size} bytes");
+
+            try
+            {
+                long maxFileSize = 10 * 1024 * 1024;
+                var stream = file.OpenReadStream(maxFileSize);
+                byte[] bytes = await ReadFully(stream);
+                completeRegistrationModel.ProfileImage = Convert.ToBase64String(bytes);
+                stream.Close();
+            }
+            catch (Exception ex)
+            { 
+                Console.WriteLine($"Client-side file read error: {ex.Message}");
+            }
+        }
+    }
+    
+    private static async Task<byte[]> ReadFully(Stream input)
+    {
+        byte[] buffer = new byte[16*1024];
+        using (MemoryStream ms = new MemoryStream())
+        {
+            int read;
+            while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+            return ms.ToArray();
+        }
     }
 }
