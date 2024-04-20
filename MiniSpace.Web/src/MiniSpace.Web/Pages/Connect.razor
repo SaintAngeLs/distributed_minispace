@@ -1,6 +1,36 @@
-<div>
-    <h1>Connect</h1>
-    <p>Contact Us:</p>
-    <p>Email: support@minispace.com</p>
-    <p>Phone: +123 456 7890</p>
+@using MudBlazor
+@inject NavigationManager NavigationManager
+
+<div class="connect-section">
+    <MudContainer MaxWidth="MaxWidth.False" Class="connect-container" Style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+        <MudText Typo="Typo.h3" Class="connect-title" Style="color: white; margin-bottom: 2rem; animation: fadeInUp 1s ease-out;">
+            Connect with Your World
+        </MudText>
+        <MudText Typo="Typo.body1" Style="color: white; max-width: 600px; text-align: center; margin-bottom: 2rem; animation: fadeInUp 1s ease-out; animation-delay: 0.5s;">
+            Join MiniSpace today and start exploring, sharing, and connecting like never before. Create your account or login to dive into the experience.
+        </MudText>
+        <div class="button-group" Style="animation: fadeInUp 1s ease-out; animation-delay: 1s;">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="mud-button-connect" Onclick="@CreateAccount">
+                Create Account
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Large" Class="mud-button-connect" Onclick="@Login">
+                Login
+            </MudButton>
+        </div>
+    </MudContainer>
 </div>
+
+@code {
+    private EventCallback CreateAccount => EventCallback.Factory.Create(this, GoToRegister);
+    private EventCallback Login => EventCallback.Factory.Create(this, GoToLogin);
+
+    private void GoToRegister()
+    {
+        NavigationManager.NavigateTo("/signup");
+    }
+
+    private void GoToLogin()
+    {
+        NavigationManager.NavigateTo("/signin");
+    }
+}
