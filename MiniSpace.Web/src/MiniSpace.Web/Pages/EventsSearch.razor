@@ -39,39 +39,52 @@
     </Template>
 </RadzenDataList>
 
-<RadzenPager ShowPagingSummary="true" PagingSummaryFormat="@pagingSummaryFormat" HorizontalAlign="HorizontalAlign.Right" Count="count" PageSize="@pageSize" PageNumbersCount="5" PageChanged="@PageChanged" />
+<RadzenPager ShowPagingSummary="true" PagingSummaryFormat="@pagingSummaryFormat" HorizontalAlign="HorizontalAlign.Right"
+             Count="count" PageSize="@searchEventModel.Pageable.Size" PageNumbersCount="5" PageChanged="@PageChanged" />
 
 @code {
+    
+    private SearchEventModel searchEventModel = new()
+    {
+        Name = "",
+        Organizer = "",
+        DateFrom = "",
+        DateTo = "",
+        Pageable = new PageableDto()
+        {
+            Page = 1,
+            Size = 6,
+            Sort = new SortDto()
+            {
+                SortBy = new List<string>() { "dateFrom" },
+                Direction = "Ascending"
+            }
+        }
+    };
+    
     private bool showError = false;
     private bool popup;
     private int publishInfo = 1;
     
     string pagingSummaryFormat = "Displaying page {0} of {1} (total {2} records)";
-    int pageSize = 2;
-    int count = 12;
+    int count = 0;
     IEnumerable<EventDto> events;
-    IEnumerable<EventDto> eventPages;
+    
     
     protected override async Task OnInitializedAsync()
     {
-        var tmp = await EventsService.SearchEventsAsync("event", "",
-            new DateTime(2024, 04, 10).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            new DateTime(2024, 04, 30).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            new PageableDto()
-            {
-                Page = 1,
-                Size = 6,
-                Sort = new SortDto()
-                {
-                    SortBy = new List<string>(){"description"},
-                    Direction = "Ascending"
-                }
-            });
+        var tmp = await EventsService.SearchEventsAsync(searchEventModel.Name, searchEventModel.Organizer,
+            searchEventModel.DateFrom, searchEventModel.DateTo, searchEventModel.Pageable);
+        count = tmp.TotalElements;
         events = tmp.Content;
     }
 
-    void PageChanged(PagerEventArgs args)
+    private async void PageChanged(PagerEventArgs args)
     {
-        //events = GetEvents(args.Skip, args.Top);
+        searchEventModel.Pageable.Page = args.PageIndex + 1;
+        
+        var tmp = await EventsService.SearchEventsAsync(searchEventModel.Name, searchEventModel.Organizer,
+            searchEventModel.DateFrom, searchEventModel.DateTo, searchEventModel.Pageable);
+        events = tmp.Content;
     }
 }
