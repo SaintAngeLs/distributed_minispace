@@ -70,11 +70,10 @@
     
     private async Task HandleSignUp()
     {
-        var organizerPermission = new List<string> { "organize_events" };
         try
         {
             await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
-                signUpModel.Password, "user", organizerPermission);
+                signUpModel.Password, "user");
             NavigationManager.NavigateTo("/signin");
         }
         catch (Exception ex)
