@@ -1,10 +1,10 @@
 @using Radzen
 
 <RadzenRow AlignItems="AlignItems.Center" Style="height: 5em">
-    <RadzenColumn Size="12" SizeMD="3">
+    <RadzenColumn Size="12" SizeMD="5">
         <RadzenLabel Text="@LabelText" Component="@Id" />
     </RadzenColumn>
-    <RadzenColumn Size="12" SizeMD="9">
+    <RadzenColumn Size="12" SizeMD="5">
         <RadzenNumeric Style="width: 82%;" Disabled="@Disabled" Name="@Id"
                        @bind-Value="Value" />
     </RadzenColumn>

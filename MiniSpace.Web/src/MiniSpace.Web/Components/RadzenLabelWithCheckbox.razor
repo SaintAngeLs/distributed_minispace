@@ -1,11 +1,11 @@
 @using Radzen
 
 <RadzenRow AlignItems="AlignItems.Center" Style="height: 5em">
-    <RadzenColumn Size="12" SizeMD="3">
+    <RadzenColumn Size="12" SizeMD="5">
         <RadzenLabel Text="@LabelText" Component="@Id" />
     </RadzenColumn>
-    <RadzenColumn Size="12" SizeMD="9">
-        <RadzenCheckBox Style="width: 7.5%; height: 2.5em" Disabled="@Disabled" Name="@Id"
+    <RadzenColumn Size="12" SizeMD="5">
+        <RadzenCheckBox Style="width: 2.5em; height: 2.5em" Disabled="@Disabled" Name="@Id"
                         @bind-Value="Value" />
     </RadzenColumn>
 </RadzenRow>

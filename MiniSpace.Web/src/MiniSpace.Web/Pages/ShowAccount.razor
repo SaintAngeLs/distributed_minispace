@@ -2,46 +2,53 @@
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
+@using System.IO
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 
-<h1>Data of your account:</h1>
+<h1>Your account</h1>
 
 @if (studentDto.Id != Guid.Empty)
 {
     <RadzenStack Gap="1rem">
+        <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
+            <RadzenImage Path="@($"data:image/jpeg;base64,{@studentDto.ProfileImage}")"
+                         AlternateText="base64 image"
+                         Style="width: 50%"/>
+        </RadzenStack>
+        
         <RadzenLabelWithTextBoxes Id="fullname" LabelText="Fullname:" Value1="@studentDto.FirstName"
-                                  Value2="@studentDto.LastName" Disabled="true" />
+                                  Value2="@studentDto.LastName" Disabled="true"/>
 
         <RadzenLabelWithTextBox Id="email" LabelText="Email:"
-                                Value="@studentDto.Email" Disabled="true" />
+                                Value="@studentDto.Email" Disabled="true"/>
 
         <RadzenLabelWithTextBox Id="description" LabelText="Description:"
-                                @bind-Value="@studentDto.Description" Disabled=@editionDisabled />
+                                @bind-Value="@studentDto.Description" Disabled=@editionDisabled/>
 
         <RadzenLabelWithTextBox Id="state" LabelText="State:"
-                                Value="@studentDto.State" Disabled="true" />
+                                Value="@studentDto.State" Disabled="true"/>
 
         <RadzenLabelWithNumeric Id="number-of-friends" LabelText="Number of friends:"
-                                Value="@studentDto.NumberOfFriends" Disabled="true" />
+                                Value="@studentDto.NumberOfFriends" Disabled="true"/>
 
         <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:"
-                                   Value="@studentDto.DateOfBirth" Disabled="true" />
+                                   Value="@studentDto.DateOfBirth" Disabled="true"/>
 
         <RadzenLabelWithDatePicker Id="created-at" LabelText="Created at:"
-                                   Value="@studentDto.CreatedAt" Disabled="true" />
+                                   Value="@studentDto.CreatedAt" Disabled="true"/>
 
         <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
-                                 @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled />
+                                 @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
 
         @if (studentDto.State == "incomplete")
         {
             <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="12">
                     <RadzenButton Size="ButtonSize.Large" Text="Complete registration"
-                                  Click="@(() => NavigationManager.NavigateTo("/signup/complete"))" />
+                                  Click="@(() => NavigationManager.NavigateTo("/signup/complete"))"/>
                 </RadzenColumn>
             </RadzenRow>
         }
@@ -52,18 +59,23 @@
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
                         <RadzenButton Size="ButtonSize.Large" Text="Update account"
-                                      Click=@EnableEdition />
+                                      Click=@EnableEdition/>
                     </RadzenColumn>
-                </RadzenRow>   
+                </RadzenRow>
             }
             else
             {
                 <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenButton Size="ButtonSize.Large" Text="Save account"
-                                      Click=@HandleUpdateStudent />
+                    <RadzenColumn Size="12" SizeMD="5">
+                        <RadzenLabel Text="Update profile image:" Component="profile-image" />
+                        <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100" Name="profile-image"
+                                      InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "select file" } })"/>
                     </RadzenColumn>
-                </RadzenRow>   
+                    <RadzenColumn Size="12" SizeMD="5">
+                        <RadzenButton Size="ButtonSize.Large" Text="Save account"
+                                      Click=@HandleUpdateStudent/>
+                    </RadzenColumn>
+                </RadzenRow>
             }
         }
     </RadzenStack>
@@ -98,5 +110,42 @@ else
         await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImage,
             studentDto.Description, studentDto.EmailNotifications);
         StateHasChanged();
+    }
+    
+    async void OnClientChange(UploadChangeEventArgs args)
+    {
+        Console.WriteLine("Client-side upload changed");
+
+        foreach (var file in args.Files)
+        {
+            Console.WriteLine($"File: {file.Name} / {file.Size} bytes");
+
+            try
+            {
+                long maxFileSize = 10 * 1024 * 1024;
+                var stream = file.OpenReadStream(maxFileSize);
+                byte[] bytes = await ReadFully(stream);
+                studentDto.ProfileImage = Convert.ToBase64String(bytes);
+                stream.Close();
+            }
+            catch (Exception ex)
+            { 
+                Console.WriteLine($"Client-side file read error: {ex.Message}");
+            }
+        }
+    }
+    
+    private static async Task<byte[]> ReadFully(Stream input)
+    {
+        byte[] buffer = new byte[16*1024];
+        using (MemoryStream ms = new MemoryStream())
+        {
+            int read;
+            while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+            return ms.ToArray();
+        }
     }
 }
