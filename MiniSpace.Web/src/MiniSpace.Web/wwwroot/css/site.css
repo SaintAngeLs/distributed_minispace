@@ -277,6 +277,10 @@ html, body {
 .rz-navigation-item-link {
     color: #fff !important;
 }
+
+.rz-navigation-item-link :hover {
+    color: #98d1ff !important;
+}
 .rz-navigation-item-icon {
     color: #fff !important;
 }
@@ -337,14 +341,4 @@ html, body {
 .button-group {
     display: flex;
     gap: 20px;
-}
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 50%, 0);
-    }
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
 }

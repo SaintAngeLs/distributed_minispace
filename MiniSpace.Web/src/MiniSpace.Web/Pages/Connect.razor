@@ -10,10 +10,10 @@
             Join MiniSpace today and start exploring, sharing, and connecting like never before. Create your account or login to dive into the experience.
         </MudText>
         <div class="button-group" Style="animation: fadeInUp 1s ease-out; animation-delay: 1s;">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="mud-button-connect" Onclick="@CreateAccount">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="mud-button-connect" OnClick="@GoToRegister">
                 Create Account
             </MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Large" Class="mud-button-connect" Onclick="@Login">
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Large" Class="mud-button-connect" OnClick="@GoToLogin">
                 Login
             </MudButton>
         </div>
@@ -21,9 +21,6 @@
 </div>
 
 @code {
-    private EventCallback CreateAccount => EventCallback.Factory.Create(this, GoToRegister);
-    private EventCallback Login => EventCallback.Factory.Create(this, GoToLogin);
-
     private void GoToRegister()
     {
         NavigationManager.NavigateTo("/signup");

@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using MudBlazor
 
+
+
 <MudLayout Class="landing-page container">
     <MudContainer MaxWidth="MaxWidth.False" Class="split-screen" Style="display: flex; align-items: center; justify-content: center; height: 80vh; margin-left: auto; margin-right: auto;" id="home">
         <MudGrid Style="width: 100%;">
@@ -15,9 +17,9 @@
                 </MudCarousel>
             </MudItem>
             <MudItem xs="12" md="6" Class="content-section" Style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
-                <MudText Typo="Typo.h4" Class="mini-space-title" Style="font-size: 3rem; font-weight: bold; color: #555; margin-bottom: 0.5rem;">Mini Space</MudText>
-                <MudText Typo="Typo.h4" Class="welcome-title" Style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">@titles[activeIndex]</MudText>
-                <MudText Typo="Typo.h6" Class="welcome-tagline" Style="color: #555; margin-bottom: 2rem;">@descriptions[activeIndex]</MudText>
+                <MudText Typo="Typo.h4" Class="mini-space-title animated fadeIn" Style="font-size: 3rem; font-weight: bold; color: #555; margin-bottom: 0.5rem; animation-duration: 1s;">Mini Space</MudText>
+                <MudText Typo="Typo.h4" Class="welcome-title animated slideInFromLeft" Style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem; animation-duration: 1.5s;">@titles[activeIndex]</MudText>
+                <MudText Typo="Typo.h6" Class="welcome-tagline animated popIn" Style="color: #555; margin-bottom: 2rem; animation-duration: 1s;">@descriptions[activeIndex]</MudText>
                 <MudButton Color="Color.Primary" Size="Size.Large" Variant="Variant.Filled">Get Started</MudButton>
             </MudItem>
         </MudGrid>
