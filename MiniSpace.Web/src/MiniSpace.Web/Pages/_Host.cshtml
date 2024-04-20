@@ -24,12 +24,24 @@
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script>
-        window.scrollToSection = function(sectionId) {
-            var element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        };
+        
+        window.scrollToSection = function scrollToSection(sectionId) {
+            let attempt = 0;
+            const maxAttempts = 10;
+            const attemptInterval = 300; // milliseconds
+
+            const scroll = () => {
+                const sectionElement = document.getElementById(sectionId);
+                if (sectionElement) {
+                    sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (attempt++ < maxAttempts) {
+                    setTimeout(scroll, attemptInterval);
+                }
+            };
+
+            scroll();
+        }
+
 
     </script>
 </body>

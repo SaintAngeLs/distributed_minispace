@@ -148,14 +148,12 @@ app {
     }
 
     .sidebar .collapse {
-        /* Never collapse the sidebar for wide screens */
         display: block;
     }
 }
 
 
 
-/* main layout component template */
 
 .main-container {
     display: flex;
@@ -164,13 +162,15 @@ app {
 }
 
 header {
-    background-color: #007BFF;
+    background-color: #2F4E6F; 
     color: white;
     padding: 0.5rem 1rem;
     display: flex;
+    flex-wrap: wrap; 
     align-items: center;
     justify-content: space-between;
 }
+
 
 .header-content {
     display: flex;
@@ -237,4 +237,108 @@ html, body {
 
 .radzen-body {
     flex: 1;
+}
+
+
+.logo-container {
+    display: inline-block;
+    padding: 5px 10px; 
+    background-color: #2F4E6F; 
+    border-radius: 5px; 
+    margin-right: 15px; 
+}
+
+.logo-container .rz-label {
+    color: white;
+    font-size: 1.5rem; 
+    font-weight: bold; 
+    letter-spacing: 0.05rem; 
+    user-select: none; 
+}
+
+@media (max-width: 767.98px) {
+    .logo-container {
+        margin-bottom: 15px;
+    }
+}
+
+.rz-menu {
+    background-color: #2F4E6F !important;
+    color: #fff !important;
+}
+
+
+.rz-menu-stack {
+    display: flex;
+    flex-direction: row;
+    padding-left: 0;
+
+}
+.rz-navigation-item-link {
+    color: #fff !important;
+}
+
+.rz-navigation-item-link :hover {
+    color: #98d1ff !important;
+}
+.rz-navigation-item-icon {
+    color: #fff !important;
+}
+
+.rz-menu-item {
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    border: none; 
+    background: none;
+    color: #fff !important;
+}
+
+@media (max-width: 767.98px) {
+    .rz-menu-stack {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .rz-menu-item {
+        width: 100%;
+        padding: 8px 0;
+    }
+
+    .rz-display-flex {
+        display: block !important;
+    }
+}
+
+.RadzenStack {
+    width: 100%;
+    justify-content: space-between;
+}
+
+@media (max-width: 767.98px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logo-container {
+        margin-bottom: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+.connect-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('images/connect-background.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100vh;
+}
+.button-group {
+    display: flex;
+    gap: 20px;
 }

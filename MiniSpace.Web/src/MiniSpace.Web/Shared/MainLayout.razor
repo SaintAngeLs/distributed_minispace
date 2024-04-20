@@ -4,35 +4,39 @@
 @inject NavigationManager NavigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
-
 <RadzenLayout style="width: 100%; text-align: center;"  id="radzen-layout" > 
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
-                     Style="width: 99%;">
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-               <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)"/>
-               <RadzenLabel Text="MiniSpace"/>
-            </RadzenStack>
-            <RadzenMenu>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5em">
-                    <RadzenMenuItem Text="Home" Click="@(() => ScrollToSection("home"))" />
-                    <RadzenMenuItem Text="About App" Click="@(() => ScrollToSection("about"))" />
-                    <RadzenMenuItem Text="Connect" Click="@(() => ScrollToSection("connect"))" />
-                    @if (IdentityService.IsAuthenticated)
-                    {
-                        <RadzenMenuItem Text="Sign Out" Click=@SignOut Icon="exit_to_app"/>
-                    }
-                    else
-                    {
-                        <RadzenMenuItem Text="Sign In" Path="signin" Icon="exit_to_app"/>
-                        <RadzenMenuItem Text="Sign Up" Path="signup" Icon="assignment_ind"/>
-                    }
-                </RadzenStack>
-            </RadzenMenu>
+   <header>
+       <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            @if (IdentityService.IsAuthenticated)
+            {
+                <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
+            }
+            <div class="logo-container" @onclick="NavigateToHome">
+                <RadzenLabel Text="MiniSpace" />
+            </div>
         </RadzenStack>
-    </RadzenHeader>
+        <RadzenMenu Class="rz-menu">
+            <div class="rz-menu-stack">
+                <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
+                <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
+                <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
+                @if (IdentityService.IsAuthenticated)
+                {
+                    <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
+                }
+                else
+                {
+                    <RadzenMenuItem Text="Sign In" Class="rz-menu-item" Path="signin" Icon="exit_to_app"/>
+                    <RadzenMenuItem Text="Sign Up" Class="rz-menu-item" Path="signup" Icon="assignment_ind"/>
+                }
+            </div>
+        </RadzenMenu>
+    </RadzenStack>
+
+    </header>
     
-     @if (IdentityService.IsAuthenticated)
+    @if (IdentityService.IsAuthenticated)
     {
         <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
             <RadzenPanelMenu>
@@ -52,7 +56,6 @@
     <CustomRadzenFooter />
 </RadzenLayout>
 
-
 @code{
     bool _sidebarExpanded = true;
     
@@ -62,8 +65,21 @@
         NavigationManager.NavigateTo("");
     }
     
-    void ScrollToSection(string sectionId)
+     async Task ScrollToSection(string sectionId)
     {
-        JSRuntime.InvokeVoidAsync("scrollToSection", sectionId);
+        if (NavigationManager.Uri != NavigationManager.BaseUri)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+        while (NavigationManager.Uri != NavigationManager.BaseUri)
+        {
+            await Task.Delay(100); // Check every 100ms
+        }
+        await JSRuntime.InvokeVoidAsync("scrollToSection", sectionId);
+    }
+
+    void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }
