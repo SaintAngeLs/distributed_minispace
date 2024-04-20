@@ -15,17 +15,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Test SSH Connection Early
-      run: |
-        ssh -o StrictHostKeyChecking=no -vvv ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
-
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh/
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
-        cat ~/.ssh/known_hosts # Add this line to confirm that the key is added
+        cat ~/.ssh/known_hosts 
 
     - name: Check the structure
       run: |
