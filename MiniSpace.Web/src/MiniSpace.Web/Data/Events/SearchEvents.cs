@@ -7,11 +7,11 @@ namespace MiniSpace.Web.DTO.Data.Events
     {
         public string Name { get; set; }
         public string Organizer { get; set; }
-        public DateTime DateFrom { get; set; }
-        public DateTime DateTo { get; set; }
+        public string DateFrom { get; set; }
+        public string DateTo { get; set; }
         public PageableDto Pageable { get; set; }
         
-        public SearchEvents(string name, string organizer, DateTime dateFrom, DateTime dateTo, PageableDto pageable)
+        public SearchEvents(string name, string organizer, string dateFrom, string dateTo, PageableDto pageable)
         {
             Name = name;
             Organizer = organizer;
