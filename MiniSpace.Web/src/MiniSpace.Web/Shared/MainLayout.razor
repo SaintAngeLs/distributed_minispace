@@ -4,38 +4,39 @@
 @inject NavigationManager NavigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
-
 <RadzenLayout style="margin: -8.0px; width: 100%; text-align: center;"  id="radzen-layout" > 
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
-                     Style="width: 98.5%;">
-           <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+   <header>
+       <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            @if (IdentityService.IsAuthenticated)
+            {
+                <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
+            }
+            <div class="logo-container">
+                <RadzenLabel Text="MiniSpace" />
+            </div>
+        </RadzenStack>
+        <RadzenMenu Class="rz-menu">
+            <div class="rz-menu-stack">
+                <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
+                <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
+                <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
                 @if (IdentityService.IsAuthenticated)
                 {
-                    <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)"/>
+                    <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
                 }
-                <RadzenLabel Text="MiniSpace"/>
-            </RadzenStack>
-            <RadzenMenu>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5em">
-                    <RadzenMenuItem Text="Home" Click="@(() => ScrollToSection("home"))" />
-                    <RadzenMenuItem Text="About App" Click="@(() => ScrollToSection("about"))" />
-                    <RadzenMenuItem Text="Connect" Click="@(() => ScrollToSection("connect"))" />
-                    @if (IdentityService.IsAuthenticated)
-                    {
-                        <RadzenMenuItem Text="Sign Out" Click=@SignOut Icon="exit_to_app"/>
-                    }
-                    else
-                    {
-                        <RadzenMenuItem Text="Sign In" Path="signin" Icon="exit_to_app"/>
-                        <RadzenMenuItem Text="Sign Up" Path="signup" Icon="assignment_ind"/>
-                    }
-                </RadzenStack>
-            </RadzenMenu>
-        </RadzenStack>
-    </RadzenHeader>
+                else
+                {
+                    <RadzenMenuItem Text="Sign In" Class="rz-menu-item" Path="signin" Icon="exit_to_app"/>
+                    <RadzenMenuItem Text="Sign Up" Class="rz-menu-item" Path="signup" Icon="assignment_ind"/>
+                }
+            </div>
+        </RadzenMenu>
+    </RadzenStack>
+
+    </header>
     
-     @if (IdentityService.IsAuthenticated)
+    @if (IdentityService.IsAuthenticated)
     {
         <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
             <RadzenPanelMenu>
@@ -54,7 +55,6 @@
     </RadzenBody>
     <CustomRadzenFooter />
 </RadzenLayout>
-
 
 @code{
     bool _sidebarExpanded = true;

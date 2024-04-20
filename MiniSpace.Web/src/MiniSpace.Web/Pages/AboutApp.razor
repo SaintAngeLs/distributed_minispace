@@ -1,4 +1,39 @@
-<div>
-    <h1>About MiniSpace</h1>
-    <p>MiniSpace is a dynamic social platform designed to connect people and communities. Discover, share, and interact with content that drives innovation and engagement.</p>
+@using MudBlazor
+
+<div class="about-video">
+    <video autoplay loop muted class="video-background" style="width: 100%; height: auto; object-fit: cover;">
+        <source src="videos/index1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="video-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.5); padding: 20px;">
+        <div>
+            <MudText Typo="Typo.h4" Class="about-title" Style="color: white; font-size: 2.5rem; font-weight: bold; margin-bottom: 20px;">
+                About MiniSpace
+            </MudText>
+            <MudText Typo="Typo.body1" Style="color: white; font-size: 1.2rem;">
+                MiniSpace is a dynamic social platform designed to connect people and communities. Discover, share, and interact with content that drives innovation and engagement.
+            </MudText>
+        </div>
+    </div>
 </div>
+
+<style>
+    .video-background {
+        width: 100%;
+        height: 100%; /* Adjust height for smaller/bigger screens */
+    }
+    .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @* background: rgba(0, 0, 0, 0.5);  *@
+    }
+    .about-title, .about-text {
+        text-align: center;
+    }
+</style>
