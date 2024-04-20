@@ -28,10 +28,10 @@
                                        @bind-Value="@completeRegistrationModel.DateOfBirth" />
             
             <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="3">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenLabel Text="Profile image:" Component="profile-image" />
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100"
                                     InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})" />
                 </RadzenColumn>

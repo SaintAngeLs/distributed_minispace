@@ -5,16 +5,13 @@
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
 
-<RadzenLayout style="margin: -8.0px; width: 100%; text-align: center;"  id="radzen-layout" > 
+<RadzenLayout style="width: 100%; text-align: center;"  id="radzen-layout" > 
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
-                     Style="width: 98.5%;">
-           <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                @if (IdentityService.IsAuthenticated)
-                {
-                    <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)"/>
-                }
-                <RadzenLabel Text="MiniSpace"/>
+                     Style="width: 99%;">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+               <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)"/>
+               <RadzenLabel Text="MiniSpace"/>
             </RadzenStack>
             <RadzenMenu>
                 <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5em">

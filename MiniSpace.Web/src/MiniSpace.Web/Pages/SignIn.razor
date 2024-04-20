@@ -18,10 +18,10 @@
     <RadzenFieldset>
         <RadzenStack Gap="1rem">
             <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="3">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenLabel Text="Email:" Component="email" />
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenTextBox Style="width: 100%;" Name="email" @bind-Value="signInModel.Email" />
                     <RadzenRequiredValidator Component="email" Text="Email is required" Popup=@popup
                                              Style="position: absolute"/>
@@ -31,10 +31,10 @@
             </RadzenRow>
             
             <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="3">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenLabel Text="Password:" Component="password" />
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenPassword Style="width: 100%;" Name="password" @bind-Value="signInModel.Password"/>
                     <RadzenRequiredValidator Component="password" Text="Password is required" Popup=@popup
                                              Style="position: absolute"/>
