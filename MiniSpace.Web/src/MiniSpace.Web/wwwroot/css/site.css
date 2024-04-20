@@ -223,3 +223,18 @@ main {
         padding: 2rem 10rem; 
     }
 }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+#radzen-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.radzen-body {
+    flex: 1;
+}

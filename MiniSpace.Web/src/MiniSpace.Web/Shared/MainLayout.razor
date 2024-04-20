@@ -2,9 +2,10 @@
 @inherits LayoutComponentBase
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
 
-<RadzenLayout style="margin: -8.0px; width: 100%; text-align: center;"> 
+<RadzenLayout style="margin: -8.0px; width: 100%; text-align: center;"  id="radzen-layout" > 
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
                      Style="width: 98.5%;">
@@ -17,6 +18,9 @@
             </RadzenStack>
             <RadzenMenu>
                 <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5em">
+                    <RadzenMenuItem Text="Home" Click="@(() => ScrollToSection("home"))" />
+                    <RadzenMenuItem Text="About App" Click="@(() => ScrollToSection("about"))" />
+                    <RadzenMenuItem Text="Connect" Click="@(() => ScrollToSection("connect"))" />
                     @if (IdentityService.IsAuthenticated)
                     {
                         <RadzenMenuItem Text="Sign Out" Click=@SignOut Icon="exit_to_app"/>
@@ -43,7 +47,7 @@
         </RadzenSidebar>
     }
     
-    <RadzenBody style="margin: -12.0px;">
+    <RadzenBody style="margin: -12.0px;" class="radzen-body">
         <div class="rz-p-4">
             @Body
         </div>
@@ -51,15 +55,18 @@
     <CustomRadzenFooter />
 </RadzenLayout>
 
-@code{
 
+@code{
     bool _sidebarExpanded = true;
     
     void SignOut()
     {
-        // Implement your sign-out logic here, e.g., redirect to sign-out path, clear authentication state
         IdentityService.Logout();
         NavigationManager.NavigateTo("");
     }
     
+    void ScrollToSection(string sectionId)
+    {
+        JSRuntime.InvokeVoidAsync("scrollToSection", sectionId);
+    }
 }
