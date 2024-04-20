@@ -1,0 +1,40 @@
+@page "/events"
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.DTO
+@using Radzen
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+
+<h1>Events</h1>
+
+@if (studentDto.Id != Guid.Empty)
+{
+    <RadzenStack Gap="1rem">
+        
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenButton Size="ButtonSize.Large" Text="Create new event"
+                              Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
+            </RadzenColumn>
+        </RadzenRow>
+        
+    </RadzenStack>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private StudentDto studentDto = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            var userDto = await IdentityService.GetAccountAsync();
+            studentDto = await StudentsService.GetStudentAsync(userDto.Id);
+        }
+    }
+}

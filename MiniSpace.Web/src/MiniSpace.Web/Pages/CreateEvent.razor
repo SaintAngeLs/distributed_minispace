@@ -1,0 +1,151 @@
+@page "/events/create"
+@using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Models.Events
+@using Radzen
+@inject IIdentityService IdentityService
+@inject IEventsService EventsService
+@inject NavigationManager NavigationManager
+
+<h3>Create new event</h3>
+
+<RadzenTemplateForm Data="@userDto" Submit="@(async (UserDto args) => { await HandleCreateEvent(); })">
+    <RadzenFieldset>
+        <RadzenStack Gap="1rem">
+            <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
+                <RadzenColumn Size="12" SizeSM="4">
+                    <RadzenStack>
+                        <RadzenFormField Text="Name" Variant="Variant.Outlined">
+                            <RadzenTextBox @bind-Value="@addEventModel.Name" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Start date" Variant="Variant.Outlined">
+                            <RadzenDatePicker @bind-Value="@addEventModel.StartDate"/>
+                        </RadzenFormField>
+                        <RadzenFormField Text="Building name" Variant="Variant.Outlined">
+                            <RadzenTextBox @bind-Value="@addEventModel.BuildingName" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Building number" Variant="Variant.Outlined">
+                            <RadzenTextBox @bind-Value="@addEventModel.BuildingNumber" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="City" Variant="Variant.Outlined">
+                            <RadzenTextBox @bind-Value="@addEventModel.City" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Capacity" Variant="Variant.Outlined">
+                            <RadzenNumeric @bind-Value="@addEventModel.Capacity" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Description" Variant="Variant.Outlined">
+                            <RadzenTextArea @bind-Value="@addEventModel.Description" />
+                        </RadzenFormField>
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeSM="4">
+                    <RadzenStack>
+                         <RadzenFormField Text="Category" Variant="Variant.Outlined">
+                             <RadzenDropDown Data=@categories @bind-Value="@addEventModel.Category" />
+                         </RadzenFormField>
+                        <RadzenFormField Text="End date" Variant="Variant.Outlined">
+                            <RadzenDatePicker @bind-Value="@addEventModel.EndDate"/>
+                        </RadzenFormField>
+                        <RadzenFormField Text="Street" Variant="Variant.Outlined">
+                            <RadzenTextBox @bind-Value="@addEventModel.Street" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Apartment number" Variant="Variant.Outlined">
+                            <RadzenTextBox @bind-Value="@addEventModel.ApartmentNumber" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Zip code" Variant="Variant.Outlined">
+                            <RadzenTextBox @bind-Value="@addEventModel.ZipCode" />
+                        </RadzenFormField>            
+                        <RadzenFormField Text="Fee" Variant="Variant.Outlined">
+                            <RadzenNumeric @bind-Value="@addEventModel.Fee" Placeholder="0.00" Step="0.01"/>
+                        </RadzenFormField>
+                        <RadzenFormField Text="Publish Date" Variant="Variant.Outlined">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenRadioButtonList @bind-Value="@publishInfo" TValue="int" class="rz-m-4 rz-mt-8">
+                                    <Items>
+                                        <RadzenRadioButtonListItem Text="Publish now" Value="1"/>
+                                        <RadzenRadioButtonListItem Text="Publish in future" Value="2"/>
+                                    </Items>
+                                </RadzenRadioButtonList>
+                                @if (publishInfo == 2)
+                                {
+                                    <RadzenDatePicker @bind-Value="@addEventModel.PublishDate"/>
+                                }
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Submit"/>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+@code {
+    private UserDto userDto = new();
+
+    private AddEventModel addEventModel = new()
+    {
+        Name = "One of first events!",
+        Category = "Art",
+        StartDate = new DateTime(2024, 04, 25),
+        EndDate = new DateTime(2024, 04, 27),
+        BuildingName = "Gmach Główny",
+        Street = "Plac Politechniki",
+        BuildingNumber = "1",
+        ApartmentNumber = "1",
+        City = "Warszawa",
+        ZipCode = "00-061",
+        Description = "Great event!",
+        Capacity = 30,
+        Fee = 34.44M
+    };
+    private bool showError = false;
+    private bool popup;
+    private int publishInfo = 1;
+
+    private List<string> categories =
+    [
+        "Music",
+        "Sports",
+        "Education",
+        "Science",
+        "Technology",
+        "Art",
+        "Business",
+        "Health",
+        "Charity",
+        "Other"
+    ];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            userDto = await IdentityService.GetAccountAsync();
+        }
+    }
+    
+    private async Task HandleCreateEvent()
+    {
+        addEventModel.OrganizerId = userDto.Id;
+        if (publishInfo == 1)
+        {
+            addEventModel.PublishDate = null;
+        }
+        
+        await EventsService.AddEventAsync(Guid.Empty, addEventModel.Name, addEventModel.OrganizerId,
+            addEventModel.StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            addEventModel.EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
+            addEventModel.BuildingName, addEventModel.Street,  addEventModel.BuildingNumber,
+            addEventModel.ApartmentNumber, addEventModel.City, addEventModel.ZipCode,
+            addEventModel.Description, addEventModel.Capacity, addEventModel.Fee, addEventModel.Category,
+            addEventModel.PublishDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+        NavigationManager.NavigateTo("/events");
+    }
+}
