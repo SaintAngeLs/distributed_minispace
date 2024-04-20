@@ -23,7 +23,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Commands.Handlers
         public async Task HandleAsync_CallsSignUpAsync()
         {
             // Arrange
-            var command = new SignUp(Guid.NewGuid(), "test@email.com", "password", "user", new List<string>());
+            var command = new SignUp(Guid.NewGuid(),  "firstName", "lastName","test@email.com", "password", "user", new List<string>());
 
             // Act
             await _signUpHandler.HandleAsync(command);

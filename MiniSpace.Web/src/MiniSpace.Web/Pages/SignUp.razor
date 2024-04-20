@@ -1,21 +1,32 @@
 @page "/signup"
 @using MiniSpace.Web.Areas.Identity
 @inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 <h3>Sign Up</h3>
 
 <EditForm Model="@signUpModel" OnValidSubmit="HandleSignUp">
     <DataAnnotationsValidator />
     <ValidationSummary />
-@* 
+    @* 
     <div class="form-group">
         <label for="studentId">Student ID:</label>
         <InputNumber id="studentId" class="form-control" @bind-Value="signUpModel.StudentId" />
     </div> *@
 
-    <div class="form-group">
-        <label for="username">Username:</label>
-        <InputText id="username" class="form-control" @bind-Value="signUpModel.Username" />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <InputText type="text" id="name" class="form-control" @bind-Value="signUpModel.FirstName" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="surname">Surname:</label>
+                <InputText type="text" id="surname" class="form-control" @bind-Value="signUpModel.LastName" />
+            </div>
+        </div>
     </div>
 
     <div class="form-group">
@@ -37,7 +48,16 @@
 
     private async Task HandleSignUp()
     {
-        await IdentityService.SignUpAsync(signUpModel.Email, signUpModel.Password, "user");
-        // Handle the post-sign-up logic, such as redirection or displaying a success message
+        var organizerPermission = new List<string> { "organize_events" };
+        try
+        {
+            await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
+                signUpModel.Password, "user", organizerPermission);
+            NavigationManager.NavigateTo("/signin");
+        }
+        catch (Exception ex)
+        {
+            
+        }
     }
 }

@@ -1,0 +1,126 @@
+@page "/account"
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.DTO
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+
+<h1>Data of your account:</h1>
+
+@if (studentDto.Id != Guid.Empty)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2">
+                Firstname:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.FirstName</b>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-2">
+                Lastname:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.LastName</b>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-2">
+                Email:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.Email</b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2">
+                Number of friends:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.NumberOfFriends</b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2">
+                Description:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.Description</b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2">
+                Date of birth:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.DateOfBirth?.ToString("dd-MM-yyyy")</b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2">
+                Email notifications:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.EmailNotifications</b>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-2">
+                State:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.State</b>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-2">
+                Created at:
+            </div>
+            <div class="col-sm">
+                <b>@studentDto.CreatedAt.ToString("dd-MM-yyyy")</b>
+            </div>
+        </div>
+    </div>
+    
+    <div>&nbsp;</div>
+    
+    @if (studentDto.State == "incomplete")
+    {
+        <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/signup/complete")'>
+            Complete Registration
+        </button>
+    }
+    else
+    {
+        <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/account/update")'>
+            Update account
+        </button>   
+    }
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private StudentDto studentDto = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            var userDto = await IdentityService.GetAccountAsync();
+            studentDto = await StudentsService.GetStudentAsync(userDto.Id);
+        }
+    }
+}
