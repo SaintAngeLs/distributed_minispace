@@ -16,7 +16,7 @@ using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.Areas.Posts;
 using MiniSpace.Web.Areas.Students;
 using MiniSpace.Web.HttpClients;
-
+using MudBlazor.Services;
 
 namespace MiniSpace.Web
 {
@@ -35,6 +35,7 @@ namespace MiniSpace.Web
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddMudServices();
 
             var httpClientOptions = Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
     
@@ -46,9 +47,7 @@ namespace MiniSpace.Web
             {
                 var options = serviceProvider.GetRequiredService<HttpClientOptions>();
                 client.BaseAddress = new Uri(options.ApiUrl); 
-                // Additional HttpClient configuration as needed
             });
-
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IStudentsService, StudentsService>();
@@ -80,6 +79,7 @@ namespace MiniSpace.Web
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
         }
     }
 }

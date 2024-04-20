@@ -1,7 +1,11 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('https://cdn.jsdelivr.net/npm/mudblazor/css/mudblazor.min.css');
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+* {
+    margin: unset !important; 
 }
 
 a, .btn-link {
@@ -146,5 +150,76 @@ app {
     .sidebar .collapse {
         /* Never collapse the sidebar for wide screens */
         display: block;
+    }
+}
+
+
+
+/* main layout component template */
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background-color: #007BFF;
+    color: white;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.menu-items {
+    display: flex;
+}
+
+.sidebar-style {
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+main {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.welcome-section h1 {
+    margin-top: 0;
+}
+
+.welcome-section {
+    text-align: center;
+    margin: auto;
+}
+
+.welcome-title {
+    font-size: 20px; 
+    font-weight: bold;
+    color: #333; 
+    margin-bottom: 20px; 
+}
+
+.landing-page {
+    padding: 2rem; 
+}
+
+@media (min-width: 768px) {
+    .landing-page {
+        padding: 2rem 5rem;
+    }
+}
+@media (min-width: 992px) {
+    .landing-page {
+        padding: 2rem 10rem; 
     }
 }
