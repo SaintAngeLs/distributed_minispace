@@ -282,6 +282,11 @@ modules:
         method: GET
         use: downstream
         downstream: events-service/events/{eventId}
+        
+      - upstream: /student/{studentId}
+        method: GET
+        use: downstream
+        downstream: events-service/events/student/{studentId}
         auth: true
 
       - upstream: /{eventId}
@@ -294,7 +299,6 @@ modules:
         method: POST
         use: downstream
         downstream: events-service/events/search
-        auth: true
 
       - upstream: /{eventId}/show-interest
         method: POST
@@ -507,7 +511,6 @@ modules:
         method: GET
         use: downstream
         downstream: posts-service/posts
-        auth: true
 
       - upstream: /{postId}
         method: DELETE
