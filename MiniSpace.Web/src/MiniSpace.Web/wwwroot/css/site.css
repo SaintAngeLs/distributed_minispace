@@ -1,7 +1,11 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('https://cdn.jsdelivr.net/npm/mudblazor/css/mudblazor.min.css');
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+* {
+    margin: unset !important; 
 }
 
 a, .btn-link {
