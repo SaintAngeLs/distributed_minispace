@@ -9,11 +9,14 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MiniSpace.Web.Data;
+using MiniSpace.Web.Areas.Events;
+//using MiniSpace.Web.Data;
 using MiniSpace.Web.Models.Identity;
 using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.Areas.Posts;
+using MiniSpace.Web.Areas.Students;
 using MiniSpace.Web.HttpClients;
-
+using MudBlazor.Services;
 
 namespace MiniSpace.Web
 {
@@ -32,7 +35,7 @@ namespace MiniSpace.Web
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddMudServices();
 
             var httpClientOptions = Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
     
@@ -44,11 +47,12 @@ namespace MiniSpace.Web
             {
                 var options = serviceProvider.GetRequiredService<HttpClientOptions>();
                 client.BaseAddress = new Uri(options.ApiUrl); 
-                // Additional HttpClient configuration as needed
             });
 
-
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IStudentsService, StudentsService>();
+            services.AddScoped<IEventsService, EventsService>();
+            services.AddScoped<IPostsService, PostsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +79,7 @@ namespace MiniSpace.Web
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
         }
     }
 }

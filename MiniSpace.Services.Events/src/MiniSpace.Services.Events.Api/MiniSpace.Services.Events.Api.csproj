@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>MiniSpace.Services.Identity.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Convey" Version="1.1.448" />
+    <PackageReference Include="Convey.Logging" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
+  </ItemGroup>  
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Events.Infrastructure\MiniSpace.Services.Events.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

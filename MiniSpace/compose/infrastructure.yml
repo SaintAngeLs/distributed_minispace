@@ -82,9 +82,12 @@ services:
     networks:
       - minispace
     ports:
-      - 5672:5672
-      - 15672:15672
-      - 15692:15692
+      - 5672:5672    # default AMQP port
+      - 15672:15672  # default management UI port
+      - 15692:15692  # already existing custom port
+      - 25672:25672  # clustering port used for inter-node and CLI tools communication
+      - 5671:5671    # secure AMQP port (TLS)
+      - 15671:15671  # secure management UI port (TLS)
     # volumes: 
     #   - rabbitmq:/var/lib/rabbitmq
 

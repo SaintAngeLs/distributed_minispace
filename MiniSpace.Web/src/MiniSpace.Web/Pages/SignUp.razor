@@ -1,43 +1,91 @@
 @page "/signup"
 @using MiniSpace.Web.Areas.Identity
+@using Radzen
 @inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<h2>Welcome to MiniSpace</h2>
+<p>Please sign in to access your account and manage your details.</p>
 
 <h3>Sign Up</h3>
 
-<EditForm Model="@signUpModel" OnValidSubmit="HandleSignUp">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-@* 
-    <div class="form-group">
-        <label for="studentId">Student ID:</label>
-        <InputNumber id="studentId" class="form-control" @bind-Value="signUpModel.StudentId" />
-    </div> *@
-
-    <div class="form-group">
-        <label for="username">Username:</label>
-        <InputText id="username" class="form-control" @bind-Value="signUpModel.Username" />
-    </div>
-
-    <div class="form-group">
-        <label for="password">Password:</label>
-        <InputText id="password" type="password" class="form-control" @bind-Value="signUpModel.Password" />
-    </div>
-
-    <div class="form-group">
-        <label for="email">Email:</label>
-        <InputText id="email" type="email" class="form-control" @bind-Value="signUpModel.Email" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Sign Up</button>
-</EditForm>
-
-
+<div style="display: flex; flex-direction: column; height: 50vh; justify-content: center; align-items: center;">
+    <RadzenTemplateForm Data="@signUpModel" Submit="@(async (SignUpModel args) => { await HandleSignUp(); })">
+        <RadzenFieldset>
+            <RadzenStack Gap="1rem">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenLabel Text="Firstname:" Component="firstname" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="9">
+                        <RadzenTextBox Style="width: 100%;" Name="firstname" @bind-Value="signUpModel.FirstName" />
+                        <RadzenRequiredValidator Component="firstname" Text="Firstname is required" Popup=@popup
+                                                Style="position: absolute"/>
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenLabel Text="Lastname:" Component="lastname" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="9">
+                        <RadzenTextBox Style="width: 100%;" Name="lastname" @bind-Value="signUpModel.LastName" />
+                        <RadzenRequiredValidator Component="lastname" Text="Lastname is required" Popup=@popup
+                                                Style="position: absolute"/>
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenLabel Text="Email:" Component="email" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="9">
+                        <RadzenTextBox Style="width: 100%;" Name="email" @bind-Value="signUpModel.Email" />
+                        <RadzenRequiredValidator Component="email" Text="Email is required" Popup=@popup
+                                                                    Style="position: absolute"/>
+                        <RadzenEmailValidator Component="email" Text="Email is invalid" Popup=@popup
+                                                Style="position: absolute"/>
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenLabel Text="Password:" Component="password" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="9">
+                        <RadzenPassword Style="width: 100%;" Name="password" @bind-Value="signUpModel.Password" />
+                        <RadzenRequiredValidator Component="password" Text="Password is required" Popup=@popup
+                                                Style="position: absolute"/>                    
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Sign up"/>
+                    </RadzenColumn>
+                </RadzenRow>
+                <div>
+                    <a href="/forgot-password">Forgot Password?</a> | <a href="/signin">Sign In</a>
+                </div>
+            </RadzenStack>
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+</div>
 @code {
     private SignUpModel signUpModel = new SignUpModel();
-
+    private bool popup;
+    
     private async Task HandleSignUp()
     {
-        await IdentityService.SignUpAsync(signUpModel.Email, signUpModel.Password, "user");
-        // Handle the post-sign-up logic, such as redirection or displaying a success message
+        try
+        {
+            await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email,
+                signUpModel.Password, "user");
+            NavigationManager.NavigateTo("/signin");
+        }
+        catch (Exception ex)
+        {
+            
+        }
     }
 }

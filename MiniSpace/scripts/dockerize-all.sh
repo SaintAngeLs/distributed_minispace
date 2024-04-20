@@ -4,6 +4,8 @@ directories=(
     "MiniSpace.APIGateway"
     "MiniSpace.Web"
     "MiniSpace.Services.Identity"
+    "MiniSpace.Services.Events"
+    "MiniSpace.Services.Students"
 )
 
 for dir in "${directories[@]}"; do

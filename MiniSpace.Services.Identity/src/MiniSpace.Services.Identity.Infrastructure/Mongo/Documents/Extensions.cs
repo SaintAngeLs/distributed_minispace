@@ -7,13 +7,14 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
     internal static class Extensions
     {
         public static User AsEntity(this UserDocument document)
-            => new User(document.Id, document.Email, document.Password, document.Role, document.CreatedAt,
+            => new User(document.Id, document.Name, document.Email, document.Password, document.Role, document.CreatedAt,
                 document.Permissions);
 
         public static UserDocument AsDocument(this User entity)
             => new UserDocument
             {
                 Id = entity.Id,
+                Name = entity.Name,
                 Email = entity.Email,
                 Password = entity.Password,
                 Role = entity.Role,
@@ -25,6 +26,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
             => new UserDto
             {
                 Id = document.Id,
+                Name = document.Name,
                 Email = document.Email,
                 Role = document.Role,
                 CreatedAt = document.CreatedAt,
