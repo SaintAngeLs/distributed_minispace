@@ -65,7 +65,8 @@
 
     private async Task HandleSignIn()
     {
-        var jwtDto = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+        var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+        var jwtDto = response.Content;
         if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
         {
             var userDto = await IdentityService.GetAccountAsync();

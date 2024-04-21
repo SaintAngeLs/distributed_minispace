@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Identity
 {
@@ -20,7 +21,7 @@ namespace MiniSpace.Web.Areas.Identity
         public Task SignUpAsync(string firstName, string lastName, string email, string password, string role = "user")
             => _identityService.SignUpAsync(firstName, lastName, email, password, role);
         
-        public Task<JwtDto> SignInAsync(string email, string password)
+        public Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
             => _identityService.SignInAsync(email, password);
 
         public Task<UserDto> GetAccount()

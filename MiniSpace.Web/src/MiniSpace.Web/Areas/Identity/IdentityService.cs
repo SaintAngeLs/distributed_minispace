@@ -30,10 +30,11 @@ namespace MiniSpace.Web.Areas.Identity
         public Task SignUpAsync(string firstName, string lastName, string email, string password, string role = "user", IEnumerable<string> permissions = null)
             => _httpClient.PostAsync("identity/sign-up", new {firstName, lastName, email, password, role, permissions});
 
-        public async Task<JwtDto> SignInAsync(string email, string password)
+        public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
         {
-            JwtDto = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new {email, password});
-
+            var response = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new {email, password});
+            JwtDto = response.Content;
+            
             if (JwtDto != null)
             {
                 var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
@@ -43,7 +44,7 @@ namespace MiniSpace.Web.Areas.Identity
                 IsAuthenticated = true;
             }
             
-            return JwtDto;
+            return response;
         }
 
         public void Logout()
