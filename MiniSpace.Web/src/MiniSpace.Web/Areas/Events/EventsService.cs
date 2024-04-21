@@ -28,7 +28,8 @@ namespace MiniSpace.Web.Areas.Events
         public Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId, int numberOfResults)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<PagedResponseDto<IEnumerable<EventDto>>>($"events/student/{studentId}");
+            return _httpClient.GetAsync<PagedResponseDto<IEnumerable<EventDto>>>(
+                $"events/student/{studentId}?numberOfResults={numberOfResults}");
         }
 
         public Task AddEventAsync(Guid eventId, string name, Guid organizerId, DateTime startDate, DateTime endDate,
