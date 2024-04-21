@@ -4,13 +4,15 @@ namespace MiniSpace.Services.Friends.Core.Exceptions
     {
         public override string Code { get; } = "friendship_state_error";
         public Guid StudentId { get; }
-        public State NewState { get; }
+        public State AttemptedState { get; }
+        public State CurrentState { get; }
 
-        public FriendshipStateException(Guid studentId, State newState)
-            : base($"Cannot change state to {newState} for student {studentId}.")
+        public FriendshipStateException(Guid studentId, State attemptedState, State currentState)
+            : base($"Attempt to change friendship state to {attemptedState} from {currentState} failed for student ID {studentId}.")
         {
             StudentId = studentId;
-            NewState = newState;
+            AttemptedState = attemptedState;
+            CurrentState = currentState;
         }
     }
 }
