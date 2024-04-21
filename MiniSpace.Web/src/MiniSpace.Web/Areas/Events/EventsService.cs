@@ -58,9 +58,9 @@ namespace MiniSpace.Web.Areas.Events
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync($"events/{eventId}/rate", new {eventId, rating, studentId});
         }
-
-        public Task<PagedResponseDto<IEnumerable<EventDto>>> SearchEventsAsync(string name, string organizer,
-            string dateFrom, string dateTo, PageableDto pageable)
+        
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name,
+                string organizer, string dateFrom, string dateTo, PageableDto pageable)
         {
             return _httpClient.PostAsync<SearchEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search", 
                 new (name, organizer, dateFrom, dateTo, pageable));

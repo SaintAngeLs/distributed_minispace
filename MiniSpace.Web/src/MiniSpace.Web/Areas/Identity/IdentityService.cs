@@ -27,23 +27,29 @@ namespace MiniSpace.Web.Areas.Identity
             return _httpClient.GetAsync<UserDto>("identity/me");
         }
 
-        public Task SignUpAsync(string firstName, string lastName, string email, string password, string role = "user", IEnumerable<string> permissions = null)
-            => _httpClient.PostAsync("identity/sign-up", new {firstName, lastName, email, password, role, permissions});
-
-        public async Task<JwtDto> SignInAsync(string email, string password)
+        public async Task<HttpResponse<object>> SignUpAsync(string firstName, string lastName, string email, string password, string role = "user",
+            IEnumerable<string> permissions = null)
         {
-            JwtDto = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new {email, password});
+            return await _httpClient.PostAsync<object, object>("identity/sign-up", 
+                new {firstName, lastName, email, password, role, permissions});
+            
+        }
 
+        public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
+        {
+            var response = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new {email, password});
+            JwtDto = response.Content;
+            
             if (JwtDto != null)
             {
                 var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
                 var payload = jwtToken.Payload;
-                Name = (string)payload["name"];
-                Email = (string)payload["e-mail"];
+                // Name = (string)payload["name"];
+                // Email = (string)payload["e-mail"];
                 IsAuthenticated = true;
             }
             
-            return JwtDto;
+            return response;
         }
 
         public void Logout()

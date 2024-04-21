@@ -3,8 +3,10 @@
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Students
 @using Radzen
+@using MiniSpace.Web.Areas.Http
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
 <h2>Welcome to MiniSpace</h2>
@@ -16,7 +18,7 @@
 <div style="display: flex; flex-direction: column; height: 50vh; justify-content: center; align-items: center;">
     <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
                 Shade="Shade.Lighter">
-        Failed to sign in. Please check your credentials and try again.
+        @errorMessage
     </RadzenAlert>
 
     <RadzenTemplateForm Data="@signInModel" Submit="@(async (SignInModel args) => { await HandleSignIn(); })">
@@ -61,11 +63,13 @@
 @code {
     private SignInModel signInModel = new SignInModel();
     private bool showError = false;
+    private string errorMessage = string.Empty;
     private bool popup;
 
     private async Task HandleSignIn()
     {
-        var jwtDto = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+        var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+        var jwtDto = response.Content;
         if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
         {
             var userDto = await IdentityService.GetAccountAsync();
@@ -76,6 +80,7 @@
         else
         {
             showError = true;
+            errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
             StateHasChanged(); // Force the component to re-render
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Wrappers;
+using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Events
 {
@@ -17,7 +18,7 @@ namespace MiniSpace.Web.Areas.Events
         Task SignUpToEventAsync(Guid eventId, Guid studentId);
         Task ShowInterestInEventAsync(Guid eventId, Guid studentId);
         Task RateEventAsync(Guid eventId, int rating, Guid studentId);
-        Task<PagedResponseDto<IEnumerable<EventDto>>> SearchEventsAsync(string name, string organizer, 
+        Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer, 
             string dateFrom, string dateTo, PageableDto pageable);
     }
 }

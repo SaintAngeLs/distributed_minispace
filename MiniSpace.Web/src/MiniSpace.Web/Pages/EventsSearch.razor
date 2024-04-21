@@ -92,10 +92,10 @@
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
         //WriteSendDataOnConsole(searchEventsModel);
-        if (tmp != null)
+        if (tmp.Content != null)
         {
-            count = tmp.TotalElements;
-            events = tmp.Content;   
+            count = tmp.Content.TotalElements;
+            events = tmp.Content.Content;   
         }
         else
         {
@@ -113,7 +113,7 @@
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
         //WriteSendDataOnConsole(searchEventsModel);
-        events = tmp.Content;
+        events = tmp.Content.Content;
     }
     
     private async Task OpenSearchDialog()
