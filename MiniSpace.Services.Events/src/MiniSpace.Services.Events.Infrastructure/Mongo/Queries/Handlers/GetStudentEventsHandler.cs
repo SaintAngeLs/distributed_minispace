@@ -37,13 +37,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             if (identity.IsAuthenticated && identity.Id != query.StudentId)
             {
                 return new PagedResponse<IEnumerable<EventDto>>(Enumerable.Empty<EventDto>(),
-                    1, query.numberOfResults, 0, 0);
+                    1, query.NumberOfResults, 0, 0);
             }
             
             var studentEvents = await _studentsServiceClient.GetAsync(query.StudentId);
-            var studentEventIds = studentEvents.InterestedInEvents.Union(studentEvents.SignedUpEvents);
+            var studentEventIds = studentEvents.InterestedInEvents.Union(studentEvents.SignedUpEvents).ToList();
             
-            var result = await _eventRepository.BrowseAsync(1, query.numberOfResults,
+            var result = await _eventRepository.BrowseAsync(1, query.NumberOfResults,
                 string.Empty, string.Empty, DateTime.MinValue, DateTime.MinValue,
                 Enumerable.Empty<string>(), "asc", State.Published, studentEventIds);
 

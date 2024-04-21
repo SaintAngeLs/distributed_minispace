@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             => new Student(document.Id, document.Email, document.CreatedAt, document.FirstName,
                 document.LastName, document.NumberOfFriends, document.ProfileImage,
                 document.Description, document.DateOfBirth, document.EmailNotifications,
-                document.IsBanned, document.CanBeOrganizer, document.State,
+                document.IsBanned, document.IsOrganizer, document.State,
                 document.InterestedInEvents, document.SignedUpEvents);
 
         public static StudentDocument AsDocument(this Student entity)
@@ -25,7 +25,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 DateOfBirth = entity.DateOfBirth,
                 EmailNotifications = entity.EmailNotifications,
                 IsBanned = entity.IsBanned,
-                CanBeOrganizer = entity.CanBeOrganizer,
+                IsOrganizer = entity.IsOrganizer,
                 State = entity.State,
                 CreatedAt = entity.CreatedAt,
                 InterestedInEvents = entity.InterestedInEvents,
@@ -45,7 +45,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 DateOfBirth = document.DateOfBirth,
                 EmailNotifications = document.EmailNotifications,
                 IsBanned = document.IsBanned,
-                CanBeOrganizer = document.CanBeOrganizer,
+                IsOrganizer = document.IsOrganizer,
                 State = document.State.ToString().ToLowerInvariant(),
                 CreatedAt = document.CreatedAt,
                 InterestedInEvents = document.InterestedInEvents,

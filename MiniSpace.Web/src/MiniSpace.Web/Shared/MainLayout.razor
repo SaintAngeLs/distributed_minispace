@@ -1,15 +1,85 @@
-﻿@inherits LayoutComponentBase
+﻿@using Radzen
+@inherits LayoutComponentBase
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
-<div class="sidebar">
-    <NavMenu />
-</div>
+<RadzenLayout style="width: 100%; text-align: center;"  id="radzen-layout" > 
+   <header>
+       <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            @if (IdentityService.IsAuthenticated)
+            {
+                <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
+            }
+            <div class="logo-container" @onclick="NavigateToHome">
+                <RadzenLabel Text="MiniSpace" />
+            </div>
+        </RadzenStack>
+        <RadzenMenu Class="rz-menu">
+            <div class="rz-menu-stack">
+                <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
+                <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
+                <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
+                @if (IdentityService.IsAuthenticated)
+                {
+                    <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
+                }
+                else
+                {
+                    <RadzenMenuItem Text="Sign In" Class="rz-menu-item" Path="signin" Icon="exit_to_app"/>
+                    <RadzenMenuItem Text="Sign Up" Class="rz-menu-item" Path="signup" Icon="assignment_ind"/>
+                }
+            </div>
+        </RadzenMenu>
+    </RadzenStack>
 
-<div class="main">
-    <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
-    </div>
+    </header>
+    
+    @if (IdentityService.IsAuthenticated)
+    {
+        <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
+            <RadzenPanelMenu>
+                <RadzenPanelMenuItem Text="Home" Icon="home"
+                                     Click="@(() => NavigationManager.NavigateTo(""))" />
+                <RadzenPanelMenuItem Text="Account" Icon="account_box"
+                                     Click="@(() => NavigationManager.NavigateTo("account"))" />
+            </RadzenPanelMenu>
+        </RadzenSidebar>
+    }
+    
+    <RadzenBody style="margin: -12.0px;" class="radzen-body">
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+    <CustomRadzenFooter />
+</RadzenLayout>
 
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+@code{
+    bool _sidebarExpanded = true;
+    
+    void SignOut()
+    {
+        IdentityService.Logout();
+        NavigationManager.NavigateTo("");
+    }
+    
+     async Task ScrollToSection(string sectionId)
+    {
+        if (NavigationManager.Uri != NavigationManager.BaseUri)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+        while (NavigationManager.Uri != NavigationManager.BaseUri)
+        {
+            await Task.Delay(100); // Check every 100ms
+        }
+        await JSRuntime.InvokeVoidAsync("scrollToSection", sectionId);
+    }
+
+    void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

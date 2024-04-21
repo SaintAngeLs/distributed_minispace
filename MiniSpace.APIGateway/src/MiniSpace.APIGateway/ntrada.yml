@@ -107,6 +107,38 @@ modules:
         downstream: identity-service/sign-in
         auth: false
 
+      - upstream: /users/{userId}/organizer-rights
+        method: POST
+        use: downstream
+        downstream: identity-service/users/{userId}/organizer-rights
+        auth: true
+        claims:
+          role: admin
+
+      - upstream: /users/{userId}/organizer-rights
+        method: DELETE
+        use: downstream
+        downstream: identity-service/users/{userId}/organizer-rights
+        auth: true
+        claims:
+          role: admin
+
+      - upstream: /users/{userId}/ban
+        method: POST
+        use: downstream
+        downstream: identity-service/users/{userId}/ban
+        auth: true
+        claims:
+          role: admin
+
+      - upstream: /users/{userId}/ban
+        method: DELETE
+        use: downstream
+        downstream: identity-service/users/{userId}/ban
+        auth: true
+        claims:
+          role: admin
+
     services:
       identity-service:
         localUrl: localhost:5004
@@ -191,6 +223,8 @@ modules:
         method: PUT
         use: downstream
         downstream: students-service/students/{studentId}
+        bind:
+          - studentId:{studentId}
         auth: true
 
       - upstream: /{studentId}
@@ -209,10 +243,18 @@ modules:
         method: PUT
         use: downstream
         downstream: students-service/students/{studentId}/state/{state}
+        bind:
+          - studentId:{studentId}
+          - state:{state}
         auth: true
         claims:
           role: admin
 
+      - upstream: /{studentId}/events
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/events
+        auth: true
 
     services:
       students-service:
@@ -240,6 +282,12 @@ modules:
         method: GET
         use: downstream
         downstream: events-service/events/{eventId}
+        
+      - upstream: /student/{studentId}
+        method: GET
+        use: downstream
+        downstream: events-service/events/student/{studentId}
+        auth: true
 
       - upstream: /{eventId}
         method: DELETE
@@ -262,6 +310,12 @@ modules:
         method: POST
         use: downstream
         downstream: events-service/events/{eventId}/sign-up
+        auth: true
+
+      - upstream: /{eventId}/rate
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/rate
         auth: true
 
       - upstream: /organizer/{organizerId}
@@ -290,6 +344,8 @@ modules:
           method: PUT
           use: downstream
           downstream: comments-service/comments/{commentId}
+          bind:
+            - commentId:{commentId}
           auth: true
 
         - upstream: /
@@ -304,10 +360,12 @@ modules:
           downstream: comments-service/comments/{commentId}
           auth: true
 
-        - upstream: /{commentId}like
+        - upstream: /{commentId}/like
           method: POST
           use: downstream
           downstream: comments-service/comments/{commentId}/like
+          bind:
+            - commentId:{commentId}
           auth: true
 
       services:
@@ -386,6 +444,8 @@ modules:
         method: POST
         use: downstream
         downstream: friends-service/friends/{userId}
+        bind:
+          - userId:{userId}
         auth: true
 
       - upstream: /notYet
@@ -410,6 +470,8 @@ modules:
         method: POST
         use: downstream
         downstream: friends-service/friends/{userId}/invite
+        bind:
+          - userId:{userId}
         auth: true
 
     services:
@@ -432,13 +494,23 @@ modules:
         method: PUT
         use: downstream
         downstream: posts-service/posts/{postId}
+        bind:
+          - postId:{postId}
+        auth: true
+
+      - upstream: /{postId}/state/{state}
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{postId}/state/{state}
+        bind:
+          - postId:{postId}
+          - state:{state}
         auth: true
 
       - upstream: /
         method: GET
         use: downstream
         downstream: posts-service/posts
-        auth: true
 
       - upstream: /{postId}
         method: DELETE

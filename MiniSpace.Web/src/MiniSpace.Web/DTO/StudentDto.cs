@@ -12,7 +12,7 @@ namespace MiniSpace.Web.DTO
         public int NumberOfFriends { get; set; }
         public string ProfileImage { get; set; }
         public string Description { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public bool EmailNotifications { get; set; }
         public string State { get; set; }
         public DateTime CreatedAt { get; set; }

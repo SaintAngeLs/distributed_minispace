@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
             await _studentRepository.DeleteAsync(command.StudentId);
 
-            await _messageBroker.PublishAsync(new StudentDeleted(command.StudentId));
+            await _messageBroker.PublishAsync(new StudentDeleted(command.StudentId, student.FullName));
         }
     }    
 }

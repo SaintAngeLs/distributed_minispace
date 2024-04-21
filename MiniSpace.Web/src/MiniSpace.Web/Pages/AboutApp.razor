@@ -1,0 +1,61 @@
+@using MudBlazor
+
+<div class="about-video">
+    <video autoplay loop muted class="video-background">
+        <source src="videos/index1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="video-overlay">
+        <div class="text-container">
+            <MudText Typo="Typo.h4" Class="about-title">
+                About MiniSpace
+            </MudText>
+            <MudText Typo="Typo.body1" Class="about-text">
+                MiniSpace is a dynamic social platform designed to connect people and communities. Discover, share, and interact with content that drives innovation and engagement.
+            </MudText>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-video {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .video-background {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -1;
+    }
+    .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    .text-container {
+        text-align: center;
+        color: white;
+        padding: 20px;
+    }
+    .about-title {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .about-text {
+        font-size: 1.5rem;
+    }
+</style>
