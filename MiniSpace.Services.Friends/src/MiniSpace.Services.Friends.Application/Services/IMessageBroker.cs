@@ -6,5 +6,5 @@ namespace MiniSpace.Services.Friends.Application.Services
     {
         Task PublishAsync(params IEvent[] events);
         Task PublishAsync(IEnumerable<IEvent> events);
-    }    z
+    }    
 }
