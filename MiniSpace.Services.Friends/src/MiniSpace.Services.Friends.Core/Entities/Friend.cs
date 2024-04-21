@@ -25,66 +25,6 @@ namespace MiniSpace.Services.Friends.Core.Entities
             LastName = lastName;
             CreatedAt = createdAt;
             FriendState = State.Unknown;
-            ValidateState();
-        }
-
-        public void SendFriendRequest(Student requester, Student requestee)
-        {
-            if (FriendState != State.Unknown)
-            {
-                throw new InvalidFriendStateException("Friend request cannot be sent from the current state.");
-            }
-            FriendState = State.Requested;
-            AddEvent(new FriendRequestCreated(requester, requestee));
-        }
-
-        public void InviteFriend(Student inviter, Student invitee)
-        {
-            AddEvent(new FriendInvited(inviter, invitee));
-        }
-
-        public void AcceptFriendship(Student requester, Student acceptor)
-        {
-            if (FriendState != State.Requested) 
-            {
-                throw new FriendshipStateException(StudentId, State.Accepted, FriendState);
-            }
-            FriendState = State.Accepted;
-            AddEvent(new PendingFriendAccepted(requester, acceptor));
-        }
-
-        public void DeclineFriendship(Student requester, Student decliner)
-        {
-            if (FriendState != State.Requested)
-            {
-                throw new FriendDeclinationException(StudentId, FriendId);
-            }
-            FriendState = State.Declined;
-            AddEvent(new PendingFriendDeclined(requester, decliner));
-        }
-
-        public void ChangeFriendshipState(Student student, State newState)
-        {
-            if (FriendState == newState)
-            {
-                throw new FriendshipStateException(StudentId, newState, FriendState);
-            }
-            State previousState = FriendState;
-            FriendState = newState;
-            AddEvent(new FriendshipStateChanged(student, previousState));
-        }
-
-        protected override void ValidateState()
-        {
-            if (StudentId == Guid.Empty || FriendId == Guid.Empty)
-            {
-                throw new InvalidFriendRequestException(StudentId, FriendId);
-            }
-
-            if (StudentId == FriendId)
-            {
-                throw new InvalidFriendInvitationException(StudentId, FriendId);
-            }
         }
     }
 }

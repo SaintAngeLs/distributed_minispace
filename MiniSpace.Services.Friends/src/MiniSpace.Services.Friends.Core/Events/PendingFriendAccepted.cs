@@ -4,10 +4,10 @@ namespace MiniSpace.Services.Friends.Core.Events
 {
     public class PendingFriendAccepted : IDomainEvent
     {
-        public Student Requester { get; }
-        public Student Acceptor { get; }
+        public Friend Requester { get; }
+        public Friend Acceptor { get; }
 
-        public PendingFriendAccepted(Student requester, Student acceptor)
+        public PendingFriendAccepted(Friend requester, Friend acceptor)
         {
             Requester = requester;
             Acceptor = acceptor;

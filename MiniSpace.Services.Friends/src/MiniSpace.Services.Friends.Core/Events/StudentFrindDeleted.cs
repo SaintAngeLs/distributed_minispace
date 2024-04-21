@@ -4,9 +4,9 @@ namespace MiniSpace.Services.Friends.Core.Events
 {
     public class StudentFrindDeleted : IDomainEvent
     {
-        public Student Student { get; }
+        public Friend Student { get; }
 
-        public StudentFrindDeleted(Student student)
+        public StudentFrindDeleted(Friend student)
         {
             Student = student;
         }
