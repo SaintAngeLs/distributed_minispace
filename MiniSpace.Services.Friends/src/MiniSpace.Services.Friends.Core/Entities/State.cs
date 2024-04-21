@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Core.Entities
+namespace MiniSpace.Services.Friends.Core.Entities
 {
     public enum State
     {

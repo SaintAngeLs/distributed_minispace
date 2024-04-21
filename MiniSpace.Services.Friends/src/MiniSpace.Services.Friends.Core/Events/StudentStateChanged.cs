@@ -1,13 +1,13 @@
-using MiniSpace.Services.Students.Core.Entities;
+using MiniSpace.Services.Friends.Core.Entities;
 
-namespace MiniSpace.Services.Students.Core.Events
+namespace MiniSpace.Services.Friends.Core.Events
 {
-    public class StudentStateChanged : IDomainEvent
+    public class FriendShipStateChanged : IDomainEvent
     {
         public Student Student { get; }
         public State PreviousState { get; }
 
-        public StudentStateChanged(Student student, State previousState)
+        public FriendShipStateChanged(Student student, State previousState)
         {
             Student = student;
             PreviousState = previousState;

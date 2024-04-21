@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Application.Services
+namespace MiniSpace.Services.Friends.Application.Services
 {
     public interface IDateTimeProvider
     {

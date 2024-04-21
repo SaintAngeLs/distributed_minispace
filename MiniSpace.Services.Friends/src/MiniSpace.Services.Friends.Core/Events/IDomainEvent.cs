@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Core.Events
+namespace MiniSpace.Services.Friends.Core.Events
 {
     public interface IDomainEvent
     {

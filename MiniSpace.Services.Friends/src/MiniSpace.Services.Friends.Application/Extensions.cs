@@ -2,7 +2,7 @@ using Convey;
 using Convey.CQRS.Commands;
 using Convey.CQRS.Events;
 
-namespace MiniSpace.Services.Students.Application
+namespace MiniSpace.Services.Friends.Application
 {
     public static class Extensions
     {

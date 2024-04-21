@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Application
+namespace MiniSpace.Services.Friends.Application
 {
     public interface IAppContext
     {

@@ -1,7 +1,7 @@
 using Convey.CQRS.Events;
-using MiniSpace.Services.Students.Core.Events;
+using MiniSpace.Services.Friends.Core.Events;
 
-namespace MiniSpace.Services.Students.Application.Services
+namespace MiniSpace.Services.Friends.Application.Services
 {
     public interface IEventMapper
     {

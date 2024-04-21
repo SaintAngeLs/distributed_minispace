@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <RootNamespace>MiniSpace.Services.Students.Api</RootNamespace>
+    <RootNamespace>MiniSpace.Services.Friends.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>  
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniSpace.Services.Students.Infrastructure\MiniSpace.Services.Students.Infrastructure.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Friends.Infrastructure\MiniSpace.Services.Friends.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

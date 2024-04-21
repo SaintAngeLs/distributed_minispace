@@ -1,6 +1,6 @@
-using MiniSpace.Services.Students.Core.Entities;
+using MiniSpace.Services.Friends.Core.Entities;
 
-namespace MiniSpace.Services.Students.Core.Repositories
+namespace MiniSpace.Services.Friends.Core.Repositories
 {
     public interface IStudentRepository
     {

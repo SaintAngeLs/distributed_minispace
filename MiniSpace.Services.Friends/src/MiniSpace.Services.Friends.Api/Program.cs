@@ -9,13 +9,13 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using MiniSpace.Services.Students.Application;
-using MiniSpace.Services.Students.Application.Commands;
-using MiniSpace.Services.Students.Application.Dto;
-using MiniSpace.Services.Students.Application.Queries;
-using MiniSpace.Services.Students.Infrastructure;
+using MiniSpace.Services.Friends.Application;
+using MiniSpace.Services.Friends.Application.Commands;
+using MiniSpace.Services.Friends.Application.Dto;
+using MiniSpace.Services.Friends.Application.Queries;
+using MiniSpace.Services.Friends.Infrastructure;
 
-namespace MiniSpace.Services.Students.Api
+namespace MiniSpace.Services.Friends.Api
 {
     public class Program
     {

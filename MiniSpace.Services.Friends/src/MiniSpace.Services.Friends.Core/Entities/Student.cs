@@ -1,7 +1,7 @@
-using MiniSpace.Services.Students.Core.Events;
-using MiniSpace.Services.Students.Core.Exceptions;
+using MiniSpace.Services.Friends.Core.Events;
+using MiniSpace.Services.Friends.Core.Exceptions;
 
-namespace MiniSpace.Services.Students.Core.Entities
+namespace MiniSpace.Services.Friends.Core.Entities
 {
     public class Student : AggregateRoot
     {

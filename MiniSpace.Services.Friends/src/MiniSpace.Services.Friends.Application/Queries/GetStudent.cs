@@ -1,7 +1,7 @@
 using Convey.CQRS.Queries;
-using MiniSpace.Services.Students.Application.Dto;
+using MiniSpace.Services.Friends.Application.Dto;
 
-namespace MiniSpace.Services.Students.Application.Queries
+namespace MiniSpace.Services.Friends.Application.Queries
 {
     public class GetStudent : IQuery<StudentDto>
     {
