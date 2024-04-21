@@ -1,6 +1,6 @@
-using MiniSpace.Services.Students.Application;
+using MiniSpace.Services.Friends.Application;
 
-namespace MiniSpace.Services.Students.Infrastructure
+namespace MiniSpace.Services.Friends.Infrastructure
 {
     public interface IAppContextFactory
     {

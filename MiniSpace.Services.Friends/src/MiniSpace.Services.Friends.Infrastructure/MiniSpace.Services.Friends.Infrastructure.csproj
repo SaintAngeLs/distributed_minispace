@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniSpace.Services.Students.Application\MiniSpace.Services.Students.Application.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Friends.Application\MiniSpace.Services.Friends.Application.csproj" />
   </ItemGroup>
 
 </Project>

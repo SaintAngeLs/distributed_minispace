@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Application.Dto
+namespace MiniSpace.Services.Friends.Application.Dto
 {
     public class StudentDto
     {

@@ -26,21 +26,21 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using MiniSpace.Services.Students.Application;
-using MiniSpace.Services.Students.Application.Commands;
-using MiniSpace.Services.Students.Application.Events.External;
-using MiniSpace.Services.Students.Application.Events.External.Handlers;
-using MiniSpace.Services.Students.Application.Services;
-using MiniSpace.Services.Students.Core.Repositories;
-using MiniSpace.Services.Students.Infrastructure.Contexts;
-using MiniSpace.Services.Students.Infrastructure.Decorators;
-using MiniSpace.Services.Students.Infrastructure.Exceptions;
-using MiniSpace.Services.Students.Infrastructure.Logging;
-using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
-using MiniSpace.Services.Students.Infrastructure.Services;
+using MiniSpace.Services.Friends.Application;
+using MiniSpace.Services.Friends.Application.Commands;
+using MiniSpace.Services.Friends.Application.Events.External;
+using MiniSpace.Services.Friends.Application.Events.External.Handlers;
+using MiniSpace.Services.Friends.Application.Services;
+using MiniSpace.Services.Friends.Core.Repositories;
+using MiniSpace.Services.Friends.Infrastructure.Contexts;
+using MiniSpace.Services.Friends.Infrastructure.Decorators;
+using MiniSpace.Services.Friends.Infrastructure.Exceptions;
+using MiniSpace.Services.Friends.Infrastructure.Logging;
+using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Friends.Infrastructure.Services;
 
-namespace MiniSpace.Services.Students.Infrastructure
+namespace MiniSpace.Services.Friends.Infrastructure
 {
     public static class Extensions
     {

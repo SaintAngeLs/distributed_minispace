@@ -3,7 +3,7 @@ using Convey.MessageBrokers;
 using Convey.MessageBrokers.Outbox;
 using Convey.Types;
 
-namespace MiniSpace.Services.Students.Infrastructure.Decorators
+namespace MiniSpace.Services.Friends.Infrastructure.Decorators
 {
     [Decorator]
     internal sealed class OutboxEventHandlerDecorator<TEvent> : IEventHandler<TEvent>

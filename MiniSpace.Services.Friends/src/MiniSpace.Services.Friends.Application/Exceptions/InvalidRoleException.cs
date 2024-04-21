@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Application.Exceptions
+namespace MiniSpace.Services.Friends.Application.Exceptions
 {
     public class InvalidRoleException : AppException
     {
