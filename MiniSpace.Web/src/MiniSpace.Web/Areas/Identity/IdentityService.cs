@@ -33,12 +33,15 @@ namespace MiniSpace.Web.Areas.Identity
         public async Task<JwtDto> SignInAsync(string email, string password)
         {
             JwtDto = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new {email, password});
-            
-            var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
-            var payload = jwtToken.Payload;
-            Name = (string)payload["name"];
-            Email = (string)payload["e-mail"];
-            IsAuthenticated = true;
+
+            if (JwtDto != null)
+            {
+                var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
+                var payload = jwtToken.Payload;
+                Name = (string)payload["name"];
+                Email = (string)payload["e-mail"];
+                IsAuthenticated = true;
+            }
             
             return JwtDto;
         }
