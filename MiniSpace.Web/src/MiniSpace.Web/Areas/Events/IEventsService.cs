@@ -12,7 +12,7 @@ namespace MiniSpace.Web.Areas.Events
     {
         Task<EventDto> GetEventAsync(Guid eventId);
         Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId, int numberOfResults);
-        Task AddEventAsync(Guid eventId, string name, Guid organizerId, string startDate, string endDate,
+        Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, string startDate, string endDate,
             string buildingName, string street, string buildingNumber, string apartmentNumber, string city,
             string zipCode, string description, int capacity, decimal fee, string category, string publishDate);
         Task SignUpToEventAsync(Guid eventId, Guid studentId);

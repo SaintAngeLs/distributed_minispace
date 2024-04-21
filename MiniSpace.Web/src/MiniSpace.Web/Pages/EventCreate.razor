@@ -1,15 +1,20 @@
 @page "/events/create"
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Http
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Models.Events
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
+@inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
 <h3>Create new event</h3>
-
+<RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
+                Shade="Shade.Lighter">
+        @errorMessage
+</RadzenAlert>
 <RadzenTemplateForm Data="@userDto" Submit="@(async (UserDto args) => { await HandleCreateEvent(); })">
     <RadzenFieldset>
         <RadzenStack Gap="1rem">
@@ -106,6 +111,7 @@
         Fee = 34.44M
     };
     private bool showError = false;
+    private string errorMessage = string.Empty;
     private bool popup;
     private int publishInfo = 1;
 
@@ -139,13 +145,21 @@
             addEventModel.PublishDate = null;
         }
         
-        await EventsService.AddEventAsync(Guid.Empty, addEventModel.Name, addEventModel.OrganizerId,
+        var response = await EventsService.AddEventAsync(Guid.Empty, addEventModel.Name, addEventModel.OrganizerId,
             addEventModel.StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             addEventModel.EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
             addEventModel.BuildingName, addEventModel.Street,  addEventModel.BuildingNumber,
             addEventModel.ApartmentNumber, addEventModel.City, addEventModel.ZipCode,
             addEventModel.Description, addEventModel.Capacity, addEventModel.Fee, addEventModel.Category,
             addEventModel.PublishDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-        NavigationManager.NavigateTo("/events");
+        if(response.ErrorMessage != null)
+        {
+            showError = true;
+            errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/events");
+        }
     }
 }

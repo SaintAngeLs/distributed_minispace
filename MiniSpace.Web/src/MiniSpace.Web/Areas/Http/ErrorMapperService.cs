@@ -12,6 +12,8 @@ namespace MiniSpace.Web.Areas.Http
                     return "Failed to sign in. Please check your credentials and try again.";
                 case "email_in_use":
                     return $"{error.Reason} Please try again with a different email.";
+                case "invalid_event_date_time":
+                    return "Please review the selected dates. They should be in chronological order.";
                 default:
                     return "Something went wrong. Please try again later.";
             }
