@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Reactions.Application;
+using MiniSpace.Services.Reactions.Application.Commands;
 
 namespace MiniSpace.Services.Reactions.Api
 {
@@ -27,6 +28,10 @@ namespace MiniSpace.Services.Reactions.Api
                     //.UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        .Post<CreateReaction>("reactions"
+                                //, afterDispatch: (cmd, ctx) => ctx.Response.Created($"reactions/{cmd.ReactionId}")
+                                )
+                        .Delete<DeleteReaction>("reactions/{reactionId}")
                         //.Get<GetPosts, IEnumerable<PostDto>>("posts")
                         //.Put<UpdatePost>("posts/{postId}")
                         //.Delete<DeletePost>("posts/{postId}")
