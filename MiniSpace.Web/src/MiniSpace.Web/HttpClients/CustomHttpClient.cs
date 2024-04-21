@@ -56,8 +56,8 @@ namespace MiniSpace.Web.HttpClients
 
             var (success, content) = await TryExecuteAsync(uri, client => client.PostAsync(uri, GetPayload(request)));
 
-            return !success ? new HttpResponse<TResult>(content) : new HttpResponse<TResult>(
-                JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings));
+            return !success ? new HttpResponse<TResult>(JsonConvert.DeserializeObject<ErrorMessage>(content, JsonSerializerSettings)) 
+                : new HttpResponse<TResult>(JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings));
         }
 
         public Task PutAsync<T>(string uri, T request)
