@@ -27,8 +27,13 @@ namespace MiniSpace.Web.Areas.Identity
             return _httpClient.GetAsync<UserDto>("identity/me");
         }
 
-        public Task SignUpAsync(string firstName, string lastName, string email, string password, string role = "user", IEnumerable<string> permissions = null)
-            => _httpClient.PostAsync("identity/sign-up", new {firstName, lastName, email, password, role, permissions});
+        public async Task<HttpResponse<object>> SignUpAsync(string firstName, string lastName, string email, string password, string role = "user",
+            IEnumerable<string> permissions = null)
+        {
+            return await _httpClient.PostAsync<object, object>("identity/sign-up", 
+                new {firstName, lastName, email, password, role, permissions});
+            
+        }
 
         public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
         {
