@@ -16,7 +16,7 @@
 <h1>Search events</h1>
 
 <div class="rz-p-12 rz-text-align-center">
-    <RadzenButton Size="ButtonSize.Large" Text=@($"Filter") ButtonStyle="ButtonStyle.Secondary" Click="@OpenSearchDialog"/>
+    <RadzenButton Size="ButtonSize.Large" Text="Filter" Click="@OpenSearchDialog"/>
 </div>
 
 <RadzenDataList WrapItems="true" AllowPaging="false" Data="@events" TItem="EventDto">
@@ -39,7 +39,8 @@
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
                     <RadzenButton Size="ButtonSize.Small" Text="See event" class="rz-mt-4 rz-my-0"
-                                  Click="@(() => NavigationManager.NavigateTo("/events/details"))"/>
+                                  ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => OpenEventDetailsDialog(ev))"/>
                 </RadzenColumn>
             </RadzenRow>
             <hr style="border: none; background-color: rgba(0,0,0,.2); height: 1px; margin: 1rem 0;" />
@@ -110,6 +111,13 @@
         await OnInitializedAsync();
     }
 
+    private async Task OpenEventDetailsDialog(EventDto eventDto)
+    {
+        await DialogService.OpenAsync<EventDetailsDialog>($"Details of the event:",
+            new Dictionary<string, object>() { { "EventDto", eventDto } },
+            new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
+    }
+    
     private static void WriteSendDataOnConsole(SearchEventsModel model)
     {
         Console.WriteLine();
