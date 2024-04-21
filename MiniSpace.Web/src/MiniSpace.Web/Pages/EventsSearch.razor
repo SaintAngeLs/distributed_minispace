@@ -4,12 +4,20 @@
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Events
+@using MiniSpace.Web.Pages.Dialogs
 @using Radzen
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
-<h3>Search events</h3>
+<h1>Search events</h1>
+
+<div class="rz-p-12 rz-text-align-center">
+    <RadzenButton Size="ButtonSize.Large" Text=@($"Filter") ButtonStyle="ButtonStyle.Secondary" Click="@OpenSearchDialog"/>
+</div>
 
 <RadzenDataList WrapItems="true" AllowPaging="false" Data="@events" TItem="EventDto">
     <Template Context="ev">
@@ -18,19 +26,19 @@
                 <RadzenColumn Size="4">
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-my-0">Category</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Category)</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-my-0">Organizer</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.Name)</b></RadzenText>
                 </RadzenColumn>
                 <RadzenColumn Size="4">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-mb-0">Category</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Category)</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Fee</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Fee)</b></RadzenText>
                 </RadzenColumn>
                 <RadzenColumn Size="4">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-mb-0">City</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Location.ZipCode), @(ev.Location.City)</b></RadzenText>
-                    <RadzenButton Size="ButtonSize.Small" Text="See event" class="rz-mt-3 rz-my-0"
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                    <RadzenButton Size="ButtonSize.Small" Text="See event" class="rz-mt-4 rz-my-0"
                                   Click="@(() => NavigationManager.NavigateTo("/events/details"))"/>
                 </RadzenColumn>
             </RadzenRow>
@@ -40,16 +48,16 @@
 </RadzenDataList>
 
 <RadzenPager ShowPagingSummary="true" PagingSummaryFormat="@pagingSummaryFormat" HorizontalAlign="HorizontalAlign.Right"
-             Count="count" PageSize="@searchEventModel.Pageable.Size" PageNumbersCount="5" PageChanged="@PageChanged" />
+             Count="count" PageSize="@searchEventsModel.Pageable.Size" PageNumbersCount="5" PageChanged="@PageChanged" />
 
 @code {
     
-    private SearchEventModel searchEventModel = new()
+    private SearchEventsModel searchEventsModel = new()
     {
         Name = "",
         Organizer = "",
-        DateFrom = "",
-        DateTo = "",
+        DateFrom = DateTime.Today,
+        DateTo = new DateTime(2024, 12, 31),
         Pageable = new PageableDto()
         {
             Page = 1,
@@ -73,18 +81,46 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var tmp = await EventsService.SearchEventsAsync(searchEventModel.Name, searchEventModel.Organizer,
-            searchEventModel.DateFrom, searchEventModel.DateTo, searchEventModel.Pageable);
+        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
+            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.Pageable);
+        //WriteSendDataOnConsole(searchEventsModel);
         count = tmp.TotalElements;
         events = tmp.Content;
     }
 
     private async void PageChanged(PagerEventArgs args)
     {
-        searchEventModel.Pageable.Page = args.PageIndex + 1;
+        searchEventsModel.Pageable.Page = args.PageIndex + 1;
         
-        var tmp = await EventsService.SearchEventsAsync(searchEventModel.Name, searchEventModel.Organizer,
-            searchEventModel.DateFrom, searchEventModel.DateTo, searchEventModel.Pageable);
+        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
+            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.Pageable);
+        //WriteSendDataOnConsole(searchEventsModel);
         events = tmp.Content;
+    }
+    
+    private async Task OpenSearchDialog()
+    {
+        await DialogService.OpenAsync<EventsSearchDialog>($"Filter results of searching:",
+            new Dictionary<string, object>() { { "SearchEventsModel", searchEventsModel } },
+            new DialogOptions() { Width = "700px", Resizable = true, Draggable = true });
+        await OnInitializedAsync();
+    }
+
+    private static void WriteSendDataOnConsole(SearchEventsModel model)
+    {
+        Console.WriteLine();
+        Console.WriteLine("Search events updated with the following data:");
+        Console.WriteLine($"Name: {model.Name}");
+        Console.WriteLine($"Organizer: {model.Organizer}");
+        Console.WriteLine($"DateFrom: {model.DateFrom}");
+        Console.WriteLine($"DateTo: {model.DateTo}");
+        Console.WriteLine($"Pageable.Page: {model.Pageable.Page}");
+        Console.WriteLine($"Pageable.Size: {model.Pageable.Size}");
+        Console.WriteLine($"Pageable.Sort.Direction: {model.Pageable.Sort.Direction}");
+        Console.WriteLine();
     }
 }

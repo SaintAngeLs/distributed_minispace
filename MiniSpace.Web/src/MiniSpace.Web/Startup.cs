@@ -16,6 +16,7 @@ using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.Areas.Posts;
 using MiniSpace.Web.Areas.Students;
 using MiniSpace.Web.HttpClients;
+using MudBlazor;
 using MudBlazor.Services;
 
 namespace MiniSpace.Web
@@ -49,6 +50,8 @@ namespace MiniSpace.Web
                 client.BaseAddress = new Uri(options.ApiUrl); 
             });
 
+            services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
+            
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IStudentsService, StudentsService>();
             services.AddScoped<IEventsService, EventsService>();
