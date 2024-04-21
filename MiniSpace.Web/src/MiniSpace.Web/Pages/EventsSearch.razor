@@ -120,7 +120,11 @@
     {
         await DialogService.OpenAsync<EventsSearchDialog>($"Filter results of searching:",
             new Dictionary<string, object>() { { "SearchEventsModel", searchEventsModel } },
-            new DialogOptions() { Width = "700px", Resizable = true, Draggable = true });
+            new DialogOptions()
+            {
+                Width = "700px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
         await OnInitializedAsync();
     }
 
@@ -128,7 +132,11 @@
     {
         await DialogService.OpenAsync<EventDetailsDialog>($"Details of the event:",
             new Dictionary<string, object>() { { "EventDto", eventDto } },
-            new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
     
     private static void WriteSendDataOnConsole(SearchEventsModel model)
