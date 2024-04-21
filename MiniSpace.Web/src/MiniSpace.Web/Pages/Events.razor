@@ -14,10 +14,12 @@
         
         <RadzenRow AlignItems="AlignItems.Center">
             <RadzenColumn Size="12" SizeMD="12">
-                <RadzenButton Size="ButtonSize.Large" Text="Create new event"
-                              Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
-                <RadzenButton Size="ButtonSize.Large" Text="Search events"
-                              Click="@(() => NavigationManager.NavigateTo("/events/search"))"/>
+                <div class="rz-p-12 rz-text-align-center">
+                    <RadzenButton Size="ButtonSize.Large" Text="Create new event"
+                                  Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
+                    <RadzenButton Size="ButtonSize.Large" Text="Search events"
+                                  Click="@(() => NavigationManager.NavigateTo("/events/search"))"/>                   
+                </div>
             </RadzenColumn>
         </RadzenRow>
         

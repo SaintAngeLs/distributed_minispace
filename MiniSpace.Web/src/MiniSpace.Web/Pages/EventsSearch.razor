@@ -19,6 +19,11 @@
     <RadzenButton Size="ButtonSize.Large" Text="Filter" Click="@OpenSearchDialog"/>
 </div>
 
+@if (count == 0)
+{
+    <h3>No results found. Try to give us more general filter rules.</h3>
+}
+
 <RadzenDataList WrapItems="true" AllowPaging="false" Data="@events" TItem="EventDto">
     <Template Context="ev">
         <RadzenCard Style="width: 500px; ">
@@ -87,8 +92,16 @@
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
         //WriteSendDataOnConsole(searchEventsModel);
-        count = tmp.TotalElements;
-        events = tmp.Content;
+        if (tmp != null)
+        {
+            count = tmp.TotalElements;
+            events = tmp.Content;   
+        }
+        else
+        {
+            count = 0;
+            events = new List<EventDto>();
+        }
     }
 
     private async void PageChanged(PagerEventArgs args)
