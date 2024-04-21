@@ -9,6 +9,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using MiniSpace.Services.Reactions.Application;
 
 namespace MiniSpace.Services.Reactions.Api
 {
@@ -19,7 +20,7 @@ namespace MiniSpace.Services.Reactions.Api
                 .ConfigureServices(services => services
                     .AddConvey()
                     .AddWebApi()
-                    //.AddApplication()
+                    .AddApplication()
                     //.AddInfrastructure()
                     .Build())
                 .Configure(app => app
