@@ -6,7 +6,6 @@ namespace MiniSpace.Services.Friends.Application.Events
     {
         public Guid StudentId { get; }
         public string Email { get; }
-        // Additional properties as required
 
         public StudentCreated(Guid studentId, string email)
         {
