@@ -1,0 +1,72 @@
+2024-04-20 11:03:00.134 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/wwwroot. Static files may be unavailable.
+2024-04-20 11:03:00.168 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-04-20 11:03:00.221 +02:00 [INF] Registering a service [id: students-service:bb2266ae2ce544d88d9bc645d95b3a5d] in Consul...
+2024-04-20 11:03:00.237 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-04-20 11:03:00.240 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-04-20 11:03:00.240 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-04-20 11:03:00.247 +02:00 [INF] Received HTTP response headers after 3.8902ms - 200
+2024-04-20 11:03:00.248 +02:00 [INF] End processing HTTP request after 8.4659ms - 200
+2024-04-20 11:03:00.251 +02:00 [INF] End processing HTTP request - "OK"
+2024-04-20 11:03:00.252 +02:00 [INF] Registered a service [id: students-service:bb2266ae2ce544d88d9bc645d95b3a5d] in Consul.
+2024-04-20 11:03:00.259 +02:00 [INF] Declaring a queue: 'students-service/students.update_student' with routing key: 'update_student' for an exchange: 'students'.
+2024-04-20 11:03:00.269 +02:00 [INF] Declaring a queue: 'students-service/students.delete_student' with routing key: 'delete_student' for an exchange: 'students'.
+2024-04-20 11:03:00.270 +02:00 [INF] Declaring a queue: 'students-service/students.complete_student_registration' with routing key: 'complete_student_registration' for an exchange: 'students'.
+2024-04-20 11:03:00.272 +02:00 [INF] Declaring a queue: 'students-service/students.change_student_state' with routing key: 'change_student_state' for an exchange: 'students'.
+2024-04-20 11:03:00.274 +02:00 [INF] Declaring a queue: 'students-service/identity.signed_up' with routing key: 'signed_up' for an exchange: 'identity'.
+2024-04-20 11:03:00.276 +02:00 [INF] Declaring a queue: 'students-service/events.student_showed_interest_in_event' with routing key: 'student_showed_interest_in_event' for an exchange: 'events'.
+2024-04-20 11:03:00.278 +02:00 [INF] Declaring a queue: 'students-service/events.student_signed_up_to_event' with routing key: 'student_signed_up_to_event' for an exchange: 'events'.
+2024-04-20 11:03:00.280 +02:00 [INF] Declaring a queue: 'students-service/identity.user_banned' with routing key: 'user_banned' for an exchange: 'identity'.
+2024-04-20 11:03:00.282 +02:00 [INF] Declaring a queue: 'students-service/identity.user_unbanned' with routing key: 'user_unbanned' for an exchange: 'identity'.
+2024-04-20 11:03:00.283 +02:00 [INF] Declaring a queue: 'students-service/identity.organizer_rights_granted' with routing key: 'organizer_rights_granted' for an exchange: 'identity'.
+2024-04-20 11:03:00.285 +02:00 [INF] Declaring a queue: 'students-service/identity.organizer_rights_revoked' with routing key: 'organizer_rights_revoked' for an exchange: 'identity'.
+2024-04-20 11:03:00.304 +02:00 [INF] Deregistering a service [id: students-service:bb2266ae2ce544d88d9bc645d95b3a5d] from Consul...
+2024-04-20 11:03:00.305 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/students-service:bb2266ae2ce544d88d9bc645d95b3a5d"
+2024-04-20 11:03:00.305 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/students-service:bb2266ae2ce544d88d9bc645d95b3a5d
+2024-04-20 11:03:00.305 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/students-service:bb2266ae2ce544d88d9bc645d95b3a5d
+2024-04-20 11:03:00.311 +02:00 [INF] Received HTTP response headers after 5.7404ms - 200
+2024-04-20 11:03:00.311 +02:00 [INF] End processing HTTP request after 6.3068ms - 200
+2024-04-20 11:03:00.311 +02:00 [INF] End processing HTTP request - "OK"
+2024-04-20 11:03:00.312 +02:00 [INF] Deregistered a service [id: students-service:bb2266ae2ce544d88d9bc645d95b3a5d] from Consul.
+2024-04-20 11:03:30.642 +02:00 [INF] Received a message with ID: 'a6cf94696e9543eab3be0a9d5345e516', Correlation ID: 'b9d779b1fdad4129aecfeb139556ee49', timestamp: 1713603810, queue: students-service/identity.signed_up, routing key: signed_up, exchange: identity, payload: 
+2024-04-20 11:03:30.649 +02:00 [INF] Handling a message: signed_up with ID: a6cf94696e9543eab3be0a9d5345e516, Correlation ID: b9d779b1fdad4129aecfeb139556ee49, retry: 0
+2024-04-20 11:03:31.112 +02:00 [INF] Created a new student with id: bfd279dc-6a89-43c0-ae0b-a75ad272563a.
+2024-04-20 11:03:31.113 +02:00 [INF] Handled a message: signed_up with ID: a6cf94696e9543eab3be0a9d5345e516, Correlation ID: b9d779b1fdad4129aecfeb139556ee49, retry: 0
+2024-04-20 11:03:43.912 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - null null
+2024-04-20 11:03:43.913 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:03:43.940 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:03:43.940 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - 200 null application/json 28.1362ms
+2024-04-20 11:04:31.594 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/students - application/json null
+2024-04-20 11:04:31.595 +02:00 [INF] Executing endpoint 'HTTP: POST students'
+2024-04-20 11:04:31.630 +02:00 [INF] Executed endpoint 'HTTP: POST students'
+2024-04-20 11:04:31.643 +02:00 [ERR] Student with id: bfd279dc-6a89-43c0-ae0b-a75ad272563a has invalid date of birth. Today date: '4/20/2024 9:04:31 AM' must be greater than date of birth: '4/20/2024 11:03:44 AM'.
+MiniSpace.Services.Students.Core.Exceptions.InvalidStudentDateOfBirthException: Student with id: bfd279dc-6a89-43c0-ae0b-a75ad272563a has invalid date of birth. Today date: '4/20/2024 9:04:31 AM' must be greater than date of birth: '4/20/2024 11:03:44 AM'.
+   at MiniSpace.Services.Students.Core.Entities.Student.CheckDateOfBirth(DateTime dateOfBirth, DateTime now)
+   at MiniSpace.Services.Students.Core.Entities.Student.CompleteRegistration(String profileImage, String description, DateTime dateOfBirth, DateTime now, Boolean emailNotifications)
+   at MiniSpace.Services.Students.Application.Commands.Handlers.CompleteStudentRegistrationHandler.HandleAsync(CompleteStudentRegistration command, CancellationToken cancellationToken)
+   at Convey.Logging.CQRS.Decorators.CommandHandlerLoggingDecorator`1.HandleAsync(TCommand command, CancellationToken cancellationToken)
+   at Convey.CQRS.Commands.Dispatchers.CommandDispatcher.SendAsync[T](T command, CancellationToken cancellationToken)
+   at Convey.WebApi.CQRS.Builders.DispatcherEndpointsBuilder.BuildCommandContext[T](T command, HttpContext context, Func`3 beforeDispatch, Func`3 afterDispatch)
+   at Convey.WebApi.EndpointsBuilder.BuildRequestContext[T](HttpContext httpContext, Func`3 context)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ApdexMiddleware.MeasureTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.PerRequestTimerMiddleware.TimeTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.RequestTimerMiddleware.TimeTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ErrorRequestMeterMiddleware.Invoke(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ActiveRequestCounterEndpointMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Convey.WebApi.Exceptions.ErrorHandlerMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
+2024-04-20 11:04:31.650 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/students - 400 null application/json 56.6225ms
+2024-04-20 11:04:31.700 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - null null
+2024-04-20 11:04:31.701 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:04:31.732 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:04:31.732 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - 200 null application/json 32.2008ms
+2024-04-20 11:04:43.170 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - null null
+2024-04-20 11:04:43.171 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:04:43.197 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:04:43.198 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - 200 null application/json 27.463ms
+2024-04-20 11:04:44.437 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - null null
+2024-04-20 11:04:44.437 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:04:44.464 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-20 11:04:44.464 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/bfd279dc-6a89-43c0-ae0b-a75ad272563a - 200 null application/json 27.4287ms

@@ -1,0 +1,135 @@
+2024-04-19 18:55:38.343 +02:00 [FTL] Application startup exception
+System.TimeoutException: A timeout occurred after 30000ms selecting a server using CompositeServerSelector{ Selectors = MongoDB.Driver.MongoClient+AreSessionsSupportedServerSelector, LatencyLimitingServerSelector{ AllowedLatencyRange = 00:00:00.0150000 }, OperationsCountServerSelector }. Client view of cluster state is { ClusterId : "1", ConnectionMode : "ReplicaSet", Type : "ReplicaSet", State : "Disconnected", Servers : [{ ServerId: "{ ClusterId : 1, EndPoint : "Unspecified/ac-jt4wzsa-shard-00-00.mmhq4pe.mongodb.net:27017" }", EndPoint: "Unspecified/ac-jt4wzsa-shard-00-00.mmhq4pe.mongodb.net:27017", ReasonChanged: "Heartbeat", State: "Disconnected", ServerVersion: , TopologyVersion: , Type: "Unknown", HeartbeatException: "MongoDB.Driver.MongoConnectionException: An exception occurred while opening a connection to the server.
+ ---> System.IO.IOException: Unable to read data from the transport connection: Connection reset by peer.
+ ---> System.Net.Sockets.SocketException (104): Connection reset by peer
+   at System.Net.Sockets.NetworkStream.ReadAsync(Memory`1 buffer, CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.EnsureFullTlsFrameAsync[TIOAdapter](CancellationToken cancellationToken, Int32 estimatedSize)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Net.Sockets.SocketAsyncEventArgs.TransferCompletionCallbackCore(Int32 bytesTransferred, Memory`1 socketAddress, SocketFlags receivedFlags, SocketError socketError)
+   at System.Net.Sockets.SocketAsyncEngine.System.Threading.IThreadPoolWorkItem.Execute()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+--- End of stack trace from previous location ---
+
+   --- End of inner exception stack trace ---
+   at System.Net.Security.SslStream.EnsureFullTlsFrameAsync[TIOAdapter](CancellationToken cancellationToken, Int32 estimatedSize)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.Security.SslStream.ReceiveHandshakeFrameAsync[TIOAdapter](CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.ForceAuthenticationAsync[TIOAdapter](Boolean receiveFirst, Byte[] reAuthenticationData, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Connections.SslStreamFactory.CreateStreamAsync(EndPoint endPoint, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Connections.BinaryConnection.OpenHelperAsync(CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at MongoDB.Driver.Core.Connections.BinaryConnection.OpenHelperAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.ServerMonitor.InitializeConnectionAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.ServerMonitor.HeartbeatAsync(CancellationToken cancellationToken)", LastHeartbeatTimestamp: "2024-04-19T16:55:38.2697578Z", LastUpdateTimestamp: "2024-04-19T16:55:38.2697582Z" }, { ServerId: "{ ClusterId : 1, EndPoint : "Unspecified/ac-jt4wzsa-shard-00-01.mmhq4pe.mongodb.net:27017" }", EndPoint: "Unspecified/ac-jt4wzsa-shard-00-01.mmhq4pe.mongodb.net:27017", ReasonChanged: "Heartbeat", State: "Disconnected", ServerVersion: , TopologyVersion: , Type: "Unknown", HeartbeatException: "MongoDB.Driver.MongoConnectionException: An exception occurred while opening a connection to the server.
+ ---> System.IO.IOException: Unable to read data from the transport connection: Connection reset by peer.
+ ---> System.Net.Sockets.SocketException (104): Connection reset by peer
+   at System.Net.Sockets.NetworkStream.ReadAsync(Memory`1 buffer, CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.EnsureFullTlsFrameAsync[TIOAdapter](CancellationToken cancellationToken, Int32 estimatedSize)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Net.Sockets.SocketAsyncEventArgs.TransferCompletionCallbackCore(Int32 bytesTransferred, Memory`1 socketAddress, SocketFlags receivedFlags, SocketError socketError)
+   at System.Net.Sockets.SocketAsyncEngine.System.Threading.IThreadPoolWorkItem.Execute()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+--- End of stack trace from previous location ---
+
+   --- End of inner exception stack trace ---
+   at System.Net.Security.SslStream.EnsureFullTlsFrameAsync[TIOAdapter](CancellationToken cancellationToken, Int32 estimatedSize)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.Security.SslStream.ReceiveHandshakeFrameAsync[TIOAdapter](CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.ForceAuthenticationAsync[TIOAdapter](Boolean receiveFirst, Byte[] reAuthenticationData, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Connections.SslStreamFactory.CreateStreamAsync(EndPoint endPoint, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Connections.BinaryConnection.OpenHelperAsync(CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at MongoDB.Driver.Core.Connections.BinaryConnection.OpenHelperAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.ServerMonitor.InitializeConnectionAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.ServerMonitor.HeartbeatAsync(CancellationToken cancellationToken)", LastHeartbeatTimestamp: "2024-04-19T16:55:38.2592560Z", LastUpdateTimestamp: "2024-04-19T16:55:38.2592563Z" }, { ServerId: "{ ClusterId : 1, EndPoint : "Unspecified/ac-jt4wzsa-shard-00-02.mmhq4pe.mongodb.net:27017" }", EndPoint: "Unspecified/ac-jt4wzsa-shard-00-02.mmhq4pe.mongodb.net:27017", ReasonChanged: "Heartbeat", State: "Disconnected", ServerVersion: , TopologyVersion: , Type: "Unknown", HeartbeatException: "MongoDB.Driver.MongoConnectionException: An exception occurred while opening a connection to the server.
+ ---> System.IO.IOException: Unable to read data from the transport connection: Connection reset by peer.
+ ---> System.Net.Sockets.SocketException (104): Connection reset by peer
+   at System.Net.Sockets.NetworkStream.ReadAsync(Memory`1 buffer, CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.EnsureFullTlsFrameAsync[TIOAdapter](CancellationToken cancellationToken, Int32 estimatedSize)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Net.Sockets.SocketAsyncEventArgs.TransferCompletionCallbackCore(Int32 bytesTransferred, Memory`1 socketAddress, SocketFlags receivedFlags, SocketError socketError)
+   at System.Net.Sockets.SocketAsyncEngine.System.Threading.IThreadPoolWorkItem.Execute()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+--- End of stack trace from previous location ---
+
+   --- End of inner exception stack trace ---
+   at System.Net.Security.SslStream.EnsureFullTlsFrameAsync[TIOAdapter](CancellationToken cancellationToken, Int32 estimatedSize)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.Security.SslStream.ReceiveHandshakeFrameAsync[TIOAdapter](CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.ForceAuthenticationAsync[TIOAdapter](Boolean receiveFirst, Byte[] reAuthenticationData, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Connections.SslStreamFactory.CreateStreamAsync(EndPoint endPoint, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Connections.BinaryConnection.OpenHelperAsync(CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at MongoDB.Driver.Core.Connections.BinaryConnection.OpenHelperAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.ServerMonitor.InitializeConnectionAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.ServerMonitor.HeartbeatAsync(CancellationToken cancellationToken)", LastHeartbeatTimestamp: "2024-04-19T16:55:37.6892998Z", LastUpdateTimestamp: "2024-04-19T16:55:37.6893001Z" }] }.
+   at MongoDB.Driver.Core.Clusters.Cluster.ThrowTimeoutException(IServerSelector selector, ClusterDescription description)
+   at MongoDB.Driver.Core.Clusters.Cluster.WaitForDescriptionChangedAsync(IServerSelector selector, ClusterDescription description, Task descriptionChangedTask, TimeSpan timeout, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Clusters.Cluster.SelectServerAsync(IServerSelector selector, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoClient.AreSessionsSupportedAfterServerSelectionAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoClient.AreSessionsSupportedAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoClient.StartImplicitSessionAsync(CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoIndexManagerBase`1.CreateOneAsync(CreateIndexModel`1 model, CreateOneIndexOptions options, CancellationToken cancellationToken)
+   at Convey.MessageBrokers.Outbox.Mongo.Internals.MongoOutboxInitializer.InitializeAsync()
+   at Convey.Types.StartupInitializer.InitializeAsync()
+   at Convey.Extensions.UseConvey(IApplicationBuilder app)
+   at MiniSpace.Services.Students.Infrastructure.Extensions.UseInfrastructure(IApplicationBuilder app) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Students/src/MiniSpace.Services.Students.Infrastructure/Extensions.cs:line 81
+   at MiniSpace.Services.Students.Api.Program.<>c.<Main>b__0_1(IApplicationBuilder app) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/Program.cs:line 30
+   at App.Metrics.AspNetCore.Tracking.DefaultMetricsTrackingStartupFilter.<>c__DisplayClass0_0.<Configure>g__AddMetricsTrackingMiddleware|0(IApplicationBuilder builder)
+   at App.Metrics.AspNetCore.Health.Endpoints.DefaultHealthEndpointsStartupFilter.<>c__DisplayClass0_0.<Configure>g__AddHealthEndpoints|0(IApplicationBuilder builder)
+   at App.Metrics.AspNetCore.Endpoints.DefaultMetricsEndpointsStartupFilter.<>c__DisplayClass0_0.<Configure>g__AddMetricsEndpoints|0(IApplicationBuilder builder)
+   at Microsoft.AspNetCore.Hosting.WebHost.BuildApplication()
+2024-04-19 19:04:53.921 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/wwwroot. Static files may be unavailable.
+2024-04-19 19:04:53.987 +02:00 [INF] Registering a service [id: students-service:186b565fbaa84fd697075627ffa472ea] in Consul...
+2024-04-19 19:04:54.006 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-04-19 19:04:54.009 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-04-19 19:04:54.009 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-04-19 19:04:54.016 +02:00 [INF] Received HTTP response headers after 4.7199ms - 200
+2024-04-19 19:04:54.019 +02:00 [INF] End processing HTTP request after 10.4218ms - 200
+2024-04-19 19:04:54.021 +02:00 [INF] End processing HTTP request - "OK"
+2024-04-19 19:04:54.022 +02:00 [INF] Registered a service [id: students-service:186b565fbaa84fd697075627ffa472ea] in Consul.
+2024-04-19 19:04:54.028 +02:00 [INF] Declaring a queue: 'students-service/students.update_student' with routing key: 'update_student' for an exchange: 'students'.
+2024-04-19 19:04:54.042 +02:00 [INF] Declaring a queue: 'students-service/students.delete_student' with routing key: 'delete_student' for an exchange: 'students'.
+2024-04-19 19:04:54.048 +02:00 [INF] Declaring a queue: 'students-service/students.complete_student_registration' with routing key: 'complete_student_registration' for an exchange: 'students'.
+2024-04-19 19:04:54.054 +02:00 [INF] Declaring a queue: 'students-service/students.change_student_state' with routing key: 'change_student_state' for an exchange: 'students'.
+2024-04-19 19:04:54.061 +02:00 [INF] Declaring a queue: 'students-service/identity.signed_up' with routing key: 'signed_up' for an exchange: 'identity'.
+2024-04-19 19:04:54.066 +02:00 [INF] Declaring a queue: 'students-service/events.student_showed_interest_in_event' with routing key: 'student_showed_interest_in_event' for an exchange: 'events'.
+2024-04-19 19:04:54.072 +02:00 [INF] Declaring a queue: 'students-service/events.student_signed_up_to_event' with routing key: 'student_signed_up_to_event' for an exchange: 'events'.
+2024-04-19 19:04:54.078 +02:00 [INF] Declaring a queue: 'students-service/identity.user_banned' with routing key: 'user_banned' for an exchange: 'identity'.
+2024-04-19 19:04:54.083 +02:00 [INF] Declaring a queue: 'students-service/identity.user_unbanned' with routing key: 'user_unbanned' for an exchange: 'identity'.
+2024-04-19 19:04:54.090 +02:00 [INF] Declaring a queue: 'students-service/identity.organizer_rights_granted' with routing key: 'organizer_rights_granted' for an exchange: 'identity'.
+2024-04-19 19:04:54.097 +02:00 [INF] Declaring a queue: 'students-service/identity.organizer_rights_revoked' with routing key: 'organizer_rights_revoked' for an exchange: 'identity'.
+2024-04-19 19:13:41.809 +02:00 [INF] Received a message with ID: '0713fd8723b54e869df37837beadcc64', Correlation ID: 'cba900f0390e467c9ed50e30a7a4c398', timestamp: 1713546821, queue: students-service/identity.signed_up, routing key: signed_up, exchange: identity, payload: 
+2024-04-19 19:13:41.832 +02:00 [INF] Handling a message: signed_up with ID: 0713fd8723b54e869df37837beadcc64, Correlation ID: cba900f0390e467c9ed50e30a7a4c398, retry: 0
+2024-04-19 19:13:42.794 +02:00 [INF] Created a new student with id: f971c185-4c39-4b2a-8368-3eb2f8145cc7.
+2024-04-19 19:13:42.796 +02:00 [INF] Handled a message: signed_up with ID: 0713fd8723b54e869df37837beadcc64, Correlation ID: cba900f0390e467c9ed50e30a7a4c398, retry: 0
+2024-04-19 19:13:53.589 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - null null
+2024-04-19 19:13:53.631 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:13:53.781 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:13:53.789 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - 200 null application/json 200.6123ms
+2024-04-19 19:14:19.844 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/students - application/json null
+2024-04-19 19:14:19.846 +02:00 [INF] Executing endpoint 'HTTP: POST students'
+2024-04-19 19:14:20.419 +02:00 [INF] Completed a registration for the student with id: f971c185-4c39-4b2a-8368-3eb2f8145cc7.
+2024-04-19 19:14:20.421 +02:00 [INF] Executed endpoint 'HTTP: POST students'
+2024-04-19 19:14:20.422 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/students - 201 0 null 578.1699ms
+2024-04-19 19:14:20.492 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - null null
+2024-04-19 19:14:20.494 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:14:20.922 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:14:20.923 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - 200 null application/json 430.6162ms
+2024-04-19 19:14:27.127 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - null null
+2024-04-19 19:14:27.128 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:14:27.189 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:14:27.189 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - 200 null application/json 62.422ms
+2024-04-19 19:14:34.915 +02:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - application/json null
+2024-04-19 19:14:34.917 +02:00 [INF] Executing endpoint 'HTTP: PUT students/{studentId}'
+2024-04-19 19:14:35.063 +02:00 [INF] Updated the student with id: f971c185-4c39-4b2a-8368-3eb2f8145cc7.
+2024-04-19 19:14:35.064 +02:00 [INF] Executed endpoint 'HTTP: PUT students/{studentId}'
+2024-04-19 19:14:35.065 +02:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - 200 0 null 150.0791ms
+2024-04-19 19:14:35.208 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - null null
+2024-04-19 19:14:35.208 +02:00 [INF] Executing endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:14:35.287 +02:00 [INF] Executed endpoint 'HTTP: GET students/{studentId}'
+2024-04-19 19:14:35.288 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/students/f971c185-4c39-4b2a-8368-3eb2f8145cc7 - 200 null application/json 80.4257ms
