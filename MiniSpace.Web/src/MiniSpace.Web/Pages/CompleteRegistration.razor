@@ -4,16 +4,18 @@
 @using MiniSpace.Web.Components
 @using MiniSpace.Web.Models.Students
 @using System.IO
+@using MiniSpace.Web.Areas.Http
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
 <h3>Complete your registration</h3>
 
 <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
              Shade="Shade.Lighter">
-    Failed to load image.
+    @errorMessage
 </RadzenAlert>
 
 <RadzenTemplateForm Data="@completeRegistrationModel"
@@ -55,6 +57,7 @@
     private string fileName;
     private long? fileSize;
     private bool showError = false;
+    private string errorMessage = string.Empty;
     private bool popup;
 
     protected override async Task OnInitializedAsync()
@@ -70,17 +73,18 @@
     
     private async Task HandleCompleteRegistration()
     {
-        await StudentsService.CompleteStudentRegistrationAsync(completeRegistrationModel.StudentId,
+        var response = await StudentsService.CompleteStudentRegistrationAsync(completeRegistrationModel.StudentId,
             completeRegistrationModel.ProfileImage, completeRegistrationModel.Description,
             completeRegistrationModel.DateOfBirth, completeRegistrationModel.EmailNotifications);
         // Handle the post-sign-up logic, such as redirection or displaying a success message
-        if (IdentityService.IsAuthenticated)
+        if(response.ErrorMessage != null)
         {
-            NavigationManager.NavigateTo("/account");
+            errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
+            showError = true;
         }
         else
         {
-            NavigationManager.NavigateTo("/signin");
+            NavigationManager.NavigateTo(IdentityService.IsAuthenticated ? "/account" : "/signin");
         }
     }
     

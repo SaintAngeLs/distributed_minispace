@@ -28,15 +28,16 @@ namespace MiniSpace.Web.Areas.Events
         public Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId, int numberOfResults)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<PagedResponseDto<IEnumerable<EventDto>>>($"events/student/{studentId}");
+            return _httpClient.GetAsync<PagedResponseDto<IEnumerable<EventDto>>>(
+                $"events/student/{studentId}?numberOfResults={numberOfResults}");
         }
 
-        public Task AddEventAsync(Guid eventId, string name, Guid organizerId, DateTime startDate, DateTime endDate,
+        public Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, string startDate, string endDate,
             string buildingName, string street, string buildingNumber, string apartmentNumber, string city, string zipCode,
-            string description, int capacity, decimal fee, string category, DateTime publishDate)
+            string description, int capacity, decimal fee, string category, string publishDate)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync("events", new {eventId, name, organizerId, startDate, endDate, buildingName,
+            return _httpClient.PostAsync<object,object>("events", new {eventId, name, organizerId, startDate, endDate, buildingName,
                 street, buildingNumber, apartmentNumber, city, zipCode, description, capacity, fee, category, publishDate});
         }
 
@@ -57,8 +58,9 @@ namespace MiniSpace.Web.Areas.Events
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync($"events/{eventId}/rate", new {eventId, rating, studentId});
         }
-
-        public Task<PagedResponseDto<IEnumerable<EventDto>>> SearchEventsAsync(string name, string organizer, DateTime dateFrom, DateTime dateTo, PageableDto pageable)
+        
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name,
+                string organizer, string dateFrom, string dateTo, PageableDto pageable)
         {
             return _httpClient.PostAsync<SearchEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search", 
                 new (name, organizer, dateFrom, dateTo, pageable));

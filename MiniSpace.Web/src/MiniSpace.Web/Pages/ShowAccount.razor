@@ -16,7 +16,7 @@
         <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
             <RadzenImage Path="@($"data:image/jpeg;base64,{@studentDto.ProfileImage}")"
                          AlternateText="base64 image"
-                         Style="width: 50%"/>
+                         Style="width: 20em" class="rz-border-radius-10"/>
         </RadzenStack>
         
         <RadzenLabelWithTextBoxes Id="fullname" LabelText="Fullname:" Value1="@studentDto.FirstName"
