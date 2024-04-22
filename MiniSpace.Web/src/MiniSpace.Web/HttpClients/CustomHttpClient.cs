@@ -49,14 +49,15 @@ namespace MiniSpace.Web.HttpClients
             return TryExecuteAsync(uri, client => client.PostAsync(uri, GetPayload(request)));
         }
 
-        public async Task<TResult> PostAsync<TRequest, TResult>(string uri, TRequest request)
+        public async Task<HttpResponse<TResult>> PostAsync<TRequest, TResult>(string uri, TRequest request)
         {
             var jsonPayload = JsonConvert.SerializeObject(request, JsonSerializerSettings);
             _logger.LogDebug($"Sending HTTP POST request to URI: {uri} with payload: {jsonPayload}");
 
             var (success, content) = await TryExecuteAsync(uri, client => client.PostAsync(uri, GetPayload(request)));
 
-            return !success ? default : JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings);
+            return !success ? new HttpResponse<TResult>(JsonConvert.DeserializeObject<ErrorMessage>(content, JsonSerializerSettings)) 
+                : new HttpResponse<TResult>(JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings));
         }
 
         public Task PutAsync<T>(string uri, T request)
@@ -109,16 +110,17 @@ namespace MiniSpace.Web.HttpClients
                     return (true, await response.Content.ReadAsStringAsync());
                 }
 
+                var errorContent = "invalid_http_response";
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
+                    errorContent = await response.Content.ReadAsStringAsync();
                     _logger.LogError($"Error response from server: {errorContent}");
                 }
 
                 _logger.LogError($"Received an invalid response to HTTP request from URI: {uri}" +
                                  $"{Environment.NewLine}{response}");
 
-                return default;
+                return (false, errorContent);
             }
         });
 
