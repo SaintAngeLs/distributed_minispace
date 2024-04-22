@@ -1,6 +1,7 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Friends.Application.Services;
+using MiniSpace.Services.Friends.Core.Events;
 using MiniSpace.Services.Friends.Core.Repositories;
 
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
@@ -20,8 +21,15 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 
         public async Task HandleAsync(AddFriend command, CancellationToken cancellationToken = default)
         {
-            var friendship = await _friendRepository.AddFriendAsync(command.RequesterId, command.FriendId);
-            var eventToPublish = _eventMapper.MapAll(new List<IDomainEvent> { new FriendRequestCreated(command.RequesterId, command.FriendId) });
+            var alreadyFriends = await _friendRepository.IsFriendAsync(command.RequesterId, command.FriendId);
+            if (alreadyFriends)
+            {
+                throw new InvalidOperationException("You are already friends.");
+            }
+            
+            await _friendRepository.AddFriendAsync(command.RequesterId, command.FriendId);
+            var events = new List<IDomainEvent> { new FriendRequestCreated(command.RequesterId, command.FriendId) };
+            var eventToPublish = _eventMapper.MapAll(events);
             await _messageBroker.PublishAsync(eventToPublish);
         }
     }

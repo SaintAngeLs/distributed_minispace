@@ -1,9 +1,10 @@
-using System.Windows.Input;
 using Convey.CQRS.Events;
+using Convey.MessageBrokers;
 
-namespace MiniSpace.Services.Friends.Application.Events
+namespace MiniSpace.Services.Friends.Application.Events.External
 {
-    public class FriendInvited : ICommand
+    [Message("notifications")]
+    public class FriendInvited : IEvent
     {
         public Guid InviterId { get; }
         public Guid InviteeId { get; }

@@ -20,19 +20,22 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             _appContext = appContext;
         }
 
-        public async Task HandleAsync(FriendInvited command, CancellationToken cancellationToken = default)
+         public async Task HandleAsync(FriendInvited command, CancellationToken cancellationToken = default)
         {
-            // Check identity context for authorization, etc.
             var identity = _appContext.Identity;
             if (!identity.IsAuthenticated || identity.Id != command.InviterId)
             {
                 throw new UnauthorizedAccessException("Not authorized to send friend invitations.");
             }
 
-            // Logic to send an invitation
-            await _friendRepository.InviteFriendAsync(command.InviterId, command.InviteeId);
+            // Check if already invited or friends
+            var alreadyFriendsOrInvited = await _friendRepository.IsFriendAsync(command.InviterId, command.InviteeId);
+            if (alreadyFriendsOrInvited)
+            {
+                throw new InvalidOperationException("Already friends or invitation already sent.");
+            }
 
-            // Trigger events
+            await _friendRepository.InviteFriendAsync(command.InviterId, command.InviteeId);
             var eventToPublish = _eventMapper.Map(new FriendInvited(command.InviterId, command.InviteeId));
             await _messageBroker.PublishAsync(eventToPublish);
         }

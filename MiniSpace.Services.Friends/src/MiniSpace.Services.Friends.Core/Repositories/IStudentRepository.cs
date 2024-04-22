@@ -2,11 +2,11 @@ using MiniSpace.Services.Friends.Core.Entities;
 
 namespace MiniSpace.Services.Friends.Core.Repositories
 {
-    public interface IFriendRepository
+    public interface IStudentRepository
     {
-        Task<List<Friend>> GetFriendsAsync(Guid studentId);
-        Task AddFriendAsync(Guid requesterId, Guid friendId);
-        Task RemoveFriendAsync(Guid requesterId, Guid friendId);
-        Task<bool> IsFriendAsync(Guid studentId, Guid potentialFriendId);
+        Task<Student> GetAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
+        Task AddAsync(Student student);
+        Task DeleteAsync(Guid id);
     }
 }

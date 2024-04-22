@@ -26,5 +26,35 @@ namespace MiniSpace.Services.Friends.Core.Entities
             CreatedAt = createdAt;
             FriendState = State.Unknown;
         }
+
+        public void AcceptFriendship()
+        {
+            if (FriendState != State.Requested)
+            {
+                throw new InvalidFriendStateException(FriendId, "Friendship cannot be accepted in the current state.");
+            }
+            FriendState = State.Accepted;
+            AddEvent(new FriendStateChanged(this));
+        }
+
+        public void DeclineFriendship()
+        {
+            if (FriendState != State.Requested)
+            {
+                throw new InvalidFriendStateException(FriendId, "Friendship cannot be declined in the current state.");
+            }
+            FriendState = State.Declined;
+            AddEvent(new FriendStateChanged(this));
+        }
+
+        public void CancelFriendship()
+        {
+            if (FriendState != State.Accepted)
+            {
+                throw new InvalidFriendStateException(FriendId, "Only accepted friendships can be cancelled.");
+            }
+            FriendState = State.Cancelled;
+            AddEvent(new FriendStateChanged(this));
+        }
     }
 }
