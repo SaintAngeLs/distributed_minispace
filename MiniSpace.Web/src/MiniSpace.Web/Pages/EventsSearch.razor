@@ -19,14 +19,14 @@
     <RadzenButton Size="ButtonSize.Large" Text="Filter" Click="@OpenSearchDialog"/>
 </div>
 
-@if (count == 0)
+@if (totalElements == 0)
 {
     <h3>No results found. Try to give us more general filter rules.</h3>
 }
 
-<RadzenDataList WrapItems="true" AllowPaging="false" Data="@events" TItem="EventDto">
+<RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
     <Template Context="ev">
-        <RadzenCard Style="width: 500px; ">
+        <RadzenCard>
             <RadzenRow Size="12">
                 <RadzenColumn Size="4">
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
@@ -43,7 +43,7 @@
                 <RadzenColumn Size="4">
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
-                    <RadzenButton Size="ButtonSize.Small" Text="See event" class="rz-mt-4 rz-my-0"
+                    <RadzenButton Size="ButtonSize.Medium" Text="See event" class="rz-mt-4 rz-my-0"
                                   ButtonStyle="ButtonStyle.Secondary"
                                   Click="@(() => OpenEventDetailsDialog(ev))"/>
                 </RadzenColumn>
@@ -54,7 +54,7 @@
 </RadzenDataList>
 
 <RadzenPager ShowPagingSummary="true" PagingSummaryFormat="@pagingSummaryFormat" HorizontalAlign="HorizontalAlign.Right"
-             Count="count" PageSize="@searchEventsModel.Pageable.Size" PageNumbersCount="5" PageChanged="@PageChanged" />
+             Count="@totalElements" PageSize="@searchEventsModel.Pageable.Size" PageNumbersCount="@totalPages" PageChanged="@PageChanged" />
 
 @code {
     
@@ -81,7 +81,8 @@
     private int publishInfo = 1;
     
     string pagingSummaryFormat = "Displaying page {0} of {1} (total {2} records)";
-    int count = 0;
+    int totalPages = 0;
+    int totalElements = 0;
     IEnumerable<EventDto> events;
     
     
@@ -91,15 +92,16 @@
             searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
-        //WriteSendDataOnConsole(searchEventsModel);
         if (tmp.Content != null)
         {
-            count = tmp.Content.TotalElements;
-            events = tmp.Content.Content;   
+            totalPages = tmp.Content.TotalPages;
+            totalElements = tmp.Content.TotalElements;
+            events = tmp.Content.Content;
         }
         else
         {
-            count = 0;
+            totalPages = 0;
+            totalElements = 0;
             events = new List<EventDto>();
         }
     }
@@ -112,8 +114,8 @@
             searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
-        //WriteSendDataOnConsole(searchEventsModel);
         events = tmp.Content.Content;
+        StateHasChanged();
     }
     
     private async Task OpenSearchDialog()
@@ -137,19 +139,5 @@
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-    }
-    
-    private static void WriteSendDataOnConsole(SearchEventsModel model)
-    {
-        Console.WriteLine();
-        Console.WriteLine("Search events updated with the following data:");
-        Console.WriteLine($"Name: {model.Name}");
-        Console.WriteLine($"Organizer: {model.Organizer}");
-        Console.WriteLine($"DateFrom: {model.DateFrom}");
-        Console.WriteLine($"DateTo: {model.DateTo}");
-        Console.WriteLine($"Pageable.Page: {model.Pageable.Page}");
-        Console.WriteLine($"Pageable.Size: {model.Pageable.Size}");
-        Console.WriteLine($"Pageable.Sort.Direction: {model.Pageable.Sort.Direction}");
-        Console.WriteLine();
     }
 }
