@@ -44,8 +44,8 @@ namespace MiniSpace.Web.Areas.Identity
             {
                 var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
                 var payload = jwtToken.Payload;
-                // Name = (string)payload["name"];
-                // Email = (string)payload["e-mail"];
+                Name = (string)payload["name"];
+                Email = (string)payload["e-mail"];
                 IsAuthenticated = true;
             }
             
