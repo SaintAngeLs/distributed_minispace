@@ -71,9 +71,8 @@
         var jwtDto = response.Content;
         if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
         {
-            var studentDto = await StudentsService.GetStudentAsync(IdentityService.UserDto.Id);
-
-            NavigationManager.NavigateTo(studentDto.State == "incomplete" ? "/signup/complete" : "/account");
+            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+            NavigationManager.NavigateTo(StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/account");
         }
         else
         {

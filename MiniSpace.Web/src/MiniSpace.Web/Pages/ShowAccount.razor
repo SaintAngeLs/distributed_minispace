@@ -93,7 +93,8 @@ else
     {
         if (IdentityService.IsAuthenticated)
         {
-            studentDto = await StudentsService.GetStudentAsync(IdentityService.UserDto.Id);
+            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+            studentDto = StudentsService.StudentDto;
         }
     }
 
