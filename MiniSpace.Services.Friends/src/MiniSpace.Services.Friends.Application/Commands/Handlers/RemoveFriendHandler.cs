@@ -1,5 +1,6 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Friends.Application.Events;
+using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Repositories;
 
@@ -25,14 +26,13 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var identity = _appContext.Identity;
             if (!identity.IsAuthenticated || (identity.Id != command.RequesterId && !identity.IsAdmin))
             {
-                throw new UnauthorizedAccessException("Not authorized to remove friend.");
+                throw new UnauthorizedFriendActionException();
             }
 
-            // Validate the friendship exists
             var exists = await _friendRepository.IsFriendAsync(command.RequesterId, command.FriendId);
             if (!exists)
             {
-                throw new InvalidOperationException("No such friendship exists.");
+                throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
             }
 
             await _friendRepository.RemoveFriendAsync(command.RequesterId, command.FriendId);

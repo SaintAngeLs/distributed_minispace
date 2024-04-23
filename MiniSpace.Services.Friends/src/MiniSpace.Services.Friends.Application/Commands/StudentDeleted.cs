@@ -1,8 +1,8 @@
-using Convey.CQRS.Events;
+using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Friends.Application.Events
 {
-    public class StudentDeleted : IEvent
+    public class StudentDeleted : ICommand
     {
         public Guid StudentId { get; }
 

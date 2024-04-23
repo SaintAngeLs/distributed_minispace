@@ -20,7 +20,7 @@ namespace MiniSpace.Services.Friends.Application.Events.External.Handlers
 
         public async Task HandleAsync(FriendInvited @event, CancellationToken cancellationToken)
         {
-            var invitation = new FriendInvitation(@event.InviterId, @event.InviteeId);
+            var invitation = new FriendInvited(@event.InviterId, @event.InviteeId);
             await _friendRepository.AddInvitationAsync(invitation);
 
             var events = _eventMapper.MapAll(invitation.Events);

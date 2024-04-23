@@ -10,12 +10,14 @@ namespace MiniSpace.Services.Friends.Application.Events.External.Handlers
         private readonly IFriendRepository _friendRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
+        private readonly IAppContext _appContext;
 
-        public PendingFriendDeclinedHandler(IFriendRepository friendRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public PendingFriendDeclinedHandler(IFriendRepository friendRepository, IEventMapper eventMapper, IMessageBroker messageBroker, IAppContext appContext)
         {
             _friendRepository = friendRepository;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
+            _appContext = appContext;
         }
 
         public async Task HandleAsync(PendingFriendDeclined @event, CancellationToken cancellationToken)

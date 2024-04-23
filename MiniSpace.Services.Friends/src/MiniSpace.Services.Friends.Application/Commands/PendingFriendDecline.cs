@@ -1,13 +1,13 @@
-using Convey.CQRS.Events;
+using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Friends.Application.Events
 {
-    public class FriendRequestCreated : IEvent
+    public class PendingFriendDecline : ICommand
     {
         public Guid RequesterId { get; }
         public Guid FriendId { get; }
 
-        public FriendRequestCreated(Guid requesterId, Guid friendId)
+        public PendingFriendDecline(Guid requesterId, Guid friendId)
         {
             RequesterId = requesterId;
             FriendId = friendId;

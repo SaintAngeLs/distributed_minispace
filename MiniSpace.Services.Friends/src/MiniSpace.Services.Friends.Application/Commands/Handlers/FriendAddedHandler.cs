@@ -3,7 +3,7 @@ using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Repositories;
 
-namespace MiniSpace.Services.Friends.Application.Events.External.Handlers
+namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
     public class FriendAddedHandler : IEventHandler<FriendAdded>
     {

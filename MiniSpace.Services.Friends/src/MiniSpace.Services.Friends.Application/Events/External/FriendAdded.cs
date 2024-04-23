@@ -3,7 +3,7 @@ using Convey.MessageBrokers;
 
 namespace MiniSpace.Services.Friends.Application.Events.External
 {
-    [Message("identity")]
+    [Message("notifications")]
     public class FriendAdded : IEvent
     {
         public Guid RequesterId { get; }

@@ -1,14 +1,13 @@
-using System.Windows.Input;
-using Convey.CQRS.Events;
+using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Friends.Application.Events
 {
-    public class FriendInvited : ICommand
+    public class InviteFriend : ICommand
     {
         public Guid InviterId { get; }
         public Guid InviteeId { get; }
 
-        public FriendInvited(Guid inviterId, Guid inviteeId)
+        public InviteFriend(Guid inviterId, Guid inviteeId)
         {
             InviterId = inviterId;
             InviteeId = inviteeId;
