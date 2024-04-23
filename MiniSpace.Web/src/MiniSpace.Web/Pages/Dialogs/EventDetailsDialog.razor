@@ -209,7 +209,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        userDto = await IdentityService.GetAccountAsync();
+        userDto = IdentityService.UserDto;
         await base.OnInitializedAsync();
     }
 

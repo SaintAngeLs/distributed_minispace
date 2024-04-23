@@ -37,8 +37,7 @@ else
     {
         if (IdentityService.IsAuthenticated)
         {
-            var userDto = await IdentityService.GetAccountAsync();
-            studentDto = await StudentsService.GetStudentAsync(userDto.Id);
+            studentDto = await StudentsService.GetStudentAsync(IdentityService.UserDto.Id);
         }
     }
 }
