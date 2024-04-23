@@ -1,6 +1,7 @@
 @page "/events/search"
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Events
@@ -9,20 +10,24 @@
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @inject DialogService DialogService
-@inject IIdentityService IdentityService
 @inject IEventsService EventsService
+@inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 
 <h1>Search events</h1>
 
 <div class="rz-p-12 rz-text-align-center">
-    <RadzenButton Size="ButtonSize.Large" Text="Filter" Click="@OpenSearchDialog"/>
+    <RadzenButton Size="ButtonSize.Large" Text="Go to your events" Click="@(() => NavigationManager.NavigateTo("/events/"))"/>  
+    <RadzenButton Size="ButtonSize.Large" Text="Filter by criteria" Click="@OpenSearchDialog"/>
 </div>
 
-@if (totalElements == 0)
+@if (pageInitialized && totalElements == 0)
 {
     <h3>No results found. Try to give us more general filter rules.</h3>
 }
+
+<RadzenPager ShowPagingSummary="true" PagingSummaryFormat="@pagingSummaryFormat" HorizontalAlign="HorizontalAlign.Right"
+             Count="@totalElements" PageSize="@searchEventsModel.Pageable.Size" PageNumbersCount="@totalPages" PageChanged="@PageChanged" />
 
 <RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
     <Template Context="ev">
@@ -31,8 +36,8 @@
                 <RadzenColumn Size="4">
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-my-0">Organizer</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.Name)</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-my-0">Description</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
                 </RadzenColumn>
                 <RadzenColumn Size="4">
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-mb-0">Category</RadzenText>
@@ -40,10 +45,38 @@
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Fee</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Fee)</b></RadzenText>
                 </RadzenColumn>
-                <RadzenColumn Size="4">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
-                    <RadzenButton Size="ButtonSize.Medium" Text="See event" class="rz-mt-4 rz-my-0"
+                <RadzenColumn Size="3">
+                    @if (!ev.ShowedInterest)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Show interest" class="rz-mt-1 rz-my-0"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@(() => ShowInterestInEvent(ev))"/>   
+                    }
+                    else
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest" class="rz-mt-1 rz-my-0"
+                                      ButtonStyle="ButtonStyle.Light"
+                                      Click="@(() => CancelInterestInEvent(ev))"/> 
+                    }
+                    
+                    @if (!ev.SignedUp)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Sign up" class="rz-mt-1 rz-my-0"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@(() => SignUpToEvent(ev))"/>   
+                    }
+                    else
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up" class="rz-mt-1 rz-my-0"
+                                      ButtonStyle="ButtonStyle.Light"
+                                      Click="@(() => CancelSignUpToEvent(ev))"/>                         
+                    }
+                    
+                    <RadzenButton Size="ButtonSize.Medium" Text="Go to event page" class="rz-mt-3 rz-my-0"
+                                  ButtonStyle="ButtonStyle.Info"
+                                  Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}"))"/>
+                    
+                    <RadzenButton Size="ButtonSize.Medium" Text="See event details" class="rz-mt-3 rz-my-0"
                                   ButtonStyle="ButtonStyle.Secondary"
                                   Click="@(() => OpenEventDetailsDialog(ev))"/>
                 </RadzenColumn>
@@ -57,7 +90,6 @@
              Count="@totalElements" PageSize="@searchEventsModel.Pageable.Size" PageNumbersCount="@totalPages" PageChanged="@PageChanged" />
 
 @code {
-    
     private SearchEventsModel searchEventsModel = new()
     {
         Name = "",
@@ -76,18 +108,18 @@
         }
     };
     
-    private bool showError = false;
-    private bool popup;
-    private int publishInfo = 1;
+    private StudentDto studentDto = new();
+    private bool pageInitialized = false;
     
     string pagingSummaryFormat = "Displaying page {0} of {1} (total {2} records)";
     int totalPages = 0;
     int totalElements = 0;
     IEnumerable<EventDto> events;
     
-    
     protected override async Task OnInitializedAsync()
     {
+        studentDto = StudentsService.StudentDto;
+        
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
             searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -104,6 +136,8 @@
             totalElements = 0;
             events = new List<EventDto>();
         }
+
+        pageInitialized = true;
     }
 
     private async void PageChanged(PagerEventArgs args)
@@ -139,5 +173,33 @@
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+    
+    private async void ShowInterestInEvent(EventDto eventDto)
+    {
+        await EventsService.ShowInterestInEventAsync(eventDto.Id, studentDto.Id);
+        eventDto.ShowedInterest = true;
+        StateHasChanged();
+    }
+
+    private async void SignUpToEvent(EventDto eventDto)
+    {
+        await EventsService.SignUpToEventAsync(eventDto.Id, studentDto.Id);
+        eventDto.SignedUp = true;
+        StateHasChanged();
+    }
+    
+    private async void CancelInterestInEvent(EventDto eventDto)
+    {
+        //await EventsService.CancelInterestInEventAsync(eventDto.Id, studentDto.Id);
+        eventDto.ShowedInterest = false;
+        StateHasChanged();
+    }
+
+    private async void CancelSignUpToEvent(EventDto eventDto)
+    {
+        //await EventsService.CancelSignUpToEventAsync(eventDto.Id, studentDto.Id);
+        eventDto.SignedUp = false;
+        StateHasChanged();
     }
 }

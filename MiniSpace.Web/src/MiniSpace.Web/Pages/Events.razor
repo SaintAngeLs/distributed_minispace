@@ -1,14 +1,20 @@
 @page "/events"
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Pages.Dialogs
 @using Radzen
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
-<h1>Events</h1>
+<h1>Your events</h1>
 
-@if (studentDto.Id != Guid.Empty)
+@if (pageInitialized && studentDto.Id != Guid.Empty)
 {
     <RadzenStack Gap="1rem" Style="height: 100%">
         
@@ -18,26 +24,90 @@
                     <RadzenButton Size="ButtonSize.Large" Text="Create new event"
                                   Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
                     <RadzenButton Size="ButtonSize.Large" Text="Search events"
-                                  Click="@(() => NavigationManager.NavigateTo("/events/search"))"/>                   
+                                  Click="@(() => NavigationManager.NavigateTo("/events/search"))"/>             
                 </div>
             </RadzenColumn>
         </RadzenRow>
         
+        @if (totalElements == 0)
+        {
+            <h3>You haven't been interested in or signed up for any event yet.</h3>
+        }
+        
+        <RadzenDataList AllowPaging="false" Data="@studentEvents" TItem="EventDto">
+            <Template Context="ev">
+                <RadzenCard>
+                    <RadzenRow Size="12">
+                        <RadzenColumn Size="4">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-my-0">Description</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="4">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-mb-0">Start date</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">End date</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="4">
+                            <RadzenButton Size="ButtonSize.Medium" Text="Go to event page" class="rz-mt-4 rz-my-0"
+                                          ButtonStyle="ButtonStyle.Info"
+                                          Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}"))"/>
+                            <RadzenButton Size="ButtonSize.Medium" Text="See event details" class="rz-mt-4 rz-my-0"
+                                          ButtonStyle="ButtonStyle.Secondary"
+                                          Click="@(() => OpenEventDetailsDialog(ev))"/>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <hr style="border: none; background-color: rgba(0,0,0,.2); height: 1px; margin: 1rem 0;" />
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+        
     </RadzenStack>
-}
-else
-{
-    <p>Loading...</p>
 }
 
 @code {
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    
     private StudentDto studentDto = new();
+    private bool pageInitialized = false;
+    
+    private int numberOfResults = 10;
+    int totalPages = 1;
+    int totalElements = 0;
+    IEnumerable<EventDto> studentEvents;
     
     protected override async Task OnInitializedAsync()
     {
         if (IdentityService.IsAuthenticated)
         {
             studentDto = StudentsService.StudentDto;
+            
+            var tmp = await EventsService.GetStudentEventsAsync(studentDto.Id, numberOfResults);
+            if (tmp != null)
+            {
+                totalElements = tmp.TotalElements;
+                studentEvents = tmp.Content;
+            }
+            else
+            {
+                totalElements = 0;
+                studentEvents = new List<EventDto>();
+            }
         }
+        
+        pageInitialized = true;
+    }
+    
+    private async Task OpenEventDetailsDialog(EventDto eventDto)
+    {
+        await DialogService.OpenAsync<EventDetailsDialog>($"Details of the event:",
+            new Dictionary<string, object>() { { "EventDto", eventDto } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
 }
