@@ -27,34 +27,34 @@ namespace MiniSpace.Services.Friends.Core.Entities
             FriendState = State.Unknown;
         }
 
-        public void AcceptFriendship()
+        public void InviteFriend(Student inviter, Student invitee)
+        {
+            if (FriendState != State.Unknown)
+            {
+                throw new InvalidFriendInvitationException(inviter.Id, invitee.Id);
+            }
+            FriendState = State.Requested;
+            AddEvent(new FriendInvited(this, new Friend(invitee.Id, this.FriendId, invitee.FullName, invitee.FullName, "", DateTime.UtcNow)));
+        }
+
+        public void AcceptFriendship(Student friend)
         {
             if (FriendState != State.Requested)
             {
                 throw new InvalidFriendStateException(FriendId, "Friendship cannot be accepted in the current state.");
             }
             FriendState = State.Accepted;
-            AddEvent(new FriendStateChanged(this));
+            AddEvent(new FriendAdded(new Student(StudentId, FullName), friend));
         }
 
-        public void DeclineFriendship()
-        {
-            if (FriendState != State.Requested)
-            {
-                throw new InvalidFriendStateException(FriendId, "Friendship cannot be declined in the current state.");
-            }
-            FriendState = State.Declined;
-            AddEvent(new FriendStateChanged(this));
-        }
-
-        public void CancelFriendship()
+        public void RemoveFriend(Student friend)
         {
             if (FriendState != State.Accepted)
             {
-                throw new InvalidFriendStateException(FriendId, "Only accepted friendships can be cancelled.");
+                throw new InvalidFriendStateException(FriendId, "Only accepted friendships can be removed.");
             }
             FriendState = State.Cancelled;
-            AddEvent(new FriendStateChanged(this));
+            AddEvent(new FriendRemoved(new Student(StudentId, FullName), friend));
         }
     }
 }

@@ -6,7 +6,7 @@ using MiniSpace.Services.Friends.Core.Repositories;
 
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
-    public class InviteFriendHandler : ICommandHandler<FriendInvited>
+    public class InviteFriendHandler : ICommandHandler<InviteFriend>
     {
         private readonly IFriendRepository _friendRepository;
         private readonly IMessageBroker _messageBroker;
@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             _appContext = appContext;
         }
 
-         public async Task HandleAsync(FriendInvited command, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(InviteFriend command, CancellationToken cancellationToken = default)
         {
             var identity = _appContext.Identity;
             if (!identity.IsAuthenticated || identity.Id != command.InviterId)
