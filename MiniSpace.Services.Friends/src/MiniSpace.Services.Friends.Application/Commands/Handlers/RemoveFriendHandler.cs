@@ -1,5 +1,6 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Friends.Application.Events;
+using MiniSpace.Services.Friends.Application.Events.External;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Repositories;
@@ -36,7 +37,9 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             }
 
             await _friendRepository.RemoveFriendAsync(command.RequesterId, command.FriendId);
-            var eventToPublish = _eventMapper.Map(new PendingFriendDeclined(command.RequesterId, command.FriendId));
+            // TODO: Apply IEventMapper.
+            // var eventToPublish = _eventMapper.Map(new PendingFriendDeclined(command.RequesterId, command.FriendId));
+            var eventToPublish = new PendingFriendDeclined(command.RequesterId, command.FriendId);
             await _messageBroker.PublishAsync(eventToPublish);
         }
     }

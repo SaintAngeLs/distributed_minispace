@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Friends.Core.Entities
     {
         public Guid FriendId { get; private set; }
         public Guid StudentId { get; private set; }
-        public State FriendState { get; private set; }
+        public FriendState FriendState { get; private set; }
         public string Email { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
@@ -24,36 +24,47 @@ namespace MiniSpace.Services.Friends.Core.Entities
             FirstName = firstName;
             LastName = lastName;
             CreatedAt = createdAt;
-            FriendState = State.Unknown;
+            FriendState = FriendState.Unknown;
         }
 
         public void InviteFriend(Student inviter, Student invitee)
         {
-            if (FriendState != State.Unknown)
+            if (FriendState != FriendState.Unknown)
             {
                 throw new InvalidFriendInvitationException(inviter.Id, invitee.Id);
             }
-            FriendState = State.Requested;
+            FriendState = FriendState.Requested;
             AddEvent(new FriendInvited(this, new Friend(invitee.Id, this.FriendId, invitee.FullName, invitee.FullName, "", DateTime.UtcNow)));
         }
 
         public void AcceptFriendship(Student friend)
         {
-            if (FriendState != State.Requested)
+            if (FriendState != FriendState.Requested)
             {
                 throw new InvalidFriendStateException(FriendId, "Friendship cannot be accepted in the current state.");
             }
-            FriendState = State.Accepted;
+            FriendState = FriendState.Accepted;
             AddEvent(new FriendAdded(new Student(StudentId, FullName), friend));
         }
 
+        public void MarkAsConfirmed()
+        {
+            if (FriendState != FriendState.Requested)
+                throw new InvalidFriendshipStateException(Id, FriendState.ToString(), "Requested");
+
+            FriendState = FriendState.Confirmed;
+            AddEvent(new FriendshipConfirmed(FriendId));
+        }
+
+
+
         public void RemoveFriend(Student friend)
         {
-            if (FriendState != State.Accepted)
+            if (FriendState != FriendState.Accepted)
             {
                 throw new InvalidFriendStateException(FriendId, "Only accepted friendships can be removed.");
             }
-            FriendState = State.Cancelled;
+            FriendState = FriendState.Cancelled;
             AddEvent(new FriendRemoved(new Student(StudentId, FullName), friend));
         }
     }

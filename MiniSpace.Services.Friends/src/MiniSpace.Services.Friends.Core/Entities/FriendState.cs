@@ -1,12 +1,13 @@
 namespace MiniSpace.Services.Friends.Core.Entities
 {
-    public enum State
+    public enum FriendState
     {
         Unknown,      
         Requested,    
         Accepted,
         Declined,        
         Blocked,         
-        Cancelled        
+        Cancelled,
+        Confirmed        
     }    
 }
