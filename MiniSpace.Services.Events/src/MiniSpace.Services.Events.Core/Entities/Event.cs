@@ -105,6 +105,17 @@ namespace MiniSpace.Services.Events.Core.Entities
             _signedUpStudents.Add(participant);
         }
         
+        public void CancelSignUp(Guid studentId)
+        {
+            var participant = _signedUpStudents.SingleOrDefault(p => p.StudentId == studentId);
+            if (participant is null)
+            {
+                throw new StudentNotSignedUpException(studentId, Id);
+            }
+
+            _signedUpStudents.Remove(participant);
+        }
+        
         public void ShowStudentInterest(Participant participant)
         {
             if (InterestedStudents.Any(p => p.StudentId == participant.StudentId))
@@ -113,6 +124,17 @@ namespace MiniSpace.Services.Events.Core.Entities
             }
 
             _interestedStudents.Add(participant);
+        }
+        
+        public void CancelInterest(Guid studentId)
+        {
+            var participant = _interestedStudents.SingleOrDefault(p => p.StudentId == studentId);
+            if (participant is null)
+            {
+                throw new StudentNotInterestedInEventException(studentId, Id);
+            }
+
+            _interestedStudents.Remove(participant);
         }
         
         public void Rate(Guid studentId, int rating)

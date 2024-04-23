@@ -46,9 +46,10 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<AddEvent>("events", 
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))
                         .Post<SignUpToEvent>("events/{eventId}/sign-up")
+                        .Delete<CancelSignUpToEvent>("events/{eventId}/sign-up")
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
+                        .Delete<CancelInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
-                        // TODO: Add query for student latest enrolled events
                         .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
                         .Delete<DeleteEvent>("events/{eventId}")
                     )
