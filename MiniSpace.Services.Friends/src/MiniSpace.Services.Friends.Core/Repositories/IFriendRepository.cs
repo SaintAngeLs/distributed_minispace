@@ -16,5 +16,6 @@ namespace MiniSpace.Services.Friends.Core.Repositories
         Task<Friend> GetFriendshipAsync(Guid requesterId, Guid friendId);
         Task InviteFriendAsync(Guid inviterId, Guid inviteeId);
         Task UpdateFriendshipAsync(Friend friend);
+        Task AddRequestAsync(FriendRequest request); 
     }
 }
