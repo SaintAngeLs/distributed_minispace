@@ -1,5 +1,6 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Friends.Application.Events;
+using MiniSpace.Services.Friends.Application.Events.External;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Repositories;
@@ -28,7 +29,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             {
                 throw new UnauthorizedFriendActionException();
             }
-            
+
             var alreadyFriendsOrInvited = await _friendRepository.IsFriendAsync(command.InviterId, command.InviteeId);
             if (alreadyFriendsOrInvited)
             {
@@ -36,8 +37,10 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             }
 
             await _friendRepository.InviteFriendAsync(command.InviterId, command.InviteeId);
-            var eventToPublish = _eventMapper.Map(new FriendInvited(command.InviterId, command.InviteeId));
-            await _messageBroker.PublishAsync(eventToPublish);
+            var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
+
+            await _messageBroker.PublishAsync(friendInvitedEvent);
         }
+
     }
 }

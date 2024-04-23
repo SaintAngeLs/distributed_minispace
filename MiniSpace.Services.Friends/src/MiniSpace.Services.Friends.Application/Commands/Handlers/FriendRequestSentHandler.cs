@@ -1,7 +1,9 @@
 using Convey.CQRS.Events;
+using MiniSpace.Services.Friends.Application.Events.External;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Repositories;
+using MiniSpace.Services.Friends.Core.Entities;
 
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
@@ -24,7 +26,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
         {
             var request = new FriendRequest(@event.InviterId, @event.InviteeId);
             await _friendRepository.AddRequestAsync(request);
-
+            
             var events = _eventMapper.MapAll(request.Events);
             await _messageBroker.PublishAsync(events.ToArray());
         }
