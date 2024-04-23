@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Core.Repositories;
@@ -37,6 +38,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
 
             @event.CancelInterest(command.StudentId);
             await _eventRepository.UpdateAsync(@event);
+            await _messageBroker.PublishAsync(new StudentCancelledInterestInEvent(@event.Id, command.StudentId));
         }
     }
 }
