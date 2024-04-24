@@ -4,7 +4,6 @@
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Dialogs
-@using MudBlazor
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -28,17 +27,14 @@
             }
             <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
                 <Template Context="post">
-                    <RadzenCard Class="rz-border-radius-3">
+                    <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
+                                @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}"))">
                         <RadzenRow Gap="0.5rem">
                             <RadzenColumn Size="12" class="rz-text-truncate">
                                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Normal">
-                                        <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{post.Id}") class="me-1"/>
-                                        <RadzenButton Size="ButtonSize.Small" Text="Go to post page"
-                                                      ButtonStyle="ButtonStyle.Info"
-                                                      Click="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}"))"/>
-                                    </RadzenStack>
-                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0">
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                                Text=@($"{GetStudentName(post.StudentId)}") />
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
                                         Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
                                     </RadzenText>
                                 </RadzenStack>
@@ -90,6 +86,26 @@
         pageInitialized = true;
     }
 
+    private string GetStudentName(Guid studentId)
+    {
+        if (studentId == eventDto.Organizer.Id)
+        {
+            return eventDto.Organizer.Name;
+        }
+        else
+        {
+            foreach (var coOrganizer in eventDto.CoOrganizers)
+            {
+                if (studentId == coOrganizer.Id)
+                {
+                    return coOrganizer.Name;
+                }
+            }
+        }
+
+        return "Author unknown";
+    }
+    
     private async void OnChange(int index)
     {
         pageInitialized = false;
