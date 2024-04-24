@@ -43,6 +43,22 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             return (pageNumber, pageSize);
         }
         
-        // TODO: Add Address validation
+        public void ValidateRequiredField(string fieldValue, string fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(fieldValue))
+                throw new EmptyRequiredEventFieldException(fieldName);
+        }
+        
+        public void ValidateUpdatedCapacity(int currentCapacity, int newCapacity)
+        {
+            if (newCapacity < currentCapacity)
+                throw new InvalidUpdatedEventCapacityException(currentCapacity, newCapacity);
+        }
+        
+        public void ValidateUpdatedFee(decimal currentFee, decimal newFee)
+        {
+            if (newFee > currentFee)
+                throw new InvalidUpdatedEventFeeException(currentFee, newFee);
+        }
     }
 }

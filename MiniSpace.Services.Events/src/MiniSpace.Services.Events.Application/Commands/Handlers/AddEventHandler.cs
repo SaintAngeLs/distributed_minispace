@@ -39,6 +39,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             if(identity.Id != command.OrganizerId)
                 throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
             
+            // TODO: Add event validation
             var category = _eventValidator.ParseCategory(command.Category);
             var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
             var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
@@ -47,19 +48,20 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
             
             var publishDate = now;
-            var status = State.Published;
+            var state = State.Published;
             if (command.PublishDate != null)
             {
                 publishDate = _eventValidator.ParseDate(command.PublishDate, "event_publish_date");
                 _eventValidator.ValidateDates(now, publishDate, "now", "event_publish_date");
-                status = State.ToBePublished;
+                _eventValidator.ValidateDates(publishDate, startDate, "event_publish_date", "event_start_date");
+                state = State.ToBePublished;
             }
             
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
             var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, string.Empty);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
-                address, command.Capacity, command.Fee, category, status, publishDate, organizer);
+                address, command.Capacity, command.Fee, category, state, publishDate, organizer);
             
             await _eventRepository.AddAsync(@event);
             await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id));
