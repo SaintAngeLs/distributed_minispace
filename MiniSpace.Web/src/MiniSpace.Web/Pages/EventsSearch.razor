@@ -6,9 +6,11 @@
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Events
 @using MiniSpace.Web.Pages.Dialogs
+@using MudBlazor
 @using Radzen
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
+@using Orientation = Radzen.Orientation
 @inject DialogService DialogService
 @inject IEventsService EventsService
 @inject IStudentsService StudentsService
@@ -23,11 +25,16 @@
 
 @if (pageInitialized && totalElements == 0)
 {
-    <h3>No results found. Try to give us more general filter rules.</h3>
+    <h3>No results found. Try to give us more general filtering criteria.</h3>
 }
 
-<RadzenPager ShowPagingSummary="true" PagingSummaryFormat="@pagingSummaryFormat" HorizontalAlign="HorizontalAlign.Right"
-             Count="@totalElements" PageSize="@searchEventsModel.Pageable.Size" PageNumbersCount="@totalPages" PageChanged="@PageChanged" />
+@if (pageInitialized && totalElements != 0)
+{
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged" Selected="@searchEventsModel.Pageable.Page"
+                       Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
+    </RadzenStack>   
+}
 
 <RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
     <Template Context="ev">
@@ -86,8 +93,13 @@
     </Template>
 </RadzenDataList>
 
-<RadzenPager ShowPagingSummary="true" PagingSummaryFormat="@pagingSummaryFormat" HorizontalAlign="HorizontalAlign.Right"
-             Count="@totalElements" PageSize="@searchEventsModel.Pageable.Size" PageNumbersCount="@totalPages" PageChanged="@PageChanged" />
+@if (pageInitialized && totalElements != 0)
+{
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged" Selected="@searchEventsModel.Pageable.Page"
+                       Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
+    </RadzenStack>   
+}
 
 @code {
     private SearchEventsModel searchEventsModel = new()
@@ -111,7 +123,6 @@
     private StudentDto studentDto = new();
     private bool pageInitialized = false;
     
-    string pagingSummaryFormat = "Displaying page {0} of {1} (total {2} records)";
     int totalPages = 0;
     int totalElements = 0;
     IEnumerable<EventDto> events;
@@ -139,10 +150,10 @@
 
         pageInitialized = true;
     }
-
-    private async void PageChanged(PagerEventArgs args)
+    
+    private async void SelectedPageChanged(int pageNumber)
     {
-        searchEventsModel.Pageable.Page = args.PageIndex + 1;
+        searchEventsModel.Pageable.Page = pageNumber;
         
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
             searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
