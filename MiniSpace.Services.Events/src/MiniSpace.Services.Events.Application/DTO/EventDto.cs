@@ -26,6 +26,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public DateTime PublishDate { get; set; }
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
+        public bool HasRated { get; set; }
         
         public EventDto()
         {
@@ -50,6 +51,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             PublishDate = @event.PublishDate;
             IsSignedUp = @event.SignedUpStudents.Any(x => x.StudentId == @event.Id);
             IsInterested = @event.InterestedStudents.Any(x => x.StudentId == @event.Id);
+            HasRated = @event.Ratings.Any(x => x.StudentId == @event.Id);
         }
     }
 }
