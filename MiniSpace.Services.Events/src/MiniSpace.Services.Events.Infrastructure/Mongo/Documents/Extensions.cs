@@ -23,7 +23,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Fee = document.Fee,
                 Category = document.Category.ToString(),
                 Status = document.State.ToString(),
-                PublishDate = document.PublishDate
+                PublishDate = document.PublishDate,
+                IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == document.Id),
+                IsInterested = document.InterestedStudents.Any(x => x.StudentId == document.Id)
             };
         
         public static Event AsEntity(this EventDocument document)
