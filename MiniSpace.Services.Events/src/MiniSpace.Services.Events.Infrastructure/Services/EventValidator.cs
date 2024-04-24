@@ -49,6 +49,18 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
                 throw new EmptyRequiredEventFieldException(fieldName);
         }
         
+        public void ValidateCapacity(int capacity)
+        {
+            if (capacity <= 0 || capacity > 1000)
+                throw new InvalidEventCapacityException(capacity);
+        }
+        
+        public void ValidateFee(decimal fee)
+        {
+            if (fee < 0.0m || fee > 1000.0m)
+                throw new InvalidEventFeeException(fee);
+        }
+        
         public void ValidateUpdatedCapacity(int currentCapacity, int newCapacity)
         {
             if (newCapacity < currentCapacity)

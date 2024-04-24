@@ -39,13 +39,18 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             if(identity.Id != command.OrganizerId)
                 throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
             
-            // TODO: Add event validation
-            var category = _eventValidator.ParseCategory(command.Category);
+            _eventValidator.ValidateRequiredField(command.Name, "event_name");
+            _eventValidator.ValidateRequiredField(command.Description, "event_description");
             var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
             var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
             var now = _dateTimeProvider.Now;
             _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
+            var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
+                command.ApartmentNumber, command.City, command.ZipCode);
+            _eventValidator.ValidateCapacity(command.Capacity);
+            _eventValidator.ValidateFee(command.Fee);
+            var category = _eventValidator.ParseCategory(command.Category);
             
             var publishDate = now;
             var state = State.Published;
@@ -57,8 +62,6 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 state = State.ToBePublished;
             }
             
-            var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
-                command.ApartmentNumber, command.City, command.ZipCode);
             var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, string.Empty);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
                 address, command.Capacity, command.Fee, category, state, publishDate, organizer);
