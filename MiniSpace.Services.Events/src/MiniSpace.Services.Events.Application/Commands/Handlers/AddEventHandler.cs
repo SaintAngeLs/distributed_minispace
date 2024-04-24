@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             var publishDate = now;
             var state = State.Published;
-            if (command.PublishDate != null)
+            if (command.PublishDate != string.Empty)
             {
                 publishDate = _eventValidator.ParseDate(command.PublishDate, "event_publish_date");
                 _eventValidator.ValidateDates(now, publishDate, "now", "event_publish_date");
