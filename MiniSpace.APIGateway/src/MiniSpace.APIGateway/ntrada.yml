@@ -306,8 +306,20 @@ modules:
         downstream: events-service/events/{eventId}/show-interest
         auth: true
 
+      - upstream: /{eventId}/show-interest
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/show-interest
+        auth: true
+
       - upstream: /{eventId}/sign-up
         method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/sign-up
+        auth: true
+
+      - upstream: /{eventId}/sign-up
+        method: DELETE
         use: downstream
         downstream: events-service/events/{eventId}/sign-up
         auth: true
@@ -501,7 +513,7 @@ modules:
       - upstream: /{postId}/state/{state}
         method: PUT
         use: downstream
-        downstream: students-service/students/{postId}/state/{state}
+        downstream: posts-service/posts/{postId}/state/{state}
         bind:
           - postId:{postId}
           - state:{state}
