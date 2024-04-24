@@ -9,5 +9,10 @@ namespace MiniSpace.Services.Events.Application.Services
         DateTime ParseDate(string dateString, string fieldName);
         void ValidateDates(DateTime earlierDate, DateTime laterDate, string earlierDateString, string endDateString);
         (int pageNumber, int pageSize) PageFilter(int pageNumber, int pageSize);
+        void ValidateRequiredField(string fieldValue, string fieldName);
+        void ValidateCapacity(int capacity);
+        void ValidateFee(decimal fee);
+        void ValidateUpdatedCapacity(int currentCapacity, int newCapacity);
+        void ValidateUpdatedFee(decimal currentFee, decimal newFee);
     }
 }
