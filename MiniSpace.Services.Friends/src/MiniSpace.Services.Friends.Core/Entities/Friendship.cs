@@ -1,11 +1,11 @@
 using System;
+using MiniSpace.Services.Friends.Core.Events;
 using MiniSpace.Services.Friends.Core.Exceptions;
 
 namespace MiniSpace.Services.Friends.Core.Entities
 {
-    public class Friendship
+    public class Friendship : AggregateRoot
     {
-        public Guid Id { get; private set; }
         public Guid RequesterId { get; private set; }
         public Guid FriendId { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -25,7 +25,18 @@ namespace MiniSpace.Services.Friends.Core.Entities
             if (State != FriendState.Requested)
                  throw new InvalidFriendshipStateException(Id, State.ToString(), "Requested");
             State = FriendState.Confirmed;
+            AddEvent(new FriendshipConfirmed(Id));
         }
+
+        public void MarkAsDeclined()
+        {
+            if (State != FriendState.Requested)
+                throw new InvalidFriendshipStateException(Id, State.ToString(), "Only Requested friendships can be declined.");
+            
+            State = FriendState.Declined;
+            AddEvent(new FriendshipDeclined(Id)); 
+        }
+
     }
 
 }

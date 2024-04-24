@@ -1,6 +1,7 @@
 using Convey.CQRS.Events;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
+using MiniSpace.Services.Friends.Core.Entities;
 using MiniSpace.Services.Friends.Core.Repositories;
 
 namespace MiniSpace.Services.Friends.Application.Events.External.Handlers

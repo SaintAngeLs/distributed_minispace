@@ -18,5 +18,6 @@ namespace MiniSpace.Services.Friends.Core.Repositories
         Task UpdateFriendshipAsync(Friend friend);
         Task AddRequestAsync(FriendRequest request); 
         Task UpdateAsync(Friend friend);
+        Task AddInvitationAsync(FriendRequest invitation);
     }
 }
