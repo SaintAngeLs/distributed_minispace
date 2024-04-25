@@ -9,8 +9,10 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using MiniSpace.Services.Organizations.Application;
+using MiniSpace.Services.Organizations.Infrastructure;
 
-namespace MiniSpace.Services.Students.Api
+namespace MiniSpace.Services.Organizations.Api
 {
     public class Program
     {

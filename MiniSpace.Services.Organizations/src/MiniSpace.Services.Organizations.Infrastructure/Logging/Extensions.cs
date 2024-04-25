@@ -1,9 +1,9 @@
 using Convey;
 using Convey.Logging.CQRS;
 using Microsoft.Extensions.DependencyInjection;
-using MiniSpace.Services.Students.Application.Commands;
+using MiniSpace.Services.Organizations.Application.Commands;
 
-namespace MiniSpace.Services.Students.Infrastructure.Logging
+namespace MiniSpace.Services.Organizations.Infrastructure.Logging
 {
     internal static class Extensions
     {

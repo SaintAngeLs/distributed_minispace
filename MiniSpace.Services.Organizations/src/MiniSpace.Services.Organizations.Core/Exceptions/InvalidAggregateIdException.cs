@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Core.Exceptions
+namespace MiniSpace.Services.Organizations.Core.Exceptions
 {
     public class InvalidAggregateIdException : DomainException
     {

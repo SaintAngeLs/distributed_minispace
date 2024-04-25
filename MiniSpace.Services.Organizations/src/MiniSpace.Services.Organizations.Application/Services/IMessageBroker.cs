@@ -1,6 +1,6 @@
 using Convey.CQRS.Events;
 
-namespace MiniSpace.Services.Students.Application.Services
+namespace MiniSpace.Services.Organizations.Application.Services
 {
     public interface IMessageBroker
     {

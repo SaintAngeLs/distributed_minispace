@@ -40,7 +40,7 @@ using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Organizations.Infrastructure.Services;
 
-namespace MiniSpace.Services.Students.Infrastructure
+namespace MiniSpace.Services.Organizations.Infrastructure
 {
     public static class Extensions
     {

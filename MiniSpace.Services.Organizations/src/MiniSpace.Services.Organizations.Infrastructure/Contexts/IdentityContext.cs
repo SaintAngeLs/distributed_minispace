@@ -1,6 +1,6 @@
-using MiniSpace.Services.Students.Application;
+using MiniSpace.Services.Organizations.Application;
 
-namespace MiniSpace.Services.Students.Infrastructure.Contexts
+namespace MiniSpace.Services.Organizations.Infrastructure.Contexts
 {
     internal class IdentityContext : IIdentityContext
     {

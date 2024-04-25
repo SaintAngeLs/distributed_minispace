@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Students.Application.Exceptions
+namespace MiniSpace.Services.Organizations.Application.Exceptions
 {
     public class AppException : Exception
     {

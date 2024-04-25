@@ -1,6 +1,6 @@
-using MiniSpace.Services.Students.Core.Exceptions;
+using MiniSpace.Services.Organizations.Core.Exceptions;
 
-namespace MiniSpace.Services.Students.Core.Entities
+namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class AggregateId : IEquatable<AggregateId>
     {
