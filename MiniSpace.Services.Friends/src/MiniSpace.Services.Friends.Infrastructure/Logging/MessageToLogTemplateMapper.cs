@@ -1,8 +1,9 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Friends.Application.Commands;
+using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Friends.Application.Events.External;
 
-namespace MiniSpace.Services.Students.Infrastructure.Logging
+namespace MiniSpace.Services.Friends.Infrastructure.Logging
 {
     internal sealed class MessageToLogTemplateMapper : IMessageToLogTemplateMapper
     {
@@ -10,69 +11,39 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(UpdateStudent),  new HandlerLogTemplate
+                    typeof(AddFriend), new HandlerLogTemplate
                     {
-                        After = "Updated the student with id: {StudentId}."
+                        After = "Friendship added between requester: {RequesterId} and friend: {FriendId}."
                     }
                 },
                 {
-                    typeof(DeleteStudent), new HandlerLogTemplate
+                    typeof(RemoveFriend), new HandlerLogTemplate
                     {
-                        After = "Deleted the student with id: {StudentId}."
+                        After = "Friendship removed between requester: {RequesterId} and friend: {FriendId}."
                     }
                 },
                 {
-                    typeof(CompleteStudentRegistration), new HandlerLogTemplate
+                    typeof(InviteFriend), new HandlerLogTemplate
                     {
-                        After = "Completed a registration for the student with id: {StudentId}."
+                        After = "Friendship invitation sent from inviter: {InviterId} to invitee: {InviteeId}."
                     }
                 },
                 {
-                    typeof(ChangeStudentState), new HandlerLogTemplate
+                    typeof(PendingFriendAccept), new HandlerLogTemplate
                     {
-                        After = "Changed a student with id: {StudentId} state to: {State}."
+                        After = "Friendship acceptance processed for requester: {RequesterId} with friend: {FriendId}."
                     }
                 },
                 {
-                    typeof(SignedUp), new HandlerLogTemplate
+                    typeof(PendingFriendDecline), new HandlerLogTemplate
                     {
-                        After = "Created a new student with id: {UserId}."
+                        After = "Friendship decline processed for requester: {RequesterId} with friend: {FriendId}."
                     }
                 },
                 {
-                    typeof(StudentShowedInterestInEvent), new HandlerLogTemplate
+                    typeof(FriendRequestSent), new HandlerLogTemplate
                     {
-                        After = "A student with id: {StudentId} has been interested in the event with id: {EventId}."
-                    }
-                },
-                {
-                    typeof(StudentSignedUpToEvent), new HandlerLogTemplate
-                    {
-                        After = "A student with id: {StudentId} has signed up for the event with id: {EventId}."
-                    }
-                },
-                {
-                    typeof(UserBanned), new HandlerLogTemplate
-                    {
-                        After = "A student with id: {UserId} has been banned."
-                    }
-                },
-                {
-                    typeof(UserUnbanned), new HandlerLogTemplate
-                    {
-                        After = "A student with id: {UserId} has been unbanned."
-                    }
-                },
-                {
-                    typeof(OrganizerRightsGranted), new HandlerLogTemplate
-                    {
-                        After = "Organizer rights has been granted for student with id: {UserId}."
-                    }
-                },
-                {
-                    typeof(OrganizerRightsRevoked), new HandlerLogTemplate
-                    {
-                        After = "Organizer rights has been revoked for student with id: {UserId}."
+                        After = "Friend request sent from: {InviterId} to: {InviteeId}."
                     }
                 }
             };

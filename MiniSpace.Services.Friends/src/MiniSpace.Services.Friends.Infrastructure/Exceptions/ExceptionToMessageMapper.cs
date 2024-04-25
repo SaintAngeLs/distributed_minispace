@@ -11,83 +11,17 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
     {
         public object Map(Exception exception, object message)
             => exception switch
-    
             {
-                CannotChangeStudentStateException ex => message switch
+                AlreadyFriendsException ex => new FriendAddingFailed(ex.RequesterId, ex.FriendId, ex.Message, "already_friends"),
+                FriendshipNotFoundException ex => message switch
                 {
-                    ChangeStudentState _ => new ChangeStudentStateRejected(ex.Id,
-                        ex.State.ToString().ToLowerInvariant(), ex.Message, ex.Code),
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
-                        ex.Code),
+                    AddFriend _ => new FriendAddingFailed(ex.RequesterId, ex.FriendId, ex.Message, "friendship_not_found"),
+                    RemoveFriend _ => new FriendRemovalFailed(ex.RequesterId, ex.FriendId, ex.Message, "friendship_not_found"),
                     _ => null
                 },
-                CannotUpdateStudentException ex => message switch
-                {
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
-                    _ => null,
-                },
-                InvalidStudentDateOfBirthException ex => message switch
-                {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
-                        ex.Code),
-                    _ => null,
-                },
-                InvalidStudentDescriptionException ex => message switch
-                {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
-                        ex.Code),
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
-                    _ => null,
-                },
-                InvalidStudentFullNameException ex => message switch
-                {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
-                        ex.Code),
-                    _ => null,
-                },
-                InvalidStudentProfileImageException ex => message switch
-                {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
-                        ex.Code),
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
-                    _ => null,
-                },
-                InvalidRoleException ex => message switch
-                {
-                    SignedUp ev => new CreateStudentRejected(ev.UserId, ex.Message, ex.Code),
-                    _ => null,
-                },
-                StudentAlreadyCreatedException ex => message switch
-                {
-                    SignedUp ev => new CreateStudentRejected(ev.UserId, ex.Message, ex.Code),
-                    _ => null,
-                },
-                StudentAlreadyRegisteredException ex => message switch
-                {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
-                        ex.Code),
-                    _ => null,
-                },
-                StudentNotFoundException ex => message switch
-                {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
-                        ex.Code),
-                    DeleteStudent command => new DeleteStudentRejected(command.StudentId, ex.Message, ex.Code),
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
-                    _ => null,
-                },
-                StudentStateAlreadySetException ex => message switch
-                {
-                    ChangeStudentState _ => new ChangeStudentStateRejected(ex.Id,
-                        ex.State.ToString().ToLowerInvariant(), ex.Message, ex.Code),
-                    _ => null
-                },
-                UnauthorizedStudentAccessException ex => message switch
-                {
-                    DeleteStudent command => new DeleteStudentRejected(command.StudentId, ex.Message, ex.Code),
-                    _ => null,
-                },
+                UnauthorizedFriendActionException ex => new FriendAddingFailed(ex.RequesterId, ex.FriendId, ex.Message, "unauthorized_action"),
                 _ => null
             };
-    }    
+
+    }
 }
