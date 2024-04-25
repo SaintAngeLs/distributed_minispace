@@ -1,17 +1,17 @@
+using Convey.Types;
 using MiniSpace.Services.Friends.Core.Entities;
 
-namespace MiniSpace.Services.Friends.Application.Dto
+namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
 {
-    public class FriendDto
+    public class FriendDocument : IIdentifiable<Guid>
     {
         public Guid Id { get; set; }
+        public Guid FriendId { get; set; }
+        public Guid UserId { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
-        public Guid UserId { get; set; }
-        public Guid FriendId { get; set; }
         public string LastName { get; set; }
-        public string FullName => $"{FirstName} {LastName}";
         public DateTime CreatedAt { get; set; }
         public FriendState State { get; set; }
-    }
+    }    
 }

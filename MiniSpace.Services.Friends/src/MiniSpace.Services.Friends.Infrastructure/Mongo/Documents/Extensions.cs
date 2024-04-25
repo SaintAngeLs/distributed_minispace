@@ -1,55 +1,62 @@
-using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Core.Entities;
+using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Friends.Application.Dto;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.Email, document.CreatedAt, document.FirstName,
-                document.LastName, document.NumberOfFriends, document.ProfileImage,
-                document.Description, document.DateOfBirth, document.EmailNotifications,
-                document.IsBanned, document.IsOrganizer, document.State,
-                document.InterestedInEvents, document.SignedUpEvents);
+         public static Friend AsEntity(this FriendDocument document)
+            => new Friend(document.UserId, document.FriendId, document.Email, document.FirstName,
+                document.LastName, document.CreatedAt, document.State);
 
-        public static StudentDocument AsDocument(this Student entity)
-            => new StudentDocument()
+
+
+         public static FriendDocument AsDocument(this Friend entity)
+            => new FriendDocument
             {
                 Id = entity.Id,
+                UserId = entity.UserId,
+                FriendId = entity.FriendId,
                 Email = entity.Email,
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
-                NumberOfFriends = entity.NumberOfFriends,
-                ProfileImage = entity.ProfileImage,
-                Description = entity.Description,
-                DateOfBirth = entity.DateOfBirth,
-                EmailNotifications = entity.EmailNotifications,
-                IsBanned = entity.IsBanned,
-                IsOrganizer = entity.IsOrganizer,
-                State = entity.State,
                 CreatedAt = entity.CreatedAt,
-                InterestedInEvents = entity.InterestedInEvents,
-                SignedUpEvents = entity.SignedUpEvents
+                State = entity.FriendState
             };
 
-        public static StudentDto AsDto(this StudentDocument document)
-            => new StudentDto()
+        public static FriendDto AsDto(this FriendDocument document)
+            => new FriendDto
             {
                 Id = document.Id,
+                UserId = document.UserId,
+                FriendId = document.FriendId,
                 Email = document.Email,
                 FirstName = document.FirstName,
                 LastName = document.LastName,
-                NumberOfFriends = document.NumberOfFriends,
-                ProfileImage = document.ProfileImage,
-                Description = document.Description,
-                DateOfBirth = document.DateOfBirth,
-                EmailNotifications = document.EmailNotifications,
-                IsBanned = document.IsBanned,
-                IsOrganizer = document.IsOrganizer,
-                State = document.State.ToString().ToLowerInvariant(),
                 CreatedAt = document.CreatedAt,
-                InterestedInEvents = document.InterestedInEvents,
-                SignedUpEvents = document.SignedUpEvents
+                State = document.State
+            };
+
+        public static FriendRequest AsEntity(this FriendRequestDocument document)
+            => new FriendRequest(document.InviterId, document.InviteeId, document.RequestedAt);
+
+        public static FriendRequestDocument AsDocument(this FriendRequest entity)
+            => new FriendRequestDocument
+            {
+                Id = entity.Id,
+                InviterId = entity.InviterId,
+                InviteeId = entity.InviteeId,
+                RequestedAt = entity.RequestedAt
+            };
+
+        public static FriendRequestDto AsDto(this FriendRequestDocument document)
+            => new FriendRequestDto
+            {
+                Id = document.Id,
+                InviterId = document.InviterId,
+                InviteeId = document.InviteeId,
+                RequestedAt = document.RequestedAt
             };
     }    
 }
