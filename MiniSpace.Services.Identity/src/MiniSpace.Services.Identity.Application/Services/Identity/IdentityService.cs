@@ -68,14 +68,15 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 throw new InvalidCredentialsException(command.Email);
             }
 
-            var claims = user.Permissions.Any()
-                ? new Dictionary<string, IEnumerable<string>>
-                {
-                    ["permissions"] = user.Permissions,
-                    ["name"] = new [] { user.Name },
-                    ["e-mail"] = new [] { user.Email }
-                }
-                : null;
+            var claims = new Dictionary<string, IEnumerable<string>>
+            {
+                ["name"] = new[] { user.Name },
+                ["e-mail"] = new[] { user.Email }
+            };
+            if(user.Permissions.Any())
+            {
+                claims.Add("permissions", user.Permissions);
+            }
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
