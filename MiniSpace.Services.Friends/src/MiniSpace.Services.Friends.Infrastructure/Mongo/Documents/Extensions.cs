@@ -7,7 +7,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
     public static class Extensions
     {
          public static Friend AsEntity(this FriendDocument document)
-            => new Friend(document.UserId, document.FriendId, document.Email, document.FirstName,
+            => new Friend(document.StudentId, document.FriendId, document.Email, document.FirstName,
                 document.LastName, document.CreatedAt, document.State);
 
 
@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
             => new FriendDocument
             {
                 Id = entity.Id,
-                UserId = entity.StudentId,
+                StudentId = entity.StudentId,
                 FriendId = entity.FriendId,
                 Email = entity.Email,
                 FirstName = entity.FirstName,
@@ -29,7 +29,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
             => new FriendDto
             {
                 Id = document.Id,
-                UserId = document.UserId,
+                StudentId = document.StudentId,
                 FriendId = document.FriendId,
                 Email = document.Email,
                 FirstName = document.FirstName,

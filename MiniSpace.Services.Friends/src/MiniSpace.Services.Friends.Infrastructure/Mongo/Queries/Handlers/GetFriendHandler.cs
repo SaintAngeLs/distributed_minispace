@@ -1,6 +1,7 @@
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Friends.Application.Dto;
+using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Queries;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 
@@ -17,9 +18,9 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<FriendDto> HandleAsync(GetFriend query, CancellationToken cancellationToken)
         {
-            var document = await _friendRepository.GetAsync(p => p.Id == query.FriendId);
+            var document = await _friendRepository.GetAsync(p => p.Id == query.StudentId);
             if (document == null)
-                throw new FriendNotFoundException(query.FriendId);
+                throw new FriendshipNotFoundException(query.StudentId);
 
             return document.AsDto();
         }
