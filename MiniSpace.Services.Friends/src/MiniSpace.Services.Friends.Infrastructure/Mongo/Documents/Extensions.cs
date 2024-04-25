@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
             => new FriendDocument
             {
                 Id = entity.Id,
-                UserId = entity.UserId,
+                UserId = entity.StudentId,
                 FriendId = entity.FriendId,
                 Email = entity.Email,
                 FirstName = entity.FirstName,

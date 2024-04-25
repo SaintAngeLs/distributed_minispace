@@ -1,7 +1,7 @@
 using Convey.Persistence.MongoDB;
-using MiniSpace.Services.Students.Core.Entities;
-using MiniSpace.Services.Students.Core.Repositories;
-using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Friends.Core.Entities;
+using MiniSpace.Services.Friends.Core.Repositories;
+using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 {
