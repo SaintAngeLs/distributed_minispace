@@ -11,6 +11,12 @@ namespace MiniSpace.Services.Friends.Application.Exceptions
             RequesterId = requesterId;
             FriendId = friendId;
         }
+
+        public FriendshipNotFoundException(Guid friendId) : base($"Friendship involving friend ID {friendId} was not found.")
+        {
+            FriendId = friendId;
+        }
+
     }
 }
 
