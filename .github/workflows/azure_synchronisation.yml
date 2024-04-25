@@ -8,7 +8,7 @@ on:
 
 jobs:
   Sync:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     env:
       AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
     steps:
