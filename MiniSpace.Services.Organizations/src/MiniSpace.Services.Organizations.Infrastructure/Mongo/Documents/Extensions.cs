@@ -23,5 +23,14 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 Name = document.Name,
                 ParentId = document.ParentId
             };
+        
+        public static Organizer AsEntity(this OrganizerDocument document)
+            => new Organizer(document.Id);
+        
+        public static OrganizerDocument AsDocument(this Organizer entity)
+            => new OrganizerDocument()
+            {
+                Id = entity.Id
+            };
     }    
 }

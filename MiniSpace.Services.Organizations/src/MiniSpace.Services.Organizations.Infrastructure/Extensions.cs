@@ -46,7 +46,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IOrganizationRepository, OrganizationMongoRepository>();
+            builder.Services.AddTransient<IOrganizerRepository, OrganizerMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -70,7 +71,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<OrganizationDocument, Guid>("organizations")
+                .AddMongoRepository<OrganizerDocument, Guid>("organizers")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();

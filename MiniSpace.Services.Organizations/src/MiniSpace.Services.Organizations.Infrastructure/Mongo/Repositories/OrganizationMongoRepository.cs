@@ -16,16 +16,16 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
         
         public async Task<Organization> GetAsync(Guid id)
         {
-            var student = await _repository.GetAsync(o => o.Id == id);
+            var organization = await _repository.GetAsync(o => o.Id == id);
 
-            return student?.AsEntity();
+            return organization?.AsEntity();
         }
 
-        public Task AddAsync(Organization student)
-            => _repository.AddAsync(student.AsDocument());
+        public Task AddAsync(Organization organization)
+            => _repository.AddAsync(organization.AsDocument());
 
-        public Task UpdateAsync(Organization student)
-            => _repository.UpdateAsync(student.AsDocument());
+        public Task UpdateAsync(Organization organization)
+            => _repository.UpdateAsync(organization.AsDocument());
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);
