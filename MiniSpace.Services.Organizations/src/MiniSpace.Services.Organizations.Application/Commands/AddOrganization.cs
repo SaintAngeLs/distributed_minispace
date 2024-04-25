@@ -1,6 +1,8 @@
+using Convey.CQRS.Commands;
+
 namespace MiniSpace.Services.Organizations.Application.Commands
 {
-    public class AddOrganization
+    public class AddOrganization: ICommand
     {
         public Guid OrganizationId { get; }
         public string Name { get; }
