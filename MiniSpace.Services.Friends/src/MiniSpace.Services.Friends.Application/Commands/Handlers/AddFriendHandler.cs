@@ -26,12 +26,16 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 
         public async Task HandleAsync(AddFriend command, CancellationToken cancellationToken = default)
         {
-            ValidateAccessOrFail(command.RequesterId);
+            if (!ValidateAccessOrFail(command.RequesterId))
+            {
+                throw new UnauthorizedFriendActionException(command.RequesterId, command.FriendId);
+            }
+
 
             var alreadyFriends = await _friendRepository.IsFriendAsync(command.RequesterId, command.FriendId);
             if (alreadyFriends)
             {
-                throw new AlreadyFriendsException();
+                throw new AlreadyFriendsException(command.RequesterId, command.FriendId);
             }
 
             var requester = await _friendRepository.GetFriendshipAsync(command.RequesterId, command.FriendId);
@@ -43,14 +47,11 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var events = _eventMapper.MapAll(requester.Events);
             await _messageBroker.PublishAsync(events);
         }
-
-        private void ValidateAccessOrFail(Guid requesterId)
+        
+        private bool ValidateAccessOrFail(Guid requesterId)
         {
             var identity = _appContext.Identity;
-            if (!identity.IsAuthenticated || identity.Id != requesterId)
-            {
-                throw new UnauthorizedFriendActionException();
-            }
+            return identity.IsAuthenticated && identity.Id == requesterId;
         }
     }
 }

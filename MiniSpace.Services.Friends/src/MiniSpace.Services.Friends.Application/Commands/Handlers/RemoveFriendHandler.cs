@@ -27,7 +27,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var identity = _appContext.Identity;
             if (!identity.IsAuthenticated || (identity.Id != command.RequesterId && !identity.IsAdmin))
             {
-                throw new UnauthorizedFriendActionException();
+                throw new UnauthorizedFriendActionException(command.RequesterId, identity.Id);
             }
 
             var exists = await _friendRepository.IsFriendAsync(command.RequesterId, command.FriendId);

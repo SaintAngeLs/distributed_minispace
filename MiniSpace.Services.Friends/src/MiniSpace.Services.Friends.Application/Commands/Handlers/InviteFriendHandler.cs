@@ -27,13 +27,13 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var identity = _appContext.Identity;
             if (!identity.IsAuthenticated || identity.Id != command.InviterId)
             {
-                throw new UnauthorizedFriendActionException();
+                throw new UnauthorizedFriendActionException(command.InviterId, command.InviteeId);
             }
 
             var alreadyFriendsOrInvited = await _friendRepository.IsFriendAsync(command.InviterId, command.InviteeId);
             if (alreadyFriendsOrInvited)
             {
-                throw new AlreadyFriendsException();
+                throw new AlreadyFriendsException(command.InviterId, command.InviteeId);
             }
 
             await _friendRepository.InviteFriendAsync(command.InviterId, command.InviteeId);
