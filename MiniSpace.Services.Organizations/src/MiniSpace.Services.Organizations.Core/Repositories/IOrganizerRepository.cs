@@ -7,5 +7,6 @@ namespace MiniSpace.Services.Organizations.Core.Repositories
         Task<Organizer> GetAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
         Task AddAsync(Organizer student);
+        Task DeleteAsync(Guid id);
     }
 }

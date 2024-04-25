@@ -23,5 +23,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
         }
         public Task<bool> ExistsAsync(Guid id) => _repository.ExistsAsync(o => o.Id == id);
         public Task AddAsync(Organizer organizer) => _repository.AddAsync(organizer.AsDocument());
+        public Task DeleteAsync(Guid id) => _repository.DeleteAsync(id);
     }
 }
