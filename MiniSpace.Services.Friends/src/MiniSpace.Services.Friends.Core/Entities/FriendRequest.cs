@@ -8,12 +8,11 @@ namespace MiniSpace.Services.Friends.Core.Entities
         public Guid InviteeId { get; private set; }
         public DateTime RequestedAt { get; private set; }
 
-        public FriendRequest(Guid inviterId, Guid inviteeId)
+        public FriendRequest(Guid inviterId, Guid inviteeId, DateTime requestedAt)
         {
-            Id = Guid.NewGuid();
             InviterId = inviterId;
             InviteeId = inviteeId;
-            RequestedAt = DateTime.UtcNow;
+            RequestedAt = requestedAt;
             AddEvent(new FriendRequestCreated(this)); 
         }
     }
