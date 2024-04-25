@@ -6,11 +6,11 @@ namespace MiniSpace.Services.Friends.Application.Queries
 {
     public class GetFriendRequests : IQuery<IEnumerable<FriendRequestDto>>
     {
-        public Guid UserId { get; set; }
+        public Guid StudentId { get; set; }
 
         public GetFriendRequests(Guid userId)
         {
-            UserId = userId;
+            StudentId = userId;
         }
     }
 }
