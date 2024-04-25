@@ -1,9 +1,9 @@
 using Convey.MessageBrokers.RabbitMQ;
-using MiniSpace.Services.Students.Application.Commands;
-using MiniSpace.Services.Students.Application.Events.Rejected;
-using MiniSpace.Services.Students.Application.Events.External;
-using MiniSpace.Services.Students.Application.Exceptions;
-using MiniSpace.Services.Students.Core.Exceptions;
+using MiniSpace.Services.Friends.Application.Commands;
+using MiniSpace.Services.Friends.Application.Events.Rejected;
+using MiniSpace.Services.Friends.Application.Events.External;
+using MiniSpace.Services.Friends.Application.Exceptions;
+using MiniSpace.Services.Friends.Core.Exceptions;
 
 namespace MiniSpace.Services.Students.Infrastructure.Exceptions
 {

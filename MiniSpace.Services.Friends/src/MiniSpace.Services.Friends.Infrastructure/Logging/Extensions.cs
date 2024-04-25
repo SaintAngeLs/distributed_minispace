@@ -1,7 +1,7 @@
 using Convey;
 using Convey.Logging.CQRS;
 using Microsoft.Extensions.DependencyInjection;
-using MiniSpace.Services.Students.Application.Commands;
+using MiniSpace.Services.Friends.Application.Commands;
 
 namespace MiniSpace.Services.Students.Infrastructure.Logging
 {

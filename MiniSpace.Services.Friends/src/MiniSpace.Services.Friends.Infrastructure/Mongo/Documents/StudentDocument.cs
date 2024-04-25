@@ -1,7 +1,7 @@
 using Convey.Types;
-using MiniSpace.Services.Students.Core.Entities;
+using MiniSpace.Services.Friends.Core.Entities;
 
-namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
+namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
 {
     public class StudentDocument : IIdentifiable<Guid>
     {

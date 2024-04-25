@@ -1,12 +1,12 @@
 ﻿using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
-using MiniSpace.Services.Students.Application.Dto;
-using MiniSpace.Services.Students.Application.Exceptions;
-using MiniSpace.Services.Students.Application.Queries;
-using MiniSpace.Services.Students.Core.Entities;
-using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Friends.Application.Dto;
+using MiniSpace.Services.Friends.Application.Exceptions;
+using MiniSpace.Services.Friends.Application.Queries;
+using MiniSpace.Services.Friends.Core.Entities;
+using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 
-namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
+namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
     public class GetStudentEventsHandler : IQueryHandler<GetStudentEvents, StudentEventsDto>
     {
