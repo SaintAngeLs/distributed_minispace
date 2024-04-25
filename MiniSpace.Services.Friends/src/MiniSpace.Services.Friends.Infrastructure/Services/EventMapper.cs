@@ -1,7 +1,7 @@
 using Convey.CQRS.Events;
-using MiniSpace.Services.Students.Application.Services;
-using MiniSpace.Services.Students.Core;
-using MiniSpace.Services.Students.Core.Events;
+using MiniSpace.Services.Friends.Application.Services;
+using MiniSpace.Services.Friends.Core;
+using MiniSpace.Services.Friends.Core.Events;
 
 namespace MiniSpace.Services.Students.Infrastructure.Services
 {
