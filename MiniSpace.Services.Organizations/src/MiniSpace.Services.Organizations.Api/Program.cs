@@ -13,6 +13,7 @@ using MiniSpace.Services.Organizations.Application;
 using MiniSpace.Services.Organizations.Application.Commands;
 using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Application.Queries;
+using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Infrastructure;
 
 namespace MiniSpace.Services.Organizations.Api
@@ -31,9 +32,10 @@ namespace MiniSpace.Services.Organizations.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
                         .Get<GetOrganizerOrganizations, IEnumerable<OrganizationDto>>("organizations/user")
-                        //.Get<GetRootOrganizations, IEnumerable<>>("organizations/root")
-                        //.Get<GetChildrenOrganizations, IEnumerable<>>("organizations/{organizationId}/children")
+                        .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
+                        .Get<GetChildrenOrganizations, IEnumerable<OrganizationDto>>("organizations/{organizationId}/children")
                         .Post<AddOrganization>("organizations",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/root"))
                         //.Post<AddUserToOrganization>("organizations/user")
