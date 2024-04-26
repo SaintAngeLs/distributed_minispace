@@ -1,6 +1,4 @@
-using MiniSpace.Services.Friends.Core.Events;
-
-namespace MiniSpace.Services.Friends.Core.Entities
+namespace MiniSpace.Services.Friends.Core.Events
 {
     public class FriendshipDeclined : IDomainEvent
     {
