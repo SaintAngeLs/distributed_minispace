@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IFriendRepository, FriendMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -70,7 +70,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<FriendDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -86,9 +86,9 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<UpdateStudent>()
-                .SubscribeCommand<DeleteStudent>()
-                .SubscribeCommand<CompleteStudentRegistration>()
+                .SubscribeCommand<AddFriend>()
+                .SubscribeCommand<RemoveFriend>()
+                .SubscribeCommand<FriendRequestSent>()
                 .SubscribeCommand<ChangeStudentState>()
                 .SubscribeEvent<SignedUp>()
                 .SubscribeEvent<StudentShowedInterestInEvent>()

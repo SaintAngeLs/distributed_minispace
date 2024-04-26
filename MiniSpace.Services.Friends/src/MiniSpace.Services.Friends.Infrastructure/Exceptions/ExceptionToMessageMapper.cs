@@ -5,7 +5,7 @@ using MiniSpace.Services.Friends.Application.Events.External;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Core.Exceptions;
 
-namespace MiniSpace.Services.Students.Infrastructure.Exceptions
+namespace MiniSpace.Services.Friends.Infrastructure.Exceptions
 {
     internal sealed class ExceptionToMessageMapper : IExceptionToMessageMapper
     {
