@@ -32,6 +32,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 {
                     throw new ParentOrganizationNotFoundException(command.ParentId);
                 }
+                parent.MakeParent();
+                await _organizationRepository.UpdateAsync(parent);
             }
             await _organizationRepository.AddAsync(organization);
         }
