@@ -14,13 +14,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Services
         {
             switch (@event)
             {
-                case StudentRegistrationCompleted e:
-                    return new Application.Events.StudentCreated(e.Student.Id, e.Student.FullName);
-                case StudentUpdated e:
-                    return new Application.Events.StudentUpdated(e.Student.Id, e.Student.FullName);
-                case StudentStateChanged e:
-                    return new Application.Events.StudentStateChanged(e.Student.Id, e.Student.FullName,
-                        e.Student.State.ToString().ToLowerInvariant(), e.PreviousState.ToString().ToLowerInvariant());
+                
             }
 
             return null;
