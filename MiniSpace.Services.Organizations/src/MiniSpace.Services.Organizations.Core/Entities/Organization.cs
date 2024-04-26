@@ -1,4 +1,6 @@
-﻿namespace MiniSpace.Services.Organizations.Core.Entities
+﻿using MiniSpace.Services.Organizations.Core.Exceptions;
+
+namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class Organization : AggregateRoot
     {
@@ -24,5 +26,14 @@
         
         public void RemoveOrganizer(Organizer organizer)
             => _organizers.Remove(organizer);
+
+        public void AddOrganizer(Organizer organizer)
+        {
+            if(Organizers.Contains(organizer))
+            {
+                throw new OrganizerAlreadyAddedToOrganizationException(organizer.Id, Id);
+            }
+            _organizers.Add(organizer);
+        }
     }
 }
