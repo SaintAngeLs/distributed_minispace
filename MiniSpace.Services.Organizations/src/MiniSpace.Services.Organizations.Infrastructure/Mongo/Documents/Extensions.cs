@@ -6,14 +6,15 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Organization AsEntity(this OrganizationDocument document)
-            => new Organization(document.Id, document.Name, document.ParentId);
+            => new Organization(document.Id, document.Name, document.ParentId, document.Organizers);
         
         public static OrganizationDocument AsDocument(this Organization entity)
             => new OrganizationDocument()
             {
                 Id = entity.Id,
                 Name = entity.Name,
-                ParentId = entity.ParentId
+                ParentId = entity.ParentId,
+                Organizers = entity.Organizers
             };
         
         public static OrganizationDto AsDto(this OrganizationDocument document)
@@ -21,7 +22,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             {
                 Id = document.Id,
                 Name = document.Name,
-                ParentId = document.ParentId
+                ParentId = document.ParentId,
+                MemberCount = document.Organizers.Count()
             };
         
         public static Organizer AsEntity(this OrganizerDocument document)

@@ -20,6 +20,14 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
 
             return organization?.AsEntity();
         }
+        
+        public async Task<IEnumerable<Organization>> GetOrganizerOrganizationsAsync(Guid organizerId)
+        {
+            var organizations = await _repository.FindAsync(o 
+                => o.Organizers.Any(x => x.Id == organizerId));
+
+            return organizations?.Select(o => o.AsEntity());
+        }
 
         public Task AddAsync(Organization organization)
             => _repository.AddAsync(organization.AsDocument());

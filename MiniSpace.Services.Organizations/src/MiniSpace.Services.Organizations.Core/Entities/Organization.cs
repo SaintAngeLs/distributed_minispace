@@ -14,11 +14,15 @@
             private set => _organizers = new HashSet<Organizer>(value);
         }
         
-        public Organization(Guid id, string name, Guid parentId)
+        public Organization(Guid id, string name, Guid parentId, IEnumerable<Organizer> organizers = null)
         {
             Id = id;
             Name = name;
             ParentId = parentId;
+            Organizers = organizers ?? Enumerable.Empty<Organizer>();
         }
+        
+        public void RemoveOrganizer(Organizer organizer)
+            => _organizers.Remove(organizer);
     }
 }
