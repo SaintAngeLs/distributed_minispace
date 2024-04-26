@@ -39,6 +39,7 @@ using MiniSpace.Services.Friends.Infrastructure.Logging;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Friends.Infrastructure.Services;
+using MiniSpace.Services.Friends.Application.Events;
 
 namespace MiniSpace.Services.Friends.Infrastructure
 {
@@ -88,15 +89,16 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<AddFriend>()
                 .SubscribeCommand<RemoveFriend>()
-                .SubscribeCommand<FriendRequestSent>()
-                .SubscribeCommand<ChangeStudentState>()
-                .SubscribeEvent<SignedUp>()
-                .SubscribeEvent<StudentShowedInterestInEvent>()
-                .SubscribeEvent<StudentSignedUpToEvent>()
-                .SubscribeEvent<UserBanned>()
-                .SubscribeEvent<UserUnbanned>()
-                .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>();
+                .SubscribeCommand<InviteFriend>()
+                .SubscribeCommand<PendingFriendAccept>()
+                .SubscribeCommand<PendingFriendDecline>()
+                .SubscribeEvent<Application.Events.FriendAdded>()
+                .SubscribeEvent<Application.Events.FriendRemoved>()
+                .SubscribeEvent<FriendRequestAccepted>()
+                .SubscribeEvent<FriendRequestRejected>()
+                .SubscribeEvent<FriendRequestCreated>()
+                .SubscribeEvent<FriendRequestSent>()
+                .SubscribeEvent<UserStatusUpdated>();
 
             return app;
         }
