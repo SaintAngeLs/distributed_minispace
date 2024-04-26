@@ -25,17 +25,17 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             _appContext = appContext;
         }
 
-        public async Task<PagedResponse<IEnumerable<EventDto>>> SignInAsync(SearchEvents command)
+        public async Task<PagedResponse<IEnumerable<EventDto>>> BrowseEventsAsync(SearchEvents command)
         {
-            var dateTo = DateTime.MinValue;
             var dateFrom = DateTime.MinValue;
-            if(command.DateTo != string.Empty)
-            {
-                _eventValidator.ParseDate(command.DateTo, "DateTo");
-            }
+            var dateTo = DateTime.MinValue;
             if(command.DateFrom != string.Empty)
             {
-                _eventValidator.ParseDate(command.DateFrom, "DateFrom");
+                dateFrom =_eventValidator.ParseDate(command.DateFrom, "DateFrom");
+            }
+            if(command.DateTo != string.Empty)
+            {
+                dateTo = _eventValidator.ParseDate(command.DateTo, "DateTo");
             }
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
             

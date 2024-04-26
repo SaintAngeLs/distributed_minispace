@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Post<SearchEvents>("events/search", async (cmd, ctx) =>
                         {
-                            var pagedResult = await ctx.RequestServices.GetService<IEventService>().SignInAsync(cmd);
+                            var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseEventsAsync(cmd);
                             await ctx.Response.WriteJsonAsync(pagedResult);
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
