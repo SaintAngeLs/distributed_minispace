@@ -37,7 +37,6 @@ using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Events.External;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Services.Clients;
-using MiniSpace.Services.Events.Application.Services.Events;
 using MiniSpace.Services.Events.Core.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Contexts;
 using MiniSpace.Services.Events.Infrastructure.Decorators;

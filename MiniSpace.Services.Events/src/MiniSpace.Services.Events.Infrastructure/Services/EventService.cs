@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.DTO;
+using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
 
-namespace MiniSpace.Services.Events.Application.Services.Events
+namespace MiniSpace.Services.Events.Infrastructure.Services
 {
     public class EventService : IEventService
     {
