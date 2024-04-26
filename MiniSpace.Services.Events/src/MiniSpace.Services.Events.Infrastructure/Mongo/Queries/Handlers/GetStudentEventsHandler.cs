@@ -47,7 +47,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 string.Empty, string.Empty, DateTime.MinValue, DateTime.MinValue,
                 Enumerable.Empty<string>(), "asc", State.Published, studentEventIds);
 
-            return new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e)), 
+            return new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e, identity.Id)), 
                 result.Item2, result.Item3, result.Item4, result.Item5);;
         }
     }

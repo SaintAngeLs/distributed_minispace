@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Core.Entities;
 
@@ -6,7 +7,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        public static EventDto AsDto(this EventDocument document)
+        public static EventDto AsDto(this EventDocument document, Guid studentId)
             => new ()
             {
                 Id = document.Id,
@@ -24,9 +25,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Category = document.Category.ToString(),
                 Status = document.State.ToString(),
                 PublishDate = document.PublishDate,
-                IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == document.Id),
-                IsInterested = document.InterestedStudents.Any(x => x.StudentId == document.Id),
-                HasRated = document.Ratings.Any(x => x.StudentId == document.Id)
+                IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == studentId),
+                IsInterested = document.InterestedStudents.Any(x => x.StudentId == studentId),
+                HasRated = document.Ratings.Any(x => x.StudentId == studentId)
             };
         
         public static Event AsEntity(this EventDocument document)

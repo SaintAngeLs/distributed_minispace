@@ -14,13 +14,13 @@ namespace MiniSpace.Services.Events.Application.Services.Events
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEventValidator _eventValidator;
-        private readonly IMessageBroker _messageBroker;
+        private readonly IAppContext _appContext;
 
-        public EventService(IEventRepository eventRepository, IEventValidator eventValidator, IMessageBroker messageBroker)
+        public EventService(IEventRepository eventRepository, IEventValidator eventValidator, IAppContext appContext)
         {
             _eventRepository = eventRepository;
             _eventValidator = eventValidator;
-            _messageBroker = messageBroker;
+            _appContext = appContext;
         }
 
         public async Task<PagedResponse<IEnumerable<EventDto>>> SignInAsync(SearchEvents command)
@@ -41,7 +41,8 @@ namespace MiniSpace.Services.Events.Application.Services.Events
                 pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, 
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction, State.Published);
             
-            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e)), 
+            var identity = _appContext.Identity;
+            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e, identity.Id)), 
                 result.Item2, result.Item3, result.Item4, result.Item5);
 
             return pagedEvents;
