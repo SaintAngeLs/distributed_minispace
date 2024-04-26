@@ -38,8 +38,8 @@ namespace MiniSpace.Services.Organizations.Api
                         .Get<GetChildrenOrganizations, IEnumerable<OrganizationDto>>("organizations/{organizationId}/children")
                         .Post<AddOrganization>("organizations",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/root"))
-                        .Post<AddOrganizerToOrganization>("organizations/organizer")
-                        .Delete<RemoveOrganizerFromOrganization>("organizations/organizer")
+                        .Post<AddOrganizerToOrganization>("organizations/{organizationId}/organizer")
+                        .Delete<RemoveOrganizerFromOrganization>("organizations/{organizationId}/organizer/{organizerId}")
                         ))
                 .UseLogging()
                 .Build()
