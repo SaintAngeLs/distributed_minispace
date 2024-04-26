@@ -1,9 +1,10 @@
 using Convey.CQRS.Events;
+using MiniSpace.Services.Friends.Application.Events;
+using MiniSpace.Services.Friends.Application.Events.External;
 using MiniSpace.Services.Friends.Application.Services;
-using MiniSpace.Services.Friends.Core;
 using MiniSpace.Services.Friends.Core.Events;
 
-namespace MiniSpace.Services.Students.Infrastructure.Services
+namespace MiniSpace.Services.Friends.Infrastructure.Services
 {
     public class EventMapper : IEventMapper
     {
@@ -14,16 +15,21 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
         {
             switch (@event)
             {
-                case StudentRegistrationCompleted e:
-                    return new Application.Events.StudentCreated(e.Student.Id, e.Student.FullName);
-                case StudentUpdated e:
-                    return new Application.Events.StudentUpdated(e.Student.Id, e.Student.FullName);
-                case StudentStateChanged e:
-                    return new Application.Events.StudentStateChanged(e.Student.Id, e.Student.FullName,
-                        e.Student.State.ToString().ToLowerInvariant(), e.PreviousState.ToString().ToLowerInvariant());
-            }
+                case Core.Events.FriendAdded e:
+                    return new Application.Events.FriendAdded(e.Requester.Id, e.Friend.Id);
 
-            return null;
+                case Core.Events.FriendRemoved e:
+                    return new Application.Events.FriendRemoved(e.Requester.Id, e.Friend.Id);
+
+                case Core.Events.FriendshipConfirmed e:
+                    return new FriendRequestAccepted(e.FriendId, e.FriendId);
+
+                case Core.Events.FriendshipDeclined e:
+                    return new FriendRequestRejected(e.FriendshipId, e.FriendshipId);
+
+                default:
+                    return null; 
+            }
         }
     }
 }
