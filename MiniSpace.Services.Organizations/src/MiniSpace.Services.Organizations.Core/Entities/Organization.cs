@@ -26,6 +26,16 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         
         public void RemoveOrganizer(Organizer organizer)
             => _organizers.Remove(organizer);
+        
+        public void RemoveOrganizer(Guid organizerId)
+        {
+            var organizer = _organizers.SingleOrDefault(x => x.Id == organizerId);
+            if(organizer is null)
+            {
+                throw new OrganizerIsNotInOrganization(organizerId, Id);
+            }
+            RemoveOrganizer(organizer);
+        }
 
         public void AddOrganizer(Organizer organizer)
         {
@@ -35,6 +45,8 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
             _organizers.Add(organizer);
         }
+        
+        
         
         public void MakeParent()
             => IsLeaf = false;

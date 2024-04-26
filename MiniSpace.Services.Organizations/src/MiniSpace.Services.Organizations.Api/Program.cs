@@ -33,13 +33,13 @@ namespace MiniSpace.Services.Organizations.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
-                        .Get<GetOrganizerOrganizations, IEnumerable<OrganizationDto>>("organizations/user")
+                        .Get<GetOrganizerOrganizations, IEnumerable<OrganizationDto>>("organizations/organizer/{organizerId}")
                         .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
                         .Get<GetChildrenOrganizations, IEnumerable<OrganizationDto>>("organizations/{organizationId}/children")
                         .Post<AddOrganization>("organizations",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/root"))
-                        .Post<AddOrganizerToOrganization>("organizations/user")
-                        .Delete<RemoveUserFromOrganization>("organizations/user")
+                        .Post<AddOrganizerToOrganization>("organizations/organizer")
+                        .Delete<RemoveOrganizerFromOrganization>("organizations/organizer")
                         ))
                 .UseLogging()
                 .Build()

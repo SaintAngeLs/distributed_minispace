@@ -1,20 +1,18 @@
 ﻿using Convey.CQRS.Commands;
-using MiniSpace.Services.Organizations.Application.Events;
 using MiniSpace.Services.Organizations.Application.Exceptions;
 using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Repositories;
-using UnauthorizedAccessException = System.UnauthorizedAccessException;
 
 namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 {
-    public class AddOrganizerToOrganizationHandler : ICommandHandler<AddOrganizerToOrganization>
+    public class RemoveOrganizerFromOrganizationHandler : ICommandHandler<RemoveOrganizerFromOrganization>
     {
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizerRepository _organizerRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
-        
-        public AddOrganizerToOrganizationHandler(IOrganizationRepository organizationRepository, 
+
+        public RemoveOrganizerFromOrganizationHandler(IOrganizationRepository organizationRepository, 
             IOrganizerRepository organizerRepository, IAppContext appContext, IMessageBroker messageBroker)
         {
             _organizationRepository = organizationRepository;
@@ -23,29 +21,28 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(AddOrganizerToOrganization command, CancellationToken cancellationToken)
+        public async Task HandleAsync(RemoveOrganizerFromOrganization command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && !identity.IsAdmin)
+            if(identity.IsAuthenticated && !identity.IsAdmin)
             {
                 throw new Exceptions.UnauthorizedAccessException("admin");
             }
             
             var organization = await _organizationRepository.GetAsync(command.OrganizationId);
-            if (organization is null)
+            if(organization is null)
             {
                 throw new OrganizationNotFoundException(command.OrganizationId);
             }
 
             var organizer = await _organizerRepository.GetAsync(command.OrganizerId);
-            if (organizer is null)
+            if(organizer is null)
             {
                 throw new OrganizerNotFoundException(command.OrganizerId);
             }
 
-            organization.AddOrganizer(organizer);
+            organization.RemoveOrganizer(organizer);
             await _organizationRepository.UpdateAsync(organization);
-            await _messageBroker.PublishAsync(new OrganizerAddedToOrganization(organization.Id, organizer.Id));
         }
     }
 }
