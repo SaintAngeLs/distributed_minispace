@@ -92,14 +92,12 @@
         {
             return eventDto.Organizer.Name;
         }
-        else
+        
+        foreach (var coOrganizer in eventDto.CoOrganizers)
         {
-            foreach (var coOrganizer in eventDto.CoOrganizers)
+            if (studentId == coOrganizer.Id)
             {
-                if (studentId == coOrganizer.Id)
-                {
-                    return coOrganizer.Name;
-                }
+                return coOrganizer.Name;
             }
         }
 
@@ -108,15 +106,18 @@
     
     private async void OnChange(int index)
     {
-        pageInitialized = false;
+        if (!IdentityService.IsAuthenticated)
+        {
+            return;
+        }
         
+        pageInitialized = false;
         switch (index)
         {
             case 0:
                 posts = await PostsService.GetPostsAsync(eventDto.Id);
                 break;
         }
-
         pageInitialized = true;
     }
 }
