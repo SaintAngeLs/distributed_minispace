@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Organizations.Application;
 using MiniSpace.Services.Organizations.Application.Commands;
+using MiniSpace.Services.Organizations.Application.DTO;
+using MiniSpace.Services.Organizations.Application.Queries;
 using MiniSpace.Services.Organizations.Infrastructure;
 
 namespace MiniSpace.Services.Organizations.Api
@@ -29,7 +31,7 @@ namespace MiniSpace.Services.Organizations.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        //.Get<GetUserOrganizations, IEnumerable<>>("organizations/user")
+                        .Get<GetOrganizerOrganizations, IEnumerable<OrganizationDto>>("organizations/user")
                         //.Get<GetRootOrganizations, IEnumerable<>>("organizations/root")
                         //.Get<GetChildrenOrganizations, IEnumerable<>>("organizations/{organizationId}/children")
                         .Post<AddOrganization>("organizations",
