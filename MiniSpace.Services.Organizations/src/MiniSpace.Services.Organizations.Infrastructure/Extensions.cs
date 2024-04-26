@@ -88,15 +88,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<UpdateStudent>()
-                .SubscribeCommand<DeleteStudent>()
-                .SubscribeCommand<CompleteStudentRegistration>()
-                .SubscribeCommand<ChangeStudentState>()
-                .SubscribeEvent<SignedUp>()
-                .SubscribeEvent<StudentShowedInterestInEvent>()
-                .SubscribeEvent<StudentSignedUpToEvent>()
-                .SubscribeEvent<UserBanned>()
-                .SubscribeEvent<UserUnbanned>()
+                .SubscribeCommand<AddOrganization>()
+                .SubscribeCommand<AddOrganizerToOrganization>()
+                .SubscribeCommand<RemoveOrganizerFromOrganization>()
                 .SubscribeEvent<OrganizerRightsGranted>()
                 .SubscribeEvent<OrganizerRightsRevoked>();
 

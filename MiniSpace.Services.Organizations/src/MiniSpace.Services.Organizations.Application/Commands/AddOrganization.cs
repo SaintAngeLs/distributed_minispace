@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands
 
         public AddOrganization(Guid organizationId, string name, Guid parentId)
         {
-            OrganizationId = organizationId;
+            OrganizationId = organizationId == Guid.Empty ? Guid.NewGuid() : organizationId;
             Name = name;
             ParentId = parentId;
         }

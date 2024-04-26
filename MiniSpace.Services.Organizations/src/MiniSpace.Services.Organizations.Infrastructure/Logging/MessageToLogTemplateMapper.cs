@@ -10,69 +10,33 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(UpdateStudent),  new HandlerLogTemplate
+                    typeof(AddOrganization),  new HandlerLogTemplate
                     {
-                        After = "Updated the student with id: {StudentId}."
+                        After = "Added a new organization with id: {OrganizationId}."
                     }
                 },
                 {
-                    typeof(DeleteStudent), new HandlerLogTemplate
+                    typeof(AddOrganizerToOrganization), new HandlerLogTemplate
                     {
-                        After = "Deleted the student with id: {StudentId}."
+                        After = "Added an organizer with id: {OrganizerId} to the organization with id: {OrganizationId}."
                     }
                 },
                 {
-                    typeof(CompleteStudentRegistration), new HandlerLogTemplate
+                    typeof(RemoveOrganizerFromOrganization), new HandlerLogTemplate
                     {
-                        After = "Completed a registration for the student with id: {StudentId}."
-                    }
-                },
-                {
-                    typeof(ChangeStudentState), new HandlerLogTemplate
-                    {
-                        After = "Changed a student with id: {StudentId} state to: {State}."
-                    }
-                },
-                {
-                    typeof(SignedUp), new HandlerLogTemplate
-                    {
-                        After = "Created a new student with id: {UserId}."
-                    }
-                },
-                {
-                    typeof(StudentShowedInterestInEvent), new HandlerLogTemplate
-                    {
-                        After = "A student with id: {StudentId} has been interested in the event with id: {EventId}."
-                    }
-                },
-                {
-                    typeof(StudentSignedUpToEvent), new HandlerLogTemplate
-                    {
-                        After = "A student with id: {StudentId} has signed up for the event with id: {EventId}."
-                    }
-                },
-                {
-                    typeof(UserBanned), new HandlerLogTemplate
-                    {
-                        After = "A student with id: {UserId} has been banned."
-                    }
-                },
-                {
-                    typeof(UserUnbanned), new HandlerLogTemplate
-                    {
-                        After = "A student with id: {UserId} has been unbanned."
+                        After = "Removed an organizer with id: {OrganizerId} from the organization with id: {OrganizationId}."
                     }
                 },
                 {
                     typeof(OrganizerRightsGranted), new HandlerLogTemplate
                     {
-                        After = "Organizer rights has been granted for student with id: {UserId}."
+                        After = "Created an organizer with id: {OrganizerId}."
                     }
                 },
                 {
                     typeof(OrganizerRightsRevoked), new HandlerLogTemplate
                     {
-                        After = "Organizer rights has been revoked for student with id: {UserId}."
+                        After = "Deleted an organizer with id: {OrganizerId}."
                     }
                 }
             };
