@@ -97,7 +97,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             var sort = sortByArguments.ToList();
             if(!sort.Any())
             {
-                sort.Add("PublishDate");
+                sort.Add("StartDate");
             }
             var sortDefinitionBuilder = Builders<EventDocument>.Sort;
             var sortDefinition = sort
