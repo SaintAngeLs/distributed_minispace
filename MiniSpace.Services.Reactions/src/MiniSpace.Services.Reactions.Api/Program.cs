@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Reactions.Application;
 using MiniSpace.Services.Reactions.Application.Commands;
+using MiniSpace.Services.Reactions.Infrastructure;
 
 namespace MiniSpace.Services.Reactions.Api
 {
@@ -22,10 +23,10 @@ namespace MiniSpace.Services.Reactions.Api
                     .AddConvey()
                     .AddWebApi()
                     .AddApplication()
-                    //.AddInfrastructure()
+                    .AddInfrastructure()
                     .Build())
                 .Configure(app => app
-                    //.UseInfrastructure()
+                    .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Post<CreateReaction>("reactions"
