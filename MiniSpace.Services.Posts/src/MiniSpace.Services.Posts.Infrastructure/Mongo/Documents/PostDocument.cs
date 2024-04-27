@@ -13,5 +13,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
         public State State { get; set; }
         public DateTime? PublishDate { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }    
 }

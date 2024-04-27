@@ -54,25 +54,25 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             }
             
             var previousState = post.State.ToString().ToLowerInvariant();
+            var now = _dateTimeProvider.Now;
 
             switch (newState)
             {
                 case State.ToBePublished:
                     post.SetToBePublished(command.PublishDate
-                                          ?? throw new PublishDateNullException(command.PostId, newState),
-                        _dateTimeProvider.Now);
+                                          ?? throw new PublishDateNullException(command.PostId, newState), now);
                     break;
                 case State.Published:
-                    post.SetPublished();
+                    post.SetPublished(now);
                     break;
                 case State.InDraft:
-                    post.SetInDraft();
+                    post.SetInDraft(now);
                     break;
                 case State.Hidden:
-                    post.SetHidden();
+                    post.SetHidden(now);
                     break;
                 case State.Reported:
-                    post.SetReported();
+                    post.SetReported(now);
                     break;
                 default:
                     throw new InvalidPostStateException(post.State.ToString().ToLowerInvariant());

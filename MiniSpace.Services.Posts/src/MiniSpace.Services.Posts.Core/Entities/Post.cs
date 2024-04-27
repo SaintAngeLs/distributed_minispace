@@ -11,9 +11,10 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public State State { get; private set; }
         public DateTime? PublishDate { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
         
         public Post(Guid id, Guid eventId, Guid studentId, string textContent,
-            string mediaContent, DateTime createdAt, State state, DateTime? publishDate)
+            string mediaContent, DateTime createdAt, State state, DateTime? publishDate, DateTime? updatedAt = null)
         {
             Id = id;
             EventId = eventId;
@@ -21,6 +22,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
             TextContent = textContent;
             MediaContent = mediaContent;
             CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
             State = state;
             PublishDate = publishDate;
         }
@@ -30,37 +32,42 @@ namespace MiniSpace.Services.Posts.Core.Entities
             CheckPublishDate(Id, State.ToBePublished, publishDate, now);
             State = State.ToBePublished;
             PublishDate = publishDate;
+            UpdatedAt = now;
         }
         
-        public void SetPublished()
+        public void SetPublished(DateTime now)
         {
             State = State.Published;
             PublishDate = null;
+            UpdatedAt = now;
         }
         
-        public void SetInDraft()
+        public void SetInDraft(DateTime now)
         {
             State = State.InDraft;
             PublishDate = null;
+            UpdatedAt = now;
         }
 
-        public void SetHidden()
+        public void SetHidden(DateTime now)
         {
             State = State.Hidden;
             PublishDate = null;
+            UpdatedAt = now;
         }
 
-        public void SetReported()
+        public void SetReported(DateTime now)
         {
             State = State.Reported;
             PublishDate = null;
+            UpdatedAt = now;
         }
 
         public bool UpdateState(DateTime now)
         {
             if (State == State.ToBePublished && PublishDate <= now)
             {
-                SetPublished();
+                SetPublished(now);
                 return true;
             }
             
@@ -75,12 +82,13 @@ namespace MiniSpace.Services.Posts.Core.Entities
             return new Post(id, eventId, studentId, textContent, mediaContent, createdAt, state, publishDate);
         }
 
-        public void Update(string textContent, string mediaContent)
+        public void Update(string textContent, string mediaContent, DateTime now)
         {
             CheckContent(Id, textContent, mediaContent);
 
             TextContent = textContent;
             MediaContent = mediaContent;
+            UpdatedAt = now;
         }
         
         private static void CheckContent(AggregateId id, string textContent, string mediaContent)

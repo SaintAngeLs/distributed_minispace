@@ -10,5 +10,6 @@ namespace MiniSpace.Services.Posts.Application.Dto
         public string State { get; set; }
         public DateTime? PublishDate { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }
