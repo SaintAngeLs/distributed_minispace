@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Identity
 {
@@ -17,13 +18,13 @@ namespace MiniSpace.Web.Areas.Identity
             return Task.CompletedTask;
         }
 
-        public Task SignUpAsync(string email, string password, string role = "user")
-            => _identityService.SignUpAsync(email, password, role);
+        public Task SignUpAsync(string firstName, string lastName, string email, string password, string role = "user")
+            => _identityService.SignUpAsync(firstName, lastName, email, password, role);
         
-        public Task<JwtDto> SignInAsync(string email, string password)
+        public Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
             => _identityService.SignInAsync(email, password);
 
-        public Task<UserDto> GetAccount(string jwt)
-            => _identityService.GetAccountAsync(jwt);
+        public Task<UserDto> GetAccount()
+            => _identityService.GetAccountAsync();
     }
 }

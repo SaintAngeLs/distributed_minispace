@@ -3,14 +3,14 @@ name: Deploy to Cloud
 on:
   push:
     branches:
-      - main
+      - main # dev for the test purposes here
   pull_request:
     branches:
       - main 
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
-        cat ~/.ssh/known_hosts # Add this line to confirm that the key is added
+        cat ~/.ssh/known_hosts 
 
     - name: Check the structure
       run: |

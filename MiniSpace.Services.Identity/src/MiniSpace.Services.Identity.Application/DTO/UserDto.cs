@@ -7,6 +7,7 @@ namespace MiniSpace.Services.Identity.Application.DTO
     public class UserDto
     {
         public Guid Id { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -19,6 +20,7 @@ namespace MiniSpace.Services.Identity.Application.DTO
         public UserDto(User user)
         {
             Id = user.Id;
+            Name = user.Name;
             Email = user.Email;
             Role = user.Role;
             CreatedAt = user.CreatedAt;

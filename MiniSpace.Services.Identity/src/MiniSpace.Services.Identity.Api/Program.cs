@@ -69,6 +69,26 @@ namespace MiniSpace.Services.Identity.Api
                             await ctx.RequestServices.GetService<IRefreshTokenService>().RevokeAsync(cmd.RefreshToken);
                             ctx.Response.StatusCode = 204;
                         })
+                        .Post<GrantOrganizerRights>("users/{userId}/organizer-rights", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().GrantOrganizerRightsAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
+                        .Delete<RevokeOrganizerRights>("users/{userId}/organizer-rights", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().RevokeOrganizerRightsAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
+                        .Post<BanUser>("users/{userId}/ban", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().BanUserAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
+                        .Delete<UnbanUser>("users/{userId}/ban", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().UnbanUserAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
                     ))
                 .UseLogging()
                 .Build()
