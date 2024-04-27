@@ -535,3 +535,52 @@ modules:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
+        
+        
+  organizations:
+    path: /organizations
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations
+        auth: true
+        
+      - upstream: /organizer/{organizationId}/organizer
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/organizer
+        auth: true
+        
+      - upstream: /organizer/{organizationId}/organizer/{organizerId}
+        method: DELETE
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
+        auth: true
+
+      - upstream: /
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations
+        
+      - upstream: /{organizationId}
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}
+        
+      - upstream: /root
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/root
+        
+      - upstream: /{organizationId}/children
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children  
+
+    services:
+      posts-service:
+        localUrl: localhost:5015
+        url: organizations-service
+        
+        
