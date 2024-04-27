@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
                 throw new StudentAlreadyAddedException(@event.StudentId);
             }
 
-            await _studentRepository.AddAsync(new Student(@event.StudentId, @event.FullName));
+            await _studentRepository.AddAsync(new Student(@event.StudentId));
         }
     }    
 }

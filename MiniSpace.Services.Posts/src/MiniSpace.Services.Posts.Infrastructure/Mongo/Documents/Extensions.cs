@@ -38,13 +38,12 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
             };
         
         public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.FullName);
+            => new Student(document.Id);
 
         public static StudentDocument AsDocument(this Student entity)
             => new StudentDocument
             {
                 Id = entity.Id,
-                FullName = entity.FullName
             };
     }    
 }
