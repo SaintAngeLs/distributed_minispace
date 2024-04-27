@@ -18,7 +18,7 @@ generateTraceId: true
 useLocalUrl: true
 loadBalancer:
   enabled: false
-  url: faibo:9999
+  url: fabio:9999
 
 extensions:
   customErrors:
@@ -535,6 +535,7 @@ modules:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
+        
         
         
   organizations:
