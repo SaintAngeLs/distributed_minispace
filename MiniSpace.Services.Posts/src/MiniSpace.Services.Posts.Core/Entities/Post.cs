@@ -5,7 +5,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
     public class Post : AggregateRoot
     {
         public Guid EventId { get; private set; }
-        public Guid StudentId { get; private set; }
+        public Guid OrganizerId { get; private set; }
         public string TextContent { get; private set; }
         public string MediaContent { get; private set; }
         public State State { get; private set; }
@@ -13,12 +13,12 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         
-        public Post(Guid id, Guid eventId, Guid studentId, string textContent,
+        public Post(Guid id, Guid eventId, Guid organizerId, string textContent,
             string mediaContent, DateTime createdAt, State state, DateTime? publishDate, DateTime? updatedAt = null)
         {
             Id = id;
             EventId = eventId;
-            StudentId = studentId;
+            OrganizerId = organizerId;
             TextContent = textContent;
             MediaContent = mediaContent;
             CreatedAt = createdAt;

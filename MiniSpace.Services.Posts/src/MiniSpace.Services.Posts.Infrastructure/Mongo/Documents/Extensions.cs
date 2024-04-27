@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Post AsEntity(this PostDocument document)
-            => new Post(document.Id, document.EventId, document.StudentId, document.TextContent,
+            => new Post(document.Id, document.EventId, document.OrganizerId, document.TextContent,
                 document.MediaContent, document.CreatedAt, document.State, document.PublishDate, document.UpdatedAt);
 
         public static PostDocument AsDocument(this Post entity)
@@ -14,7 +14,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
             {
                 Id = entity.Id,
                 EventId = entity.EventId,
-                StudentId = entity.StudentId,
+                OrganizerId = entity.OrganizerId,
                 TextContent = entity.TextContent,
                 MediaContent = entity.MediaContent,
                 CreatedAt = entity.CreatedAt,
@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
             {
                 Id = document.Id,
                 EventId = document.EventId,
-                StudentId = document.StudentId,
+                OrganizerId = document.OrganizerId,
                 TextContent = document.TextContent,
                 MediaContent = document.MediaContent,
                 CreatedAt = document.CreatedAt,
@@ -37,13 +37,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 PublishDate = document.PublishDate
             };
         
-        public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id);
+        public static Event AsEntity(this EventDocument document)
+            => new Event(document.Id, document.OrganizerId);
 
-        public static StudentDocument AsDocument(this Student entity)
-            => new StudentDocument
+        public static EventDocument AsDocument(this Event entity)
+            => new EventDocument
             {
                 Id = entity.Id,
+                OrganizerId = entity.OrganizerId
             };
     }    
 }

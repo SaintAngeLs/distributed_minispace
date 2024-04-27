@@ -11,24 +11,24 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
     public class CreatePostHandler : ICommandHandler<CreatePost>
     {
         private readonly IPostRepository _postRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IEventRepository _eventRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
 
-        public CreatePostHandler(IPostRepository postRepository, IStudentRepository studentRepository,
+        public CreatePostHandler(IPostRepository postRepository, IEventRepository eventRepository,
             IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
         {
             _postRepository = postRepository;
-            _studentRepository = studentRepository;
+            _eventRepository = eventRepository;
             _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(CreatePost command, CancellationToken cancellationToken = default)
         {
-            if (!(await _studentRepository.ExistsAsync(command.StudentId)))
+            if (!(await _eventRepository.ExistsAsync(command.StudentId)))
             {
-                throw new StudentNotFoundException(command.StudentId);
+                throw new EventNotFoundException(command.StudentId);
             }
 
             if (!Enum.TryParse<State>(command.State, true, out var newState))

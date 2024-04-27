@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Exceptions
                         ex.State.ToString().ToLowerInvariant(), ex.Message, ex.Code),
                     _ => null,
                 },
-                StudentNotFoundException ex => message switch
+                EventNotFoundException ex => message switch
                 {
                     CreatePost _ => new CreatePostRejected(ex.Id, ex.Message,
                         ex.Code),
