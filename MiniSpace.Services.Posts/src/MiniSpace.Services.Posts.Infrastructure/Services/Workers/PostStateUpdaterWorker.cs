@@ -35,7 +35,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services.Workers
                         await _commandDispatcher.SendAsync(new UpdatePostsState(now), stoppingToken);
                     }
                     
-                    var nextTime = now.AddMinutes(MinutesInterval - (minutes % MinutesInterval));
+                    var nextTime = now.AddMinutes(MinutesInterval - (minutes % MinutesInterval)).AddSeconds(-now.Second)
+                        .AddMilliseconds(-now.Millisecond);
                     var delay = nextTime - now;
                     
                     await Task.Delay(delay, stoppingToken);
