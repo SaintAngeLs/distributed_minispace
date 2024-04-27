@@ -32,7 +32,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         {
         }
 
-        public EventDto(Event @event)
+        public EventDto(Event @event, Guid studentId)
         {
             Id = @event.Id;
             Name = @event.Name;
@@ -49,9 +49,9 @@ namespace MiniSpace.Services.Events.Application.DTO
             Category = @event.Category.ToString();
             Status = @event.State.ToString();
             PublishDate = @event.PublishDate;
-            IsSignedUp = @event.SignedUpStudents.Any(x => x.StudentId == @event.Id);
-            IsInterested = @event.InterestedStudents.Any(x => x.StudentId == @event.Id);
-            HasRated = @event.Ratings.Any(x => x.StudentId == @event.Id);
+            IsSignedUp = @event.SignedUpStudents.Any(x => x.StudentId == studentId);
+            IsInterested = @event.InterestedStudents.Any(x => x.StudentId == studentId);
+            HasRated = @event.Ratings.Any(x => x.StudentId == studentId);
         }
     }
 }
