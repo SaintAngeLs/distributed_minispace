@@ -92,6 +92,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .SubscribeCommand<UpdatePost>()
                 .SubscribeCommand<DeletePost>()
                 .SubscribeCommand<CreatePost>()
+                .SubscribeCommand<UpdatePostsState>()
                 .SubscribeCommand<ChangePostState>()
                 .SubscribeEvent<StudentCreated>()
                 .SubscribeEvent<StudentDeleted>();

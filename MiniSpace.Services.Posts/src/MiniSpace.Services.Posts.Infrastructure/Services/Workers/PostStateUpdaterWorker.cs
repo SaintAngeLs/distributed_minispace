@@ -11,7 +11,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services.Workers
         private readonly IMessageBroker _messageBroker;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly TimeSpan _updateInterval = TimeSpan.FromMinutes(10);
+        private const int MinutesInterval = 5;
 
         public PostStateUpdaterWorker(IMessageBroker messageBroker, ICommandDispatcher commandDispatcher,
             IDateTimeProvider dateTimeProvider)
@@ -28,8 +28,17 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services.Workers
             {
                 try
                 {
-                    await _commandDispatcher.SendAsync(new UpdatePostsState(_dateTimeProvider.Now), stoppingToken);
-                    await Task.Delay(_updateInterval, stoppingToken);
+                    var now = _dateTimeProvider.Now;
+                    var minutes = now.Minute;
+                    if(minutes % MinutesInterval == 0)
+                    {
+                        await _commandDispatcher.SendAsync(new UpdatePostsState(now), stoppingToken);
+                    }
+                    
+                    var nextTime = now.AddMinutes(MinutesInterval - (minutes % MinutesInterval));
+                    var delay = nextTime - now;
+                    
+                    await Task.Delay(delay, stoppingToken);
                 }
                 catch (TaskCanceledException)
                 {

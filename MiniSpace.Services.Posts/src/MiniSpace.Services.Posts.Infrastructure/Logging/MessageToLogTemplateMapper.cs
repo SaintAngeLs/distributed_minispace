@@ -47,7 +47,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Logging
                     }
                 },
                 {
-                    typeof(PostsStateUpdated),     
+                    typeof(UpdatePostsState),     
                     new HandlerLogTemplate
                     {
                         After = "Updated state of posts at: {Now}."
