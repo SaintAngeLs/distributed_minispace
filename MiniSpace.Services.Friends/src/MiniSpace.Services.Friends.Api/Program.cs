@@ -56,77 +56,7 @@ namespace MiniSpace.Services.Friends.Api
                         .Get<PendingFriendDeclineQuery, FriendRequestDto>("friends/requests/{studentId}/decline")
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending")
-                        .Post<InviteFriend>("friends/{userId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["studentId"]}/invite")))) 
-                    //    .Get("friends", async ctx =>
-                    //     {
-                    //         var query = new GetFriends();
-                    //         var result = await ctx.RequestServices.GetRequiredService<IQueryDispatcher>().QueryAsync<IEnumerable<FriendDto>>(query);
-                    //         await ctx.Response.WriteAsJsonAsync(result);
-                    //     })
-//                         .Post("friends/{userId}", async ctx =>
-//                         {
-//                             var command = new AddFriend(Guid.Parse(ctx.User.Identity.Name), Guid.Parse(ctx.Request.RouteValues["userId"].ToString()));
-//                             await ctx.RequestServices.GetRequiredService<ICommandDispatcher>().SendAsync(command);
-//                             ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}");
-//                         })
-//                         .Get("friends/notYet", async ctx =>
-//                         {
-                            
-//                             await ctx.Response.WriteAsJsonAsync(new { Message = "Retrieve not yet confirmed friends." });
-//                         })
-//                         .Post("friends/pending", async ctx =>
-//                         {
-//                             var command = new InviteFriend(Guid.Parse(ctx.User.Identity.Name), Guid.NewGuid()); 
-//                             await ctx.RequestServices.GetRequiredService<ICommandDispatcher>().SendAsync(command);
-//                             ctx.Response.Created("friends/pending");
-//                         })
-//                         .Get("friends/pending", async ctx =>
-//                         {
-//                             var query = new GetFriendRequests(Guid.Parse(ctx.User.Identity.Name));
-//                             var result = await ctx.RequestServices.GetRequiredService<IQueryDispatcher>().QueryAsync<IEnumerable<FriendRequestDto>>(query);
-//                             await ctx.Response.WriteAsJsonAsync(result);
-//                         })
-//                         .Post("friends/{userId}/invite", async ctx =>
-// {
-//     var userIdRouteValue = ctx.Request.RouteValues["userId"]?.ToString();
-//     Console.WriteLine($"Received userId: {userIdRouteValue}");
-
-//     if (string.IsNullOrEmpty(userIdRouteValue))
-//     {
-//         ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-//         await ctx.Response.WriteAsync("User ID is required.");
-//         return;
-//     }
-
-//     if (!Guid.TryParse(userIdRouteValue, out Guid userIdGuid))
-//     {
-//         ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-//         await ctx.Response.WriteAsync("Invalid User ID format.");
-//         return;
-//     }
-
-    // var userIdentityName = ctx.User.Identity.Name;
-    // if (string.IsNullOrEmpty(userIdentityName))
-    // {
-    //     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-    //     await ctx.Response.WriteAsync("Authentication is required.");
-    //     return;
-    // }
-
-    // if (!Guid.TryParse(userIdentityName, out Guid userGuid))
-    // {
-    //     ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-    //     await ctx.Response.WriteAsync("User identity format is invalid. Identity must be a GUID.");
-    //     return;
-    // }
-
-//     var command = new InviteFriend(userIdGuid, userIdGuid);
-//     await ctx.RequestServices.GetRequiredService<ICommandDispatcher>().SendAsync(command);
-//     ctx.Response.Created($"friends/{userIdRouteValue}/invite");
-// })
-
-
-    
+                        .Post<InviteFriend>("friends/{studentId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}/invite")))) 
                 .UseLogging()
                 .UseLogging()
                 .Build()
