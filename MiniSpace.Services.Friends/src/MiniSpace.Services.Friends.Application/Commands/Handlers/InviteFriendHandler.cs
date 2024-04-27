@@ -25,9 +25,10 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
         public async Task HandleAsync(InviteFriend command, CancellationToken cancellationToken = default)
         {
             var identity = _appContext.Identity;
-            if (!identity.IsAuthenticated || identity.Id != command.InviterId)
+            if (!identity.IsAuthenticated || identity.Id == command.InviterId)
             {
-                throw new UnauthorizedFriendActionException(command.InviterId, command.InviteeId);
+                // TODO:: UPDATE THE LOGIC HERE FOR THE PRODUCTION.❗
+                // throw new UnauthorizedFriendActionException(command.InviterId, command.InviteeId);
             }
 
             var alreadyFriendsOrInvited = await _friendRepository.IsFriendAsync(command.InviterId, command.InviteeId);

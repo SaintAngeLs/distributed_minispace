@@ -4,8 +4,8 @@ namespace MiniSpace.Services.Friends.Application.Events
 {
     public class InviteFriend : ICommand
     {
-        public Guid InviterId { get; }
-        public Guid InviteeId { get; }
+        public Guid InviterId { get; set; }
+        public Guid InviteeId { get; set; }
 
         public InviteFriend(Guid inviterId, Guid inviteeId)
         {
