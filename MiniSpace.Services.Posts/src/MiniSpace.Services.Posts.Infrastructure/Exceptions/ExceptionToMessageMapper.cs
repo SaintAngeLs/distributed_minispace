@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Exceptions
             => exception switch
     
             {
-                InvalidPostContentException ex => message switch
+                InvalidPostTextContentException ex => message switch
                 {
                     CreatePost _ => new CreatePostRejected(ex.Id, ex.Message,
                         ex.Code),
