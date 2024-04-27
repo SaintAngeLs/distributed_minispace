@@ -14,21 +14,30 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
         private readonly IEventRepository _eventRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
+        private readonly IAppContext _appContext;
 
         public CreatePostHandler(IPostRepository postRepository, IEventRepository eventRepository,
-            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
+            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker, IAppContext appContext)
         {
             _postRepository = postRepository;
             _eventRepository = eventRepository;
             _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
+            _appContext = appContext;
         }
 
         public async Task HandleAsync(CreatePost command, CancellationToken cancellationToken = default)
         {
-            if (!(await _eventRepository.ExistsAsync(command.StudentId)))
+            var @event = await _eventRepository.GetAsync(command.EventId);
+            if (@event is null)
             {
-                throw new EventNotFoundException(command.StudentId);
+                throw new EventNotFoundException(command.EventId);
+            }
+            
+            var identity = _appContext.Identity;
+            if (identity.IsAuthenticated && (identity.Id != command.OrganizerId || identity.Id != @event.OrganizerId))
+            {
+                throw new UnauthorizedPostCreationAttemptException(identity.Id, command.EventId);
             }
 
             if (!Enum.TryParse<State>(command.State, true, out var newState))
@@ -44,7 +53,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                     throw new PublishDateNullException(command.PostId, newState);
             }
             
-            var post = Post.Create(command.PostId, command.EventId, command.StudentId, command.TextContent,
+            var post = Post.Create(command.PostId, command.EventId, command.OrganizerId, command.TextContent,
                 command.MediaContent, _dateTimeProvider.Now, newState, command.PublishDate);
             await _postRepository.AddAsync(post);
             
