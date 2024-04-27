@@ -1,5 +1,3 @@
-using MiniSpace.Services.Students.Core.Exceptions;
-
 namespace MiniSpace.Services.Friends.Core.Exceptions
 {
     public class InvalidFriendshipStateException : DomainException

@@ -35,20 +35,6 @@ namespace MiniSpace.Services.Friends.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        // .Get<GetStudents, IEnumerable<StudentDto>>("students")
-                        // .Get<GetStudent, StudentDto>("students/{studentId}")
-                        // .Put<UpdateStudent>("students/{studentId}")
-                        // .Delete<DeleteStudent>("students/{studentId}")
-                        // .Post<CompleteStudentRegistration>("students",
-                        //     afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))
-                        // .Put<ChangeStudentState>("students/{studentId}/state/{state}",
-                        //     afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
-                        // .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")))
-
-                        // .Get<IEnumerable<FriendDto>>("friends/{studentId}", 
-                        //     ctx => new GetFriends { StudentId = Guid.Parse(ctx.Request.RouteValues["studentId"].ToString()) }, 
-                        //     (query, ctx) => ctx.Response.WriteAsJsonAsync(query), // Correctly define delegate with parameters
-                        //     afterDispatch: ctx => ctx.Response.Ok())
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends")
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/{studentId}") 
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/{studentId}")

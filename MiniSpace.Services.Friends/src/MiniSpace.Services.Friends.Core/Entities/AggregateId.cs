@@ -1,5 +1,4 @@
 using MiniSpace.Services.Friends.Core.Exceptions;
-using MiniSpace.Services.Students.Core.Exceptions;
 
 namespace MiniSpace.Services.Friends.Core.Entities
 {

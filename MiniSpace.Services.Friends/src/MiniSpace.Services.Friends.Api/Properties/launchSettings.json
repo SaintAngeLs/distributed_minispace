@@ -14,7 +14,7 @@
         "ASPNETCORE_ENVIRONMENT": "local"
       }
     },
-    "MiniSpace.Services.Students": {
+    "MiniSpace.Services.Friends": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5012",

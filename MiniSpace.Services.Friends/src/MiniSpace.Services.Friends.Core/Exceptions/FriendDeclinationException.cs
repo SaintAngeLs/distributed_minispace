@@ -1,4 +1,4 @@
-using MiniSpace.Services.Students.Core.Exceptions;
+using MiniSpace.Services.Friends.Core.Exceptions;
 
 namespace MiniSpace.Services.Friends.Core.Exceptions
 {

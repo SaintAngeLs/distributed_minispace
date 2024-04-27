@@ -4,7 +4,6 @@ using Convey;
 using Convey.WebApi.Exceptions;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Core.Exceptions;
-using MiniSpace.Services.Students.Core.Exceptions;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Exceptions
 {
