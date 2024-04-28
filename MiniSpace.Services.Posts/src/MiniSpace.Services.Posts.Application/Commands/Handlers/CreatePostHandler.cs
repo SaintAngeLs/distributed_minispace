@@ -47,7 +47,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
 
             switch (newState)
             {
-                case State.Hidden or State.Reported:
+                case State.Reported:
                     throw new NotAllowedPostStateException(command.PostId, newState);
                 case State.ToBePublished when command.PublishDate is null:
                     throw new PublishDateNullException(command.PostId, newState);

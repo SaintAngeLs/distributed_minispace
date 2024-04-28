@@ -68,9 +68,6 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 case State.InDraft:
                     post.SetInDraft(now);
                     break;
-                case State.Hidden:
-                    post.SetHidden(now);
-                    break;
                 case State.Reported:
                     post.SetReported(now);
                     break;

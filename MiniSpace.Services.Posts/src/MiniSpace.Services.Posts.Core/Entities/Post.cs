@@ -49,13 +49,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
             UpdatedAt = now;
         }
 
-        public void SetHidden(DateTime now)
-        {
-            State = State.Hidden;
-            PublishDate = null;
-            UpdatedAt = now;
-        }
-
         public void SetReported(DateTime now)
         {
             State = State.Reported;

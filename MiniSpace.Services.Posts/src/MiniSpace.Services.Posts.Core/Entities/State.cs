@@ -5,7 +5,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
         ToBePublished,
         Published,
         InDraft,
-        Hidden,
         Reported
     }
 }
