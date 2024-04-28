@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MiniSpace.Services.Events.Application
+namespace MiniSpace.Services.Comments.Application
 {
     public interface IIdentityContext
     {

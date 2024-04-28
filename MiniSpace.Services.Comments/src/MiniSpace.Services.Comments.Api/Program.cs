@@ -48,9 +48,14 @@ namespace MiniSpace.Services.Identity.Api
                         // .Post<SignUpToEvent>("events/{eventId}/sign-up")
                         // .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         // .Post<RateEvent>("events/{eventId}/rate")
-                        // // TODO: Add query for student latest enrolled events
                         // .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
                         // .Delete<DeleteEvent>("events/{eventId}")
+
+                        // .Post
+                        // .Put command.id
+                        // .Get
+                        // .Delete command.id
+                        // .Post command.id/like
                     )
                 )
                 .UseLogging()
