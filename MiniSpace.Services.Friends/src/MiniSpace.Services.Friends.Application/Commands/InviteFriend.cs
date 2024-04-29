@@ -1,6 +1,6 @@
 using Convey.CQRS.Commands;
 
-namespace MiniSpace.Services.Friends.Application.Events
+namespace MiniSpace.Services.Friends.Application.Commands
 {
     public class InviteFriend : ICommand
     {

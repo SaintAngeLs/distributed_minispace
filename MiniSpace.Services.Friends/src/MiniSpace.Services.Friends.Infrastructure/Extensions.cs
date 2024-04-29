@@ -48,6 +48,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IFriendRepository, FriendMongoRepository>();
+            builder.Services.AddTransient<IFriendRequestRepository, FriendRequestMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -71,8 +72,8 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
+                .AddMongoRepository<FriendRequestDocument, Guid>("friendRequests")
                 .AddMongoRepository<FriendDocument, Guid>("friends")
-                .AddMongoRepository<FriendRequestDocument, Guid>("friend-requests")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -95,8 +96,8 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .SubscribeCommand<PendingFriendDecline>()
                 .SubscribeEvent<Application.Events.FriendAdded>()
                 .SubscribeEvent<Application.Events.FriendRemoved>()
-                .SubscribeEvent<FriendRequestAccepted>()
-                .SubscribeEvent<FriendRequestRejected>()
+                .SubscribeEvent<PendingFriendAccepted>()
+                .SubscribeEvent<PendingFriendDeclined>()
                 .SubscribeEvent<FriendRequestCreated>()
                 .SubscribeEvent<FriendRequestSent>()
                 .SubscribeEvent<UserStatusUpdated>();

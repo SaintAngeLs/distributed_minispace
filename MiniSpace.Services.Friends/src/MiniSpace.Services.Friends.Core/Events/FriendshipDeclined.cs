@@ -2,11 +2,13 @@ namespace MiniSpace.Services.Friends.Core.Events
 {
     public class FriendshipDeclined : IDomainEvent
     {
-        public Guid FriendshipId { get; }
-
-        public FriendshipDeclined(Guid friendshipId)
+        // Adding separate properties for the requester and the friend
+        public Guid RequesterId { get; }
+        public Guid FriendId { get; }
+        public FriendshipDeclined(Guid requesterId, Guid friendId)
         {
-            FriendshipId = friendshipId;
+            RequesterId = requesterId;
+            FriendId = friendId;
         }
     }
 }

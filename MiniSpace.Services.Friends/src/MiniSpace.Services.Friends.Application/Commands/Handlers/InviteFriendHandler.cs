@@ -3,20 +3,21 @@ using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Friends.Application.Events.External;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
+using MiniSpace.Services.Friends.Core.Entities;
 using MiniSpace.Services.Friends.Core.Repositories;
 
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
     public class InviteFriendHandler : ICommandHandler<InviteFriend>
     {
-        private readonly IFriendRepository _friendRepository;
+        private readonly IFriendRequestRepository _friendRequestRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IEventMapper _eventMapper;
         private readonly IAppContext _appContext;
 
-        public InviteFriendHandler(IFriendRepository friendRepository, IMessageBroker messageBroker, IEventMapper eventMapper, IAppContext appContext)
+        public InviteFriendHandler(IFriendRequestRepository friendRequestRepository, IMessageBroker messageBroker, IEventMapper eventMapper, IAppContext appContext)
         {
-            _friendRepository = friendRepository;
+            _friendRequestRepository = friendRequestRepository;
             _messageBroker = messageBroker;
             _eventMapper = eventMapper;
             _appContext = appContext;
@@ -31,15 +32,24 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
                 // throw new UnauthorizedFriendActionException(command.InviterId, command.InviteeId);
             }
 
-            var alreadyFriendsOrInvited = await _friendRepository.IsFriendAsync(command.InviterId, command.InviteeId);
-            if (alreadyFriendsOrInvited)
+            var existingRequest = await _friendRequestRepository.FindByInviterAndInvitee(command.InviterId, command.InviteeId);
+
+            if (existingRequest != null && existingRequest.State == FriendState.Requested)
             {
-                throw new AlreadyFriendsException(command.InviterId, command.InviteeId);
+                throw new AlreadyInvitedException(command.InviterId, command.InviteeId);
             }
 
-            await _friendRepository.InviteFriendAsync(command.InviterId, command.InviteeId);
-            var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
+            var friendRequest = new FriendRequest(
+                inviterId: command.InviterId,
+                inviteeId: command.InviteeId,
+                requestedAt: DateTime.UtcNow,
+                state: FriendState.Requested
+            );
 
+            await _friendRequestRepository.AddAsync(friendRequest);
+
+            // Optionally, publish an event about the friend request
+            var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
             await _messageBroker.PublishAsync(friendInvitedEvent);
         }
 

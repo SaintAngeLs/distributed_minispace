@@ -21,7 +21,10 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
         public async Task<Friend> GetAsync(Guid id)
         {
             var friendDocument = await _repository.GetAsync(f => f.Id == id);
-            return friendDocument?.AsEntity();
+            if (friendDocument == null)
+                throw new KeyNotFoundException("Friend not found with the specified ID.");
+
+            return friendDocument.AsEntity();
         }
 
          public Task AddFriendAsync(Guid requesterId, Guid friendId)
@@ -128,5 +131,19 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
         {
             await _repository.UpdateAsync(friend.AsDocument());
         }
+
+         public async Task AddAsync(Friend friend)
+        {
+            var document = new FriendDocument
+            {
+                Id = friend.Id,
+                StudentId = friend.StudentId,
+                FriendId = friend.FriendId,
+                CreatedAt = friend.CreatedAt,
+                State = friend.FriendState
+            };
+            await _repository.AddAsync(document);
+        }
+
     }
 }

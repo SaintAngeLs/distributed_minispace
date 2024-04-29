@@ -22,10 +22,10 @@ namespace MiniSpace.Services.Friends.Infrastructure.Services
                     return new Application.Events.FriendRemoved(e.Requester.Id, e.Friend.Id);
 
                 case Core.Events.FriendshipConfirmed e:
-                    return new FriendRequestAccepted(e.FriendId, e.FriendId);
+                    return new PendingFriendAccepted(e.FriendId, e.FriendId);
 
                 case Core.Events.FriendshipDeclined e:
-                    return new FriendRequestRejected(e.FriendshipId, e.FriendshipId);
+                    return new PendingFriendDeclined(e.RequesterId, e.FriendId);
 
                 default:
                     return null; 

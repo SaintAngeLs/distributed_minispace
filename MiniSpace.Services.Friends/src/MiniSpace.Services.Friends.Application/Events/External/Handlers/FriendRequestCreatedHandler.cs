@@ -22,7 +22,13 @@ namespace MiniSpace.Services.Friends.Application.Events.External.Handlers
         public async Task HandleAsync(FriendRequestCreated @event, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
-            var request = new FriendRequest(@event.RequesterId, @event.FriendId, now);
+            var request = new FriendRequest(
+                inviterId: @event.RequesterId, 
+                inviteeId: @event.FriendId, 
+                requestedAt: now, 
+                state: FriendState.Requested 
+            );
+           
             await _friendRepository.AddRequestAsync(request);
 
             var events = _eventMapper.MapAll(request.Events);

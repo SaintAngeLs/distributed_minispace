@@ -1,16 +1,18 @@
-using Convey.CQRS.Events;
+// TODO: REMOVE.
 
-namespace MiniSpace.Services.Friends.Application.Events
-{
-    public class FriendRequestAccepted : IEvent
-    {
-        public Guid RequesterId { get; }
-        public Guid FriendId { get; }
+// using Convey.CQRS.Events;
 
-        public FriendRequestAccepted(Guid requesterId, Guid friendId)
-        {
-            RequesterId = requesterId;
-            FriendId = friendId;
-        }
-    }
-}
+// namespace MiniSpace.Services.Friends.Application.Events
+// {
+//     public class FriendRequestAccepted : IEvent
+//     {
+//         public Guid RequesterId { get; }
+//         public Guid FriendId { get; }
+
+//         public FriendRequestAccepted(Guid requesterId, Guid friendId)
+//         {
+//             RequesterId = requesterId;
+//             FriendId = friendId;
+//         }
+//     }
+// }

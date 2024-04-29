@@ -9,24 +9,21 @@ namespace MiniSpace.Services.Friends.Core.Entities
         public Guid FriendId { get; private set; }
         public Guid StudentId { get; private set; }
         public FriendState FriendState { get; private set; }
-        public string Email { get; private set; }
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
-        public string FullName => $"{FirstName} {LastName}";
         public DateTime CreatedAt { get; private set; }
 
-        public Friend(Guid studentId, Guid friendId, string email, string firstName, string lastName, DateTime createdAt, FriendState state)
+        public Friend(Guid studentId, Guid friendId, DateTime createdAt, FriendState state)
         {
-
+            Id = Guid.NewGuid();
             StudentId = studentId;
             FriendId = friendId;
-            Email = email;
-            FirstName = firstName;
-            LastName = lastName;
             CreatedAt = createdAt;
             FriendState = state;
         }
-        
+
+        public static Friend CreateNewFriendship(Guid studentId, Guid friendId)
+        {
+            return new Friend(studentId, friendId, DateTime.UtcNow, FriendState.Accepted);
+        }
 
         public void InviteFriend(Student inviter, Student invitee)
         {
@@ -35,7 +32,7 @@ namespace MiniSpace.Services.Friends.Core.Entities
                 throw new InvalidFriendInvitationException(inviter.Id, invitee.Id);
             }
             FriendState = FriendState.Requested;
-            Friend newFriend = new Friend(inviter.Id, invitee.Id, invitee.Email, invitee.FirstName, invitee.LastName, DateTime.UtcNow, FriendState.Requested);
+            Friend newFriend = new Friend(inviter.Id, invitee.Id, DateTime.UtcNow, FriendState.Requested);
             AddEvent(new FriendInvited(this, newFriend));
         }
 
@@ -46,8 +43,18 @@ namespace MiniSpace.Services.Friends.Core.Entities
                 throw new InvalidFriendStateException(FriendId, "Friendship cannot be accepted in the current state.");
             }
             FriendState = FriendState.Accepted;
-            AddEvent(new FriendAdded(new Student(StudentId, FullName), friend));
+            AddEvent(new FriendshipConfirmed(Id));
         }
+
+        public void DeclineFriendship()
+        {
+            if (FriendState != FriendState.Requested)
+                throw new InvalidOperationException("Friendship can only be declined if it is in the requested state.");
+
+            FriendState = FriendState.Declined;
+            AddEvent(new FriendshipDeclined(Id, FriendId));
+        }
+
 
         public void MarkAsConfirmed()
         {
@@ -64,18 +71,20 @@ namespace MiniSpace.Services.Friends.Core.Entities
                 throw new InvalidFriendshipStateException(Id, FriendState.ToString(), "Only Requested friendships can be declined.");
             
             FriendState = FriendState.Declined;
-            AddEvent(new FriendshipDeclined(Id)); 
+            AddEvent(new FriendshipDeclined(Id, FriendId));
         }
 
 
-        public void RemoveFriend(Student friend)
+
+         public void RemoveFriend(Student requester, Student friend)
         {
             if (FriendState != FriendState.Accepted)
             {
                 throw new InvalidFriendStateException(FriendId, "Only accepted friendships can be removed.");
             }
             FriendState = FriendState.Cancelled;
-            AddEvent(new FriendRemoved(new Student(StudentId, FullName), friend));
+            
+            AddEvent(new FriendRemoved(requester, friend));
         }
     }
 }

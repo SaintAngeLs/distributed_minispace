@@ -28,14 +28,16 @@ namespace MiniSpace.Services.Friends.Core.Entities
             AddEvent(new FriendshipConfirmed(Id));
         }
 
-        public void MarkAsDeclined()
+        public void DeclineFriendship()
         {
             if (State != FriendState.Requested)
-                throw new InvalidFriendshipStateException(Id, State.ToString(), "Only Requested friendships can be declined.");
-            
+                throw new InvalidOperationException("Friendship can only be declined if it is in the requested state.");
+
             State = FriendState.Declined;
-            AddEvent(new FriendshipDeclined(Id)); 
+            // Assuming 'Id' is the ID of the current object and 'FriendId' is the ID of the friend.
+            AddEvent(new FriendshipDeclined(RequesterId, FriendId));
         }
+
 
     }
 
