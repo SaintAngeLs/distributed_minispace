@@ -128,12 +128,10 @@
             var tmp = await EventsService.GetStudentEventsAsync(studentDto.Id, numberOfResults);
             if (tmp != null)
             {
-                //signedUpEvents = tmp.Content.Where(ev => ev.IsSignedUp);
-                signedUpEvents = tmp.Content;
+                signedUpEvents = tmp.Content.Where(ev => ev.IsSignedUp);
                 totalSignedUpElements = signedUpEvents.Count();
 
-                //interestedEvents = tmp.Content.Where(ev => ev.IsInterested);
-                interestedEvents = tmp.Content.Reverse();
+                interestedEvents = tmp.Content.Where(ev => ev.IsInterested);
                 totalInterestedElements = interestedEvents.Count();
             }
             else
