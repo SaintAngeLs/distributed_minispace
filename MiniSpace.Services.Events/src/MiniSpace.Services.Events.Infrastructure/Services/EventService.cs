@@ -42,11 +42,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             
             var result = await _eventRepository.BrowseEventsAsync(
                 pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, 
-                command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction, State.Published);
+                command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
             
             var identity = _appContext.Identity;
-            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e, identity.Id)), 
-                result.Item2, result.Item3, result.Item4, result.Item5);
+            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, identity.Id)), 
+                result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
 
             return pagedEvents;
         }
@@ -79,8 +79,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
                 pageNumber, pageSize, command.Name, command.OrganizerId, dateFrom, dateTo, 
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction, state);
             
-            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e, _appContext.Identity.Id)), 
-                result.Item2, result.Item3, result.Item4, result.Item5);
+            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, _appContext.Identity.Id)), 
+                result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
 
             return pagedEvents;
         }
