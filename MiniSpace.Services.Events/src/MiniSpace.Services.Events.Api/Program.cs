@@ -38,10 +38,14 @@ namespace MiniSpace.Services.Identity.Api
                         {
                             var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseEventsAsync(cmd);
                             await ctx.Response.WriteJsonAsync(pagedResult);
+                        })
+                        .Post<SearchOrganizerEvents>("events/search/organizer", async (cmd, ctx) =>
+                        {
+                            var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseOrganizerEventsAsync(cmd);
+                            await ctx.Response.WriteJsonAsync(pagedResult);
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get<GetEvent, EventDto>("events/{eventId}")
-                        //.Get<GetEventsOrganizer, IEnumerable<EventDto>>("events/organizer/{organizerId}")
                         .Put<UpdateEvent>("events/{eventId}")
                         .Post<AddEvent>("events", 
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))

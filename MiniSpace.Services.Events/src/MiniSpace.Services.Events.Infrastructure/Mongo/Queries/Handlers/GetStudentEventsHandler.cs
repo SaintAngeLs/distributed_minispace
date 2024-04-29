@@ -43,7 +43,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             var studentEvents = await _studentsServiceClient.GetAsync(query.StudentId);
             var studentEventIds = studentEvents.InterestedInEvents.Union(studentEvents.SignedUpEvents).ToList();
             
-            var result = await _eventRepository.BrowseAsync(1, query.NumberOfResults,
+            var result = await _eventRepository.BrowseEventsAsync(1, query.NumberOfResults,
                 string.Empty, string.Empty, DateTime.MinValue, DateTime.MinValue,
                 Enumerable.Empty<string>(), "asc", State.Published, studentEventIds);
 

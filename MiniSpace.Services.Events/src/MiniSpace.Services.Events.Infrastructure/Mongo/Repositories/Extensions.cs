@@ -56,11 +56,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         }
         
         public static FilterDefinition<EventDocument> ToFilterDefinition(string name, string organizer, 
-            DateTime dateFrom, DateTime dateTo, State state, IEnumerable<Guid> eventIds = null)
+            DateTime dateFrom, DateTime dateTo, IEnumerable<Guid> eventIds = null)
         {
             var filterDefinitionBuilder = Builders<EventDocument>.Filter;
             var filterDefinition = filterDefinitionBuilder.Empty;
-            filterDefinition &= filterDefinitionBuilder.Eq(x => x.State, state);
 
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -90,6 +89,22 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             }
 
             return filterDefinition;
+        }
+        
+        public static void AddOrganizerIdFilter (this FilterDefinition<EventDocument> filterDefinition, Guid organizerId)
+        {
+            var filterDefinitionBuilder = Builders<EventDocument>.Filter;
+            filterDefinition &= filterDefinitionBuilder.Eq(x => x.Organizer.Id, organizerId);
+        }
+        
+        public static void AddStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
+        {
+            if (state == null)
+            {
+                return;
+            }
+            var filterDefinitionBuilder = Builders<EventDocument>.Filter;
+            filterDefinition &= filterDefinitionBuilder.Eq(x => x.State, state);
         }
         
         public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)

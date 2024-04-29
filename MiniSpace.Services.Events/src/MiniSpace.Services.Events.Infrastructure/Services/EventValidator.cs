@@ -28,6 +28,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             }
             return date;
         }
+        
+        public State ParseState(string stateString)
+        {
+            if (!Enum.TryParse<State>(stateString, true, out var state))
+            {
+                throw new InvalidEventStateException(stateString);
+            }
+            return state;
+        }
 
         public void ValidateDates(DateTime earlierDate, DateTime laterDate,  string earlierDateField, string laterDateField)
         {
