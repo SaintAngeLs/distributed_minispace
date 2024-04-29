@@ -31,6 +31,13 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
             return postsToUpdate.Select(e => e.AsEntity());
         }
         
+        public async Task<IEnumerable<Post>> GetByEventIdAsync(Guid eventId)
+        {
+            var posts = _repository.Collection.AsQueryable();
+            var postsByEventId = await posts.Where(e => e.EventId == eventId).ToListAsync();
+            return postsByEventId.Select(e => e.AsEntity());
+        }
+        
         public Task AddAsync(Post post)
             => _repository.AddAsync(post.AsDocument());
 
