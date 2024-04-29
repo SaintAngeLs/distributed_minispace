@@ -85,27 +85,32 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
-        public static void AddOrganizerNameFilter (this FilterDefinition<EventDocument> filterDefinition, string organizer)
+        public static FilterDefinition<EventDocument> AddOrganizerNameFilter (
+            this FilterDefinition<EventDocument> filterDefinition, string organizer)
         {
             if (!string.IsNullOrWhiteSpace(organizer))
             {   
                 filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Organizer.OrganizationName, 
                     new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
             }
+
+            return filterDefinition;
         }
         
-        public static void AddOrganizerIdFilter (this FilterDefinition<EventDocument> filterDefinition, Guid organizerId)
+        public static FilterDefinition<EventDocument> AddOrganizerIdFilter (this FilterDefinition<EventDocument> filterDefinition, Guid organizerId)
         {
             filterDefinition &= FilterDefinitionBuilder.Eq(x => x.Organizer.Id, organizerId);
+            return filterDefinition;
         }
         
-        public static void AddStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
+        public static FilterDefinition<EventDocument> AddStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
         {
-            if (state == null)
+            if (state != null)
             {
-                return;
+                filterDefinition &= FilterDefinitionBuilder.Eq(x => x.State, state);
             }
-            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.State, state);
+
+            return filterDefinition;
         }
         
         public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
