@@ -299,6 +299,12 @@ modules:
         method: POST
         use: downstream
         downstream: events-service/events/search
+        
+      - upstream: /search/organizer
+        method: POST
+        use: downstream
+        downstream: events-service/events/search/organizer
+        auth: true
 
       - upstream: /{eventId}/show-interest
         method: POST
