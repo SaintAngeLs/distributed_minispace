@@ -13,6 +13,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {
     public static class Extensions
     {
+        private static readonly FilterDefinitionBuilder<EventDocument> FilterDefinitionBuilder = Builders<EventDocument>.Filter;
         public static async Task<(int totalPages, int totalElements, IReadOnlyList<TDocument> data)> AggregateByPage<TDocument>(
             this IMongoCollection<TDocument> collection,
             FilterDefinition<TDocument> filterDefinition,
@@ -55,46 +56,47 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return (totalPages, (int)count, data);
         }
         
-        public static FilterDefinition<EventDocument> ToFilterDefinition(string name, string organizer, 
-            DateTime dateFrom, DateTime dateTo, IEnumerable<Guid> eventIds = null)
+        public static FilterDefinition<EventDocument> ToFilterDefinition(string name, DateTime dateFrom, 
+            DateTime dateTo, IEnumerable<Guid> eventIds = null)
         {
-            var filterDefinitionBuilder = Builders<EventDocument>.Filter;
-            var filterDefinition = filterDefinitionBuilder.Empty;
+            var filterDefinition = FilterDefinitionBuilder.Empty;
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Name,
+                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Name,
                     new BsonRegularExpression(new Regex($".*{name}.*", RegexOptions.IgnoreCase)));
-            }
-
-            if (!string.IsNullOrWhiteSpace(organizer))
-            {   
-                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Organizer.OrganizationName, 
-                    new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
             }
 
             if (dateFrom != DateTime.MinValue)
             {
-                filterDefinition &= filterDefinitionBuilder.Gte(x => x.StartDate, dateFrom);
+                filterDefinition &= FilterDefinitionBuilder.Gte(x => x.StartDate, dateFrom);
             }
 
             if (dateTo != DateTime.MinValue)
             {
-                filterDefinition &= filterDefinitionBuilder.Lte(x => x.EndDate, dateTo);
+                filterDefinition &= FilterDefinitionBuilder.Lte(x => x.EndDate, dateTo);
             }
 
             if (eventIds != null)
             {
-                filterDefinition &= filterDefinitionBuilder.In(x => x.Id, eventIds);
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.Id, eventIds);
             }
 
             return filterDefinition;
         }
         
+        public static void AddOrganizerNameFilter (this FilterDefinition<EventDocument> filterDefinition, string organizer)
+        {
+            if (!string.IsNullOrWhiteSpace(organizer))
+            {   
+                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Organizer.OrganizationName, 
+                    new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
+            }
+        }
+        
         public static void AddOrganizerIdFilter (this FilterDefinition<EventDocument> filterDefinition, Guid organizerId)
         {
-            var filterDefinitionBuilder = Builders<EventDocument>.Filter;
-            filterDefinition &= filterDefinitionBuilder.Eq(x => x.Organizer.Id, organizerId);
+            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.Organizer.Id, organizerId);
         }
         
         public static void AddStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
@@ -103,8 +105,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             {
                 return;
             }
-            var filterDefinitionBuilder = Builders<EventDocument>.Filter;
-            filterDefinition &= filterDefinitionBuilder.Eq(x => x.State, state);
+            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.State, state);
         }
         
         public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)

@@ -54,7 +54,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             string name, string organizer, DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, 
             string direction, IEnumerable<Guid> eventIds = null)
         {
-            var filterDefinition = Repositories.Extensions.ToFilterDefinition(name, organizer, dateFrom, dateTo, eventIds);
+            var filterDefinition = Repositories.Extensions.ToFilterDefinition(name, dateFrom, dateTo, eventIds);
+            filterDefinition.AddOrganizerNameFilter(organizer);
             filterDefinition.AddStateFilter(State.Published);
             var sortDefinition = Repositories.Extensions.ToSortDefinition(sortBy, direction);
             
@@ -68,7 +69,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             int pageSize, string name, Guid organizerId, DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, 
             string direction, State? state)
         {
-            var filterDefinition = Extensions.ToFilterDefinition(name, string.Empty, dateFrom, dateTo);
+            var filterDefinition = Extensions.ToFilterDefinition(name, dateFrom, dateTo);
             filterDefinition.AddOrganizerIdFilter(organizerId);
             filterDefinition.AddStateFilter(state);
             var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
