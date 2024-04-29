@@ -39,8 +39,8 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             if(identity.Id != command.OrganizerId)
                 throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
             
-            _eventValidator.ValidateRequiredField(command.Name, "event_name");
-            _eventValidator.ValidateRequiredField(command.Description, "event_description");
+            _eventValidator.ValidateName(command.Name);
+            _eventValidator.ValidateDescription(command.Description);
             var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
             var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
             var now = _dateTimeProvider.Now;

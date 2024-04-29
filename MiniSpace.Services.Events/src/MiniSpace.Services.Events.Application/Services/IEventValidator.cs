@@ -10,7 +10,8 @@ namespace MiniSpace.Services.Events.Application.Services
         State ParseState(string stateString);
         void ValidateDates(DateTime earlierDate, DateTime laterDate, string earlierDateString, string endDateString);
         (int pageNumber, int pageSize) PageFilter(int pageNumber, int pageSize);
-        void ValidateRequiredField(string fieldValue, string fieldName);
+        void ValidateName(string name);
+        void ValidateDescription(string description);
         void ValidateCapacity(int capacity);
         void ValidateFee(decimal fee);
         void ValidateUpdatedCapacity(int currentCapacity, int newCapacity);
