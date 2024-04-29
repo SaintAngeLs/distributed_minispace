@@ -71,7 +71,8 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<FriendDocument, Guid>("students")
+                .AddMongoRepository<FriendDocument, Guid>("friends")
+                .AddMongoRepository<FriendRequestDocument, Guid>("friend-requests")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
