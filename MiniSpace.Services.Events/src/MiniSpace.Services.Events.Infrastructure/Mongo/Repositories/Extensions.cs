@@ -47,7 +47,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 ?.FirstOrDefault()
                 ?.Count;
 
-            var totalPages = (int)Math.Ceiling((double)count/ pageSize);
+            if (count == null)
+            {
+                return (0, 0, Array.Empty<TDocument>());
+            }
+            var totalPages = (int)Math.Ceiling((double)count / pageSize);
 
             var data = aggregation.First()
                 .Facets.First(x => x.Name == "data")
