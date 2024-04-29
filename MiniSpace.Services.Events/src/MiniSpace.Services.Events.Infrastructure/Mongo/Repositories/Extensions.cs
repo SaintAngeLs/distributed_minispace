@@ -70,7 +70,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 
             if (!string.IsNullOrWhiteSpace(organizer))
             {   
-                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Organizer.Name, 
+                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Organizer.OrganizationName, 
                     new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
             }
 

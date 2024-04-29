@@ -62,7 +62,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 state = State.ToBePublished;
             }
             
-            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, string.Empty);
+            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizerId, string.Empty);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
                 address, command.Capacity, command.Fee, category, state, publishDate, organizer);
             

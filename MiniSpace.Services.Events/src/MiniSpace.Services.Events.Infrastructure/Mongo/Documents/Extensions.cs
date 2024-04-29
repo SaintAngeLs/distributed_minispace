@@ -74,7 +74,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Id = entity.Id,
                 Name = entity.Name,
                 Email = entity.Email,
-                Organization = entity.Organization
+                OrganizationId = entity.OrganizationId,
+                OrganizationName = entity.OrganizationName
             };
         
         public static StudentDocument AsDocument(this Student entity)
