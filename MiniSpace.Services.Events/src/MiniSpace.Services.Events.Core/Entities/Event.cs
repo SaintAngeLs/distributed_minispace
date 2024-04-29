@@ -8,7 +8,6 @@ namespace MiniSpace.Services.Events.Core.Entities
 {
     public class Event: AggregateRoot
     {
-        private ISet<Organizer> _coOrganizers = new HashSet<Organizer>();
         private ISet<Participant> _interestedStudents = new HashSet<Participant>();
         private ISet<Participant> _signedUpStudents = new HashSet<Participant>();
         private ISet<Rating> _ratings = new HashSet<Rating>();
@@ -24,12 +23,6 @@ namespace MiniSpace.Services.Events.Core.Entities
         public Category Category { get; private set; }
         public State State { get; private set; }
         public DateTime PublishDate { get; private set; }
-        
-        public IEnumerable<Organizer> CoOrganizers
-        {
-            get => _coOrganizers;
-            private set => _coOrganizers = new HashSet<Organizer>(value);
-        }
         
         public IEnumerable<Participant> InterestedStudents
         {
@@ -51,7 +44,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
             Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate,
-            Organizer organizer, IEnumerable<Organizer> coOrganizers = null, IEnumerable<Participant> interestedStudents = null, 
+            Organizer organizer, IEnumerable<Participant> interestedStudents = null, 
             IEnumerable<Participant> signedUpStudents = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
@@ -65,7 +58,6 @@ namespace MiniSpace.Services.Events.Core.Entities
             Category = category;
             State = state;
             Organizer = organizer;
-            CoOrganizers = coOrganizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Participant>();
             SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Participant>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
@@ -93,16 +85,6 @@ namespace MiniSpace.Services.Events.Core.Entities
             Category = category;
             State = state;
             PublishDate = publishDate; 
-        }
-        
-        public void AddOrganizer(Organizer organizer)
-        {
-            if (CoOrganizers.Any(o => o.Id == organizer.Id))
-            {
-                throw new OrganizerAlreadyAddedException(organizer.Id);
-            }
-
-            _coOrganizers.Add(organizer);
         }
         
         public void SignUpStudent(Participant participant)
@@ -199,6 +181,6 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
         
         public bool IsOrganizer(Guid organizerId)
-            => Organizer.Id == organizerId || CoOrganizers.Any(o => o.Id == organizerId);
+            => Organizer.Id == organizerId;
     }
 }
