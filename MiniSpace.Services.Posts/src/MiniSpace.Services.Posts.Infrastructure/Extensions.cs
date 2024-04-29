@@ -72,7 +72,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<EventDocument, Guid>("students")
+                .AddMongoRepository<EventDocument, Guid>("events")
                 .AddMongoRepository<PostDocument, Guid>("posts")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()

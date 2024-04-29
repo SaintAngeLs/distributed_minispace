@@ -37,7 +37,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Logging
                 {
                     typeof(EventCreated), new HandlerLogTemplate
                     {
-                        After = "Created an new event with id: {EventId}."
+                        After = "Created a new event with id: {EventId}."
                     }
                 },
                 {
