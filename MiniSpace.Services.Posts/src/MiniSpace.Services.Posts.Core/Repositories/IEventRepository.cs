@@ -2,11 +2,11 @@ using MiniSpace.Services.Posts.Core.Entities;
 
 namespace MiniSpace.Services.Posts.Core.Repositories
 {
-    public interface IStudentRepository
+    public interface IEventRepository
     {
-        Task<Student> GetAsync(Guid id);
+        Task<Event> GetAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
-        Task AddAsync(Student student);
+        Task AddAsync(Event @event);
         Task DeleteAsync(Guid id);
     }
 }
