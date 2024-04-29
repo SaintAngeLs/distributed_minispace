@@ -26,28 +26,28 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using MiniSpace.Services.Friends.Application;
-using MiniSpace.Services.Friends.Application.Commands;
-using MiniSpace.Services.Friends.Application.Events.External;
-using MiniSpace.Services.Friends.Application.Events.External.Handlers;
-using MiniSpace.Services.Friends.Application.Services;
-using MiniSpace.Services.Friends.Core.Repositories;
-using MiniSpace.Services.Friends.Infrastructure.Contexts;
-using MiniSpace.Services.Friends.Infrastructure.Decorators;
-using MiniSpace.Services.Friends.Infrastructure.Exceptions;
-using MiniSpace.Services.Friends.Infrastructure.Logging;
-using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories;
-using MiniSpace.Services.Friends.Infrastructure.Services;
-using MiniSpace.Services.Friends.Application.Events;
+using MiniSpace.Services.Organizations.Application;
+using MiniSpace.Services.Organizations.Application.Commands;
+using MiniSpace.Services.Organizations.Application.Events.External;
+using MiniSpace.Services.Organizations.Application.Events.External.Handlers;
+using MiniSpace.Services.Organizations.Application.Services;
+using MiniSpace.Services.Organizations.Core.Repositories;
+using MiniSpace.Services.Organizations.Infrastructure.Contexts;
+using MiniSpace.Services.Organizations.Infrastructure.Decorators;
+using MiniSpace.Services.Organizations.Infrastructure.Exceptions;
+using MiniSpace.Services.Organizations.Infrastructure.Logging;
+using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Organizations.Infrastructure.Services;
 
-namespace MiniSpace.Services.Friends.Infrastructure
+namespace MiniSpace.Services.Organizations.Infrastructure
 {
     public static class Extensions
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IFriendRepository, FriendMongoRepository>();
+            builder.Services.AddTransient<IOrganizationRepository, OrganizationMongoRepository>();
+            builder.Services.AddTransient<IOrganizerRepository, OrganizerMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -71,8 +71,8 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<FriendDocument, Guid>("friends")
-                .AddMongoRepository<FriendRequestDocument, Guid>("friend-requests")
+                .AddMongoRepository<OrganizationDocument, Guid>("organizations")
+                .AddMongoRepository<OrganizerDocument, Guid>("organizers")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -88,18 +88,11 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<AddFriend>()
-                .SubscribeCommand<RemoveFriend>()
-                .SubscribeCommand<InviteFriend>()
-                .SubscribeCommand<PendingFriendAccept>()
-                .SubscribeCommand<PendingFriendDecline>()
-                .SubscribeEvent<Application.Events.FriendAdded>()
-                .SubscribeEvent<Application.Events.FriendRemoved>()
-                .SubscribeEvent<FriendRequestAccepted>()
-                .SubscribeEvent<FriendRequestRejected>()
-                .SubscribeEvent<FriendRequestCreated>()
-                .SubscribeEvent<FriendRequestSent>()
-                .SubscribeEvent<UserStatusUpdated>();
+                .SubscribeCommand<AddOrganization>()
+                .SubscribeCommand<AddOrganizerToOrganization>()
+                .SubscribeCommand<RemoveOrganizerFromOrganization>()
+                .SubscribeEvent<OrganizerRightsGranted>()
+                .SubscribeEvent<OrganizerRightsRevoked>();
 
             return app;
         }

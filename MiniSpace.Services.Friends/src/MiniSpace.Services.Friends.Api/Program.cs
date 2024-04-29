@@ -35,13 +35,18 @@ namespace MiniSpace.Services.Friends.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        // .Get<IEnumerable<FriendDto>>("friends/{studentId}", 
+                        //     ctx => new GetFriends { StudentId = Guid.Parse(ctx.Request.RouteValues["studentId"].ToString()) }, 
+                        //     (query, ctx) => ctx.Response.WriteAsJsonAsync(query), // Correctly define delegate with parameters
+                        //     afterDispatch: ctx => ctx.Response.Ok())
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends")
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/{studentId}") 
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/{studentId}")
                         .Get<PendingFriendAcceptQuery, FriendRequestDto>("friends/requests/{studentId}/accept")
                         .Get<PendingFriendDeclineQuery, FriendRequestDto>("friends/requests/{studentId}/decline")
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
-                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending")
+                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
+                        .Post<RemoveFriend>("friends/{friendId}/remove")
                         .Post<InviteFriend>("friends/{studentId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}/invite")))) 
                 .UseLogging()
                 .UseLogging()
