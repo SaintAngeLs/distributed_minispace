@@ -4,7 +4,7 @@ using Convey.HTTP;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Services.Clients;
 
-namespace MiniSpace.Services.Events.Infrastructure.Services
+namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
 {
     public class OrganizationsServiceClient : IOrganizationsServiceClient
     {

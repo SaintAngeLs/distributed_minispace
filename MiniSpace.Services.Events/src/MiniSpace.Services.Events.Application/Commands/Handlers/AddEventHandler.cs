@@ -6,6 +6,7 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
 
@@ -15,17 +16,18 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMessageBroker _messageBroker;
-        private readonly IEventMapper _eventMapper;
+        private readonly IOrganizationsServiceClient _organizationsServiceClient;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IEventValidator _eventValidator;
         private readonly IAppContext _appContext;
         
-        public AddEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, IEventMapper eventMapper,
-            IDateTimeProvider dateTimeProvider, IEventValidator eventValidator, IAppContext appContext)
+        public AddEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, 
+            IOrganizationsServiceClient organizationsServiceClient, IDateTimeProvider dateTimeProvider, 
+            IEventValidator eventValidator, IAppContext appContext)
         {
             _eventRepository = eventRepository;
             _messageBroker = messageBroker;
-            _eventMapper = eventMapper;
+            _organizationsServiceClient = organizationsServiceClient;
             _dateTimeProvider = dateTimeProvider;
             _eventValidator = eventValidator;
             _appContext = appContext;
@@ -60,6 +62,17 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 _eventValidator.ValidateDates(now, publishDate, "now", "event_publish_date");
                 _eventValidator.ValidateDates(publishDate, startDate, "event_publish_date", "event_start_date");
                 state = State.ToBePublished;
+            }
+            
+            var organization = await _organizationsServiceClient.GetAsync(command.OrganizationId);
+            if (organization == null)
+            {
+                throw new OrganizationNotFoundException(command.OrganizationId);
+            }
+            
+            if (!organization.Organizers.Contains(command.OrganizerId))
+            {
+                throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
             }
             
             var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizerId, string.Empty);
