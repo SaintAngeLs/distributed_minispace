@@ -74,11 +74,11 @@ namespace MiniSpace.Web.HttpClients
             => TryExecuteAsync(uri, client => client.DeleteAsync(uri));
 
         private static StringContent GetPayload<T>(T request)
-{
-    var json = JsonConvert.SerializeObject(request, JsonSerializerSettings);
-    // Set content type with charset parameter
-    return new StringContent(json, Encoding.UTF8, "text/plain");
-}
+        {
+            var json = JsonConvert.SerializeObject(request, JsonSerializerSettings);
+            // Set content type with charset parameter
+            return new StringContent(json, Encoding.UTF8, "text/plain");
+        }
 
 
 

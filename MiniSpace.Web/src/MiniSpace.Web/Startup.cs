@@ -19,6 +19,7 @@ using MiniSpace.Web.Areas.Students;
 using MiniSpace.Web.HttpClients;
 using MudBlazor;
 using MudBlazor.Services;
+using MiniSpace.Web.Areas.Friends;
 
 namespace MiniSpace.Web
 {
@@ -58,6 +59,8 @@ namespace MiniSpace.Web
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IPostsService, PostsService>();
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
+            services.AddScoped<IFriendsService, FriendsService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
