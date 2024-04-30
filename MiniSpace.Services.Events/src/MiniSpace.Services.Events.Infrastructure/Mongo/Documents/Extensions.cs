@@ -16,7 +16,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Organizer = document.Organizer.AsDto(),
                 StartDate = document.StartDate,
                 EndDate = document.EndDate,
-                CoOrganizers = document.CoOrganizers.Select(x => x.AsDto()),
                 Location = document.Location.AsDto(),
                 InterestedStudents = document.InterestedStudents.Count(),
                 SignedUpStudents = document.SignedUpStudents.Count(),
@@ -25,6 +24,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Category = document.Category.ToString(),
                 Status = document.State.ToString(),
                 PublishDate = document.PublishDate,
+                UpdatedAt = document.UpdatedAt,
                 IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == studentId),
                 IsInterested = document.InterestedStudents.Any(x => x.StudentId == studentId),
                 HasRated = document.Ratings.Any(x => x.StudentId == studentId)
@@ -33,7 +33,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public static Event AsEntity(this EventDocument document)
             => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
                 document.Location, document.Capacity, document.Fee, document.Category, document.State, document.PublishDate,
-                document.Organizer, document.CoOrganizers, document.InterestedStudents, document.SignedUpStudents, document.Ratings);
+                document.Organizer, document.UpdatedAt,document.InterestedStudents, document.SignedUpStudents, document.Ratings);
         
         public static EventDocument AsDocument(this Event entity)
             => new ()
@@ -45,7 +45,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Location = entity.Location,
-                CoOrganizers = entity.CoOrganizers,
                 InterestedStudents = entity.InterestedStudents,
                 SignedUpStudents = entity.SignedUpStudents,
                 Capacity = entity.Capacity,
@@ -53,6 +52,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Category = entity.Category,
                 State = entity.State,
                 PublishDate = entity.PublishDate,
+                UpdatedAt = entity.UpdatedAt,
                 Ratings = entity.Ratings
             };
 
@@ -76,7 +76,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Id = entity.Id,
                 Name = entity.Name,
                 Email = entity.Email,
-                Organization = entity.Organization
+                OrganizationId = entity.OrganizationId,
+                OrganizationName = entity.OrganizationName
             };
         
         public static StudentDocument AsDocument(this Student entity)

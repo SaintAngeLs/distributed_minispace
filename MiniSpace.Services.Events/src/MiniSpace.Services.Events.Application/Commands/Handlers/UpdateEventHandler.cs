@@ -69,7 +69,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 state = State.ToBePublished;
             }
             
-            @event.Update(name, description, startDate, endDate, address, capacity, fee, category, state, publishDate);
+            @event.Update(name, description, startDate, endDate, address, capacity, fee, category, state, publishDate, now);
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new EventUpdated(@event.Id, _dateTimeProvider.Now, identity.Id));
         }

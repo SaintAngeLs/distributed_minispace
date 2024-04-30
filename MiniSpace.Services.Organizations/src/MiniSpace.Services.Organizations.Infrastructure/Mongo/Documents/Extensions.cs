@@ -27,6 +27,16 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 IsLeaf = document.IsLeaf
             };
         
+        public static OrganizationDetailsDto AsDetailsDto(this OrganizationDocument document)
+            => new OrganizationDetailsDto()
+            {
+                Id = document.Id,
+                Name = document.Name,
+                ParentId = document.ParentId,
+                IsLeaf = document.IsLeaf,
+                Organizers = document.Organizers.Select(x => x.Id)
+            };
+        
         public static Organizer AsEntity(this OrganizerDocument document)
             => new Organizer(document.Id);
         

@@ -28,6 +28,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             }
             return date;
         }
+        
+        public State ParseState(string stateString)
+        {
+            if (!Enum.TryParse<State>(stateString, true, out var state))
+            {
+                throw new InvalidEventStateException(stateString);
+            }
+            return state;
+        }
 
         public void ValidateDates(DateTime earlierDate, DateTime laterDate,  string earlierDateField, string laterDateField)
         {
@@ -43,10 +52,16 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             return (pageNumber, pageSize);
         }
         
-        public void ValidateRequiredField(string fieldValue, string fieldName)
+        public void ValidateName(string name)
         {
-            if (string.IsNullOrWhiteSpace(fieldValue))
-                throw new EmptyRequiredEventFieldException(fieldName);
+            if (string.IsNullOrWhiteSpace(name) || name.Length > 300)
+                throw new InvalidEventNameException(name);
+        }
+        
+        public void ValidateDescription(string description)
+        {
+            if (string.IsNullOrWhiteSpace(description) || description.Length > 1000)
+                throw new InvalidEventDescriptionException(description);
         }
         
         public void ValidateCapacity(int capacity)

@@ -13,6 +13,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {
     public static class Extensions
     {
+        private static readonly FilterDefinitionBuilder<EventDocument> FilterDefinitionBuilder = Builders<EventDocument>.Filter;
         public static async Task<(int totalPages, int totalElements, IReadOnlyList<TDocument> data)> AggregateByPage<TDocument>(
             this IMongoCollection<TDocument> collection,
             FilterDefinition<TDocument> filterDefinition,
@@ -46,7 +47,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 ?.FirstOrDefault()
                 ?.Count;
 
-            var totalPages = (int)Math.Ceiling((double)count/ pageSize);
+            if (count == null)
+            {
+                return (0, 0, Array.Empty<TDocument>());
+            }
+            var totalPages = (int)Math.Ceiling((double)count / pageSize);
 
             var data = aggregation.First()
                 .Facets.First(x => x.Name == "data")
@@ -55,38 +60,82 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return (totalPages, (int)count, data);
         }
         
-        public static FilterDefinition<EventDocument> ToFilterDefinition(string name, string organizer, 
-            DateTime dateFrom, DateTime dateTo, State state, IEnumerable<Guid> eventIds = null)
+        public static FilterDefinition<EventDocument> ToFilterDefinition(string name, DateTime dateFrom, 
+            DateTime dateTo, IEnumerable<Guid> eventIds = null)
         {
-            var filterDefinitionBuilder = Builders<EventDocument>.Filter;
-            var filterDefinition = filterDefinitionBuilder.Empty;
-            filterDefinition &= filterDefinitionBuilder.Eq(x => x.State, state);
+            var filterDefinition = FilterDefinitionBuilder.Empty;
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Name,
+                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Name,
                     new BsonRegularExpression(new Regex($".*{name}.*", RegexOptions.IgnoreCase)));
-            }
-
-            if (!string.IsNullOrWhiteSpace(organizer))
-            {   
-                filterDefinition &= filterDefinitionBuilder.Regex(x => x.Organizer.Name, 
-                    new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
             }
 
             if (dateFrom != DateTime.MinValue)
             {
-                filterDefinition &= filterDefinitionBuilder.Gte(x => x.StartDate, dateFrom);
+                filterDefinition &= FilterDefinitionBuilder.Gte(x => x.StartDate, dateFrom);
             }
 
             if (dateTo != DateTime.MinValue)
             {
-                filterDefinition &= filterDefinitionBuilder.Lte(x => x.EndDate, dateTo);
+                filterDefinition &= FilterDefinitionBuilder.Lte(x => x.EndDate, dateTo);
             }
 
             if (eventIds != null)
             {
-                filterDefinition &= filterDefinitionBuilder.In(x => x.Id, eventIds);
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.Id, eventIds);
+            }
+
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<EventDocument> AddOrganizerNameFilter (
+            this FilterDefinition<EventDocument> filterDefinition, string organizer)
+        {
+            if (!string.IsNullOrWhiteSpace(organizer))
+            {   
+                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Organizer.OrganizationName, 
+                    new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
+            }
+
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<EventDocument> AddOrganizerIdFilter (this FilterDefinition<EventDocument> filterDefinition, Guid organizerId)
+        {
+            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.Organizer.Id, organizerId);
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<EventDocument> AddCategoryFilter (this FilterDefinition<EventDocument> filterDefinition, Category? category)
+        {
+            if (category != null)
+            {
+                filterDefinition &= FilterDefinitionBuilder.Eq(x => x.Category, category);
+            }
+
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<EventDocument> AddStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
+        {
+            if (state != null)
+            {
+                filterDefinition &= FilterDefinitionBuilder.Eq(x => x.State, state);
+            }
+
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<EventDocument> AddRestrictedStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
+        {
+            if (state != null)
+            {
+                filterDefinition &= FilterDefinitionBuilder.Eq(x => x.State, state);
+            }
+            else
+            {
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, new[] { State.Published, State.Archived });
             }
 
             return filterDefinition;
@@ -97,14 +146,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             var sort = sortByArguments.ToList();
             if(!sort.Any())
             {
-                sort.Add("PublishDate");
+                sort.Add("StartDate");
             }
             var sortDefinitionBuilder = Builders<EventDocument>.Sort;
+            var sortStateDefinition = new[] { sortDefinitionBuilder.Descending("State") };
             var sortDefinition = sort
                 .Select(sortBy => direction == "asc"
                     ? sortDefinitionBuilder.Ascending(sortBy)
                     : sortDefinitionBuilder.Descending(sortBy));
-            var sortCombined = sortDefinitionBuilder.Combine(sortDefinition);
+            var sortCombined = sortDefinitionBuilder.Combine(sortStateDefinition.Concat(sortDefinition));
 
             return sortCombined;
         }

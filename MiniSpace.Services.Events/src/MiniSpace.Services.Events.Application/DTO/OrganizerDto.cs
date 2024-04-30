@@ -8,7 +8,8 @@ namespace MiniSpace.Services.Events.Application.DTO
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Organization { get; set; }
+        public Guid OrganizationId { get; set; }
+        public string OrganizationName { get; set; }
         
         public OrganizerDto()
         {
@@ -19,7 +20,8 @@ namespace MiniSpace.Services.Events.Application.DTO
             Id = organizer.Id;
             Name = organizer.Name;
             Email = organizer.Email;
-            Organization = organizer.Organization;
+            OrganizationId = organizer.OrganizationId;
+            OrganizationName = organizer.OrganizationName;
         }
     }
 }
