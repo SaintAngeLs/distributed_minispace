@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
@@ -21,7 +22,7 @@ namespace MiniSpace.Web.Areas.Students
 
         public async Task UpdateStudentDto(Guid studentId)
         {
-            StudentDto = await GetStudentAsync(studentId, studentId);
+            StudentDto = await GetStudentAsync(studentId);
         }
 
         public void ClearStudentDto()
@@ -29,10 +30,16 @@ namespace MiniSpace.Web.Areas.Students
             StudentDto = null;
         }
         
-        public Task<StudentDto> GetStudentAsync(Guid studentId, Guid secondId)
+        public Task<StudentDto> GetStudentAsync(Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+        }
+
+        public Task<IEnumerable<StudentDto>> GetStudentsAsync()
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
         }
 
         public Task UpdateStudentAsync(Guid studentId, string profileImage, string description, bool emailNotifications)

@@ -1,0 +1,79 @@
+@page "/admin/students"
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Pages.Dialogs
+@using Radzen
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IEventsService EventsService
+@inject NavigationManager NavigationManager
+
+<h1>Manage students</h1>
+
+@if (!pageInitialized)
+{
+    <h3 class="rz-p-12">Loading...</h3>
+}
+@if (pageInitialized && studentDto.Id != Guid.Empty)
+{
+    <RadzenStack class="rz-p-12" Gap="1rem" Style="height: 100%">
+        @if (totalStudents == 0)
+        {
+            <h3>You haven't been signed up for any event yet.</h3>
+        }
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+                        FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true"
+                        PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@students"
+                        ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"
+                        SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStudents>
+            <Columns>
+                <RadzenDataGridColumn Property="Email" Title="Email" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="FirstName" Title="First Name" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="LastName" Title="Last Name" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Context="student" Title="Details" Width="100px" TextAlign="TextAlign.Center"
+                                      Filterable="false" Sortable="false" Frozen="true">
+                    <Template Context="student">
+                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
+                                      ButtonStyle="ButtonStyle.Secondary" />
+                                      @* Click="@(() => OpenEventDetailsDialog(ev))" /> *@
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="State" Title="State" Width="110px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="IsBanned" Title="Is Banned" Width="110px" />
+                <RadzenDataGridColumn Property="IsOrganizer" Title="Is Organizer" Width="130px" />
+                <RadzenDataGridColumn Property="DateOfBirth" Title="Birth Date" FormatString="{0:d}" Width="120px" />
+                <RadzenDataGridColumn Property="CreatedAt" Title="Created At" Width="180px" />
+                <RadzenDataGridColumn Property="Description" Title="Description" Width="150px" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+}
+
+@code {
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    
+    private StudentDto studentDto = new();
+    private bool pageInitialized = false;
+
+    private int totalStudents = 0;
+    private IEnumerable<StudentDto> students;
+    private IList<StudentDto> selectedStudents;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            studentDto = StudentsService.StudentDto;
+            
+            students = await StudentsService.GetStudentsAsync();
+            selectedStudents = new List<StudentDto>() { students.FirstOrDefault() };
+            totalStudents = students.Count();
+        }
+        
+        pageInitialized = true;
+    }
+}

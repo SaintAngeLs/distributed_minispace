@@ -49,6 +49,13 @@
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
                     <RadzenPanelMenuItem Text="Events" Icon="event"
                                          Click="@(() => NavigationManager.NavigateTo("events"))" />
+                    @if (IdentityService.UserDto.Role == "admin")
+                    {
+                        <RadzenPanelMenuItem Text="Admin" Icon="build">
+                            <RadzenPanelMenuItem Text="Manage students" Icon="account_circle"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
+                        </RadzenPanelMenuItem>
+                    }
                 </RadzenPanelMenu>
             </RadzenSidebar>
         }
