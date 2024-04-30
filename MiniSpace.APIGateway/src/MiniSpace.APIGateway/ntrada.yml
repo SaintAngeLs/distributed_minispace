@@ -428,82 +428,84 @@ modules:
         statistics-service:
           localUrl: localhost:5011
           url: statistics-service
-
-
+          
 
   friends:
-    path: /friends
-    routes:
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: friends-service/friends
-        auth: true
+      path: /friends
+      routes:
+        - upstream: /
+          method: GET
+          use: downstream
+          downstream: friends-service/friends
+          auth: true
 
-      - upstream: /{userId}
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/{userId}
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/{userId}
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /{userId}/invite
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/{userId}/invite
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /{userId}/invite
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/{userId}/invite
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /{friendId}/remove
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/{friendId}/remove
-        bind:
-          - friendId: {friendId}
-        auth: true
+        - upstream: /{friendId}/remove
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/{friendId}/remove
+          bind:
+            - friendId: {friendId}
+          auth: true
 
-      - upstream: /requests/{userId}
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/requests/{userId}
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /requests/{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /requests/{userId}/accept
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/requests/{userId}/accept
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /requests/{userId}/accept
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/accept
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /requests/{userId}/decline
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/requests/{userId}/decline
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /requests/{userId}/decline
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/decline
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /pending
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/pending
-        auth: true
+        - upstream: /pending
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/pending
+          auth: true
 
-      - upstream: /pending/all
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/pending/all
-        auth: true
+        - upstream: /pending/all
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/pending/all
+          auth: true
 
-  services:
-    friends-service:
-      localUrl: localhost:5012
-      url: friends-service
+      services:
+        friends-service:
+          localUrl: localhost:5012
+          url: friends-service
+
+
+
 
 
   # friends:
