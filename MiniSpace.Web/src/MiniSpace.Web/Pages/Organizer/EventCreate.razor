@@ -133,7 +133,7 @@
     {
         if (IdentityService.IsAuthenticated)
         {
-            userDto = await IdentityService.GetAccountAsync();
+            userDto = IdentityService.UserDto;
         }
     }
     

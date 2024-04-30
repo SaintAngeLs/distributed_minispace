@@ -11,6 +11,7 @@ namespace MiniSpace.Web.Areas.Identity
         private readonly IHttpClient _httpClient;
         private readonly JwtSecurityTokenHandler _jwtHandler;
         public JwtDto JwtDto { get; private set; }
+        public UserDto UserDto { get; private set; }
         public string Name {get; private set; }
         public string Email {get; private set; }
         public bool IsAuthenticated { get; private set; }
@@ -21,9 +22,9 @@ namespace MiniSpace.Web.Areas.Identity
             _jwtHandler = new JwtSecurityTokenHandler();
         }
         
-        public Task<UserDto> GetAccountAsync()
+        public Task<UserDto> GetAccountAsync(JwtDto jwtDto)
         {
-            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            _httpClient.SetAccessToken(jwtDto.AccessToken);
             return _httpClient.GetAsync<UserDto>("identity/me");
         }
 
@@ -44,6 +45,7 @@ namespace MiniSpace.Web.Areas.Identity
             {
                 var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
                 var payload = jwtToken.Payload;
+                UserDto = await GetAccountAsync(JwtDto);
                 Name = (string)payload["name"];
                 Email = (string)payload["e-mail"];
                 IsAuthenticated = true;
@@ -55,6 +57,7 @@ namespace MiniSpace.Web.Areas.Identity
         public void Logout()
         {
             JwtDto = null;
+            UserDto = null;
             Name = null;
             Email = null;
             IsAuthenticated = false;

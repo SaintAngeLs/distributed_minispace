@@ -1,0 +1,149 @@
+@page "/events"
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Pages.Dialogs
+@using Radzen
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IEventsService EventsService
+@inject NavigationManager NavigationManager
+
+<h1>Your events</h1>
+
+@if (pageInitialized && studentDto.Id != Guid.Empty)
+{
+    <RadzenStack Gap="1rem" Style="height: 100%">
+        
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="12">
+                <div class="rz-p-12 rz-text-align-center">
+                    <RadzenButton Size="ButtonSize.Large" Text="Create new event"
+                                  Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
+                    <RadzenButton Size="ButtonSize.Large" Text="Search events"
+                                  Click="@(() => NavigationManager.NavigateTo("/events/search"))"/>             
+                </div>
+            </RadzenColumn>
+        </RadzenRow>
+        
+        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client" >
+            <Tabs>
+                <RadzenTabsItem Text="Signed up">
+                    @if (totalSignedUpElements == 0)
+                    {
+                        <h3>You haven't been signed up for any event yet.</h3>
+                    }
+                    <RadzenDataList AllowPaging="false" Data="@signedUpEvents" TItem="EventDto">
+                        <Template Context="ev">
+                            <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
+                                        @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}"))">
+                                <RadzenRow Size="12">
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow Size="12">
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Start date</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">End date</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <hr style="border: none; background-color: rgba(0,0,0,.2); height: 1px; margin: 1rem 0;"/>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenTabsItem>
+                
+                <RadzenTabsItem Text="Interested">
+                    @if (totalInterestedElements == 0)
+                    {
+                        <h3>You haven't been interested in any event yet.</h3>
+                    }
+                    <RadzenDataList AllowPaging="false" Data="@interestedEvents" TItem="EventDto">
+                        <Template Context="ev">
+                            <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
+                                        @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}"))">
+                                <RadzenRow Size="12">
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow Size="12">
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Start date</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Capacity</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.SignedUpStudents)/@(ev.Capacity)</b></RadzenText>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <hr style="border: none; background-color: rgba(0,0,0,.2); height: 1px; margin: 1rem 0;" />
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+    </RadzenStack>
+}
+
+@code {
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    
+    private StudentDto studentDto = new();
+    private bool pageInitialized = false;
+    
+    private int numberOfResults = 10;
+    
+    int totalSignedUpElements = 0;
+    IEnumerable<EventDto> signedUpEvents;
+
+    int totalInterestedElements = 0;
+    IEnumerable<EventDto> interestedEvents;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            studentDto = StudentsService.StudentDto;
+            
+            var tmp = await EventsService.GetStudentEventsAsync(studentDto.Id, numberOfResults);
+            if (tmp != null)
+            {
+                signedUpEvents = tmp.Content.Where(ev => ev.IsSignedUp);
+                totalSignedUpElements = signedUpEvents.Count();
+
+                interestedEvents = tmp.Content.Where(ev => ev.IsInterested);
+                totalInterestedElements = interestedEvents.Count();
+            }
+            else
+            {
+                signedUpEvents = new List<EventDto>();
+                totalSignedUpElements = 0;
+                
+                interestedEvents = new List<EventDto>();
+                totalInterestedElements = 0;
+            }
+        }
+        
+        pageInitialized = true;
+    }
+}
