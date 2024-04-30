@@ -7,11 +7,12 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
     {
         public Guid Id { get; set; }
         public Guid EventId { get; set; }
-        public Guid StudentId { get; set; }
+        public Guid OrganizerId { get; set; }
         public string TextContent { get; set; }
         public string MediaContent { get; set; }
         public State State { get; set; }
         public DateTime? PublishDate { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }    
 }

@@ -63,7 +63,7 @@
                 <RadzenRow Size="12">
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Start date</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(EventDto.StartDate)</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(EventDto.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
                         
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Status</RadzenText>
                         <RadzenText TextStyle="TextStyle.H6"><b>@(EventDto.Status)</b></RadzenText>
@@ -71,10 +71,10 @@
                     
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">End date</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(EventDto.EndDate)</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(EventDto.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
                         
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Publish date</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(EventDto.PublishDate)</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(EventDto.PublishDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
                     </RadzenColumn>
                 </RadzenRow>
         
@@ -163,33 +163,8 @@
                 </RadzenRow>
             </RadzenStack>
         </ChildContent>
-    </RadzenFieldset>       
+    </RadzenFieldset>
     
-    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            @if (!interestedIn)
-            {
-                <RadzenButton Click="@ShowInterestInEvent" Variant="Variant.Flat" ButtonStyle="ButtonStyle.Secondary"
-                              Text="Show interest" Style="width: 150px"/>          
-            }
-            @if (!signedUp)
-            {
-                <RadzenButton Click="@SignUpToEvent" Variant="Variant.Flat" ButtonStyle="ButtonStyle.Secondary"
-                              Text="Sign up" Style="width: 150px"/>                
-            }
-        </RadzenStack>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            @if (interestedIn)
-            {
-                <RadzenText TextStyle="TextStyle.H6"><b>You're interested in this event.</b></RadzenText>
-            }
-            @if (signedUp)
-            {
-                <RadzenText TextStyle="TextStyle.H6"><b>You're signed up to this event.</b></RadzenText>
-            }
-        </RadzenStack>
-    </RadzenStack>
-        
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
@@ -197,33 +172,14 @@
     </RadzenStack>
 </RadzenStack>
 
-
-
 @code {
     [Parameter]
     public EventDto EventDto { get; set; }
 
-    private UserDto userDto = new();
-    private bool interestedIn = false;
-    private bool signedUp = false;
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
     
     protected override async Task OnInitializedAsync()
     {
-        userDto = await IdentityService.GetAccountAsync();
         await base.OnInitializedAsync();
-    }
-
-    private async void ShowInterestInEvent()
-    {
-        await EventsService.ShowInterestInEventAsync(EventDto.Id, userDto.Id);
-        interestedIn = true;
-        StateHasChanged();
-    }
-
-    private async void SignUpToEvent()
-    {
-        await EventsService.SignUpToEventAsync(EventDto.Id, userDto.Id);
-        signedUp = true;
-        StateHasChanged();
     }
 }

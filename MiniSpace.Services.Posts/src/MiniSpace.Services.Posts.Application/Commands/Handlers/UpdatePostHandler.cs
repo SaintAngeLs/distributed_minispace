@@ -12,13 +12,15 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
         private readonly IPostRepository _postRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
+        private readonly IDateTimeProvider _dateTimeProvider;
         
         public UpdatePostHandler(IPostRepository postRepository, IAppContext appContext,
-            IMessageBroker messageBroker)
+            IMessageBroker messageBroker, IDateTimeProvider dateTimeProvider)
         {
             _postRepository = postRepository;
             _appContext = appContext;
             _messageBroker = messageBroker;
+            _dateTimeProvider = dateTimeProvider;
         }
         
         public async Task HandleAsync(UpdatePost command, CancellationToken cancellationToken = default)
@@ -30,7 +32,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             }
             
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != post.StudentId && !identity.IsAdmin)
+            if (identity.IsAuthenticated && identity.Id != post.OrganizerId && !identity.IsAdmin)
             {
                 throw new UnauthorizedPostAccessException(command.PostId, identity.Id);
             }
@@ -40,7 +42,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new UnauthorizedPostOperationException(command.PostId, identity.Id);
             }
             
-            post.Update(command.TextContent, command.MediaContent);
+            post.Update(command.TextContent, command.MediaContent, _dateTimeProvider.Now);
             await _postRepository.UpdateAsync(post);
 
             await _messageBroker.PublishAsync(new PostUpdated(command.PostId));

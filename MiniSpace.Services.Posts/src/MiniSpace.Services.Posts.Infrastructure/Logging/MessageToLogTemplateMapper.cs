@@ -35,19 +35,19 @@ namespace MiniSpace.Services.Posts.Infrastructure.Logging
                     }
                 },
                 {
-                    typeof(StudentCreated), new HandlerLogTemplate
+                    typeof(EventCreated), new HandlerLogTemplate
                     {
-                        After = "Created a new student with id: {StudentId}."
+                        After = "Created a new event with id: {EventId}."
                     }
                 },
                 {
-                    typeof(StudentDeleted), new HandlerLogTemplate
+                    typeof(EventDeleted), new HandlerLogTemplate
                     {
-                        After = "Deleted a student with id: {StudentId}."
+                        After = "Deleted an event with id: {EventId}."
                     }
                 },
                 {
-                    typeof(PostsStateUpdated),     
+                    typeof(UpdatePostsState),     
                     new HandlerLogTemplate
                     {
                         After = "Updated state of posts at: {Now}."

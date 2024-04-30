@@ -1,6 +1,8 @@
 ﻿@using Radzen
+@using MiniSpace.Web.Areas.Students
 @inherits LayoutComponentBase
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
@@ -8,7 +10,7 @@
     <header>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                @if (IdentityService.IsAuthenticated)
+                @if (IdentityService.IsAuthenticated && StudentsService.StudentDto.State == "valid")
                 {
                     <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
                 }
@@ -16,6 +18,7 @@
                     <RadzenLabel Text="MiniSpace" />
                 </div>
             </RadzenStack>
+            
             <RadzenMenu Class="rz-menu">
                 <div class="rz-menu-stack">
                     <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
@@ -33,28 +36,30 @@
                 </div>
             </RadzenMenu>
         </RadzenStack>
-
     </header>
     
-    @if (IdentityService.IsAuthenticated)
-    {
-        <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
-            <RadzenPanelMenu>
-                <RadzenPanelMenuItem Text="Home" Icon="home"
-                                     Click="@(() => NavigationManager.NavigateTo(""))" />
-                <RadzenPanelMenuItem Text="Account" Icon="account_box"
-                                     Click="@(() => NavigationManager.NavigateTo("account"))" />
-                <RadzenPanelMenuItem Text="Events" Icon="event"
-                                     Click="@(() => NavigationManager.NavigateTo("events"))" />
-            </RadzenPanelMenu>
-        </RadzenSidebar>
-    }
+    <div style="display: flex; flex: 1; flex-direction: row;">
+        @if (IdentityService.IsAuthenticated && StudentsService.StudentDto.State == "valid")
+        {
+            <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
+                <RadzenPanelMenu>
+                    <RadzenPanelMenuItem Text="Home" Icon="home"
+                                         Click="@(() => NavigationManager.NavigateTo(""))" />
+                    <RadzenPanelMenuItem Text="Account" Icon="account_box"
+                                         Click="@(() => NavigationManager.NavigateTo("account"))" />
+                    <RadzenPanelMenuItem Text="Events" Icon="event"
+                                         Click="@(() => NavigationManager.NavigateTo("events"))" />
+                </RadzenPanelMenu>
+            </RadzenSidebar>
+        }
+        
+        <RadzenBody class="radzen-body">
+            <div class="rz-p-4">
+                @Body
+            </div>
+        </RadzenBody>    
+    </div>
     
-    <RadzenBody class="radzen-body">
-        <div class="rz-p-4">
-            @Body
-        </div>
-    </RadzenBody>
     <CustomRadzenFooter />
 </RadzenLayout>
 
@@ -66,10 +71,11 @@
     void SignOut()
     {
         IdentityService.Logout();
+        StudentsService.ClearStudentDto();
         NavigationManager.NavigateTo("");
     }
     
-     async Task ScrollToSection(string sectionId)
+    async Task ScrollToSection(string sectionId)
     {
         if (NavigationManager.Uri != NavigationManager.BaseUri)
         {

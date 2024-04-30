@@ -21,8 +21,7 @@ else
     {
         if (IdentityService.IsAuthenticated)
         {
-            var userDto = await IdentityService.GetAccountAsync();
-            email = userDto.Email;   
+            email = IdentityService.UserDto.Email;
             StateHasChanged();
         }
     }
