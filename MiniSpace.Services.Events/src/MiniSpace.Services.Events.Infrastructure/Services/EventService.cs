@@ -30,6 +30,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
         {
             var dateFrom = DateTime.MinValue;
             var dateTo = DateTime.MinValue;
+            Category? category = null;
+            State? state = null;
             if(command.DateFrom != string.Empty)
             {
                 dateFrom =_eventValidator.ParseDate(command.DateFrom, "DateFrom");
@@ -38,10 +40,19 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             {
                 dateTo = _eventValidator.ParseDate(command.DateTo, "DateTo");
             }
+            if(command.Category != string.Empty)
+            {
+                category = _eventValidator.ParseCategory(command.Category);
+            }
+            if(command.State != string.Empty)
+            {
+                state = _eventValidator.ParseState(command.State);
+                state = state != State.Published && state != State.Archived ? null : state;
+            }
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
             
             var result = await _eventRepository.BrowseEventsAsync(
-                pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, 
+                pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, category, state,
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
             
             var identity = _appContext.Identity;

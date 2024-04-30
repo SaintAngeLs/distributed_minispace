@@ -107,11 +107,35 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
+        public static FilterDefinition<EventDocument> AddCategoryFilter (this FilterDefinition<EventDocument> filterDefinition, Category? category)
+        {
+            if (category != null)
+            {
+                filterDefinition &= FilterDefinitionBuilder.Eq(x => x.Category, category);
+            }
+
+            return filterDefinition;
+        }
+        
         public static FilterDefinition<EventDocument> AddStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
         {
             if (state != null)
             {
                 filterDefinition &= FilterDefinitionBuilder.Eq(x => x.State, state);
+            }
+
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<EventDocument> AddRestrictedStateFilter (this FilterDefinition<EventDocument> filterDefinition, State? state)
+        {
+            if (state != null)
+            {
+                filterDefinition &= FilterDefinitionBuilder.Eq(x => x.State, state);
+            }
+            else
+            {
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, new[] { State.Published, State.Archived });
             }
 
             return filterDefinition;
@@ -128,7 +152,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             var sortDefinition = sort
                 .Select(sortBy => direction == "asc"
                     ? sortDefinitionBuilder.Ascending(sortBy)
-                    : sortDefinitionBuilder.Descending(sortBy));
+                    : sortDefinitionBuilder.Descending(sortBy))
+                .Append(sortDefinitionBuilder.Ascending("State"));
             var sortCombined = sortDefinitionBuilder.Combine(sortDefinition);
 
             return sortCombined;
