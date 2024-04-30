@@ -11,13 +11,25 @@ namespace MiniSpace.Web.Areas.Students
         private readonly IHttpClient _httpClient;
         private readonly IIdentityService _identityService;
 
+        public StudentDto StudentDto { get; private set; }
+        
         public StudentsService(IHttpClient httpClient, IIdentityService identityService)
         {
             _httpClient = httpClient;
             _identityService = identityService;
         }
+
+        public async Task UpdateStudentDto(Guid studentId)
+        {
+            StudentDto = await GetStudentAsync(studentId, studentId);
+        }
+
+        public void ClearStudentDto()
+        {
+            StudentDto = null;
+        }
         
-        public Task<StudentDto> GetStudentAsync(Guid studentId)
+        public Task<StudentDto> GetStudentAsync(Guid studentId, Guid secondId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<StudentDto>($"students/{studentId}");

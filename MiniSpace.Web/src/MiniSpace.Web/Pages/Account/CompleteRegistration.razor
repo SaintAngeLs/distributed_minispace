@@ -12,6 +12,7 @@
 @inject NavigationManager NavigationManager
 
 <h3>Complete your registration</h3>
+<p>This step is necessary to go ahead, otherwise please to sign out.</p>
 
 <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
              Shade="Shade.Lighter">
@@ -64,8 +65,7 @@
     {
         if (IdentityService.IsAuthenticated)
         {
-            var userDto = await IdentityService.GetAccountAsync();
-            completeRegistrationModel.StudentId = userDto.Id;
+            completeRegistrationModel.StudentId = IdentityService.UserDto.Id;
             completeRegistrationModel.ProfileImage = "null";
             completeRegistrationModel.DateOfBirth = DateTime.Now;
         }
@@ -77,14 +77,19 @@
             completeRegistrationModel.ProfileImage, completeRegistrationModel.Description,
             completeRegistrationModel.DateOfBirth, completeRegistrationModel.EmailNotifications);
         // Handle the post-sign-up logic, such as redirection or displaying a success message
-        if(response.ErrorMessage != null)
+        if (response.ErrorMessage != null)
         {
             errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
             showError = true;
         }
+        else if (IdentityService.IsAuthenticated)
+        {
+            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+            NavigationManager.NavigateTo("/account");
+        }
         else
         {
-            NavigationManager.NavigateTo(IdentityService.IsAuthenticated ? "/account" : "/signin");
+            NavigationManager.NavigateTo("/signin");
         }
     }
     

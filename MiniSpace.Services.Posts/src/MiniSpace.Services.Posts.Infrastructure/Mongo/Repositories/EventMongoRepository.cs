@@ -5,27 +5,27 @@ using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 {
-    public class StudentMongoRepository : IStudentRepository
+    public class EventMongoRepository : IEventRepository
     {
-        private readonly IMongoRepository<StudentDocument, Guid> _repository;
+        private readonly IMongoRepository<EventDocument, Guid> _repository;
 
-        public StudentMongoRepository(IMongoRepository<StudentDocument, Guid> repository)
+        public EventMongoRepository(IMongoRepository<EventDocument, Guid> repository)
         {
             _repository = repository;
         }
         
-        public async Task<Student> GetAsync(Guid id)
+        public async Task<Event> GetAsync(Guid id)
         {
-            var student = await _repository.GetAsync(s => s.Id == id);
+            var @event = await _repository.GetAsync(s => s.Id == id);
 
-            return student?.AsEntity();
+            return @event?.AsEntity();
         }
 
         public Task<bool> ExistsAsync(Guid id)
             => _repository.ExistsAsync(s => s.Id == id);
 
-        public Task AddAsync(Student student)
-            => _repository.AddAsync(student.AsDocument());
+        public Task AddAsync(Event @event)
+            => _repository.AddAsync(@event.AsDocument());
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);
