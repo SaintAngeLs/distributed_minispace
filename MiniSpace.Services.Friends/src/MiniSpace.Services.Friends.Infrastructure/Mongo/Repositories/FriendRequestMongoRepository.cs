@@ -33,32 +33,21 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
         public async Task UpdateAsync(FriendRequest friendRequest)
 {
-    // Retrieve the document by Inviter and Invitee ID
-    var documentBeforeUpdate = await FindByInviterAndInvitee(friendRequest.InviterId, friendRequest.InviteeId);
-    Console.WriteLine("Document before update: " + JsonSerializer.Serialize(documentBeforeUpdate));
-
-    // Check if the document exists
-    if (documentBeforeUpdate == null)
-    {
-        Console.WriteLine("No document found for update. Adding new document.");
-        // If not found, potentially add a new document
-        var newDocument = friendRequest.AsDocument();
-        await _repository.AddAsync(newDocument);
-    }
-    else
-    {
-        // If found, update the document
-        // It's crucial here to ensure that the State is explicitly set from the incoming friendRequest object
+   
         var documentToUpdate = friendRequest.AsDocument();
-        documentToUpdate.State = friendRequest.State; // Ensure the state is explicitly updated
+
+        // Explicitly set the state to ensure it's carried over correctly
+        documentToUpdate.State = friendRequest.State;
+
         Console.WriteLine("Attempting to update document in database: " + JsonSerializer.Serialize(documentToUpdate));
         await _repository.UpdateAsync(documentToUpdate);
 
-        // Fetch the updated document to log and verify the update
-        var documentAfterUpdate = await FindByInviterAndInvitee(friendRequest.InviterId, friendRequest.InviteeId);
+        // Fetch the updated document to verify the update
+        var documentAfterUpdate = await _repository.GetAsync(friendRequest.Id);
         Console.WriteLine("Document after update: " + JsonSerializer.Serialize(documentAfterUpdate));
-    }
+    
 }
+
 
 
 

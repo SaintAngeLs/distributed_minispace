@@ -46,7 +46,5 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var newFriend = new Friend(command.RequesterId, command.FriendId, DateTime.UtcNow, FriendState.Accepted);
             await _friendRepository.AddAsync(newFriend);
         }
-
-
     }
 }
