@@ -149,12 +149,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 sort.Add("StartDate");
             }
             var sortDefinitionBuilder = Builders<EventDocument>.Sort;
+            var sortStateDefinition = new[] { sortDefinitionBuilder.Descending("State") };
             var sortDefinition = sort
                 .Select(sortBy => direction == "asc"
                     ? sortDefinitionBuilder.Ascending(sortBy)
-                    : sortDefinitionBuilder.Descending(sortBy))
-                .Append(sortDefinitionBuilder.Ascending("State"));
-            var sortCombined = sortDefinitionBuilder.Combine(sortDefinition);
+                    : sortDefinitionBuilder.Descending(sortBy));
+            var sortCombined = sortDefinitionBuilder.Combine(sortStateDefinition.Concat(sortDefinition));
 
             return sortCombined;
         }
