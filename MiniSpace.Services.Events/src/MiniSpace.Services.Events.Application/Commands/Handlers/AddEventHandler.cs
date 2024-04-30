@@ -75,7 +75,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
             }
             
-            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizerId, string.Empty);
+            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizerId, organization.Name);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
                 address, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
             
