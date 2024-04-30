@@ -34,7 +34,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 Name = document.Name,
                 ParentId = document.ParentId,
                 IsLeaf = document.IsLeaf,
-                Organizers = document.Organizers.Select(x => new OrganizerDto(x))
+                Organizers = document.Organizers.Select(x => x.Id)
             };
         
         public static Organizer AsEntity(this OrganizerDocument document)
