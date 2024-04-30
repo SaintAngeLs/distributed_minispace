@@ -24,6 +24,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Category = document.Category.ToString(),
                 Status = document.State.ToString(),
                 PublishDate = document.PublishDate,
+                UpdatedAt = document.UpdatedAt,
                 IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == studentId),
                 IsInterested = document.InterestedStudents.Any(x => x.StudentId == studentId),
                 HasRated = document.Ratings.Any(x => x.StudentId == studentId)
@@ -32,7 +33,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public static Event AsEntity(this EventDocument document)
             => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
                 document.Location, document.Capacity, document.Fee, document.Category, document.State, document.PublishDate,
-                document.Organizer, document.InterestedStudents, document.SignedUpStudents, document.Ratings);
+                document.Organizer, document.UpdatedAt,document.InterestedStudents, document.SignedUpStudents, document.Ratings);
         
         public static EventDocument AsDocument(this Event entity)
             => new ()
@@ -51,6 +52,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Category = entity.Category,
                 State = entity.State,
                 PublishDate = entity.PublishDate,
+                UpdatedAt = entity.UpdatedAt,
                 Ratings = entity.Ratings
             };
 

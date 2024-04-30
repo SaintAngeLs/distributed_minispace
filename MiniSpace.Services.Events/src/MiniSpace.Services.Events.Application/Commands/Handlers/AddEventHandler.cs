@@ -77,7 +77,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizerId, string.Empty);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
-                address, command.Capacity, command.Fee, category, state, publishDate, organizer);
+                address, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
             
             await _eventRepository.AddAsync(@event);
             await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id));

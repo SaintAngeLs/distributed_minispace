@@ -23,6 +23,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public Category Category { get; set; }
         public State State { get; set; }
         public DateTime PublishDate { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public IEnumerable<Rating> Ratings { get; set; }
     }
 }

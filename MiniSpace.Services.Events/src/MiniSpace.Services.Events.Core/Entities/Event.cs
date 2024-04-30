@@ -23,6 +23,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         public Category Category { get; private set; }
         public State State { get; private set; }
         public DateTime PublishDate { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
         
         public IEnumerable<Participant> InterestedStudents
         {
@@ -44,7 +45,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
             Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate,
-            Organizer organizer, IEnumerable<Participant> interestedStudents = null, 
+            Organizer organizer, DateTime updatedAt, IEnumerable<Participant> interestedStudents = null, 
             IEnumerable<Participant> signedUpStudents = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
@@ -62,18 +63,20 @@ namespace MiniSpace.Services.Events.Core.Entities
             SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Participant>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
             PublishDate = publishDate;
+            UpdatedAt = updatedAt;
         }
         
         public static Event Create(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, Organizer organizer)
+            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, 
+            Organizer organizer, DateTime now)
         {
             var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, 
-                state, publishDate, organizer);
+                state, publishDate, organizer, now);
             return @event;
         }
         
-        public void Update(string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate)
+        public void Update(string name, string description, DateTime startDate, DateTime endDate, Address location,
+            int capacity, decimal fee, Category category, State state, DateTime publishDate, DateTime now)
         {
             Name = name;
             Description = description;
@@ -84,7 +87,8 @@ namespace MiniSpace.Services.Events.Core.Entities
             Fee = fee;
             Category = category;
             State = state;
-            PublishDate = publishDate; 
+            PublishDate = publishDate;
+            UpdatedAt = now;
         }
         
         public void SignUpStudent(Participant participant)
@@ -167,6 +171,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             else
                 return false;
 
+            UpdatedAt = now;
             return true;
         }
         

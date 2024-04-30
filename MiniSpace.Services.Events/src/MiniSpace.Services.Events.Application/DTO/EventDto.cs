@@ -23,6 +23,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public string Category { get; set; }
         public string Status { get; set; }
         public DateTime PublishDate { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
         public bool HasRated { get; set; }
