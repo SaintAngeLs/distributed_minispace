@@ -20,16 +20,18 @@
 }
 @if (pageInitialized && studentDto.Id != Guid.Empty)
 {
-    <RadzenStack class="rz-p-12" Gap="1rem" Style="height: 100%">
+    <h4 class="rz-p-8">To manage rights of a student, open details dialog by clicking "Show" button.</h4>
+    
+    <RadzenStack Gap="1rem" Style="height: 100%">
         @if (totalStudents == 0)
         {
             <h3>You haven't been signed up for any event yet.</h3>
         }
+        
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
-                        FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true"
-                        PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@students"
-                        ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or"
-                        SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedStudents>
+                        FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="@pageSize" PageSizeOptions="@pageSizeOptions"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
+                        Data="@students" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
             <Columns>
                 <RadzenDataGridColumn Property="Email" Title="Email" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
                 <RadzenDataGridColumn Property="FirstName" Title="First Name" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
@@ -38,8 +40,8 @@
                                       Filterable="false" Sortable="false" Frozen="true">
                     <Template Context="student">
                         <RadzenButton Size="ButtonSize.Medium" Text="Show"
-                                      ButtonStyle="ButtonStyle.Secondary" />
-                                      @* Click="@(() => OpenEventDetailsDialog(ev))" /> *@
+                                      ButtonStyle="ButtonStyle.Secondary"
+                                      Click="@(() => OpenManageStudentDialog(student))" />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn Property="State" Title="State" Width="110px" TextAlign="TextAlign.Center" />
@@ -56,12 +58,14 @@
 @code {
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     
+    private int pageSize = 5;
+    IEnumerable<int> pageSizeOptions = new int[] { 5, 10, 20, 40};
+    
     private StudentDto studentDto = new();
     private bool pageInitialized = false;
 
     private int totalStudents = 0;
     private IEnumerable<StudentDto> students;
-    private IList<StudentDto> selectedStudents;
     
     protected override async Task OnInitializedAsync()
     {
@@ -70,10 +74,20 @@
             studentDto = StudentsService.StudentDto;
             
             students = await StudentsService.GetStudentsAsync();
-            selectedStudents = new List<StudentDto>() { students.FirstOrDefault() };
             totalStudents = students.Count();
         }
         
         pageInitialized = true;
+    }
+    
+    private async Task OpenManageStudentDialog(StudentDto studentDto)
+    {
+        await DialogService.OpenAsync<ManageStudentDialog>($"Manage student:",
+            new Dictionary<string, object>() { { "StudentDto", studentDto } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
 }

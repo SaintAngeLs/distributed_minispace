@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
@@ -61,6 +62,30 @@ namespace MiniSpace.Web.Areas.Identity
             Name = null;
             Email = null;
             IsAuthenticated = false;
+        }
+
+        public Task GrantOrganizerRights(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.PostAsync($"identity/users/{userId}/organizer-rights", new {userId});
+        }
+
+        public Task RevokeOrganizerRights(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"identity/users/{userId}/organizer-rights");
+        }
+
+        public Task BanUser(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.PostAsync($"identity/users/{userId}/ban", new {userId});
+        }
+
+        public Task UnbanUser(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"identity/users/{userId}/ban");
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
@@ -14,5 +15,9 @@ namespace MiniSpace.Web.Areas.Identity
         Task<HttpResponse<object>> SignUpAsync(string firstName, string lastName, string email, string password, string role = "user", IEnumerable<string> permissions = null);
         Task<HttpResponse<JwtDto>> SignInAsync(string email, string password);
         void Logout();
+        Task GrantOrganizerRights(Guid userId);
+        Task RevokeOrganizerRights(Guid userId);
+        Task BanUser(Guid userId);
+        Task UnbanUser(Guid userId);
     }
 }

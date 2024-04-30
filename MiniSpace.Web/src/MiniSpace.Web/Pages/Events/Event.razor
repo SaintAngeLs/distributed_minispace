@@ -92,13 +92,16 @@
         {
             return eventDto.Organizer.Name;
         }
-        
-        foreach (var coOrganizer in eventDto.CoOrganizers)
+
+        if (eventDto.CoOrganizers != null)
         {
-            if (studentId == coOrganizer.Id)
+            foreach (var coOrganizer in eventDto.CoOrganizers)
             {
-                return coOrganizer.Name;
-            }
+                if (studentId == coOrganizer.Id)
+                {
+                    return coOrganizer.Name;
+                }
+            }   
         }
 
         return "Author unknown";
