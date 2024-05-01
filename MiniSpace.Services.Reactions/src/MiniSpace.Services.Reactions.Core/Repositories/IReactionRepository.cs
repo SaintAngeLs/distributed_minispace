@@ -1,13 +1,13 @@
+using System.Formats.Tar;
 using MiniSpace.Services.Reactions.Core.Entities;
 
 namespace MiniSpace.Services.Reactions.Core.Repositories
 {
+    // content not specified
     public interface IReactionRepository
     {
-        //Task<Reaction> GetAsync(Guid id);
-        //Task<IEnumerable<Reaction>> GetToUpdateAsync();
-        Task AddAsync(Reaction reaction);
-        //Task UpdateAsync(Reaction reaction);
-        //Task DeleteAsync(Guid id);
+        Task<ReactionSummary> GetReactionSummaryAsync(Guid id);
+        Task<ReactionData> GetReactions(Guid id);
+        
     }    
 }

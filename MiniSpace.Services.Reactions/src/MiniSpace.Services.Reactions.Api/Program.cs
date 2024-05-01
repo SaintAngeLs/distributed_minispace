@@ -9,8 +9,11 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+
 using MiniSpace.Services.Reactions.Application;
 using MiniSpace.Services.Reactions.Application.Commands;
+using MiniSpace.Services.Reactions.Application.Queries;
+using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Infrastructure;
 
 namespace MiniSpace.Services.Reactions.Api
@@ -29,15 +32,21 @@ namespace MiniSpace.Services.Reactions.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+
+                        // create reaction: user, content, reaction type needed
+                        // no need for defining reactionId because reactions can be identified by the user and the content
                         .Post<CreateReaction>("reactions"
                                 //, afterDispatch: (cmd, ctx) => ctx.Response.Created($"reactions/{cmd.ReactionId}")
                                 )
-                        .Delete<DeleteReaction>("reactions/{reactionId}")
-                        //.Get<GetPosts, IEnumerable<PostDto>>("posts")
-                        //.Put<UpdatePost>("posts/{postId}")
-                        //.Delete<DeletePost>("posts/{postId}")
-                        //.Post<CreatePost>("posts", afterDispatch: (cmd, ctx) => ctx.Response.Created($"posts/{cmd.PostId}"))
-                        //.Put<ChangePostState>("posts/{postId}/state/{state}", afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+
+                        // delete reaction: user, content needed
+                        .Delete<DeleteReaction>("reactions")
+
+                        // get reactions: content needed
+                        .Get<GetReactions, ReactionData>("reactions")
+
+                        // reaction summary: content needed
+                        .Get<GetReactionsSummary, ReactionSummary>("reactions")
                     ))
                 .UseLogging()
                 .Build()

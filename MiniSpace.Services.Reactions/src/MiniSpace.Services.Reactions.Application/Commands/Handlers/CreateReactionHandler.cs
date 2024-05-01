@@ -1,5 +1,7 @@
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Reactions.Application.Events;
 using MiniSpace.Services.Reactions.Application.Exceptions;
+using MiniSpace.Services.Reactions.Application.Services;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Exceptions;
 using MiniSpace.Services.Reactions.Core.Repositories;
@@ -10,18 +12,18 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
     {
         private readonly IReactionRepository _reactionRepository;
         private readonly IStudentRepository _studentRepository;
-        //private readonly IDateTimeProvider _dateTimeProvider;
-        //private readonly IMessageBroker _messageBroker;
+        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IMessageBroker _messageBroker;
 
         public CreateReactionHandler(IReactionRepository reactionRepository, IStudentRepository studentRepository
-            //,IDateTimeProvider dateTimeProvider
-            //, IMessageBroker messageBroker
+            ,IDateTimeProvider dateTimeProvider
+            , IMessageBroker messageBroker
             )
         {
             _reactionRepository = reactionRepository;
             _studentRepository = studentRepository;
-            //_dateTimeProvider = dateTimeProvider;
-            //_messageBroker = messageBroker;
+            _dateTimeProvider = dateTimeProvider;
+            _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(CreateReaction command, CancellationToken cancellationToken = default)
@@ -36,10 +38,10 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                 throw new InvalidReactionTypeException(command.ReactionType);
             }
             
-            var reaction = Reaction.Create(command.StudentId, command.StudentFullName, newReactionType);
-            await _reactionRepository.AddAsync(reaction);
+            //var reaction = Reaction.Create(command.StudentId, newReactionType);
+            //await _reactionRepository.AddAsync(reaction);
             
-            //await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));
+            //await _messageBroker.PublishAsync(new ReactionCreated(command.StudentId, command.Content, command.ContentType));
         }
     }
 }

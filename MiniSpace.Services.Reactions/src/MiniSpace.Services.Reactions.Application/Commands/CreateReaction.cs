@@ -7,18 +7,18 @@ namespace MiniSpace.Services.Reactions.Application.Commands
     public class CreateReaction : ICommand
     {
         public Guid StudentId { get; }
-        public string StudentFullName { get; }
-
         public string ReactionType { get; } 
         
+        public string Content {get;}
+
         // Is the reaction related to event or post?
         public string ContentType { get; } 
 
-        public CreateReaction(Guid studentId, string studentFullName,
+        public CreateReaction(Guid studentId, string content,
                               string reactionType, string contentType)
         {
             StudentId = studentId;
-            StudentFullName = studentFullName;
+            Content = content;
             ReactionType = reactionType;
             ContentType = contentType;
         }
