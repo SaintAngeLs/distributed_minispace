@@ -20,6 +20,8 @@ using MiniSpace.Web.HttpClients;
 using MudBlazor;
 using MudBlazor.Services;
 using MiniSpace.Web.Areas.Friends;
+using Microsoft.AspNetCore.Components.Authorization;
+using Blazored.LocalStorage;
 
 namespace MiniSpace.Web
 {
@@ -52,8 +54,12 @@ namespace MiniSpace.Web
                 client.BaseAddress = new Uri(options.ApiUrl); 
             });
 
+            services.AddBlazoredLocalStorage(); 
+
+
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
             
+            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IStudentsService, StudentsService>();
             services.AddScoped<IEventsService, EventsService>();

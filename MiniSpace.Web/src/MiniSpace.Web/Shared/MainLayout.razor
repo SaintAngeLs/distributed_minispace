@@ -5,6 +5,8 @@
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
 
 <RadzenLayout style="width: 100%; min-width: 100vw; min-height: 100vh; text-align: center;" id="radzen-layout">
     <header>
@@ -70,12 +72,19 @@
 @code{
     bool _sidebarExpanded = true;
     
-    void SignOut()
+    @* void SignOut()
     {
         IdentityService.Logout();
         StudentsService.ClearStudentDto();
         NavigationManager.NavigateTo("");
+    } *@
+
+    async Task SignOut()
+    {
+        await localStorage.RemoveItemAsync("accessToken");
+        NavigationManager.NavigateTo("signin", forceLoad: true);
     }
+
     
     async Task ScrollToSection(string sectionId)
     {

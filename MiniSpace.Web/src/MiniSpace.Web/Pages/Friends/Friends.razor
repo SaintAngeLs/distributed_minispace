@@ -9,15 +9,25 @@
 <div class="container mt-4 mx-5" style="width: 1000px;">
     <div class="search-bar" style="display: flex; flex-direction: row;">
         <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
-        <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Primary" Icon="search" Style="margin-left: 10px; width: 23%;" />
+        <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
     </div>
 
-     <div>
-        <RadzenButton Text="Load Students" Click="@LoadStudents" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="school" Style="margin-top: 20px;" />
-        <RadzenGrid Data="@students" TItem="StudentDto" AutoGenerateColumns="true" PageSize="5" Style="margin-top: 20px;">
-            <!-- Columns can be customized as needed -->
+
+
+        <RadzenGrid Data="@students" TItem="StudentDto" PageSize="5" Style="margin-top: 20px;">
+            <Columns>
+                <RadzenGridColumn TItem="StudentDto" Property="StudentId" Title="ID" Width="100px" />
+                <RadzenGridColumn TItem="StudentDto" Property="FirstName" Title="First Name" />
+                <RadzenGridColumn TItem="StudentDto" Property="LastName" Title="Last Name" />
+                <RadzenGridColumn TItem="StudentDto" Property="Email" Title="Email" />
+                <RadzenGridColumn TItem="StudentDto" Context="student">
+                    <Template>
+                        <RadzenButton Text="Details" Click="@(() => OnDetails(student))" ButtonStyle="Radzen.ButtonStyle.Primary" />
+                    </Template>
+                </RadzenGridColumn>
+            </Columns>
         </RadzenGrid>
-    </div>
+
 
     <RadzenGrid Data="@filteredFriends" TItem="Friend" AutoGenerateColumns="false" PageSize="5" Style="margin-top: 20px;">
         <Columns>
@@ -58,55 +68,96 @@
             flex: 1;
         }
     } *@
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 2rem;
+    }
+
+    .card {
+        width: 18rem;
+        margin: 1rem;
+        min-height: 400px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .card-body {
+        padding: 2px 16px;
+    }
+
+    .card-title {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    .card-text {
+        font-size: 16px;
+    }
 </style>
 
 @code {
-       private string searchTerm;
-    private List<Friend> friends = new List<Friend>(); // This should be populated from your backend or service layer
+    private string searchTerm;
+    private List<Friend> friends = new List<Friend>();
     private IEnumerable<Friend> filteredFriends => friends.Where(f => f.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
-    private IEnumerable<StudentDto> students; // To hold the list of students
+    private IEnumerable<StudentDto> students;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudents();
+    }
 
     private async Task LoadStudents()
-{
-    try
     {
         var result = await FriendsService.GetAllStudentsAsync();
         if (result != null && result.Any())
         {
             students = result;
+            StateHasChanged(); 
         }
-        else
+        else 
         {
-            Console.WriteLine("No students found.");
+            Console.WriteLine("No students available.");
         }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to load students: {ex.Message}");
-    }
-}
-
 
     private void ViewFriendDetails(Friend friend)
     {
-        // Navigate to a detailed view of the friend or open a modal/dialog with more information
         NavigationManager.NavigateTo($"/friend/{friend.Id}");
     }
 
-     private void SearchFriends()
+    private void SearchFriends()
     {
-        // This method would ideally invoke a backend service to refresh the list based on the search term
+        // Refresh the list based on the search term
     }
 
     private void AddFriend()
     {
-        // Open a modal dialog to add a new friend, or navigate to a different page/form to handle new friend addition
         NavigationManager.NavigateTo("/add-friend");
     }
 
+
+    private void OnDetails(StudentDto student)
+    {
+        // Navigate to the student details page or display the details in some way
+        NavigationManager.NavigateTo($"/student-details/{student.Id}");
+    }
+
+
     private void RemoveFriend(Friend friend)
     {
-        // Call a service to remove the friend from the database, then update the local list
         friends.Remove(friend);
     }
 

@@ -54,10 +54,16 @@ namespace MiniSpace.Web.Areas.Friends
             return _httpClient.DeleteAsync($"friends/{friendId}");
         }
 
-        public Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
+        public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
+            if (_httpClient == null) throw new InvalidOperationException("HTTP client is not initialized.");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+
+            if (string.IsNullOrEmpty(accessToken))
+                throw new InvalidOperationException("Invalid or missing access token.");
+
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
         }
     }    
 }

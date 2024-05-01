@@ -65,7 +65,7 @@
     private string errorMessage = string.Empty;
     private bool popup;
 
-    private async Task HandleSignIn()
+    @* private async Task HandleSignIn()
     {
         var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
         var jwtDto = response.Content;
@@ -80,5 +80,34 @@
             errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
             StateHasChanged(); // Force the component to re-render
         }
+    } *@
+
+    private async Task HandleSignIn()
+{
+    try
+    {
+        var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+        if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
+        {
+            // Assuming UpdateStudentDto and other subsequent methods correctly handle null checks
+            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+            var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/account";
+            NavigationManager.NavigateTo(nextPage);
+        }
+        else
+        {
+            showError = true;
+            errorMessage = "Invalid login attempt";
+            StateHasChanged(); // Force the component to re-render
+        }
     }
+    catch (Exception ex)
+    {
+        // Log the exception or handle it accordingly
+        showError = true;
+        errorMessage = $"Error during sign in: {ex.Message}";
+        StateHasChanged(); // Update UI to show error message
+    }
+}
+
 }
