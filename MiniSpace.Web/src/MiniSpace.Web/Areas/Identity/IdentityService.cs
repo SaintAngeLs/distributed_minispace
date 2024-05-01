@@ -83,21 +83,16 @@ namespace MiniSpace.Web.Areas.Identity
             return response;
         }
 
-public async Task Logout()
-{
-    await _localStorage.RemoveItemAsync("jwtDto");
-    JwtDto = null;
-    UserDto = null;
-    Name = null;
-    Email = null;
-    IsAuthenticated = false;
-    _navigationManager.NavigateTo("signin", forceLoad: true);
-}
-
-
-
-
-
+        public async Task Logout()
+        {
+            await _localStorage.RemoveItemAsync("jwtDto");
+            JwtDto = null;
+            UserDto = null;
+            Name = null;
+            Email = null;
+            IsAuthenticated = false;
+            _navigationManager.NavigateTo("signin", forceLoad: true);
+        }
 
 
         // Make the Logout asynchronous 😕
@@ -110,8 +105,6 @@ public async Task Logout()
         //     Email = null;
         //     IsAuthenticated = false;
         // }
-
-
         public async Task<string> GetAccessTokenAsync()
         {
             var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
@@ -132,7 +125,5 @@ public async Task Logout()
             }
             return null; // Or throw an exception or handle an unauthenticated state appropriately
         }
-
-        
     }
 }

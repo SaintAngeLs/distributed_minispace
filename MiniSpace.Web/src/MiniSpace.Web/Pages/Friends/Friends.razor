@@ -114,9 +114,12 @@
     private IEnumerable<Friend> filteredFriends => friends.Where(f => f.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
     private IEnumerable<StudentDto> students;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadStudents();
+        if (firstRender)
+        {
+            await LoadStudents();
+        }
     }
 
     private async Task LoadStudents()
@@ -127,7 +130,7 @@
             students = result;
             StateHasChanged(); 
         }
-        else 
+        else
         {
             Console.WriteLine("No students available.");
         }
@@ -140,7 +143,7 @@
 
     private void SearchFriends()
     {
-        // Refresh the list based on the search term
+        // Implement search functionality here
     }
 
     private void AddFriend()
@@ -148,17 +151,15 @@
         NavigationManager.NavigateTo("/add-friend");
     }
 
-
     private void OnDetails(StudentDto student)
     {
-        // Navigate to the student details page or display the details in some way
         NavigationManager.NavigateTo($"/student-details/{student.Id}");
     }
-
 
     private void RemoveFriend(Friend friend)
     {
         friends.Remove(friend);
+        // Implement further UI update or server-side removal logic if necessary
     }
 
     public class Friend
