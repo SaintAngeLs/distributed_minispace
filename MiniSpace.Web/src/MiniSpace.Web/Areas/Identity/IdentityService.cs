@@ -8,12 +8,6 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.HttpClients;
-using System.Net.Http.Json;
-
-using System.Net.Http; // Include for HttpResponseMessage and StringContent
-using System.Net.Http.Headers;
-using System.Text; // Include for AuthenticationHeaderValue
-
 
 namespace MiniSpace.Web.Areas.Identity
 {
@@ -24,11 +18,11 @@ namespace MiniSpace.Web.Areas.Identity
         private readonly ILocalStorageService _localStorage;
         private readonly NavigationManager _navigationManager;
         
-        public JwtDto JwtDto { get; private set; }
-        public UserDto UserDto { get; private set; }
+        public JwtDto JwtDto { get; set; }
+        public UserDto UserDto { get; set; }
         public string Name {get; private set; }
         public string Email {get; private set; }
-        public bool IsAuthenticated { get; private set; }
+        public bool IsAuthenticated { get; set; }
         
         public IdentityService(IHttpClient httpClient, ILocalStorageService localStorage, NavigationManager navigationManager)
         {
@@ -117,11 +111,7 @@ namespace MiniSpace.Web.Areas.Identity
             throw new InvalidOperationException("Failed to refresh token");
         }
 
-
-
-
         // Make the Logout asynchronous 😕
-     
         // public void Logout()
         // {
         //     JwtDto = null;
@@ -133,9 +123,11 @@ namespace MiniSpace.Web.Areas.Identity
         public async Task<string> GetAccessTokenAsync()
         {
             var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+
             if (!string.IsNullOrEmpty(jwtDtoJson))
             {
                 JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
+
                 var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
 
                 if (jwtToken.ValidTo > DateTime.UtcNow)
@@ -149,30 +141,62 @@ namespace MiniSpace.Web.Areas.Identity
                         try
                         {
                             JwtDto newJwtDto = await RefreshAccessToken(jwtDto.RefreshToken);
+
                             if (newJwtDto != null)
                             {
                                 var newJwtDtoJson = JsonSerializer.Serialize(newJwtDto);
+
                                 await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
+
                                 return newJwtDto.AccessToken;
                             }
                         }
                         catch (Exception ex)
                         {
-                            // Log exception details here, e.g., using ILogger
                             await _localStorage.RemoveItemAsync("jwtDto");
-                            // Optionally redirect to login or handle unauthenticated state
+                            
                             _navigationManager.NavigateTo("signin", forceLoad: true);
+
                             throw new InvalidOperationException("Failed to refresh token: " + ex.Message);
                         }
                     }
 
                     await _localStorage.RemoveItemAsync("jwtDto");
+
                     _navigationManager.NavigateTo("signin", forceLoad: true);
+
                     throw new InvalidOperationException("Session expired, please login again.");
                 }
             }
 
             throw new InvalidOperationException("Authentication required.");
         }
+
+        public async Task InitializeAuthenticationState()
+        {
+            var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+            if (!string.IsNullOrEmpty(jwtDtoJson))
+            {
+                JwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
+                var tokenExpirationDateTime = DateTimeOffset.FromUnixTimeSeconds(JwtDto.Expires).UtcDateTime;
+                if (JwtDto != null && DateTime.UtcNow < tokenExpirationDateTime)
+                {
+                    UserDto = await GetAccountAsync(JwtDto); 
+                    IsAuthenticated = UserDto != null;
+                }
+                else if (JwtDto != null && !string.IsNullOrEmpty(JwtDto.RefreshToken))
+                {
+                    JwtDto = await RefreshAccessToken(JwtDto.RefreshToken);
+                    if (JwtDto != null)
+                    {
+                        jwtDtoJson = JsonSerializer.Serialize(JwtDto);
+                        await _localStorage.SetItemAsStringAsync("jwtDto", jwtDtoJson);
+                        UserDto = await GetAccountAsync(JwtDto);
+                        IsAuthenticated = UserDto != null;
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -1,4 +1,9 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@* @using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+
+@using MiniSpace.Web.Areas.Identity
+@inject IIdentityService IdentityService
+
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
@@ -12,3 +17,50 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+@code {
+    Type layoutType = typeof(NotAuthenticatedLayout);
+    bool initialized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialization that doesn't involve JS interop or other browser-specific functionality
+        await InitializeAuthentication();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !initialized)
+        {
+            // Now it's safe to make JS interop calls
+            await InitializeAuthentication();
+            initialized = true;
+        }
+    }
+
+    private async Task InitializeAuthentication()
+    {
+        await Task.Delay(1); // Ensure this method is asynchronous
+
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        {
+            layoutType = typeof(AuthenticatedLayout);
+            StateHasChanged(); // Ensure UI updates after changing layoutType
+        }
+    }
+} *@
+
+
+
+@using Microsoft.AspNetCore.Components.Authorization
+
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>

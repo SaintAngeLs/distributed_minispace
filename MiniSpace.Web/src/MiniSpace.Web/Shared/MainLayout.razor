@@ -7,12 +7,13 @@
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 @using Blazored.LocalStorage
 @inject ILocalStorageService localStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <RadzenLayout style="width: 100%; min-width: 100vw; min-height: 100vh; text-align: center;" id="radzen-layout">
     <header>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                @if (IdentityService.IsAuthenticated && StudentsService.StudentDto.State == "valid")
+                @if (IsUserAuthenticated()  && StudentsService.StudentDto.State == "valid")
                 {
                     <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
                 }
@@ -26,7 +27,7 @@
                     <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
                     <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
                     <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
-                    @if (IdentityService.IsAuthenticated)
+                    @if (IsUserAuthenticated())
                     {
                         <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
                     }
@@ -41,7 +42,7 @@
     </header>
     
     <div style="display: flex; flex: 1; flex-direction: row;">
-        @if (IdentityService.IsAuthenticated && StudentsService.StudentDto.State == "valid")
+        @if (IsUserAuthenticated() && StudentsService.StudentDto.State == "valid")
         {
             <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
                 <RadzenPanelMenu>
@@ -58,7 +59,7 @@
         }
         
         <RadzenBody class="radzen-body">
-            <div class="rz-p-4">
+            <div class="">
                 @Body
             </div>
         </RadzenBody>    
@@ -71,6 +72,37 @@
 
 @code{
     bool _sidebarExpanded = true;
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to authentication state changes
+        AuthenticationStateProvider.AuthenticationStateChanged += HandleAuthenticationStateChanged;
+    }
+
+    private async void HandleAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var authState = await task;
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // Check if the user is valid and then expand the sidebar
+            @* var studentState = await StudentsService.GetStudentStateAsync(); // Assume this method checks the student state
+            _sidebarExpanded = studentState == "valid"; *@
+        }
+        else
+        {
+            _sidebarExpanded = true;
+        }
+
+        StateHasChanged(); // Refresh UI
+    }
+
+    public void Dispose() // Implement IDisposable to unsubscribe
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged -= HandleAuthenticationStateChanged;
+    }
+
+    public bool IsUserAuthenticated() => IdentityService.IsAuthenticated;
     
     @* void SignOut()
     {
@@ -82,6 +114,7 @@
     async Task SignOut()
     {
         await localStorage.RemoveItemAsync("accessToken");
+        await localStorage.RemoveItemAsync("jwtDto");
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
 

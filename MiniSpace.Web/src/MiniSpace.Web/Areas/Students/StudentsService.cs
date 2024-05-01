@@ -46,5 +46,11 @@ namespace MiniSpace.Web.Areas.Students
             string description, DateTime dateOfBirth, bool emailNotifications)
             => _httpClient.PostAsync<object,object>("students", new {studentId, profileImage,
                 description, dateOfBirth, emailNotifications});
+
+        public async Task<string> GetStudentStateAsync(Guid studentId)
+        {
+            var student = await GetStudentAsync(studentId, studentId);
+            return student != null ? student.State : "invalid"; 
+        }
     }    
 }
