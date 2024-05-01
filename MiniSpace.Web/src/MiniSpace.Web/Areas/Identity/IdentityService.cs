@@ -8,6 +8,12 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.HttpClients;
+using System.Net.Http.Json;
+
+using System.Net.Http; // Include for HttpResponseMessage and StringContent
+using System.Net.Http.Headers;
+using System.Text; // Include for AuthenticationHeaderValue
+
 
 namespace MiniSpace.Web.Areas.Identity
 {
@@ -94,6 +100,25 @@ namespace MiniSpace.Web.Areas.Identity
             _navigationManager.NavigateTo("signin", forceLoad: true);
         }
 
+        private async Task<JwtDto> RefreshAccessToken(string refreshToken)
+        {
+            var payload = new { refreshToken };
+            var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-token", payload);
+            if (response.ErrorMessage != null)
+            {
+                throw new InvalidOperationException($"Error refreshing token: {response.ErrorMessage.Reason}");
+            }
+
+            if (response.Content != null)
+            {
+                return response.Content;
+            }
+
+            throw new InvalidOperationException("Failed to refresh token");
+        }
+
+
+
 
         // Make the Logout asynchronous 😕
      
@@ -112,18 +137,42 @@ namespace MiniSpace.Web.Areas.Identity
             {
                 JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
                 var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
-                
-                // Check if token is expired
+
                 if (jwtToken.ValidTo > DateTime.UtcNow)
                 {
                     return jwtDto.AccessToken;
                 }
                 else
                 {
-                    // Handle token refresh here if you have a refresh token or similar mechanism
+                    if (!string.IsNullOrEmpty(jwtDto.RefreshToken))
+                    {
+                        try
+                        {
+                            JwtDto newJwtDto = await RefreshAccessToken(jwtDto.RefreshToken);
+                            if (newJwtDto != null)
+                            {
+                                var newJwtDtoJson = JsonSerializer.Serialize(newJwtDto);
+                                await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
+                                return newJwtDto.AccessToken;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log exception details here, e.g., using ILogger
+                            await _localStorage.RemoveItemAsync("jwtDto");
+                            // Optionally redirect to login or handle unauthenticated state
+                            _navigationManager.NavigateTo("signin", forceLoad: true);
+                            throw new InvalidOperationException("Failed to refresh token: " + ex.Message);
+                        }
+                    }
+
+                    await _localStorage.RemoveItemAsync("jwtDto");
+                    _navigationManager.NavigateTo("signin", forceLoad: true);
+                    throw new InvalidOperationException("Session expired, please login again.");
                 }
             }
-            return null; // Or throw an exception or handle an unauthenticated state appropriately
+
+            throw new InvalidOperationException("Authentication required.");
         }
     }
 }
