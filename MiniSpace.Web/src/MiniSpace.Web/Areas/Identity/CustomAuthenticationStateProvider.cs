@@ -24,9 +24,8 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        await _identityService.InitializeAuthenticationState();
-
-        if (!_identityService.IsAuthenticated)
+        var isAuthenticated = await _identityService.CheckIfUserIsAuthenticated();
+        if (!isAuthenticated)
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
         var identity = new ClaimsIdentity(new[]
@@ -37,5 +36,6 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }
+
 
 }

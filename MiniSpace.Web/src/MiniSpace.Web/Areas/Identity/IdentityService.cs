@@ -198,5 +198,61 @@ namespace MiniSpace.Web.Areas.Identity
             }
         }
 
+         public async Task<bool> CheckIfUserIsAuthenticated()
+        {
+            var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+            if (!string.IsNullOrEmpty(jwtDtoJson))
+            {
+                var jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
+                var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+                if (jwtToken.ValidTo > DateTime.UtcNow)
+                {
+                    IsAuthenticated = true;
+                }
+                else
+                {
+                    IsAuthenticated = await TryRefreshToken(jwtDto.RefreshToken);
+                }
+            }
+            else
+            {
+                IsAuthenticated = false;
+            }
+            return IsAuthenticated;
+}
+
+
+        private async Task<bool> TryRefreshToken(string refreshToken)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-token", new { refreshToken });
+                if (response.Content != null)
+                {
+                    var newJwtDtoJson = JsonSerializer.Serialize(response.Content);
+                    await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                await Logout();
+            }
+            return false;
+        }
+
+        public async Task<bool> IsTokenValid()
+        {
+            var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+            if (!string.IsNullOrEmpty(jwtDtoJson))
+            {
+                var jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
+                var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+                return jwtToken.ValidTo > DateTime.UtcNow;
+            }
+            return false;
+        }
+
+
     }
 }

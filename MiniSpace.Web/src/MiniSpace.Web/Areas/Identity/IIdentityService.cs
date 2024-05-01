@@ -17,6 +17,7 @@ namespace MiniSpace.Web.Areas.Identity
         Task<string> GetAccessTokenAsync();
 
         Task InitializeAuthenticationState();
-        
+        Task<bool> CheckIfUserIsAuthenticated();
+        Task<bool> IsTokenValid();
     }
 }

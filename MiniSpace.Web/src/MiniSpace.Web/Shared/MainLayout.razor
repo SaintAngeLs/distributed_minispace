@@ -13,7 +13,11 @@
     <header>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                @if (IsUserAuthenticated()  && StudentsService.StudentDto.State == "valid")
+                @* 
+                    TODO: do not forget about the code snippet chaned ❕❕❕
+                        @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid") 
+                *@
+                @if (IsUserAuthenticated) 
                 {
                     <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
                 }
@@ -27,7 +31,7 @@
                     <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
                     <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
                     <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
-                    @if (IsUserAuthenticated())
+                    @if (IsUserAuthenticated)
                     {
                         <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
                     }
@@ -42,7 +46,11 @@
     </header>
     
     <div style="display: flex; flex: 1; flex-direction: row;">
-        @if (IsUserAuthenticated() && StudentsService.StudentDto.State == "valid")
+        @* 
+            TODO: do not forget about the code snippet chaned ❕❕❕
+                    @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid") 
+        *@
+        @if (IsUserAuthenticated)
         {
             <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
                 <RadzenPanelMenu>
@@ -72,37 +80,45 @@
 
 @code{
     bool _sidebarExpanded = true;
+    bool isLoading = true;
+     private bool firstRender = true;
+
+     private bool _isUserAuthenticated;
+
     protected override async Task OnInitializedAsync()
     {
-        // Subscribe to authentication state changes
-        AuthenticationStateProvider.AuthenticationStateChanged += HandleAuthenticationStateChanged;
+        @* await CheckAuthentication();
+        isLoading = false; *@
     }
 
-    private async void HandleAuthenticationStateChanged(Task<AuthenticationState> task)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var authState = await task;
-        var user = authState.User;
-
-        if (user.Identity?.IsAuthenticated ?? false)
+        if (firstRender)
         {
-            // Check if the user is valid and then expand the sidebar
-            @* var studentState = await StudentsService.GetStudentStateAsync(); // Assume this method checks the student state
-            _sidebarExpanded = studentState == "valid"; *@
+            await CheckAuthentication(); // Now moved inside OnAfterRenderAsync
+            isLoading = false;
+            @* StateHasChanged(); // Re-render the component after the authentication check *@
         }
-        else
-        {
-            _sidebarExpanded = true;
-        }
-
-        StateHasChanged(); // Refresh UI
     }
 
-    public void Dispose() // Implement IDisposable to unsubscribe
+    public async Task<bool> CheckAuthentication()
     {
-        AuthenticationStateProvider.AuthenticationStateChanged -= HandleAuthenticationStateChanged;
+        _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
+        Console.WriteLine($"IsUserAuthenticated: {_isUserAuthenticated}");
+        return _isUserAuthenticated;
     }
 
-    public bool IsUserAuthenticated() => IdentityService.IsAuthenticated;
+
+    @* public bool IsUserAuthenticated() => IdentityService.IsAuthenticated; *@
+public bool IsUserAuthenticated => _isUserAuthenticated;
+
+    
+      @* public bool IsUserAuthenticated()
+    {
+        var isAuthenticated = IdentityService.IsAuthenticated;
+        Console.WriteLine($"IsUserAuthenticated: {isAuthenticated}");
+        return false;
+    } *@
     
     @* void SignOut()
     {
@@ -113,6 +129,7 @@
 
     async Task SignOut()
     {
+        Console.WriteLine("Signing out...");
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
         NavigationManager.NavigateTo("signin", forceLoad: true);
@@ -136,4 +153,6 @@
     {
         NavigationManager.NavigateTo("/");
     }
+
+    
 }
