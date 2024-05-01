@@ -28,7 +28,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Reactions.Application;
 using MiniSpace.Services.Reactions.Application.Commands;
-using MiniSpace.Services.Reactions.Application.Events.External;
 using MiniSpace.Services.Reactions.Application.Services;
 using MiniSpace.Services.Reactions.Core.Repositories;
 using MiniSpace.Services.Reactions.Infrastructure.Contexts;
@@ -38,7 +37,7 @@ using MiniSpace.Services.Reactions.Infrastructure.Logging;
 using MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Reactions.Infrastructure.Services;
-using MiniSpace.Services.Reactions.Infrastructure.Services.Workers;
+using MiniSpace.Services.Reactions.Application.Queries;
 
 namespace MiniSpace.Services.Reactions.Infrastructure
 {
@@ -46,19 +45,22 @@ namespace MiniSpace.Services.Reactions.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
+            // add repositories
+            builder.Services.AddTransient<IReactionRepository, ReactionMongoRepository>();
+            builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
+            builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
-            //builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
-            ////builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-            //builder.Services.AddHostedService<PostStateUpdaterWorker>();
+            builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
             return builder
-                //.AddErrorHandler<ExceptionToResponseMapper>()
+                .AddErrorHandler<ExceptionToResponseMapper>()
                 .AddQueryHandlers()
                 .AddInMemoryQueryDispatcher()
                 .AddHttpClient()
@@ -66,14 +68,12 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .AddFabio()
                 .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
                 .AddMessageOutbox(o => o.AddMongo())
-                //.AddExceptionToMessageMapper<ExceptionToMessageMapper>()
+                .AddExceptionToMessageMapper<ExceptionToMessageMapper>()
                 .AddMongo()
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
-                //.AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
-                //.AddMongoRepository<PostDocument, Guid>("posts")
+                .AddMongoRepository<ReactionDocument, Guid>("reaction")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -85,16 +85,12 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .UseSwaggerDocs()
                 .UseJaeger()
                 .UseConvey()
-                //.UsePublicContracts<ContractAttribute>()
+                .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                //.SubscribeCommand<UpdatePost>()
-                //.SubscribeCommand<DeletePost>()
-                //.SubscribeCommand<CreatePost>()
-                //.SubscribeCommand<ChangePostState>()
-                .SubscribeEvent<StudentCreated>()
-                .SubscribeEvent<StudentDeleted>();
+                .SubscribeCommand<CreateReaction>()
+                .SubscribeCommand<DeleteReaction>();
 
             return app;
         }

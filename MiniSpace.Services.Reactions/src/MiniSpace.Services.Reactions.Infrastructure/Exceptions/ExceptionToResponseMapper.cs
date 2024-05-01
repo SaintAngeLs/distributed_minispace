@@ -5,7 +5,7 @@ using Convey.WebApi.Exceptions;
 using MiniSpace.Services.Reactions.Application.Exceptions;
 using MiniSpace.Services.Reactions.Core.Exceptions;
 
-namespace MiniSpace.Services.Posts.Infrastructure.Exceptions
+namespace MiniSpace.Services.Reactions.Infrastructure.Exceptions
 {
     internal sealed class ExceptionToResponseMapper : IExceptionToResponseMapper
     {

@@ -35,18 +35,16 @@ namespace MiniSpace.Services.Reactions.Api
 
                         // create reaction: user, content, reaction type needed
                         // no need for defining reactionId because reactions can be identified by the user and the content
-                        .Post<CreateReaction>("reactions"
-                                //, afterDispatch: (cmd, ctx) => ctx.Response.Created($"reactions/{cmd.ReactionId}")
-                                )
+                        .Post<CreateReaction>("reactions")
 
                         // delete reaction: user, content needed
                         .Delete<DeleteReaction>("reactions")
 
                         // get reactions: content needed
-                        .Get<GetReactions, ReactionData>("reactions")
-
+                        .Get<GetReactions, IEnumerable<Reaction>>("reactions")
+                        
                         // reaction summary: content needed
-                        .Get<GetReactionsSummary, ReactionSummary>("reactions")
+                        .Get<GetReactionsSummary, (int NumberOfReactions, ReactionType DominantReaction)>("reactions/summary")
                     ))
                 .UseLogging()
                 .Build()

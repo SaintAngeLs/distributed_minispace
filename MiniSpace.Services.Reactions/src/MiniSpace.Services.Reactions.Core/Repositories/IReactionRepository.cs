@@ -3,11 +3,13 @@ using MiniSpace.Services.Reactions.Core.Entities;
 
 namespace MiniSpace.Services.Reactions.Core.Repositories
 {
-    // content not specified
     public interface IReactionRepository
     {
-        Task<ReactionSummary> GetReactionSummaryAsync(Guid id);
-        Task<ReactionData> GetReactions(Guid id);
+        Task<(int NumberOfReactions, ReactionType DominantReaction)> GetReactionSummaryAsync(Guid contentId, ReactionContentType contentType);
+        Task<IEnumerable<Reaction>> GetReactionsAsync(Guid contentId, ReactionContentType contentType);
+        Task<Reaction> GetAsync(Guid studentId, Guid contentId, ReactionContentType contentType);
+        Task AddAsync(Reaction reaction);
+        Task DeleteAsync(Guid studentId, Guid contentId, ReactionContentType contentType);
         
     }    
 }

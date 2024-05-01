@@ -1,7 +1,6 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Reactions.Application.Commands;
 using MiniSpace.Services.Reactions.Application.Events;
-using MiniSpace.Services.Reactions.Application.Events.External;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Logging
 {
@@ -10,18 +9,18 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Logging
         private static IReadOnlyDictionary<Type, HandlerLogTemplate> MessageTemplates 
             => new Dictionary<Type, HandlerLogTemplate>
             {
-                // {
-                //     typeof(CreatePost),  new HandlerLogTemplate
-                //     {
-                //         After = "Created the post with id: {PostId}."
-                //     }
-                // },
-                // {
-                //     typeof(UpdatePost),  new HandlerLogTemplate
-                //     {
-                //         After = "Updated the post with id: {PostId}."
-                //     }
-                // },
+                {
+                    typeof(CreateReaction),  new HandlerLogTemplate
+                    {
+                        After = "Created the reaction with student id: {StudentId} and content id: {ContentId}."
+                    }
+                },
+                {
+                    typeof(DeleteReaction),  new HandlerLogTemplate
+                    {
+                        After = "Delete the reaction with student id: {StudentId} and content id: {ContentId}."
+                    }
+                },
                 // {
                 //     typeof(DeletePost), new HandlerLogTemplate
                 //     {
@@ -34,18 +33,18 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Logging
                 //         After = "Changed a post with id: {PostId} state to: {State}."
                 //     }
                 // },
-                {
-                    typeof(StudentCreated), new HandlerLogTemplate
-                    {
-                        After = "Created a new student with id: {StudentId}."
-                    }
-                },
-                {
-                    typeof(StudentDeleted), new HandlerLogTemplate
-                    {
-                        After = "Deleted a student with id: {StudentId}."
-                    }
-                },
+                // {
+                //     typeof(StudentCreated), new HandlerLogTemplate
+                //     {
+                //         After = "Created a new student with id: {StudentId}."
+                //     }
+                // },
+                // {
+                //     typeof(StudentDeleted), new HandlerLogTemplate
+                //     {
+                //         After = "Deleted a student with id: {StudentId}."
+                //     }
+                // },
                 // {
                 //     typeof(PostsStateUpdated),     
                 //     new HandlerLogTemplate

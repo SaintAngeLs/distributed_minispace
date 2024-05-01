@@ -5,11 +5,11 @@ using MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 {
-    public class PostMongoRepository : IPostRepository
+    public class EventMongoRepository : IEventRepository
     {
-        private readonly IMongoRepository<PostDocument, Guid> _repository;
+        private readonly IMongoRepository<EventDocument, Guid> _repository;
 
-        public PostMongoRepository(IMongoRepository<PostDocument, Guid> repository)
+        public EventMongoRepository(IMongoRepository<EventDocument, Guid> repository)
         {
             _repository = repository;
         }

@@ -5,35 +5,30 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        // public static Post AsEntity(this PostDocument document)
-        //     => new Post(document.Id, document.EventId, document.StudentId, document.TextContent,
-        //         document.MediaContent, document.CreatedAt, document.State, document.PublishDate);
+        public static Reaction AsEntity(this ReactionDocument document)
+            => new Reaction(document.StudentId, document.StudentFullName, document.Type, document.ContentType, document.ContentId);
 
-        // public static PostDocument AsDocument(this Post entity)
-        //     => new PostDocument()
-        //     {
-        //         Id = entity.Id,
-        //         EventId = entity.EventId,
-        //         StudentId = entity.StudentId,
-        //         TextContent = entity.TextContent,
-        //         MediaContent = entity.MediaContent,
-        //         CreatedAt = entity.CreatedAt,
-        //         State = entity.State,
-        //         PublishDate = entity.PublishDate
-        //     };
+        public static ReactionDocument AsDocument(this Reaction entity)
+            => new ReactionDocument()
+            {
+                Id = entity.Id,
+                ContentId = entity.ContentId,
+                ContentType = entity.ContentType,
+                Type = entity.ReactionType,
+                StudentFullName = entity.StudentFullName,
+                StudentId = entity.StudentId
+            };
 
-        // public static PostDto AsDto(this PostDocument document)
-        //     => new PostDto()
-        //     {
-        //         Id = document.Id,
-        //         EventId = document.EventId,
-        //         StudentId = document.StudentId,
-        //         TextContent = document.TextContent,
-        //         MediaContent = document.MediaContent,
-        //         CreatedAt = document.CreatedAt,
-        //         State = document.State.ToString().ToLowerInvariant(),
-        //         PublishDate = document.PublishDate
-        //     };
+        public static ReactionDto AsDto(this ReactionDocument document)
+            => new ReactionDto()
+            {
+                Id = document.Id,
+                ContentId = document.ContentId,
+                ContentType = document.ContentType,
+                Type = document.Type,
+                StudentFullName = document.StudentFullName,
+                StudentId = document.StudentId
+            };
         
         public static Student AsEntity(this StudentDocument document)
             => new Student(document.Id, document.FullName);
