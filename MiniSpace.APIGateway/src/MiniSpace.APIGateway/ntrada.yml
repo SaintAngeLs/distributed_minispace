@@ -586,7 +586,7 @@ modules:
         downstream: organizations-service/organizations/{organizationId}/children  
 
     services:
-      posts-service:
+      organizations-service:
         localUrl: localhost:5015
         url: organizations-service
         
