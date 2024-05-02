@@ -199,27 +199,29 @@ namespace MiniSpace.Web.Areas.Identity
         }
 
          public async Task<bool> CheckIfUserIsAuthenticated()
+{
+    var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+    if (!string.IsNullOrEmpty(jwtDtoJson))
+    {
+        JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
+        var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+        if (jwtToken.ValidTo > DateTime.UtcNow)
         {
-            var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
-            if (!string.IsNullOrEmpty(jwtDtoJson))
-            {
-                var jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
-                var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
-                if (jwtToken.ValidTo > DateTime.UtcNow)
-                {
-                    IsAuthenticated = true;
-                }
-                else
-                {
-                    IsAuthenticated = await TryRefreshToken(jwtDto.RefreshToken);
-                }
-            }
-            else
-            {
-                IsAuthenticated = false;
-            }
-            return IsAuthenticated;
+            IsAuthenticated = true;
+        }
+        else
+        {
+            Console.WriteLine("Refreshing tocke.............................................................");
+            IsAuthenticated = await TryRefreshToken(jwtDto.RefreshToken);
+        }
+    }
+    else
+    {
+        IsAuthenticated = false;
+    }
+    return IsAuthenticated;
 }
+
 
 
         private async Task<bool> TryRefreshToken(string refreshToken)

@@ -9,12 +9,15 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
-<h2>Welcome to MiniSpace</h2>
-<p>Please sign in to access your account and manage your details.</p>
-<div>&nbsp;</div>
-<h3>Sign In</h3>
+ <div style="text-align: center; width: 100%; justify-content: center; align-items: center; padding-top: 10rem;">
+        <h2>Welcome to MiniSpace</h2>
+        <p>Please sign in to access your account and manage your details.</p>
+        <div>&nbsp;</div>
+        <h3>Sign In</h3>
+    </div>
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+   
 
-<div style="display: flex; flex-direction: column; height: 50vh; justify-content: center; align-items: center;">
     <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
                 Shade="Shade.Lighter">
         @errorMessage
@@ -58,6 +61,7 @@
             </RadzenStack>
         </RadzenFieldset>
     </RadzenTemplateForm>
+     
 </div>
 @code {
     private SignInModel signInModel = new SignInModel();

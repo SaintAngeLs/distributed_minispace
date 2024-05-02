@@ -19,12 +19,5 @@ else
 @code {
     private string email;
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (IdentityService.IsAuthenticated)
-        {
-            email = IdentityService.UserDto.Email;
-            StateHasChanged();
-        }
-    }
+   
 }

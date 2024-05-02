@@ -21,7 +21,9 @@ namespace MiniSpace.Web.Areas.Students
 
         public async Task UpdateStudentDto(Guid studentId)
         {
-            StudentDto = await GetStudentAsync(studentId, studentId);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            StudentDto = await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
         }
 
         public void ClearStudentDto()
@@ -29,10 +31,11 @@ namespace MiniSpace.Web.Areas.Students
             StudentDto = null;
         }
         
-        public Task<StudentDto> GetStudentAsync(Guid studentId, Guid secondId)
+        public async Task<StudentDto> GetStudentAsync(Guid studentId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
         }
 
         public Task UpdateStudentAsync(Guid studentId, string profileImage, string description, bool emailNotifications)
@@ -49,7 +52,7 @@ namespace MiniSpace.Web.Areas.Students
 
         public async Task<string> GetStudentStateAsync(Guid studentId)
         {
-            var student = await GetStudentAsync(studentId, studentId);
+            var student = await GetStudentAsync(studentId);
             return student != null ? student.State : "invalid"; 
         }
     }    

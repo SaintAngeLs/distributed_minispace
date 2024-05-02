@@ -8,6 +8,7 @@ using MiniSpace.Web.DTO;
 using System.Text.Json;
 using Microsoft.IdentityModel.JsonWebTokens;
 using MiniSpace.Web.Areas.Identity;
+using System.Collections.Generic;
 
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
@@ -24,17 +25,55 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var isAuthenticated = await _identityService.CheckIfUserIsAuthenticated();
-        if (!isAuthenticated)
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-
-        var identity = new ClaimsIdentity(new[]
+        string storedToken = await _localStorage.GetItemAsStringAsync("jwtDto");
+        if (!string.IsNullOrEmpty(storedToken))
         {
-            new Claim(ClaimTypes.Name, _identityService.UserDto.Name),
-            new Claim(ClaimTypes.Email, _identityService.UserDto.Email),
-        }, "apiauth_type");
+            var jwtDto = JsonSerializer.Deserialize<JwtDto>(storedToken);
+            if (jwtDto != null && ValidateToken(jwtDto.AccessToken))
+            {
+                var claims = ParseClaimsFromJwt(jwtDto.AccessToken);
+                var identity = new ClaimsIdentity(claims, "jwtAuthType");
+                var user = new ClaimsPrincipal(identity);
+                return new AuthenticationState(user);
+            }
+        }
 
-        return new AuthenticationState(new ClaimsPrincipal(identity));
+        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+    }
+
+    private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+    {
+        var token = _jwtHandler.ReadJwtToken(jwt);
+        return token.Claims;
+    }
+
+    private bool ValidateToken(string jwt)
+    {
+        if (string.IsNullOrEmpty(jwt)) return false;
+        var token = _jwtHandler.ReadJwtToken(jwt);
+        return token.ValidTo > DateTime.UtcNow;
+    }
+
+    // public async Task InitializeAsync()
+    // {
+    //     string storedToken = await _localStorage.GetItemAsStringAsync("jwtDto");
+    //     if (!string.IsNullOrEmpty(storedToken))
+    //     {
+    //         var jwtDto = JsonSerializer.Deserialize<JwtDto>(storedToken);
+    //         if (jwtDto != null && ValidateToken(jwtDto.AccessToken))
+    //         {
+    //             var claims = ParseClaimsFromJwt(jwtDto.AccessToken);
+    //             var identity = new ClaimsIdentity(claims, "jwtAuthType");
+    //             var user = new ClaimsPrincipal(identity);
+    //             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+    //         }
+    //     }
+    // }
+
+public async Task InitializeAsync()
+    {
+        var authState = await GetAuthenticationStateAsync();
+        NotifyAuthenticationStateChanged(Task.FromResult(authState));
     }
 
 

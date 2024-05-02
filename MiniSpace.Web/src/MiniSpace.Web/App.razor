@@ -1,8 +1,12 @@
-﻿@* @using Blazored.LocalStorage
-@inject ILocalStorageService localStorage
-
-@using MiniSpace.Web.Areas.Identity
+﻿@* @using Microsoft.AspNetCore.Components.Authorization
+@using Radzen
+@using MiniSpace.Web.Areas.Students
+@inherits LayoutComponentBase
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject CustomAuthenticationStateProvider CustomAuthenticationStateProvider
 
 
 <CascadingAuthenticationState>
@@ -17,43 +21,19 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
-@code {
-    Type layoutType = typeof(NotAuthenticatedLayout);
-    bool initialized = false;
 
+@code {
     protected override async Task OnInitializedAsync()
     {
-        // Initialization that doesn't involve JS interop or other browser-specific functionality
-        await InitializeAuthentication();
+        await CustomAuthenticationStateProvider.InitializeAsync();
+        await base.OnInitializedAsync();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && !initialized)
-        {
-            // Now it's safe to make JS interop calls
-            await InitializeAuthentication();
-            initialized = true;
-        }
-    }
-
-    private async Task InitializeAuthentication()
-    {
-        await Task.Delay(1); // Ensure this method is asynchronous
-
-        await IdentityService.InitializeAuthenticationState();
-        if (IdentityService.IsAuthenticated)
-        {
-            layoutType = typeof(AuthenticatedLayout);
-            StateHasChanged(); // Ensure UI updates after changing layoutType
-        }
-    }
 } *@
 
 
-
 @using Microsoft.AspNetCore.Components.Authorization
-
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -64,3 +44,4 @@
             </LayoutView>
         </NotFound>
     </Router>
+</CascadingAuthenticationState>

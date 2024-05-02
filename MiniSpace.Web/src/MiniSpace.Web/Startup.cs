@@ -59,8 +59,9 @@ namespace MiniSpace.Web
 
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
             
-            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             services.AddScoped<IStudentsService, StudentsService>();
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IPostsService, PostsService>();
@@ -83,6 +84,8 @@ namespace MiniSpace.Web
                 app.UseHsts();
             }
 
+ app.UseAuthentication();  
+    app.UseAuthorization();  
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

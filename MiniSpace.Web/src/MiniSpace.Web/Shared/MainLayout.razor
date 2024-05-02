@@ -7,17 +7,17 @@
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 @using Blazored.LocalStorage
 @inject ILocalStorageService localStorage
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationStateProvider authenticationStateProvider
 
 <RadzenLayout style="width: 100%; min-width: 100vw; min-height: 100vh; text-align: center;" id="radzen-layout">
     <header>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                @* 
+                @*
                     TODO: do not forget about the code snippet chaned ❕❕❕
-                        @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid") 
+                        @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
                 *@
-                @if (IsUserAuthenticated) 
+                @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
                 {
                     <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
                 }
@@ -25,13 +25,13 @@
                     <RadzenLabel Text="MiniSpace" />
                 </div>
             </RadzenStack>
-            
+
             <RadzenMenu Class="rz-menu">
                 <div class="rz-menu-stack">
                     <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
                     <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
                     <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
-                    @if (IsUserAuthenticated)
+                    @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
                     {
                         <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
                     }
@@ -44,13 +44,13 @@
             </RadzenMenu>
         </RadzenStack>
     </header>
-    
+
     <div style="display: flex; flex: 1; flex-direction: row;">
-        @* 
+        @*
             TODO: do not forget about the code snippet chaned ❕❕❕
-                    @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid") 
+                    @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
         *@
-        @if (IsUserAuthenticated)
+        @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
         {
             <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
                 <RadzenPanelMenu>
@@ -65,14 +65,14 @@
                 </RadzenPanelMenu>
             </RadzenSidebar>
         }
-        
+
         <RadzenBody class="radzen-body">
             <div class="">
                 @Body
             </div>
-        </RadzenBody>    
+        </RadzenBody>
     </div>
-    
+
     <CustomRadzenFooter />
 </RadzenLayout>
 
@@ -85,16 +85,18 @@
 
      private bool _isUserAuthenticated;
 
-    protected override async Task OnInitializedAsync()
+     @* protected override async Task OnInitializedAsync()
     {
-        @* await CheckAuthentication();
-        isLoading = false; *@
-    }
+        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        _isUserAuthenticated = authenticationState.User.Identity.IsAuthenticated;
+    } *@
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender  && !OperatingSystem.IsBrowser())
         {
+            isLoading = true;
             await CheckAuthentication(); // Now moved inside OnAfterRenderAsync
             isLoading = false;
             @* StateHasChanged(); // Re-render the component after the authentication check *@
@@ -112,14 +114,14 @@
     @* public bool IsUserAuthenticated() => IdentityService.IsAuthenticated; *@
 public bool IsUserAuthenticated => _isUserAuthenticated;
 
-    
+
       @* public bool IsUserAuthenticated()
     {
         var isAuthenticated = IdentityService.IsAuthenticated;
         Console.WriteLine($"IsUserAuthenticated: {isAuthenticated}");
         return false;
     } *@
-    
+
     @* void SignOut()
     {
         IdentityService.Logout();
@@ -135,7 +137,7 @@ public bool IsUserAuthenticated => _isUserAuthenticated;
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
 
-    
+
     async Task ScrollToSection(string sectionId)
     {
         if (NavigationManager.Uri != NavigationManager.BaseUri)
@@ -154,5 +156,18 @@ public bool IsUserAuthenticated => _isUserAuthenticated;
         NavigationManager.NavigateTo("/");
     }
 
-    
+
+    @* protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ((CustomAuthenticationStateProvider)authenticationStateProvider).InitializeAsync();
+              isLoading = true;
+            await CheckAuthentication(); // Now moved inside OnAfterRenderAsync
+            isLoading = false;
+            StateHasChanged();
+        }
+    } *@
+
+
 }

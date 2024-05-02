@@ -14,7 +14,7 @@
 
 
 
-        <RadzenGrid Data="@students" TItem="StudentDto" PageSize="5" Style="margin-top: 20px;">
+        @* <RadzenGrid Data="@students" TItem="StudentDto" PageSize="5" Style="margin-top: 20px;">
             <Columns>
                 <RadzenGridColumn TItem="StudentDto" Property="StudentId" Title="ID" Width="100px" />
                 <RadzenGridColumn TItem="StudentDto" Property="FirstName" Title="First Name" />
@@ -26,10 +26,26 @@
                     </Template>
                 </RadzenGridColumn>
             </Columns>
-        </RadzenGrid>
+        </RadzenGrid> *@
+
+  <div class="card-container">
+        @foreach (var student in students)
+        {
+            <div class="card">
+                <img class="card-img-top" src="@GetImage(student.ProfileImage)" alt="Student Image">
+                <div class="card-header">
+                    <h5>@student.FirstName @student.LastName</h5>
+                </div>
+                <div class="card-body">
+                    <p>Email: @student.Email</p>
+                    <RadzenButton Text="Details" Click="@(() => OnDetails(student))" ButtonStyle="Radzen.ButtonStyle.Primary" />
+                </div>
+            </div>
+        }
+    </div>
 
 
-    <RadzenGrid Data="@filteredFriends" TItem="Friend" AutoGenerateColumns="false" PageSize="5" Style="margin-top: 20px;">
+    @* <RadzenGrid Data="@filteredFriends" TItem="Friend" AutoGenerateColumns="false" PageSize="5" Style="margin-top: 20px;">
         <Columns>
             <RadzenGridColumn TItem="Friend" Property="Name" Title="Name" Width="auto" />
             <RadzenGridColumn TItem="Friend" Width="auto">
@@ -41,10 +57,10 @@
                 </Template>
             </RadzenGridColumn>
         </Columns>
-    </RadzenGrid>
+    </RadzenGrid> *@
 
 
-    <RadzenButton Text="Add Friend" Click="@AddFriend" ButtonStyle="Radzen.ButtonStyle.Success" Icon="add" Style="margin-top: 20px; width:100%;" />
+    <RadzenButton Text="Add Friend" Click="@AddFriend" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="add" Style="margin-top: 20px; width:100%;" />
 </div>
 
 <style>
@@ -74,6 +90,7 @@
         flex-wrap: wrap;
         justify-content: space-around;
         margin-top: 2rem;
+       
     }
 
     .card {
@@ -83,6 +100,7 @@
         box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
         transition: 0.3s;
     }
+   
 
     .card:hover {
         box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -110,45 +128,25 @@
 
 @code {
     private string searchTerm;
-    private List<Friend> friends = new List<Friend>();
-    private IEnumerable<Friend> filteredFriends => friends.Where(f => f.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
-    private IEnumerable<StudentDto> students;
+    private List<StudentDto> students = new List<StudentDto>();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            await LoadStudents();
-        }
+        await LoadStudents();
     }
 
     private async Task LoadStudents()
     {
         var result = await FriendsService.GetAllStudentsAsync();
-        if (result != null && result.Any())
+        if (result != null)
         {
-            students = result;
-            StateHasChanged(); 
-        }
-        else
-        {
-            Console.WriteLine("No students available.");
+            students = result.ToList();
         }
     }
-
-    private void ViewFriendDetails(Friend friend)
+     private string GetImage(string imageUrl)
     {
-        NavigationManager.NavigateTo($"/friend/{friend.Id}");
-    }
-
-    private void SearchFriends()
-    {
-        // Implement search functionality here
-    }
-
-    private void AddFriend()
-    {
-        NavigationManager.NavigateTo("/add-friend");
+        // Use a default image if the imageUrl is null or empty
+        return !string.IsNullOrWhiteSpace(imageUrl) ? imageUrl : "images/user_image.png";
     }
 
     private void OnDetails(StudentDto student)
@@ -156,15 +154,13 @@
         NavigationManager.NavigateTo($"/student-details/{student.Id}");
     }
 
-    private void RemoveFriend(Friend friend)
+    private void AddFriend()
     {
-        friends.Remove(friend);
-        // Implement further UI update or server-side removal logic if necessary
+        NavigationManager.NavigateTo("/add-friend");
     }
 
-    public class Friend
+    private void SearchFriends()
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        // Implement the search functionality here
     }
 }
