@@ -211,7 +211,6 @@ namespace MiniSpace.Web.Areas.Identity
         }
         else
         {
-            Console.WriteLine("Refreshing tocke.............................................................");
             IsAuthenticated = await TryRefreshToken(jwtDto.RefreshToken);
         }
     }
