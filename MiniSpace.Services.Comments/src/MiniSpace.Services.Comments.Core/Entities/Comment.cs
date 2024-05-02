@@ -1,7 +1,10 @@
+using MiniSpace.Services.Comments.Core.Exceptions;
+
+
 namespace MiniSpace.Services.Comments.Core.Entities
 {
-    public class Comment{
-        public Guid Id { get; private set; }
+    public class Comment : AggregateRoot
+    {
         public Guid PostId { get; private set; }
         public Guid StudentId { get; private set; }
         public List<Guid> Likes { get; private set; }
@@ -21,10 +24,27 @@ namespace MiniSpace.Services.Comments.Core.Entities
             PublishDate = publishDate;
         }
 
-        public static Comment Create()
+        public static Comment Create(AggregateId id, Guid postId, Guid studentId, List<Guid> likes,
+        Guid parentId, string comment, DateTime publishDate)
+        {
+            CheckContent(id, comment);
+
+            return new Comment(id, postId, studentId, likes, parentId, comment, publishDate);
+        }
 
         public void Update(string textContent)
+        {
+            CheckContent(Id, textContent);
 
-        private static void CheckContent()
+            Comment = textContent;
+        }
+
+        private static void CheckContent(AggregateId id, string textContent)
+        {
+            if (string.IsNullOrWhiteSpace(textContent) && string.IsNullOrWhiteSpace(mediaContent))
+            {
+                throw new InvalidCommentContentException(id);
+            }
+        }
     }
 }
