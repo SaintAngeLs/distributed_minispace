@@ -10,13 +10,13 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-// using MiniSpace.Services.Events.Application;
-// using MiniSpace.Services.Events.Application.Commands;
-// using MiniSpace.Services.Events.Application.DTO;
-// using MiniSpace.Services.Events.Application.Queries;
-// using MiniSpace.Services.Events.Application.Services;
-// using MiniSpace.Services.Events.Application.Wrappers;
-// using MiniSpace.Services.Events.Infrastructure;
+using MiniSpace.Services.Comments.Application;
+using MiniSpace.Services.Comments.Application.Commands;
+using MiniSpace.Services.Comments.Application.DTO;
+using MiniSpace.Services.Comments.Application.Queries;
+using MiniSpace.Services.Comments.Application.Services;
+using MiniSpace.Services.Comments.Application.Wrappers;
+using MiniSpace.Services.Comments.Infrastructure;
 
 namespace MiniSpace.Services.Identity.Api
 {
@@ -33,31 +33,24 @@ namespace MiniSpace.Services.Identity.Api
                 .Configure(app => app
                     .UseInfrastructure()
                     .UseEndpoints(endpoints => endpoints
-                        // .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        // .Post<SearchEvents>("events/search", async (cmd, ctx) =>
-                        // {
-                        //     var pagedResult = await ctx.RequestServices.GetService<IEventService>().SignInAsync(cmd);
-                        //     await ctx.Response.WriteJsonAsync(pagedResult);
-                        // }))
+                        .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                     .UseDispatcherEndpoints(endpoints => endpoints
-                        // .Get<GetEvent, EventDto>("events/{eventId}")
-                        // //.Get<GetEventsOrganizer, IEnumerable<EventDto>>("events/organizer/{organizerId}")
-                        // //.Put<UpdateEvent>("events/{eventId}")
-                        // .Post<AddEvent>("events", 
-                        //     afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))
-                        // .Post<SignUpToEvent>("events/{eventId}/sign-up")
-                        // .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
-                        // .Post<RateEvent>("events/{eventId}/rate")
-                        // .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
-                        // .Delete<DeleteEvent>("events/{eventId}")
-
-                        // .Post
-                        // .Put command.id
-                        // .Get
-                        // .Delete command.id
-                        // .Post command.id/like
+                        //.Get<GetComment, IEnumerable<CommentDto>>("comments/{postId}")
+                        .Post<CreateComment>("comments/{postId}",
+                        //    afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}")
+                        )
+                        .Put<UpdateComment>("comments/{postId}/{commentID}")
+                        .Delete<DeleteComment>("comments/{postId}/{commentID}",
+                        //    afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}/{cmd.Id}")
+                        //    to chyba w końcu nie potrzebne
+                        )
+                        // .Post<UpdateLike>("comments/{postId}/{commentID}/like",
+                        // WIP
+                        // afterDispatch: (cmd, ctx) => ctx.Response.Created($"comments/{cmd.postId}/{cmd.ID}/like")
+                        // nie było w spec ale moze można dodać?
+                        // )
                     )
-                )
+                ))
                 .UseLogging()
                 .Build()
                 .RunAsync();
