@@ -1,7 +1,6 @@
 @page "/admin/students"
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
-@using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Pages.Dialogs
 @using Radzen
 @using DialogOptions = Radzen.DialogOptions
@@ -9,8 +8,6 @@
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
-@inject IEventsService EventsService
-@inject NavigationManager NavigationManager
 
 <h1>Manage students</h1>
 
@@ -25,7 +22,7 @@
     <RadzenStack Gap="1rem" Style="height: 100%">
         @if (totalStudents == 0)
         {
-            <h3>You haven't been signed up for any event yet.</h3>
+            <h3>There are not any students registered.</h3>
         }
         
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"

@@ -52,8 +52,10 @@
                     @if (IdentityService.UserDto.Role == "admin")
                     {
                         <RadzenPanelMenuItem Text="Admin" Icon="build">
-                            <RadzenPanelMenuItem Text="Manage students" Icon="account_circle"
+                            <RadzenPanelMenuItem Text="Students" Icon="account_circle"
                                                  Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
+                            <RadzenPanelMenuItem Text="Organizations" Icon="assignment"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/organizations"))" />
                         </RadzenPanelMenuItem>
                     }
                 </RadzenPanelMenu>

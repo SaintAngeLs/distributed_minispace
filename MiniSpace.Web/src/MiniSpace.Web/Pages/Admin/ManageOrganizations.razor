@@ -1,0 +1,91 @@
+@page "/admin/organizations"
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Organizations
+@using MiniSpace.Web.Pages.Dialogs
+@using Radzen
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IOrganizationsService OrganizationsService
+
+<h1>Manage organizations</h1>
+
+@if (!pageInitialized)
+{
+    <h3 class="rz-p-12">Loading...</h3>
+}
+else
+{
+    <h4 class="rz-p-8">To add new organization, select its parent and click corresponding button.</h4>
+    
+    <RadzenStack Gap="1rem" Style="height: 100%">
+        @if (totalRootOrganizations == 0)
+        {
+            <h3>There are not any organizations created.</h3>
+        }
+        
+        <RadzenTree Data="@rootOrganizations" Expand="@OnExpand">
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+            <RadzenTreeLevel TextProperty="Name" HasChildren=@(organization => false)/>
+        </RadzenTree>
+
+    </RadzenStack>
+}
+
+@code {
+    private bool pageInitialized = false;
+
+    public class ParentOrganization
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public Guid ParentId { get; set; }
+        public bool IsLeaf { get; set; }
+        public List<ParentOrganization> Children { get; set; }
+    }
+    
+    private int totalRootOrganizations = 0;
+    private List<ParentOrganization> rootOrganizations = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            var tmpOrganizations = await OrganizationsService.GetRootOrganizationsAsync();
+            ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations);
+            totalRootOrganizations = rootOrganizations.Count;
+        }
+        
+        pageInitialized = true;
+    }
+    
+    private async void OnExpand(TreeExpandEventArgs args)
+    {
+        var parent = (ParentOrganization)args.Value;
+        var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(parent.Id);
+        ConvertOrganizationDtoList(childOrganizations, parent.Children);
+        StateHasChanged();
+    }
+
+    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<ParentOrganization> result)
+    {
+        result.Clear();
+        foreach (var organization in input)
+        {
+            result.Add(new ParentOrganization()
+            {
+                Id = organization.Id,
+                Name = organization.Name,
+                ParentId = organization.ParentId,
+                IsLeaf = organization.IsLeaf,
+                Children = new List<ParentOrganization>()
+            });
+        }
+    }
+}
