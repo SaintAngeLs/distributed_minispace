@@ -9,16 +9,16 @@ namespace MiniSpace.Services.Comments.Core.Entities
         public string Comment { get; private set; }
         public DateTime PublishDate { get; private set; }
 
-        public Comment(Guid Id, Guid PostId, Guid StudentId, List<Guid> Likes,
-        Guid ParentId, string Comment, DateTime PublishDate)
+        public Comment(Guid id, Guid postId, Guid studentId, List<Guid> likes,
+        Guid parentId, string comment, DateTime publishDate)
         {
-            Id = Id;
-            PostId = PostId;
-            StudentId = StudentId;
-            Likes = Likes;
-            ParentId = ParentId;
-            Comment = Comment;
-            PublishDate = PublishDate;
+            Id = id;
+            PostId = postId;
+            StudentId = studentId;
+            Likes = likes;
+            ParentId = parentId;
+            Comment = comment;
+            PublishDate = publishDate;
         }
     }
 }
