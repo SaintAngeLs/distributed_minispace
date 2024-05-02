@@ -20,5 +20,11 @@ namespace MiniSpace.Services.Comments.Core.Entities
             Comment = comment;
             PublishDate = publishDate;
         }
+
+        public static Comment Create()
+
+        public void Update(string textContent)
+
+        private static void CheckContent()
     }
 }
