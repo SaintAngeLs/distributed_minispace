@@ -38,7 +38,6 @@ using MiniSpace.Services.Comments.Infrastructure.Logging;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Comments.Infrastructure.Services;
-using MiniSpace.Services.Comments.Infrastructure.Services.Workers;
 
 namespace MiniSpace.Services.Comments.Infrastructure
 {

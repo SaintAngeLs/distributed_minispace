@@ -1,3 +1,7 @@
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Comments.Application.Events;
 using MiniSpace.Services.Comments.Application.Exceptions;
@@ -15,7 +19,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
 
-        public CreateCommentHandler(ICommentRepository ommentRepository, IStudentRepository studentRepository,
+        public CreateCommentHandler(ICommentRepository commentRepository, IStudentRepository studentRepository,
             IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
         {
             _commentRepository = commentRepository;

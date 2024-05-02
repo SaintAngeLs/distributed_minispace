@@ -1,6 +1,6 @@
 ﻿using Convey;
 using Convey.CQRS.Commands;
-using Convey.CQRS.Comments;
+using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Comments.Application
 {

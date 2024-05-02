@@ -1,3 +1,5 @@
+using System;
+
 namespace MiniSpace.Services.Comments.Core.Entities
 {
     public class Student

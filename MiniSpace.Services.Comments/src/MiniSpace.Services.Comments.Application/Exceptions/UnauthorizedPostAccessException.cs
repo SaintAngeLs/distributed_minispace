@@ -1,3 +1,5 @@
+using System;
+
 namespace MiniSpace.Services.Comments.Application.Exceptions
 {
     public class UnauthorizedCommentAccessException : AppException

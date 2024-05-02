@@ -1,4 +1,5 @@
 using Convey.CQRS.Events;
+using System;
 
 namespace MiniSpace.Services.Comments.Application.Events.Rejected
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MiniSpace.Services.EComments.Application.Exceptions
+namespace MiniSpace.Services.Comments.Application.Exceptions
 {
     public abstract class AppException : Exception
     {

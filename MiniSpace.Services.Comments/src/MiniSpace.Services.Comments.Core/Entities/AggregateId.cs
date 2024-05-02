@@ -1,4 +1,5 @@
 using MiniSpace.Services.Comments.Core.Exceptions;
+using System;
 
 namespace MiniSpace.Services.Comments.Core.Entities
 {

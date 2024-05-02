@@ -12,10 +12,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Comments.Application;
 using MiniSpace.Services.Comments.Application.Commands;
-using MiniSpace.Services.Comments.Application.DTO;
-using MiniSpace.Services.Comments.Application.Queries;
+using MiniSpace.Services.Comments.Application.Dto;
 using MiniSpace.Services.Comments.Application.Services;
-using MiniSpace.Services.Comments.Application.Wrappers;
 using MiniSpace.Services.Comments.Infrastructure;
 
 namespace MiniSpace.Services.Identity.Api
@@ -32,16 +30,15 @@ namespace MiniSpace.Services.Identity.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseEndpoints(endpoints => endpoints
-                        .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                     .UseDispatcherEndpoints(endpoints => endpoints
+                        .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         //.Get<GetComment, IEnumerable<CommentDto>>("comments/{postId}")
-                        .Post<CreateComment>("comments/{postId}",
-                        //    afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}")
+                        .Post<CreateComment>("comments/{postId}"
+                        //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}")
                         )
                         .Put<UpdateComment>("comments/{postId}/{commentID}")
-                        .Delete<DeleteComment>("comments/{postId}/{commentID}",
-                        //    afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}/{cmd.Id}")
+                        .Delete<DeleteComment>("comments/{postId}/{commentID}"
+                        //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}/{cmd.Id}")
                         //    to chyba w końcu nie potrzebne
                         )
                         // .Post<UpdateLike>("comments/{postId}/{commentID}/like",
@@ -50,7 +47,7 @@ namespace MiniSpace.Services.Identity.Api
                         // nie było w spec ale moze można dodać?
                         // )
                     )
-                ))
+                )
                 .UseLogging()
                 .Build()
                 .RunAsync();

@@ -14,7 +14,8 @@
   </ItemGroup>  
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniSpace.Services.Comments.Infrastructure\MiniSpace.Services.Comments.Infrastructure.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Comments.Application\MiniSpace.Services.Comments.Application.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Comments.Infrastructure\MiniSpace.Services.Posts.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
