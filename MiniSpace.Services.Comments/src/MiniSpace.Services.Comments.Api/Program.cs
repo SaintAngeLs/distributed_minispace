@@ -32,18 +32,18 @@ namespace MiniSpace.Services.Identity.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        //.Get<GetComment, IEnumerable<CommentDto>>("comments/{postId}")
-                        .Post<CreateComment>("comments/{postId}"
+                        //.Get<GetComment, IEnumerable<CommentDto>>("comments")
+                        .Post<CreateComment>("comments"
                         //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}")
                         )
-                        .Put<UpdateComment>("comments/{postId}/{commentID}")
-                        .Delete<DeleteComment>("comments/{postId}/{commentID}"
-                        //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}/{cmd.Id}")
+                        .Put<UpdateComment>("comments/{commentID}")
+                        .Delete<DeleteComment>("comments/{commentID}"
+                        //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.Id}")
                         //    to chyba w końcu nie potrzebne
                         )
-                        // .Post<UpdateLike>("comments/{postId}/{commentID}/like",
+                        // .Post<UpdateLike>("comments/{commentID}/like",
                         // WIP
-                        // afterDispatch: (cmd, ctx) => ctx.Response.Created($"comments/{cmd.postId}/{cmd.ID}/like")
+                        // afterDispatch: (cmd, ctx) => ctx.Response.Created($"comments/{cmd.ID}/like")
                         // nie było w spec ale moze można dodać?
                         // )
                     )
