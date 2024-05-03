@@ -8,6 +8,8 @@
 @using MiniSpace.Web.Areas.Identity
 @inject IIdentityService IdentityService
 @inject Radzen.NotificationService NotificationService
+@inject IJSRuntime JSRuntime
+
 
 <div style="display: flex; padding: 50px;">
     <div class="left-panel">
@@ -37,8 +39,12 @@
           
             @if (student != null)
             {
+                <div class="notification-block">
+                <RadzenNotification @ref="notificationComponent" Style="position:sticky; top: 10px; right: 20px;" />
+                </div>
                 <div class="student-details">
-                   <RadzenNotification @ref="notificationComponent" Style="position:sticky; top: 20px; right: 20px;" />
+                   
+                   <div>
                     <img src="@student?.ProfileImage" alt="Profile Image" class="profile-image"/>
                     <div class="info-block">
                         <h3 class="name">@student?.FirstName @student?.LastName</h3>
@@ -52,8 +58,9 @@
                             <li><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</li>
                         </ul>
                         <RadzenButton Text="Connect" Click="@(() => ConnectWithStudent(student.Id))" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-top: 10px;" />
-                    </div>
+                     </div>
                     
+                   </div> 
                 </div>
             }
             else
@@ -69,6 +76,15 @@
 
 
 <style>
+
+    .notification-block {
+    position: fixed; /* Or 'absolute' if 'fixed' is too intrusive in your layout */
+    top: 20px;
+    right: 20px;
+    z-index: 1050; /* Ensure it's above other content */
+    max-width: 300px; /* Limit the width of notifications */
+}
+
     .main-container { overflow: visible; display: flex;   align-items: flex-start; }
     .left-panel {  width: 100%;   overflow-y: auto; /}
     @* .right-panel { width: 100%; padding: 50px; position: sticky; top: 50px;overflow-y: auto; } *@
@@ -201,7 +217,10 @@
             student.InvitationSent = true;
         }
         NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
+        await JSRuntime.InvokeVoidAsync("playNotificationSound");
     }
+
+
 
 
 

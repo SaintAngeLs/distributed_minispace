@@ -18,7 +18,7 @@
 }
 else if (sentRequests.Any())
 {
-    <RadzenDataGrid Data="@sentRequests" TItem="FriendRequestDto" AllowSorting="true" AllowPaging="true" PageSize="5">
+    <RadzenDataGrid Data="@sentRequests" TItem="FriendRequestDto" AllowSorting="true" AllowPaging="true" PageSize="10">
         <Columns>
             <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviteeName" Title="Invitee Name">
                 <Template Context="data">

@@ -1,0 +1,59 @@
+@page "/friends/requests"
+@using MiniSpace.Web.HttpClients
+@using Radzen.Blazor
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.Areas.Friends
+@inject IFriendsService FriendsService
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Services.Friends.Application.Dto;
+@inject IIdentityService IdentityService
+@inject Radzen.NotificationService NotificationService
+
+<h3>Incoming Friend Requests</h3>
+
+@if (incomingRequests == null)
+{
+    <p>Loading...</p>
+}
+else if (incomingRequests.Any())
+{
+    <RadzenDataGrid Data="@incomingRequests" TItem="FriendRequestDto" AllowSorting="true" AllowPaging="true" PageSize="5">
+        <Columns>
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviterName" Title="Inviter Name" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On" FormatString="{0:yyyy-MM-dd}" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="State" Title="Status" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Context="request">
+                <Template>
+                    <RadzenButton Text="Accept" Click="@(() => AcceptRequest(request.Id))" Style="margin-right: 10px;" />
+                    <RadzenButton Text="Decline" Click="@(() => DeclineRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <p>No incoming requests.</p>
+}
+
+@code {
+    private IEnumerable<FriendRequestDto> incomingRequests;
+
+    protected override async Task OnInitializedAsync()
+    {
+        incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
+    }
+
+    private async Task AcceptRequest(Guid requestId)
+    {
+        // Call service to accept the request
+        NotificationService.Notify(Radzen.NotificationSeverity.Success, "Request Accepted", duration: 4000);
+    }
+
+    private async Task DeclineRequest(Guid requestId)
+    {
+        // Call service to decline the request
+        NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Request Declined", duration: 4000);
+    }
+}

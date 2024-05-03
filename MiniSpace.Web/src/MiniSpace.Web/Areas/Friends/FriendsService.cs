@@ -140,8 +140,18 @@ namespace MiniSpace.Web.Areas.Friends
             }
         }
 
+        public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
+        {
+            var userId = _identityService.GetCurrentUserId();
+            if (userId == Guid.Empty)
+            {
+                throw new InvalidOperationException("User ID is not valid.");
+            }
 
-
-
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            var endpoint = $"friends/requests/{userId}";
+            return await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>(endpoint);
+        }
     }    
 }

@@ -20,5 +20,6 @@ namespace MiniSpace.Web.Areas.Friends
         Task<StudentDto> GetStudentAsync(Guid studentId);
         Task InviteStudent(Guid inviterId, Guid inviteeId);
         Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync();
+        Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync();
     }
 }
