@@ -455,12 +455,13 @@ modules:
             - userId: {userId}
           auth: true
 
-        - upstream: /{friendId}/remove
-          method: POST
+        - upstream: /{requesterId}/{friendId}/remove
+          method: DELETE
           use: downstream
-          downstream: friends-service/friends/{friendId}/remove
+          downstream: friends-service/friends/{requesterId}/{friendId}/remove
           bind:
             - friendId: {friendId}
+            - requesterId: {requesterId}
           auth: true
 
         - upstream: /requests/{userId}

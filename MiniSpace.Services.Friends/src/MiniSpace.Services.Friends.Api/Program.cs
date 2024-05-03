@@ -52,7 +52,7 @@ namespace MiniSpace.Services.Friends.Api
 
                         .Post<PendingFriendAccept>("friends/requests/{studentId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Post<PendingFriendDecline>("friends/requests/{studentId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
-                        .Post<RemoveFriend>("friends/{friendId}/remove")
+                        .Delete<RemoveFriend>("friends/{requesterId}/{friendId}/remove")
                         .Post<InviteFriend>("friends/{studentId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["studentId"]}/invite")))) 
                 .UseLogging()
                 .UseLogging()

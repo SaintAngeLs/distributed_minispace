@@ -39,37 +39,32 @@ namespace MiniSpace.Web.Areas.Friends
             return await _httpClient.GetAsync<FriendDto>($"friends/{friendId}");
         }
 
-       public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync(Guid studentId)
-{
-    string accessToken = await _identityService.GetAccessTokenAsync();
-    _httpClient.SetAccessToken(accessToken);
-    string url = $"friends/{studentId}";
-    var friends = await _httpClient.GetAsync<IEnumerable<FriendDto>>(url);
-    
-    Console.WriteLine($"Retrieved {friends.Count()} friends for student ID {studentId}.");
-
-    if (friends != null && friends.Any())
-    {
-        foreach (var friend in friends)
+        public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync(Guid studentId)
         {
-            // Make sure to use FriendId to fetch the friend's details
-            friend.StudentDetails = await GetStudentAsync(friend.FriendId);
-            Console.WriteLine($"Friend ID: {friend.FriendId}, Friend's Student ID: {friend.StudentDetails.Id}, Name: {friend.StudentDetails.FirstName} {friend.StudentDetails.LastName}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            string url = $"friends/{studentId}";
+            var friends = await _httpClient.GetAsync<IEnumerable<FriendDto>>(url);
+            
+            Console.WriteLine($"Retrieved {friends.Count()} friends for student ID {studentId}.");
+
+            if (friends != null && friends.Any())
+            {
+                foreach (var friend in friends)
+                {
+                    friend.StudentDetails = await GetStudentAsync(friend.FriendId);
+                    Console.WriteLine($"Friend ID: {friend.FriendId}, Friend's Student ID: {friend.StudentDetails.Id}, Name: {friend.StudentDetails.FirstName} {friend.StudentDetails.LastName}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No friends found.");
+            }
+
+            return friends;
         }
-    }
-    else
-    {
-        Console.WriteLine("No friends found.");
-    }
 
-    return friends;
-}
-
-
-
-
-
-         public async Task<HttpResponse<object>> AddFriendAsync(Guid friendId)
+        public async Task<HttpResponse<object>> AddFriendAsync(Guid friendId)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -80,8 +75,21 @@ namespace MiniSpace.Web.Areas.Friends
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            await _httpClient.DeleteAsync($"friends/{friendId}");
+            var requesterId = _identityService.GetCurrentUserId();
+            Console.WriteLine($"Requester ID: {requesterId}"); // Log the requester ID
+
+            if (requesterId == Guid.Empty)
+            {
+                Console.WriteLine("Invalid Requester ID: ID is empty.");
+                return; // Optionally handle the case where the requester ID is invalid
+            }
+
+            var payload = new { RequesterId = requesterId, FriendId = friendId };
+            Console.WriteLine($"Payload: {payload.RequesterId}, {payload.FriendId}");
+            await _httpClient.DeleteAsync($"friends/{requesterId}/{friendId}/remove");
         }
+
+
 
 
         public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
@@ -158,7 +166,6 @@ namespace MiniSpace.Web.Areas.Friends
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as per your error-handling policy
                 return new List<FriendRequestDto>();
             }
         }

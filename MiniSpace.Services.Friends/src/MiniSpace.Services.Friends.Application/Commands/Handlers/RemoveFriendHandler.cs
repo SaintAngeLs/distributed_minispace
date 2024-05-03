@@ -29,6 +29,8 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             // {
             //     throw new UnauthorizedFriendActionException(command.RequesterId, identity.Id);
             // }
+             Console.WriteLine($"Handling RemoveFriend for RequesterId: {command.RequesterId} and FriendId: {command.FriendId}. Authenticated: {identity.IsAuthenticated}");
+    
 
             var exists = await _friendRepository.IsFriendAsync(command.RequesterId, command.FriendId);
             if (!exists)
@@ -36,11 +38,17 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
                 throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
             }
 
+            // Remove the friendship in both directions
             await _friendRepository.RemoveFriendAsync(command.RequesterId, command.FriendId);
-            // TODO: Apply IEventMapper.
-            // var eventToPublish = _eventMapper.Map(new PendingFriendDeclined(command.RequesterId, command.FriendId));
+            await _friendRepository.RemoveFriendAsync(command.FriendId, command.RequesterId);
+
+            // Publish an event indicating the friend has been removed
             var eventToPublish = new PendingFriendDeclined(command.RequesterId, command.FriendId);
             await _messageBroker.PublishAsync(eventToPublish);
+
+            // Publish a reciprocal event for the inverse relationship
+            var reciprocalEventToPublish = new PendingFriendDeclined(command.FriendId, command.RequesterId);
+            await _messageBroker.PublishAsync(reciprocalEventToPublish);
         }
     }
 }
