@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniSpace.Services.Students.Core\MiniSpace.Services.Students.Core.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.MediaFiles.Core\MiniSpace.Services.MediaFiles.Core.csproj" />
   </ItemGroup>
 
 </Project>
