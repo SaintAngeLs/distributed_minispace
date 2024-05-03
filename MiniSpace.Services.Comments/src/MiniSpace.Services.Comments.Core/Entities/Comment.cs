@@ -26,6 +26,12 @@ namespace MiniSpace.Services.Comments.Core.Entities
             PublishDate = publishDate;
         }
 
+        public void Like(Guid studentId)
+        {
+            if(Likes.Contains(studentId)) Likes.Remove(studentId);
+            else Likes.Add(studentId);
+        }
+
         public static Comment Create(AggregateId id, Guid postId, Guid studentId, List<Guid> likes,
         Guid parentId, string textContent, DateTime publishDate)
         {

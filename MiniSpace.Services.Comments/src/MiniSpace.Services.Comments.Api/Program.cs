@@ -41,11 +41,13 @@ namespace MiniSpace.Services.Identity.Api
                         //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.Id}")
                         //    to chyba w końcu nie potrzebne
                         )
-                        // .Post<UpdateLike>("comments/{commentID}/like",
-                        // WIP
-                        // afterDispatch: (cmd, ctx) => ctx.Response.Created($"comments/{cmd.ID}/like")
+                        .Post<UpdateLike>("comments/{commentID}/like"
+                        //
+                        // Działą tak, że jak nie było to dodaje do listy a jak był na liście to usuwa z listy
+                        //
+                        // ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"comments/{cmd.ID}/like")
                         // nie było w spec ale moze można dodać?
-                        // )
+                        )
                     )
                 )
                 .UseLogging()
