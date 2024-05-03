@@ -43,6 +43,12 @@ namespace MiniSpace.Services.Friends.Api
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/{studentId}")
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
+                        .Get<GetSentFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/sent/{studentId}")
+                        // .Get("friends/requests/sent", ctx =>
+                        // {
+                        //     var query = new GetSentFriendRequests { StudentId = ctx.User.GetUserId() }; 
+                        //     return ctx.QueryDispatcher.QueryAsync(query);
+                        // }, afterDispatch: ctx => ctx.Response.WriteAsJsonAsync(ctx.Result))
 
                         .Post<PendingFriendAccept>("friends/requests/{studentId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Post<PendingFriendDecline>("friends/requests/{studentId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
