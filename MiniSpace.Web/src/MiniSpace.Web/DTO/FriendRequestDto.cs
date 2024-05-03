@@ -11,5 +11,9 @@ namespace MiniSpace.Services.Friends.Application.Dto
         public DateTime RequestedAt { get; set; }
         public FriendState State { get; set; }
         public Guid StudentId { get; set; }
+
+        public string InviteeName { get; set; }
+        public string InviteeEmail { get; set; }
+        public string InviteeImage { get; set; }
     }
 }

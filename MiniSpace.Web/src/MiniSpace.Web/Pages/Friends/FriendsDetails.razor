@@ -2,21 +2,30 @@
 @using MiniSpace.Web.Areas.Friends
 @inject IFriendsService FriendsService
 @using MiniSpace.Web.DTO
+@using Radzen.Blazor
 
-<h3>Student Details</h3>
-<div>
-    <img src="@student?.ProfileImage" alt="Profile Image" style="width: 150px; height: 150px; object-fit: cover;"/>
-    <p><strong>ID:</strong> @student?.Id</p>
-    <p><strong>Name:</strong> @student?.FirstName @student?.LastName</p>
-    <p><strong>Email:</strong> @student?.Email</p>
-    <p><strong>Description:</strong> @student?.Description</p>
-    <p><strong>Number of Friends:</strong> @student?.NumberOfFriends</p>
-    <p><strong>Date of Birth:</strong> @student?.DateOfBirth.ToString("yyyy-MM-dd")</p>
-    <p><strong>State:</strong> @student?.State</p>
-    <p><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</p>
-
-</div>
-
+<h3>Student Profile</h3>
+@if (student == null)
+{
+    <RadzenProgress Label="Loading profile..." Mode="ProgressMode.Indeterminate" />
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <img src="@student.ProfileImage" alt="Profile Image" class="profile-image" />
+            <h3>@student.FirstName @student.LastName</h3>
+            <p>@student.Email</p>
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong> @student.Description</p>
+            <p><strong>Number of Friends:</strong> @student.NumberOfFriends</p>
+            <p><strong>Date of Birth:</strong> @student.DateOfBirth.ToString("yyyy-MM-dd")</p>
+            <p><strong>State:</strong> @student.State</p>
+            <p><strong>Joined:</strong> @student.CreatedAt.ToString("yyyy-MM-dd")</p>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter] public Guid Id { get; set; }
@@ -27,4 +36,31 @@
         student = await FriendsService.GetStudentAsync(Id);
     }
 }
-   
+
+<style>
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+
+    .card-header {
+        background-color: #f5f5f5;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+</style>

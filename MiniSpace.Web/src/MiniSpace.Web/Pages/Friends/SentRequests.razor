@@ -18,17 +18,18 @@
 }
 else if (sentRequests.Any())
 {
-    <div>
-        @foreach (var request in sentRequests)
-        {
-            <div>
-                <p>@request.InviterId --> Inviter's ID (You need to fetch names separately)</p>
-                <p>@request.InviteeId --> Invitee's ID (You need to fetch names separately)</p>
-                <p>Sent on: @request.RequestedAt.ToString("yyyy-MM-dd")</p>
-                <p>Status: @(request.State)</p>
-            </div>
-        }
-    </div>
+    <RadzenDataGrid Data="@sentRequests" TItem="FriendRequestDto" AllowSorting="true" AllowPaging="true" PageSize="5">
+        <Columns>
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviteeName" Title="Invitee Name">
+                <Template Context="data">
+                    <a href="" @onclick="@(() => RedirectToDetails(data.InviteeId))">@data.InviteeName</a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviteeEmail" Title="Invitee Email" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On" FormatString="{0:yyyy-MM-dd}" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="State" Title="Status" />
+        </Columns>
+    </RadzenDataGrid>
 }
 else
 {
@@ -41,7 +42,11 @@ else
     protected override async Task OnInitializedAsync()
     {
         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
-        StateHasChanged(); // This will ensure UI refreshes after data load
+        StateHasChanged(); 
     }
 
+    private void RedirectToDetails(Guid id)
+    {
+        NavigationManager.NavigateTo($"/student-details/{id}");
+    }
 }

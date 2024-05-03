@@ -38,7 +38,6 @@ namespace MiniSpace.Web.Areas.Friends
             return await _httpClient.GetAsync<FriendDto>($"friends/{friendId}");
         }
 
-
         public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync()
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
@@ -97,6 +96,14 @@ namespace MiniSpace.Web.Areas.Friends
         //     return await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>($"friends/requests/sent/{studentId}");
         // }
 
+        public async Task<StudentDto> GetUserDetails(Guid userId)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<StudentDto>($"students/{userId}");
+        }
+
+
         public async Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync()
         {
             try
@@ -114,8 +121,17 @@ namespace MiniSpace.Web.Areas.Friends
                 }
 
                 _httpClient.SetAccessToken(accessToken);
-                var response = await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>($"friends/requests/sent/{studentId}");
-                return response ?? new List<FriendRequestDto>();
+                var friendRequests = await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>($"friends/requests/sent/{studentId}");
+
+                foreach (var request in friendRequests)
+                {
+                    var userDetails = await GetUserDetails(request.InviteeId);
+                    request.InviteeName = userDetails.FirstName + " " + userDetails.LastName;
+                    request.InviteeEmail = userDetails.Email;
+                    request.InviteeImage = userDetails.ProfileImage;
+                }
+
+                return friendRequests;
             }
             catch (Exception ex)
             {
@@ -123,6 +139,7 @@ namespace MiniSpace.Web.Areas.Friends
                 return new List<FriendRequestDto>();
             }
         }
+
 
 
 
