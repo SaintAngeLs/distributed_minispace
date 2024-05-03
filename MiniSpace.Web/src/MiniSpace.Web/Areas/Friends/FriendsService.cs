@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.HttpClients;
@@ -87,6 +88,43 @@ namespace MiniSpace.Web.Areas.Friends
             var payload = new { inviterId = inviterId, inviteeId = inviteeId };
             await _httpClient.PostAsync<object, HttpResponse<object>>($"friends/{inviteeId}/invite", payload);
         }
+
+        // public async Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync()
+        // {
+        //     var studentId = _identityService.GetCurrentUserId();
+        //     string accessToken = await _identityService.GetAccessTokenAsync();
+        //     _httpClient.SetAccessToken(accessToken);
+        //     return await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>($"friends/requests/sent/{studentId}");
+        // }
+
+        public async Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync()
+        {
+            try
+            {
+                var studentId = _identityService.GetCurrentUserId();
+                if (studentId == Guid.Empty)
+                {
+                    throw new InvalidOperationException("User ID is not valid.");
+                }
+
+                string accessToken = await _identityService.GetAccessTokenAsync();
+                if (string.IsNullOrEmpty(accessToken))
+                {
+                    throw new InvalidOperationException("Access token is missing or invalid.");
+                }
+
+                _httpClient.SetAccessToken(accessToken);
+                var response = await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>($"friends/requests/sent/{studentId}");
+                return response ?? new List<FriendRequestDto>();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as per your error-handling policy
+                return new List<FriendRequestDto>();
+            }
+        }
+
+
 
     }    
 }

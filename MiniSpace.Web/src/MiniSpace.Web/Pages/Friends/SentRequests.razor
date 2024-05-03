@@ -1,0 +1,47 @@
+@page "/friends/sent-requests"
+@using MiniSpace.Web.HttpClients
+@using Radzen.Blazor
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.Areas.Friends
+@inject IFriendsService FriendsService
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Services.Friends.Application.Dto;
+@inject IIdentityService IdentityService
+@inject Radzen.NotificationService NotificationService
+
+<h3>Sent Friend Requests</h3>
+
+@if (sentRequests == null)
+{
+    <p>Loading...</p>
+}
+else if (sentRequests.Any())
+{
+    <div>
+        @foreach (var request in sentRequests)
+        {
+            <div>
+                <p>@request.InviterId --> Inviter's ID (You need to fetch names separately)</p>
+                <p>@request.InviteeId --> Invitee's ID (You need to fetch names separately)</p>
+                <p>Sent on: @request.RequestedAt.ToString("yyyy-MM-dd")</p>
+                <p>Status: @(request.State)</p>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No sent requests.</p>
+}
+
+@code {
+    private IEnumerable<FriendRequestDto> sentRequests;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+        StateHasChanged(); // This will ensure UI refreshes after data load
+    }
+
+}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.HttpClients;
 
@@ -18,5 +19,6 @@ namespace MiniSpace.Web.Areas.Friends
         Task<IEnumerable<StudentDto>> GetAllStudentsAsync(); 
         Task<StudentDto> GetStudentAsync(Guid studentId);
         Task InviteStudent(Guid inviterId, Guid inviteeId);
+        Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync();
     }
 }

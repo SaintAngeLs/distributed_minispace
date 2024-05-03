@@ -32,25 +32,18 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
         }
 
         public async Task UpdateAsync(FriendRequest friendRequest)
-{
-   
-        var documentToUpdate = friendRequest.AsDocument();
+        {
+        
+                var documentToUpdate = friendRequest.AsDocument();
 
-        // Explicitly set the state to ensure it's carried over correctly
-        documentToUpdate.State = friendRequest.State;
+                documentToUpdate.State = friendRequest.State;
 
-        Console.WriteLine("Attempting to update document in database: " + JsonSerializer.Serialize(documentToUpdate));
-        await _repository.UpdateAsync(documentToUpdate);
+                Console.WriteLine("Attempting to update document in database: " + JsonSerializer.Serialize(documentToUpdate));
+                await _repository.UpdateAsync(documentToUpdate);
 
-        // Fetch the updated document to verify the update
-        var documentAfterUpdate = await _repository.GetAsync(friendRequest.Id);
-        Console.WriteLine("Document after update: " + JsonSerializer.Serialize(documentAfterUpdate));
-    
-}
-
-
-
-
+                var documentAfterUpdate = await _repository.GetAsync(friendRequest.Id);
+                Console.WriteLine("Document after update: " + JsonSerializer.Serialize(documentAfterUpdate));
+        }
 
         public async Task DeleteAsync(Guid id)
         {

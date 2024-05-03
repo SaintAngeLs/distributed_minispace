@@ -94,7 +94,7 @@
 
     .student-details {
     position: sticky;
-    top: 60px; /* This ensures it starts sticking slightly below the right-panel's stickiness */
+    top: 60px;
  
     align-items: center;
     margin: 20px;
@@ -200,7 +200,7 @@
         {
             student.InvitationSent = true;
         }
-        NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 4000);
+        NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
     }
 
 
