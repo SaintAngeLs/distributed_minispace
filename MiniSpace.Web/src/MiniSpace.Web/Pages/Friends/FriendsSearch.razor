@@ -1,4 +1,4 @@
-@page "/friends"
+@page "/friends/search"
 @using MiniSpace.Web.HttpClients
 @using Radzen.Blazor
 @inject NavigationManager NavigationManager
@@ -163,9 +163,18 @@
         }
     }
 
-    private string GetImage(string imageUrl) {
-        return !string.IsNullOrWhiteSpace(imageUrl) ? imageUrl : "images/user_image.png";
+    private string GetImage(string base64Image)
+    {
+        if (string.IsNullOrWhiteSpace(base64Image))
+        {
+            return "images/user_image.png";
+        }
+        else
+        {
+            return $"data:image/jpeg;base64,{base64Image}";
+        }
     }
+
 
     private void OnDetails(StudentDto selectedStudent) {
         student = selectedStudent;
