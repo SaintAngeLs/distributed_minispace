@@ -13,13 +13,15 @@ namespace MiniSpace.Web.Areas.Friends
         Task UpdateFriendDto(Guid friendId);
         void ClearFriendDto();
         Task<FriendDto> GetFriendAsync(Guid friendId);
-        Task<IEnumerable<FriendDto>> GetAllFriendsAsync();
         Task<HttpResponse<object>> AddFriendAsync(Guid friendId);
         Task RemoveFriendAsync(Guid friendId);
-        Task<IEnumerable<StudentDto>> GetAllStudentsAsync(); 
+         Task<IEnumerable<FriendDto>> GetAllFriendsAsync(Guid studentId);
         Task<StudentDto> GetStudentAsync(Guid studentId);
+        Task<IEnumerable<StudentDto>> GetAllStudentsAsync();
         Task InviteStudent(Guid inviterId, Guid inviteeId);
         Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync();
         Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync();
+        Task AcceptFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId);
+        Task DeclineFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId);
     }
 }

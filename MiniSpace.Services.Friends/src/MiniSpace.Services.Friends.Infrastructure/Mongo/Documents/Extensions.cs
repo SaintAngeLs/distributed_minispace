@@ -28,7 +28,10 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
                 StudentId = document.StudentId,
                 FriendId = document.FriendId,
                 CreatedAt = document.CreatedAt,
-                State = document.State
+                State = document.State,
+                // Email = document.Email,          
+                // FirstName = document.FirstName,   
+                // LastName = document.LastName
             };
 
         public static FriendRequest AsEntity(this FriendRequestDocument document)

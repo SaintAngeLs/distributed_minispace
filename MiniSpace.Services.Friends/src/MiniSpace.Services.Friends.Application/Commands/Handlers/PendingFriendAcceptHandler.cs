@@ -29,6 +29,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 
         public async Task HandleAsync(PendingFriendAccept command, CancellationToken cancellationToken = default)
         {
+            // Fetch the friend request to confirm it exists and is valid
             var friendRequest = await _friendRequestRepository.FindByInviterAndInvitee(command.RequesterId, command.FriendId);
             if (friendRequest == null)
             {
@@ -40,11 +41,17 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
                 throw new InvalidOperationException("Friend request is not in the correct state to be accepted.");
             }
 
+            // Accept the friend request
             friendRequest.Accept();
             await _friendRequestRepository.UpdateAsync(friendRequest);
 
+            // Create a new friend relationship
             var newFriend = new Friend(command.RequesterId, command.FriendId, DateTime.UtcNow, FriendState.Accepted);
             await _friendRepository.AddAsync(newFriend);
+
+            // Optionally, create the reciprocal friendship to reflect the two-way relationship
+            var reciprocalFriend = new Friend(command.FriendId, command.RequesterId, DateTime.UtcNow, FriendState.Accepted);
+            await _friendRepository.AddAsync(reciprocalFriend);
         }
     }
 }

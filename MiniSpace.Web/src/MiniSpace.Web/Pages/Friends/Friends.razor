@@ -1,0 +1,114 @@
+@page "/friends"
+@using MiniSpace.Web.HttpClients
+@using Radzen.Blazor
+@using MiniSpace.Web.Areas.Friends
+@using MiniSpace.Web.DTO;
+@inject IIdentityService IdentityService
+@inject IFriendsService FriendsService
+@inject NavigationManager NavigationManager
+@inject Radzen.NotificationService NotificationService
+
+<div class="friends-container">
+    @if (friends != null && friends.Any())
+    {
+        foreach (var friend in friends)
+        {
+            <div class="friend-card">
+                <img src="@GetImage(friend.StudentDetails.ProfileImage)" alt="Friend Image" class="friend-img">
+                <div class="friend-info">
+                    <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
+                    <p>@friend.StudentDetails.Email</p>
+                    <RadzenButton Text="Details" Click="@(() => ViewDetails(friend.Id))" Style="margin-right: 10px;" />
+                    <RadzenButton Text="Remove" Click="@(() => RemoveFriend(friend.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No friends to show. Start connecting now!</p>
+    }
+</div>
+
+<style>
+    .friends-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.friend-card {
+    width: 30%;
+    margin: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+}
+
+.friend-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
+    object-fit: cover;
+}
+
+.friend-info {
+    flex: 1;
+}
+
+</style> 
+
+
+@code {
+    private List<FriendDto> friends;
+    private Guid studentId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            studentId = IdentityService.GetCurrentUserId();
+            var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
+            if (friendsResult != null)
+            {
+                friends = friendsResult.ToList();
+            }
+            else
+            {
+                friends = new List<FriendDto>();  // Initialize as empty list if null is returned
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
+            friends = new List<FriendDto>();  // Initialize as empty list in case of error
+        }
+    }
+
+
+
+    private void ViewDetails(Guid friendId)
+    {
+        NavigationManager.NavigateTo($"/friend/details/{friendId}");
+    }
+
+    private async Task RemoveFriend(Guid friendId)
+    {
+        await FriendsService.RemoveFriendAsync(friendId);
+        friends.RemoveAll(f => f.Id == friendId);
+    
+        NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Friend Removed", $"You have removed a friend.", 5000);
+        StateHasChanged();  // Refresh the UI
+    }
+
+    private string GetImage(string base64Image)
+    {
+        if (string.IsNullOrWhiteSpace(base64Image))
+        {
+            return "images/user_default.png";  // Ensure you have a default image
+        }
+        return $"data:image/jpeg;base64,{base64Image}";
+    }
+}

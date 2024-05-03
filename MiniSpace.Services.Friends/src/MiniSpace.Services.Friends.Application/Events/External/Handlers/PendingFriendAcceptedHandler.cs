@@ -22,17 +22,29 @@ namespace MiniSpace.Services.Friends.Application.Events.External.Handlers
 
         public async Task HandleAsync(PendingFriendAccepted @event, CancellationToken cancellationToken)
         {
+            // Fetch the friendship and check existence
             var friendship = await _friendRepository.GetFriendshipAsync(@event.RequesterId, @event.FriendId);
-            if (friendship is null)
+            if (friendship == null)
             {
                 throw new FriendshipNotFoundException(@event.RequesterId, @event.FriendId);
             }
 
+            // Confirm the friendship
             friendship.MarkAsConfirmed();
-            await _friendRepository.UpdateAsync(friendship);
+            await _friendRepository.UpdateFriendshipAsync(friendship);
 
-            var events = _eventMapper.MapAll(friendship.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
+            // Create reciprocal friendship to ensure mutual visibility and interaction
+            if (await _friendRepository.GetFriendshipAsync(@event.FriendId, @event.RequesterId) == null)
+            {
+                var reciprocalFriendship = new Core.Entities.Friend(@event.FriendId, @event.RequesterId, DateTime.UtcNow, Core.Entities.FriendState.Accepted);
+                await _friendRepository.AddAsync(reciprocalFriendship);
+                reciprocalFriendship.MarkAsConfirmed();
+                await _friendRepository.UpdateFriendshipAsync(reciprocalFriendship);
+            }
+
+            // Publish the confirmation event
+            var confirmationEvent = new FriendshipConfirmed(@event.RequesterId, @event.FriendId);
+            await _messageBroker.PublishAsync(confirmationEvent);
         }
     }
 }

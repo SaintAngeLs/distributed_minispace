@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Web.Areas.Identity;
@@ -38,12 +39,34 @@ namespace MiniSpace.Web.Areas.Friends
             return await _httpClient.GetAsync<FriendDto>($"friends/{friendId}");
         }
 
-        public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync()
+       public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync(Guid studentId)
+{
+    string accessToken = await _identityService.GetAccessTokenAsync();
+    _httpClient.SetAccessToken(accessToken);
+    string url = $"friends/{studentId}";
+    var friends = await _httpClient.GetAsync<IEnumerable<FriendDto>>(url);
+    
+    Console.WriteLine($"Retrieved {friends.Count()} friends for student ID {studentId}.");
+
+    if (friends != null && friends.Any())
+    {
+        foreach (var friend in friends)
         {
-            string accessToken = await _identityService.GetAccessTokenAsync();
-            _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<IEnumerable<FriendDto>>("friends");
+            // Make sure to use FriendId to fetch the friend's details
+            friend.StudentDetails = await GetStudentAsync(friend.FriendId);
+            Console.WriteLine($"Friend ID: {friend.FriendId}, Friend's Student ID: {friend.StudentDetails.Id}, Name: {friend.StudentDetails.FirstName} {friend.StudentDetails.LastName}");
         }
+    }
+    else
+    {
+        Console.WriteLine("No friends found.");
+    }
+
+    return friends;
+}
+
+
+
 
 
          public async Task<HttpResponse<object>> AddFriendAsync(Guid friendId)
@@ -152,6 +175,22 @@ namespace MiniSpace.Web.Areas.Friends
             _httpClient.SetAccessToken(accessToken);
             var endpoint = $"friends/requests/{userId}";
             return await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>(endpoint);
+        }
+
+        public async Task AcceptFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            var payload = new { RequesterId = requesterId, FriendId = friendId };
+            await _httpClient.PostAsync<object, object>($"friends/requests/{requestId}/accept", payload);
+        }
+
+        public async Task DeclineFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            var payload = new { RequesterId = requesterId, FriendId = friendId };
+            await _httpClient.PostAsync<object, object>($"friends/requests/{requestId}/decline", payload);
         }
     }    
 }

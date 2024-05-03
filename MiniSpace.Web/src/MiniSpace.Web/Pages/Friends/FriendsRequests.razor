@@ -47,13 +47,26 @@ else
 
     private async Task AcceptRequest(Guid requestId)
     {
-        // Call service to accept the request
-        NotificationService.Notify(Radzen.NotificationSeverity.Success, "Request Accepted", duration: 4000);
+        var request = incomingRequests.FirstOrDefault(r => r.Id == requestId);
+        if (request != null)
+        {
+            await FriendsService.AcceptFriendRequestAsync(request.Id, request.InviterId, request.InviteeId);
+            incomingRequests = incomingRequests.Where(r => r.Id != requestId).ToList();
+            NotificationService.Notify(Radzen.NotificationSeverity.Success, "Request Accepted", duration: 4000);
+            StateHasChanged(); // Refresh the UI
+        }
     }
 
     private async Task DeclineRequest(Guid requestId)
     {
-        // Call service to decline the request
-        NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Request Declined", duration: 4000);
+        var request = incomingRequests.FirstOrDefault(r => r.Id == requestId);
+        if (request != null)
+        {
+            await FriendsService.DeclineFriendRequestAsync(request.Id, request.InviterId, request.InviteeId);
+            incomingRequests = incomingRequests.Where(r => r.Id != requestId).ToList();
+            NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Request Declined", duration: 4000);
+            StateHasChanged(); // Update the UI
+        }
     }
+
 }

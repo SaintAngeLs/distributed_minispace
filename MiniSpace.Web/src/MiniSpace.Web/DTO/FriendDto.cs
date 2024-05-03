@@ -15,5 +15,7 @@ namespace MiniSpace.Web.DTO
         public string FullName => $"{FirstName} {LastName}";
         public DateTime CreatedAt { get; set; }
         public FriendState State { get; set; }
+        public string ProfileImage { get; set; }
+        public StudentDto StudentDetails { get; set; }
     }
 }
