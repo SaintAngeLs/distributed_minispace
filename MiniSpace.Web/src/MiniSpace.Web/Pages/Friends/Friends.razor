@@ -1,166 +1,201 @@
 @page "/friends"
+@using MiniSpace.Web.HttpClients
 @using Radzen.Blazor
 @inject NavigationManager NavigationManager
 @using MiniSpace.Web.Areas.Friends
 @inject IFriendsService FriendsService
-
 @using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Identity
+@inject IIdentityService IdentityService
+@inject Radzen.NotificationService NotificationService
 
-<div class="container mt-4 mx-5" style="width: 1000px;">
-    <div class="search-bar" style="display: flex; flex-direction: row;">
-        <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
-        <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
-    </div>
-
-
-
-        @* <RadzenGrid Data="@students" TItem="StudentDto" PageSize="5" Style="margin-top: 20px;">
-            <Columns>
-                <RadzenGridColumn TItem="StudentDto" Property="StudentId" Title="ID" Width="100px" />
-                <RadzenGridColumn TItem="StudentDto" Property="FirstName" Title="First Name" />
-                <RadzenGridColumn TItem="StudentDto" Property="LastName" Title="Last Name" />
-                <RadzenGridColumn TItem="StudentDto" Property="Email" Title="Email" />
-                <RadzenGridColumn TItem="StudentDto" Context="student">
-                    <Template>
-                        <RadzenButton Text="Details" Click="@(() => OnDetails(student))" ButtonStyle="Radzen.ButtonStyle.Primary" />
-                    </Template>
-                </RadzenGridColumn>
-            </Columns>
-        </RadzenGrid> *@
-
-  <div class="card-container">
-        @foreach (var student in students)
-        {
-            <div class="card">
-                <img class="card-img-top" src="@GetImage(student.ProfileImage)" alt="Student Image">
-                <div class="card-header">
-                    <h5>@student.FirstName @student.LastName</h5>
-                </div>
-                <div class="card-body">
-                    <p>Email: @student.Email</p>
-                    <RadzenButton Text="Details" Click="@(() => OnDetails(student))" ButtonStyle="Radzen.ButtonStyle.Primary" />
-                </div>
-            </div>
-        }
-    </div>
-
-
-    @* <RadzenGrid Data="@filteredFriends" TItem="Friend" AutoGenerateColumns="false" PageSize="5" Style="margin-top: 20px;">
-        <Columns>
-            <RadzenGridColumn TItem="Friend" Property="Name" Title="Name" Width="auto" />
-            <RadzenGridColumn TItem="Friend" Width="auto">
-                <Template Context="friend">
-                    <div class="friend-actions">
-                        <RadzenButton Text="Details" Click="@(() => ViewFriendDetails(friend))" ButtonStyle="Radzen.ButtonStyle.Info" Icon="info" Style="margin-right: 10px;" />
-                        <RadzenButton Text="Remove" Click="@(() => RemoveFriend(friend))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="delete" />
+<div style="display: flex; padding: 50px;">
+    <div class="left-panel">
+        <div class="search-bar">
+            <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
+            <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
+        </div>
+        <div class="card-container">
+            @foreach (var student in students)
+            {
+                <div class="card" @onclick="@(() => OnDetails(student))">
+                    <img class="card-img-top" src="@GetImage(student.ProfileImage)" alt="Student Image">
+                    <div class="card-body">
+                        <h5 class="card-title">@student.FirstName @student.LastName</h5>
+                        <p class="card-text">Email: @student.Email</p>
+                        <RadzenButton Text="Connect" Disabled="@student.IsInvitationPending" 
+                              Click="@(e => ConnectWithStudent(student.Id, e))" 
+                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                              Style="width: 100%; margin-top: 8px;" />
                     </div>
-                </Template>
-            </RadzenGridColumn>
-        </Columns>
-    </RadzenGrid> *@
+                </div>
+            }
+        </div>
+    </div>
+   
+    <div class="right-panel">
+          
+            @if (student != null)
+            {
+                <div class="student-details">
+                   <RadzenNotification @ref="notificationComponent" Style="position:sticky; top: 20px; right: 20px;" />
+                    <img src="@student?.ProfileImage" alt="Profile Image" class="profile-image"/>
+                    <div class="info-block">
+                        <h3 class="name">@student?.FirstName @student?.LastName</h3>
+                        <ul class="details-list">
+                            <li><strong>ID:</strong> @student?.Id</li>
+                            <li><strong>Email:</strong> @student?.Email</li>
+                            <li><strong>Description:</strong> @student?.Description</li>
+                            <li><strong>Number of Friends:</strong> @student?.NumberOfFriends</li>
+                            <li><strong>Date of Birth:</strong> @student?.DateOfBirth.ToString("yyyy-MM-dd")</li>
+                            <li><strong>State:</strong> @student?.State</li>
+                            <li><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</li>
+                        </ul>
+                        <RadzenButton Text="Connect" Click="@(() => ConnectWithStudent(student.Id))" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-top: 10px;" />
+                    </div>
+                    
+                </div>
+            }
+            else
+            {
+                <div class="no-details">
+                    <p>Select a student to view details.</p>
+                </div>
+            }
+        </div>
+    </div>
 
+    
 
-    <RadzenButton Text="Add Friend" Click="@AddFriend" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="add" Style="margin-top: 20px; width:100%;" />
-</div>
 
 <style>
-    .search-bar {
-        display: flex;
-        flex-direction: column;
+    .main-container { overflow: visible; display: flex;   align-items: flex-start; }
+    .left-panel {  width: 100%;   overflow-y: auto; /}
+    @* .right-panel { width: 100%; padding: 50px; position: sticky; top: 50px;overflow-y: auto; } *@
+
+    .right-panel {
+        width: 70%; 
+        padding: 25px;
+        position: sticky;
+        top: 100px; 
+
+        background-color: white; 
     }
+    .search-bar { display: flex; margin-bottom: 20px; }
+    .card-container { display: flex; flex-wrap: wrap; justify-content: space-between; padding-top: 50px;}
+    .card { display: block; width: 30%; margin: 5px !important; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: box-shadow 0.3s ease-in-out; }
+    .card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    .card-img-top { width: 100%; height: 200px; object-fit: cover; }
+    .card-body { padding: 15px; }
+    .card-title { font-size: 18px; font-weight: bold; }
+    .card-text { font-size: 14px; }
+    .student-details { margin-top: 20px; }
+    .no-details { font-style: italic; color: grey; }
 
-    .friend-actions {
-        display: flex;
-        justify-content: space-between;
-    }
+    .student-details {
+    position: sticky;
+    top: 60px; /* This ensures it starts sticking slightly below the right-panel's stickiness */
+ 
+    align-items: center;
+    margin: 20px;
+    background-color: #f9f9f9;
+    padding: 80px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
-    @* @media (min-width: 768px) {
-        .search-bar {
-            flex-direction: row;
-            align-items: center;
-        }
+.profile-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 75px;
+    margin-right: 20px;
+}
 
-        .search-bar > * {
-            flex: 1;
-        }
-    } *@
+.info-block {
+    display: flex;
+    flex-direction: column;
+}
 
-    .card-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        margin-top: 2rem;
-       
-    }
+.name {
+    margin: 0 0 10px 0;
+    color: #333;
+}
 
-    .card {
-        width: 18rem;
-        margin: 1rem;
-        min-height: 400px;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-        transition: 0.3s;
-    }
-   
+.details-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+}
 
-    .card:hover {
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-    }
+.details-list li {
+    margin-bottom: 5px;
+    color: #666;
+}
 
-    .card-img-top {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-    }
+.no-details {
+    font-style: italic;
+    color: grey;
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    margin-top: 20px;
+}
 
-    .card-body {
-        padding: 2px 16px;
-    }
-
-    .card-title {
-        font-size: 20px;
-        margin-bottom: 5px;
-    }
-
-    .card-text {
-        font-size: 16px;
-    }
 </style>
 
 @code {
     private string searchTerm;
     private List<StudentDto> students = new List<StudentDto>();
+    private StudentDto student;
+    RadzenNotification notificationComponent;
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         await LoadStudents();
     }
 
-    private async Task LoadStudents()
-    {
+    private async Task LoadStudents() {
         var result = await FriendsService.GetAllStudentsAsync();
-        if (result != null)
-        {
+        if (result != null) {
             students = result.ToList();
         }
     }
-     private string GetImage(string imageUrl)
-    {
-        // Use a default image if the imageUrl is null or empty
+
+    private string GetImage(string imageUrl) {
         return !string.IsNullOrWhiteSpace(imageUrl) ? imageUrl : "images/user_image.png";
     }
 
-    private void OnDetails(StudentDto student)
-    {
-        NavigationManager.NavigateTo($"/student-details/{student.Id}");
+    private void OnDetails(StudentDto selectedStudent) {
+        student = selectedStudent;
     }
 
-    private void AddFriend()
-    {
-        NavigationManager.NavigateTo("/add-friend");
+    private void SearchFriends() {
+        students = students.Where(s => s.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                       s.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
-    private void SearchFriends()
+    private async Task ConnectWithStudent(Guid studentId)
     {
-        // Implement the search functionality here
+        var response = await FriendsService.AddFriendAsync(studentId);
+        
     }
+
+     private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) {
+        var currentUserId = IdentityService.GetCurrentUserId();
+        await FriendsService.InviteStudent(currentUserId, studentId);
+
+         var student = students.FirstOrDefault(s => s.Id == studentId);
+        if (student != null)
+        {
+            student.InvitationSent = true;
+        }
+        NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 4000);
+    }
+
+
+
+
+
 }

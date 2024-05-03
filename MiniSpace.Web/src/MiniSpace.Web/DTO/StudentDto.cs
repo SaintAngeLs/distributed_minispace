@@ -18,5 +18,7 @@ namespace MiniSpace.Web.DTO
         public DateTime CreatedAt { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }
+        public bool IsInvitationPending { get; set; } 
+        public bool InvitationSent { get; set; }
     }    
 }

@@ -44,10 +44,8 @@ namespace MiniSpace.Web
 
             var httpClientOptions = Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
     
-            // Register HttpClientOptions as a singleton
             services.AddSingleton(httpClientOptions);
 
-            // Register IHttpClient to resolve to CustomHttpClient
             services.AddHttpClient<IHttpClient, CustomHttpClient>((serviceProvider, client) =>
             {
                 var options = serviceProvider.GetRequiredService<HttpClientOptions>();
@@ -58,6 +56,7 @@ namespace MiniSpace.Web
 
 
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
+            services.AddScoped<Radzen.NotificationService>(); 
             
             
             services.AddScoped<IIdentityService, IdentityService>();
@@ -84,8 +83,8 @@ namespace MiniSpace.Web
                 app.UseHsts();
             }
 
- app.UseAuthentication();  
-    app.UseAuthorization();  
+            app.UseAuthentication();  
+            app.UseAuthorization();  
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

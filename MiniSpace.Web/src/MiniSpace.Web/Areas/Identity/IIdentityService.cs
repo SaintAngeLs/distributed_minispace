@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
@@ -19,5 +20,6 @@ namespace MiniSpace.Web.Areas.Identity
         Task InitializeAuthenticationState();
         Task<bool> CheckIfUserIsAuthenticated();
         Task<bool> IsTokenValid();
+        public Guid GetCurrentUserId();
     }
 }

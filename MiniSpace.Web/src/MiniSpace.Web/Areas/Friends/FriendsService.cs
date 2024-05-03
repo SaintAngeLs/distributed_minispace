@@ -30,40 +30,63 @@ namespace MiniSpace.Web.Areas.Friends
             FriendDto = null;
         }
         
-        public Task<FriendDto> GetFriendAsync(Guid friendId)
+        public async Task<FriendDto> GetFriendAsync(Guid friendId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<FriendDto>($"friends/{friendId}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<FriendDto>($"friends/{friendId}");
         }
 
-        public Task<IEnumerable<FriendDto>> GetAllFriendsAsync()
+
+        public async Task<IEnumerable<FriendDto>> GetAllFriendsAsync()
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<FriendDto>>("friends");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<IEnumerable<FriendDto>>("friends");
         }
 
-        public Task<HttpResponse<object>> AddFriendAsync(Guid friendId)
+
+         public async Task<HttpResponse<object>> AddFriendAsync(Guid friendId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("friends", new { friendId });
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>("friends", new { friendId });
         }
 
-        public Task RemoveFriendAsync(Guid friendId)
+        public async Task RemoveFriendAsync(Guid friendId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"friends/{friendId}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"friends/{friendId}");
         }
+
 
         public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
         {
             if (_httpClient == null) throw new InvalidOperationException("HTTP client is not initialized.");
             string accessToken = await _identityService.GetAccessTokenAsync();
-
             if (string.IsNullOrEmpty(accessToken))
                 throw new InvalidOperationException("Invalid or missing access token.");
 
             _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
         }
+
+        public async Task<StudentDto> GetStudentAsync(Guid studentId)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+        }
+
+        public async Task InviteStudent(Guid inviterId, Guid inviteeId)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var payload = new { inviterId = inviterId, inviteeId = inviteeId };
+            await _httpClient.PostAsync<object, HttpResponse<object>>($"friends/{inviteeId}/invite", payload);
+        }
+
     }    
 }

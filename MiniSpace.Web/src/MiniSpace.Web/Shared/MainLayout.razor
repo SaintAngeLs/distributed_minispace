@@ -60,8 +60,12 @@
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
                     <RadzenPanelMenuItem Text="Events" Icon="event"
                                          Click="@(() => NavigationManager.NavigateTo("events"))" />
-                    <RadzenPanelMenuItem Text="Friends" Icon="group"
-                             Click="@(() => NavigationManager.NavigateTo("friends"))" />
+                   <RadzenPanelMenuItem Text="Friends" Icon="group">
+                        <RadzenPanelMenuItem Text="Friends" Icon="group" Click="@(() => NavigationManager.NavigateTo("friends"))" />
+                        <RadzenPanelMenuItem Text="Search" Icon="search" Click="@(() => NavigationManager.NavigateTo("friends/search"))" />
+                        <RadzenPanelMenuItem Text="Requests" Icon="mail_outline" Click="@(() => NavigationManager.NavigateTo("friends/requests"))" />
+                        <RadzenPanelMenuItem Text="Send Requests" Icon="send" Click="@(() => NavigationManager.NavigateTo("friends/send"))" />
+                    </RadzenPanelMenuItem>
                 </RadzenPanelMenu>
             </RadzenSidebar>
         }
@@ -81,27 +85,18 @@
 @code{
     bool _sidebarExpanded = true;
     bool isLoading = true;
-     private bool firstRender = true;
+    private bool firstRender = true;
 
-     private bool _isUserAuthenticated;
-
-     @* protected override async Task OnInitializedAsync()
-    {
-        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        _isUserAuthenticated = authenticationState.User.Identity.IsAuthenticated;
-    } *@
+    private bool _isUserAuthenticated;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // Asynchronously check if user is authenticated only after the component has rendered
             _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
-            StateHasChanged();  // Re-render the component with the updated state
+            StateHasChanged(); 
         }
     }
-
-
     public async Task<bool> CheckAuthentication()
     {
         _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
@@ -109,26 +104,7 @@
         return _isUserAuthenticated;
     }
 
-
-    @* public bool IsUserAuthenticated() => IdentityService.IsAuthenticated; *@
-public bool IsUserAuthenticated => _isUserAuthenticated;
-
-
-      @* public bool IsUserAuthenticated()
-    {
-        var isAuthenticated = IdentityService.IsAuthenticated;
-        Console.WriteLine($"IsUserAuthenticated: {isAuthenticated}");
-        return false;
-    } *@
-    
-
-    @* void SignOut()
-    {
-        IdentityService.Logout();
-        StudentsService.ClearStudentDto();
-        NavigationManager.NavigateTo("");
-    } *@
-
+    public bool IsUserAuthenticated => _isUserAuthenticated;
     async Task SignOut()
     {
         Console.WriteLine("Signing out...");
@@ -136,7 +112,6 @@ public bool IsUserAuthenticated => _isUserAuthenticated;
         await localStorage.RemoveItemAsync("jwtDto");
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
-
 
     async Task ScrollToSection(string sectionId)
     {
@@ -155,19 +130,5 @@ public bool IsUserAuthenticated => _isUserAuthenticated;
     {
         NavigationManager.NavigateTo("/");
     }
-
-
-    @* protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await ((CustomAuthenticationStateProvider)authenticationStateProvider).InitializeAsync();
-              isLoading = true;
-            await CheckAuthentication(); // Now moved inside OnAfterRenderAsync
-            isLoading = false;
-            StateHasChanged();
-        }
-    } *@
-
 
 }

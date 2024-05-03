@@ -1,0 +1,30 @@
+@page "/student-details/{Id:guid}"
+@using MiniSpace.Web.Areas.Friends
+@inject IFriendsService FriendsService
+@using MiniSpace.Web.DTO
+
+<h3>Student Details</h3>
+<div>
+    <img src="@student?.ProfileImage" alt="Profile Image" style="width: 150px; height: 150px; object-fit: cover;"/>
+    <p><strong>ID:</strong> @student?.Id</p>
+    <p><strong>Name:</strong> @student?.FirstName @student?.LastName</p>
+    <p><strong>Email:</strong> @student?.Email</p>
+    <p><strong>Description:</strong> @student?.Description</p>
+    <p><strong>Number of Friends:</strong> @student?.NumberOfFriends</p>
+    <p><strong>Date of Birth:</strong> @student?.DateOfBirth.ToString("yyyy-MM-dd")</p>
+    <p><strong>State:</strong> @student?.State</p>
+    <p><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</p>
+
+</div>
+
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private StudentDto student;
+
+    protected override async Task OnInitializedAsync()
+    {
+        student = await FriendsService.GetStudentAsync(Id);
+    }
+}
+   

@@ -16,5 +16,7 @@ namespace MiniSpace.Web.Areas.Friends
         Task<HttpResponse<object>> AddFriendAsync(Guid friendId);
         Task RemoveFriendAsync(Guid friendId);
         Task<IEnumerable<StudentDto>> GetAllStudentsAsync(); 
+        Task<StudentDto> GetStudentAsync(Guid studentId);
+        Task InviteStudent(Guid inviterId, Guid inviteeId);
     }
 }
