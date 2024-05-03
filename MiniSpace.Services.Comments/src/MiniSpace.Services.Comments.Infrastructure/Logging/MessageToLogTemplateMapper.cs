@@ -40,6 +40,12 @@ namespace MiniSpace.Services.Comments.Infrastructure.Logging
                         After = "Deleted a student with id: {StudentId}."
                     }
                 },
+                {
+                    typeof(UpdateLike), new HandlerLogTemplate
+                    {
+                        After = "Updated likes in the comment with id: {CommentId}."
+                    }
+                },
             };
         
         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class
