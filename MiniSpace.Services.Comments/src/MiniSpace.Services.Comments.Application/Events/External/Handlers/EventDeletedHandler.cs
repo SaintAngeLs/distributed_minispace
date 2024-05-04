@@ -24,6 +24,12 @@ namespace MiniSpace.Services.Comments.Application.Events.External.Handlers
             //    throw new EventNotFoundException(@event.EventId);
             //}
 
+            var comments = await _commentRepository.GetByEventIdAsync(@event.EventId);
+            foreach(var comment in comments)
+            {
+                await _commentRepository.DeleteAsync(comment.Id);
+            }
+
             //await _eventRepository.DeleteAsync(@event.EventId);
         }
     }    

@@ -24,6 +24,12 @@ namespace MiniSpace.Services.Comments.Application.Events.External.Handlers
             //    throw new StudentNotFoundException(@event.StudentId);
             //}
 
+            var comments = await _commentRepository.GetByPostIdAsync(@event.PostId);
+            foreach (var comment in comments)
+            {
+                await _commentRepository.DeleteAsync(comment.Id);
+            }
+
             //await _studentRepository.DeleteAsync(@event.StudentId);
         }
     }    

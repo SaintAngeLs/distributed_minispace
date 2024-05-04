@@ -1,4 +1,5 @@
 using Convey.Persistence.MongoDB;
+using Microsoft.Extensions.Hosting;
 using MiniSpace.Services.Comments.Core.Entities;
 using MiniSpace.Services.Comments.Core.Repositories;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;
@@ -31,5 +32,19 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);
+
+        public async Task<IEnumerable<Comment>> GetByEventIdAsync(Guid eventId)
+        {
+            var comments = _repository.Collection.AsQueryable();
+            var commentsByEventId = await comments.Where(e =>e.CommentContext == CommentContext.Event && e.ContextId == eventId).ToListAsync();
+            return commentsByEventId.Select(e => e.AsEntity());
+        }
+
+        public async Task<IEnumerable<Comment>> GetByPostIdAsync(Guid postId)
+        {
+            var comments = _repository.Collection.AsQueryable();
+            var commentsByEventId = await comments.Where(e => e.CommentContext == CommentContext.Post && e.ContextId == postId).ToListAsync();
+            return commentsByEventId.Select(e => e.AsEntity());
+        }
     }    
 }
