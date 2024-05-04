@@ -12,10 +12,10 @@ namespace MiniSpace.Services.Comments.Core.Entities
         public List<Guid> Likes { get; private set; }
         public Guid ParentId { get; private set; }
         public string TextContent { get; private set; }
-        public DateTime PublishDate { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         public Comment(Guid id, Guid postId, Guid studentId, List<Guid> likes,
-        Guid parentId, string textContent, DateTime publishDate)
+        Guid parentId, string textContent, DateTime createdAt)
         {
             Id = id;
             PostId = postId;
@@ -23,7 +23,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
             Likes = likes;
             ParentId = parentId;
             TextContent = textContent;
-            PublishDate = publishDate;
+            CreatedAt = createdAt;
         }
 
         public void Like(Guid studentId)
@@ -33,11 +33,11 @@ namespace MiniSpace.Services.Comments.Core.Entities
         }
 
         public static Comment Create(AggregateId id, Guid postId, Guid studentId, List<Guid> likes,
-        Guid parentId, string textContent, DateTime publishDate)
+        Guid parentId, string textContent, DateTime createdAt)
         {
             CheckContent(id, textContent);
 
-            return new Comment(id, postId, studentId, likes, parentId, textContent, publishDate);
+            return new Comment(id, postId, studentId, likes, parentId, textContent, createdAt);
         }
 
         public void Update(string textContent)
@@ -49,7 +49,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
 
         private static void CheckContent(AggregateId id, string textContent)
         {
-            if (string.IsNullOrWhiteSpace(textContent))
+            if (string.IsNullOrWhiteSpace(textContent) || textContent.Length > 300)
             {
                 throw new InvalidCommentContentException(id);
             }

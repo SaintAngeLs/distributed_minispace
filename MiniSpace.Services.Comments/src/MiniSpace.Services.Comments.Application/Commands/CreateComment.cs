@@ -12,11 +12,11 @@ namespace MiniSpace.Services.Comments.Application.Commands
         public List<Guid> Likes { get; set; }
         public Guid ParentId { get; set; }
         public string Comment { get; set; }
-        public DateTime PublishDate { get; set; }
+        public DateTime CreatedAt { get; set; }
  
 
         public CreateComment(Guid id, Guid postId, Guid studentId, List<Guid> likes,
-            Guid parentId, string comment, DateTime publishDate)
+            Guid parentId, string comment, DateTime createdAt)
         {
             Id = id;
             PostId = postId;
@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Comments.Application.Commands
             Likes = likes;
             ParentId = parentId;
             Comment = comment;
-            PublishDate = publishDate;
+            CreatedAt = createdAt;
         }
     }
 }

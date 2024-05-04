@@ -7,7 +7,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
     {
         public static Comment AsEntity(this CommentDocument document)
             => new Comment(document.Id,document.PostId, document.StudentId, document.Likes, document.ParentId,
-                document.TextContent, document.PublishDate);
+                document.TextContent, document.CreatedAt);
 
         public static CommentDocument AsDocument(this Comment entity)
             => new CommentDocument()
@@ -18,7 +18,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 Likes = entity.Likes,
                 ParentId = entity.ParentId,
                 TextContent = entity.TextContent,
-                PublishDate = entity.PublishDate,
+                CreatedAt = entity.CreatedAt,
             };
 
         public static CommentDto AsDto(this CommentDocument document)
@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 Likes = document.Likes,
                 ParentId = document.ParentId,
                 TextContent = document.TextContent,
-                PublishDate = document.PublishDate
+                CreatedAt = document.CreatedAt
             };
         
         public static Student AsEntity(this StudentDocument document)
