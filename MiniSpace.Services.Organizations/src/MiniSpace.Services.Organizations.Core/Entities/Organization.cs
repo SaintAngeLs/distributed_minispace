@@ -37,13 +37,13 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             RemoveOrganizer(organizer);
         }
 
-        public void AddOrganizer(Organizer organizer)
+        public void AddOrganizer(Guid organizerId)
         {
-            if(Organizers.Contains(organizer))
+            if(Organizers.Any(x => x.Id == organizerId))
             {
-                throw new OrganizerAlreadyAddedToOrganizationException(organizer.Id, Id);
+                throw new OrganizerAlreadyAddedToOrganizationException(organizerId, Id);
             }
-            _organizers.Add(organizer);
+            _organizers.Add(new Organizer(organizerId));
         }
         
         
