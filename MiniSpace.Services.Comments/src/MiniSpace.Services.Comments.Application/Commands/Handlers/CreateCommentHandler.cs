@@ -35,7 +35,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.StudentId);
             }
             
-            var comment = Comment.Create(command.Id, command.PostId, command.StudentId,
+            var comment = Comment.Create(command.Id, command.ContextId, command.StudentId,
                 command.Likes, command.ParentId, command.Comment, _dateTimeProvider.Now);
             await _commentRepository.AddAsync(comment);
             
