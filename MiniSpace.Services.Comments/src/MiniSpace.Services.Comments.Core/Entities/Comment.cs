@@ -65,11 +65,11 @@ namespace MiniSpace.Services.Comments.Core.Entities
         }
 
         public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid studentId, 
-            string studentName, List<Guid> likes, Guid parentId, string textContent, DateTime createdAt)
+            string studentName, Guid parentId, string textContent, DateTime createdAt)
         {
             CheckContent(id, textContent);
 
-            return new Comment(id, contextId, commentContext, studentId, studentName, likes, parentId, textContent, 
+            return new Comment(id, contextId, commentContext, studentId, studentName, new List<Guid>(), parentId, textContent, 
                 createdAt, createdAt, createdAt, 0,false);
         }
 

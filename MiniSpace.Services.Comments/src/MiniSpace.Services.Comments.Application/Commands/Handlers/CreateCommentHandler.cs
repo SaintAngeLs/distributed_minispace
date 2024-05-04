@@ -59,7 +59,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
 
             var now = _dateTimeProvider.Now;
             var comment = Comment.Create(command.Id, command.ContextId, newCommentContext, command.StudentId,
-                identity.Name,command.Likes, command.ParentId, command.Comment, now);
+                identity.Name, command.ParentId, command.Comment, now);
             await _commentRepository.AddAsync(comment);
             
             parentComment.AddReply(now);
