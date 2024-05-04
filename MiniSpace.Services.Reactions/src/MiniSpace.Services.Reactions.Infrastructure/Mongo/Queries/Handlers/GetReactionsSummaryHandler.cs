@@ -33,9 +33,14 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
                 nrRcs.TryGetValue(r.Type, out tmp);
                 nrRcs[r.Type] = tmp + 1;
             }
-            ReactionType dominant = nrRcs.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-            int sum = nrRcs.Skip(1).Sum(x => x.Value);
-            return (sum, dominant);
+            if (nrRcs.Count != 0) {
+                ReactionType dominant = nrRcs.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+                int sum = nrRcs.Skip(1).Sum(x => x.Value);
+                return (sum, dominant);
+            }
+            else {
+                return (0, default);
+            }
         }
     }    
 }
