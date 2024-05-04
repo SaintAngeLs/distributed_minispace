@@ -3,10 +3,10 @@ using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Comments.Application.Commands
 {
-    public class DeleteComment : ICommand
+    public class DeleteLike : ICommand
     {
         public Guid CommentId { get; }
 
-        public DeleteComment(Guid commentId) => CommentId = commentId;
+        public DeleteLike(Guid commentId) => CommentId = commentId;
     }    
 }

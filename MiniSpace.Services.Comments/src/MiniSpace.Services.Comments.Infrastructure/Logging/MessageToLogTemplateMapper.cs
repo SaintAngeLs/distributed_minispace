@@ -43,7 +43,13 @@ namespace MiniSpace.Services.Comments.Infrastructure.Logging
                 {
                     typeof(UpdateLike), new HandlerLogTemplate
                     {
-                        After = "Updated likes in the comment with id: {CommentId}."
+                        After = "Added like in the comment with id: {CommentId}."
+                    }
+                },
+                {
+                    typeof(DeleteLike), new HandlerLogTemplate
+                    {
+                        After = "Removed like in the comment with id: {CommentId}."
                     }
                 },
             };

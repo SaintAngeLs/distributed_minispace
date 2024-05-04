@@ -31,8 +31,12 @@ namespace MiniSpace.Services.Comments.Core.Entities
 
         public void Like(Guid studentId)
         {
+            if(!Likes.Contains(studentId)) Likes.Add(studentId);
+        }
+
+        public void UnLike(Guid studentId)
+        {
             if(Likes.Contains(studentId)) Likes.Remove(studentId);
-            else Likes.Add(studentId);
         }
 
         public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid studentId, List<Guid> likes,
