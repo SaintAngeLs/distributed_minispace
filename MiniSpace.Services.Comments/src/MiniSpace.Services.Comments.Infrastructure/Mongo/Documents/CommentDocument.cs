@@ -13,5 +13,6 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
         public Guid ParentId { get;  set; }
         public string TextContent { get;  set; }
         public DateTime CreatedAt { get;  set; }
+        public bool IsDeleted { get; set; }
     }    
 }

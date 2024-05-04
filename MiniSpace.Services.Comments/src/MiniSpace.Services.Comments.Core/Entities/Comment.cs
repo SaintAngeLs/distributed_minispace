@@ -14,9 +14,10 @@ namespace MiniSpace.Services.Comments.Core.Entities
         public Guid ParentId { get; private set; }
         public string TextContent { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public bool IsDeleted { get; private set; }
 
         public Comment(Guid id, Guid contextId, CommentContext commentContext, Guid studentId, List<Guid> likes,
-        Guid parentId, string textContent, DateTime createdAt)
+        Guid parentId, string textContent, DateTime createdAt, bool isDeleted)
         {
             Id = id;
             ContextId = contextId;
@@ -26,7 +27,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
             ParentId = parentId;
             TextContent = textContent;
             CreatedAt = createdAt;
-            
+            IsDeleted = isDeleted;
         }
 
         public void Like(Guid studentId)
@@ -44,7 +45,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
         {
             CheckContent(id, textContent);
 
-            return new Comment(id, contextId, commentContext, studentId, likes, parentId, textContent, createdAt);
+            return new Comment(id, contextId, commentContext, studentId, likes, parentId, textContent, createdAt, false);
         }
 
         public void Update(string textContent)
@@ -60,6 +61,11 @@ namespace MiniSpace.Services.Comments.Core.Entities
             {
                 throw new InvalidCommentContentException(id);
             }
+        }
+
+        public void Delete(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

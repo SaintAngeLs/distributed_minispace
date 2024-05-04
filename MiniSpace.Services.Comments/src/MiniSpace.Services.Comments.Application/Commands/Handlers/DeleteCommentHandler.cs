@@ -38,8 +38,9 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             {
                 throw new UnauthorizedCommentAccessException(command.CommentId, identity.Id);
             }
-            
-            await _commentRepository.DeleteAsync(command.CommentId);
+
+            comment.Delete(identity.Id);
+            await _commentRepository.UpdateAsync(comment);
 
             await _messageBroker.PublishAsync(new CommentDeleted(command.CommentId));
         }

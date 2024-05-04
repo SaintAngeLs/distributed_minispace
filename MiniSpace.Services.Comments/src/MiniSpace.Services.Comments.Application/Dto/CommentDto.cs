@@ -13,5 +13,7 @@ namespace MiniSpace.Services.Comments.Application.Dto
         public Guid ParentId { get; set; }
         public string TextContent { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }
