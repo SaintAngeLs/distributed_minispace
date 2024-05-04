@@ -10,6 +10,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
         public Guid ContextId { get; private set; }
         public CommentContext CommentContext { get; private set; }
         public Guid StudentId { get; private set; }
+        public string StudentName { get; private set; }
         public List<Guid> Likes { get; private set; }
         public Guid ParentId { get; private set; }
         public string TextContent { get; private set; }
@@ -17,13 +18,15 @@ namespace MiniSpace.Services.Comments.Core.Entities
         public DateTime? LastUpdatedAt { get; private set; }
         public bool IsDeleted { get; private set; }
 
-        public Comment(Guid id, Guid contextId, CommentContext commentContext, Guid studentId, List<Guid> likes,
-        Guid parentId, string textContent, DateTime createdAt, DateTime? lastUpdatedAt, bool isDeleted)
+        public Comment(Guid id, Guid contextId, CommentContext commentContext, Guid studentId, string studentName,
+            List<Guid> likes, Guid parentId, string textContent, DateTime createdAt, DateTime? lastUpdatedAt, 
+            bool isDeleted)
         {
             Id = id;
             ContextId = contextId;
             CommentContext = commentContext;
             StudentId = studentId;
+            StudentName = studentName;
             Likes = likes;
             ParentId = parentId;
             TextContent = textContent;
@@ -50,12 +53,12 @@ namespace MiniSpace.Services.Comments.Core.Entities
             Likes.Remove(studentId);
         }
 
-        public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid studentId, List<Guid> likes,
-        Guid parentId, string textContent, DateTime createdAt)
+        public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid studentId, 
+            string studentName, List<Guid> likes, Guid parentId, string textContent, DateTime createdAt)
         {
             CheckContent(id, textContent);
 
-            return new Comment(id, contextId, commentContext, studentId, likes, parentId, textContent, createdAt, null , false);
+            return new Comment(id, contextId, commentContext, studentId, studentName, likes, parentId, textContent, createdAt, null , false);
         }
 
         public void Update(string textContent, DateTime now)

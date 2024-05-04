@@ -6,8 +6,9 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Comment AsEntity(this CommentDocument document)
-            => new Comment(document.Id,document.ContextId,document.CommentContext, document.StudentId, document.Likes, document.ParentId,
-                document.TextContent, document.CreatedAt, document.LastUpdatedAt, document.IsDeleted);
+            => new Comment(document.Id,document.ContextId,document.CommentContext, document.StudentId, 
+                document.StudentName, document.Likes, document.ParentId, document.TextContent, document.CreatedAt,
+                document.LastUpdatedAt, document.IsDeleted);
 
         public static CommentDocument AsDocument(this Comment entity)
             => new CommentDocument()
@@ -40,13 +41,12 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
             };
         
         public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.FullName);
+            => new Student(document.Id);
 
         public static StudentDocument AsDocument(this Student entity)
             => new StudentDocument
             {
                 Id = entity.Id,
-                FullName = entity.FullName
             };
     }    
 }

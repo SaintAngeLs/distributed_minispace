@@ -18,18 +18,25 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         private readonly IStudentRepository _studentRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
+        private readonly IAppContext _appContext;
 
         public CreateCommentHandler(ICommentRepository commentRepository, IStudentRepository studentRepository,
-            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
+            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker, IAppContext appContext)
         {
             _commentRepository = commentRepository;
             _studentRepository = studentRepository;
             _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
+            _appContext = appContext;
         }
 
         public async Task HandleAsync(CreateComment command, CancellationToken cancellationToken = default)
         {
+            var identity = _appContext.Identity;
+            if (identity.IsAuthenticated && identity.Id != command.StudentId)
+            {
+                throw new UnauthorizedCommentAccessException(command.ContextId, identity.Id);
+            }
             if (!(await _studentRepository.ExistsAsync(command.StudentId)))
             {
                 throw new StudentNotFoundException(command.StudentId);
@@ -41,7 +48,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             }
 
             var comment = Comment.Create(command.Id, command.ContextId, newCommentContext, command.StudentId,
-                command.Likes, command.ParentId, command.Comment, _dateTimeProvider.Now);
+                identity.Name,command.Likes, command.ParentId, command.Comment, _dateTimeProvider.Now);
             await _commentRepository.AddAsync(comment);
             
             await _messageBroker.PublishAsync(new CommentCreated(command.Id));
