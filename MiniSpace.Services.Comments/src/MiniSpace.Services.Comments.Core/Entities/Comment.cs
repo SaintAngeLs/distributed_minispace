@@ -66,9 +66,10 @@ namespace MiniSpace.Services.Comments.Core.Entities
             }
         }
 
-        public void Delete(Guid id)
+        public void Delete()
         {
-            throw new NotImplementedException();
+            IsDeleted = true;
+            TextContent = "";
         }
     }
 }
