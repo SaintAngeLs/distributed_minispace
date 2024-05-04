@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Comments.Core.Repositories
         Task UpdateAsync(Comment comment);
         Task DeleteAsync(Guid id);
         Task<IEnumerable<Comment>> GetByEventIdAsync(Guid eventId);
-        Task<IEnumerable<Comment>> GetByPostIdAsync(Guid postId)
+        Task<IEnumerable<Comment>> GetByPostIdAsync(Guid postId);
 
     }    
 }

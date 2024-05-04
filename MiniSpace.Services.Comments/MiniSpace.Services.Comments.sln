@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Comments
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Comments.Core", "src\MiniSpace.Services.Comments.Core\MiniSpace.Services.Comments.Core.csproj", "{2C8AC5D4-011F-4545-9C0C-88D99D13FF82}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Posts.Infrastructure", "src\MiniSpace.Services.Comments.Infrastructure\MiniSpace.Services.Posts.Infrastructure.csproj", "{85941F19-E28E-467B-A338-7D358D32CFC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Comments.Infrastructure", "src\MiniSpace.Services.Comments.Infrastructure\MiniSpace.Services.Comments.Infrastructure.csproj", "{85941F19-E28E-467B-A338-7D358D32CFC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
