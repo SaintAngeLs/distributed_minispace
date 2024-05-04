@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Organizations.Application.Events.External.Handlers
             var organizerOrganizations = await _organizationRepository.GetOrganizerOrganizationsAsync(@event.UserId);
             foreach (var organization in organizerOrganizations)
             {
-                organization.RemoveOrganizer(organizer);
+                organization.RemoveOrganizer(organizer.Id);
                 await _organizationRepository.UpdateAsync(organization);
             }
             
