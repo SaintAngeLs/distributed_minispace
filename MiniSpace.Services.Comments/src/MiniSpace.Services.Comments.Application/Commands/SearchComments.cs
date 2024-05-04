@@ -8,6 +8,7 @@ namespace MiniSpace.Services.Comments.Application.Commands
     {
         public Guid ContextId { get; set; }
         public string CommentContext { get; set; }
+        public Guid ParentId { get; set; }
         public PageableDto Pageable { get; set; }
     }
 }

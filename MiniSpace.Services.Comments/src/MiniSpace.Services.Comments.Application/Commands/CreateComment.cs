@@ -13,7 +13,6 @@ namespace MiniSpace.Services.Comments.Application.Commands
         public List<Guid> Likes { get; set; }
         public Guid ParentId { get; set; }
         public string Comment { get; set; }
-        public DateTime CreatedAt { get; set; }
  
 
         public CreateComment(Guid id, Guid contextId, string commentContext, Guid studentId,  List<Guid> likes,

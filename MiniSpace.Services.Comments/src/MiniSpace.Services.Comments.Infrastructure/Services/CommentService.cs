@@ -32,7 +32,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Services
             var pageSize = command.Pageable.Size > 10 ? 10 : command.Pageable.Size;
 
             var result = await _commentRepository.BrowseCommentsAsync(
-                pageNumber, pageSize, command.ContextId, context,
+                pageNumber, pageSize, command.ContextId, context, command.ParentId,
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
 
             var identity = _appContext.Identity;

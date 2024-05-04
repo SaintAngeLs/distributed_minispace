@@ -61,10 +61,11 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
         }
         
         public async Task<(IEnumerable<Comment> comments, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseCommentsAsync(int pageNumber, int pageSize, 
-            Guid contextId, CommentContext context, IEnumerable<string> sortBy, string direction)
+            Guid contextId, CommentContext context, Guid parentId, IEnumerable<string> sortBy, string direction)
         {
-            var filterDefinition = Extensions.ToFilterDefinition(contextId, context)
-                .AddParentFilter();
+            var filterDefinition = parentId == Guid.Empty
+                ? Extensions.ToFilterDefinition(contextId, context).AddParentFilter()
+                : Extensions.ToFilterDefinition(contextId, context).AddChildrenFilter(parentId);
             var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
             
             var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);

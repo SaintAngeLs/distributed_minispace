@@ -75,6 +75,13 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
+        public static FilterDefinition<CommentDocument> AddChildrenFilter (this FilterDefinition<CommentDocument> filterDefinition, 
+            Guid parentId)
+        {
+            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.ParentId, parentId);
+            return filterDefinition;
+        }
+        
         public static SortDefinition<CommentDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
             var sort = sortByArguments.ToList();
