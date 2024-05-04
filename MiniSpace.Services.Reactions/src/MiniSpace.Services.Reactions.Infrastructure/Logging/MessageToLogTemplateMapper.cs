@@ -21,6 +21,19 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Logging
                         After = "Delete the reaction with student id: {StudentId} and content id: {ContentId}."
                     }
                 },
+                {
+                    typeof(ReactionCreated), new HandlerLogTemplate
+                    {
+                        After = "Created a new reaction with id: {ReactionId}."
+                    }
+                },
+                {
+                    typeof(ReactionDeleted), new HandlerLogTemplate
+                    {
+                        After = "Deleted a new reaction with id: {ReactionId}."
+                    }
+                },
+
                 // {
                 //     typeof(DeletePost), new HandlerLogTemplate
                 //     {

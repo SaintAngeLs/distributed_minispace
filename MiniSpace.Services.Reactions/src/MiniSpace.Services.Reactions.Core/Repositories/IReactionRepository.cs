@@ -7,9 +7,9 @@ namespace MiniSpace.Services.Reactions.Core.Repositories
     {
         Task<(int NumberOfReactions, ReactionType DominantReaction)> GetReactionSummaryAsync(Guid contentId, ReactionContentType contentType);
         Task<IEnumerable<Reaction>> GetReactionsAsync(Guid contentId, ReactionContentType contentType);
-        Task<Reaction> GetAsync(Guid studentId, Guid contentId, ReactionContentType contentType);
+        Task<Reaction> GetAsync(Guid id);
         Task AddAsync(Reaction reaction);
-        Task DeleteAsync(Guid studentId, Guid contentId, ReactionContentType contentType);
+        Task DeleteAsync(Guid id);
         
     }    
 }

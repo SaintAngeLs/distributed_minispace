@@ -7,14 +7,10 @@ namespace MiniSpace.Services.Reactions.Application.Events
 {
     public class ReactionDeleted : IEvent
     {
-        public Guid StudentId {get;set;}
-        public Guid Content {get;set;}
-        public ReactionContentType ContentType{get;set;}
-        public ReactionDeleted(Guid studentId, Guid content, ReactionContentType contentType)
+        public Guid ReactionId {get;set;}
+        public ReactionDeleted(Guid reactionId)
         {
-            StudentId=studentId;
-            Content=content;
-            ContentType=contentType;
+            ReactionId = reactionId;
         }
     }
 }

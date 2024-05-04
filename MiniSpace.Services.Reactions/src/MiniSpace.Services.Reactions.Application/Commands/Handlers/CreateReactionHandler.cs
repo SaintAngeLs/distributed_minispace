@@ -67,7 +67,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             var reaction = Reaction.Create(command.StudentId, command.StudentFullName, reactionType, contentType, command.ContentId);
             await _reactionRepository.AddAsync(reaction);
             
-            await _messageBroker.PublishAsync(new ReactionCreated(command.StudentId, command.ContentId, contentType, reactionType));
+            await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));
         }
     }
 }

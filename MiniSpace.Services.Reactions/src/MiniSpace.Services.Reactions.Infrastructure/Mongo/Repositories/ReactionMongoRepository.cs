@@ -41,16 +41,15 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
             return _repository.AddAsync(reaction.AsDocument());
         }
 
-        public Task DeleteAsync(Guid studentId, Guid contentId, ReactionContentType contentType)
+        public async Task<Reaction> GetAsync(Guid id)
         {
-            return _repository.DeleteAsync(x => x.StudentId == studentId && x.ContentId == contentId);
+            var reaction = await _repository.GetAsync(x => x.Id == id);
+            return reaction?.AsEntity();
         }
 
-        public async Task<Reaction> GetAsync(Guid studentId, Guid contentId, ReactionContentType contentType)
+        public Task DeleteAsync(Guid id)
         {
-            var reaction = await _repository.GetAsync(x => x.StudentId == studentId && x.ContentId == contentId && x.ContentType ==
-                        contentType);
-            return reaction?.AsEntity();
+            return _repository.DeleteAsync(x => x.Id == id);
         }
     }    
 }

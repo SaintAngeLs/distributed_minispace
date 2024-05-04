@@ -7,16 +7,10 @@ namespace MiniSpace.Services.Reactions.Application.Commands
 {
     public class DeleteReaction : ICommand
     {
-        public Guid StudentId;
-        public Guid ContentId;
-        public ReactionContentType ContentType;
-        
-        public DeleteReaction(Guid studentId, Guid contentId,
-                              ReactionContentType contentType)
+        public Guid ReactionId { get; }
+        public DeleteReaction(Guid reactionId)
         {
-            StudentId = studentId;
-            ContentId = contentId;
-            ContentType = contentType;
+            ReactionId = reactionId;
         }
     }    
 }

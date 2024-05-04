@@ -6,5 +6,12 @@ namespace MiniSpace.Services.Reactions.Core.Repositories
     {
         Task<Student> GetAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
+
+
+
+
+        
+        // Task AddAsync(Student student);
+        // Task DeleteAsync(Guid id);
     }
 }

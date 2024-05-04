@@ -38,6 +38,8 @@ using MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Reactions.Infrastructure.Services;
 using MiniSpace.Services.Reactions.Application.Queries;
+using Convey.Logging.CQRS;
+using MiniSpace.Services.Reactions.Application.Events;
 
 namespace MiniSpace.Services.Reactions.Infrastructure
 {
@@ -59,6 +61,8 @@ namespace MiniSpace.Services.Reactions.Infrastructure
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
+            // background workers: none
+
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
                 .AddQueryHandlers()
@@ -73,7 +77,11 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
-                .AddMongoRepository<ReactionDocument, Guid>("reaction")
+                .AddHandlersLogging()
+                .AddMongoRepository<ReactionDocument, Guid>("reactions")
+                .AddMongoRepository<PostDocument, Guid>("posts")
+                .AddMongoRepository<EventDocument, Guid>("events")
+                .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -90,7 +98,10 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
                 .SubscribeCommand<CreateReaction>()
-                .SubscribeCommand<DeleteReaction>();
+                .SubscribeCommand<DeleteReaction>()
+                .SubscribeEvent<ReactionCreated>()
+                .SubscribeEvent<ReactionDeleted>()
+                ;
 
             return app;
         }

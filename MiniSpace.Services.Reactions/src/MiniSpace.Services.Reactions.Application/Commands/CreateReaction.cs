@@ -1,4 +1,5 @@
 using System.Data;
+using System.Threading.Tasks.Dataflow;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Reactions.Core.Entities;
 
@@ -6,6 +7,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands
 {
     public class CreateReaction : ICommand
     {
+        public Guid ReactionId {get;}
         public Guid StudentId { get; }
         public string StudentFullName {get;}
         public string ReactionType { get; } 
@@ -15,10 +17,13 @@ namespace MiniSpace.Services.Reactions.Application.Commands
         // Is the reaction related to event or post?
         public string ContentType { get; } 
 
-        public CreateReaction(Guid studentId, Guid contentId,
+        public CreateReaction(Guid reactionId, Guid studentId, string studentFullName,
+                            Guid contentId,
                               string reactionType, string contentType)
         {
+            ReactionId = reactionId == Guid.Empty ? Guid.NewGuid() : reactionId;
             StudentId = studentId;
+            StudentFullName = studentFullName;
             ContentId = contentId;
             ReactionType = reactionType;
             ContentType = contentType;

@@ -16,6 +16,7 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Exceptions
                 InvalidReactionTypeException ex => new AddReactionRejected(Guid.Empty, ex.Message, ex.Code),
                 InvalidAggregateIdException ex => new AddReactionRejected(Guid.Empty, ex.Message, ex.Code),
                 InvalidReactionContentTypeException ex => new AddReactionRejected(Guid.Empty, ex.Message, ex.Code),
+                EventNotFoundException ex => new AddReactionRejected(Guid.Empty, ex.Message, ex.Code),
                 _ => null,
             };
     }    

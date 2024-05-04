@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MiniSpace.Services.Reactions.Application;
 using MiniSpace.Services.Reactions.Application.Commands;
+using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Application.Queries;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Infrastructure;
@@ -33,18 +34,19 @@ namespace MiniSpace.Services.Reactions.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
 
-                        // create reaction: user, content, reaction type needed
-                        // no need for defining reactionId because reactions can be identified by the user and the content
-                        .Post<CreateReaction>("reactions")
-
-                        // delete reaction: user, content needed
-                        .Delete<DeleteReaction>("reactions")
-
                         // get reactions: content needed
-                        .Get<GetReactions, IEnumerable<Reaction>>("reactions")
-                        
+                        .Get<GetReactions, IEnumerable<ReactionDto>>("reactions")
+
                         // reaction summary: content needed
                         .Get<GetReactionsSummary, (int NumberOfReactions, ReactionType DominantReaction)>("reactions/summary")
+
+                        // create reaction: user, content, reaction type needed
+                        // no need for defining reactionId because reactions can be identified by the user and the content
+                        .Post<CreateReaction>("reactions/{reactionId}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"reactions/{cmd.ReactionId}"))
+
+                        // delete reaction: user, content needed
+                        .Delete<DeleteReaction>("reactions/{reactionId}")
                     ))
                 .UseLogging()
                 .Build()

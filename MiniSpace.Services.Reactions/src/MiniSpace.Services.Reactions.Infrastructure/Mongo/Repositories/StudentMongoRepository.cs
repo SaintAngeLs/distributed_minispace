@@ -22,5 +22,19 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 
         public Task<bool> ExistsAsync(Guid id)
             => _repository.ExistsAsync(s => s.Id == id);
+
+
+
+
+
+        // public Task AddAsync(Student student)
+        // {
+        //     throw new NotImplementedException();
+        // }
+
+        // public Task DeleteAsync(Guid id)
+        // {
+        //     throw new NotImplementedException();
+        // }
     }    
 }
