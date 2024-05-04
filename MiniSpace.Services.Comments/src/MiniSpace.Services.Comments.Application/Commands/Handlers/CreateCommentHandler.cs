@@ -57,9 +57,13 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                 throw new InvalidParentCommentException(command.ParentId);
             }
 
+            var now = _dateTimeProvider.Now;
             var comment = Comment.Create(command.Id, command.ContextId, newCommentContext, command.StudentId,
-                identity.Name,command.Likes, command.ParentId, command.Comment, _dateTimeProvider.Now);
+                identity.Name,command.Likes, command.ParentId, command.Comment, now);
             await _commentRepository.AddAsync(comment);
+            
+            parentComment.AddReply(now);
+            await _commentRepository.UpdateAsync(parentComment);
             
             await _messageBroker.PublishAsync(new CommentCreated(command.Id));
         }

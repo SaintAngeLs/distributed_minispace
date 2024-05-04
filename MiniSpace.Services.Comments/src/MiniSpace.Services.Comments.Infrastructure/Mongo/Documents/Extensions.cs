@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
         public static Comment AsEntity(this CommentDocument document)
             => new Comment(document.Id,document.ContextId,document.CommentContext, document.StudentId, 
                 document.StudentName, document.Likes, document.ParentId, document.TextContent, document.CreatedAt,
-                document.LastUpdatedAt, document.IsDeleted);
+                document.LastUpdatedAt, document.LastReplyAt, document.RepliesCount, document.IsDeleted);
 
         public static CommentDocument AsDocument(this Comment entity)
             => new CommentDocument()

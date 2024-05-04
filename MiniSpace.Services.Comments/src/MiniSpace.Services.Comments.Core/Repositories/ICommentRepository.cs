@@ -14,5 +14,9 @@ namespace MiniSpace.Services.Comments.Core.Repositories
         Task<IEnumerable<Comment>> GetByEventIdAsync(Guid eventId);
         Task<IEnumerable<Comment>> GetByPostIdAsync(Guid postId);
 
+        Task<(IEnumerable<Comment> comments, int pageNumber, int pageSize, int totalPages, int totalElements)>
+            BrowseCommentsAsync(int pageNumber, int pageSize, Guid contextId, CommentContext context,
+                IEnumerable<string> sortBy, string direction);
+
     }    
 }

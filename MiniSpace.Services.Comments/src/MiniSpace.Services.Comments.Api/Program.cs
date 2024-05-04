@@ -30,17 +30,18 @@ namespace MiniSpace.Services.Identity.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseDispatcherEndpoints(endpoints => endpoints
+                    .UseEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        //.Get<GetComment, IEnumerable<CommentDto>>("comments")
-                        .Post<CreateComment>("comments"
-                        //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.PostId}")
-                        )
+                        .Post<SearchComments>("comments/search", async (cmd, ctx) =>
+                        {
+                            var pagedResult = await ctx.RequestServices.GetService<ICommentService>().BrowseCommentsAsync(cmd);
+                            await ctx.Response.WriteJsonAsync(pagedResult);
+                        }))
+                    .UseDispatcherEndpoints(endpoints => endpoints
+                        .Post<CreateComment>("comments")
+                        .Post<SearchComments>("comments/search")
                         .Put<UpdateComment>("comments/{commentID}")
-                        .Delete<DeleteComment>("comments/{commentID}"
-                        //    ,afterDispatch: (cmd, ctx) => ctx.Response.Created($"commens/{cmd.Id}")
-                        //    to chyba w końcu nie potrzebne
-                        )
+                        .Delete<DeleteComment>("comments/{commentID}")
                         .Post<UpdateLike>("comments/{commentID}/like")
                         .Delete<DeleteLike>("comments/{commentID}/like")
                     )

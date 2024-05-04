@@ -46,5 +46,31 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
             var commentsByEventId = await comments.Where(e => e.CommentContext == CommentContext.Post && e.ContextId == postId).ToListAsync();
             return commentsByEventId.Select(e => e.AsEntity());
         }
+        
+        private async Task<(int totalPages, int totalElements, IEnumerable<CommentDocument> data)> BrowseAsync(
+            FilterDefinition<CommentDocument> filterDefinition, SortDefinition<CommentDocument> sortDefinition, 
+            int pageNumber, int pageSize)
+        {
+            var pagedEvents = await _repository.Collection.AggregateByPage(
+                filterDefinition,
+                sortDefinition,
+                pageNumber,
+                pageSize);
+
+            return pagedEvents;
+        }
+        
+        public async Task<(IEnumerable<Comment> comments, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseCommentsAsync(int pageNumber, int pageSize, 
+            Guid contextId, CommentContext context, IEnumerable<string> sortBy, string direction)
+        {
+            var filterDefinition = Extensions.ToFilterDefinition(contextId, context)
+                .AddParentFilter();
+            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
+            
+            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+            
+            return (pagedEvents.data.Select(e => e.AsEntity()), pageNumber, pageSize,
+                pagedEvents.totalPages, pagedEvents.totalElements);
+        }
     }    
 }
