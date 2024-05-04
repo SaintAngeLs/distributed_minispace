@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Comment AsEntity(this CommentDocument document)
-            => new Comment(document.Id,document.ContextId, document.StudentId, document.Likes, document.ParentId,
+            => new Comment(document.Id,document.ContextId,document.CommentContext, document.StudentId, document.Likes, document.ParentId,
                 document.TextContent, document.CreatedAt);
 
         public static CommentDocument AsDocument(this Comment entity)
@@ -14,6 +14,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
             {
                 Id = entity.Id,
                 ContextId = entity.ContextId,
+                CommentContext = entity.CommentContext,
                 StudentId = entity.StudentId,
                 Likes = entity.Likes,
                 ParentId = entity.ParentId,
@@ -26,6 +27,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
             {
                 Id = document.Id,
                 ContextId = document.ContextId,
+                CommentContext = document.CommentContext.ToString().ToLowerInvariant(),
                 StudentId = document.StudentId,
                 Likes = document.Likes,
                 ParentId = document.ParentId,

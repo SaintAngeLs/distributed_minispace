@@ -34,8 +34,13 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             {
                 throw new StudentNotFoundException(command.StudentId);
             }
-            
-            var comment = Comment.Create(command.Id, command.ContextId, command.StudentId,
+
+            if (!Enum.TryParse<CommentContext>(command.CommentContext, true, out var newCommentContext))
+            {
+                throw new InvalidCommentContextEnumException(command.CommentContext);
+            }
+
+            var comment = Comment.Create(command.Id, command.ContextId, newCommentContext, command.StudentId,
                 command.Likes, command.ParentId, command.Comment, _dateTimeProvider.Now);
             await _commentRepository.AddAsync(comment);
             

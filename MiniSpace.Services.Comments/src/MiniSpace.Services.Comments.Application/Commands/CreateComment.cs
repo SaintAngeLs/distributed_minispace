@@ -8,6 +8,7 @@ namespace MiniSpace.Services.Comments.Application.Commands
     {
         public Guid Id { get; set; }
         public Guid ContextId { get; set; }
+        public string CommentContext {  get; set; }
         public Guid StudentId { get; set; }
         public List<Guid> Likes { get; set; }
         public Guid ParentId { get; set; }
@@ -15,11 +16,12 @@ namespace MiniSpace.Services.Comments.Application.Commands
         public DateTime CreatedAt { get; set; }
  
 
-        public CreateComment(Guid id, Guid contextId, Guid studentId, List<Guid> likes,
+        public CreateComment(Guid id, Guid contextId, string commentContext, Guid studentId,  List<Guid> likes,
             Guid parentId, string comment, DateTime createdAt)
         {
-            Id = id;
+            Id = id == Guid.Empty ? Guid.NewGuid() : id;
             ContextId = contextId;
+            CommentContext = commentContext;
             StudentId = studentId;
             Likes = likes;
             ParentId = parentId;

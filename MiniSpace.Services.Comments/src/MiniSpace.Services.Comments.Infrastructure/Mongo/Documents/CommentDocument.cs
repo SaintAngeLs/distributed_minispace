@@ -7,6 +7,7 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
     {
         public Guid Id { get;  set; }
         public Guid ContextId { get;  set; }
+        public CommentContext CommentContext { get; set; }
         public Guid StudentId { get;  set; }
         public List<Guid> Likes { get;  set; }
         public Guid ParentId { get;  set; }

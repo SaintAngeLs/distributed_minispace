@@ -8,22 +8,25 @@ namespace MiniSpace.Services.Comments.Core.Entities
     public class Comment : AggregateRoot
     {
         public Guid ContextId { get; private set; }
+        public CommentContext CommentContext { get; private set; }
         public Guid StudentId { get; private set; }
         public List<Guid> Likes { get; private set; }
         public Guid ParentId { get; private set; }
         public string TextContent { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Comment(Guid id, Guid contextId, Guid studentId, List<Guid> likes,
+        public Comment(Guid id, Guid contextId, CommentContext commentContext, Guid studentId, List<Guid> likes,
         Guid parentId, string textContent, DateTime createdAt)
         {
             Id = id;
             ContextId = contextId;
+            CommentContext = commentContext;
             StudentId = studentId;
             Likes = likes;
             ParentId = parentId;
             TextContent = textContent;
             CreatedAt = createdAt;
+            
         }
 
         public void Like(Guid studentId)
@@ -32,12 +35,12 @@ namespace MiniSpace.Services.Comments.Core.Entities
             else Likes.Add(studentId);
         }
 
-        public static Comment Create(AggregateId id, Guid contextId, Guid studentId, List<Guid> likes,
+        public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid studentId, List<Guid> likes,
         Guid parentId, string textContent, DateTime createdAt)
         {
             CheckContent(id, textContent);
 
-            return new Comment(id, contextId, studentId, likes, parentId, textContent, createdAt);
+            return new Comment(id, contextId, commentContext, studentId, likes, parentId, textContent, createdAt);
         }
 
         public void Update(string textContent)
