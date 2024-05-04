@@ -16,15 +16,17 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         private readonly ICommentRepository _commentRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
-        
+        private readonly IDateTimeProvider _dateTimeProvider;
+
         public UpdateCommentHandler(ICommentRepository commentRepository, IAppContext appContext,
-            IMessageBroker messageBroker)
+            IMessageBroker messageBroker, IDateTimeProvider dateTimeProvider)
         {
             _commentRepository = commentRepository;
             _appContext = appContext;
             _messageBroker = messageBroker;
+            _dateTimeProvider = dateTimeProvider;
         }
-        
+
         public async Task HandleAsync(UpdateComment command, CancellationToken cancellationToken = default)
         {
             var comment = await _commentRepository.GetAsync(command.CommentId);
@@ -39,7 +41,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                 throw new UnauthorizedCommentAccessException(command.CommentId, identity.Id);
             }
             
-            comment.Update(command.TextContent);
+            comment.Update(command.TextContent, _dateTimeProvider.Now);
             await _commentRepository.UpdateAsync(comment);
 
             await _messageBroker.PublishAsync(new CommentUpdated(command.CommentId));

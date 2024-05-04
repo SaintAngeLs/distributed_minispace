@@ -14,12 +14,10 @@ namespace MiniSpace.Services.Comments.Application.Commands
         public Guid ParentId { get; set; }
         public string Comment { get; set; }
         public DateTime CreatedAt { get; set; }
-
-        public bool IsDeleted { get; set; }
  
 
         public CreateComment(Guid id, Guid contextId, string commentContext, Guid studentId,  List<Guid> likes,
-            Guid parentId, string comment, DateTime createdAt)
+            Guid parentId, string comment)
         {
             Id = id == Guid.Empty ? Guid.NewGuid() : id;
             ContextId = contextId;
@@ -28,8 +26,6 @@ namespace MiniSpace.Services.Comments.Application.Commands
             Likes = likes;
             ParentId = parentId;
             Comment = comment;
-            CreatedAt = createdAt;
-            IsDeleted = false;
         }
     }
 }
