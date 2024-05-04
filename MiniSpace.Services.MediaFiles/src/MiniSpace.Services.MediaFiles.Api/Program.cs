@@ -31,15 +31,7 @@ namespace MiniSpace.Services.MediaFiles.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Get<GetStudents, IEnumerable<StudentDto>>("students")
-                        .Get<GetStudent, StudentDto>("students/{studentId}")
-                        .Put<UpdateStudent>("students/{studentId}")
-                        .Delete<DeleteStudent>("students/{studentId}")
-                        .Post<CompleteStudentRegistration>("students",
-                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))
-                        .Put<ChangeStudentState>("students/{studentId}/state/{state}",
-                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
-                        .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")))
+                        ))
                 .UseLogging()
                 .Build()
                 .RunAsync();
