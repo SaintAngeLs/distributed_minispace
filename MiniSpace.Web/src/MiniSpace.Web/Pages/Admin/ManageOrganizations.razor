@@ -32,7 +32,8 @@ else
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Clear selection" Disabled="@(selectedItem == null)"
                           Click="@(() => selectedItem = null)" />
-            <RadzenButton Size="ButtonSize.Medium" Text="Show organization details" Disabled="@(selectedItem == null)" />
+            <RadzenButton Size="ButtonSize.Medium" Text="Show organization details" Disabled="@(selectedItem == null)"
+                          Click="@(() => OpenOrganizationDetailsDialog(selectedItem as ParentOrganization))" />
            
         </RadzenStack>
     </RadzenStack>
@@ -146,5 +147,16 @@ else
             ConvertOrganizationDtoList(childOrganizations, selectedOrganization.Children);
             StateHasChanged();
         }
+    }
+    
+    private async Task OpenOrganizationDetailsDialog(ParentOrganization organization)
+    {
+        await DialogService.OpenAsync<OrganizationDetailsDialog>($"Details of the organization:",
+            new Dictionary<string, object>() { { "OrganizationId", organization.Id } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
 }

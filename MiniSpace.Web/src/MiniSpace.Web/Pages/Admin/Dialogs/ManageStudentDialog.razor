@@ -1,4 +1,4 @@
-@page "/students/{StudentDto.Id}/details"
+@page "/admin/students/{StudentDto.Id}/details"
 @using Radzen
 @using MiniSpace.Web.DTO
 @inject DialogService DialogService
@@ -119,46 +119,46 @@
     </RadzenFieldset>
 
     <RadzenFieldset>
-            <HeaderTemplate>
-                <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
-                    <RadzenIcon Icon="event" class="me-1"/>
-                    <b>Other info</b>
-                </RadzenStack>
-            </HeaderTemplate>
-            <ChildContent>
-                <RadzenStack>
-                    <RadzenRow Size="12" AlignItems="AlignItems.Center">
-                        <RadzenColumn Size="6">
-                            <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Status</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.State)</b></RadzenText>
-                        </RadzenColumn>
-    
-                        <RadzenColumn Size="6">
-                            <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Email notifications</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.EmailNotifications)</b></RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-    
-                    <RadzenRow Size="12">
-                        <RadzenColumn Size="6">
-                            <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Date of birth</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.DateOfBirth.ToLocalTime().ToString(dateFormat))</b></RadzenText>
-                        </RadzenColumn>
-    
-                        <RadzenColumn Size="6">
-                            <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Created at</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.CreatedAt.ToLocalTime().ToString(dateFormat))</b></RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-    
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenColumn Size="12" SizeMD="12">
-    
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenStack>
-            </ChildContent>
-        </RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="event" class="me-1"/>
+                <b>Other info</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack>
+                <RadzenRow Size="12" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Status</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.State)</b></RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Email notifications</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.EmailNotifications)</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow Size="12">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Date of birth</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.DateOfBirth.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Created at</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.CreatedAt.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
 
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
