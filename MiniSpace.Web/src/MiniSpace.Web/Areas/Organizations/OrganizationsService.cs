@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
-using MiniSpace.Web.DTO.Data.Events;
-using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Organizations

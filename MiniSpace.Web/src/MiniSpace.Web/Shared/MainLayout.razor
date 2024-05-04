@@ -52,8 +52,11 @@
                                              Click="@(() => NavigationManager.NavigateTo("events/"))"/>
                         <RadzenPanelMenuItem Text="Search" Icon="find_in_page"
                                              Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
-                        @* <RadzenPanelMenuItem Text="Organize" Icon="assignment" *@
-                        @*                      Click="@(() => NavigationManager.NavigateTo("events/organize"))"/> *@
+                        @if (IdentityService.UserDto.Role == "organizer")
+                        {
+                            <RadzenPanelMenuItem Text="Organize" Icon="assignment"
+                                                 Click="@(() => NavigationManager.NavigateTo("events/organize"))"/>
+                        }
                     </RadzenPanelMenuItem>
                     @if (IdentityService.UserDto.Role == "admin")
                     {

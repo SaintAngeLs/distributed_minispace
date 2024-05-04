@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
-using MiniSpace.Web.DTO.Data.Events;
+using MiniSpace.Web.Data.Events;
 using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
@@ -64,6 +64,13 @@ namespace MiniSpace.Web.Areas.Events
         {
             return _httpClient.PostAsync<SearchEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search", 
                 new (name, organizer, category, state, dateFrom, dateTo, pageable));
+        }
+
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(Guid organizerId,
+            string name, string state, string dateFrom, string dateTo, PageableDto pageable)
+        {
+            return _httpClient.PostAsync<SearchOrganizerEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search/organizer", 
+                new (name, organizerId, dateFrom, dateTo, state, pageable));
         }
     }
 }

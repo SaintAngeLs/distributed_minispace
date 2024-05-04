@@ -1,7 +1,7 @@
 ﻿using System;
 using MiniSpace.Web.DTO.Wrappers;
 
-namespace MiniSpace.Web.DTO.Data.Events
+namespace MiniSpace.Web.Data.Events
 {
     public class SearchEvents
     {
