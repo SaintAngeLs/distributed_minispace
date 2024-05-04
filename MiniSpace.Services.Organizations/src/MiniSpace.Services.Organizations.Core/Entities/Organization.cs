@@ -24,14 +24,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             Organizers = organizers ?? Enumerable.Empty<Organizer>();
         }
         
-        public void RemoveOrganizer(Organizer organizer)
-        {
-            foreach (var organizer in Organizers.Where(o => o.Id == organizer.Id))
-            {
-                _organizers.Remove(organizer);
-            }
-        }
-        
         public void RemoveOrganizer(Guid organizerId)
         {
             var organizer = _organizers.SingleOrDefault(x => x.Id == organizerId);
