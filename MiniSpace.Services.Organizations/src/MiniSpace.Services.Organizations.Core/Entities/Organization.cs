@@ -25,7 +25,12 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         }
         
         public void RemoveOrganizer(Organizer organizer)
-            => _organizers.Remove(organizer);
+        {
+            foreach (var organizer in Organizers.Where(o => o.Id == organizer.Id))
+            {
+                _organizers.Remove(organizer);
+            }
+        }
         
         public void RemoveOrganizer(Guid organizerId)
         {
@@ -34,7 +39,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             {
                 throw new OrganizerIsNotInOrganization(organizerId, Id);
             }
-            RemoveOrganizer(organizer);
+            _organizers.Remove(organizer);
         }
 
         public void AddOrganizer(Guid organizerId)
