@@ -19,6 +19,6 @@ namespace MiniSpace.Web.Areas.Events
         Task ShowInterestInEventAsync(Guid eventId, Guid studentId);
         Task RateEventAsync(Guid eventId, int rating, Guid studentId);
         Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer, 
-            string dateFrom, string dateTo, PageableDto pageable);
+            string category, string state, string dateFrom, string dateTo, PageableDto pageable);
     }
 }

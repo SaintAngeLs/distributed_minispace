@@ -60,10 +60,10 @@ namespace MiniSpace.Web.Areas.Events
         }
         
         public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name,
-                string organizer, string dateFrom, string dateTo, PageableDto pageable)
+                string organizer, string category, string state, string dateFrom, string dateTo, PageableDto pageable)
         {
             return _httpClient.PostAsync<SearchEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search", 
-                new (name, organizer, dateFrom, dateTo, pageable));
+                new (name, organizer, category, state, dateFrom, dateTo, pageable));
         }
     }
 }

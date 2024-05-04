@@ -2,7 +2,7 @@
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Events
-@using MiniSpace.Web.Pages.Dialogs
+@using MiniSpace.Web.Pages.Events.Dialogs
 @using Radzen
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
@@ -12,7 +12,7 @@
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
-<h1>Your events</h1>
+<h1>Follow events</h1>
 
 @if (pageInitialized && studentDto.Id != Guid.Empty)
 {
@@ -23,8 +23,6 @@
                 <div class="rz-p-12 rz-text-align-center">
                     <RadzenButton Size="ButtonSize.Large" Text="Create new event"
                                   Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
-                    <RadzenButton Size="ButtonSize.Large" Text="Search events"
-                                  Click="@(() => NavigationManager.NavigateTo("/events/search"))"/>             
                 </div>
             </RadzenColumn>
         </RadzenRow>
@@ -46,8 +44,8 @@
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
                                     </RadzenColumn>
                                     <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
-                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Status</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Status)</b></RadzenText>
                                     </RadzenColumn>
                                 </RadzenRow>
                                 <RadzenRow Size="12">
@@ -81,8 +79,8 @@
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
                                     </RadzenColumn>
                                     <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Description</RadzenText>
-                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Status</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Status)</b></RadzenText>
                                     </RadzenColumn>
                                 </RadzenRow>
                                 <RadzenRow Size="12">

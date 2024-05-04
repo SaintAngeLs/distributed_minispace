@@ -47,8 +47,14 @@
                                          Click="@(() => NavigationManager.NavigateTo(""))" />
                     <RadzenPanelMenuItem Text="Account" Icon="account_box"
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
-                    <RadzenPanelMenuItem Text="Events" Icon="event"
-                                         Click="@(() => NavigationManager.NavigateTo("events"))" />
+                    <RadzenPanelMenuItem Text="Events" Icon="event">
+                        <RadzenPanelMenuItem Text="Follow" Icon="bookmark"
+                                             Click="@(() => NavigationManager.NavigateTo("events/"))"/>
+                        <RadzenPanelMenuItem Text="Search" Icon="find_in_page"
+                                             Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
+                        @* <RadzenPanelMenuItem Text="Organize" Icon="assignment" *@
+                        @*                      Click="@(() => NavigationManager.NavigateTo("events/organize"))"/> *@
+                    </RadzenPanelMenuItem>
                     @if (IdentityService.UserDto.Role == "admin")
                     {
                         <RadzenPanelMenuItem Text="Admin" Icon="build">
