@@ -51,7 +51,7 @@ namespace MiniSpace.Web.Areas.Organizations
                 ($"organizations/{organizationId}/children?parentId={organizationId}");
         }
 
-        public Task<HttpResponse<object>> AddOrganization(Guid organizationId, string name, string parentId)
+        public Task<HttpResponse<object>> AddOrganization(Guid organizationId, string name, Guid parentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object, object>("organizations", new {organizationId, name, parentId});

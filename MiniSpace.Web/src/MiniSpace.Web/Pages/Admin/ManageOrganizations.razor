@@ -2,14 +2,15 @@
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Organizations
+@using MiniSpace.Web.Pages.Admin.Dialogs
 @using MiniSpace.Web.Pages.Dialogs
 @using Radzen
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
-@inject IStudentsService StudentsService
 @inject IOrganizationsService OrganizationsService
+@inject NavigationManager NavigationManager
 
 <h1>Manage organizations</h1>
 
@@ -19,7 +20,22 @@
 }
 else
 {
-    <h4 class="rz-p-8">To add new organization, select its parent and click corresponding button.</h4>
+    <h4 class="rz-p-8">To manage organizers in an organization, select it and open details dialog.</h4>
+    
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Size="ButtonSize.Medium" Text="Add root organization"
+                          Click="@(() => OpenAddOrganizationDialog(newOrganization, true))" />
+            <RadzenButton Size="ButtonSize.Medium" Text="Add child organization" Disabled="@(selectedItem == null)"
+                          Click="@(() => OpenAddOrganizationDialog(newOrganization, false))" />
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Size="ButtonSize.Medium" Text="Clear selection" Disabled="@(selectedItem == null)"
+                          Click="@(() => selectedItem = null)" />
+            <RadzenButton Size="ButtonSize.Medium" Text="Show organization details" Disabled="@(selectedItem == null)" />
+           
+        </RadzenStack>
+    </RadzenStack>
     
     <RadzenStack Gap="1rem" Style="height: 100%">
         @if (totalRootOrganizations == 0)
@@ -27,12 +43,12 @@ else
             <h3>There are not any organizations created.</h3>
         }
         
-        <RadzenTree Data="@rootOrganizations" Expand="@OnExpand">
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
-            <RadzenTreeLevel TextProperty="Name" HasChildren=@(organization => false)/>
+        <RadzenTree Data="@rootOrganizations" Expand="@OnExpand" Change="@OnChange" @bind-Value=@selectedItem>
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
+            <RadzenTreeLevel TextProperty="Name" HasChildren=@(org => false)/>
         </RadzenTree>
 
     </RadzenStack>
@@ -86,6 +102,49 @@ else
                 IsLeaf = organization.IsLeaf,
                 Children = new List<ParentOrganization>()
             });
+        }
+    }
+
+    private bool HasChildren(object org)
+    {
+        var organization = (ParentOrganization)org;
+        return !organization.IsLeaf;
+    }
+    
+    private object selectedItem;
+    private OrganizationDto newOrganization = new();
+
+    private void OnChange()
+    {
+        if (selectedItem is ParentOrganization selectedOrganization)
+        {
+            newOrganization.ParentId = selectedOrganization.Id;
+        }
+    }
+    
+    private async Task OpenAddOrganizationDialog(OrganizationDto newOrganization, bool isRootOrganization)
+    {
+        await DialogService.OpenAsync<AddOrganizationDialog>($"Add new organization:",
+            new Dictionary<string, object>()
+            {
+                { "NewOrganization", newOrganization },
+                { "IsRootOrganization", isRootOrganization }
+            },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "230px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+
+        if (isRootOrganization)
+        {
+            await OnInitializedAsync();
+        }
+        else if (selectedItem is ParentOrganization selectedOrganization)
+        {
+            var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(selectedOrganization.Id);
+            ConvertOrganizationDtoList(childOrganizations, selectedOrganization.Children);
+            StateHasChanged();
         }
     }
 }
