@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Comments.Application.Commands
     {
         public Guid Id { get; set; }
         public Guid ContextId { get; set; }
-        public string CommentContext {  get; set; }
+        public string CommentContext { get; set; }
         public Guid StudentId { get; set; }
         public Guid ParentId { get; set; }
         public string Comment { get; set; }

@@ -46,25 +46,27 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             {
                 throw new InvalidCommentContextEnumException(command.CommentContext);
             }
-            
-            var parentComment = await _commentRepository.GetAsync(command.ParentId);
-            if (parentComment is null)
-            {
-                throw new ParentCommentNotFoundException(command.ParentId);
-            }
-            if (parentComment.ParentId != Guid.Empty)
-            {
-                throw new InvalidParentCommentException(command.ParentId);
-            }
 
             var now = _dateTimeProvider.Now;
             var comment = Comment.Create(command.Id, command.ContextId, newCommentContext, command.StudentId,
                 identity.Name, command.ParentId, command.Comment, now);
+            
+            if (command.ParentId != Guid.Empty)
+            {
+                var parentComment = await _commentRepository.GetAsync(command.ParentId);
+                if (parentComment is null)
+                {
+                    throw new ParentCommentNotFoundException(command.ParentId);
+                }
+                if (parentComment.ParentId != Guid.Empty)
+                {
+                    throw new InvalidParentCommentException(command.ParentId);
+                }
+                parentComment.AddReply(now);
+                await _commentRepository.UpdateAsync(parentComment);
+            }
+            
             await _commentRepository.AddAsync(comment);
-            
-            parentComment.AddReply(now);
-            await _commentRepository.UpdateAsync(parentComment);
-            
             await _messageBroker.PublishAsync(new CommentCreated(command.Id));
         }
 
