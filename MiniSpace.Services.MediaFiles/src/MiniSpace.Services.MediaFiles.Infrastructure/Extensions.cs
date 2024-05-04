@@ -28,16 +28,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.MediaFiles.Application;
 using MiniSpace.Services.MediaFiles.Application.Commands;
-using MiniSpace.Services.MediaFiles.Application.Events.External;
-using MiniSpace.Services.MediaFiles.Application.Events.External.Handlers;
 using MiniSpace.Services.MediaFiles.Application.Services;
-using MiniSpace.Services.MediaFiles.Core.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Contexts;
 using MiniSpace.Services.MediaFiles.Infrastructure.Decorators;
 using MiniSpace.Services.MediaFiles.Infrastructure.Exceptions;
 using MiniSpace.Services.MediaFiles.Infrastructure.Logging;
-using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure
@@ -46,7 +41,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            //builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -70,7 +65,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
+                //.AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -86,17 +81,14 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<UpdateStudent>()
-                .SubscribeCommand<DeleteStudent>()
-                .SubscribeCommand<CompleteStudentRegistration>()
-                .SubscribeCommand<ChangeStudentState>()
-                .SubscribeEvent<SignedUp>()
-                .SubscribeEvent<StudentShowedInterestInEvent>()
-                .SubscribeEvent<StudentSignedUpToEvent>()
-                .SubscribeEvent<UserBanned>()
-                .SubscribeEvent<UserUnbanned>()
-                .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>();
+                .SubscribeCommand<UploadMediaFile>();
+                //.SubscribeEvent<SignedUp>()
+                //.SubscribeEvent<StudentShowedInterestInEvent>()
+                //.SubscribeEvent<StudentSignedUpToEvent>()
+                //.SubscribeEvent<UserBanned>()
+                //.SubscribeEvent<UserUnbanned>()
+                //.SubscribeEvent<OrganizerRightsGranted>()
+                //.SubscribeEvent<OrganizerRightsRevoked>();
 
             return app;
         }

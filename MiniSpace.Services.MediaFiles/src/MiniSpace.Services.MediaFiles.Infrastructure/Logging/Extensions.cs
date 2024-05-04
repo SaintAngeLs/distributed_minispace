@@ -9,7 +9,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Logging
     {
         public static IConveyBuilder AddHandlersLogging(this IConveyBuilder builder)
         {
-            var assembly = typeof(UpdateStudent).Assembly;
+            var assembly = typeof(UploadMediaFile).Assembly;
             
             builder.Services.AddSingleton<IMessageToLogTemplateMapper>(new MessageToLogTemplateMapper());
             
