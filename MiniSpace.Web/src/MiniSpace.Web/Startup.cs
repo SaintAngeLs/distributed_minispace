@@ -19,6 +19,9 @@ using MiniSpace.Web.Areas.Students;
 using MiniSpace.Web.HttpClients;
 using MudBlazor;
 using MudBlazor.Services;
+using MiniSpace.Web.Areas.Friends;
+using Microsoft.AspNetCore.Components.Authorization;
+using Blazored.LocalStorage;
 
 namespace MiniSpace.Web
 {
@@ -41,23 +44,29 @@ namespace MiniSpace.Web
 
             var httpClientOptions = Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
     
-            // Register HttpClientOptions as a singleton
             services.AddSingleton(httpClientOptions);
 
-            // Register IHttpClient to resolve to CustomHttpClient
             services.AddHttpClient<IHttpClient, CustomHttpClient>((serviceProvider, client) =>
             {
                 var options = serviceProvider.GetRequiredService<HttpClientOptions>();
                 client.BaseAddress = new Uri(options.ApiUrl); 
             });
 
+            services.AddBlazoredLocalStorage(); 
+
+
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
+            services.AddScoped<Radzen.NotificationService>(); 
+            
             
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             services.AddScoped<IStudentsService, StudentsService>();
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IPostsService, PostsService>();
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
+            services.AddScoped<IFriendsService, FriendsService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +83,8 @@ namespace MiniSpace.Web
                 app.UseHsts();
             }
 
+            app.UseAuthentication();  
+            app.UseAuthorization();  
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

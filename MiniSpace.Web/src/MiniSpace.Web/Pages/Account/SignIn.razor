@@ -9,12 +9,15 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
-<h2>Welcome to MiniSpace</h2>
-<p>Please sign in to access your account and manage your details.</p>
-<div>&nbsp;</div>
-<h3>Sign In</h3>
+ <div style="text-align: center; width: 100%; justify-content: center; align-items: center; padding-top: 10rem;">
+        <h2>Welcome to MiniSpace</h2>
+        <p>Please sign in to access your account and manage your details.</p>
+        <div>&nbsp;</div>
+        <h3>Sign In</h3>
+    </div>
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+   
 
-<div style="display: flex; flex-direction: column; height: 50vh; justify-content: center; align-items: center;">
     <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
                 Shade="Shade.Lighter">
         @errorMessage
@@ -49,7 +52,7 @@
                 
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Sign In"/>
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Large" Text="Sign In"/>
                     </RadzenColumn>
                 </RadzenRow>
                 <div>
@@ -58,6 +61,7 @@
             </RadzenStack>
         </RadzenFieldset>
     </RadzenTemplateForm>
+     
 </div>
 @code {
     private SignInModel signInModel = new SignInModel();
@@ -65,7 +69,7 @@
     private string errorMessage = string.Empty;
     private bool popup;
 
-    private async Task HandleSignIn()
+    @* private async Task HandleSignIn()
     {
         var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
         var jwtDto = response.Content;
@@ -80,5 +84,34 @@
             errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
             StateHasChanged(); // Force the component to re-render
         }
+    } *@
+
+    private async Task HandleSignIn()
+{
+    try
+    {
+        var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+        if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
+        {
+            // Assuming UpdateStudentDto and other subsequent methods correctly handle null checks
+            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+            var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/account";
+            NavigationManager.NavigateTo(nextPage);
+        }
+        else
+        {
+            showError = true;
+            errorMessage = "Invalid login attempt";
+            StateHasChanged(); // Force the component to re-render
+        }
     }
+    catch (Exception ex)
+    {
+        // Log the exception or handle it accordingly
+        showError = true;
+        errorMessage = $"Error during sign in: {ex.Message}";
+        StateHasChanged(); // Update UI to show error message
+    }
+}
+
 }

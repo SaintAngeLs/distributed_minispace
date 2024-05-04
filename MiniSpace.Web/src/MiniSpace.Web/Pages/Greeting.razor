@@ -1,6 +1,8 @@
 @page "/greeting"
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IIdentityService IdentityService
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
 
 <h1>Greeting</h1>
 
@@ -17,12 +19,5 @@ else
 @code {
     private string email;
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (IdentityService.IsAuthenticated)
-        {
-            email = IdentityService.UserDto.Email;
-            StateHasChanged();
-        }
-    }
+   
 }

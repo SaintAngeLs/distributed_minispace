@@ -73,12 +73,33 @@ namespace MiniSpace.Web.HttpClients
         public Task DeleteAsync(string uri)
             => TryExecuteAsync(uri, client => client.DeleteAsync(uri));
 
+        public async Task DeleteAsync(string uri, object payload)
+        {
+            var jsonPayload = JsonConvert.SerializeObject(payload, JsonSerializerSettings);
+            _logger.LogDebug($"Sending HTTP DELETE request to URI: {uri} with payload: {jsonPayload}");
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, uri)
+            {
+                Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
+            };
+
+            var response = await _client.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Error response from server: {errorContent}");
+                throw new HttpRequestException($"Request to {uri} failed with status code {response.StatusCode} and message {errorContent}");
+            }
+        }
+
+
+
         private static StringContent GetPayload<T>(T request)
-{
-    var json = JsonConvert.SerializeObject(request, JsonSerializerSettings);
-    // Set content type with charset parameter
-    return new StringContent(json, Encoding.UTF8, "text/plain");
-}
+        {
+            var json = JsonConvert.SerializeObject(request, JsonSerializerSettings);
+            // Set content type with charset parameter
+            return new StringContent(json, Encoding.UTF8, "text/plain");
+        }
 
 
 
