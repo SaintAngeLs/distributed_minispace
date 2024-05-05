@@ -9,7 +9,7 @@ using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetReactionsSummaryHandler : IQueryHandler<GetReactionsSummary, (int NumberOfReactions, ReactionType DominantReaction)>
+    public class GetReactionsSummaryHandler : IQueryHandler<GetReactionsSummary, ReactionsSummaryDto>
     {
         private readonly IMongoRepository<ReactionDocument, Guid> _reactionRepository;
 
@@ -18,7 +18,7 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
             _reactionRepository = reactionRepository;
         }
         
-        public async Task<(int NumberOfReactions, ReactionType DominantReaction)>
+        public async Task<ReactionsSummaryDto>
             HandleAsync(GetReactionsSummary query, CancellationToken cancellationToken)
         {
             var documents = _reactionRepository.Collection.AsQueryable();
@@ -36,10 +36,10 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
             if (nrRcs.Count != 0) {
                 ReactionType dominant = nrRcs.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
                 int sum = nrRcs.Skip(1).Sum(x => x.Value);
-                return (sum, dominant);
+                return new ReactionsSummaryDto(sum, dominant);
             }
             else {
-                return (0, default);
+                return new ReactionsSummaryDto(0, default);
             }
         }
     }    

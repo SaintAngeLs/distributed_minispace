@@ -6,7 +6,7 @@ using MiniSpace.Services.Reactions.Core.Exceptions;
 
 namespace MiniSpace.Services.Reactions.Application.Queries
 {
-    public class GetReactionsSummary : IQuery<(int NumberOfReactions, ReactionType DominantReaction)>
+    public class GetReactionsSummary : IQuery<ReactionsSummaryDto>
     {
         public Guid ContentId { get; set; }
         public ReactionContentType ContentType { get; set; }

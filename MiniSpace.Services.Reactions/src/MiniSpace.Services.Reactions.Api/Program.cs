@@ -33,19 +33,10 @@ namespace MiniSpace.Services.Reactions.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-
-                        // get reactions: content needed
                         .Get<GetReactions, IEnumerable<ReactionDto>>("reactions")
-
-                        // reaction summary: content needed
-                        .Get<GetReactionsSummary, (int NumberOfReactions, ReactionType DominantReaction)>("reactions/summary")
-
-                        // create reaction: user, content, reaction type needed
-                        // no need for defining reactionId because reactions can be identified by the user and the content
+                        .Get<GetReactionsSummary, ReactionsSummaryDto>("reactions/summary")
                         .Post<CreateReaction>("reactions/{reactionId}",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"reactions/{cmd.ReactionId}"))
-
-                        // delete reaction: user, content needed
                         .Delete<DeleteReaction>("reactions/{reactionId}")
                     ))
                 .UseLogging()
