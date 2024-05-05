@@ -33,18 +33,21 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
             int nrReactions = groups.Select(x => x.ToList().Count).Sum();
 
             if (nrReactions == 0) {
-                return new ReactionsSummaryDto(0, default, null);
+                return new ReactionsSummaryDto(0, default, null, null);
             }
 
             var identity = _appContext.Identity;
             Guid? authUserReactionId = null;
+            ReactionType? authUserReactionType = null;
 
             if (identity.IsAuthenticated && reactions.Exists(x => x.StudentId == identity.Id)) {
-                authUserReactionId = reactions.Find(x => x.StudentId == identity.Id).Id;
+                var reactionDocument = reactions.Find(x => x.StudentId == identity.Id);
+                authUserReactionId = reactionDocument.Id;
+                authUserReactionType = reactionDocument.Type;
             }
 
             ReactionType dominant = groups.OrderBy(x => x.ToList().Count).Last().Key;
-            return new ReactionsSummaryDto(nrReactions, dominant, authUserReactionId);
+            return new ReactionsSummaryDto(nrReactions, dominant, authUserReactionId, authUserReactionType);
         }
     }    
 }
