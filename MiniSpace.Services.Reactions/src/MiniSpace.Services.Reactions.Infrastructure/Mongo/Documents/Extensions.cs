@@ -6,7 +6,8 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Reaction AsEntity(this ReactionDocument document)
-            => new Reaction(document.StudentId, document.Type, document.ContentType, document.ContentId);
+            => new Reaction(document.StudentId, document.Type, document.StudentFullName,
+                    document.ContentType, document.ContentId);
 
         public static ReactionDocument AsDocument(this Reaction entity)
             => new ReactionDocument()
@@ -15,7 +16,8 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents
                 ContentId = entity.ContentId,
                 ContentType = entity.ContentType,
                 Type = entity.ReactionType,
-                StudentId = entity.StudentId
+                StudentId = entity.StudentId,
+                StudentFullName = entity.StudentFullName
             };
 
         public static ReactionDto AsDto(this ReactionDocument document)
@@ -25,17 +27,17 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents
                 ContentId = document.ContentId,
                 ContentType = document.ContentType,
                 Type = document.Type,
-                StudentId = document.StudentId
+                StudentId = document.StudentId,
+                StudentFullName = document.StudentFullName
             };
         
         public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.FullName);
+            => new Student(document.Id);
 
         public static StudentDocument AsDocument(this Student entity)
             => new StudentDocument
             {
-                Id = entity.Id,
-                FullName = entity.FullName
+                Id = entity.Id
             };
     }    
 }

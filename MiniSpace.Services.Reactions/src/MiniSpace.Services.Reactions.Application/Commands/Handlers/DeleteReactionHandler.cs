@@ -17,13 +17,13 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
         private readonly IAppContext _appContext = appContext;
         public async Task HandleAsync(DeleteReaction command, CancellationToken cancellationToken = default)
         {
-            _ = await _reactionRepository.GetAsync(command.ReactionId) ??
+            var reaction = await _reactionRepository.GetAsync(command.ReactionId) ??
                 throw new ReactionNotFoundException(command.ReactionId);
 
             var identity = _appContext.Identity;
-            if (!identity.IsAuthenticated)
+            if (identity.IsAuthenticated && identity.Id != reaction.StudentId)
             {
-                throw new UnauthorizedIdentityException(identity.Id);
+                throw new UnauthorizedReactionAccessException(command.ReactionId, identity.Id);
             }
 
             await _reactionRepository.DeleteAsync(command.ReactionId);

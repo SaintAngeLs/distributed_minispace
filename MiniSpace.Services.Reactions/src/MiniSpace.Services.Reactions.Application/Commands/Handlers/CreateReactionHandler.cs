@@ -11,15 +11,15 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
     public class CreateReactionHandler(IReactionRepository reactionRepository,
                                  IPostRepository postRepository,
                                  IEventRepository eventRepository,
-                                 IDateTimeProvider dateTimeProvider,
+                                 IStudentRepository studentRepository,
                                  IAppContext appContext,
                                  IMessageBroker messageBroker
                                  ) : ICommandHandler<CreateReaction>
     {
         private readonly IReactionRepository _reactionRepository = reactionRepository;
         private readonly IPostRepository _postRepository = postRepository;
+        private readonly IStudentRepository _studentRepository = studentRepository;
         private readonly IEventRepository _eventRepository = eventRepository;
-        private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
         private readonly IMessageBroker _messageBroker = messageBroker;
         private readonly IAppContext _appContext = appContext;
 
@@ -27,8 +27,13 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
         {
             var identity = _appContext.Identity;
 
-            if (identity.Id != command.StudentId) {
-                throw new UnauthorizedIdentityException(command.StudentId);
+            if (identity.IsAuthenticated && identity.Id != command.StudentId) {
+                throw new UnauthorizedReactionAccessException(command.ReactionId, command.StudentId);
+            }
+
+            if (!await _studentRepository.ExistsAsync(command.StudentId))
+            {
+                throw new StudentNotFoundException(command.StudentId);
             }
 
             // Check the content type
@@ -58,8 +63,10 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             {
                 throw new InvalidReactionTypeException(command.ReactionType);
             }
+
+            string studentFullName = identity.Name;
             
-            var reaction = Reaction.Create(command.StudentId, reactionType, contentType, command.ContentId);
+            var reaction = Reaction.Create(command.StudentId, reactionType, studentFullName, contentType, command.ContentId);
             await _reactionRepository.AddAsync(reaction);
             
             await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));
