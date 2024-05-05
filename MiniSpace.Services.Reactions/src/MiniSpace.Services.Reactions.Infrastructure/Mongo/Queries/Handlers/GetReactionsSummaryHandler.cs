@@ -1,5 +1,6 @@
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
+using MiniSpace.Services.Reactions.Application;
 using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Application.Queries;
 using MiniSpace.Services.Reactions.Core.Entities;
@@ -13,9 +14,12 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
     {
         private readonly IMongoRepository<ReactionDocument, Guid> _reactionRepository;
 
-        public GetReactionsSummaryHandler(IMongoRepository<ReactionDocument, Guid> reactionRepository)
+        private readonly IAppContext _appContext;
+
+        public GetReactionsSummaryHandler(IMongoRepository<ReactionDocument, Guid> reactionRepository, IAppContext appContext)
         {
             _reactionRepository = reactionRepository;
+            _appContext = appContext;
         }
         
         public async Task<ReactionsSummaryDto>
@@ -29,11 +33,18 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
             int nrReactions = groups.Select(x => x.ToList().Count).Sum();
 
             if (nrReactions == 0) {
-                return new ReactionsSummaryDto(0, default);
+                return new ReactionsSummaryDto(0, default, null);
+            }
+
+            var identity = _appContext.Identity;
+            Guid? authUserReactionId = null;
+
+            if (identity.IsAuthenticated && reactions.Exists(x => x.StudentId == identity.Id)) {
+                authUserReactionId = reactions.Find(x => x.StudentId == identity.Id).Id;
             }
 
             ReactionType dominant = groups.OrderBy(x => x.ToList().Count).Last().Key;
-            return new ReactionsSummaryDto(nrReactions, dominant);
+            return new ReactionsSummaryDto(nrReactions, dominant, authUserReactionId);
         }
     }    
 }
