@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Reactions.Application.Events.External.Handlers
                 throw new EventAlreadyAddedException(@event.EventId);
             }
 
-            await _eventRepository.AddAsync(new Event(@event.EventId, @event.OrganizerId));
+            await _eventRepository.AddAsync(new Event(@event.EventId));
         }
     }    
 }

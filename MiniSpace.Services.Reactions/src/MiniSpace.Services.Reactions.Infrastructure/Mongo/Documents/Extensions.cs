@@ -43,8 +43,7 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents
             public static EventDocument AsDocument(this Event entity)
             => new EventDocument
             {
-                Id = entity.Id,
-                OrganizerId = entity.OrganizerId
+                Id = entity.Id
             };
 
             public static PostDocument AsDocument(this Post entity)
