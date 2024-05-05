@@ -35,7 +35,7 @@ namespace MiniSpace.Services.Reactions.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetReactions, IEnumerable<ReactionDto>>("reactions")
                         .Get<GetReactionsSummary, ReactionsSummaryDto>("reactions/summary")
-                        .Post<CreateReaction>("reactions/{reactionId}",
+                        .Post<CreateReaction>("reactions",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"reactions/{cmd.ReactionId}"))
                         .Delete<DeleteReaction>("reactions/{reactionId}")
                     ))
