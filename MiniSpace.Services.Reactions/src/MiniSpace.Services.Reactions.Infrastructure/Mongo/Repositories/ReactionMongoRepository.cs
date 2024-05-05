@@ -13,22 +13,6 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
     {
         private readonly IMongoRepository<ReactionDocument, Guid> _repository = repository;
 
-        public async Task<(int NumberOfReactions, ReactionType DominantReaction)> GetReactionSummaryAsync(Guid contentId, ReactionContentType contentType)
-        {
-            // Get number for each reaction type
-            Dictionary<ReactionType, int> nrRcs = new();
-            var reactions = _repository.Collection.AsQueryable();
-            var reactionsAsync = await reactions.ToListAsync();
-            foreach (var r in reactionsAsync) {
-                int tmp = 0;
-                nrRcs.TryGetValue(r.Type, out tmp);
-                nrRcs[r.Type] = tmp + 1;
-            }
-            ReactionType dominant = nrRcs.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-            int sum = nrRcs.Skip(1).Sum(x => x.Value);
-            return (sum, dominant);
-        }
-
         public async Task<IEnumerable<Reaction>> GetReactionsAsync(Guid contentId, ReactionContentType contentType)
         {
             var reactions = _repository.Collection.AsQueryable();
