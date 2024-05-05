@@ -2,11 +2,13 @@
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Http
+@using MiniSpace.Web.Areas.Organizations
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Models.Events
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
+@inject IOrganizationsService OrganizationsService
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
@@ -22,26 +24,43 @@
                 <RadzenColumn Size="12" SizeSM="4">
                     <RadzenStack>
                         <RadzenFormField Text="Name" Variant="Variant.Outlined">
-                            <RadzenTextBox @bind-Value="@addEventModel.Name" />
+                            <RadzenTextBox @bind-Value="@addEventModel.Name" Name="name" />
+                            <RadzenRequiredValidator Component="name" Style="position: relative"
+                                                     Text="Name is required" />
+                            <RadzenLengthValidator Component="name"  Max="300" Style="position: relative"
+                                                   Text="Name should have at most 300 characters" />
                         </RadzenFormField>
                         <RadzenFormField Text="Start date" Variant="Variant.Outlined">
-                            <RadzenDatePicker @bind-Value="@addEventModel.StartDate"/>
+                            <RadzenDatePicker @bind-Value="@addEventModel.StartDate" Name="start-date"
+                                              ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                            <RadzenCustomValidator Component="start-date" Style="position: relative"
+                                                   Validator="@(() => ValidateDate(addEventModel.StartDate))"
+                                                   Text="Minute number has to be divisible by 5"/>
                         </RadzenFormField>
                         <RadzenFormField Text="Building name" Variant="Variant.Outlined">
-                            <RadzenTextBox @bind-Value="@addEventModel.BuildingName" />
+                            <RadzenTextBox @bind-Value="@addEventModel.BuildingName" Name="building-name" />
+                            <RadzenRequiredValidator Component="building-name" Style="position: relative"
+                                                     Text="Building name is required" />
                         </RadzenFormField>
                         <RadzenFormField Text="Building number" Variant="Variant.Outlined">
-                            <RadzenTextBox @bind-Value="@addEventModel.BuildingNumber" />
+                            <RadzenTextBox @bind-Value="@addEventModel.BuildingNumber" Name="building-number" />
+                            <RadzenRequiredValidator Component="building-number" Style="position: relative"
+                                                     Text="Building number is required"/>
                         </RadzenFormField>
                         <RadzenFormField Text="City" Variant="Variant.Outlined">
-                            <RadzenTextBox @bind-Value="@addEventModel.City" />
+                            <RadzenTextBox @bind-Value="@addEventModel.City" Name="city" />
+                            <RadzenRequiredValidator Component="city" Style="position: relative"
+                                                     Text="City is required"/>
                         </RadzenFormField>
                         <RadzenFormField Text="Capacity" Variant="Variant.Outlined">
-                            <RadzenNumeric @bind-Value="@addEventModel.Capacity" />
+                            <RadzenNumeric @bind-Value="@addEventModel.Capacity" Name="capacity" />
+                            <RadzenNumericRangeValidator Component="capacity" Min="1" Max="1000" Style="position: relative"
+                                                         Text="Capacity should be between 1 and 1000" />
                         </RadzenFormField>
-                        <RadzenFormField Text="Description" Variant="Variant.Outlined">
-                            <RadzenTextArea @bind-Value="@addEventModel.Description" />
-                        </RadzenFormField>
+                        <RadzenFormField Text="Organization" Variant="Variant.Outlined">
+                            <RadzenDropDown Data=@organizations @bind-Value="@addEventModel.OrganizationId"
+                                            TextProperty="Name" ValueProperty="Id" />
+                     </RadzenFormField>
                     </RadzenStack>
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeSM="4">
@@ -49,20 +68,30 @@
                          <RadzenFormField Text="Category" Variant="Variant.Outlined">
                              <RadzenDropDown Data=@categories @bind-Value="@addEventModel.Category" />
                          </RadzenFormField>
-                        <RadzenFormField Text="End date" Variant="Variant.Outlined">
-                            <RadzenDatePicker @bind-Value="@addEventModel.EndDate"/>
-                        </RadzenFormField>
+                         <RadzenFormField Text="End date" Variant="Variant.Outlined">
+                             <RadzenDatePicker @bind-Value="@addEventModel.EndDate" Name="end-date"
+                                               ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                             <RadzenCustomValidator Component="end-date" Style="position: relative"
+                                                    Validator="@(() => ValidateDate(addEventModel.EndDate))"
+                                                    Text="Minute number has to be divisible by 5"/>
+                         </RadzenFormField>
                         <RadzenFormField Text="Street" Variant="Variant.Outlined">
-                            <RadzenTextBox @bind-Value="@addEventModel.Street" />
+                            <RadzenTextBox @bind-Value="@addEventModel.Street" Name="street" />
+                            <RadzenRequiredValidator Component="street" Style="position: relative"
+                                                     Text="Street is required" />
                         </RadzenFormField>
                         <RadzenFormField Text="Apartment number" Variant="Variant.Outlined">
                             <RadzenTextBox @bind-Value="@addEventModel.ApartmentNumber" />
                         </RadzenFormField>
                         <RadzenFormField Text="Zip code" Variant="Variant.Outlined">
-                            <RadzenTextBox @bind-Value="@addEventModel.ZipCode" />
-                        </RadzenFormField>            
+                            <RadzenTextBox @bind-Value="@addEventModel.ZipCode" Name="zip-code" />
+                            <RadzenRequiredValidator Component="zip-code" Style="position: relative"
+                                                     Text="Zip code is required" />
+                        </RadzenFormField>
                         <RadzenFormField Text="Fee" Variant="Variant.Outlined">
-                            <RadzenNumeric @bind-Value="@addEventModel.Fee" Placeholder="0.00" Step="0.01"/>
+                            <RadzenNumeric @bind-Value="@addEventModel.Fee" Placeholder="0.00" Step="0.01" Name="fee"/>
+                            <RadzenNumericRangeValidator Component="fee" Min="0.0" Max="1000.0" Style="position: relative"
+                                                         Text="Fee should be between 0.0 and 1000.0" />
                         </RadzenFormField>
                         <RadzenFormField Text="Publish Date" Variant="Variant.Outlined">
                             <RadzenStack Orientation="Orientation.Vertical">
@@ -74,9 +103,27 @@
                                 </RadzenRadioButtonList>
                                 @if (publishInfo == 2)
                                 {
-                                    <RadzenDatePicker @bind-Value="@addEventModel.PublishDate"/>
+                                    <RadzenDatePicker @bind-Value="@addEventModel.PublishDate" Name="publish-date"
+                                                      ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                                    <RadzenCustomValidator Component="publish-date" Style="position: relative"
+                                                           Validator="@(() => ValidateDate(addEventModel.PublishDate))"
+                                                           Text="Minute number has to be divisible by 5"/>
                                 }
                             </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
+                <RadzenColumn Size="12" SizeSM="8">
+                    <RadzenStack>
+                        <RadzenFormField Text="Description" Variant="Variant.Outlined">
+                            <RadzenTextArea Style="height: 100px" @bind-Value="@addEventModel.Description" Name="description"/>
+                            <RadzenRequiredValidator Component="description" Style="position: relative"
+                                                     Text="Description is required" />
+                            <RadzenLengthValidator Component="description"  Max="1000" Style="position: relative"
+                                                   Text="Description should have at most 1000 characters" />
                         </RadzenFormField>
                     </RadzenStack>
                 </RadzenColumn>
@@ -98,8 +145,8 @@
     {
         Name = "One of first events!",
         Category = "Art",
-        StartDate = new DateTime(2024, 04, 25),
-        EndDate = new DateTime(2024, 04, 27),
+        StartDate = new DateTime(2024, 05, 09),
+        EndDate = new DateTime(2024, 05, 11),
         BuildingName = "Gmach Główny",
         Street = "Plac Politechniki",
         BuildingNumber = "1",
@@ -112,9 +159,8 @@
     };
     private bool showError = false;
     private string errorMessage = string.Empty;
-    private bool popup;
     private int publishInfo = 1;
-
+    
     private List<string> categories =
     [
         "Music",
@@ -129,30 +175,37 @@
         "Other"
     ];
     
+    private IEnumerable<OrganizationDto> organizations;
+    
+    private static bool ValidateDate(DateTime dateTime)
+    {
+        return dateTime.Minute % 5 == 0;
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         if (IdentityService.IsAuthenticated)
         {
             userDto = IdentityService.UserDto;
+            organizations = await OrganizationsService.GetOrganizerOrganizationsAsync(userDto.Id);
+            
+            addEventModel.OrganizerId = userDto.Id;
+            addEventModel.OrganizationId = organizations.First().Id;
         }
     }
     
     private async Task HandleCreateEvent()
     {
-        addEventModel.OrganizerId = userDto.Id;
-        if (publishInfo == 1)
-        {
-            addEventModel.PublishDate = null;
-        }
-        
-        var response = await EventsService.AddEventAsync(Guid.Empty, addEventModel.Name, addEventModel.OrganizerId,
+        var response = await EventsService.AddEventAsync(Guid.Empty, addEventModel.Name,
+            addEventModel.OrganizerId, addEventModel.OrganizationId,
             addEventModel.StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             addEventModel.EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
             addEventModel.BuildingName, addEventModel.Street,  addEventModel.BuildingNumber,
             addEventModel.ApartmentNumber, addEventModel.City, addEventModel.ZipCode,
             addEventModel.Description, addEventModel.Capacity, addEventModel.Fee, addEventModel.Category,
-            addEventModel.PublishDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-        if(response.ErrorMessage != null)
+            publishInfo == 2 ? addEventModel.PublishDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : string.Empty);
+        
+        if (response.ErrorMessage != null)
         {
             showError = true;
             errorMessage = ErrorMapperService.MapError(response.ErrorMessage);

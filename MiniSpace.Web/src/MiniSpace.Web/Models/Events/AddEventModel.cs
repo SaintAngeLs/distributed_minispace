@@ -7,6 +7,7 @@ namespace MiniSpace.Web.Models.Events
         public Guid EventId { get; set; }
         public string Name { get; set; }
         public Guid OrganizerId { get; set; }
+        public Guid OrganizationId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string BuildingName { get; set; }
@@ -19,6 +20,6 @@ namespace MiniSpace.Web.Models.Events
         public int Capacity { get; set; }
         public decimal Fee { get; set; }
         public string Category { get; set; }
-        public DateTime? PublishDate { get; set; }
+        public DateTime PublishDate { get; set; }
     }
 }
