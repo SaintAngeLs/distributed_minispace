@@ -1,11 +1,11 @@
 namespace MiniSpace.Services.Reactions.Application.Exceptions
 {
-    public class StudentNotFoundException : AppException
+    public class UnauthorizedIdentityException : AppException
     {
         public override string Code { get; } = "student_not_found";
         public Guid Id { get; }
 
-        public StudentNotFoundException(Guid id) : base($"Student with id: {id} was not found.")
+        public UnauthorizedIdentityException(Guid id) : base($"Identity with id: {id} is not authorized.")
         {
             Id = id;
         }

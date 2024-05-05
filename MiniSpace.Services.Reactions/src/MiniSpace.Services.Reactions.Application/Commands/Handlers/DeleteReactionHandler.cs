@@ -19,6 +19,13 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
         {
             _ = await _reactionRepository.GetAsync(command.ReactionId) ??
                 throw new ReactionNotFoundException(command.ReactionId);
+
+            var identity = _appContext.Identity;
+            if (!identity.IsAuthenticated)
+            {
+                throw new UnauthorizedIdentityException(identity.Id);
+            }
+
             await _reactionRepository.DeleteAsync(command.ReactionId);
             await _messageBroker.PublishAsync(new ReactionDeleted(command.ReactionId));
         }

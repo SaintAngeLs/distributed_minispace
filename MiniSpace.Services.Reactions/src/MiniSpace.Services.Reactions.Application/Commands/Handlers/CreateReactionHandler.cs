@@ -9,25 +9,26 @@ using MiniSpace.Services.Reactions.Core.Repositories;
 namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
 {
     public class CreateReactionHandler(IReactionRepository reactionRepository,
-                                 IStudentRepository studentRepository,
                                  IPostRepository postRepository,
                                  IEventRepository eventRepository,
                                  IDateTimeProvider dateTimeProvider,
-                                 IMessageBroker messageBroker) : ICommandHandler<CreateReaction>
+                                 IAppContext appContext,
+                                 IMessageBroker messageBroker
+                                 ) : ICommandHandler<CreateReaction>
     {
         private readonly IReactionRepository _reactionRepository = reactionRepository;
-        private readonly IStudentRepository _studentRepository = studentRepository;
         private readonly IPostRepository _postRepository = postRepository;
         private readonly IEventRepository _eventRepository = eventRepository;
         private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
         private readonly IMessageBroker _messageBroker = messageBroker;
+        private readonly IAppContext _appContext = appContext;
 
         public async Task HandleAsync(CreateReaction command, CancellationToken cancellationToken = default)
         {
-            // Check if student exists
-            if (!await _studentRepository.ExistsAsync(command.StudentId))
-            {
-                throw new StudentNotFoundException(command.StudentId);
+            var identity = _appContext.Identity;
+
+            if (identity.Id != command.StudentId) {
+                throw new UnauthorizedIdentityException(command.StudentId);
             }
 
             // Check the content type
