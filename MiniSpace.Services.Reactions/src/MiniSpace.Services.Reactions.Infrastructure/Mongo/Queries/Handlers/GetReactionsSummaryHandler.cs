@@ -25,22 +25,15 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
             documents = documents.Where(p => p.ContentId == query.ContentId && p.ContentType == query.ContentType);
 
             var reactions = await documents.ToListAsync();
+            var groups = reactions.GroupBy(x => x.Type);
+            int nrReactions = groups.Select(x => x.ToList().Count).Sum();
 
-            // Get number for each reaction type
-            Dictionary<ReactionType, int> nrRcs = new();
-            foreach (var r in reactions) {
-                int tmp = 0;
-                nrRcs.TryGetValue(r.Type, out tmp);
-                nrRcs[r.Type] = tmp + 1;
-            }
-            if (nrRcs.Count != 0) {
-                ReactionType dominant = nrRcs.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-                int sum = nrRcs.Skip(1).Sum(x => x.Value);
-                return new ReactionsSummaryDto(sum, dominant);
-            }
-            else {
+            if (nrReactions == 0) {
                 return new ReactionsSummaryDto(0, default);
             }
+
+            ReactionType dominant = groups.OrderBy(x => x.ToList().Count).Last().Key;
+            return new ReactionsSummaryDto(nrReactions, dominant);
         }
     }    
 }
