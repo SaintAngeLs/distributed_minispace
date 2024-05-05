@@ -5,5 +5,6 @@ namespace MiniSpace.Services.Reactions.Core.Repositories
     public interface IPostRepository
     {
         Task<bool> ExistsAsync(Guid id);
+        Task AddAsync(Post post);
     }    
 }

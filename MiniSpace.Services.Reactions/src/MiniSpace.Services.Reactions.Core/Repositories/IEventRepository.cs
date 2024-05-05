@@ -8,5 +8,6 @@ namespace MiniSpace.Services.Reactions.Core.Repositories
     public interface IEventRepository
     {
         Task<bool> ExistsAsync(Guid id);
+        Task AddAsync(Event @event);
     }
 }

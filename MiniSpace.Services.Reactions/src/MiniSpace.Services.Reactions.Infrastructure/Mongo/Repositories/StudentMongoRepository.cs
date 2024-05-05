@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
             => _repository.ExistsAsync(s => s.Id == id);
 
 
-
+        public Task AddAsync(Student student) => _repository.AddAsync(student.AsDocument());
 
 
         // public Task AddAsync(Student student)
