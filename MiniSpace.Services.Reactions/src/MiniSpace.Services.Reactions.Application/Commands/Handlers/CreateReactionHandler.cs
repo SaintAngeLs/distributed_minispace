@@ -30,12 +30,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.StudentId);
             }
 
-            var student = await _studentRepository.GetAsync(command.StudentId);
-
-            if (student.FullName != command.StudentFullName) {
-                throw new InvalidStudentFullNameException(command.StudentId, command.StudentFullName);
-            }
-
             // Check the content type
             if (!Enum.TryParse<ReactionContentType>(command.ContentType, true, out var contentType)) {
                 throw new InvalidReactionContentTypeException(command.ContentType);
@@ -64,7 +58,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                 throw new InvalidReactionTypeException(command.ReactionType);
             }
             
-            var reaction = Reaction.Create(command.StudentId, command.StudentFullName, reactionType, contentType, command.ContentId);
+            var reaction = Reaction.Create(command.StudentId, reactionType, contentType, command.ContentId);
             await _reactionRepository.AddAsync(reaction);
             
             await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));

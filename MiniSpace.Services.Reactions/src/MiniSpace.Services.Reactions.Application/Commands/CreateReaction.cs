@@ -9,7 +9,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands
     {
         public Guid ReactionId {get;}
         public Guid StudentId { get; }
-        public string StudentFullName {get;}
         public string ReactionType { get; } 
         
         public Guid ContentId {get;}
@@ -17,13 +16,12 @@ namespace MiniSpace.Services.Reactions.Application.Commands
         // Is the reaction related to event or post?
         public string ContentType { get; } 
 
-        public CreateReaction(Guid reactionId, Guid studentId, string studentFullName,
+        public CreateReaction(Guid reactionId, Guid studentId,
                             Guid contentId,
                               string reactionType, string contentType)
         {
             ReactionId = reactionId == Guid.Empty ? Guid.NewGuid() : reactionId;
             StudentId = studentId;
-            StudentFullName = studentFullName;
             ContentId = contentId;
             ReactionType = reactionType;
             ContentType = contentType;
