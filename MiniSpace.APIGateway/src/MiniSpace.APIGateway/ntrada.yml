@@ -112,32 +112,24 @@ modules:
         use: downstream
         downstream: identity-service/users/{userId}/organizer-rights
         auth: true
-        # claims:
-        #   role: admin
 
       - upstream: /users/{userId}/organizer-rights
         method: DELETE
         use: downstream
         downstream: identity-service/users/{userId}/organizer-rights
         auth: true
-        # claims:
-        #   role: admin
 
       - upstream: /users/{userId}/ban
         method: POST
         use: downstream
         downstream: identity-service/users/{userId}/ban
         auth: true
-        # claims:
-        #   role: admin
 
       - upstream: /users/{userId}/ban
         method: DELETE
         use: downstream
         downstream: identity-service/users/{userId}/ban
         auth: true
-        # claims:
-        #   role: admin
 
     services:
       identity-service:
@@ -587,6 +579,12 @@ modules:
         method: GET
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children  
+
+      - upstream: /organizer/{organizerId}
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/organizer/{organizerId}
+        auth: true
 
     services:
       organizations-service:
