@@ -13,7 +13,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands
         
         public Guid ContentId {get;}
 
-        // Is the reaction related to event or post?
         public string ContentType { get; } 
 
         public CreateReaction(Guid reactionId, Guid studentId,
