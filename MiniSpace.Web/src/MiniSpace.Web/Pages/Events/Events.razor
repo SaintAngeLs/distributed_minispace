@@ -21,9 +21,8 @@
 
 @if (pageInitialized && studentDto.Id != Guid.Empty)
 {
-    <RadzenStack class="rz-p-12" Gap="1rem" Style="height: 100%">
-        
-        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client" >
+    <RadzenStack class="rz-pt-12" Gap="1rem" Style="height: 100%">
+        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
             <Tabs>
                 <RadzenTabsItem Text="Signed up">
                     @if (totalSignedUpElements == 0)
@@ -35,21 +34,21 @@
                             <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
                                         @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}"))">
                                 <RadzenRow Size="12">
-                                    <RadzenColumn Size="6">
+                                    <RadzenColumn Size="12" SizeMD="6">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
                                     </RadzenColumn>
-                                    <RadzenColumn Size="5">
+                                    <RadzenColumn Size="12" SizeMD="5">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Status</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Status)</b></RadzenText>
                                     </RadzenColumn>
                                 </RadzenRow>
                                 <RadzenRow Size="12">
-                                    <RadzenColumn Size="6">
+                                    <RadzenColumn Size="12" SizeMD="6">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Start date</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
                                     </RadzenColumn>
-                                    <RadzenColumn Size="5">
+                                    <RadzenColumn Size="12" SizeMD="5">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">End date</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
                                     </RadzenColumn>
@@ -70,21 +69,21 @@
                             <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
                                         @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}"))">
                                 <RadzenRow Size="12">
-                                    <RadzenColumn Size="6">
+                                    <RadzenColumn Size="12" SizeMD="6">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
                                     </RadzenColumn>
-                                    <RadzenColumn Size="5">
+                                    <RadzenColumn Size="12" SizeMD="5">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Status</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Status)</b></RadzenText>
                                     </RadzenColumn>
                                 </RadzenRow>
                                 <RadzenRow Size="12">
-                                    <RadzenColumn Size="6">
+                                    <RadzenColumn Size="12" SizeMD="6">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Start date</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
                                     </RadzenColumn>
-                                    <RadzenColumn Size="5">
+                                    <RadzenColumn Size="12" SizeMD="5">
                                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Capacity</RadzenText>
                                         <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.SignedUpStudents)/@(ev.Capacity)</b></RadzenText>
                                     </RadzenColumn>

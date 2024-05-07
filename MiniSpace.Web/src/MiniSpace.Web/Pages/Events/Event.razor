@@ -18,49 +18,51 @@
 
 <h1>@eventDto.Name</h1>
 
-<RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client" >
-    <Tabs>
-        <RadzenTabsItem Text="Posts">
-            @if (pageInitialized && !posts.Any())
-            {
-                <h3>No posts have been added by organizers yet.</h3>
-            }
-            <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
-                <Template Context="post">
-                    <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
-                                @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}"))">
-                        <RadzenRow Gap="0.5rem">
-                            <RadzenColumn Size="12" class="rz-text-truncate">
-                                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                                Text=@($"{GetStudentName(post.StudentId)}") />
-                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                        Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+<RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
+    <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client" >
+        <Tabs>
+            <RadzenTabsItem Text="Posts">
+                @if (pageInitialized && !posts.Any())
+                {
+                    <h3>No posts have been added by organizers yet.</h3>
+                }
+                <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
+                    <Template Context="post">
+                        <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
+                                    @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}"))">
+                            <RadzenRow Gap="0.5rem">
+                                <RadzenColumn Size="12" class="rz-text-truncate">
+                                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                                    Text=@($"{GetStudentName(post.StudentId)}") />
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                            Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                                        </RadzenText>
+                                    </RadzenStack>
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                                <RadzenStack Gap="1em">
+                                    <RadzenStack></RadzenStack>
+                                    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
+                                        <strong>@(post.TextContent)</strong>
                                     </RadzenText>
                                 </RadzenStack>
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
-                            <RadzenStack Gap="1em">
-                                <RadzenStack></RadzenStack>
-                                <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
-                                    <strong>@(post.TextContent)</strong>
-                                </RadzenText>
                             </RadzenStack>
-                        </RadzenStack>
-                    </RadzenCard>
-                </Template>
-            </RadzenDataList>
-        </RadzenTabsItem>
-        
-        <RadzenTabsItem Text="Comments">
-        </RadzenTabsItem>
-        
-        <RadzenTabsItem Text="Interested friends">
-                </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
+                        </RadzenCard>
+                    </Template>
+                </RadzenDataList>
+            </RadzenTabsItem>
+            
+            <RadzenTabsItem Text="Comments">
+            </RadzenTabsItem>
+            
+            <RadzenTabsItem Text="Interested friends">
+                    </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+</RadzenStack>
 
 @code {
     [Parameter]
