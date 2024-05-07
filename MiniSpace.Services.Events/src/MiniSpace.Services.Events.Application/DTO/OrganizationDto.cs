@@ -7,6 +7,6 @@ namespace MiniSpace.Services.Events.Application.DTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Guid> Organizers;
+        public IEnumerable<Guid> Organizers { get; set; }
     }
 }
