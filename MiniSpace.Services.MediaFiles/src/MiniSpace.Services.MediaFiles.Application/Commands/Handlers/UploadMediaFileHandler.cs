@@ -31,7 +31,7 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             var stream = new MemoryStream(bytes);
 
             var objectId = await _gridFSService.UploadFileAsync(command.FileName, stream);
-            var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, objectId);
+            var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, objectId, command.FileName);
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, command.FileName));
         }

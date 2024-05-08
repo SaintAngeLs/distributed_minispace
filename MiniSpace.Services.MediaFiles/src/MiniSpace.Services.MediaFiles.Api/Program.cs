@@ -8,9 +8,12 @@ using Convey.WebApi.CQRS;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.MediaFiles.Application;
 using MiniSpace.Services.MediaFiles.Application.Commands;
+using MiniSpace.Services.MediaFiles.Application.Dto;
+using MiniSpace.Services.MediaFiles.Application.Queries;
 using MiniSpace.Services.MediaFiles.Infrastructure;
 
 namespace MiniSpace.Services.MediaFiles.Api
@@ -29,6 +32,7 @@ namespace MiniSpace.Services.MediaFiles.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        .Get<GetMediaFile, FileDto>("media-files/{mediaFileId}")
                         .Post<UploadMediaFile>("media-files",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"media-files/{cmd.MediaFileId}"))
                         ))
