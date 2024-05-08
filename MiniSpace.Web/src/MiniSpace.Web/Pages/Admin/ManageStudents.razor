@@ -15,7 +15,7 @@
 {
     <h3 class="rz-p-12">Loading...</h3>
 }
-@if (pageInitialized && studentDto.Id != Guid.Empty)
+@if (pageInitialized && studentId != Guid.Empty)
 {
     <h4 class="rz-p-8">To manage rights of a student, open details dialog by clicking "Show" button.</h4>
     
@@ -58,7 +58,7 @@
     private int pageSize = 5;
     IEnumerable<int> pageSizeOptions = new int[] { 5, 10, 20, 40};
     
-    private StudentDto studentDto = new();
+    private Guid studentId;
     private bool pageInitialized = false;
 
     private int totalStudents = 0;
@@ -66,9 +66,9 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if (IdentityService.IsAuthenticated)
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
-            studentDto = StudentsService.StudentDto;
+            studentId = IdentityService.GetCurrentUserId();
             
             students = await StudentsService.GetStudentsAsync();
             totalStudents = students.Count();

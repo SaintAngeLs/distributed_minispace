@@ -184,7 +184,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if (IdentityService.IsAuthenticated)
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
         {
             userDto = IdentityService.UserDto;
             organizations = await OrganizationsService.GetOrganizerOrganizationsAsync(userDto.Id);

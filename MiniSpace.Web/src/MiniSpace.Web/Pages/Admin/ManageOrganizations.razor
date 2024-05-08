@@ -71,7 +71,7 @@ else
     
     protected override async Task OnInitializedAsync()
     {
-        if (IdentityService.IsAuthenticated)
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
             var tmpOrganizations = await OrganizationsService.GetRootOrganizationsAsync();
             ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations);

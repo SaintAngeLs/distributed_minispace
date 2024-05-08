@@ -261,6 +261,14 @@ namespace MiniSpace.Web.Areas.Identity
             throw new InvalidOperationException("No user is currently logged in.");
         }
 
+        public string GetCurrentUserRole()
+        {
+            if (UserDto != null && UserDto.Id != Guid.Empty)
+            {
+                return UserDto.Role;
+            }
+            throw new InvalidOperationException("No user is currently logged in.");
+        }
         
         public Task GrantOrganizerRights(Guid userId)
         {

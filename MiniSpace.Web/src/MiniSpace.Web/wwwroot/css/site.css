@@ -344,10 +344,10 @@ html, body {
 }
 
 
-.rz-body {
-    padding: 0 !important;
-}
+/*.rz-body {*/
+/*    padding: 0 !important;*/
+/*}*/
 
-.rz-layout .rz-body {
-    overflow: unset !important;
-}
+/*.rz-layout .rz-body {*/
+/*    overflow: unset !important;*/
+/*}*/

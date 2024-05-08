@@ -65,7 +65,7 @@
                                              Click="@(() => NavigationManager.NavigateTo("events/"))"/>
                         <RadzenPanelMenuItem Text="Search" Icon="find_in_page"
                                              Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
-                        @if (IdentityService.UserDto.Role == "organizer")
+                        @if (IdentityService.GetCurrentUserRole() == "organizer")
                         {
                             <RadzenPanelMenuItem Text="Organize" Icon="assignment"
                                                  Click="@(() => NavigationManager.NavigateTo("events/organize"))"/>
@@ -79,7 +79,7 @@
                         <RadzenPanelMenuItem Text="Sent Requests" Icon="send" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
                     </RadzenPanelMenuItem>
                     
-                    @if (IdentityService.UserDto.Role == "admin")
+                    @if (IdentityService.GetCurrentUserRole() == "admin")
                     {
                         <RadzenPanelMenuItem Text="Admin" Icon="build">
                             <RadzenPanelMenuItem Text="Students" Icon="account_circle"
