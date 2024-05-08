@@ -34,6 +34,7 @@ using MiniSpace.Services.MediaFiles.Infrastructure.Decorators;
 using MiniSpace.Services.MediaFiles.Infrastructure.Exceptions;
 using MiniSpace.Services.MediaFiles.Infrastructure.Logging;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services;
+using MongoDB.Driver;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure
 {
@@ -49,6 +50,13 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
+            builder.Services.AddSingleton<IGridFSService, GridFSService>(serviceProvider =>
+            {
+                var mongoDbOptions = serviceProvider.GetRequiredService<MongoDbOptions>();
+                var mongoClient = new MongoClient(mongoDbOptions.ConnectionString);
+                var database = mongoClient.GetDatabase(mongoDbOptions.Database);
+                return new GridFSService(database);
+            });
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -60,7 +68,6 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
                 .AddMessageOutbox(o => o.AddMongo())
                 .AddExceptionToMessageMapper<ExceptionToMessageMapper>()
-                .AddMongo()
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()

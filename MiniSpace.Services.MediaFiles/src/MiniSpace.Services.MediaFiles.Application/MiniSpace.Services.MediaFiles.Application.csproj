@@ -12,6 +12,7 @@
     <PackageReference Include="Convey.CQRS.Events" Version="1.1.448" />
     <PackageReference Include="Convey.CQRS.Queries" Version="1.1.448" />
     <PackageReference Include="Convey.MessageBrokers" Version="1.1.448" />
+    <PackageReference Include="MongoDB.Bson" Version="2.25.0" />
   </ItemGroup>
 
   <ItemGroup>

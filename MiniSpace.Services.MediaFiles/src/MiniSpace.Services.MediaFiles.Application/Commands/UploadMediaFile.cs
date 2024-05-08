@@ -5,13 +5,13 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands
 {
     public class UploadMediaFile : ICommand
     {
-        //public Guid MediaFileId { get; }
-        public IFormFile File { get;  }
+        public string FileName { get; set; }
+        public string Base64Content { get; set; }
 
-        public UploadMediaFile(IFormFile file)
+        public UploadMediaFile(string fileName, string base64Content)
         {
-            //MediaFileId = mediaFileId == Guid.Empty ? Guid.NewGuid() : mediaFileId;
-            File = file;
+            FileName = fileName;
+            Base64Content = base64Content;
         }
     }
 }
