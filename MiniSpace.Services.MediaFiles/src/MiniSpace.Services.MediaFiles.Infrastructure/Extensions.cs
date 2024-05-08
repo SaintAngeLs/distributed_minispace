@@ -68,6 +68,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
                 .AddMessageOutbox(o => o.AddMongo())
                 .AddExceptionToMessageMapper<ExceptionToMessageMapper>()
+                .AddMongo()
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
