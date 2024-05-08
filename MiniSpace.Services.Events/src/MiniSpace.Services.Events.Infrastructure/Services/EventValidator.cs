@@ -87,5 +87,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             if (newFee > currentFee)
                 throw new InvalidUpdatedEventFeeException(currentFee, newFee);
         }
+        
+        public State? RestrictState(State? state)
+        {
+            if (state != State.Published && state != State.Archived)
+                return null;
+            return state;
+        }
     }
 }

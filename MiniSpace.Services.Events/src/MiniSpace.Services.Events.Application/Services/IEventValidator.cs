@@ -16,5 +16,6 @@ namespace MiniSpace.Services.Events.Application.Services
         void ValidateFee(decimal fee);
         void ValidateUpdatedCapacity(int currentCapacity, int newCapacity);
         void ValidateUpdatedFee(decimal currentFee, decimal newFee);
+        State? RestrictState(State? state);
     }
 }

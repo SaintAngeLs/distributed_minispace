@@ -47,12 +47,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             if(command.State != string.Empty)
             {
                 state = _eventValidator.ParseState(command.State);
-                state = state != State.Published && state != State.Archived ? null : state;
+                state = _eventValidator.RestrictState(state);
             }
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
             
             var result = await _eventRepository.BrowseEventsAsync(
-                pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, category, state,
+                pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, category, state, command.Friends,
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
             
             var identity = _appContext.Identity;

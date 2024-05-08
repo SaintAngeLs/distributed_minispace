@@ -141,6 +141,16 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
+        public static FilterDefinition<EventDocument> AddFriendsFilter (this FilterDefinition<EventDocument> filterDefinition, IEnumerable<Guid> friends)
+        {
+            if (friends != null && friends.Any())
+            {
+                filterDefinition &= FilterDefinitionBuilder.AnyIn(x => x.Friends, friends);
+            }
+
+            return filterDefinition;
+        }
+        
         public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
             var sort = sortByArguments.ToList();
