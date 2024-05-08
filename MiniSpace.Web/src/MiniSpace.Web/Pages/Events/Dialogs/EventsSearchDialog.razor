@@ -13,6 +13,9 @@
                     <RadzenFormField Text="Name" Variant="Variant.Outlined">
                         <RadzenTextBox @bind-Value="@TempSearchEventsModel.Name" />
                     </RadzenFormField>
+                    <RadzenFormField Text="Category" Variant="Variant.Outlined">
+                         <RadzenDropDown Data=@categories @bind-Value="@TempSearchEventsModel.Category" />
+                     </RadzenFormField>
                     <RadzenFormField Text="Start date" Variant="Variant.Outlined">
                         <RadzenDatePicker @bind-Value="@TempSearchEventsModel.DateFrom"/>
                     </RadzenFormField>
@@ -26,6 +29,9 @@
                     <RadzenFormField Text="Organizer" Variant="Variant.Outlined">
                         <RadzenTextBox @bind-Value="@TempSearchEventsModel.Organizer" />
                     </RadzenFormField>
+                    <RadzenFormField Text="State" Variant="Variant.Outlined">
+                         <RadzenDropDown Data=@states @bind-Value="@TempSearchEventsModel.State" />
+                     </RadzenFormField>
                     <RadzenFormField Text="End date" Variant="Variant.Outlined">
                         <RadzenDatePicker @bind-Value="@TempSearchEventsModel.DateTo"/>
                     </RadzenFormField>
@@ -57,6 +63,29 @@
 
     private SearchEventsModel TempSearchEventsModel { get; set; }
     
+    private List<string> categories =
+    [
+        "",
+        "Music",
+        "Sports",
+        "Education",
+        "Science",
+        "Technology",
+        "Art",
+        "Business",
+        "Health",
+        "Charity",
+        "Other"
+    ];
+
+    private List<string> states = 
+    [
+        "",
+        "Published",
+        "Cancelled",
+        "Archived"
+    ];
+    
     private List<string> directions =
     [
         "Ascending",
@@ -73,6 +102,8 @@
     {
         SearchEventsModel.Name = TempSearchEventsModel.Name;
         SearchEventsModel.Organizer = TempSearchEventsModel.Organizer;
+        SearchEventsModel.Category = TempSearchEventsModel.Category;
+        SearchEventsModel.State = TempSearchEventsModel.State;
         SearchEventsModel.DateFrom = TempSearchEventsModel.DateFrom;
         SearchEventsModel.DateTo = TempSearchEventsModel.DateTo;
         SearchEventsModel.Pageable = TempSearchEventsModel.Pageable.DeepClone();

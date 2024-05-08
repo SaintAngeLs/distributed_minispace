@@ -93,7 +93,7 @@ namespace MiniSpace.Web.Areas.Identity
             IsAuthenticated = false;
             _navigationManager.NavigateTo("signin", forceLoad: true);
         }
-
+        
         private async Task<JwtDto> RefreshAccessToken(string refreshToken)
         {
             var payload = new { refreshToken };
@@ -220,9 +220,7 @@ namespace MiniSpace.Web.Areas.Identity
             }
             return IsAuthenticated;
         }
-
-
-
+        
         private async Task<bool> TryRefreshToken(string refreshToken)
         {
             try
@@ -253,8 +251,7 @@ namespace MiniSpace.Web.Areas.Identity
             }
             return false;
         }
-
-
+        
         public Guid GetCurrentUserId()
         {
             if (UserDto != null && UserDto.Id != Guid.Empty)
@@ -264,6 +261,29 @@ namespace MiniSpace.Web.Areas.Identity
             throw new InvalidOperationException("No user is currently logged in.");
         }
 
+        
+        public Task GrantOrganizerRights(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.PostAsync($"identity/users/{userId}/organizer-rights", new {userId});
+        }
 
+        public Task RevokeOrganizerRights(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"identity/users/{userId}/organizer-rights");
+        }
+
+        public Task BanUser(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.PostAsync($"identity/users/{userId}/ban", new {userId});
+        }
+
+        public Task UnbanUser(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"identity/users/{userId}/ban");
+        }
     }
 }

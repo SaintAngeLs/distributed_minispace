@@ -9,7 +9,7 @@
 @inject ILocalStorageService localStorage
 @inject AuthenticationStateProvider authenticationStateProvider
 
-<RadzenLayout style="width: 100%; min-width: 100vw; min-height: 100vh; text-align: center;" id="radzen-layout">
+<RadzenLayout style="width: 100%; min-height: 100vh; text-align: center;" id="radzen-layout">
     <header>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
@@ -50,22 +50,44 @@
             TODO: do not forget about the code snippet chaned ❕❕❕
                     @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
         *@
-        @if (IsUserAuthenticated )
+        @if (IsUserAuthenticated)
         {
             <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
                 <RadzenPanelMenu>
                     <RadzenPanelMenuItem Text="Home" Icon="home"
                                          Click="@(() => NavigationManager.NavigateTo(""))" />
+                    
                     <RadzenPanelMenuItem Text="Account" Icon="account_box"
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
-                    <RadzenPanelMenuItem Text="Events" Icon="event"
-                                         Click="@(() => NavigationManager.NavigateTo("events"))" />
-                   <RadzenPanelMenuItem Text="Friends" Icon="group">
+                    
+                    <RadzenPanelMenuItem Text="Events" Icon="event">
+                        <RadzenPanelMenuItem Text="Follow" Icon="bookmark"
+                                             Click="@(() => NavigationManager.NavigateTo("events/"))"/>
+                        <RadzenPanelMenuItem Text="Search" Icon="find_in_page"
+                                             Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
+                        @if (IdentityService.UserDto.Role == "organizer")
+                        {
+                            <RadzenPanelMenuItem Text="Organize" Icon="assignment"
+                                                 Click="@(() => NavigationManager.NavigateTo("events/organize"))"/>
+                        }
+                    </RadzenPanelMenuItem>
+                    
+                    <RadzenPanelMenuItem Text="Friends" Icon="group">
                         <RadzenPanelMenuItem Text="Search" Icon="search" Click="@(() => NavigationManager.NavigateTo("friends/search"))" />
                         <RadzenPanelMenuItem Text="Friends" Icon="group" Click="@(() => NavigationManager.NavigateTo("friends"))" />
                         <RadzenPanelMenuItem Text="Requests" Icon="mail_outline" Click="@(() => NavigationManager.NavigateTo("friends/requests"))" />
                         <RadzenPanelMenuItem Text="Sent Requests" Icon="send" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
                     </RadzenPanelMenuItem>
+                    
+                    @if (IdentityService.UserDto.Role == "admin")
+                    {
+                        <RadzenPanelMenuItem Text="Admin" Icon="build">
+                            <RadzenPanelMenuItem Text="Students" Icon="account_circle"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
+                            <RadzenPanelMenuItem Text="Organizations" Icon="assignment"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/organizations"))" />
+                        </RadzenPanelMenuItem>
+                    }
                 </RadzenPanelMenu>
             </RadzenSidebar>
         }
