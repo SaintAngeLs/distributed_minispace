@@ -32,6 +32,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             var dateTo = DateTime.MinValue;
             Category? category = null;
             State? state = null;
+            EventEngagementType? friendsEngagementType = null;
             if(command.DateFrom != string.Empty)
             {
                 dateFrom =_eventValidator.ParseDate(command.DateFrom, "DateFrom");
@@ -49,11 +50,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
                 state = _eventValidator.ParseState(command.State);
                 state = _eventValidator.RestrictState(state);
             }
+            if(command.FriendsEngagementType != string.Empty)
+            {
+                friendsEngagementType = _eventValidator.ParseEngagementType(command.FriendsEngagementType);
+            }
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
             
             var result = await _eventRepository.BrowseEventsAsync(
                 pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, category, state, command.Friends,
-                command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
+                friendsEngagementType, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
             
             var identity = _appContext.Identity;
             var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, identity.Id)), 

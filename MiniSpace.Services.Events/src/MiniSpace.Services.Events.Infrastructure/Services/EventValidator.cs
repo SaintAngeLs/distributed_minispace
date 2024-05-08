@@ -37,6 +37,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             }
             return state;
         }
+        
+        public EventEngagementType ParseEngagementType(string engagementTypeString)
+        {
+            if (!Enum.TryParse<EventEngagementType>(engagementTypeString, true, out var engagementType))
+            {
+                throw new InvalidEventEngagementTypeException(engagementTypeString);
+            }
+            return engagementType;
+        }
 
         public void ValidateDates(DateTime earlierDate, DateTime laterDate,  string earlierDateField, string laterDateField)
         {

@@ -8,6 +8,7 @@ namespace MiniSpace.Services.Events.Application.Services
         Category ParseCategory(string categoryString);
         DateTime ParseDate(string dateString, string fieldName);
         State ParseState(string stateString);
+        EventEngagementType ParseEngagementType(string engagementTypeString);
         void ValidateDates(DateTime earlierDate, DateTime laterDate, string earlierDateString, string endDateString);
         (int pageNumber, int pageSize) PageFilter(int pageNumber, int pageSize);
         void ValidateName(string name);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
@@ -141,11 +140,26 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
-        public static FilterDefinition<EventDocument> AddFriendsFilter (this FilterDefinition<EventDocument> filterDefinition, IEnumerable<Guid> friends)
+        public static FilterDefinition<EventDocument> AddFriendsFilter (this FilterDefinition<EventDocument> filterDefinition,
+            IEnumerable<Guid> friendsEnumerable, EventEngagementType? friendsEngagementType)
         {
-            if (friends != null && friends.Any())
+            var friends = friendsEnumerable.ToList();
+            if (friends.Count == 0)
             {
-                filterDefinition &= FilterDefinitionBuilder.AnyIn(x => x.Friends, friends);
+                return filterDefinition;
+            }
+            
+            if (friendsEngagementType != null)  
+            {
+                filterDefinition &= friendsEngagementType == EventEngagementType.InterestedIn 
+                    ? FilterDefinitionBuilder.AnyIn(x => x.InterestedStudents.Select(s => s.StudentId), friends)
+                    : FilterDefinitionBuilder.AnyIn(x => x.SignedUpStudents.Select(s => s.StudentId), friends);
+            }
+            else
+            {
+                filterDefinition &= FilterDefinitionBuilder.AnyIn(x
+                    => x.InterestedStudents.Select(s 
+                        => s.StudentId).Union(x.SignedUpStudents.Select(s => s.StudentId)), friends);
             }
 
             return filterDefinition;
@@ -154,7 +168,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
             var sort = sortByArguments.ToList();
-            if(!sort.Any())
+            if(sort.Count == 0)
             {
                 sort.Add("StartDate");
             }
