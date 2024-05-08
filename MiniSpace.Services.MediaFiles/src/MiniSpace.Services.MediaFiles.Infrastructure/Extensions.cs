@@ -29,10 +29,12 @@ using Newtonsoft.Json;
 using MiniSpace.Services.MediaFiles.Application;
 using MiniSpace.Services.MediaFiles.Application.Commands;
 using MiniSpace.Services.MediaFiles.Application.Services;
+using MiniSpace.Services.MediaFiles.Core.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Contexts;
 using MiniSpace.Services.MediaFiles.Infrastructure.Decorators;
 using MiniSpace.Services.MediaFiles.Infrastructure.Exceptions;
 using MiniSpace.Services.MediaFiles.Infrastructure.Logging;
+using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services;
 using MongoDB.Driver;
 
@@ -42,7 +44,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            //builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IFileSourceInfoRepository, IFileSourceInfoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -73,7 +75,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                //.AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<FileSourceInfoDocument, Guid>("fileSourceInfos")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
