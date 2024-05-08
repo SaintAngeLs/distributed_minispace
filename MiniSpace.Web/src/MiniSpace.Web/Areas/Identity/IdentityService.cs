@@ -267,7 +267,7 @@ namespace MiniSpace.Web.Areas.Identity
             {
                 return UserDto.Role;
             }
-            throw new InvalidOperationException("No user is currently logged in.");
+            return string.Empty;
         }
         
         public Task GrantOrganizerRights(Guid userId)

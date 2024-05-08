@@ -17,7 +17,9 @@ namespace MiniSpace.Web.Areas.Events
             string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
             string category, string publishDate);
         Task SignUpToEventAsync(Guid eventId, Guid studentId);
+        Task CancelSignUpToEventAsync(Guid eventId, Guid studentId);
         Task ShowInterestInEventAsync(Guid eventId, Guid studentId);
+        Task CancelInterestInEventAsync(Guid eventId, Guid studentId);
         Task RateEventAsync(Guid eventId, int rating, Guid studentId);
         Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer, 
             string category, string state, string dateFrom, string dateTo, PageableDto pageable);

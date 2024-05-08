@@ -49,12 +49,24 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.PostAsync($"events/{eventId}/sign-up", new {eventId, studentId});
         }
 
+        public Task CancelSignUpToEventAsync(Guid eventId, Guid studentId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"events/{eventId}/sign-up?studentId={studentId}");
+        }
+        
         public Task ShowInterestInEventAsync(Guid eventId, Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync($"events/{eventId}/show-interest", new {eventId, studentId});
         }
 
+        public Task CancelInterestInEventAsync(Guid eventId, Guid studentId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"events/{eventId}/show-interest?studentId={studentId}");
+        }
+        
         public Task RateEventAsync(Guid eventId, int rating, Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);

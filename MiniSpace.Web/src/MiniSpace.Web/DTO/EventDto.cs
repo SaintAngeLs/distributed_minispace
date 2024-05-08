@@ -11,7 +11,6 @@ namespace MiniSpace.Web.DTO
         public OrganizerDto Organizer { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public IEnumerable<OrganizerDto> CoOrganizers { get; set; }
         public AddressDto Location { get; set; }
         public int InterestedStudents { get; set; }
         public int SignedUpStudents { get; set; }
@@ -20,10 +19,9 @@ namespace MiniSpace.Web.DTO
         public string Category { get; set; }
         public string Status { get; set; }
         public DateTime PublishDate { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
         public bool HasRated { get; set; }
-        public bool ShowedInterest { get; set; }
-        public bool SignedUp { get; set; }
     }
 }
