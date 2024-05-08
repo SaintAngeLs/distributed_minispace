@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Core.Entities;
@@ -29,6 +30,18 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 IsInterested = document.InterestedStudents.Any(x => x.StudentId == studentId),
                 HasRated = document.Ratings.Any(x => x.StudentId == studentId)
             };
+
+        public static EventDto AsDtoWithFriends(this EventDocument document, Guid studentId, IEnumerable<FriendDto> friends)
+        {
+            var eventDto = document.AsDto(studentId);
+            eventDto.FriendsInterestedIn = document.InterestedStudents
+                .Where(x => friends.Any(f => f.Id == x.StudentId))
+                .Select(p => p.AsDto());
+            eventDto.FriendsSignedUp = document.SignedUpStudents
+                .Where(x => friends.Any(f => f.Id == x.StudentId))
+                .Select(p => p.AsDto());
+            return eventDto;
+        }
         
         public static Event AsEntity(this EventDocument document)
             => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
@@ -88,5 +101,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         
         public static Student AsEntity(this StudentDocument document)
             => new (document.Id);
+        
+        public static ParticipantDto AsDto(this Participant entity)
+            => new ()
+            {
+                StudentId = entity.StudentId,
+                Name = entity.Name
+            };
     }
 }
