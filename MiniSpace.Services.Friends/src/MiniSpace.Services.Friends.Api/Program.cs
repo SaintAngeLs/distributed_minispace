@@ -42,7 +42,7 @@ namespace MiniSpace.Services.Friends.Api
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/{studentId}") 
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/{studentId}")
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
-                        //.Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
+                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
                         .Get<GetSentFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/sent/{studentId}")
                         // .Get("friends/requests/sent", ctx =>
                         // {
