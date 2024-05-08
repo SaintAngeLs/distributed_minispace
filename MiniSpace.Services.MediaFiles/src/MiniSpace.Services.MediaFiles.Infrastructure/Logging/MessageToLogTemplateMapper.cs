@@ -8,7 +8,12 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Logging
         private static IReadOnlyDictionary<Type, HandlerLogTemplate> MessageTemplates 
             => new Dictionary<Type, HandlerLogTemplate>
             {
-                
+                {
+                    typeof(UploadMediaFile),  new HandlerLogTemplate
+                    {
+                        After = "Uploaded media file with ID: {MediaFileId} and name: {FileName}.",
+                    }
+                },
             };
         
         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class

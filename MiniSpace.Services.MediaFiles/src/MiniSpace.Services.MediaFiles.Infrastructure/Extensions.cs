@@ -35,6 +35,7 @@ using MiniSpace.Services.MediaFiles.Infrastructure.Decorators;
 using MiniSpace.Services.MediaFiles.Infrastructure.Exceptions;
 using MiniSpace.Services.MediaFiles.Infrastructure.Logging;
 using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services;
 using MongoDB.Driver;
 
@@ -44,7 +45,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IFileSourceInfoRepository, IFileSourceInfoRepository>();
+            builder.Services.AddTransient<IFileSourceInfoRepository, FileSourceInfoMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();

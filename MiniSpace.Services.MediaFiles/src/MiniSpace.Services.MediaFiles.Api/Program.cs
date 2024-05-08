@@ -29,8 +29,8 @@ namespace MiniSpace.Services.MediaFiles.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Post<UploadMediaFile>("media-files")
-                            //afterDispatch: (cmd, ctx) => ctx.Response.Created($"media-files/{cmd.MediaFileId}"))
+                        .Post<UploadMediaFile>("media-files",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"media-files/{cmd.MediaFileId}"))
                         ))
                 .UseLogging()
                 .Build()
