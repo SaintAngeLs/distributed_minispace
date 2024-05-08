@@ -37,7 +37,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Queries.Handlers
             var base64String = Convert.ToBase64String(fileContent);
 
             return new FileDto(query.MediaFileId, fileSourceInfo.SourceId, fileSourceInfo.SourceType.ToString(),
-                fileSourceInfo.FileName, base64String);
+                fileSourceInfo.UploaderId, fileSourceInfo.FileName, base64String);
         }
     }
 }
