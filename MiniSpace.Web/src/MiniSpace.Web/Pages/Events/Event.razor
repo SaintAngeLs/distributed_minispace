@@ -3,6 +3,7 @@
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.Pages.Admin.Dialogs
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using Radzen
 @using AlignItems = Radzen.AlignItems
@@ -59,7 +60,7 @@
             </RadzenTabsItem>
             
             <RadzenTabsItem Text="Interested friends">
-                    </RadzenTabsItem>
+            </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
 </RadzenStack>
@@ -69,8 +70,8 @@
     public string EventId { get; set; }
     
     private const string dateFormat = "dd/MM/yyyy HH:mm";
-    
-    private StudentDto studentDto = new();
+
+    private Guid studentId;
     public EventDto eventDto = new();
     private bool pageInitialized = false;
 
@@ -80,10 +81,10 @@
     {
         if (IdentityService.IsAuthenticated)
         {
-            studentDto = StudentsService.StudentDto;
-            eventDto = await EventsService.GetEventAsync(new Guid(EventId));
-            posts = await PostsService.GetPostsAsync(eventDto.Id);
+            studentId = IdentityService.GetCurrentUserId();
         }
+        eventDto = await EventsService.GetEventAsync(new Guid(EventId));
+        posts = await PostsService.GetPostsAsync(eventDto.Id);
         
         pageInitialized = true;
     }
