@@ -35,10 +35,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         {
             var eventDto = document.AsDto(studentId);
             eventDto.FriendsInterestedIn = document.InterestedStudents
-                .Where(x => friends.Any(f => f.Id == x.StudentId))
+                .Where(x => friends.Any(f => f.FriendId == x.StudentId))
                 .Select(p => p.AsDto());
             eventDto.FriendsSignedUp = document.SignedUpStudents
-                .Where(x => friends.Any(f => f.Id == x.StudentId))
+                .Where(x => friends.Any(f => f.FriendId == x.StudentId))
                 .Select(p => p.AsDto());
             return eventDto;
         }

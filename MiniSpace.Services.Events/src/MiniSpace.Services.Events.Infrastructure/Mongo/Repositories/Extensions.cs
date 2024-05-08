@@ -152,14 +152,14 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             if (friendsEngagementType != null)  
             {
                 filterDefinition &= friendsEngagementType == EventEngagementType.InterestedIn 
-                    ? FilterDefinitionBuilder.AnyIn(x => x.InterestedStudents.Select(s => s.StudentId), friends)
-                    : FilterDefinitionBuilder.AnyIn(x => x.SignedUpStudents.Select(s => s.StudentId), friends);
+                    ? FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.StudentId))
+                    : FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.StudentId));
             }
             else
             {
-                filterDefinition &= FilterDefinitionBuilder.AnyIn(x
-                    => x.InterestedStudents.Select(s 
-                        => s.StudentId).Union(x.SignedUpStudents.Select(s => s.StudentId)), friends);
+                var interestedFilter = FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.StudentId));
+                var signedUpFilter = FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.StudentId));
+                filterDefinition &= FilterDefinitionBuilder.Or(interestedFilter, signedUpFilter);
             }
 
             return filterDefinition;
