@@ -59,7 +59,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
         {
             if (Likes.All(id => id != studentId))
             {
-                throw new StudentNotLikeCommentException(studentId);
+                throw new StudentNotLikeCommentException(studentId, Id);
             }
             _likes.Remove(studentId);
         }
