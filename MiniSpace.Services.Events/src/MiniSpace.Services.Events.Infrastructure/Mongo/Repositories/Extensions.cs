@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
@@ -141,10 +140,35 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
+        public static FilterDefinition<EventDocument> AddFriendsFilter (this FilterDefinition<EventDocument> filterDefinition,
+            IEnumerable<Guid> friendsEnumerable, EventEngagementType? friendsEngagementType)
+        {
+            var friends = friendsEnumerable.ToList();
+            if (friends.Count == 0)
+            {
+                return filterDefinition;
+            }
+            
+            if (friendsEngagementType != null)  
+            {
+                filterDefinition &= friendsEngagementType == EventEngagementType.InterestedIn 
+                    ? FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.StudentId))
+                    : FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.StudentId));
+            }
+            else
+            {
+                var interestedFilter = FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.StudentId));
+                var signedUpFilter = FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.StudentId));
+                filterDefinition &= FilterDefinitionBuilder.Or(interestedFilter, signedUpFilter);
+            }
+
+            return filterDefinition;
+        }
+        
         public static SortDefinition<EventDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
             var sort = sortByArguments.ToList();
-            if(!sort.Any())
+            if(sort.Count == 0)
             {
                 sort.Add("StartDate");
             }

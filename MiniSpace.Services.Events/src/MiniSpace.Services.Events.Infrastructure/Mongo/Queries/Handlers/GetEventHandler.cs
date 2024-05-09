@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Queries;
@@ -8,6 +9,8 @@ using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Application.Services.Clients;
+using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
@@ -15,13 +18,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
     public class GetEventHandler : IQueryHandler<GetEvent, EventDto>
     {
         private readonly IMongoRepository<EventDocument, Guid> _eventRepository;
+        private readonly IFriendsServiceClient _friendsServiceClient;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
 
-        public GetEventHandler(IMongoRepository<EventDocument, Guid> eventRepository, IAppContext appContext,
-            IMessageBroker messageBroker)
+        public GetEventHandler(IMongoRepository<EventDocument, Guid> eventRepository, 
+            IFriendsServiceClient friendsServiceClient, IAppContext appContext, IMessageBroker messageBroker)
         {
             _eventRepository = eventRepository;
+            _friendsServiceClient = friendsServiceClient;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
@@ -30,9 +35,14 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
         {
             var document = await _eventRepository.GetAsync(p => p.Id == query.EventId);
             var identity = _appContext.Identity;
+            var friends = Enumerable.Empty<FriendDto>();
+            if(identity.IsAuthenticated)
+            {
+                friends = await _friendsServiceClient.GetAsync(identity.Id);
+            }
 
             await _messageBroker.PublishAsync(new EventViewed(query.EventId));
-            return document?.AsDto(identity.Id);
+            return document.AsDtoWithFriends(identity.Id, friends);
         }
         
     }
