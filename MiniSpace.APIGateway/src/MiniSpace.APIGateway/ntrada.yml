@@ -376,6 +376,14 @@ modules:
             - commentId:{commentId}
           auth: true
 
+        - upstream: /{commentId}/like
+          method: DELETE
+          use: downstream
+          downstream: comments-service/comments/{commentId}/like
+          bind:
+            - commentId:{commentId}
+          auth: true
+
       services:
         comments-service:
           localUrl: localhost:5009
