@@ -64,6 +64,11 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                 throw new InvalidReactionTypeException(command.ReactionType);
             }
 
+            if (await _reactionRepository.ExistsAsync(command.ContentId, contentType, command.StudentId))
+            {
+                throw new StudentAlreadyGaveReactionException(command.StudentId, command.ContentId, contentType);
+            }
+
             string studentFullName = identity.Name;
             
             var reaction = Reaction.Create(command.ReactionId, command.StudentId, studentFullName, reactionType, 
