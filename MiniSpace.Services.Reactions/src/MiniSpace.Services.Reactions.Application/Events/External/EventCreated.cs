@@ -7,9 +7,11 @@ namespace MiniSpace.Services.Reactions.Application.Events.External
     public class EventCreated : IEvent
     {
         public Guid EventId { get; }
+        public Guid OrganizerId { get; }
         public EventCreated(Guid eventId, Guid organizerId)
         {
             EventId = eventId;
+            OrganizerId = organizerId;
         }
     }    
 }
