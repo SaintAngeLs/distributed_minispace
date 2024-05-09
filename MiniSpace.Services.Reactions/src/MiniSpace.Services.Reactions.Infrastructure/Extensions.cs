@@ -40,6 +40,7 @@ using MiniSpace.Services.Reactions.Infrastructure.Services;
 using MiniSpace.Services.Reactions.Application.Queries;
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Reactions.Application.Events;
+using MiniSpace.Services.Reactions.Application.Events.External;
 
 namespace MiniSpace.Services.Reactions.Infrastructure
 {
@@ -99,9 +100,9 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<CreateReaction>()
                 .SubscribeCommand<DeleteReaction>()
-                .SubscribeEvent<ReactionCreated>()
-                .SubscribeEvent<ReactionDeleted>()
-                ;
+                .SubscribeEvent<EventCreated>()
+                .SubscribeEvent<PostCreated>()
+                .SubscribeEvent<StudentCreated>();
 
             return app;
         }
