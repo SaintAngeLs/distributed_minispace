@@ -17,11 +17,14 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 ContextId = entity.ContextId,
                 CommentContext = entity.CommentContext,
                 StudentId = entity.StudentId,
+                StudentName = entity.StudentName,
                 Likes = entity.Likes,
                 ParentId = entity.ParentId,
                 TextContent = entity.TextContent,
                 CreatedAt = entity.CreatedAt,
                 LastUpdatedAt = entity.LastUpdatedAt,
+                LastReplyAt = entity.LastReplyAt,
+                RepliesCount = entity.RepliesCount,
                 IsDeleted = entity.IsDeleted,
             };
 
