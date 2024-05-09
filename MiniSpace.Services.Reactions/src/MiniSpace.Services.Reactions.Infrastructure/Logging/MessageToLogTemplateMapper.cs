@@ -13,25 +13,13 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Logging
                 {
                     typeof(CreateReaction),  new HandlerLogTemplate
                     {
-                        After = "Created the reaction with student id: {StudentId} and content id: {ContentId}."
+                        After = "Created the reaction with id: {ReactionId}."
                     }
                 },
                 {
                     typeof(DeleteReaction),  new HandlerLogTemplate
                     {
-                        After = "Delete the reaction with student id: {StudentId} and content id: {ContentId}."
-                    }
-                },
-                {
-                    typeof(ReactionCreated), new HandlerLogTemplate
-                    {
-                        After = "Created a new reaction with id: {ReactionId}."
-                    }
-                },
-                {
-                    typeof(ReactionDeleted), new HandlerLogTemplate
-                    {
-                        After = "Deleted a new reaction with id: {ReactionId}."
+                        After = "Delete the reaction with id: {ReactionId}."
                     }
                 },
                 {
