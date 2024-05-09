@@ -16,10 +16,15 @@ namespace MiniSpace.Web.Areas.Identity
         Task<HttpResponse<JwtDto>> SignInAsync(string email, string password);
         Task Logout();
         Task<string> GetAccessTokenAsync();
-
         Task InitializeAuthenticationState();
         Task<bool> CheckIfUserIsAuthenticated();
         Task<bool> IsTokenValid();
         public Guid GetCurrentUserId();
+        public string GetCurrentUserRole();
+        
+        Task GrantOrganizerRights(Guid userId);
+        Task RevokeOrganizerRights(Guid userId);
+        Task BanUser(Guid userId);
+        Task UnbanUser(Guid userId);
     }
 }

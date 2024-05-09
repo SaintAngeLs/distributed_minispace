@@ -1,5 +1,4 @@
-@page "/events/search"
-@using MiniSpace.Web.Areas.Identity
+@page "/events/organize"
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
@@ -13,13 +12,19 @@
 @using Orientation = Radzen.Orientation
 @inject DialogService DialogService
 @inject IEventsService EventsService
-@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 
-<h1>Search events</h1>
+<h1>Organize events</h1>
 
-<div class="rz-p-8 rz-text-align-center">
-    <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
+<div class="rz-p-8">
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Size="ButtonSize.Medium" Text="Create new event"
+                          Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
+            <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
+        </RadzenStack>
+    </RadzenStack>
 </div>
 
 @if (!pageInitialized)
@@ -29,13 +34,14 @@
 
 @if (pageInitialized && totalElements == 0)
 {
-    <h3 class="rz-p-12">No results found. Try to give us more general filtering criteria.</h3>
+    <h3 class="rz-p-12">No results found. Create new event or try to give us more general filtering criteria.</h3>
 }
 
 @if (pageInitialized && totalElements != 0)
 {
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged" Selected="@searchEventsModel.Pageable.Page"
+        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                       Selected="@searchOrganizerEventsModel.Pageable.Page"
                        Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
     </RadzenStack>   
 }
@@ -49,7 +55,7 @@
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="6">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Status</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Status)</b></RadzenText>
                 </RadzenColumn>
@@ -59,7 +65,7 @@
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Start date</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="6">
+                <RadzenColumn Size="12" SizeMD="5">
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Capacity</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.SignedUpStudents)/@(ev.Capacity)</b></RadzenText>
                 </RadzenColumn>
@@ -72,7 +78,8 @@
 @if (pageInitialized && totalElements != 0)
 {
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged" Selected="@searchEventsModel.Pageable.Page"
+        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                       Selected="@searchOrganizerEventsModel.Pageable.Page"
                        Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
     </RadzenStack>   
 }
@@ -80,14 +87,10 @@
 @code {
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     
-    private SearchEventsModel searchEventsModel = new()
+    private SearchOrganizerEventsModel searchOrganizerEventsModel = new()
     {
         Name = "",
-        Organizer = "",
-        Category = "",
         State = "",
-        Friends = [],
-        FriendsEngagementType = "",
         DateFrom = new DateTime(2024, 04, 14),
         DateTo = new DateTime(2024, 05, 31),
         Pageable = new PageableDto()
@@ -102,6 +105,7 @@
         }
     };
     
+    private Guid studentId;
     private bool pageInitialized = false;
     
     int totalPages = 0;
@@ -110,23 +114,28 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
-            searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
-            searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
-            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.Pageable);
-        if (tmp.Content != null)
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
         {
-            totalPages = tmp.Content.TotalPages;
-            totalElements = tmp.Content.TotalElements;
-            events = tmp.Content.Content;
-        }
-        else
-        {
-            totalPages = 0;
-            totalElements = 0;
-            events = new List<EventDto>();
+            studentId = IdentityService.GetCurrentUserId();
+            searchOrganizerEventsModel.OrganizerId = studentId;
+        
+            var tmp = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
+                searchOrganizerEventsModel.Name, searchOrganizerEventsModel.State,
+                searchOrganizerEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                searchOrganizerEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                searchOrganizerEventsModel.Pageable);
+            if (tmp.Content != null)
+            {
+                totalPages = tmp.Content.TotalPages;
+                totalElements = tmp.Content.TotalElements;
+                events = tmp.Content.Content;
+            }
+            else
+            {
+                totalPages = 0;
+                totalElements = 0;
+                events = new List<EventDto>();
+            }   
         }
 
         pageInitialized = true;
@@ -134,22 +143,21 @@
     
     private async void SelectedPageChanged(int pageNumber)
     {
-        searchEventsModel.Pageable.Page = pageNumber;
+        searchOrganizerEventsModel.Pageable.Page = pageNumber;
         
-        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
-            searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
-            searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
-            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.Pageable);
+        var tmp = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
+            searchOrganizerEventsModel.Name, searchOrganizerEventsModel.State,
+            searchOrganizerEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchOrganizerEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchOrganizerEventsModel.Pageable);
         events = tmp.Content.Content;
         StateHasChanged();
     }
     
     private async Task OpenSearchDialog()
     {
-        await DialogService.OpenAsync<EventsSearchDialog>($"Filter all events by criteria:",
-            new Dictionary<string, object>() { { "SearchEventsModel", searchEventsModel } },
+        await DialogService.OpenAsync<EventsOrganizeDialog>($"Filter your events by criteria:",
+            new Dictionary<string, object>() { { "SearchOrganizerEventsModel", searchOrganizerEventsModel } },
             new DialogOptions()
             {
                 Width = "700px", Resizable = true, Draggable = true,

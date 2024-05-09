@@ -14,6 +14,7 @@ using MiniSpace.Web.Areas.Http;
 //using MiniSpace.Web.Data;
 using MiniSpace.Web.Models.Identity;
 using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.Areas.Organizations;
 using MiniSpace.Web.Areas.Posts;
 using MiniSpace.Web.Areas.Students;
 using MiniSpace.Web.HttpClients;
@@ -64,6 +65,7 @@ namespace MiniSpace.Web
             services.AddScoped<IStudentsService, StudentsService>();
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IPostsService, PostsService>();
+            services.AddScoped<IOrganizationsService, OrganizationsService>();
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
             services.AddScoped<IFriendsService, FriendsService>();
 

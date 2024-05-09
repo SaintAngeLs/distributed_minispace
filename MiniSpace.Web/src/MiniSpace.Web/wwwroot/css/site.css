@@ -307,9 +307,9 @@ html, body {
         padding: 8px 0;
     }
 
-    .rz-display-flex {
-        display: block !important;
-    }
+    /*.rz-display-flex {*/
+    /*    display: block !important;*/
+    /*}*/
 }
 
 .RadzenStack {
@@ -344,10 +344,10 @@ html, body {
 }
 
 
-.rz-body {
-    padding: 0 !important;
-}
+/*.rz-body {*/
+/*    padding: 0 !important;*/
+/*}*/
 
-.rz-layout .rz-body {
-    overflow: unset !important;
-}
+/*.rz-layout .rz-body {*/
+/*    overflow: unset !important;*/
+/*}*/
