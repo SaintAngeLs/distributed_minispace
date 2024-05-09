@@ -35,11 +35,14 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 ContextId = document.ContextId,
                 CommentContext = document.CommentContext.ToString().ToLowerInvariant(),
                 StudentId = document.StudentId,
+                StudentName = document.StudentName,
                 Likes = document.Likes,
                 ParentId = document.ParentId,
                 TextContent = document.TextContent,
                 CreatedAt = document.CreatedAt,
                 LastUpdatedAt = document.LastUpdatedAt,
+                LastReplyAt = document.LastReplyAt,
+                RepliesCount = document.RepliesCount,
                 IsDeleted= document.IsDeleted,
             };
         
