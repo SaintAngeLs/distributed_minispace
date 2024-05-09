@@ -7,9 +7,9 @@ namespace MiniSpace.Services.Comments.Application.Commands
     {
         public Guid CommentId { get; set; }
 
-        public AddLike(Guid id)
+        public AddLike(Guid commentId)
         {
-            CommentId = id;
+            CommentId = commentId;
         }
     }
 }
