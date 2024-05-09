@@ -86,6 +86,8 @@
         Organizer = "",
         Category = "",
         State = "",
+        Friends = [],
+        FriendsEngagementType = "",
         DateFrom = new DateTime(2024, 04, 14),
         DateTo = new DateTime(2024, 05, 31),
         Pageable = new PageableDto()
@@ -110,6 +112,7 @@
     {
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
             searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
+            searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
             searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
@@ -135,6 +138,7 @@
         
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
             searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
+            searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
             searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
