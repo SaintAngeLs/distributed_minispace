@@ -356,12 +356,6 @@ modules:
             - commentId:{commentId}
           auth: true
 
-        - upstream: /
-          method: GET
-          use: downstream
-          downstream: comments-service/comments
-          auth: true
-
         - upstream: /{commentId}
           method: DELETE
           use: downstream
@@ -383,6 +377,11 @@ modules:
           bind:
             - commentId:{commentId}
           auth: true
+
+        - upstream: /search
+          method: POST
+          use: downstream
+          downstream: comments-service/comments/search
 
       services:
         comments-service:
