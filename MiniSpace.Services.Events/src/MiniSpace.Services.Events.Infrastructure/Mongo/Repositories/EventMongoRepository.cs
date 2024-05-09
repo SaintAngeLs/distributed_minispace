@@ -37,21 +37,50 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filteredEvents.Select(e => e.AsEntity());
         }
 
-        public async Task<Tuple<IEnumerable<Event>,int,int,int,int>> BrowseAsync(int pageNumber, int pageSize, string name, string organizer, 
-            DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, string direction, State state, 
-            IEnumerable<Guid> eventIds = null)
+        private async Task<(int totalPages, int totalElements, IEnumerable<EventDocument> data)> BrowseAsync(
+            FilterDefinition<EventDocument> filterDefinition, SortDefinition<EventDocument> sortDefinition, 
+            int pageNumber, int pageSize)
         {
-            var filterDefinition = Repositories.Extensions.ToFilterDefinition(name, organizer, dateFrom, dateTo, state, eventIds);
-            var sortDefinition = Repositories.Extensions.ToSortDefinition(sortBy, direction);
-            
             var pagedEvents = await _repository.Collection.AggregateByPage(
                 filterDefinition,
                 sortDefinition,
                 pageNumber,
                 pageSize);
+
+            return pagedEvents;
+        }
+        
+        public async Task<(IEnumerable<Event> events, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseEventsAsync(
+            int pageNumber, int pageSize, string name, string organizer, DateTime dateFrom, DateTime dateTo, 
+            Category? category, State? state, IEnumerable<Guid> friends, EventEngagementType? friendsEngagementType,
+            IEnumerable<string> sortBy, string direction, IEnumerable<Guid> eventIds = null)
+        {
+            var filterDefinition = Extensions.ToFilterDefinition(name, dateFrom, dateTo, eventIds)
+                .AddOrganizerNameFilter(organizer)
+                .AddCategoryFilter(category)
+                .AddRestrictedStateFilter(state)
+                .AddFriendsFilter(friends, friendsEngagementType);
+            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
             
-            return new Tuple<IEnumerable<Event>,int,int,int,int>(pagedEvents.data.Select(e => e.AsEntity()), 
-                pageNumber, pageSize, pagedEvents.totalPages, pagedEvents.totalElements);
+            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+            
+            return (pagedEvents.data.Select(e => e.AsEntity()), pageNumber, pageSize,
+                pagedEvents.totalPages, pagedEvents.totalElements);
+        }
+        
+        public async Task<(IEnumerable<Event> events, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseOrganizerEventsAsync(int pageNumber, 
+            int pageSize, string name, Guid organizerId, DateTime dateFrom, DateTime dateTo, IEnumerable<string> sortBy, 
+            string direction, State? state)
+        {
+            var filterDefinition = Extensions.ToFilterDefinition(name, dateFrom, dateTo)
+                .AddOrganizerIdFilter(organizerId)
+                .AddStateFilter(state);
+            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
+            
+            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+            
+            return (pagedEvents.data.Select(e => e.AsEntity()), pageNumber, pageSize, 
+                pagedEvents.totalPages, pagedEvents.totalElements);
         }
 
         public Task AddAsync(Event @event) => _repository.AddAsync(@event.AsDocument());

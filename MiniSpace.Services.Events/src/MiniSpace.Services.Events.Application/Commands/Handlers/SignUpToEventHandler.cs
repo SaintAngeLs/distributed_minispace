@@ -47,7 +47,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.StudentId);
             }
 
-            var participant = new Participant(student.Id, identity.Name, identity.Email);
+            var participant = new Participant(student.Id, identity.Name);
             @event.SignUpStudent(participant);
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new StudentSignedUpToEvent(@event.Id, student.Id));

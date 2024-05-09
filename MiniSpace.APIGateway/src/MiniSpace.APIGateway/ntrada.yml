@@ -436,7 +436,7 @@ modules:
         statistics-service:
           localUrl: localhost:5011
           url: statistics-service
-
+          
 
 
   friends:

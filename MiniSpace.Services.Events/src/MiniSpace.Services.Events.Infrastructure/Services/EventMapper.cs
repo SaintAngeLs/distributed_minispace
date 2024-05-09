@@ -14,10 +14,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
         public IEvent Map(IDomainEvent @event)
         {
             // TODO: update mapper
-            // switch (@event)
-            // {
-            //     
-            // }
+            switch (@event)
+            {
+                
+            }
 
             return null;
         }

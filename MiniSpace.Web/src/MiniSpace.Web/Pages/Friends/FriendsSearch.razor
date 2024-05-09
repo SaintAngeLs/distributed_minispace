@@ -1,0 +1,229 @@
+@page "/friends/search"
+@using MiniSpace.Web.HttpClients
+@using Radzen.Blazor
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.Areas.Friends
+@inject IFriendsService FriendsService
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Identity
+@inject IIdentityService IdentityService
+@inject Radzen.NotificationService NotificationService
+@inject IJSRuntime JSRuntime
+
+
+<div style="display: flex; padding: 50px;">
+    <div class="left-panel">
+        <div class="search-bar">
+            <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
+            <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
+        </div>
+        <div class="card-container">
+            @foreach (var student in students)
+            {
+                <div class="card" @onclick="@(() => OnDetails(student))">
+                    <img class="card-img-top" src="@GetImage(student.ProfileImage)" alt="Student Image">
+                    <div class="card-body">
+                        <h5 class="card-title">@student.FirstName @student.LastName</h5>
+                        <p class="card-text">Email: @student.Email</p>
+                        <RadzenButton Text="Connect" Disabled="@student.IsInvitationPending" 
+                              Click="@(e => ConnectWithStudent(student.Id, e))" 
+                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                              Style="width: 100%; margin-top: 8px;" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+   
+    <div class="right-panel">
+          
+            @if (student != null)
+            {
+                <div class="notification-block">
+                <RadzenNotification @ref="notificationComponent" Style="position:sticky; top: 10px; right: 20px;" />
+                </div>
+                <div class="student-details">
+                   
+                   <div>
+                    <img src="@student?.ProfileImage" alt="Profile Image" class="profile-image"/>
+                    <div class="info-block">
+                        <h3 class="name">@student?.FirstName @student?.LastName</h3>
+                        <ul class="details-list">
+                            <li><strong>ID:</strong> @student?.Id</li>
+                            <li><strong>Email:</strong> @student?.Email</li>
+                            <li><strong>Description:</strong> @student?.Description</li>
+                            <li><strong>Number of Friends:</strong> @student?.NumberOfFriends</li>
+                            <li><strong>Date of Birth:</strong> @student?.DateOfBirth.ToString("yyyy-MM-dd")</li>
+                            <li><strong>State:</strong> @student?.State</li>
+                            <li><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</li>
+                        </ul>
+                        <RadzenButton Text="Connect" Click="@(() => ConnectWithStudent(student.Id))" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-top: 10px;" />
+                     </div>
+                    
+                   </div> 
+                </div>
+            }
+            else
+            {
+                <div class="no-details">
+                    <p>Select a student to view details.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    
+
+
+<style>
+
+    .notification-block {
+    position: fixed; /* Or 'absolute' if 'fixed' is too intrusive in your layout */
+    top: 20px;
+    right: 20px;
+    z-index: 1050; /* Ensure it's above other content */
+    max-width: 300px; /* Limit the width of notifications */
+}
+
+    .main-container { overflow: visible; display: flex;   align-items: flex-start; }
+    .left-panel {  width: 100%;   overflow-y: auto; /}
+    @* .right-panel { width: 100%; padding: 50px; position: sticky; top: 50px;overflow-y: auto; } *@
+
+    .right-panel {
+        width: 70%; 
+        padding: 25px;
+        position: sticky;
+        top: 100px; 
+
+        background-color: white; 
+    }
+    .search-bar { display: flex; margin-bottom: 20px; }
+    .card-container { display: flex; flex-wrap: wrap; justify-content: space-between; padding-top: 50px;}
+    .card { display: block; width: 30%; margin: 5px !important; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: box-shadow 0.3s ease-in-out; }
+    .card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    .card-img-top { width: 100%; height: 200px; object-fit: cover; }
+    .card-body { padding: 15px; }
+    .card-title { font-size: 18px; font-weight: bold; }
+    .card-text { font-size: 14px; }
+    .student-details { margin-top: 20px; }
+    .no-details { font-style: italic; color: grey; }
+
+    .student-details {
+    position: sticky;
+    top: 60px;
+ 
+    align-items: center;
+    margin: 20px;
+    background-color: #f9f9f9;
+    padding: 80px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 75px;
+    margin-right: 20px;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.details-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+}
+
+.details-list li {
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.no-details {
+    font-style: italic;
+    color: grey;
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+</style>
+
+@code {
+    private string searchTerm;
+    private List<StudentDto> students = new List<StudentDto>();
+    private StudentDto student;
+    RadzenNotification notificationComponent;
+
+    protected override async Task OnInitializedAsync() {
+        await LoadStudents();
+    }
+
+    private async Task LoadStudents() {
+        var result = await FriendsService.GetAllStudentsAsync();
+        if (result != null) {
+            students = result.ToList();
+        }
+    }
+
+    private string GetImage(string base64Image)
+    {
+        if (string.IsNullOrWhiteSpace(base64Image))
+        {
+            return "images/user_image.png";
+        }
+        else
+        {
+            return $"data:image/jpeg;base64,{base64Image}";
+        }
+    }
+
+
+    private void OnDetails(StudentDto selectedStudent) {
+        student = selectedStudent;
+    }
+
+    private void SearchFriends() {
+        students = students.Where(s => s.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                       s.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    private async Task ConnectWithStudent(Guid studentId)
+    {
+        var response = await FriendsService.AddFriendAsync(studentId);
+        
+    }
+
+     private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) {
+        var currentUserId = IdentityService.GetCurrentUserId();
+        await FriendsService.InviteStudent(currentUserId, studentId);
+
+         var student = students.FirstOrDefault(s => s.Id == studentId);
+        if (student != null)
+        {
+            student.InvitationSent = true;
+        }
+        NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
+        await JSRuntime.InvokeVoidAsync("playNotificationSound");
+    }
+
+
+
+
+
+
+
+}

@@ -8,6 +8,7 @@ namespace MiniSpace.Services.Events.Application.Services
 {
     public interface IEventService
     {
-        Task<PagedResponse<IEnumerable<EventDto>>> SignInAsync(SearchEvents command);
+        Task<PagedResponse<IEnumerable<EventDto>>> BrowseEventsAsync(SearchEvents command);
+        Task<PagedResponse<IEnumerable<EventDto>>> BrowseOrganizerEventsAsync(SearchOrganizerEvents command);
     }
 }

@@ -210,17 +210,17 @@ main {
 }
 
 .landing-page {
-    padding: 2rem; 
+    /* padding: 2rem;  */
 }
 
 @media (min-width: 768px) {
     .landing-page {
-        padding: 2rem 5rem;
+        /* padding: 2rem 5rem; */
     }
 }
 @media (min-width: 992px) {
     .landing-page {
-        padding: 2rem 10rem; 
+        /* padding: 2rem 10rem;  */
     }
 }
 
@@ -341,4 +341,13 @@ html, body {
 .button-group {
     display: flex;
     gap: 20px;
+}
+
+
+.rz-body {
+    padding: 0 !important;
+}
+
+.rz-layout .rz-body {
+    overflow: unset !important;
 }

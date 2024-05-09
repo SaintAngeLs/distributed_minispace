@@ -14,7 +14,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public Organizer Organizer { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public IEnumerable<Organizer> CoOrganizers { get; set; }
         public Address Location { get; set; }
         //public string Image { get; set; }
         public IEnumerable<Participant> InterestedStudents { get; set; }
@@ -24,6 +23,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public Category Category { get; set; }
         public State State { get; set; }
         public DateTime PublishDate { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public IEnumerable<Rating> Ratings { get; set; }
     }
 }

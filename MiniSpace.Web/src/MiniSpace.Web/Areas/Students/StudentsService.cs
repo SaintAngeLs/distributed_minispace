@@ -11,16 +11,31 @@ namespace MiniSpace.Web.Areas.Students
         private readonly IHttpClient _httpClient;
         private readonly IIdentityService _identityService;
 
+        public StudentDto StudentDto { get; private set; }
+        
         public StudentsService(IHttpClient httpClient, IIdentityService identityService)
         {
             _httpClient = httpClient;
             _identityService = identityService;
         }
-        
-        public Task<StudentDto> GetStudentAsync(Guid studentId)
+
+        public async Task UpdateStudentDto(Guid studentId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            StudentDto = await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+        }
+
+        public void ClearStudentDto()
+        {
+            StudentDto = null;
+        }
+        
+        public async Task<StudentDto> GetStudentAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
         }
 
         public Task UpdateStudentAsync(Guid studentId, string profileImage, string description, bool emailNotifications)
@@ -30,9 +45,15 @@ namespace MiniSpace.Web.Areas.Students
                 description, emailNotifications});
         }
 
-        public Task CompleteStudentRegistrationAsync(Guid studentId, string profileImage,
+        public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImage,
             string description, DateTime dateOfBirth, bool emailNotifications)
-            => _httpClient.PostAsync("students", new {studentId, profileImage,
+            => _httpClient.PostAsync<object,object>("students", new {studentId, profileImage,
                 description, dateOfBirth, emailNotifications});
+
+        public async Task<string> GetStudentStateAsync(Guid studentId)
+        {
+            var student = await GetStudentAsync(studentId);
+            return student != null ? student.State : "invalid"; 
+        }
     }    
 }
