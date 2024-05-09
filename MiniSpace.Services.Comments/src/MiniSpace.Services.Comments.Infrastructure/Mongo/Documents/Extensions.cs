@@ -17,11 +17,14 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 ContextId = entity.ContextId,
                 CommentContext = entity.CommentContext,
                 StudentId = entity.StudentId,
+                StudentName = entity.StudentName,
                 Likes = entity.Likes,
                 ParentId = entity.ParentId,
                 TextContent = entity.TextContent,
                 CreatedAt = entity.CreatedAt,
                 LastUpdatedAt = entity.LastUpdatedAt,
+                LastReplyAt = entity.LastReplyAt,
+                RepliesCount = entity.RepliesCount,
                 IsDeleted = entity.IsDeleted,
             };
 
@@ -32,11 +35,14 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 ContextId = document.ContextId,
                 CommentContext = document.CommentContext.ToString().ToLowerInvariant(),
                 StudentId = document.StudentId,
+                StudentName = document.StudentName,
                 Likes = document.Likes,
                 ParentId = document.ParentId,
                 TextContent = document.TextContent,
                 CreatedAt = document.CreatedAt,
                 LastUpdatedAt = document.LastUpdatedAt,
+                LastReplyAt = document.LastReplyAt,
+                RepliesCount = document.RepliesCount,
                 IsDeleted= document.IsDeleted,
             };
         

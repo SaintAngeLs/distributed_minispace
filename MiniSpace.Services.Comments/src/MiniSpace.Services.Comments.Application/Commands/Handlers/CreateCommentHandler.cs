@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             }
 
             var now = _dateTimeProvider.Now;
-            var comment = Comment.Create(command.Id, command.ContextId, newCommentContext, command.StudentId,
+            var comment = Comment.Create(command.CommentId, command.ContextId, newCommentContext, command.StudentId,
                 identity.Name, command.ParentId, command.Comment, now);
             
             if (command.ParentId != Guid.Empty)
@@ -67,7 +67,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             }
             
             await _commentRepository.AddAsync(comment);
-            await _messageBroker.PublishAsync(new CommentCreated(command.Id));
+            await _messageBroker.PublishAsync(new CommentCreated(command.CommentId));
         }
 
     }

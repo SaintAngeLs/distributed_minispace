@@ -11,6 +11,7 @@ namespace MiniSpace.Services.Comments.Application.Dto
         public Guid ContextId { get; set; }
         public string CommentContext { get; set; }
         public Guid StudentId { get; set; }
+        public string StudentName { get; set; }
         public IEnumerable<Guid> Likes { get; set; }
         public Guid ParentId { get; set; }
         public string TextContent { get; set; }
@@ -24,12 +25,13 @@ namespace MiniSpace.Services.Comments.Application.Dto
         {
         }
         
-        public CommentDto (Comment comment, Guid studentId)
+        public CommentDto (Comment comment)
         {
             Id = comment.Id;
             ContextId = comment.ContextId;
             CommentContext = comment.CommentContext.ToString().ToLowerInvariant();
             StudentId = comment.StudentId;
+            StudentName = comment.StudentName;
             Likes = comment.Likes;
             ParentId = comment.ParentId;
             TextContent = comment.TextContent;

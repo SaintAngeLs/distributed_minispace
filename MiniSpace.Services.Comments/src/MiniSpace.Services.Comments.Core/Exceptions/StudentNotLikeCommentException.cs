@@ -9,12 +9,14 @@ namespace MiniSpace.Services.Comments.Core.Exceptions
     public class StudentNotLikeCommentException : DomainException
     {
         public override string Code { get; } = "student_not_likes_comment";
-        public Guid Id { get; }
+        public Guid StudentId { get; }
+        public Guid CommentId { get; }
 
-        public StudentNotLikeCommentException(Guid id) : base(
-            $"Comment with id: {id} does not like this comment.")
+        public StudentNotLikeCommentException(Guid studentId, Guid commentId) : base(
+            $"Student with id: {studentId} does not like comment with id:.")
         {
-            Id = id;
+            StudentId = studentId;
+            CommentId = commentId;
         }
     }
 }

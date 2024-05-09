@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Comments.Application.Commands
 {
     public class CreateComment : ICommand
     {
-        public Guid Id { get; set; }
+        public Guid CommentId { get; set; }
         public Guid ContextId { get; set; }
         public string CommentContext { get; set; }
         public Guid StudentId { get; set; }
@@ -14,9 +14,10 @@ namespace MiniSpace.Services.Comments.Application.Commands
         public string Comment { get; set; }
  
 
-        public CreateComment(Guid id, Guid contextId, string commentContext, Guid studentId, Guid parentId, string comment)
+        public CreateComment(Guid commentId, Guid contextId, string commentContext, Guid studentId, Guid parentId,
+            string comment)
         {
-            Id = id == Guid.Empty ? Guid.NewGuid() : id;
+            CommentId = commentId == Guid.Empty ? Guid.NewGuid() : commentId;
             ContextId = contextId;
             CommentContext = commentContext;
             StudentId = studentId;

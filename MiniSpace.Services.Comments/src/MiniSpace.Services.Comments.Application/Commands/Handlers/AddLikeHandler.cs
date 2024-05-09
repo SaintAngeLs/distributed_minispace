@@ -11,13 +11,13 @@ using MiniSpace.Services.Comments.Core.Repositories;
 
 namespace MiniSpace.Services.Comments.Application.Commands.Handlers
 {
-    public class UpdateLikeHandler : ICommandHandler<UpdateLike>
+    public class AddLikeHandler : ICommandHandler<AddLike>
     {
         private readonly ICommentRepository _commentRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
 
-        public UpdateLikeHandler(ICommentRepository commentRepository, IAppContext appContext,
+        public AddLikeHandler(ICommentRepository commentRepository, IAppContext appContext,
             IMessageBroker messageBroker)
         {
             _commentRepository = commentRepository;
@@ -25,7 +25,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             _messageBroker = messageBroker;
         }
 
-        public async Task HandleAsync(UpdateLike command, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(AddLike command, CancellationToken cancellationToken = default)
         {
             var comment = await _commentRepository.GetAsync(command.CommentId);
             if (comment is null)
@@ -34,7 +34,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             }
 
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated)
+            if (!identity.IsAuthenticated)
             {
                 throw new UnauthorizedCommentAccessException(command.CommentId, identity.Id);
             }

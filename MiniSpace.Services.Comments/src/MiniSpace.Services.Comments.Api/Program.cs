@@ -39,10 +39,9 @@ namespace MiniSpace.Services.Identity.Api
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Post<CreateComment>("comments")
-                        .Post<SearchComments>("comments/search")
                         .Put<UpdateComment>("comments/{commentID}")
                         .Delete<DeleteComment>("comments/{commentID}")
-                        .Post<UpdateLike>("comments/{commentID}/like")
+                        .Post<AddLike>("comments/{commentID}/like")
                         .Delete<DeleteLike>("comments/{commentID}/like")
                     )
                 )
