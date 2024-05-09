@@ -3,11 +3,11 @@ using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Comments.Application.Commands
 {
-    public class UpdateLike : ICommand
+    public class AddLike : ICommand
     {
         public Guid CommentId { get; set; }
 
-        public UpdateLike(Guid id)
+        public AddLike(Guid id)
         {
             CommentId = id;
         }

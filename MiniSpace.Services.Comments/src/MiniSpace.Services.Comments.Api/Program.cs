@@ -42,7 +42,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<SearchComments>("comments/search")
                         .Put<UpdateComment>("comments/{commentID}")
                         .Delete<DeleteComment>("comments/{commentID}")
-                        .Post<UpdateLike>("comments/{commentID}/like")
+                        .Post<AddLike>("comments/{commentID}/like")
                         .Delete<DeleteLike>("comments/{commentID}/like")
                     )
                 )
