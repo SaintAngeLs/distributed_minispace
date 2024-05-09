@@ -3,20 +3,30 @@ using MiniSpace.Services.Reactions.Core.Exceptions;
 
 namespace MiniSpace.Services.Reactions.Core.Entities
 {
-    public class Reaction(Guid studentId, ReactionType reactionType, string studentFullName,
-                        ReactionContentType contentType,
-                    Guid contentId) : AggregateRoot
+    public class Reaction : AggregateRoot
     {
-        public Guid StudentId { get; private set; } = studentId;
-        public string StudentFullName {get;private set;} = studentFullName;
-        public ReactionType ReactionType { get; private set; } = reactionType;
-        public Guid ContentId { get; private set; } = contentId;
-        public ReactionContentType ContentType { get; private set; } = contentType;
+        public Guid StudentId { get; private set; }
+        public string StudentFullName {get;private set;} 
+        public ReactionType ReactionType { get; private set; } 
+        public Guid ContentId { get; private set; }
+        public ReactionContentType ContentType { get; private set; } 
+        
+        public Reaction(Guid reactionId, Guid studentId, string studentFullName, ReactionType reactionType,
+            Guid contentId, ReactionContentType contentType) 
+        {
 
-        public static Reaction Create(Guid studentId, ReactionType reactionType, string studentFullName,
-            ReactionContentType contentType,
-                    Guid contentId) {
-            return new Reaction(studentId, reactionType, studentFullName, contentType, contentId);
+            Id = reactionId;
+            StudentId = studentId;
+            StudentFullName = studentFullName;
+            ReactionType = reactionType;
+            ContentId = contentId;
+            ContentType = contentType;
+        }
+
+        public static Reaction Create(Guid reactionId, Guid studentId, string studentFullName, ReactionType reactionType,
+            Guid contentId, ReactionContentType contentType) 
+        {
+            return new Reaction(reactionId, studentId, studentFullName, reactionType, contentId, contentType);
         }
 
 

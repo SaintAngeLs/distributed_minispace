@@ -66,7 +66,8 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
 
             string studentFullName = identity.Name;
             
-            var reaction = Reaction.Create(command.StudentId, reactionType, studentFullName, contentType, command.ContentId);
+            var reaction = Reaction.Create(command.ReactionId, command.StudentId, studentFullName, reactionType, 
+                command.ContentId, contentType);
             await _reactionRepository.AddAsync(reaction);
             
             await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));

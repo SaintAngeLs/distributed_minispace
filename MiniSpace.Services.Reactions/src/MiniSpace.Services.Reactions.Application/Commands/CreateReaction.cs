@@ -10,9 +10,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands
         public Guid ReactionId {get;}
         public Guid StudentId { get; }
         public string ReactionType { get; } 
-        
         public Guid ContentId {get;}
-
         public string ContentType { get; } 
 
         public CreateReaction(Guid reactionId, Guid studentId,
