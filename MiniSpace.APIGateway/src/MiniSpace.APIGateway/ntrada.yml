@@ -399,17 +399,21 @@ modules:
           downstream: reactions-service/reactions
           auth: true
 
-        - upstream: /
+        - upstream: /{reactionId}
           method: DELETE
           use: downstream
-          downstream: reactions-service/reactions
+          downstream: reactions-service/reactions/{reactionId}
           auth: true
 
         - upstream: /
           method: GET
           use: downstream
           downstream: reactions-service/reactions
-          auth: true
+
+        - upstream: /summary
+          method: GET
+          use: downstream
+          downstream: reactions-service/reactions/summary
 
       services:
         reactions-service:
