@@ -187,5 +187,18 @@ namespace MiniSpace.Services.Events.Core.Entities
         
         public bool IsOrganizer(Guid organizerId)
             => Organizer.Id == organizerId;
+        
+        public void RemoveParticipants(IEnumerable<Guid> participants)
+        {
+            foreach (var participant in participants)
+            {
+                var signedUpParticipant = _signedUpStudents.SingleOrDefault(p => p.StudentId == participant);
+                if (signedUpParticipant is null)
+                {
+                    throw new StudentNotSignedUpException(participant, Id);
+                }
+                _signedUpStudents.Remove(signedUpParticipant);
+            }
+        }
     }
 }
