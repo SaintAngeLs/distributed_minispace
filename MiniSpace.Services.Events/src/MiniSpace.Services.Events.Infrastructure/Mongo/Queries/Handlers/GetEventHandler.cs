@@ -34,6 +34,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
         public async Task<EventDto> HandleAsync(GetEvent query, CancellationToken cancellationToken)
         {
             var document = await _eventRepository.GetAsync(p => p.Id == query.EventId);
+            if(document is null)
+            {
+                return null;
+            }
             var identity = _appContext.Identity;
             var friends = Enumerable.Empty<FriendDto>();
             if(identity.IsAuthenticated)

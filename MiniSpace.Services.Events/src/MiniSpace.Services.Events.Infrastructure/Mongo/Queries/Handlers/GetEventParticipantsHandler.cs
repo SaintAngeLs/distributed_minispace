@@ -17,14 +17,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
     {
         private readonly IMongoRepository<EventDocument, Guid> _eventRepository;
         private readonly IAppContext _appContext;
-        private readonly IMessageBroker _messageBroker;
         
         public GetEventParticipantsHandler(IMongoRepository<EventDocument, Guid> eventRepository,
-            IAppContext appContext, IMessageBroker messageBroker)
+            IAppContext appContext)
         {
             _eventRepository = eventRepository;
             _appContext = appContext;
-            _messageBroker = messageBroker;
         }
         
         public async Task<EventParticipantsDto> HandleAsync(GetEventParticipants query, CancellationToken cancellationToken)
