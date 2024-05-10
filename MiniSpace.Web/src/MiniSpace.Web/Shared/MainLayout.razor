@@ -28,15 +28,16 @@
 
             <RadzenMenu Class="rz-menu">
                 <div class="rz-menu-stack">
-                    <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
-                    <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
-                    <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
+                  
                     @if (_isUserAuthenticated)
                     {
                         <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
                     }
                     else
                     {
+                        <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
+                        <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
+                        <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
                         <RadzenMenuItem Text="Sign In" Class="rz-menu-item" Path="signin" Icon="exit_to_app"/>
                         <RadzenMenuItem Text="Sign Up" Class="rz-menu-item" Path="signup" Icon="assignment_ind"/>
                     }
