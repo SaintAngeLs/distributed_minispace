@@ -16,6 +16,10 @@ namespace MiniSpace.Web.Areas.Events
             string startDate, string endDate, string buildingName, string street, string buildingNumber,
             string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
             string category, string publishDate);
+        Task<HttpResponse<object>> UpdateEventAsync(Guid eventId, string name, Guid organizerId,
+            string startDate, string endDate, string buildingName, string street, string buildingNumber,
+            string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
+            string category, string publishDate);
         Task SignUpToEventAsync(Guid eventId, Guid studentId);
         Task CancelSignUpToEventAsync(Guid eventId, Guid studentId);
         Task ShowInterestInEventAsync(Guid eventId, Guid studentId);

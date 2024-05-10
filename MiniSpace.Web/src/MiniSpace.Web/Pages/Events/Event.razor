@@ -88,7 +88,8 @@
         @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
         {
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary" />
+                <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary"
+                              Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/update"))" />
                 <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning" />
             </RadzenStack>
 
