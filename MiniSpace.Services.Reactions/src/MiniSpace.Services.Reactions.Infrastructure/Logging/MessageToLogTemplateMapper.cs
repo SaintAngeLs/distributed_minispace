@@ -1,6 +1,7 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Reactions.Application.Commands;
 using MiniSpace.Services.Reactions.Application.Events;
+using MiniSpace.Services.Reactions.Application.Events.External;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Logging
 {
@@ -12,59 +13,33 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Logging
                 {
                     typeof(CreateReaction),  new HandlerLogTemplate
                     {
-                        After = "Created the reaction with student id: {StudentId} and content id: {ContentId}."
+                        After = "Created the reaction with id: {ReactionId}."
                     }
                 },
                 {
                     typeof(DeleteReaction),  new HandlerLogTemplate
                     {
-                        After = "Delete the reaction with student id: {StudentId} and content id: {ContentId}."
+                        After = "Delete the reaction with id: {ReactionId}."
                     }
                 },
                 {
-                    typeof(ReactionCreated), new HandlerLogTemplate
+                    typeof(EventCreated), new HandlerLogTemplate
                     {
-                        After = "Created a new reaction with id: {ReactionId}."
+                        After = "Created a new event with id: {EventId}."
                     }
                 },
                 {
-                    typeof(ReactionDeleted), new HandlerLogTemplate
+                    typeof(PostCreated), new HandlerLogTemplate
                     {
-                        After = "Deleted a new reaction with id: {ReactionId}."
+                        After = "Created a new post with id: {PostId}."
                     }
                 },
-
-                // {
-                //     typeof(DeletePost), new HandlerLogTemplate
-                //     {
-                //         After = "Deleted the post with id: {PostId}."
-                //     }
-                // },
-                // {
-                //     typeof(ChangePostState), new HandlerLogTemplate
-                //     {
-                //         After = "Changed a post with id: {PostId} state to: {State}."
-                //     }
-                // },
-                // {
-                //     typeof(StudentCreated), new HandlerLogTemplate
-                //     {
-                //         After = "Created a new student with id: {StudentId}."
-                //     }
-                // },
-                // {
-                //     typeof(StudentDeleted), new HandlerLogTemplate
-                //     {
-                //         After = "Deleted a student with id: {StudentId}."
-                //     }
-                // },
-                // {
-                //     typeof(PostsStateUpdated),     
-                //     new HandlerLogTemplate
-                //     {
-                //         After = "Updated state of posts at: {Now}."
-                //     }
-                // },
+                {
+                    typeof(StudentCreated), new HandlerLogTemplate
+                    {
+                        After = "Created a new student with id: {StudentId}."
+                    }
+                },
             };
         
         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class

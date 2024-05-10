@@ -29,11 +29,10 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
             documents = documents.Where(p => p.ContentId == query.ContentId && p.ContentType == query.ContentType);
 
             var reactions = await documents.ToListAsync();
-            var groups = reactions.GroupBy(x => x.Type);
-            int nrReactions = groups.Select(x => x.ToList().Count).Sum();
+            int nrReactions = reactions.Count;
 
             if (nrReactions == 0) {
-                return new ReactionsSummaryDto(0, default, null, null);
+                return new ReactionsSummaryDto(0, null, null, null);
             }
 
             var identity = _appContext.Identity;
@@ -46,7 +45,8 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
                 authUserReactionType = reactionDocument.Type;
             }
 
-            ReactionType dominant = groups.OrderBy(x => x.ToList().Count).Last().Key;
+            ReactionType dominant = reactions.GroupBy(x => x.Type)
+                .OrderBy(x => x.ToList().Count).Last().Key;
             return new ReactionsSummaryDto(nrReactions, dominant, authUserReactionId, authUserReactionType);
         }
     }    

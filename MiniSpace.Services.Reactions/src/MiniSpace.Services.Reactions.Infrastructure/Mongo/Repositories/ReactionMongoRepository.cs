@@ -35,5 +35,9 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
         {
             return _repository.DeleteAsync(x => x.Id == id);
         }
+        
+        public Task<bool> ExistsAsync(Guid contentId, ReactionContentType contentType, Guid studentId)
+            => _repository.ExistsAsync(x => x.ContentId == contentId && x.ContentType == contentType 
+                                                                     && x.StudentId == studentId);
     }    
 }
