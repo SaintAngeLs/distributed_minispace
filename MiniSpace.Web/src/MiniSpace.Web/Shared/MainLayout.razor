@@ -35,13 +35,15 @@
                        <div class=" rz-text-align-center" style="">
                             <RadzenProfileMenu>
                                 <Template>
-                                    <RadzenGravatar Email="user@example.com">
-                                    </RadzenGravatar>
+                                    @* <RadzenGravatar Email="@_userEmail" /> *@
+                                     <div style="padding: 10px; font-size: 16px;">
+                                        Hello, @_userName
+                                    </div>
                                 </Template>
-                                <ChildContent>
-                                    <RadzenProfileMenuItem Text="Account settings" Path="menu" Icon="line_weight"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Notifications" Path="notification" Icon="announcement"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Sign out" Path="dialog" Icon="perm_media"></RadzenProfileMenuItem>
+                                 <ChildContent>
+                                    <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications" Icon="notifications"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Sign out" Click="@SignOut" Icon="exit_to_app"></RadzenProfileMenuItem>
                                 </ChildContent>
                             </RadzenProfileMenu>
                         </div>
@@ -126,6 +128,8 @@
     private string _userName;
     private string _userSurname;
 
+    private string _userEmail;
+
     private bool _isUserAuthenticated;
 
      protected override async Task OnAfterRenderAsync(bool firstRender) {
@@ -135,6 +139,7 @@
                 var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto); 
                 if (userDto != null) {
                     _userName = userDto.Name;
+                    _userEmail = userDto.Email; 
                     @* _userSurname = userDto.LastName; *@
                 }
             }
