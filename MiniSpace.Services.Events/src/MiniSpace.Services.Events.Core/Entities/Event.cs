@@ -187,6 +187,16 @@ namespace MiniSpace.Services.Events.Core.Entities
         
         public bool IsOrganizer(Guid organizerId)
             => Organizer.Id == organizerId;
+
+        public void AddParticipant(Guid studentId, string name)
+        {
+            var signedUpParticipant = _signedUpStudents.SingleOrDefault(p => p.StudentId == studentId);
+            if (signedUpParticipant is not null)
+            {
+                throw new StudentAlreadySignedUpException(studentId, Id);
+            }
+            _signedUpStudents.Add(new Participant(studentId, name));
+        }
         
         public void RemoveParticipants(IEnumerable<Guid> participants)
         {
