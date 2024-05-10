@@ -195,6 +195,12 @@ namespace MiniSpace.Services.Events.Core.Entities
             {
                 throw new StudentAlreadySignedUpException(studentId, Id);
             }
+            
+            if (SignedUpStudents.Count() >= Capacity)
+            {
+                throw new EventCapacityExceededException(Id, Capacity);
+            }
+            
             _signedUpStudents.Add(new Participant(studentId, name));
         }
         
