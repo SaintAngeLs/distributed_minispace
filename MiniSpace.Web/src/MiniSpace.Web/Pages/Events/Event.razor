@@ -1,10 +1,8 @@
 @page "/events/{EventId}"
-@using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Events
-@using MiniSpace.Web.Areas.Posts
-@using MiniSpace.Web.Pages.Admin.Dialogs
 @using MiniSpace.Web.Pages.Events.Dialogs
+@using MiniSpace.Web.Areas.Posts
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -12,7 +10,6 @@
 @using Orientation = Radzen.Orientation
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
-@inject IStudentsService StudentsService
 @inject IEventsService EventsService
 @inject IPostsService PostsService
 @inject NavigationManager NavigationManager
@@ -61,7 +58,7 @@
         </RadzenStack>
         
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            @if (IdentityService.IsAuthenticated
+            @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev)
                  && (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
             {
                 @if (!ev.IsSignedUp)
@@ -87,14 +84,19 @@
                 }
             }
         </RadzenStack>
-        
-        @* <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem"> *@
-        @*     @if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer" && studentId == ev.Organizer.Id) *@
-        @*     { *@
-        @*         <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary" /> *@
-        @*         <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning" /> *@
-        @*     } *@
-        @* </RadzenStack> *@
+
+        @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary" />
+                <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning" />
+            </RadzenStack>
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                <RadzenButton Size="ButtonSize.Medium" Text="Create new post" ButtonStyle="ButtonStyle.Secondary"
+                              Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" />
+            </RadzenStack>   
+        }
     </RadzenStack>
     
     <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
@@ -112,7 +114,7 @@
                                 <RadzenColumn Size="12" class="rz-text-truncate">
                                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                                         <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                                    Text=@($"{GetStudentName(post.StudentId)}")/>
+                                                    Text=@($"{GetAuthorName(post.OrganizerId)}")/>
                                         <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
                                             Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
                                         </RadzenText>
@@ -166,9 +168,19 @@
         pageInitialized = true;
     }
 
-    private string GetStudentName(Guid studentId)
+    private string GetAuthorName(Guid authorId)
     {
-        return studentId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+        return authorId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+    }
+
+    private bool IsUserEventOrganizer(EventDto eventDto)
+    {
+        if (IdentityService.GetCurrentUserRole() != "organizer")
+        {
+            return false;
+        }
+
+        return ev.Organizer != null && studentId == ev.Organizer.Id;
     }
     
     private async void OnChange(int index)

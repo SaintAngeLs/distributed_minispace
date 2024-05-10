@@ -1,4 +1,4 @@
-@page "/events/create"
+@page "/events/add"
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Http
@@ -17,7 +17,7 @@
                 Shade="Shade.Lighter">
         @errorMessage
 </RadzenAlert>
-<RadzenTemplateForm Data="@userDto" Submit="@(async (UserDto args) => { await HandleCreateEvent(); })">
+<RadzenTemplateForm Data="@addEventModel" Submit="@(async (AddEventModel args) => { await HandleCreateEvent(); })">
     <RadzenFieldset>
         <RadzenStack Gap="1rem">
             <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
@@ -93,7 +93,7 @@
                             <RadzenNumericRangeValidator Component="fee" Min="0.0" Max="1000.0" Style="position: relative"
                                                          Text="Fee should be between 0.0 and 1000.0" />
                         </RadzenFormField>
-                        <RadzenFormField Text="Publish Date" Variant="Variant.Outlined">
+                        <RadzenFormField Text="Publish time" Variant="Variant.Outlined">
                             <RadzenStack Orientation="Orientation.Vertical">
                                 <RadzenRadioButtonList @bind-Value="@publishInfo" TValue="int" class="rz-m-4 rz-mt-8">
                                     <Items>
@@ -103,11 +103,13 @@
                                 </RadzenRadioButtonList>
                                 @if (publishInfo == 2)
                                 {
-                                    <RadzenDatePicker @bind-Value="@addEventModel.PublishDate" Name="publish-date"
-                                                      ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
-                                    <RadzenCustomValidator Component="publish-date" Style="position: relative"
-                                                           Validator="@(() => ValidateDate(addEventModel.PublishDate))"
-                                                           Text="Minute number has to be divisible by 5"/>
+                                    <RadzenFormField Text="Publish date" Variant="Variant.Outlined">
+                                        <RadzenDatePicker @bind-Value="@addEventModel.PublishDate" Name="publish-date"
+                                                          ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                                        <RadzenCustomValidator Component="publish-date" Style="position: relative"
+                                                               Validator="@(() => ValidateDate(addEventModel.PublishDate))"
+                                                               Text="Minute number has to be divisible by 5"/>
+                                    </RadzenFormField>
                                 }
                             </RadzenStack>
                         </RadzenFormField>
@@ -139,7 +141,7 @@
 </RadzenTemplateForm>
 
 @code {
-    private UserDto userDto = new();
+    private Guid organizerId;
 
     private AddEventModel addEventModel = new()
     {
@@ -186,10 +188,10 @@
     {
         if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
         {
-            userDto = IdentityService.UserDto;
-            organizations = await OrganizationsService.GetOrganizerOrganizationsAsync(userDto.Id);
-            
-            addEventModel.OrganizerId = userDto.Id;
+            organizerId = IdentityService.GetCurrentUserId();
+            organizations = await OrganizationsService.GetOrganizerOrganizationsAsync(organizerId);
+
+            addEventModel.OrganizerId = organizerId;
             addEventModel.OrganizationId = organizations.First().Id;
         }
     }
@@ -212,7 +214,7 @@
         }
         else
         {
-            NavigationManager.NavigateTo("/events");
+            NavigationManager.NavigateTo("/events/organize");
         }
     }
 }

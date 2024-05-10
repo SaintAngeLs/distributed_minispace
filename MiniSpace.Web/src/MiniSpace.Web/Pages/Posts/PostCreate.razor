@@ -1,0 +1,113 @@
+@page "/events/{EventId}/posts/create"
+@using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Web.Areas.Http
+@using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Models.Posts
+@using Radzen
+@inject IIdentityService IdentityService
+@inject IPostsService PostsService
+@inject IErrorMapperService ErrorMapperService
+@inject NavigationManager NavigationManager
+
+<h3>Create new event</h3>
+<RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
+                Shade="Shade.Lighter">
+        @errorMessage
+</RadzenAlert>
+<RadzenTemplateForm Data="@createPostModel" Submit="@(async (CreatePostModel args) => { await HandleCreatePost(); })">
+    <RadzenFieldset>
+        <RadzenStack Gap="1rem">
+            
+            <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
+                <RadzenColumn Size="12" SizeSM="8">
+                    <RadzenStack>
+                        <RadzenFormField Text="Text content" Variant="Variant.Outlined">
+                            <RadzenTextArea Style="height: 100px" @bind-Value="@createPostModel.TextContent" Name="text-content"/>
+                            <RadzenRequiredValidator Component="text-content" Style="position: relative"
+                                                     Text="Text content is required"/>
+                            <RadzenLengthValidator Component="text-content" Max="5000" Style="position: relative"
+                                                   Text="Text content should have at most 5000 characters"/>
+                        </RadzenFormField>
+                        <RadzenFormField Text="Publish time" Variant="Variant.Outlined">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenRadioButtonList @bind-Value="@publishInfo" TValue="int" class="rz-m-4 rz-mt-8">
+                                    <Items>
+                                        <RadzenRadioButtonListItem Text="Publish now" Value="1"/>
+                                        <RadzenRadioButtonListItem Text="Publish in future" Value="2"/>
+                                    </Items>
+                                </RadzenRadioButtonList>
+                                @if (publishInfo == 2)
+                                {
+                                    <RadzenFormField Text="Publish date" Variant="Variant.Outlined">
+                                        <RadzenDatePicker @bind-Value="@createPostModel.PublishDate" Name="publish-date"
+                                                          ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm"/>
+                                        <RadzenCustomValidator Component="publish-date" Style="position: relative"
+                                                               Validator="@(() => ValidateDate(createPostModel.PublishDate))"
+                                                               Text="Minute number has to be divisible by 5"/>
+                                    </RadzenFormField>
+                                }
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Submit"/>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter]
+    public string EventId { get; set; }
+    
+    private Guid organizerId;
+
+    private CreatePostModel createPostModel = new()
+    {
+        TextContent = "Lorem ipsum!",
+        MediaContent = ""
+    };
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    private int publishInfo = 1;
+    
+    private static bool ValidateDate(DateTime dateTime)
+    {
+        return dateTime.Minute % 5 == 0;
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
+        {
+            organizerId = IdentityService.GetCurrentUserId();
+
+            createPostModel.EventId = new Guid(EventId);
+            createPostModel.OrganizerId = organizerId;
+        }
+    }
+    
+    private async Task HandleCreatePost()
+    {
+        var response = await PostsService.CreatePostAsync(Guid.Empty, createPostModel.EventId,
+            createPostModel.OrganizerId, createPostModel.TextContent, createPostModel.MediaContent,
+            publishInfo == 2 ? "ToBePublished" : "Published",
+            publishInfo == 2 ? createPostModel.PublishDate : null);
+        
+        if (response.ErrorMessage != null)
+        {
+            showError = true;
+            errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/events/{EventId}");
+        }
+    }
+}

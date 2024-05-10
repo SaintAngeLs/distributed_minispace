@@ -24,11 +24,12 @@ namespace MiniSpace.Web.Areas.Posts
             return _httpClient.PutAsync($"posts/{postId}/state/{state}", new {postId, state, publishDate});
         }
         
-        public Task CreatePostAsync(Guid postId, Guid eventId, Guid studentId, string textContext, string mediaContext, string state,
-            DateTime publishedDate)
+        public Task<HttpResponse<object>> CreatePostAsync(Guid postId, Guid eventId, Guid organizerId, string textContent,
+            string mediaContext, string state, DateTime? publishDate)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync("posts", new {postId, eventId, studentId, textContext, mediaContext, state, publishedDate});
+            return _httpClient.PostAsync<object, object>("posts", new {postId, eventId, organizerId, textContent,
+                mediaContext, state, publishDate});
         }
 
         public Task DeletePostAsync(Guid postId)
