@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Students.Application.Queries
         public int Page { get; set; } = 1;
         public int ResultsPerPage { get; set; } = 10;
 
-        public string OrderBy { get; set; } = "Name"; 
+        public string OrderBy { get; set; } = "LastName"; 
         public string SortOrder { get; set; } = "asc";
 
         public int Results { get; set; } = 10;

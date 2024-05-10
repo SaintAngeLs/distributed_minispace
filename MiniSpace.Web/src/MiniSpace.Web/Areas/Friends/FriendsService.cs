@@ -103,6 +103,14 @@ namespace MiniSpace.Web.Areas.Friends
             return await _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
         }
 
+        public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync(int page = 1, int resultsPerPage = 10)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            string url = $"students?page={page}&resultsPerPage={resultsPerPage}";
+            return await _httpClient.GetAsync<IEnumerable<StudentDto>>(url);
+        }
+
         public async Task<StudentDto> GetStudentAsync(Guid studentId)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();

@@ -74,7 +74,14 @@
         </div>
     </div>
 
-    
+    <div class="pagination-controls">
+        <button disabled="@currentPage == 1" @onclick="() => SetPage(1)">First</button>
+        <button disabled="@currentPage == 1" @onclick="() => SetPage(currentPage - 1)">Previous</button>
+        <span>Page @currentPage</span>
+        <button disabled="@currentPage * pageSize >= totalStudents" @onclick="() => SetPage(currentPage + 1)">Next</button>
+        <button disabled="@currentPage * pageSize >= totalStudents" @onclick="() => SetPage((totalStudents + pageSize - 1) / pageSize)">Last</button>
+    </div>
+
 
 
 <style>
@@ -87,8 +94,17 @@
         max-width: 300px;
     }
 
-    .main-container { overflow: visible; display: flex;   align-items: flex-start; }
-    .left-panel {  width: 100%;   overflow-y: auto; /}
+    .main-container { 
+        overflow: visible; 
+        display: flex;   
+        align-items: 
+        flex-start; 
+    }
+
+    .left-panel {  
+        width: 100%;   
+        overflow-y: auto; 
+    }
     @* .right-panel { width: 100%; padding: 50px; position: sticky; top: 50px;overflow-y: auto; } *@
 
     .right-panel {
@@ -96,52 +112,72 @@
         padding: 25px;
         position: sticky;
         top: 100px; 
-
         background-color: white; 
     }
-    .search-bar { display: flex; margin-bottom: 20px; }
+    .search-bar {
+        display: flex; 
+        margin-bottom: 20px; 
+        }
     
+    .card-container {
+        display: flex;
+        flex-direction: column;
+    }
 
-/* Card Styling */
-.card-container {
-    display: flex;
-    flex-direction: column;
-}
+    .friend-card {
+        display: flex;
+        background-color: #ffffff;
+        margin-bottom: 1rem !important;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+        align-items: center;
+        padding: 20px;
+        border-radius: 8px;
+    }
 
-.card-container {
-    display: flex;
-    flex-direction: column;
-}
+    .friend-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
 
-.friend-card {
-    display: flex;
-    background-color: #ffffff;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s;
-    cursor: pointer;
-    align-items: center;
-    padding: 20px;
-    border-radius: 8px;
-}
+    .friend-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-right: 20px;
+        object-fit: cover;
+        border: 3px solid #007BFF; 
+    }
 
-.friend-card:hover {
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-}
+    .friend-info {
+        flex: 1;
+    }
 
-.friend-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-right: 20px;
-    object-fit: cover;
-    border: 3px solid #007BFF; 
-}
+    .search-bar input:focus {
+        outline: none;
+        border: 2px solid #0056b3;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    }
 
-.friend-info {
-    flex: 1;
-}
+    .pagination-controls {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination-controls button {
+        padding: 8px 16px;
+        margin-right: 5px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .pagination-controls button:disabled {
+        background-color: #ccc;
+    }
 
 </style>
 
@@ -150,13 +186,17 @@
     private List<StudentDto> students = new List<StudentDto>();
     private StudentDto student;
     RadzenNotification notificationComponent;
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalStudents;
 
     protected override async Task OnInitializedAsync() {
         await LoadStudents();
     }
 
     private async Task LoadStudents() {
-        var result = await FriendsService.GetAllStudentsAsync();
+        var result = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
+        totalStudents = result.Count();
         if (result != null) {
             students = result.ToList();
         }
@@ -203,7 +243,10 @@
         await JSRuntime.InvokeVoidAsync("playNotificationSound");
     }
 
-
+    private async Task SetPage(int page) {
+        currentPage = page;
+        await LoadStudents();
+    }
 
 
 
