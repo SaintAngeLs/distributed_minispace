@@ -31,6 +31,20 @@
                   
                     @if (_isUserAuthenticated)
                     {
+                        
+                       <div class=" rz-text-align-center" style="">
+                            <RadzenProfileMenu>
+                                <Template>
+                                    <RadzenGravatar Email="user@example.com">
+                                    </RadzenGravatar>
+                                </Template>
+                                <ChildContent>
+                                    <RadzenProfileMenuItem Text="Account settings" Path="menu" Icon="line_weight"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Notifications" Path="notification" Icon="announcement"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Sign out" Path="dialog" Icon="perm_media"></RadzenProfileMenuItem>
+                                </ChildContent>
+                            </RadzenProfileMenu>
+                        </div>
                         <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
                     }
                     else
@@ -56,7 +70,7 @@
             <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
                 <RadzenPanelMenu>
                     <RadzenPanelMenuItem Text="Home" Icon="home"
-                                         Click="@(() => NavigationManager.NavigateTo(""))" />
+                                         Click="@(() => NavigationManager.NavigateTo("service-home"))" />
                     
                     <RadzenPanelMenuItem Text="Account" Icon="account_box"
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
@@ -109,17 +123,25 @@
     bool _sidebarExpanded = true;
     bool isLoading = true;
     private bool firstRender = true;
+    private string _userName;
+    private string _userSurname;
 
     private bool _isUserAuthenticated;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
+     protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
             _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
-            StateHasChanged(); 
+            if (_isUserAuthenticated) {
+                var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto); 
+                if (userDto != null) {
+                    _userName = userDto.Name;
+                    @* _userSurname = userDto.LastName; *@
+                }
+            }
+            StateHasChanged();
         }
     }
+    
     public async Task<bool> CheckAuthentication()
     {
         _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();

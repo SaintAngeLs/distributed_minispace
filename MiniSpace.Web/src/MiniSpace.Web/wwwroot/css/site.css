@@ -169,6 +169,7 @@ header {
     flex-wrap: wrap; 
     align-items: center;
     justify-content: space-between;
+    
 }
 
 
@@ -262,9 +263,14 @@ html, body {
     }
 }
 
+.rz-menu .rz-profile-menu .rz-navigation-item-link {
+    margin-top: -10px !important;
+}
+
 .rz-menu {
     background-color: #2F4E6F !important;
     color: #fff !important;
+    height: 50px;
 }
 
 
