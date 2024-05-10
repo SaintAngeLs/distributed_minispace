@@ -4,6 +4,7 @@ using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 
+
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
     public class GetStudentsHandler : IQueryHandler<GetStudents, IEnumerable<StudentDto>>
@@ -17,9 +18,12 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
         
         public async Task<IEnumerable<StudentDto>> HandleAsync(GetStudents query, CancellationToken cancellationToken)
         {
-            var students = await _studentRepository.FindAsync(_ => true);
+            // var students = await _studentRepository.FindAsync(_ => true);
 
-            return students.Select(p => p.AsDto());
+            // return students.Select(p => p.AsDto());
+
+            var pagedResult = await _studentRepository.BrowseAsync<IPagedGetStudentsQuery>(_ => true, query);
+            return pagedResult.Items.Select(doc => doc.AsDto());
         }
     }    
 }
