@@ -9,6 +9,7 @@ namespace MiniSpace.Services.Events.Application.Commands
     public class AddEventParticipant: ICommand
     {
         public Guid EventId { get; set; }
-        public StudentDto Student { get; set; }
+        public Guid StudentId { get; set; }
+        public string StudentName { get; set; }
     }
 }

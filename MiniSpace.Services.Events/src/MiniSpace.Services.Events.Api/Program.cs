@@ -58,7 +58,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
                         .Get<GetEventParticipants, EventParticipantsDto>("events/{eventId}/participants")
                         .Post<AddEventParticipant>("events/{eventId}/participants")
-                        .Delete<RemoveEventParticipants>("events/{eventId}/participants")
+                        .Delete<RemoveEventParticipant>("events/{eventId}/participants")
                     )
                 )
                 .UseLogging()

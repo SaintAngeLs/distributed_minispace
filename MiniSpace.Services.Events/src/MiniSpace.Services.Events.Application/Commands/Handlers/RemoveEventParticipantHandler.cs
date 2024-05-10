@@ -9,20 +9,20 @@ using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
 {
-    public class RemoveEventParticipantsHandler: ICommandHandler<RemoveEventParticipants>
+    public class RemoveEventParticipantHandler: ICommandHandler<RemoveEventParticipant>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IAppContext _appContext;
         private IMessageBroker _messageBroker;
         
-        public RemoveEventParticipantsHandler(IEventRepository eventRepository, IAppContext appContext, IMessageBroker messageBroker)
+        public RemoveEventParticipantHandler(IEventRepository eventRepository, IAppContext appContext, IMessageBroker messageBroker)
         {
             _eventRepository = eventRepository;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(RemoveEventParticipants command, CancellationToken cancellationToken)
+        public async Task HandleAsync(RemoveEventParticipant command, CancellationToken cancellationToken)
         {
             var @event = await _eventRepository.GetAsync(command.EventId);
             if(@event is null)
@@ -35,9 +35,10 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             {
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }
-            @event.RemoveParticipants(command.Participants);
+            
+            @event.CancelSignUp(command.ParticipantId);
             await _eventRepository.UpdateAsync(@event);
-            await _messageBroker.PublishAsync(new EventParticipantsRemoved(@event.Id, command.Participants));
+            await _messageBroker.PublishAsync(new EventParticipantRemoved(@event.Id, command.ParticipantId));
         }
         
     }

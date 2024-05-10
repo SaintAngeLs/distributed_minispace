@@ -5,6 +5,7 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
@@ -33,10 +34,10 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new EventNotFoundException(command.EventId);
             }
             
-            var student = await _studentRepository.GetAsync(command.Student.Id);
+            var student = await _studentRepository.GetAsync(command.StudentId);
             if(student is null)
             {
-                throw new StudentNotFoundException(command.Student.Id);
+                throw new StudentNotFoundException(command.StudentId);
             }
             
             var identity = _appContext.Identity;
@@ -44,10 +45,11 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             {
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }
-            @event.AddParticipant(command.Student.Id, command.Student.Name);
+            
+            @event.SignUpStudent(new Participant(command.StudentId, command.StudentName));
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new EventParticipantAdded(@event.Id, 
-                command.Student.Id, command.Student.Name));
+                command.StudentId, command.StudentName));
         }
         
     }

@@ -112,7 +112,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .SubscribeCommand<CancelInterestInEvent>()
                 .SubscribeCommand<CancelSignUpToEvent>()
                 .SubscribeCommand<AddEventParticipant>()
-                .SubscribeCommand<RemoveEventParticipants>()
+                .SubscribeCommand<RemoveEventParticipant>()
                 .SubscribeEvent<StudentCreated>();
 
             return app;

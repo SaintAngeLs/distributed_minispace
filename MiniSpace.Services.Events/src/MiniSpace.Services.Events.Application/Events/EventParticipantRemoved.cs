@@ -4,15 +4,15 @@ using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Events.Application.Events
 {
-    public class EventParticipantsRemoved: IEvent
+    public class EventParticipantRemoved: IEvent
     {
         public Guid EventId { get; }
-        public IEnumerable<Guid> Participants { get; }
+        public Guid Participant { get; }
 
-        public EventParticipantsRemoved(Guid eventId, IEnumerable<Guid> participants)
+        public EventParticipantRemoved(Guid eventId, Guid participant)
         {
             EventId = eventId;
-            Participants = participants;
+            Participant = participant;
         }
     }
 }

@@ -4,10 +4,9 @@ using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Events.Application.Commands
 {
-    public class RemoveEventParticipants: ICommand
+    public class RemoveEventParticipant: ICommand
     {
         public Guid EventId { get; set; }
-        public string EventEngagementType { get; set; }
-        public IEnumerable<Guid> Participants { get; set; }
+        public Guid ParticipantId { get; set; }
     }
 }
