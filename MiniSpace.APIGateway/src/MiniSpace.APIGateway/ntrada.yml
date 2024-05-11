@@ -588,13 +588,39 @@ modules:
         downstream: posts-service/posts/{postId}
         auth: true
 
-
     services:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
+
+
         
-        
+  mediafiles:
+    path: /media-files
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: mediafiles-service/media-files
+        auth: true
+
+      - upstream: /{mediaFileId}
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+
+      - upstream: /{mediaFileId}
+        method: DELETE
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+        auth: true
+
+    services:
+      mediafiles-service:
+        localUrl: localhost:5014
+        url: mediafiles-service
+
+
         
   organizations:
     path: /organizations
