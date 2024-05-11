@@ -68,6 +68,14 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 UpdatedAt = entity.UpdatedAt,
                 Ratings = entity.Ratings
             };
+        
+        public static EventParticipantsDto AsDto(this EventDocument document)
+            => new ()
+            {
+                EventId = document.Id,
+                InterestedStudents = document.InterestedStudents.Select(p => p.AsDto()),
+                SignedUpStudents = document.SignedUpStudents.Select(p => p.AsDto())
+            };
 
         public static AddressDto AsDto(this Address entity)
             => new ()

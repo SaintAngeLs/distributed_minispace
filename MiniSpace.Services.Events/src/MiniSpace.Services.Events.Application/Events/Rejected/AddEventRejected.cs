@@ -5,9 +5,9 @@ using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.Events.Rejected
 {
-    public class AddEventRejected(Guid userId, string reason, string code) : IRejectedEvent
+    public class AddEventRejected(Guid organizerId, string reason, string code) : IRejectedEvent
     {
-        public Guid UserId { get; } = userId;
+        public Guid OrganizerId { get; } = organizerId;
         public string Reason { get; } = reason;
         public string Code { get; } = code;
     }

@@ -105,9 +105,14 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<AddEvent>()
                 .SubscribeCommand<DeleteEvent>()
+                .SubscribeCommand<UpdateEvent>()
                 .SubscribeCommand<RateEvent>()
                 .SubscribeCommand<SignUpToEvent>()
                 .SubscribeCommand<ShowInterestInEvent>()
+                .SubscribeCommand<CancelInterestInEvent>()
+                .SubscribeCommand<CancelSignUpToEvent>()
+                .SubscribeCommand<AddEventParticipant>()
+                .SubscribeCommand<RemoveEventParticipant>()
                 .SubscribeEvent<StudentCreated>();
 
             return app;

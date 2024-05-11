@@ -63,6 +63,20 @@ namespace MiniSpace.Services.Events.Infrastructure.Logging
                     }
                 },
                 {
+                    typeof(AddEventParticipant),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Added a participant with id: {StudentId} to event with id: {EventId}.",
+                    }
+                },
+                {
+                    typeof(RemoveEventParticipant),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Removed participant with id: {ParticipantId} from event with id: {EventId}."
+                    }
+                },
+                {
                     typeof(StudentCreated),     
                     new HandlerLogTemplate
                     {
