@@ -93,6 +93,15 @@ namespace MiniSpace.Services.Events.Core.Entities
         
         public void SignUpStudent(Participant participant)
         {
+            if(State != State.Published)
+            {
+                throw new InvalidEventState(Id, State.Published, State);
+            }
+            AddParticipant(participant);
+        }
+        
+        public void AddParticipant(Participant participant)
+        {
             if (SignedUpStudents.Any(p => p.StudentId == participant.StudentId))
             {
                 throw new StudentAlreadySignedUpException(participant.StudentId, Id);
@@ -102,11 +111,25 @@ namespace MiniSpace.Services.Events.Core.Entities
             {
                 throw new EventCapacityExceededException(Id, Capacity);
             }
+            
+            if(participant.StudentId == Organizer.Id)
+            {
+                throw new OrganizerCannotSignUpForOwnEventException(Organizer.Id, Id);
+            }
 
             _signedUpStudents.Add(participant);
         }
         
         public void CancelSignUp(Guid studentId)
+        {
+            if(State != State.Published)
+            {
+                throw new InvalidEventState(Id, State.Published, State);
+            }
+            RemoveParticipant(studentId);
+        }
+        
+        public void RemoveParticipant(Guid studentId)
         {
             var participant = _signedUpStudents.SingleOrDefault(p => p.StudentId == studentId);
             if (participant is null)
@@ -140,6 +163,11 @@ namespace MiniSpace.Services.Events.Core.Entities
         
         public void Rate(Guid studentId, int rating)
         {
+            if(State != State.Archived)
+            {
+                throw new InvalidEventState(Id, State.Archived, State);
+            }
+            
             if(_signedUpStudents.All(p => p.StudentId != studentId))
             {
                 throw new StudentNotSignedUpForEventException(Id ,studentId);

@@ -18,7 +18,7 @@ generateTraceId: true
 useLocalUrl: true
 loadBalancer:
   enabled: false
-  url: faibo:9999
+  url: fabio:9999
 
 extensions:
   customErrors:
@@ -112,32 +112,24 @@ modules:
         use: downstream
         downstream: identity-service/users/{userId}/organizer-rights
         auth: true
-        claims:
-          role: admin
 
       - upstream: /users/{userId}/organizer-rights
         method: DELETE
         use: downstream
         downstream: identity-service/users/{userId}/organizer-rights
         auth: true
-        claims:
-          role: admin
 
       - upstream: /users/{userId}/ban
         method: POST
         use: downstream
         downstream: identity-service/users/{userId}/ban
         auth: true
-        claims:
-          role: admin
 
       - upstream: /users/{userId}/ban
         method: DELETE
         use: downstream
         downstream: identity-service/users/{userId}/ban
         auth: true
-        claims:
-          role: admin
 
     services:
       identity-service:
@@ -210,8 +202,6 @@ modules:
         use: downstream
         downstream: students-service/students
         auth: true
-        claims:
-          role: admin
 
       - upstream: /{studentId}
         method: GET
@@ -299,6 +289,12 @@ modules:
         method: POST
         use: downstream
         downstream: events-service/events/search
+        
+      - upstream: /search/organizer
+        method: POST
+        use: downstream
+        downstream: events-service/events/search/organizer
+        auth: true
 
       - upstream: /{eventId}/show-interest
         method: POST
@@ -306,8 +302,20 @@ modules:
         downstream: events-service/events/{eventId}/show-interest
         auth: true
 
+      - upstream: /{eventId}/show-interest
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/show-interest
+        auth: true
+
       - upstream: /{eventId}/sign-up
         method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/sign-up
+        auth: true
+
+      - upstream: /{eventId}/sign-up
+        method: DELETE
         use: downstream
         downstream: events-service/events/{eventId}/sign-up
         auth: true
@@ -322,6 +330,24 @@ modules:
         method: GET
         use: downstream
         downstream: events-service/events/organizer/{organizerId}
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
         auth: true
 
     services:
@@ -348,12 +374,6 @@ modules:
             - commentId:{commentId}
           auth: true
 
-        - upstream: /
-          method: GET
-          use: downstream
-          downstream: comments-service/comments
-          auth: true
-
         - upstream: /{commentId}
           method: DELETE
           use: downstream
@@ -367,6 +387,19 @@ modules:
           bind:
             - commentId:{commentId}
           auth: true
+
+        - upstream: /{commentId}/like
+          method: DELETE
+          use: downstream
+          downstream: comments-service/comments/{commentId}/like
+          bind:
+            - commentId:{commentId}
+          auth: true
+
+        - upstream: /search
+          method: POST
+          use: downstream
+          downstream: comments-service/comments/search
 
       services:
         comments-service:
@@ -384,17 +417,21 @@ modules:
           downstream: reactions-service/reactions
           auth: true
 
-        - upstream: /
+        - upstream: /{reactionId}
           method: DELETE
           use: downstream
-          downstream: reactions-service/reactions
+          downstream: reactions-service/reactions/{reactionId}
           auth: true
 
         - upstream: /
           method: GET
           use: downstream
           downstream: reactions-service/reactions
-          auth: true
+
+        - upstream: /summary
+          method: GET
+          use: downstream
+          downstream: reactions-service/reactions/summary
 
       services:
         reactions-service:
@@ -428,56 +465,89 @@ modules:
         statistics-service:
           localUrl: localhost:5011
           url: statistics-service
-
+          
 
 
   friends:
-    path: /friends
-    routes:
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: friends-service/friends
-        auth: true
+      path: /friends
+      routes:
+        - upstream: /
+          method: GET
+          use: downstream
+          downstream: friends-service/friends
+          auth: true
 
-      - upstream: /{userId}
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/{userId}
-        bind:
-          - userId:{userId}
-        auth: true
+        - upstream: /{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/{userId}
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /notYet
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/notYet
-        auth: true
+        - upstream: /{userId}/invite
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/{userId}/invite
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /pending
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/pending
-        auth: true
+        - upstream: /{requesterId}/{friendId}/remove
+          method: DELETE
+          use: downstream
+          downstream: friends-service/friends/{requesterId}/{friendId}/remove
+          bind:
+            - friendId: {friendId}
+            - requesterId: {requesterId}
+          auth: true
 
-      - upstream: /pending
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/pending
-        auth: true
+        - upstream: /requests/{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /{userId}/invite
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/{userId}/invite
-        bind:
-          - userId:{userId}
-        auth: true
+        - upstream: /requests/{userId}/accept
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/accept
+          bind:
+            - userId: {userId}
+          auth: true
 
-    services:
-      friends-service:
-        localUrl: localhost:5012
-        url: friends-service
+        - upstream: /requests/{userId}/decline
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/decline
+          bind:
+            - userId: {userId}
+          auth: true
+
+        - upstream: /pending
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/pending
+          auth: true
+
+        - upstream: /pending/all
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/pending/all
+          auth: true
+
+        - upstream: /requests/sent/{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/requests/sent/{userId}
+          auth: true
+
+      services:
+        friends-service:
+          localUrl: localhost:5012
+          url: friends-service
 
 
 
@@ -501,7 +571,7 @@ modules:
       - upstream: /{postId}/state/{state}
         method: PUT
         use: downstream
-        downstream: students-service/students/{postId}/state/{state}
+        downstream: posts-service/posts/{postId}/state/{state}
         bind:
           - postId:{postId}
           - state:{state}
@@ -523,3 +593,64 @@ modules:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
+        
+        
+        
+  organizations:
+    path: /organizations
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations
+        auth: true
+        
+      - upstream: /organizer/{organizationId}/organizer
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/organizer
+        auth: true
+        
+      - upstream: /organizer/{organizationId}/organizer/{organizerId}
+        method: DELETE
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
+        auth: true
+
+      - upstream: /
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations
+        
+      - upstream: /{organizationId}
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}
+        
+      - upstream: /{organizationId}/details
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/details
+
+      - upstream: /root
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/root
+        
+      - upstream: /{organizationId}/children
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children  
+
+      - upstream: /organizer/{organizerId}
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/organizer/{organizerId}
+        auth: true
+
+    services:
+      organizations-service:
+        localUrl: localhost:5015
+        url: organizations-service
+        
+        

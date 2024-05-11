@@ -30,13 +30,13 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Logging
                 {
                     typeof(OrganizerRightsGranted), new HandlerLogTemplate
                     {
-                        After = "Created an organizer with id: {OrganizerId}."
+                        After = "Created an organizer with id: {UserId}."
                     }
                 },
                 {
                     typeof(OrganizerRightsRevoked), new HandlerLogTemplate
                     {
-                        After = "Deleted an organizer with id: {OrganizerId}."
+                        After = "Deleted an organizer with id: {UserId}."
                     }
                 }
             };

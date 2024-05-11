@@ -11,7 +11,7 @@
 <div>&nbsp;</div>
 <h3>Sign Up</h3>
 
-<div style="display: flex; flex-direction: column; height: 50vh; justify-content: center; align-items: center;">
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
     <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
                  Shade="Shade.Lighter">
         @errorMessage
@@ -68,7 +68,7 @@
 
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Sign up"/>
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Large" Text="Sign up"/>
                     </RadzenColumn>
                 </RadzenRow>
                 <div>

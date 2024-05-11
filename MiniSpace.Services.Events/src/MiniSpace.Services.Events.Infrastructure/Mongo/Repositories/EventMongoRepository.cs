@@ -50,14 +50,16 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return pagedEvents;
         }
         
-        public async Task<(IEnumerable<Event> events, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseEventsAsync(int pageNumber, int pageSize, 
-            string name, string organizer, DateTime dateFrom, DateTime dateTo, Category? category, State? state,
+        public async Task<(IEnumerable<Event> events, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseEventsAsync(
+            int pageNumber, int pageSize, string name, string organizer, DateTime dateFrom, DateTime dateTo, 
+            Category? category, State? state, IEnumerable<Guid> friends, EventEngagementType? friendsEngagementType,
             IEnumerable<string> sortBy, string direction, IEnumerable<Guid> eventIds = null)
         {
             var filterDefinition = Extensions.ToFilterDefinition(name, dateFrom, dateTo, eventIds)
                 .AddOrganizerNameFilter(organizer)
                 .AddCategoryFilter(category)
-                .AddStateFilter(state);
+                .AddRestrictedStateFilter(state)
+                .AddFriendsFilter(friends, friendsEngagementType);
             var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
             
             var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);

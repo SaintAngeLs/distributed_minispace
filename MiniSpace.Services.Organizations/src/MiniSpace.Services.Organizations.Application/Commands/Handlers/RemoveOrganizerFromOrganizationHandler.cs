@@ -41,7 +41,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new OrganizerNotFoundException(command.OrganizerId);
             }
 
-            organization.RemoveOrganizer(organizer);
+            organization.RemoveOrganizer(organizer.Id);
             await _organizationRepository.UpdateAsync(organization);
         }
     }

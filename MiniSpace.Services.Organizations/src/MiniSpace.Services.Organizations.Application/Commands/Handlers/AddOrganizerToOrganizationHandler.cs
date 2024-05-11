@@ -36,14 +36,14 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             {
                 throw new OrganizationNotFoundException(command.OrganizationId);
             }
-
+    
             var organizer = await _organizerRepository.GetAsync(command.OrganizerId);
             if (organizer is null)
             {
                 throw new OrganizerNotFoundException(command.OrganizerId);
             }
 
-            organization.AddOrganizer(organizer);
+            organization.AddOrganizer(command.OrganizerId);
             await _organizationRepository.UpdateAsync(organization);
             await _messageBroker.PublishAsync(new OrganizerAddedToOrganization(organization.Id, organizer.Id));
         }

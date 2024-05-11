@@ -27,6 +27,8 @@ namespace MiniSpace.Services.Events.Application.DTO
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
         public bool HasRated { get; set; }
+        public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
+        public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
         
         public EventDto()
         {
@@ -51,6 +53,8 @@ namespace MiniSpace.Services.Events.Application.DTO
             IsSignedUp = @event.SignedUpStudents.Any(x => x.StudentId == studentId);
             IsInterested = @event.InterestedStudents.Any(x => x.StudentId == studentId);
             HasRated = @event.Ratings.Any(x => x.StudentId == studentId);
+            FriendsInterestedIn = Enumerable.Empty<ParticipantDto>();
+            FriendsSignedUp = Enumerable.Empty<ParticipantDto>();
         }
     }
 }

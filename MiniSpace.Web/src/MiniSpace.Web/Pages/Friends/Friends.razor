@@ -1,0 +1,149 @@
+@page "/friends"
+@using MiniSpace.Web.HttpClients
+@using Radzen.Blazor
+@using MiniSpace.Web.Areas.Friends
+@using MiniSpace.Web.DTO;
+@inject IIdentityService IdentityService
+@inject IFriendsService FriendsService
+@inject NavigationManager NavigationManager
+@inject Radzen.NotificationService NotificationService
+@inject Radzen.DialogService DialogService
+
+<div class="friends-container">
+    @if (friends != null && friends.Any())
+    {
+        foreach (var friend in friends)
+        {
+            <div class="friend-card">
+                <img src="@GetImage(friend.StudentDetails.ProfileImage)" alt="Friend Image" class="friend-img">
+                <div class="friend-info">
+                    <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
+                    <p>@friend.StudentDetails.Email</p>
+                    <div class="buttons">
+                        <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.StudentId))" Style="margin-right: 10px;" />
+                         <RadzenButton Text="Remove" Click="@(() => ConfirmRemoveFriend(friend.StudentDetails.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No friends to show. Start connecting now!</p>
+    }
+</div>
+
+<style>
+    .friends-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 20px;
+    }
+
+    .friend-card {
+        width: 30%;
+        margin: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: box-shadow 0.3s ease-in-out;
+        display: flex;
+        align-items: center;
+        background-color: white;
+        border-radius: 8px;
+    }
+
+    .friend-card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .friend-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-right: 20px;
+        object-fit: cover;
+        border: 3px solid #007BFF; 
+    }
+
+    .friend-info {
+        flex: 1;
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+    }
+
+    h5 {
+        margin-bottom: 5px;
+        color: #333;
+        font-size: 18px;
+    }
+
+    p {
+        margin-bottom: 10px;
+        color: #666;
+    }
+
+    .buttons {
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+
+@code {
+    private List<FriendDto> friends;
+    private Guid studentId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            studentId = IdentityService.GetCurrentUserId();
+            var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
+            if (friendsResult != null)
+            {
+                friends = friendsResult.ToList();
+            }
+            else
+            {
+                friends = new List<FriendDto>();  
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
+            friends = new List<FriendDto>();  
+        }
+    }
+
+    private void ViewDetails(Guid friendId)
+    {
+        NavigationManager.NavigateTo($"/student-details/{friendId}");
+    }
+
+    private async Task RemoveFriend(Guid friendId)
+    {
+        await FriendsService.RemoveFriendAsync(friendId);
+        friends.RemoveAll(f => f.StudentId == friendId);
+    
+        NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Friend Removed", $"You have removed a friend.", 5000);
+        StateHasChanged();
+    }
+
+    private string GetImage(string base64Image)
+    {
+        if (string.IsNullOrWhiteSpace(base64Image))
+        {
+            return "images/user_default.png";  
+        }
+        return $"data:image/jpeg;base64,{base64Image}";
+    }
+
+      private async Task ConfirmRemoveFriend(Guid friendId)
+    {
+        var confirm = await DialogService.Confirm("Are you sure you want to remove this friend?", "Confirm Removal", new Radzen.ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        if (confirm.HasValue && confirm.Value)
+        {
+            await RemoveFriend(friendId);
+        }
+    }
+}

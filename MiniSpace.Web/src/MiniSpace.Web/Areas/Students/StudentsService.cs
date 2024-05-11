@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
@@ -21,7 +22,9 @@ namespace MiniSpace.Web.Areas.Students
 
         public async Task UpdateStudentDto(Guid studentId)
         {
-            StudentDto = await GetStudentAsync(studentId, studentId);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            StudentDto = await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
         }
 
         public void ClearStudentDto()
@@ -29,10 +32,17 @@ namespace MiniSpace.Web.Areas.Students
             StudentDto = null;
         }
         
-        public Task<StudentDto> GetStudentAsync(Guid studentId, Guid secondId)
+        public async Task<StudentDto> GetStudentAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+        }
+
+        public Task<IEnumerable<StudentDto>> GetStudentsAsync()
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+            return _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
         }
 
         public Task UpdateStudentAsync(Guid studentId, string profileImage, string description, bool emailNotifications)
@@ -46,5 +56,11 @@ namespace MiniSpace.Web.Areas.Students
             string description, DateTime dateOfBirth, bool emailNotifications)
             => _httpClient.PostAsync<object,object>("students", new {studentId, profileImage,
                 description, dateOfBirth, emailNotifications});
+
+        public async Task<string> GetStudentStateAsync(Guid studentId)
+        {
+            var student = await GetStudentAsync(studentId);
+            return student != null ? student.State : "invalid"; 
+        }
     }    
 }

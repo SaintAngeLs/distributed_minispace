@@ -64,6 +64,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
+            builder.Services.AddTransient<IFriendsServiceClient, FriendsServiceClient>();
             builder.Services.AddTransient<IOrganizationsServiceClient, OrganizationsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
@@ -104,9 +105,14 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<AddEvent>()
                 .SubscribeCommand<DeleteEvent>()
+                .SubscribeCommand<UpdateEvent>()
                 .SubscribeCommand<RateEvent>()
                 .SubscribeCommand<SignUpToEvent>()
                 .SubscribeCommand<ShowInterestInEvent>()
+                .SubscribeCommand<CancelInterestInEvent>()
+                .SubscribeCommand<CancelSignUpToEvent>()
+                .SubscribeCommand<AddEventParticipant>()
+                .SubscribeCommand<RemoveEventParticipant>()
                 .SubscribeEvent<StudentCreated>();
 
             return app;
