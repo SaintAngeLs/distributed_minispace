@@ -92,14 +92,9 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<UploadMediaFile>();
+                .SubscribeCommand<UploadMediaFile>()
+                .SubscribeCommand<DeleteMediaFile>();
                 //.SubscribeEvent<SignedUp>()
-                //.SubscribeEvent<StudentShowedInterestInEvent>()
-                //.SubscribeEvent<StudentSignedUpToEvent>()
-                //.SubscribeEvent<UserBanned>()
-                //.SubscribeEvent<UserUnbanned>()
-                //.SubscribeEvent<OrganizerRightsGranted>()
-                //.SubscribeEvent<OrganizerRightsRevoked>();
 
             return app;
         }

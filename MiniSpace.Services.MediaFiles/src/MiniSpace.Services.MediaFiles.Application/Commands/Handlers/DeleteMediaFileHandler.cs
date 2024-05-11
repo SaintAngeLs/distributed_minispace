@@ -38,7 +38,8 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             
             await _gridFSService.DeleteFileAsync(fileSourceInfo.FileId);
             await _fileSourceInfoRepository.DeleteAsync(command.MediaFileId);
-            await _messageBroker.PublishAsync(new MediaFileDeleted(command.MediaFileId));
+            await _messageBroker.PublishAsync(new MediaFileDeleted(command.MediaFileId, 
+                fileSourceInfo.SourceId, fileSourceInfo.SourceType.ToString()));
         }
     }
 }
