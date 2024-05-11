@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }
             
-            @event.CancelSignUp(command.ParticipantId);
+            @event.RemoveParticipant(command.ParticipantId);
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new EventParticipantRemoved(@event.Id, command.ParticipantId));
         }

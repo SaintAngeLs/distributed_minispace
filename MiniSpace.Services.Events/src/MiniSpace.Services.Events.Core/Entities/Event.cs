@@ -93,6 +93,15 @@ namespace MiniSpace.Services.Events.Core.Entities
         
         public void SignUpStudent(Participant participant)
         {
+            if(State != State.Published)
+            {
+                throw new EventNotPublishedException(Id);
+            }
+            AddParticipant(participant);
+        }
+        
+        public void AddParticipant(Participant participant)
+        {
             if (SignedUpStudents.Any(p => p.StudentId == participant.StudentId))
             {
                 throw new StudentAlreadySignedUpException(participant.StudentId, Id);
@@ -107,6 +116,15 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
         
         public void CancelSignUp(Guid studentId)
+        {
+            if(State != State.Published)
+            {
+                throw new EventNotPublishedException(Id);
+            }
+            RemoveParticipant(studentId);
+        }
+        
+        public void RemoveParticipant(Guid studentId)
         {
             var participant = _signedUpStudents.SingleOrDefault(p => p.StudentId == studentId);
             if (participant is null)
