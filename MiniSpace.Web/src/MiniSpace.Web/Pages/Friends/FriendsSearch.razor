@@ -73,15 +73,13 @@
             }
         </div>
     </div>
-
-    <div class="pagination-controls">
-        <button disabled="@currentPage == 1" @onclick="() => SetPage(1)">First</button>
-        <button disabled="@currentPage == 1" @onclick="() => SetPage(currentPage - 1)">Previous</button>
-        <span>Page @currentPage</span>
-        <button disabled="@currentPage * pageSize >= totalStudents" @onclick="() => SetPage(currentPage + 1)">Next</button>
-        <button disabled="@currentPage * pageSize >= totalStudents" @onclick="() => SetPage((totalStudents + pageSize - 1) / pageSize)">Last</button>
-    </div>
-
+<div class="pagination-controls">
+    <button  @onclick="() => SetPage(1)">First</button>
+    <button  @onclick="() => SetPage(currentPage - 1)">Previous</button>
+    <span>Page @currentPage of @(Math.Ceiling((double)totalStudents / pageSize))</span>
+    <button @onclick="() => SetPage(currentPage + 1)">Next</button>
+    <button  @onclick="() => SetPage((totalStudents + pageSize - 1) / pageSize)">Last</button>
+</div>
 
 
 <style>
@@ -194,13 +192,31 @@
         await LoadStudents();
     }
 
-    private async Task LoadStudents() {
+    @* private async Task LoadStudents() {
         var result = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
         totalStudents = result.Count();
         if (result != null) {
             students = result.ToList();
         }
+    } *@private async Task LoadStudents()
+{
+    int maxPage = (int)Math.Ceiling((double)totalStudents / pageSize);
+    if (currentPage > maxPage) currentPage = maxPage;
+    if (currentPage < 1) currentPage = 1;
+
+    var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
+    if (response != null)
+    {
+        students = response.Results;
+        totalStudents = response.Total;  // Update total count
+        // Optionally, update currentPage and pageSize if needed
     }
+    else
+    {
+        students = new List<StudentDto>();
+    }
+    StateHasChanged();  // Trigger UI refresh
+}
 
     private string GetImage(string base64Image)
     {
@@ -244,12 +260,15 @@
     }
 
     private async Task SetPage(int page) {
-        currentPage = page;
-        await LoadStudents();
+    Console.WriteLine($"Attempting to set page to {page}");
+    if (page < 1 || page > Math.Ceiling((double)totalStudents / pageSize)) {
+        Console.WriteLine("Page number out of range.");
+        return;
     }
-
-
-
-
+    currentPage = page;
+    Console.WriteLine($"Page set to {currentPage}");
+    await LoadStudents();
+    StateHasChanged(); // This triggers a UI update
+}
 
 }
