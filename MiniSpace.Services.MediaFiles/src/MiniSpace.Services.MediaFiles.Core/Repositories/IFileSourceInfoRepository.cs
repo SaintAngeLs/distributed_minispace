@@ -9,5 +9,6 @@ namespace MiniSpace.Services.MediaFiles.Core.Repositories
         Task UpdateAsync(FileSourceInfo fileSourceInfo);
         Task DeleteAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
+        Task<IEnumerable<FileSourceInfo>> FindAsync(Guid sourceId, ContextType sourceType);
     }    
 }

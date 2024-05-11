@@ -28,6 +28,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.MediaFiles.Application;
 using MiniSpace.Services.MediaFiles.Application.Commands;
+using MiniSpace.Services.MediaFiles.Application.Events.External;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Contexts;
@@ -93,8 +94,11 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
                 .SubscribeCommand<UploadMediaFile>()
-                .SubscribeCommand<DeleteMediaFile>();
-                //.SubscribeEvent<SignedUp>()
+                .SubscribeCommand<DeleteMediaFile>()
+                .SubscribeEvent<StudentCreated>()
+                .SubscribeEvent<StudentUpdated>()
+                .SubscribeEvent<PostCreated>()
+                .SubscribeEvent<EventCreated>();
 
             return app;
         }

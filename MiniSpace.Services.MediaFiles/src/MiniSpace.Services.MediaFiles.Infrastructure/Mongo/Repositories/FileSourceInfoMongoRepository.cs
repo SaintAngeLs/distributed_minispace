@@ -38,5 +38,13 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories
         
         public Task<bool> ExistsAsync(Guid id)
             => _repository.ExistsAsync(s => s.Id == id);
+        
+        public async Task<IEnumerable<FileSourceInfo>> FindAsync(Guid sourceId, ContextType sourceType)
+        {
+            var fileSourceInfos = await _repository.FindAsync(
+                s => s.SourceId == sourceId && s.SourceType == sourceType);
+
+            return fileSourceInfos?.Select(s => s.AsEntity());
+        }
     }
 }

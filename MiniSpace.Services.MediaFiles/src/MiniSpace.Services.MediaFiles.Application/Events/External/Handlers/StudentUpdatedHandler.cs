@@ -6,18 +6,18 @@ using MiniSpace.Services.MediaFiles.Core.Repositories;
 
 namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
 {
-    public class StudentCreatedHandler : IEventHandler<StudentCreated>
+    public class StudentUpdatedHandler : IEventHandler<StudentUpdated>
     {
         private readonly IFileSourceInfoRepository _fileSourceInfoRepository;
         private readonly ICommandDispatcher _commandDispatcher;
 
-        public StudentCreatedHandler(IFileSourceInfoRepository fileSourceInfoRepository, ICommandDispatcher commandDispatcher)
+        public StudentUpdatedHandler(IFileSourceInfoRepository fileSourceInfoRepository, ICommandDispatcher commandDispatcher)
         {
             _fileSourceInfoRepository = fileSourceInfoRepository;
             _commandDispatcher = commandDispatcher;
         }
 
-        public async Task HandleAsync(StudentCreated @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(StudentUpdated @event, CancellationToken cancellationToken)
         {
             var fileSourceInfos =
                 await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfile);

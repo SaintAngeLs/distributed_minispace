@@ -6,24 +6,24 @@ using MiniSpace.Services.MediaFiles.Core.Repositories;
 
 namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
 {
-    public class StudentCreatedHandler : IEventHandler<StudentCreated>
+    public class PostCreatedHandler : IEventHandler<PostCreated>
     {
         private readonly IFileSourceInfoRepository _fileSourceInfoRepository;
         private readonly ICommandDispatcher _commandDispatcher;
 
-        public StudentCreatedHandler(IFileSourceInfoRepository fileSourceInfoRepository, ICommandDispatcher commandDispatcher)
+        public PostCreatedHandler(IFileSourceInfoRepository fileSourceInfoRepository, ICommandDispatcher commandDispatcher)
         {
             _fileSourceInfoRepository = fileSourceInfoRepository;
             _commandDispatcher = commandDispatcher;
         }
 
-        public async Task HandleAsync(StudentCreated @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(PostCreated @event, CancellationToken cancellationToken)
         {
             var fileSourceInfos =
-                await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfile);
+                await _fileSourceInfoRepository.FindAsync(@event.PostId, ContextType.Post);
             foreach (var fileSourceInfo in fileSourceInfos)
             {
-                if (fileSourceInfo.Id != @event.MediaFileId)
+                if(!@event.MediaFilesIds.Contains(fileSourceInfo.Id))
                 {
                     await _commandDispatcher.SendAsync(new DeleteMediaFile
                         {
