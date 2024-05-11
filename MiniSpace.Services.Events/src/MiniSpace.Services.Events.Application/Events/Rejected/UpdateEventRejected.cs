@@ -1,14 +1,17 @@
-﻿using Convey.CQRS.Events;
+﻿using System;
+using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Events.Application.Events.Rejected
 {
     public class UpdateEventRejected: IRejectedEvent
     {
+        public Guid EventId { get; }
         public string Reason { get; }
         public string Code { get; }
 
-        public UpdateEventRejected(string reason, string code)
+        public UpdateEventRejected(Guid eventId, string reason, string code)
         {
+            EventId = eventId;
             Reason = reason;
             Code = code;
         }

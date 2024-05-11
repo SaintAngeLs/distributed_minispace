@@ -1,5 +1,6 @@
 ﻿using System;
 using Convey.MessageBrokers.RabbitMQ;
+using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.Events.Rejected;
 using MiniSpace.Services.Events.Application.Exceptions;
 
@@ -12,10 +13,66 @@ namespace MiniSpace.Services.Events.Infrastructure.Exceptions
             {
                 // TODO: Add more exceptions
                 AuthorizedUserIsNotAnOrganizerException ex => new AddEventRejected(ex.UserId, ex.Message, ex.Code),
-                OrganizerCannotAddEventForAnotherOrganizerException ex => new AddEventRejected(ex.OrganizerId, ex.Message, ex.Code),
-                InvalidEventCategoryException ex => new AddEventRejected(Guid.Empty, ex.Message, ex.Code),
-                InvalidEventDateTimeException ex => new AddEventRejected(Guid.Empty, ex.Message, ex.Code),
-                InvalidEventDateTimeOrderException ex => new AddEventRejected(Guid.Empty, ex.Message, ex.Code),
+                EventNotFoundException ex 
+                    => message switch
+                    {
+                        AddEventParticipant m => new AddEventParticipantRejected(ex.EventId, m.StudentId, ex.Message, ex.Code),
+                        CancelInterestInEvent m => new CancelInterestInEventRejected(ex.EventId, ex.Message, ex.Code),
+                        CancelSignUpToEvent m => new CancelSignUpToEventRejected(ex.EventId, ex.Message, ex.Code),
+                        DeleteEvent m => new DeleteEventRejected(ex.EventId, ex.Message, ex.Code),
+                        RateEvent m => new RateEventRejected(ex.EventId, m.StudentId, ex.Message, ex.Code),
+                        RemoveEventParticipant m => new RemoveEventParticipantRejected(ex.EventId, ex.Message, ex.Code),
+                        ShowInterestInEvent m => new ShowInterestInEventRejected(ex.EventId, m.StudentId, ex.Message, ex.Code),
+                        SignUpToEvent m => new SignUpToEventRejected(ex.EventId, m.StudentId, ex.Message, ex.Code),
+                        UpdateEvent m => new UpdateEventRejected(ex.EventId, ex.Message, ex.Code),
+                        _ => null
+                    },    
+                InvalidEventCategoryException ex 
+                    => message switch
+                    {
+                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        _ => null
+                    },
+                InvalidEventDateTimeException ex 
+                    => message switch
+                    {
+                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        _ => null
+                    },
+                InvalidEventDateTimeOrderException ex
+                    => message switch
+                    {
+                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        _ => null
+                    },
+                OrganizerCannotAddEventForAnotherOrganizerException ex
+                    => message switch
+                    {
+                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        _ => null
+                    },
+                StudentNotFoundException ex 
+                    => message switch
+                    {
+                        AddEventParticipant m => new AddEventParticipantRejected(m.EventId, ex.StudentId, ex.Message, ex.Code),
+                        ShowInterestInEvent m => new ShowInterestInEventRejected(m.EventId, ex.StudentId, ex.Message, ex.Code),
+                        SignUpToEvent m => new SignUpToEventRejected(m.EventId, ex.StudentId, ex.Message, ex.Code),
+                        RateEvent m => new RateEventRejected(m.EventId, ex.StudentId, ex.Message, ex.Code),
+                        _ => null
+                    },
+                UnauthorizedEventAccessException ex 
+                    => message switch
+                    { 
+                        AddEventParticipant m => new AddEventParticipantRejected(ex.EventId, m.StudentId, ex.Message, ex.Code),
+                        CancelInterestInEvent m => new CancelInterestInEventRejected(ex.EventId, ex.Message, ex.Code),
+                        CancelSignUpToEvent m => new CancelSignUpToEventRejected(ex.EventId, ex.Message, ex.Code),
+                        DeleteEvent m => new DeleteEventRejected(ex.EventId, ex.Message, ex.Code),
+                        RemoveEventParticipant m => new RemoveEventParticipantRejected(ex.EventId, ex.Message, ex.Code),
+                        ShowInterestInEvent m => new ShowInterestInEventRejected(ex.EventId, m.StudentId, ex.Message, ex.Code),
+                        SignUpToEvent m => new SignUpToEventRejected(ex.EventId, m.StudentId, ex.Message, ex.Code),
+                        UpdateEvent m => new UpdateEventRejected(ex.EventId, ex.Message, ex.Code),
+                        _ => null  
+                    },
                 _ => null,
             };
     }
