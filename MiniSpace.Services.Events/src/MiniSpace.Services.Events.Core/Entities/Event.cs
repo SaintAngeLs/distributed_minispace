@@ -95,7 +95,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         {
             if(State != State.Published)
             {
-                throw new EventNotPublishedException(Id);
+                throw new InvalidEventState(Id, State.Published, State);
             }
             AddParticipant(participant);
         }
@@ -119,7 +119,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         {
             if(State != State.Published)
             {
-                throw new EventNotPublishedException(Id);
+                throw new InvalidEventState(Id, State.Published, State);
             }
             RemoveParticipant(studentId);
         }
@@ -158,6 +158,11 @@ namespace MiniSpace.Services.Events.Core.Entities
         
         public void Rate(Guid studentId, int rating)
         {
+            if(State != State.Archived)
+            {
+                throw new InvalidEventState(Id, State.Archived, State);
+            }
+            
             if(_signedUpStudents.All(p => p.StudentId != studentId))
             {
                 throw new StudentNotSignedUpForEventException(Id ,studentId);
