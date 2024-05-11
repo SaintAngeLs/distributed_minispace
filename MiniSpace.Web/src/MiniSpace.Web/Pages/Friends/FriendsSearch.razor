@@ -47,7 +47,7 @@
                 <div class="student-details">
                    
                    <div>
-                    <img src="@student?.ProfileImage" alt="Profile Image" class="profile-image"/>
+                    <img src="@GetImage(student.ProfileImage)" alt="Profile Image" class="profile-image"/>
                     <div class="info-block">
                         <h3 class="name">@student?.FirstName @student?.LastName</h3>
                         <ul class="details-list">
@@ -103,7 +103,6 @@
         width: 100%;   
         overflow-y: auto; 
     }
-    @* .right-panel { width: 100%; padding: 50px; position: sticky; top: 50px;overflow-y: auto; } *@
 
     .right-panel {
         width: 70%; 
@@ -112,6 +111,14 @@
         top: 100px; 
         background-color: white; 
     }
+
+    .left-panel, .right-panel {
+    background-color: #f7f7f7; /* Soft background color for subtle contrast */
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Light shadow for depth */
+}
     .search-bar {
         display: flex; 
         margin-bottom: 20px; 
@@ -177,6 +184,41 @@
         background-color: #ccc;
     }
 
+    .profile-image {
+        width: 400px; 
+        height: 400px;
+        border-radius: 5%;
+        object-fit: cover;
+        border: 4px solid #ffffff; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+        transition: transform 0.3s ease-in-out; 
+    }
+
+    .profile-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+    }
+
+    .info-block {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 15px;
+}
+
+.details-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.details-list li {
+    margin-bottom: 8px;
+    font-size: 16px; /* Larger font for readability */
+}
+
+
 </style>
 
 @code {
@@ -198,25 +240,25 @@
         if (result != null) {
             students = result.ToList();
         }
-    } *@private async Task LoadStudents()
-{
-    int maxPage = (int)Math.Ceiling((double)totalStudents / pageSize);
-    if (currentPage > maxPage) currentPage = maxPage;
-    if (currentPage < 1) currentPage = 1;
+    } *@
+    private async Task LoadStudents()
+    {
+        int maxPage = (int)Math.Ceiling((double)totalStudents / pageSize);
+        if (currentPage > maxPage) currentPage = maxPage;
+        if (currentPage < 1) currentPage = 1;
 
-    var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
-    if (response != null)
-    {
-        students = response.Results;
-        totalStudents = response.Total;  // Update total count
-        // Optionally, update currentPage and pageSize if needed
+        var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
+        if (response != null)
+        {
+            students = response.Results;
+            totalStudents = response.Total; 
+        }
+        else
+        {
+            students = new List<StudentDto>();
+        }
+        StateHasChanged(); 
     }
-    else
-    {
-        students = new List<StudentDto>();
-    }
-    StateHasChanged();  // Trigger UI refresh
-}
 
     private string GetImage(string base64Image)
     {
@@ -231,7 +273,8 @@
     }
 
 
-    private void OnDetails(StudentDto selectedStudent) {
+    private void OnDetails(StudentDto selectedStudent) 
+    {
         student = selectedStudent;
     }
 
@@ -246,7 +289,8 @@
         
     }
 
-     private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) {
+     private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) 
+     {
         var currentUserId = IdentityService.GetCurrentUserId();
         await FriendsService.InviteStudent(currentUserId, studentId);
 
@@ -259,16 +303,17 @@
         await JSRuntime.InvokeVoidAsync("playNotificationSound");
     }
 
-    private async Task SetPage(int page) {
-    Console.WriteLine($"Attempting to set page to {page}");
-    if (page < 1 || page > Math.Ceiling((double)totalStudents / pageSize)) {
-        Console.WriteLine("Page number out of range.");
-        return;
+    private async Task SetPage(int page) 
+    {
+        Console.WriteLine($"Attempting to set page to {page}");
+        if (page < 1 || page > Math.Ceiling((double)totalStudents / pageSize)) {
+            Console.WriteLine("Page number out of range.");
+            return;
+        }
+        currentPage = page;
+        Console.WriteLine($"Page set to {currentPage}");
+        await LoadStudents();
+        StateHasChanged(); 
     }
-    currentPage = page;
-    Console.WriteLine($"Page set to {currentPage}");
-    await LoadStudents();
-    StateHasChanged(); // This triggers a UI update
-}
 
 }
