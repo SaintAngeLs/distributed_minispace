@@ -111,6 +111,11 @@ namespace MiniSpace.Services.Events.Core.Entities
             {
                 throw new EventCapacityExceededException(Id, Capacity);
             }
+            
+            if(participant.StudentId == Organizer.Id)
+            {
+                throw new OrganizerCannotSignUpForOwnEventException(Organizer.Id, Id);
+            }
 
             _signedUpStudents.Add(participant);
         }
