@@ -6,5 +6,6 @@ namespace MiniSpace.Services.MediaFiles.Application.Services
     {
         Task<ObjectId> UploadFileAsync(string fileName, Stream fileStream);
         Task DownloadFileAsync(ObjectId fileId, Stream destination);
+        Task DeleteFileAsync(ObjectId fileId);
     }
 }

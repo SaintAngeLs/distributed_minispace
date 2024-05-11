@@ -35,6 +35,7 @@ namespace MiniSpace.Services.MediaFiles.Api
                         .Get<GetMediaFile, FileDto>("media-files/{mediaFileId}")
                         .Post<UploadMediaFile>("media-files",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"media-files/{cmd.MediaFileId}"))
+                        .Delete<DeleteMediaFile>("media-files/{mediaFileId}")
                         ))
                 .UseLogging()
                 .Build()

@@ -26,5 +26,10 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
         {
             await _gridFSBucket.DownloadToStreamAsync(fileId, destination);
         }
+        
+        public async Task DeleteFileAsync(ObjectId fileId)
+        {
+            await _gridFSBucket.DeleteAsync(fileId);
+        }
     }
 }
