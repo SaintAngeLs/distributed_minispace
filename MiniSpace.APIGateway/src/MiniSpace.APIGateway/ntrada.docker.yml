@@ -29,9 +29,11 @@ extensions:
     allowedOrigins:
       - '*'
     allowedMethods:
-      - post
-      - put
-      - delete
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
     allowedHeaders:
       - '*'
     exposedHeaders:
@@ -42,10 +44,10 @@ extensions:
 
   jwt:
     issuerSigningKey: eiquief5phee9pazo0Faegaez9gohThailiur5woy2befiech1oarai4aiLi6ahVecah3ie9Aiz6Peij
-    validIssuer: pacco
+    validIssuer: minispace
     validateAudience: false
-    validateIssuer: true
-    validateLifetime: true
+    validateIssuer: false
+    validateLifetime: false
 
   swagger:
     name: MiniSpace
@@ -132,8 +134,6 @@ modules:
         localUrl: localhost:5004
         url: identity-service
       
-
-
   reports:
     path: /reports
     routes:
@@ -166,8 +166,6 @@ modules:
         localUrl: localhost:5005
         url: reports-service
 
-
-
   notifications:
     path: /notifications
     routes:
@@ -187,8 +185,6 @@ modules:
       notifications-service:
         localUrl: localhost:5006
         url: notifications-service
-
-
 
   students:
     path: /students
@@ -246,8 +242,6 @@ modules:
       students-service:
         localUrl: localhost:5007
         url: students-service
-
-
 
   events:
     path: /events
@@ -333,8 +327,6 @@ modules:
         localUrl: localhost:5008
         url: events-service
 
-
-
   comments:
       path: /comments
       routes:
@@ -384,8 +376,6 @@ modules:
           localUrl: localhost:5009
           url: comments-service
 
-
-
   reactions:
       path: /reactions
       routes:
@@ -416,8 +406,6 @@ modules:
           localUrl: localhost:5010
           url: reactions-service
 
-
-
   statistics:
       path: /statistics
       routes:
@@ -444,8 +432,6 @@ modules:
           localUrl: localhost:5011
           url: statistics-service
           
-
-
   friends:
       path: /friends
       routes:
@@ -527,8 +513,6 @@ modules:
           localUrl: localhost:5012
           url: friends-service
 
-
-
   posts:
     path: /posts
     routes:
@@ -571,9 +555,7 @@ modules:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
-        
-        
-        
+    
   organizations:
     path: /organizations
     routes:
