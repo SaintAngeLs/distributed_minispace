@@ -29,10 +29,19 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
                 },
             };
         
-        public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class
+         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class
         {
             var key = message.GetType();
-            return MessageTemplates.TryGetValue(key, out var template) ? template : null;
+            if (MessageTemplates.TryGetValue(key, out var template))
+            {
+                // Perform string replacement to match actual property names if necessary
+                if (template.After.Contains("{NewStatus}"))
+                {
+                    template.After = template.After.Replace("{NewStatus}", "{Status}");
+                }
+                return template;
+            }
+            return null;
         }
     }
 }

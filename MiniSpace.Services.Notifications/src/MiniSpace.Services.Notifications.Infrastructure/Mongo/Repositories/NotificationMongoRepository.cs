@@ -2,6 +2,7 @@ using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
+using MongoDB.Driver;
 using System;
 using System.Threading.Tasks;
 
@@ -25,8 +26,15 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
         public Task AddAsync(Notification notification)
             => _repository.AddAsync(notification.AsDocument());
 
-        public Task UpdateAsync(Notification notification)
-            => _repository.UpdateAsync(notification.AsDocument());
+         public async Task UpdateAsync(Notification notification)
+        {
+            var filter = Builders<NotificationDocument>.Filter.Eq(doc => doc.NotificationId, notification.NotificationId);
+            var update = Builders<NotificationDocument>.Update
+                .Set(doc => doc.Status, notification.Status.ToString())
+                .Set(doc => doc.UpdatedAt, DateTime.UtcNow);
+
+            var updateResult = await _repository.Collection.UpdateOneAsync(filter, update);
+        }
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);

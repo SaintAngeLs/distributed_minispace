@@ -21,30 +21,24 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateNotificationStatus command, CancellationToken cancellationToken = default)
         {
+            Console.WriteLine($"Received NotificationId: {command.NotificationId}");
+
             var notification = await _notificationRepository.GetAsync(command.NotificationId);
             if (notification == null)
             {
                 throw new NotificationNotFoundException(command.NotificationId);
             }
 
-            if (Enum.TryParse<NotificationStatus>(command.Status, true, out var status))
+            if (Enum.TryParse<NotificationStatus>(command.Status, true, out var newStatus))
             {
-                switch (status)
-                {
-                    case NotificationStatus.Read:
-                        notification.MarkAsRead();
-                        break;
-                    case NotificationStatus.Deleted:
-                        notification.MarkAsDeleted();
-                        break;
-                }
+                notification.Status = newStatus;
+                notification.UpdatedAt = DateTime.UtcNow;
+                await _notificationRepository.UpdateAsync(notification);
             }
             else
             {
                 throw new InvalidNotificationStatusException($"Invalid status: {command.Status}");
             }
-
-            await _notificationRepository.UpdateAsync(notification);
 
             var events = _eventMapper.MapAll(notification.Events);
             await _messageBroker.PublishAsync(events.ToArray());

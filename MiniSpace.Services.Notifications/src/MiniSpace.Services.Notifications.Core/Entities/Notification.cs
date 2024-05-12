@@ -4,12 +4,12 @@ namespace MiniSpace.Services.Notifications.Core.Entities
 {
     public class Notification : AggregateRoot
     {
-        public Guid NotificationId { get; private set; }
-        public string UserId { get; private set; }
-        public string Message { get; private set; }
-        public NotificationStatus Status { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime? UpdatedAt { get; private set; } 
+        public Guid NotificationId { get;  set; }
+        public string UserId { get;  set; }
+        public string Message { get; set; }
+        public NotificationStatus Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; } 
 
         public Notification(Guid notificationId, string userId, string message, NotificationStatus status, DateTime createdAt, DateTime? updatedAt)
         {
