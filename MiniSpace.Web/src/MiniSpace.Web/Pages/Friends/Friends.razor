@@ -25,7 +25,7 @@
                         <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
                         <p>@friend.StudentDetails.Email</p>
                         <div class="buttons">
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.StudentId))" Style="margin-right: 10px;" />
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.FriendId))" Style="margin-right: 10px;" />
                             <RadzenButton Text="Remove" Click="@(() => ConfirmRemoveFriend(friend.StudentDetails.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
                         </div>
                     </div>
