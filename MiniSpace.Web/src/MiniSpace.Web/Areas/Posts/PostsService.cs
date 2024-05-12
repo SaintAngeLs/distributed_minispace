@@ -48,10 +48,10 @@ namespace MiniSpace.Web.Areas.Posts
             return _httpClient.GetAsync<IEnumerable<PostDto>>($"posts?eventId={eventId}");
         }
 
-        public Task UpdatePostAsync(Guid postId, string textContext, string mediaContext)
+        public Task<HttpResponse<object>> UpdatePostAsync(Guid postId, string textContent, string mediaContent)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync($"posts/{postId}", new {postId, textContext, mediaContext});
+            return _httpClient.PutAsync<object, object>($"posts/{postId}", new {postId, textContent, mediaContent});
         }
     }
 }

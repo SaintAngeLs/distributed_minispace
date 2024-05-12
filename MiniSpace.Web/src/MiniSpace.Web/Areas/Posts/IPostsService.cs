@@ -14,6 +14,6 @@ namespace MiniSpace.Web.Areas.Posts
             string mediaContext, string state, DateTime? publishDate);
         Task DeletePostAsync(Guid postId);
         Task<IEnumerable<PostDto>> GetPostsAsync(Guid eventId);
-        Task UpdatePostAsync(Guid postId, string textContext, string mediaContext);
+        Task<HttpResponse<object>> UpdatePostAsync(Guid postId, string textContent, string mediaContent);
     }
 }

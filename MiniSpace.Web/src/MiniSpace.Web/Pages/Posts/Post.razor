@@ -63,7 +63,7 @@
             {
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                     <RadzenButton Size="ButtonSize.Medium" Text="Update post" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}/update"))" />
+                                  Click="@(() => NavigationManager.NavigateTo($"/posts/{PostId}/author/{AuthorName}/update"))" />
                     <RadzenButton Size="ButtonSize.Medium" Text="Delete post" ButtonStyle="ButtonStyle.Warning" />
                 </RadzenStack>
             }
