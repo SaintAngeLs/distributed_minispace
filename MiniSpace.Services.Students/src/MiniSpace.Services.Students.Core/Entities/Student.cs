@@ -152,6 +152,16 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             _signedUpEvents.Add(eventId);
         }
+        
+        public void RemoveProfileImage(Guid mediaFileId)
+        {
+            if (ProfileImage != mediaFileId)
+            {
+                return;
+            }
+
+            ProfileImage = Guid.Empty;
+        }
 
         public void Ban() => IsBanned = true;
         public void Unban() => IsBanned = false;
