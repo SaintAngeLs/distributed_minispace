@@ -41,7 +41,7 @@ using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Notifications.Infrastructure.Services;
 using MiniSpace.Services.Notifications.Infrastructure;
 
-namespace MiniSpace.Services.Students.Infrastructure
+namespace MiniSpace.Services.Notifications.Infrastructure
 {
     public static class Extensions
     {

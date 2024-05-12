@@ -31,8 +31,9 @@ namespace MiniSpace.Services.Notifications.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Get<GetUserNotifications, IEnumerable<NotificationDto>>("notifications/{userId}", afterDispatch: (query, ctx) => ctx.Response.Ok())
-                        .Post<CreateNotification>("notifications", afterDispatch: (cmd, ctx) => ctx.Response.Created($"notifications/{cmd.NotificationId}")))
+                        .Get<GetNotificationsByUser, IEnumerable<NotificationDto>>("notifications/user/{userId}")
+                        .Get<GetNotification, NotificationDto>("notifications/{notificationId}")
+                        .Post<CreateNotification>("notifications")))
                 .UseLogging()
                 .UseLogging()
                 .Build()

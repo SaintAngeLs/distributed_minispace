@@ -2,7 +2,7 @@ using Convey.MessageBrokers;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using MiniSpace.Services.Notifications.Application;
-using MiniSpace.Services.Students.Infrastructure;
+using MiniSpace.Services.Notifications.Infrastructure;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Contexts
 {
