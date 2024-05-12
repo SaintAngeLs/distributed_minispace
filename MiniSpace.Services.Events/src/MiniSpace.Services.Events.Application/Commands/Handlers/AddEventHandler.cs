@@ -50,6 +50,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
+            _eventValidator.ValidateMediaFiles(command.MediaFiles.ToList());
             _eventValidator.ValidateCapacity(command.Capacity);
             _eventValidator.ValidateFee(command.Fee);
             var category = _eventValidator.ParseCategory(command.Category);
@@ -75,12 +76,13 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
             }
             
-            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizerId, organization.Name);
+            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, 
+                command.OrganizerId, organization.Name);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
-                address, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
+                address, command.MediaFiles, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
             
             await _eventRepository.AddAsync(@event);
-            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id));
+            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id, @event.MediaFiles));
         }
     }
 }

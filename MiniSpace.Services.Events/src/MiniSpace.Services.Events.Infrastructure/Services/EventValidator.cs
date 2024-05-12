@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Core.Entities;
@@ -71,6 +74,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
         {
             if (string.IsNullOrWhiteSpace(description) || description.Length > 1000)
                 throw new InvalidEventDescriptionException(description);
+        }
+        
+        public void ValidateMediaFiles(List<Guid> mediaFiles)
+        {
+            if (mediaFiles.Count > 5)
+                throw new InvalidEventMediaFilesSizeException(mediaFiles.Count);
         }
         
         public void ValidateCapacity(int capacity)

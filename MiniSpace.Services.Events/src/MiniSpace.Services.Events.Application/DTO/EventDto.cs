@@ -15,7 +15,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public AddressDto Location { get; set; }
-        //public string Image { get; set; }
+        public IEnumerable<Guid> MediaFiles { get; set; }
         public int InterestedStudents { get; set; }
         public int SignedUpStudents { get; set; }
         public int Capacity { get; set; }
@@ -43,6 +43,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             StartDate = @event.StartDate;
             EndDate = @event.EndDate;
             Location = new AddressDto(@event.Location);
+            MediaFiles = @event.MediaFiles;
             InterestedStudents = @event.InterestedStudents.Count();
             SignedUpStudents = @event.SignedUpStudents.Count();
             Capacity = @event.Capacity;
