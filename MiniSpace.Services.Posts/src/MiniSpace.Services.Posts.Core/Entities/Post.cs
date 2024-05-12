@@ -84,6 +84,15 @@ namespace MiniSpace.Services.Posts.Core.Entities
             UpdatedAt = now;
         }
         
+        public void RemoveMediaFile(Guid mediaFileId, DateTime now)
+        {
+            var mediaFile = MediaFiles.SingleOrDefault(mf => mf == mediaFileId);
+            if (mediaFile == Guid.Empty)
+            {
+                throw new MediaFileNotFoundException(mediaFileId, Id);
+            }
+        }
+        
         private static void CheckTextContent(AggregateId id, string textContent)
         {
             if (string.IsNullOrWhiteSpace(textContent) || textContent.Length > 5000)
