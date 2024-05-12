@@ -117,7 +117,7 @@
                     <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
                         <Template Context="post">
                             <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
-                                        @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}/author/{GetAuthorName(post.OrganizerId)}"))">
+                                        @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{GetAuthorName(post.OrganizerId)}"))">
                                 <RadzenRow Gap="0.5rem">
                                     <RadzenColumn Size="12" class="rz-text-truncate">
                                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">

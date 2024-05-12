@@ -1,8 +1,8 @@
-@page "/posts/{PostId}/author/{AuthorName}"
+@page "/events/{EventId}/posts/{PostId}/author/{AuthorName}"
+@using Microsoft.Extensions.Logging
 @using MiniSpace.Web.DTO
-@using MiniSpace.Web.Areas.Events
-@using MiniSpace.Web.Pages.Events.Dialogs
 @using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.Pages.Posts.Dialogs
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -55,6 +55,8 @@
         
         <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                <RadzenButton Size="ButtonSize.Medium" Text="Go back to event" ButtonStyle="ButtonStyle.Primary"
+                              Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
                 <RadzenButton Size="ButtonSize.Medium" Text="Report post" ButtonStyle="ButtonStyle.Primary"
                 />
             </RadzenStack>
@@ -63,8 +65,9 @@
             {
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                     <RadzenButton Size="ButtonSize.Medium" Text="Update post" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => NavigationManager.NavigateTo($"/posts/{PostId}/author/{AuthorName}/update"))" />
-                    <RadzenButton Size="ButtonSize.Medium" Text="Delete post" ButtonStyle="ButtonStyle.Warning" />
+                                  Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/author/{AuthorName}/update"))" />
+                    <RadzenButton Size="ButtonSize.Medium" Text="Delete post" ButtonStyle="ButtonStyle.Warning"
+                                  Click="@(() => OpenDeletePostDialog(post.Id))" />
                 </RadzenStack>
             }
         </RadzenStack>
@@ -82,6 +85,8 @@
 }
 
 @code {
+    [Parameter]
+    public string EventId { get; set; }
     [Parameter]
     public string PostId { get; set; }
     [Parameter]
@@ -112,5 +117,16 @@
         }
 
         return studentId == postDto.OrganizerId;
+    }
+    
+    private async Task OpenDeletePostDialog(Guid postId)
+    {
+        await DialogService.OpenAsync<DeletePostDialog>("Are you sure? This action cannot be undone!",
+            new Dictionary<string, object>() { {"EventId", new Guid(EventId) }, { "PostId", new Guid(PostId) } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "100px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
 }

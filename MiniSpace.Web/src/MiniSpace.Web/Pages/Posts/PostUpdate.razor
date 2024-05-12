@@ -1,4 +1,4 @@
-@page "/posts/{PostId}/author/{AuthorName}/update"
+@page "/events/{EventId}/posts/{PostId}/author/{AuthorName}/update"
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Http
 @using MiniSpace.Web.Areas.Posts
@@ -53,6 +53,8 @@
 
 @code {
     [Parameter]
+    public string EventId { get; set; }
+    [Parameter]
     public string PostId { get; set; }
     [Parameter]
     public string AuthorName { get; set; }
@@ -98,7 +100,7 @@
         }
         else
         {
-            NavigationManager.NavigateTo($"/posts/{PostId}/author/{AuthorName}");
+            NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/author/{AuthorName}");
         }
     }
 }
