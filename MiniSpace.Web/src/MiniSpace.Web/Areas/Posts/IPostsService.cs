@@ -8,6 +8,7 @@ namespace MiniSpace.Web.Areas.Posts
 {
     public interface IPostsService
     {
+        Task<PostDto> GetPostAsync(Guid postId);
         Task ChangePostStateAsync(Guid postId, string state, DateTime publishDate); 
         Task<HttpResponse<object>> CreatePostAsync(Guid postId, Guid eventId, Guid organizerId, string textContext,
             string mediaContext, string state, DateTime? publishDate);

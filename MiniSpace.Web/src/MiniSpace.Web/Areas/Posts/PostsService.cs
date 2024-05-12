@@ -17,6 +17,11 @@ namespace MiniSpace.Web.Areas.Posts
             _httpClient = httpClient;
             _identityService = identityService;
         }
+
+        public Task<PostDto> GetPostAsync(Guid postId)
+        {
+            return _httpClient.GetAsync<PostDto>($"posts/{postId}");
+        }
         
         public Task ChangePostStateAsync(Guid postId, string state, DateTime publishDate)
         {

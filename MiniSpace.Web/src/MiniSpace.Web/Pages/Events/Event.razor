@@ -189,7 +189,7 @@
             return false;
         }
 
-        return ev.Organizer != null && studentId == ev.Organizer.Id;
+        return eventDto.Organizer != null && studentId == eventDto.Organizer.Id;
     }
     
     private async void OnChange(int index)
