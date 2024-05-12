@@ -562,6 +562,11 @@ modules:
           - state:{state}
         auth: true
 
+      - upstream: /{postId}
+        method: GET
+        use: downstream
+        downstream: posts-service/posts/{postId}
+
       - upstream: /
         method: GET
         use: downstream
