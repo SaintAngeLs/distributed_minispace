@@ -44,6 +44,12 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             {
                 throw new InvalidPostStateException(command.State);
             }
+            
+            var mediaFiles = command.MediaFiles.ToList();
+            if(mediaFiles.Count > 3)
+            {
+                throw new InvalidNumberOfPostMediaFilesException(command.PostId, mediaFiles.Count);
+            }
 
             switch (newState)
             {
@@ -54,10 +60,10 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             }
             
             var post = Post.Create(command.PostId, command.EventId, command.OrganizerId, command.TextContent,
-                command.MediaContent, _dateTimeProvider.Now, newState, command.PublishDate);
+                command.MediaFiles, _dateTimeProvider.Now, newState, command.PublishDate);
             await _postRepository.AddAsync(post);
             
-            await _messageBroker.PublishAsync(new PostCreated(command.PostId));
+            await _messageBroker.PublishAsync(new PostCreated(command.PostId, post.MediaFiles));
         }
     }
 }
