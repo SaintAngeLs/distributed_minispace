@@ -5,6 +5,7 @@ namespace MiniSpace.Services.MediaFiles.Core.Repositories
     public interface IFileSourceInfoRepository
     {
         Task<FileSourceInfo> GetAsync(Guid id);
+        Task<IEnumerable<FileSourceInfo>> GetAllUnassociatedAsync();
         Task AddAsync(FileSourceInfo fileSourceInfo);
         Task UpdateAsync(FileSourceInfo fileSourceInfo);
         Task DeleteAsync(Guid id);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,6 +26,13 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories
             var fileSourceInfo = await _repository.GetAsync(s => s.Id == id);
 
             return fileSourceInfo?.AsEntity();
+        }
+        
+        public async Task<IEnumerable<FileSourceInfo>> GetAllUnassociatedAsync()
+        {
+            var fileSourceInfos = await _repository.FindAsync(s => s.State == State.Unassociated);
+
+            return fileSourceInfos?.Select(s => s.AsEntity());
         }
 
         public Task AddAsync(FileSourceInfo fileSourceInfo)

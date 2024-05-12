@@ -38,6 +38,7 @@ using MiniSpace.Services.MediaFiles.Infrastructure.Logging;
 using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services;
+using MiniSpace.Services.MediaFiles.Infrastructure.Services.Workers;
 using MongoDB.Driver;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure
@@ -61,6 +62,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 var database = mongoClient.GetDatabase(mongoDbOptions.Database);
                 return new GridFSService(database);
             });
+            builder.Services.AddHostedService<FileCleanupWorker>();
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -95,6 +97,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<UploadMediaFile>()
                 .SubscribeCommand<DeleteMediaFile>()
+                .SubscribeCommand<CleanupUnassociatedFiles>()
                 .SubscribeEvent<StudentCreated>()
                 .SubscribeEvent<StudentUpdated>()
                 .SubscribeEvent<PostCreated>()
