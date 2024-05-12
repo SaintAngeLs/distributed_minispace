@@ -11,12 +11,14 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents
                 SourceId = fileSourceInfo.SourceId,
                 SourceType = fileSourceInfo.SourceType,
                 UploaderId = fileSourceInfo.UploaderId,
+                State = fileSourceInfo.State,
+                CreatedAt = fileSourceInfo.CreatedAt,
                 FileId = fileSourceInfo.FileId,
                 FileName = fileSourceInfo.FileName
             };
 
         public static FileSourceInfo AsEntity(this FileSourceInfoDocument document)
             => new FileSourceInfo(document.Id, document.SourceId, document.SourceType, document.UploaderId, 
-                document.FileId, document.FileName);
+                document.State, document.CreatedAt, document.FileId, document.FileName);
     }
 }

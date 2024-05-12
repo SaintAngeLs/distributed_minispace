@@ -11,14 +11,16 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
     {
         private readonly IFileSourceInfoRepository _fileSourceInfoRepository;
         private readonly IGridFSService _gridFSService;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
         
         public UploadMediaFileHandler(IFileSourceInfoRepository fileSourceInfoRepository, IGridFSService gridFSService,
-            IAppContext appContext, IMessageBroker messageBroker)
+            IDateTimeProvider dateTimeProvider, IAppContext appContext, IMessageBroker messageBroker)
         {
             _fileSourceInfoRepository = fileSourceInfoRepository;
             _gridFSService = gridFSService;
+            _dateTimeProvider = dateTimeProvider;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
@@ -40,7 +42,7 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 
             var objectId = await _gridFSService.UploadFileAsync(command.FileName, stream);
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
-                command.UploaderId, objectId, command.FileName);
+                command.UploaderId, State.Unassociated, _dateTimeProvider.Now, objectId, command.FileName);
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, command.FileName));
         }

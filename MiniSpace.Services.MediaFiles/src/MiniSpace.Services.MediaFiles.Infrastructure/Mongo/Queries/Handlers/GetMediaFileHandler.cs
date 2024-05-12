@@ -10,12 +10,12 @@ using MongoDB.Bson;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetMediaFilesHandler : IQueryHandler<GetMediaFile, FileDto>
+    public class GetMediaFileHandler : IQueryHandler<GetMediaFile, FileDto>
     {
         private readonly IMongoRepository<FileSourceInfoDocument, Guid> _fileSourceInfoRepository;
         private readonly IGridFSService _gridFSService;
 
-        public GetMediaFilesHandler(IMongoRepository<FileSourceInfoDocument, Guid> fileSourceInfoRepository,
+        public GetMediaFileHandler(IMongoRepository<FileSourceInfoDocument, Guid> fileSourceInfoRepository,
             IGridFSService gridFSService)
         {
             _fileSourceInfoRepository = fileSourceInfoRepository;
@@ -37,7 +37,8 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Queries.Handlers
             var base64String = Convert.ToBase64String(fileContent);
 
             return new FileDto(query.MediaFileId, fileSourceInfo.SourceId, fileSourceInfo.SourceType.ToString(),
-                fileSourceInfo.UploaderId, fileSourceInfo.FileName, base64String);
+                fileSourceInfo.UploaderId, fileSourceInfo.State.ToString().ToLower(), fileSourceInfo.CreatedAt,
+                fileSourceInfo.FileName, base64String);
         }
     }
 }
