@@ -1,0 +1,72 @@
+@page "/admin/organizations/{OrganizationId}/details"
+@using Radzen
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Organizations
+@inject IOrganizationsService OrganizationsService
+@inject NavigationManager NavigationManager
+@inject Radzen.DialogService DialogService
+
+<RadzenStack Gap="1rem">
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="assignment" class="me-1"/>
+                <b>Basic info</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack Gap="2rem">
+                <RadzenRow Size="12" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Id</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(OrganizationDetailsDto.Id)</b></RadzenText>
+                    </RadzenColumn>
+    
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Name</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(OrganizationDetailsDto.Name)</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+    
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+    
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="assignment_ind" class="me-1"/>
+                <b>Organizers</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenListBox @bind-Value=@selectedOrganizer Data=@OrganizationDetailsDto.Organizers Style="width: 100%; height:200px"
+                           InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})"/>
+        </ChildContent>
+    </RadzenFieldset>
+
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    public OrganizationDetailsDto OrganizationDetailsDto { get; set; } = new();
+    private Guid selectedOrganizer;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        OrganizationDetailsDto = await OrganizationsService.GetOrganizationDetailsAsync(OrganizationId);
+        await base.OnInitializedAsync();
+    }
+}

@@ -8,7 +8,6 @@ namespace MiniSpace.Services.Events.Core.Entities
 {
     public class Event: AggregateRoot
     {
-        private ISet<Organizer> _coOrganizers = new HashSet<Organizer>();
         private ISet<Participant> _interestedStudents = new HashSet<Participant>();
         private ISet<Participant> _signedUpStudents = new HashSet<Participant>();
         private ISet<Rating> _ratings = new HashSet<Rating>();
@@ -24,12 +23,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         public Category Category { get; private set; }
         public State State { get; private set; }
         public DateTime PublishDate { get; private set; }
-        
-        public IEnumerable<Organizer> CoOrganizers
-        {
-            get => _coOrganizers;
-            private set => _coOrganizers = new HashSet<Organizer>(value);
-        }
+        public DateTime UpdatedAt { get; private set; }
         
         public IEnumerable<Participant> InterestedStudents
         {
@@ -51,7 +45,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
             Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate,
-            Organizer organizer, IEnumerable<Organizer> coOrganizers = null, IEnumerable<Participant> interestedStudents = null, 
+            Organizer organizer, DateTime updatedAt, IEnumerable<Participant> interestedStudents = null, 
             IEnumerable<Participant> signedUpStudents = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
@@ -65,32 +59,48 @@ namespace MiniSpace.Services.Events.Core.Entities
             Category = category;
             State = state;
             Organizer = organizer;
-            CoOrganizers = coOrganizers ?? Enumerable.Empty<Organizer>();
             InterestedStudents = interestedStudents ?? Enumerable.Empty<Participant>();
             SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Participant>();
             Ratings = ratings ?? Enumerable.Empty<Rating>();
             PublishDate = publishDate;
+            UpdatedAt = updatedAt;
         }
         
         public static Event Create(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, Organizer organizer)
+            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, 
+            Organizer organizer, DateTime now)
         {
             var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, 
-                state, publishDate, organizer);
+                state, publishDate, organizer, now);
             return @event;
         }
         
-        public void AddOrganizer(Organizer organizer)
+        public void Update(string name, string description, DateTime startDate, DateTime endDate, Address location,
+            int capacity, decimal fee, Category category, State state, DateTime publishDate, DateTime now)
         {
-            if (CoOrganizers.Any(o => o.Id == organizer.Id))
-            {
-                throw new OrganizerAlreadyAddedException(organizer.Id);
-            }
-
-            _coOrganizers.Add(organizer);
+            Name = name;
+            Description = description;
+            StartDate = startDate;
+            EndDate = endDate;
+            Location = location;
+            Capacity = capacity;
+            Fee = fee;
+            Category = category;
+            State = state;
+            PublishDate = publishDate;
+            UpdatedAt = now;
         }
         
         public void SignUpStudent(Participant participant)
+        {
+            if(State != State.Published)
+            {
+                throw new InvalidEventState(Id, State.Published, State);
+            }
+            AddParticipant(participant);
+        }
+        
+        public void AddParticipant(Participant participant)
         {
             if (SignedUpStudents.Any(p => p.StudentId == participant.StudentId))
             {
@@ -101,8 +111,33 @@ namespace MiniSpace.Services.Events.Core.Entities
             {
                 throw new EventCapacityExceededException(Id, Capacity);
             }
+            
+            if(participant.StudentId == Organizer.Id)
+            {
+                throw new OrganizerCannotSignUpForOwnEventException(Organizer.Id, Id);
+            }
 
             _signedUpStudents.Add(participant);
+        }
+        
+        public void CancelSignUp(Guid studentId)
+        {
+            if(State != State.Published)
+            {
+                throw new InvalidEventState(Id, State.Published, State);
+            }
+            RemoveParticipant(studentId);
+        }
+        
+        public void RemoveParticipant(Guid studentId)
+        {
+            var participant = _signedUpStudents.SingleOrDefault(p => p.StudentId == studentId);
+            if (participant is null)
+            {
+                throw new StudentNotSignedUpException(studentId, Id);
+            }
+
+            _signedUpStudents.Remove(participant);
         }
         
         public void ShowStudentInterest(Participant participant)
@@ -115,8 +150,24 @@ namespace MiniSpace.Services.Events.Core.Entities
             _interestedStudents.Add(participant);
         }
         
+        public void CancelInterest(Guid studentId)
+        {
+            var participant = _interestedStudents.SingleOrDefault(p => p.StudentId == studentId);
+            if (participant is null)
+            {
+                throw new StudentNotInterestedInEventException(studentId, Id);
+            }
+
+            _interestedStudents.Remove(participant);
+        }
+        
         public void Rate(Guid studentId, int rating)
         {
+            if(State != State.Archived)
+            {
+                throw new InvalidEventState(Id, State.Archived, State);
+            }
+            
             if(_signedUpStudents.All(p => p.StudentId != studentId))
             {
                 throw new StudentNotSignedUpForEventException(Id ,studentId);
@@ -148,6 +199,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             else
                 return false;
 
+            UpdatedAt = now;
             return true;
         }
         
@@ -160,5 +212,8 @@ namespace MiniSpace.Services.Events.Core.Entities
 
             State = state;
         }
+        
+        public bool IsOrganizer(Guid organizerId)
+            => Organizer.Id == organizerId;
     }
 }

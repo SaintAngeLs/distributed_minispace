@@ -6,6 +6,11 @@ directories=(
     "MiniSpace.Services.Identity"
     "MiniSpace.Services.Events"
     "MiniSpace.Services.Students"
+    "MiniSpace.Services.Friends"
+    "MiniSpace.Services.Reactions"
+    "MiniSpace.Services.Posts"
+    "MiniSpace.Services.Comments"
+    "MiniSpace.Services.Organizations"
 )
 
 for dir in "${directories[@]}"; do

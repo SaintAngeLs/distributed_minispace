@@ -31,7 +31,9 @@ namespace MiniSpace.Services.Posts.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        .Get<GetPost, PostDto>("posts/{postId}")
                         .Get<GetPosts, IEnumerable<PostDto>>("posts")
+                        .Get<GetOrganizerPosts, IEnumerable<PostDto>>("posts/organizer/{organizerId}")
                         .Put<UpdatePost>("posts/{postId}")
                         .Delete<DeletePost>("posts/{postId}")
                         .Post<CreatePost>("posts",

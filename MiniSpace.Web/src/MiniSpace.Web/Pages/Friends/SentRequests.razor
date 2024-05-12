@@ -1,0 +1,52 @@
+@page "/friends/sent-requests"
+@using MiniSpace.Web.HttpClients
+@using Radzen.Blazor
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.Areas.Friends
+@inject IFriendsService FriendsService
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Services.Friends.Application.Dto;
+@inject IIdentityService IdentityService
+@inject Radzen.NotificationService NotificationService
+
+<h3>Sent Friend Requests</h3>
+
+@if (sentRequests == null)
+{
+    <p>Loading...</p>
+}
+else if (sentRequests.Any())
+{
+    <RadzenDataGrid Data="@sentRequests" TItem="FriendRequestDto" AllowSorting="true" AllowPaging="true" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviteeName" Title="Invitee Name">
+                <Template Context="data">
+                    <a href="" @onclick="@(() => RedirectToDetails(data.InviteeId))">@data.InviteeName</a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviteeEmail" Title="Invitee Email" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On" FormatString="{0:yyyy-MM-dd}" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="State" Title="Status" />
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <p>No sent requests.</p>
+}
+
+@code {
+    private IEnumerable<FriendRequestDto> sentRequests;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+        StateHasChanged(); 
+    }
+
+    private void RedirectToDetails(Guid id)
+    {
+        NavigationManager.NavigateTo($"/student-details/{id}");
+    }
+}

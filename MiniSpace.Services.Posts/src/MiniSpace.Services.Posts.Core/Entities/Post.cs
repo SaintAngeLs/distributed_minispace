@@ -5,22 +5,24 @@ namespace MiniSpace.Services.Posts.Core.Entities
     public class Post : AggregateRoot
     {
         public Guid EventId { get; private set; }
-        public Guid StudentId { get; private set; }
+        public Guid OrganizerId { get; private set; }
         public string TextContent { get; private set; }
         public string MediaContent { get; private set; }
         public State State { get; private set; }
         public DateTime? PublishDate { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
         
-        public Post(Guid id, Guid eventId, Guid studentId, string textContent,
-            string mediaContent, DateTime createdAt, State state, DateTime? publishDate)
+        public Post(Guid id, Guid eventId, Guid organizerId, string textContent,
+            string mediaContent, DateTime createdAt, State state, DateTime? publishDate, DateTime? updatedAt = null)
         {
             Id = id;
             EventId = eventId;
-            StudentId = studentId;
+            OrganizerId = organizerId;
             TextContent = textContent;
             MediaContent = mediaContent;
             CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
             State = state;
             PublishDate = publishDate;
         }
@@ -30,37 +32,35 @@ namespace MiniSpace.Services.Posts.Core.Entities
             CheckPublishDate(Id, State.ToBePublished, publishDate, now);
             State = State.ToBePublished;
             PublishDate = publishDate;
+            UpdatedAt = now;
         }
         
-        public void SetPublished()
+        public void SetPublished(DateTime now)
         {
             State = State.Published;
             PublishDate = null;
+            UpdatedAt = now;
         }
         
-        public void SetInDraft()
+        public void SetInDraft(DateTime now)
         {
             State = State.InDraft;
             PublishDate = null;
+            UpdatedAt = now;
         }
 
-        public void SetHidden()
-        {
-            State = State.Hidden;
-            PublishDate = null;
-        }
-
-        public void SetReported()
+        public void SetReported(DateTime now)
         {
             State = State.Reported;
             PublishDate = null;
+            UpdatedAt = now;
         }
 
         public bool UpdateState(DateTime now)
         {
             if (State == State.ToBePublished && PublishDate <= now)
             {
-                SetPublished();
+                SetPublished(now);
                 return true;
             }
             
@@ -70,24 +70,25 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public static Post Create(AggregateId id, Guid eventId, Guid studentId, string textContent,
             string mediaContent, DateTime createdAt, State state, DateTime? publishDate)
         {
-            CheckContent(id, textContent, mediaContent);
+            CheckTextContent(id, textContent);
             
             return new Post(id, eventId, studentId, textContent, mediaContent, createdAt, state, publishDate);
         }
 
-        public void Update(string textContent, string mediaContent)
+        public void Update(string textContent, string mediaContent, DateTime now)
         {
-            CheckContent(Id, textContent, mediaContent);
+            CheckTextContent(Id, textContent);
 
             TextContent = textContent;
             MediaContent = mediaContent;
+            UpdatedAt = now;
         }
         
-        private static void CheckContent(AggregateId id, string textContent, string mediaContent)
+        private static void CheckTextContent(AggregateId id, string textContent)
         {
-            if (string.IsNullOrWhiteSpace(textContent) && string.IsNullOrWhiteSpace(mediaContent))
+            if (string.IsNullOrWhiteSpace(textContent) || textContent.Length > 5000)
             {
-                throw new InvalidPostContentException(id);
+                throw new InvalidPostTextContentException(id);
             }
         }
 

@@ -7,14 +7,16 @@ namespace MiniSpace.Services.Events.Core.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Organization { get; set; }
+        public Guid OrganizationId { get; set; }
+        public string OrganizationName { get; set; }
         
-        public Organizer(Guid id, string name, string email, string organization)
+        public Organizer(Guid id, string name, string email, Guid organizationId, string organizationName)
         {
             Id = id;
             Name = name;
             Email = email;
-            Organization = organization;
+            OrganizationId = organizationId;
+            OrganizationName = organizationName;
         }
     }
 }

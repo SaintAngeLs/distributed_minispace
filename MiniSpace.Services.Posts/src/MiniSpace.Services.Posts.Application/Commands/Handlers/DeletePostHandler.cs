@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             }
             
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != post.StudentId && !identity.IsAdmin)
+            if (identity.IsAuthenticated && identity.Id != post.OrganizerId && !identity.IsAdmin)
             {
                 throw new UnauthorizedPostAccessException(command.PostId, identity.Id);
             }

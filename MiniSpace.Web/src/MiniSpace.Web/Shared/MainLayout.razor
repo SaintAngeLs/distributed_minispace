@@ -1,71 +1,169 @@
 ﻿@using Radzen
+@using MiniSpace.Web.Areas.Students
 @inherits LayoutComponentBase
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+@inject AuthenticationStateProvider authenticationStateProvider
 
-<RadzenLayout style="width: 100%; text-align: center;"  id="radzen-layout" > 
-   <header>
-       <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-            @if (IdentityService.IsAuthenticated)
-            {
-                <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
-            }
-            <div class="logo-container" @onclick="NavigateToHome">
-                <RadzenLabel Text="MiniSpace" />
-            </div>
+<RadzenLayout style="width: 100%; min-height: 100vh; text-align: center;" id="radzen-layout">
+    <header>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                @*
+                    TODO: do not forget about the code snippet chaned ❕❕❕
+                        @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
+                *@
+                @if (_isUserAuthenticated )
+                {
+                    <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
+                }
+                <div class="logo-container" @onclick="NavigateToHome">
+                    <RadzenLabel Text="MiniSpace" />
+                </div>
+            </RadzenStack>
+
+            <RadzenMenu Class="rz-menu">
+                <div class="rz-menu-stack">
+                  
+                    @if (_isUserAuthenticated)
+                    {
+                        
+                       <div class=" rz-text-align-center" style="">
+                            <RadzenProfileMenu>
+                                <Template>
+                                    @* <RadzenGravatar Email="@_userEmail" /> *@
+                                     <div style="padding: 10px; font-size: 16px;">
+                                        Hello, @_userName
+                                    </div>
+                                </Template>
+                                 <ChildContent>
+                                    <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications" Icon="notifications"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Sign out" Click="@SignOut" Icon="exit_to_app"></RadzenProfileMenuItem>
+                                </ChildContent>
+                            </RadzenProfileMenu>
+                        </div>
+                        <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
+                    }
+                    else
+                    {
+                        <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
+                        <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
+                        <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
+                        <RadzenMenuItem Text="Sign In" Class="rz-menu-item" Path="signin" Icon="exit_to_app"/>
+                        <RadzenMenuItem Text="Sign Up" Class="rz-menu-item" Path="signup" Icon="assignment_ind"/>
+                    }
+                </div>
+            </RadzenMenu>
         </RadzenStack>
-        <RadzenMenu Class="rz-menu">
-            <div class="rz-menu-stack">
-                <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
-                <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
-                <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
-                @if (IdentityService.IsAuthenticated)
-                {
-                    <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
-                }
-                else
-                {
-                    <RadzenMenuItem Text="Sign In" Class="rz-menu-item" Path="signin" Icon="exit_to_app"/>
-                    <RadzenMenuItem Text="Sign Up" Class="rz-menu-item" Path="signup" Icon="assignment_ind"/>
-                }
-            </div>
-        </RadzenMenu>
-    </RadzenStack>
-
     </header>
-    
-    @if (IdentityService.IsAuthenticated)
-    {
-        <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
-            <RadzenPanelMenu>
-                <RadzenPanelMenuItem Text="Home" Icon="home"
-                                     Click="@(() => NavigationManager.NavigateTo(""))" />
-                <RadzenPanelMenuItem Text="Account" Icon="account_box"
-                                     Click="@(() => NavigationManager.NavigateTo("account"))" />
-            </RadzenPanelMenu>
-        </RadzenSidebar>
-    }
-    
-    <RadzenBody style="margin: -12.0px;" class="radzen-body">
-        <div class="rz-p-4">
-            @Body
-        </div>
-    </RadzenBody>
+
+    <div style="display: flex; flex: 1; flex-direction: row;">
+        @*
+            TODO: do not forget about the code snippet chaned ❕❕❕
+                    @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
+        *@
+        @if (IsUserAuthenticated)
+        {
+            <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
+                <RadzenPanelMenu>
+                    <RadzenPanelMenuItem Text="Home" Icon="home"
+                                         Click="@(() => NavigationManager.NavigateTo("service-home"))" />
+                    
+                    <RadzenPanelMenuItem Text="Account" Icon="account_box"
+                                         Click="@(() => NavigationManager.NavigateTo("account"))" />
+                    
+                    <RadzenPanelMenuItem Text="Events" Icon="event">
+                        <RadzenPanelMenuItem Text="Follow" Icon="bookmark"
+                                             Click="@(() => NavigationManager.NavigateTo("events/"))"/>
+                        <RadzenPanelMenuItem Text="Search" Icon="find_in_page"
+                                             Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
+                        @if (IdentityService.GetCurrentUserRole() == "organizer")
+                        {
+                            <RadzenPanelMenuItem Text="Organize" Icon="assignment"
+                                                 Click="@(() => NavigationManager.NavigateTo("events/organize"))"/>
+                        }
+                    </RadzenPanelMenuItem>
+                    
+                    <RadzenPanelMenuItem Text="Friends" Icon="group">
+                        <RadzenPanelMenuItem Text="Search" Icon="search" Click="@(() => NavigationManager.NavigateTo("friends/search"))" />
+                        <RadzenPanelMenuItem Text="Friends" Icon="group" Click="@(() => NavigationManager.NavigateTo("friends"))" />
+                        <RadzenPanelMenuItem Text="Requests" Icon="mail_outline" Click="@(() => NavigationManager.NavigateTo("friends/requests"))" />
+                        <RadzenPanelMenuItem Text="Sent Requests" Icon="send" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
+                    </RadzenPanelMenuItem>
+                    
+                    @if (IdentityService.GetCurrentUserRole() == "admin")
+                    {
+                        <RadzenPanelMenuItem Text="Admin" Icon="build">
+                            <RadzenPanelMenuItem Text="Students" Icon="account_circle"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
+                            <RadzenPanelMenuItem Text="Organizations" Icon="assignment"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/organizations"))" />
+                        </RadzenPanelMenuItem>
+                    }
+                </RadzenPanelMenu>
+            </RadzenSidebar>
+        }
+
+        <RadzenBody class="radzen-body">
+            <div class="">
+                @Body
+            </div>
+        </RadzenBody>
+    </div>
+
     <CustomRadzenFooter />
 </RadzenLayout>
 
+<RadzenDialog />
+
 @code{
     bool _sidebarExpanded = true;
-    
-    void SignOut()
-    {
-        IdentityService.Logout();
-        NavigationManager.NavigateTo("");
+    bool isLoading = true;
+    private bool firstRender = true;
+    private string _userName;
+    private string _userSurname;
+
+    private string _userEmail;
+
+    private bool _isUserAuthenticated;
+
+     protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
+            if (_isUserAuthenticated) {
+                var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto); 
+                if (userDto != null) {
+                    _userName = userDto.Name;
+                    _userEmail = userDto.Email; 
+                    @* _userSurname = userDto.LastName; *@
+                }
+            }
+            StateHasChanged();
+        }
     }
     
-     async Task ScrollToSection(string sectionId)
+    public async Task<bool> CheckAuthentication()
+    {
+        _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
+        Console.WriteLine($"IsUserAuthenticated: {_isUserAuthenticated}");
+        return _isUserAuthenticated;
+    }
+
+    public bool IsUserAuthenticated => _isUserAuthenticated;
+    async Task SignOut()
+    {
+        Console.WriteLine("Signing out...");
+        await localStorage.RemoveItemAsync("accessToken");
+        await localStorage.RemoveItemAsync("jwtDto");
+        NavigationManager.NavigateTo("signin", forceLoad: true);
+    }
+
+    async Task ScrollToSection(string sectionId)
     {
         if (NavigationManager.Uri != NavigationManager.BaseUri)
         {
@@ -82,4 +180,5 @@
     {
         NavigationManager.NavigateTo("/");
     }
+
 }

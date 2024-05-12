@@ -6,6 +6,7 @@ namespace MiniSpace.Services.Posts.Core.Repositories
     {
         Task<Post> GetAsync(Guid id);
         Task<IEnumerable<Post>> GetToUpdateAsync();
+        Task<IEnumerable<Post>> GetByEventIdAsync(Guid eventId);
         Task AddAsync(Post post);
         Task UpdateAsync(Post post);
         Task DeleteAsync(Guid id);

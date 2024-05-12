@@ -1,0 +1,92 @@
+@page "/events/organize/dialog"
+@using MiniSpace.Web.Models.Events
+@using Radzen
+@using Blazorise.DeepCloner
+@inject NavigationManager NavigationManager
+@inject Radzen.DialogService DialogService
+
+<RadzenFieldset>
+    <RadzenStack Gap="1rem">
+        <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeSM="4">
+                <RadzenStack>
+                    <RadzenFormField Text="Name" Variant="Variant.Outlined">
+                        <RadzenTextBox @bind-Value="@TempSearchOrganizerEventsModel.Name" />
+                    </RadzenFormField>
+                    <RadzenFormField Text="Start date" Variant="Variant.Outlined">
+                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateFrom"/>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Results on page" Variant="Variant.Outlined">
+                        <RadzenNumeric @bind-Value="@TempSearchOrganizerEventsModel.Pageable.Size" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeSM="4">
+                <RadzenStack>
+                    <RadzenFormField Text="State" Variant="Variant.Outlined">
+                         <RadzenDropDown Data=@states @bind-Value="@TempSearchOrganizerEventsModel.State" />
+                     </RadzenFormField>
+                    <RadzenFormField Text="End date" Variant="Variant.Outlined">
+                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateTo"/>
+                    </RadzenFormField>
+                    <RadzenFormField Text="Sort direction" Variant="Variant.Outlined">
+                        <RadzenDropDown Data=@directions @bind-Value="@TempSearchOrganizerEventsModel.Pageable.Sort.Direction"/>
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+            
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="12">
+                
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+    
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Click="@HandleFiltering" Variant="Variant.Flat" Text="Submit" Style="width: 120px"/>
+            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenFieldset>
+
+@code {
+    [Parameter]
+    public SearchOrganizerEventsModel SearchOrganizerEventsModel { get; set; }
+
+    private SearchOrganizerEventsModel TempSearchOrganizerEventsModel { get; set; }
+    
+
+    private List<string> states = 
+    [
+        "",
+        "Published",
+        "Cancelled",
+        "Archived"
+    ];
+    
+    private List<string> directions =
+    [
+        "Ascending",
+        "Descending"
+    ];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        TempSearchOrganizerEventsModel = SearchOrganizerEventsModel.DeepClone();
+    }
+    
+    private void HandleFiltering()
+    {
+        SearchOrganizerEventsModel.OrganizerId = TempSearchOrganizerEventsModel.OrganizerId;
+        SearchOrganizerEventsModel.Name = TempSearchOrganizerEventsModel.Name;
+        SearchOrganizerEventsModel.State = TempSearchOrganizerEventsModel.State;
+        SearchOrganizerEventsModel.DateFrom = TempSearchOrganizerEventsModel.DateFrom;
+        SearchOrganizerEventsModel.DateTo = TempSearchOrganizerEventsModel.DateTo;
+        SearchOrganizerEventsModel.Pageable = TempSearchOrganizerEventsModel.Pageable.DeepClone();
+        
+        DialogService.Close(true);
+    }
+}

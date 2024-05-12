@@ -169,6 +169,7 @@ header {
     flex-wrap: wrap; 
     align-items: center;
     justify-content: space-between;
+    
 }
 
 
@@ -210,17 +211,17 @@ main {
 }
 
 .landing-page {
-    padding: 2rem; 
+    /* padding: 2rem;  */
 }
 
 @media (min-width: 768px) {
     .landing-page {
-        padding: 2rem 5rem;
+        /* padding: 2rem 5rem; */
     }
 }
 @media (min-width: 992px) {
     .landing-page {
-        padding: 2rem 10rem; 
+        /* padding: 2rem 10rem;  */
     }
 }
 
@@ -262,9 +263,49 @@ html, body {
     }
 }
 
+.rz-menu .rz-profile-menu .rz-navigation-item-link {
+    margin-top: -10px !important;
+}
+
+.rz-navigation-menu {
+    background-color: #2F4E6F !important;
+    color: #fff !important;
+    transition: background-color 0.3s ease; 
+}
+
+.rz-navigation-item-text {
+    color: #fff !important;
+    transition: color 0.3s ease;
+}
+
+.rz-navigation-menu a {
+    display: block;
+    text-decoration: none; 
+    color: #fff; 
+    transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+.rz-navigation-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #98d1ff; 
+    text-decoration: none;
+}
+
+.rz-navigation-menu a:active,
+.rz-navigation-menu a:focus {
+    background-color: rgba(255, 255, 255, 0.2); 
+    color: #aad4ff; 
+}
+
+.rz-navigation-menua a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
 .rz-menu {
     background-color: #2F4E6F !important;
     color: #fff !important;
+    height: 50px;
 }
 
 
@@ -307,9 +348,9 @@ html, body {
         padding: 8px 0;
     }
 
-    .rz-display-flex {
-        display: block !important;
-    }
+    /*.rz-display-flex {*/
+    /*    display: block !important;*/
+    /*}*/
 }
 
 .RadzenStack {
@@ -342,3 +383,12 @@ html, body {
     display: flex;
     gap: 20px;
 }
+
+
+/*.rz-body {*/
+/*    padding: 0 !important;*/
+/*}*/
+
+/*.rz-layout .rz-body {*/
+/*    overflow: unset !important;*/
+/*}*/

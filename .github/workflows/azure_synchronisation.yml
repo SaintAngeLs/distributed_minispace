@@ -29,7 +29,13 @@ jobs:
           AZURE_DEVOPS_PASSWORD: ${{ secrets.AZURE_DEVOPS_PASSWORD }} 
         run: |
           # git remote add azure https://$AZURE_DEVOPS_USERNAME:$AZURE_DEVOPS_PASSWORD@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO
-          git remote add azure https://$AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO
+          # Check if the remote already exists
+          if git remote get-url azure; then
+            echo "Remote 'azure' already exists. Updating URL if needed."
+            git remote set-url azure https://$AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO
+          else
+            git remote add azure https://$AZURE_DEVOPS_PAT@dev.azure.com/SocialAppOIPproject/SocialApp_IO/_git/SocialApp_IO
+          fi
 
       - name: Push all branches to Azure DevOps
         run: git push azure --all --force

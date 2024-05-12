@@ -11,24 +11,33 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
     public class CreatePostHandler : ICommandHandler<CreatePost>
     {
         private readonly IPostRepository _postRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IEventRepository _eventRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
+        private readonly IAppContext _appContext;
 
-        public CreatePostHandler(IPostRepository postRepository, IStudentRepository studentRepository,
-            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
+        public CreatePostHandler(IPostRepository postRepository, IEventRepository eventRepository,
+            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker, IAppContext appContext)
         {
             _postRepository = postRepository;
-            _studentRepository = studentRepository;
+            _eventRepository = eventRepository;
             _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
+            _appContext = appContext;
         }
 
         public async Task HandleAsync(CreatePost command, CancellationToken cancellationToken = default)
         {
-            if (!(await _studentRepository.ExistsAsync(command.StudentId)))
+            var @event = await _eventRepository.GetAsync(command.EventId);
+            if (@event is null)
             {
-                throw new StudentNotFoundException(command.StudentId);
+                throw new EventNotFoundException(command.EventId);
+            }
+            
+            var identity = _appContext.Identity;
+            if (identity.IsAuthenticated && (identity.Id != command.OrganizerId || identity.Id != @event.OrganizerId))
+            {
+                throw new UnauthorizedPostCreationAttemptException(identity.Id, command.EventId);
             }
 
             if (!Enum.TryParse<State>(command.State, true, out var newState))
@@ -38,13 +47,13 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
 
             switch (newState)
             {
-                case State.Hidden or State.Reported:
+                case State.Reported:
                     throw new NotAllowedPostStateException(command.PostId, newState);
                 case State.ToBePublished when command.PublishDate is null:
                     throw new PublishDateNullException(command.PostId, newState);
             }
             
-            var post = Post.Create(command.PostId, command.EventId, command.StudentId, command.TextContent,
+            var post = Post.Create(command.PostId, command.EventId, command.OrganizerId, command.TextContent,
                 command.MediaContent, _dateTimeProvider.Now, newState, command.PublishDate);
             await _postRepository.AddAsync(post);
             

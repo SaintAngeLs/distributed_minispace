@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Core.Entities;
 
@@ -6,7 +8,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        public static EventDto AsDto(this EventDocument document)
+        public static EventDto AsDto(this EventDocument document, Guid studentId)
             => new ()
             {
                 Id = document.Id,
@@ -15,7 +17,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Organizer = document.Organizer.AsDto(),
                 StartDate = document.StartDate,
                 EndDate = document.EndDate,
-                CoOrganizers = document.CoOrganizers.Select(x => x.AsDto()),
                 Location = document.Location.AsDto(),
                 InterestedStudents = document.InterestedStudents.Count(),
                 SignedUpStudents = document.SignedUpStudents.Count(),
@@ -23,13 +24,29 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Fee = document.Fee,
                 Category = document.Category.ToString(),
                 Status = document.State.ToString(),
-                PublishDate = document.PublishDate
+                PublishDate = document.PublishDate,
+                UpdatedAt = document.UpdatedAt,
+                IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == studentId),
+                IsInterested = document.InterestedStudents.Any(x => x.StudentId == studentId),
+                HasRated = document.Ratings.Any(x => x.StudentId == studentId)
             };
+
+        public static EventDto AsDtoWithFriends(this EventDocument document, Guid studentId, IEnumerable<FriendDto> friends)
+        {
+            var eventDto = document.AsDto(studentId);
+            eventDto.FriendsInterestedIn = document.InterestedStudents
+                .Where(x => friends.Any(f => f.FriendId == x.StudentId))
+                .Select(p => p.AsDto());
+            eventDto.FriendsSignedUp = document.SignedUpStudents
+                .Where(x => friends.Any(f => f.FriendId == x.StudentId))
+                .Select(p => p.AsDto());
+            return eventDto;
+        }
         
         public static Event AsEntity(this EventDocument document)
             => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
                 document.Location, document.Capacity, document.Fee, document.Category, document.State, document.PublishDate,
-                document.Organizer, document.CoOrganizers, document.InterestedStudents, document.SignedUpStudents, document.Ratings);
+                document.Organizer, document.UpdatedAt,document.InterestedStudents, document.SignedUpStudents, document.Ratings);
         
         public static EventDocument AsDocument(this Event entity)
             => new ()
@@ -41,7 +58,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Location = entity.Location,
-                CoOrganizers = entity.CoOrganizers,
                 InterestedStudents = entity.InterestedStudents,
                 SignedUpStudents = entity.SignedUpStudents,
                 Capacity = entity.Capacity,
@@ -49,7 +65,16 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Category = entity.Category,
                 State = entity.State,
                 PublishDate = entity.PublishDate,
+                UpdatedAt = entity.UpdatedAt,
                 Ratings = entity.Ratings
+            };
+        
+        public static EventParticipantsDto AsDto(this EventDocument document)
+            => new ()
+            {
+                EventId = document.Id,
+                InterestedStudents = document.InterestedStudents.Select(p => p.AsDto()),
+                SignedUpStudents = document.SignedUpStudents.Select(p => p.AsDto())
             };
 
         public static AddressDto AsDto(this Address entity)
@@ -72,7 +97,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Id = entity.Id,
                 Name = entity.Name,
                 Email = entity.Email,
-                Organization = entity.Organization
+                OrganizationId = entity.OrganizationId,
+                OrganizationName = entity.OrganizationName
             };
         
         public static StudentDocument AsDocument(this Student entity)
@@ -83,5 +109,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         
         public static Student AsEntity(this StudentDocument document)
             => new (document.Id);
+        
+        public static ParticipantDto AsDto(this Participant entity)
+            => new ()
+            {
+                StudentId = entity.StudentId,
+                Name = entity.Name
+            };
     }
 }
