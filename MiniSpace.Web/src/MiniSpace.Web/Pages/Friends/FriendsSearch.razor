@@ -1,4 +1,5 @@
 @page "/friends/search"
+@using MiniSpace.Services.Friends.Application.Dto
 @using MiniSpace.Web.HttpClients
 @using Radzen.Blazor
 @inject NavigationManager NavigationManager
@@ -26,10 +27,22 @@
                         <h5>@student.FirstName @student.LastName</h5>
                         <p>Email: @student.Email</p>
                         <div class="buttons">
-                            <RadzenButton Text="Connect" Disabled="@student.IsInvitationPending" 
+                            @* <RadzenButton Text="Connect" Disabled="@student.IsInvitationPending" 
                                 Click="@(e => ConnectWithStudent(student.Id, e))" 
                                 ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                                Style="width: 100%; margin-top: 8px;" />
+                                Style="width: 100%; margin-top: 8px;" /> *@
+
+                             @if (!sentRequests.Any(r => r.InviteeId == student.Id))
+                            {
+                                <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
+                                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                              Style="width: 100%; margin-top: 8px;" />
+                            }
+                            else
+                            {
+                                <RadzenButton Text="Pending" Disabled="true" 
+                                              Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                            }
                         </div>
                     </div>
                 </div>
@@ -59,7 +72,17 @@
                             <li><strong>State:</strong> @student?.State</li>
                             <li><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</li>
                         </ul>
-                        <RadzenButton Text="Connect" Click="@(() => ConnectWithStudent(student.Id))" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-top: 10px;" />
+                        @if (!sentRequests.Any(r => r.InviteeId == student.Id))
+                            {
+                                <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
+                                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                              Style="width: 100%; margin-top: 8px;" />
+                            }
+                            else
+                            {
+                                <RadzenButton Text="Pending" Disabled="true" 
+                                              Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                            }
                      </div>
                     
                    </div> 
@@ -69,6 +92,7 @@
             {
                 <div class="no-details">
                     <p>Select a student to view details.</p>
+    using MiniSpace.Services.Friends.Application.Dto;
                 </div>
             }
         </div>
@@ -224,6 +248,7 @@
 @code {
     private string searchTerm;
     private List<StudentDto> students = new List<StudentDto>();
+    private IEnumerable<FriendRequestDto> sentRequests;
     private StudentDto student;
     RadzenNotification notificationComponent;
     private int currentPage = 1;
@@ -231,7 +256,9 @@
     private int totalStudents;
 
     protected override async Task OnInitializedAsync() {
+         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         await LoadStudents();
+        StateHasChanged();
     }
 
     @* private async Task LoadStudents() {
@@ -283,14 +310,14 @@
                                        s.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
-    private async Task ConnectWithStudent(Guid studentId)
+    @* private async Task ConnectWithStudent(Guid studentId)
     {
         var response = await FriendsService.AddFriendAsync(studentId);
         
-    }
+    } *@
 
-     private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) 
-     {
+    private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) 
+    {
         var currentUserId = IdentityService.GetCurrentUserId();
         await FriendsService.InviteStudent(currentUserId, studentId);
 
@@ -298,9 +325,12 @@
         if (student != null)
         {
             student.InvitationSent = true;
+            student.IsInvitationPending = true;
         }
+         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
         await JSRuntime.InvokeVoidAsync("playNotificationSound");
+        StateHasChanged(); 
     }
 
     private async Task SetPage(int page) 
