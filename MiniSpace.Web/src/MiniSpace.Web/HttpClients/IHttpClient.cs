@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using MiniSpace.Web.Areas.Friends;
 
 namespace MiniSpace.Web.HttpClients
 {

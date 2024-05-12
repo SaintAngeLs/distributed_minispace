@@ -7,6 +7,7 @@ using Newtonsoft.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Polly;
+using MiniSpace.Web.Areas.Friends;
 
 namespace MiniSpace.Web.HttpClients
 {
@@ -144,6 +145,10 @@ namespace MiniSpace.Web.HttpClients
                 return (false, errorContent);
             }
         });
+
+
+
+
 
     }
 }

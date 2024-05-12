@@ -22,7 +22,7 @@ services:
       - minispace
     ports:
     - 9998:9998
-    - 9999:9999
+    - 10000:9999
 
   grafana:
     image: grafana/grafana
@@ -98,7 +98,7 @@ services:
     networks:
       - minispace
     ports:
-      - 6379:6379
+      - 6380:6379
     volumes: 
       - redis:/data
 

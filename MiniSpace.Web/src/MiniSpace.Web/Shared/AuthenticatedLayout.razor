@@ -68,7 +68,7 @@
     public bool IsUserAuthenticated() => IdentityService.IsAuthenticated;
 
     void NavigateToHome() {
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/home");
     }
 
     async Task SignOut() {

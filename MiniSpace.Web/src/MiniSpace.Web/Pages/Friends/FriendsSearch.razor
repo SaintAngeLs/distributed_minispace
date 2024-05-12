@@ -1,4 +1,5 @@
 @page "/friends/search"
+@using MiniSpace.Services.Friends.Application.Dto
 @using MiniSpace.Web.HttpClients
 @using Radzen.Blazor
 @inject NavigationManager NavigationManager
@@ -20,15 +21,29 @@
         <div class="card-container">
             @foreach (var student in students)
             {
-                <div class="card" @onclick="@(() => OnDetails(student))">
-                    <img class="card-img-top" src="@GetImage(student.ProfileImage)" alt="Student Image">
-                    <div class="card-body">
-                        <h5 class="card-title">@student.FirstName @student.LastName</h5>
-                        <p class="card-text">Email: @student.Email</p>
-                        <RadzenButton Text="Connect" Disabled="@student.IsInvitationPending" 
-                              Click="@(e => ConnectWithStudent(student.Id, e))" 
-                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                              Style="width: 100%; margin-top: 8px;" />
+                 <div class="friend-card" @onclick="@(() => OnDetails(student))">
+                    <img src="@GetImage(student.ProfileImage)" alt="Student Image" class="friend-img">
+                    <div class="friend-info">
+                        <h5>@student.FirstName @student.LastName</h5>
+                        <p>Email: @student.Email</p>
+                        <div class="buttons">
+                            @* <RadzenButton Text="Connect" Disabled="@student.IsInvitationPending" 
+                                Click="@(e => ConnectWithStudent(student.Id, e))" 
+                                ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                Style="width: 100%; margin-top: 8px;" /> *@
+
+                             @if (!sentRequests.Any(r => r.InviteeId == student.Id))
+                            {
+                                <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
+                                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                              Style="width: 100%; margin-top: 8px;" />
+                            }
+                            else
+                            {
+                                <RadzenButton Text="Pending" Disabled="true" 
+                                              Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                            }
+                        </div>
                     </div>
                 </div>
             }
@@ -45,7 +60,7 @@
                 <div class="student-details">
                    
                    <div>
-                    <img src="@student?.ProfileImage" alt="Profile Image" class="profile-image"/>
+                    <img src="@GetImage(student.ProfileImage)" alt="Profile Image" class="profile-image"/>
                     <div class="info-block">
                         <h3 class="name">@student?.FirstName @student?.LastName</h3>
                         <ul class="details-list">
@@ -57,7 +72,17 @@
                             <li><strong>State:</strong> @student?.State</li>
                             <li><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</li>
                         </ul>
-                        <RadzenButton Text="Connect" Click="@(() => ConnectWithStudent(student.Id))" ButtonStyle="Radzen.ButtonStyle.Secondary" Style="margin-top: 10px;" />
+                        @if (!sentRequests.Any(r => r.InviteeId == student.Id))
+                            {
+                                <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
+                                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                              Style="width: 100%; margin-top: 8px;" />
+                            }
+                            else
+                            {
+                                <RadzenButton Text="Pending" Disabled="true" 
+                                              Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                            }
                      </div>
                     
                    </div> 
@@ -67,116 +92,199 @@
             {
                 <div class="no-details">
                     <p>Select a student to view details.</p>
+    using MiniSpace.Services.Friends.Application.Dto;
                 </div>
             }
         </div>
     </div>
-
-    
+<div class="pagination-controls">
+    <button  @onclick="() => SetPage(1)">First</button>
+    <button  @onclick="() => SetPage(currentPage - 1)">Previous</button>
+    <span>Page @currentPage of @(Math.Ceiling((double)totalStudents / pageSize))</span>
+    <button @onclick="() => SetPage(currentPage + 1)">Next</button>
+    <button  @onclick="() => SetPage((totalStudents + pageSize - 1) / pageSize)">Last</button>
+</div>
 
 
 <style>
 
     .notification-block {
-    position: fixed; /* Or 'absolute' if 'fixed' is too intrusive in your layout */
-    top: 20px;
-    right: 20px;
-    z-index: 1050; /* Ensure it's above other content */
-    max-width: 300px; /* Limit the width of notifications */
-}
+        position: fixed; 
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        max-width: 300px;
+    }
 
-    .main-container { overflow: visible; display: flex;   align-items: flex-start; }
-    .left-panel {  width: 100%;   overflow-y: auto; /}
-    @* .right-panel { width: 100%; padding: 50px; position: sticky; top: 50px;overflow-y: auto; } *@
+    .main-container { 
+        overflow: visible; 
+        display: flex;   
+        align-items: 
+        flex-start; 
+    }
+
+    .left-panel {  
+        width: 100%;   
+        overflow-y: auto; 
+    }
 
     .right-panel {
         width: 70%; 
         padding: 25px;
         position: sticky;
         top: 100px; 
-
         background-color: white; 
     }
-    .search-bar { display: flex; margin-bottom: 20px; }
-    .card-container { display: flex; flex-wrap: wrap; justify-content: space-between; padding-top: 50px;}
-    .card { display: block; width: 30%; margin: 5px !important; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: box-shadow 0.3s ease-in-out; }
-    .card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-    .card-img-top { width: 100%; height: 200px; object-fit: cover; }
-    .card-body { padding: 15px; }
-    .card-title { font-size: 18px; font-weight: bold; }
-    .card-text { font-size: 14px; }
-    .student-details { margin-top: 20px; }
-    .no-details { font-style: italic; color: grey; }
 
-    .student-details {
-    position: sticky;
-    top: 60px;
- 
-    align-items: center;
-    margin: 20px;
-    background-color: #f9f9f9;
-    padding: 80px;
+    .left-panel, .right-panel {
+    background-color: #f7f7f7; /* Soft background color for subtle contrast */
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Light shadow for depth */
 }
+    .search-bar {
+        display: flex; 
+        margin-bottom: 20px; 
+        }
+    
+    .card-container {
+        display: flex;
+        flex-direction: column;
+    }
 
-.profile-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 75px;
-    margin-right: 20px;
-}
+    .friend-card {
+        display: flex;
+        background-color: #ffffff;
+        margin-bottom: 1rem !important;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+        align-items: center;
+        padding: 20px;
+        border-radius: 8px;
+    }
 
-.info-block {
-    display: flex;
-    flex-direction: column;
-}
+    .friend-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
 
-.name {
-    margin: 0 0 10px 0;
-    color: #333;
+    .friend-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-right: 20px;
+        object-fit: cover;
+        border: 3px solid #007BFF; 
+    }
+
+    .friend-info {
+        flex: 1;
+    }
+
+    .search-bar input:focus {
+        outline: none;
+        border: 2px solid #0056b3;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    }
+
+    .pagination-controls {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination-controls button {
+        padding: 8px 16px;
+        margin-right: 5px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .pagination-controls button:disabled {
+        background-color: #ccc;
+    }
+
+    .profile-image {
+        width: 400px; 
+        height: 400px;
+        border-radius: 5%;
+        object-fit: cover;
+        border: 4px solid #ffffff; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+        transition: transform 0.3s ease-in-out; 
+    }
+
+    .profile-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+    }
+
+    .info-block {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 15px;
 }
 
 .details-list {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
-    margin: 0;
-    font-size: 14px;
+    margin-top: 10px;
 }
 
 .details-list li {
-    margin-bottom: 5px;
-    color: #666;
+    margin-bottom: 8px;
+    font-size: 16px; /* Larger font for readability */
 }
 
-.no-details {
-    font-style: italic;
-    color: grey;
-    padding: 20px;
-    text-align: center;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    margin-top: 20px;
-}
 
 </style>
 
 @code {
     private string searchTerm;
     private List<StudentDto> students = new List<StudentDto>();
+    private IEnumerable<FriendRequestDto> sentRequests;
     private StudentDto student;
     RadzenNotification notificationComponent;
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalStudents;
 
     protected override async Task OnInitializedAsync() {
+         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         await LoadStudents();
+        StateHasChanged();
     }
 
-    private async Task LoadStudents() {
-        var result = await FriendsService.GetAllStudentsAsync();
+    @* private async Task LoadStudents() {
+        var result = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
+        totalStudents = result.Count();
         if (result != null) {
             students = result.ToList();
         }
+    } *@
+    private async Task LoadStudents()
+    {
+        int maxPage = (int)Math.Ceiling((double)totalStudents / pageSize);
+        if (currentPage > maxPage) currentPage = maxPage;
+        if (currentPage < 1) currentPage = 1;
+
+        var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
+        if (response != null)
+        {
+            students = response.Results;
+            totalStudents = response.Total; 
+        }
+        else
+        {
+            students = new List<StudentDto>();
+        }
+        StateHasChanged(); 
     }
 
     private string GetImage(string base64Image)
@@ -192,7 +300,8 @@
     }
 
 
-    private void OnDetails(StudentDto selectedStudent) {
+    private void OnDetails(StudentDto selectedStudent) 
+    {
         student = selectedStudent;
     }
 
@@ -201,13 +310,14 @@
                                        s.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
-    private async Task ConnectWithStudent(Guid studentId)
+    @* private async Task ConnectWithStudent(Guid studentId)
     {
         var response = await FriendsService.AddFriendAsync(studentId);
         
-    }
+    } *@
 
-     private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) {
+    private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) 
+    {
         var currentUserId = IdentityService.GetCurrentUserId();
         await FriendsService.InviteStudent(currentUserId, studentId);
 
@@ -215,15 +325,25 @@
         if (student != null)
         {
             student.InvitationSent = true;
+            student.IsInvitationPending = true;
         }
+         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
         await JSRuntime.InvokeVoidAsync("playNotificationSound");
+        StateHasChanged(); 
     }
 
-
-
-
-
-
+    private async Task SetPage(int page) 
+    {
+        Console.WriteLine($"Attempting to set page to {page}");
+        if (page < 1 || page > Math.Ceiling((double)totalStudents / pageSize)) {
+            Console.WriteLine("Page number out of range.");
+            return;
+        }
+        currentPage = page;
+        Console.WriteLine($"Page set to {currentPage}");
+        await LoadStudents();
+        StateHasChanged(); 
+    }
 
 }
