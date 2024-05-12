@@ -15,7 +15,7 @@ namespace MiniSpace.Services.Posts.Application.Commands
         public CreatePost(Guid postId, Guid eventId, Guid organizerId, string textContent,
             IEnumerable<Guid> mediaFiles, string state, DateTime? publishDate)
         {
-            PostId = postId == Guid.Empty ? Guid.NewGuid() : postId;
+            PostId = postId;
             EventId = eventId;
             OrganizerId = organizerId;
             TextContent = textContent;
