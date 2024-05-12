@@ -79,7 +79,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
         public void ValidateMediaFiles(List<Guid> mediaFiles)
         {
             if (mediaFiles.Count > 5)
-                throw new InvalidEventMediaFilesSizeException(mediaFiles.Count);
+                throw new InvalidNumberOfEventMediaFilesException(mediaFiles.Count);
         }
         
         public void ValidateCapacity(int capacity)

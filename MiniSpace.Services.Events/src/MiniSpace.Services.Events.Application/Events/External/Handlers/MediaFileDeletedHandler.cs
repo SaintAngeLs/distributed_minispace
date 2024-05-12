@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Events.Application.Events.External.Handlers
         
         public async Task HandleAsync(MediaFileDeleted @event, CancellationToken cancellationToken)
         {
-            if(@event.Source.ToLowerInvariant() != "events")
+            if(@event.Source.ToLowerInvariant() != "event")
             {
                 return;
             }
