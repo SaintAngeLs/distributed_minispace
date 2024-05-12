@@ -107,7 +107,7 @@
             }
         </RadzenStack>
         
-        <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
             <Tabs>
                 <RadzenTabsItem Text="Posts">
                     @if (pageInitialized && !posts.Any())
@@ -117,15 +117,24 @@
                     <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
                         <Template Context="post">
                             <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
-                                        @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}"))">
+                                        @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}/author/{GetAuthorName(post.OrganizerId)}"))">
                                 <RadzenRow Gap="0.5rem">
                                     <RadzenColumn Size="12" class="rz-text-truncate">
                                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                                             <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
                                                         Text=@($"{GetAuthorName(post.OrganizerId)}")/>
-                                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                                Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
-                                            </RadzenText>
+                                            @if (post.UpdatedAt != null)
+                                            {
+                                                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                                                </RadzenText>   
+                                            }
+                                            else
+                                            {
+                                                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                                    Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                                                </RadzenText>   
+                                            }
                                         </RadzenStack>
                                     </RadzenColumn>
                                 </RadzenRow>
@@ -144,6 +153,9 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Comments">
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Reactions">
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Interested friends">

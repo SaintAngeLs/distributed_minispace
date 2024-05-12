@@ -1,4 +1,4 @@
-@page "/posts/{PostId}"
+@page "/posts/{PostId}/author/{AuthorName}"
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Pages.Events.Dialogs
@@ -20,19 +20,25 @@
 
 @if (pageInitialized)
 {
-    <h1>@AuthorName</h1>
-
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
-        <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
-                    @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}"))">
+        <RadzenCard Class="rz-border-radius-3">
             <RadzenRow Gap="0.5rem">
                 <RadzenColumn Size="12" class="rz-text-truncate">
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                         <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
                                     Text=@($"{AuthorName}")/>
-                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                            Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
-                        </RadzenText>
+                        @if (post.UpdatedAt != null)
+                        {
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                            </RadzenText>
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                            </RadzenText>
+                        }
                     </RadzenStack>
                 </RadzenColumn>
             </RadzenRow>
@@ -49,7 +55,7 @@
         
         <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                <RadzenButton Size="ButtonSize.Medium" Text="Report event" ButtonStyle="ButtonStyle.Primary"
+                <RadzenButton Size="ButtonSize.Medium" Text="Report post" ButtonStyle="ButtonStyle.Primary"
                 />
             </RadzenStack>
 
@@ -58,7 +64,7 @@
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                     <RadzenButton Size="ButtonSize.Medium" Text="Update post" ButtonStyle="ButtonStyle.Secondary"
                                   Click="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}/update"))" />
-                    <RadzenButton Size="ButtonSize.Medium" Text="Delete delete" ButtonStyle="ButtonStyle.Warning" />
+                    <RadzenButton Size="ButtonSize.Medium" Text="Delete post" ButtonStyle="ButtonStyle.Warning" />
                 </RadzenStack>
             }
         </RadzenStack>
@@ -93,6 +99,7 @@
         {
             studentId = IdentityService.GetCurrentUserId();
         }
+        post = await PostsService.GetPostAsync(new Guid(PostId));
         
         pageInitialized = true;
     }
