@@ -10,7 +10,7 @@ namespace MiniSpace.Web.HttpClients
         Task PostAsync<T>(string uri, T request);
         Task<HttpResponse<TResult>> PostAsync<TRequest, TResult>(string uri, TRequest request);
         Task PutAsync<T>(string uri, T request);
-        Task<TResult> PutAsync<TRequest, TResult>(string uri, TRequest request);
+        Task<HttpResponse<TResult>> PutAsync<TRequest, TResult>(string uri, TRequest request);
         Task DeleteAsync(string uri);
         Task DeleteAsync(string uri, object payload);
     }

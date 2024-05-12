@@ -1,0 +1,132 @@
+@page "/events/{EventId}/posts/{PostId}/author/{AuthorName}"
+@using Microsoft.Extensions.Logging
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.Pages.Posts.Dialogs
+@using Radzen
+@using AlignItems = Radzen.AlignItems
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@using Orientation = Radzen.Orientation
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@inject IPostsService PostsService
+@inject NavigationManager NavigationManager
+
+@if (!pageInitialized)
+{
+    <h3 class="rz-p-12">Loading...</h3>
+}
+
+@if (pageInitialized)
+{
+    <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
+        <RadzenCard Class="rz-border-radius-3">
+            <RadzenRow Gap="0.5rem">
+                <RadzenColumn Size="12" class="rz-text-truncate">
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                    Text=@($"{AuthorName}")/>
+                        @if (post.UpdatedAt != null)
+                        {
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                            </RadzenText>
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                            </RadzenText>
+                        }
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+            <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                <RadzenStack Gap="1em">
+                    <RadzenStack></RadzenStack>
+                    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
+                        <strong>@(post.TextContent)</strong>
+                    </RadzenText>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenCard>
+        
+        <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                <RadzenButton Size="ButtonSize.Medium" Text="Go back to event" ButtonStyle="ButtonStyle.Primary"
+                              Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
+                <RadzenButton Size="ButtonSize.Medium" Text="Report post" ButtonStyle="ButtonStyle.Primary"
+                />
+            </RadzenStack>
+
+            @if (IdentityService.IsAuthenticated && IsUserPostCreator(post))
+            {
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                    <RadzenButton Size="ButtonSize.Medium" Text="Update post" ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/author/{AuthorName}/update"))" />
+                    <RadzenButton Size="ButtonSize.Medium" Text="Delete post" ButtonStyle="ButtonStyle.Warning"
+                                  Click="@(() => OpenDeletePostDialog(post.Id))" />
+                </RadzenStack>
+            }
+        </RadzenStack>
+        
+        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+            <Tabs>
+                <RadzenTabsItem Text="Comments">
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Reactions">
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+    </RadzenStack>
+}
+
+@code {
+    [Parameter]
+    public string EventId { get; set; }
+    [Parameter]
+    public string PostId { get; set; }
+    [Parameter]
+    public string AuthorName { get; set; }
+    
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+
+    private Guid studentId;
+    private PostDto post = new();
+    private bool pageInitialized = false;
+     
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            studentId = IdentityService.GetCurrentUserId();
+        }
+        post = await PostsService.GetPostAsync(new Guid(PostId));
+        
+        pageInitialized = true;
+    }
+
+    private bool IsUserPostCreator(PostDto postDto)
+    {
+        if (IdentityService.GetCurrentUserRole() != "organizer")
+        {
+            return false;
+        }
+
+        return studentId == postDto.OrganizerId;
+    }
+    
+    private async Task OpenDeletePostDialog(Guid postId)
+    {
+        await DialogService.OpenAsync<DeletePostDialog>("Are you sure? This action cannot be undone!",
+            new Dictionary<string, object>() { {"EventId", new Guid(EventId) }, { "PostId", new Guid(PostId) } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "100px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+}

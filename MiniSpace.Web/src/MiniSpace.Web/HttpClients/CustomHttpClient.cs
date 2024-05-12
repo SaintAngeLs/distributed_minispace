@@ -64,11 +64,12 @@ namespace MiniSpace.Web.HttpClients
         public Task PutAsync<T>(string uri, T request)
             => TryExecuteAsync(uri, client => client.PutAsync(uri, GetPayload(request)));
 
-        public async Task<TResult> PutAsync<TRequest, TResult>(string uri, TRequest request)
+        public async Task<HttpResponse<TResult>> PutAsync<TRequest, TResult>(string uri, TRequest request)
         {
             var (success, content) = await TryExecuteAsync(uri, client => client.PutAsync(uri, GetPayload(request)));
 
-            return !success ? default : JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings);
+            return !success ? new HttpResponse<TResult>(JsonConvert.DeserializeObject<ErrorMessage>(content, JsonSerializerSettings)) 
+                : new HttpResponse<TResult>(JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings));
         }
 
         public Task DeleteAsync(string uri)
