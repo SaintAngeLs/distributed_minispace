@@ -37,7 +37,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             }
             
             await _eventRepository.DeleteAsync(command.EventId);
-            await _messageBroker.PublishAsync(new EventDeleted(command.EventId));
+            await _messageBroker.PublishAsync(new EventDeleted(command.EventId, @event.MediaFiles));
         }
     }
 }

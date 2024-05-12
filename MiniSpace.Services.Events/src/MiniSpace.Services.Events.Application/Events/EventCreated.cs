@@ -8,6 +8,6 @@ namespace MiniSpace.Services.Events.Application.Events
     {
         public Guid EventId { get; set; } = eventId;
         public Guid OrganizerId { get; set; } = organizerId;
-        public IEnumerable<Guid> MediaFilesIds { get; } = mediaFilesIds;
+        public IEnumerable<Guid> MediaFilesIds { get; set; } = mediaFilesIds;
     }
 }
