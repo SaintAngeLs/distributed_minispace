@@ -53,7 +53,6 @@ namespace MiniSpace.Web.Areas.Friends
                 foreach (var friend in friends)
                 {
                     friend.StudentDetails = await GetStudentAsync(friend.FriendId);
-                    Console.WriteLine($"Friend ID: {friend.FriendId}, Friend's Student ID: {friend.StudentDetails.Id}, Name: {friend.StudentDetails.FirstName} {friend.StudentDetails.LastName}");
                 }
             }
             else
