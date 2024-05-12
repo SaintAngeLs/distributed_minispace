@@ -23,13 +23,10 @@ namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
                 await _fileSourceInfoRepository.FindAsync(@event.PostId, ContextType.Post);
             foreach (var fileSourceInfo in fileSourceInfos)
             {
-                if(!@event.MediaFilesIds.Contains(fileSourceInfo.Id))
+                if(@event.MediaFilesIds.Contains(fileSourceInfo.Id))
                 {
-                    await _commandDispatcher.SendAsync(new DeleteMediaFile
-                        {
-                            MediaFileId = fileSourceInfo.Id
-                        }, 
-                        cancellationToken);
+                    fileSourceInfo.Associate();
+                    await _fileSourceInfoRepository.UpdateAsync(fileSourceInfo);
                 }
             }
         }

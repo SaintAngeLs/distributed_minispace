@@ -24,5 +24,15 @@ namespace MiniSpace.Services.MediaFiles.Core.Entities
             FileId = fileId;
             FileName = fileName;
         }
+        
+        public void Associate()
+        {
+            State = State.Associated;
+        }
+        
+        public void Unassociate()
+        {
+            State = State.Unassociated;
+        }
     }
 }

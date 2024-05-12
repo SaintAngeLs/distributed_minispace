@@ -49,6 +49,13 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Logging
                         After = "Cleaned unmatched files for event with ID: {EventId}.",
                     }
                 },
+                {
+                    typeof(CleanupUnassociatedFiles),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Cleaned unmatched files for all entities at {Now}."
+                    }
+                },
             };
         
         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class
