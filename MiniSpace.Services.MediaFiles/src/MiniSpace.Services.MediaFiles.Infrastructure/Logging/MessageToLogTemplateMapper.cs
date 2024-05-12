@@ -25,28 +25,63 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Logging
                     typeof(StudentCreated),     
                     new HandlerLogTemplate
                     {
-                        After = "Cleaned unmatched files for student with ID: {StudentId}.",
+                        After = "Associated profile picture with ID: {MediaFileId} for student with ID: {StudentId}.",
                     }
                 },
                 {
                     typeof(StudentUpdated),     
                     new HandlerLogTemplate
                     {
-                        After = "Cleaned unmatched files for student with ID: {StudentId}.",
+                        After = "Associated profile picture with ID: {MediaFileId} for student with ID: {StudentId}.",
+                    }
+                },
+                {
+                    typeof(StudentDeleted),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Deleted all media files for student with ID: {StudentId}.",
                     }
                 },
                 {
                     typeof(PostCreated),     
                     new HandlerLogTemplate
                     {
-                        After = "Cleaned unmatched files for post with ID: {PostId}.",
+                        After = "Associated media files for post with ID: {PostId}.",
+                    }
+                },
+                {
+                    typeof(PostUpdated),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Associated media files for post with ID: {PostId}.",
+                    }
+                },
+                {
+                    typeof(PostDeleted),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Deleted all media files for post with ID: {PostId}.",
                     }
                 },
                 {
                     typeof(EventCreated),     
                     new HandlerLogTemplate
                     {
-                        After = "Cleaned unmatched files for event with ID: {EventId}.",
+                        After = "Associated media files for event with ID: {EventId}.",
+                    }
+                },
+                {
+                    typeof(EventUpdated),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Associated media files for event with ID: {EventId}.",
+                    }
+                },
+                {
+                    typeof(EventDeleted),     
+                    new HandlerLogTemplate
+                    {
+                        After = "Deleted all media files for event with ID: {EventId}.",
                     }
                 },
                 {
