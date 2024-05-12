@@ -214,6 +214,15 @@ namespace MiniSpace.Services.Events.Core.Entities
             State = state;
         }
         
+        public void RemoveMediaFile(Guid mediaFileId)
+        {
+            var mediaFile = MediaFiles.SingleOrDefault(mf => mf == mediaFileId);
+            if (mediaFile == Guid.Empty)
+            {
+                throw new MediaFileNotFoundException(mediaFileId, Id);
+            }
+        }
+        
         public bool IsOrganizer(Guid organizerId)
             => Organizer.Id == organizerId;
     }
