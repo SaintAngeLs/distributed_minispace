@@ -39,6 +39,11 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             {
                 throw new UnauthorizedPostCreationAttemptException(identity.Id, command.EventId);
             }
+            
+            if(command.PostId == Guid.Empty || await _postRepository.ExistsAsync(command.PostId))
+            {
+                throw new InvalidPostIdException(command.PostId);
+            }
 
             if (!Enum.TryParse<State>(command.State, true, out var newState))
             {
