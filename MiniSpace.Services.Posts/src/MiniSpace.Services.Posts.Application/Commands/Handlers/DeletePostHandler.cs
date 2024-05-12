@@ -42,7 +42,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             
             await _postRepository.DeleteAsync(command.PostId);
 
-            await _messageBroker.PublishAsync(new PostDeleted(command.PostId, post.MediaFiles));
+            await _messageBroker.PublishAsync(new PostDeleted(command.PostId));
         }
     }    
 }
