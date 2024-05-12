@@ -6,13 +6,11 @@ namespace MiniSpace.Services.Students.Application.Events
     {
         public Guid StudentId { get; }
         public string FullName { get; }
-        public Guid MediaFileId { get; }
 
-        public StudentDeleted(Guid studentId, string fullName, Guid mediaFileId)
+        public StudentDeleted(Guid studentId, string fullName)
         {
             StudentId = studentId;
             FullName = fullName;
-            MediaFileId = mediaFileId;
         }
     }
 }
