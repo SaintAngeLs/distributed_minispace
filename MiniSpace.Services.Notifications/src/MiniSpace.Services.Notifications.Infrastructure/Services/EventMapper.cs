@@ -1,9 +1,9 @@
 using Convey.CQRS.Events;
-using MiniSpace.Services.Students.Application.Services;
-using MiniSpace.Services.Students.Core;
-using MiniSpace.Services.Students.Core.Events;
+using MiniSpace.Services.Notifications.Application.Services;
+using MiniSpace.Services.Notifications.Core;
+using MiniSpace.Services.Notifications.Core.Events;
 
-namespace MiniSpace.Services.Students.Infrastructure.Services
+namespace MiniSpace.Services.Notifications.Infrastructure.Services
 {
     public class EventMapper : IEventMapper
     {
@@ -14,13 +14,15 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
         {
             switch (@event)
             {
-                case StudentRegistrationCompleted e:
-                    return new Application.Events.StudentCreated(e.Student.Id, e.Student.FullName);
-                case StudentUpdated e:
-                    return new Application.Events.StudentUpdated(e.Student.Id, e.Student.FullName);
-                case StudentStateChanged e:
-                    return new Application.Events.StudentStateChanged(e.Student.Id, e.Student.FullName,
-                        e.Student.State.ToString().ToLowerInvariant(), e.PreviousState.ToString().ToLowerInvariant());
+                case NotificationCreated e:
+                    return new MiniSpace.Services.Notifications.Application.Events.External.NotificationCreated(
+                        e.NotificationId, e.UserId, e.Message);
+                case NotificationUpdated e:
+                    return new MiniSpace.Services.Notifications.Application.Events.External.NotificationUpdated(
+                        e.NotificationId, e.UserId, e.NewStatus);
+                case NotificationDeleted e:
+                    return new MiniSpace.Services.Notifications.Application.Events.External.NotificationDeleted(
+                        e.NotificationId);
             }
 
             return null;

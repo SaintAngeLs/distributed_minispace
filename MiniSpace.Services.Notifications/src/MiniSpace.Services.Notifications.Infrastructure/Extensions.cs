@@ -26,19 +26,19 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using MiniSpace.Services.Students.Application;
-using MiniSpace.Services.Students.Application.Commands;
-using MiniSpace.Services.Students.Application.Events.External;
-using MiniSpace.Services.Students.Application.Events.External.Handlers;
-using MiniSpace.Services.Students.Application.Services;
-using MiniSpace.Services.Students.Core.Repositories;
-using MiniSpace.Services.Students.Infrastructure.Contexts;
-using MiniSpace.Services.Students.Infrastructure.Decorators;
-using MiniSpace.Services.Students.Infrastructure.Exceptions;
-using MiniSpace.Services.Students.Infrastructure.Logging;
-using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
-using MiniSpace.Services.Students.Infrastructure.Services;
+using MiniSpace.Services.Notifications.Application;
+using MiniSpace.Services.Notifications.Application.Commands;
+using MiniSpace.Services.Notifications.Application.Events.External;
+using MiniSpace.Services.Notifications.Application.Events.External.Handlers;
+using MiniSpace.Services.Notifications.Application.Services;
+using MiniSpace.Services.Notifications.Core.Repositories;
+using MiniSpace.Services.Notifications.Infrastructure.Contexts;
+using MiniSpace.Services.Notifications.Infrastructure.Decorators;
+using MiniSpace.Services.Notifications.Infrastructure.Exceptions;
+using MiniSpace.Services.Notifications.Infrastructure.Logging;
+using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Notifications.Infrastructure.Services;
 
 namespace MiniSpace.Services.Students.Infrastructure
 {

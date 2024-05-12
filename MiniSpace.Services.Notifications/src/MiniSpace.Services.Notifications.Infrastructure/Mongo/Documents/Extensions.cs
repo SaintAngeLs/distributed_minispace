@@ -1,7 +1,7 @@
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Core.Entities;
 
-namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
+namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {

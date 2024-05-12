@@ -1,15 +1,15 @@
 using Convey;
 using Convey.Logging.CQRS;
 using Microsoft.Extensions.DependencyInjection;
-using MiniSpace.Services.Students.Application.Commands;
+using MiniSpace.Services.Notifications.Application.Commands;
 
-namespace MiniSpace.Services.Students.Infrastructure.Logging
+namespace MiniSpace.Services.Notifications.Infrastructure.Logging
 {
     internal static class Extensions
     {
         public static IConveyBuilder AddHandlersLogging(this IConveyBuilder builder)
         {
-            var assembly = typeof(UpdateStudent).Assembly;
+            var assembly = typeof(UpdateNotificationStatus).Assembly;
             
             builder.Services.AddSingleton<IMessageToLogTemplateMapper>(new MessageToLogTemplateMapper());
             
