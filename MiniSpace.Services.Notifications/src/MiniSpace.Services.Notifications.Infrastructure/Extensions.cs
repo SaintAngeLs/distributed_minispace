@@ -39,6 +39,7 @@ using MiniSpace.Services.Notifications.Infrastructure.Logging;
 using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Notifications.Infrastructure.Services;
+using MiniSpace.Services.Notifications.Infrastructure;
 
 namespace MiniSpace.Services.Students.Infrastructure
 {
@@ -46,7 +47,7 @@ namespace MiniSpace.Services.Students.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -70,7 +71,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<NotificationDocument, Guid>("notifications")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -86,17 +87,12 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<UpdateStudent>()
-                .SubscribeCommand<DeleteStudent>()
-                .SubscribeCommand<CompleteStudentRegistration>()
-                .SubscribeCommand<ChangeStudentState>()
-                .SubscribeEvent<SignedUp>()
-                .SubscribeEvent<StudentShowedInterestInEvent>()
-                .SubscribeEvent<StudentSignedUpToEvent>()
-                .SubscribeEvent<UserBanned>()
-                .SubscribeEvent<UserUnbanned>()
-                .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>();
+                .SubscribeCommand<CreateNotification>()
+                .SubscribeCommand<DeleteNotification>()
+                .SubscribeCommand<UpdateNotificationStatus>()
+                .SubscribeEvent<NotificationCreated>()
+                .SubscribeEvent<NotificationDeleted>()
+                .SubscribeEvent<NotificationUpdated>();
 
             return app;
         }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
 using MiniSpace.Services.Notifications.Application.Services;
+using MiniSpace.Services.Students.Infrastructure;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Services
 {

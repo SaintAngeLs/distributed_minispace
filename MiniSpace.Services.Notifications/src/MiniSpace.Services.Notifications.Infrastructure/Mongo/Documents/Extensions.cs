@@ -1,55 +1,41 @@
-using MiniSpace.Services.Students.Application.Dto;
-using MiniSpace.Services.Students.Core.Entities;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Core.Entities;
+using System;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.Email, document.CreatedAt, document.FirstName,
-                document.LastName, document.NumberOfFriends, document.ProfileImage,
-                document.Description, document.DateOfBirth, document.EmailNotifications,
-                document.IsBanned, document.IsOrganizer, document.State,
-                document.InterestedInEvents, document.SignedUpEvents);
+        // Converts a NotificationDocument to its domain entity equivalent
+        public static Notification AsEntity(this NotificationDocument document)
+            => new Notification(
+                document.NotificationId,
+                document.UserId,
+                document.Message,
+                Enum.Parse<NotificationStatus>(document.Status, true),
+                document.CreatedAt,
+                document.UpdatedAt);
 
-        public static StudentDocument AsDocument(this Student entity)
-            => new StudentDocument()
+        public static NotificationDocument AsDocument(this Notification entity)
+            => new NotificationDocument
             {
-                Id = entity.Id,
-                Email = entity.Email,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                NumberOfFriends = entity.NumberOfFriends,
-                ProfileImage = entity.ProfileImage,
-                Description = entity.Description,
-                DateOfBirth = entity.DateOfBirth,
-                EmailNotifications = entity.EmailNotifications,
-                IsBanned = entity.IsBanned,
-                IsOrganizer = entity.IsOrganizer,
-                State = entity.State,
+                NotificationId = entity.NotificationId,
+                UserId = entity.UserId,
+                Message = entity.Message,
+                Status = entity.Status.ToString(),
                 CreatedAt = entity.CreatedAt,
-                InterestedInEvents = entity.InterestedInEvents,
-                SignedUpEvents = entity.SignedUpEvents
+                UpdatedAt = entity.UpdatedAt
             };
 
-        public static StudentDto AsDto(this StudentDocument document)
-            => new StudentDto()
+        public static NotificationDto AsDto(this NotificationDocument document)
+            => new NotificationDto
             {
-                Id = document.Id,
-                Email = document.Email,
-                FirstName = document.FirstName,
-                LastName = document.LastName,
-                NumberOfFriends = document.NumberOfFriends,
-                ProfileImage = document.ProfileImage,
-                Description = document.Description,
-                DateOfBirth = document.DateOfBirth,
-                EmailNotifications = document.EmailNotifications,
-                IsBanned = document.IsBanned,
-                IsOrganizer = document.IsOrganizer,
-                State = document.State.ToString().ToLowerInvariant(),
+                NotificationId = document.NotificationId,
+                UserId = document.UserId,
+                Message = document.Message,
+                Status = document.Status,
                 CreatedAt = document.CreatedAt,
-                InterestedInEvents = document.InterestedInEvents,
-                SignedUpEvents = document.SignedUpEvents
+                UpdatedAt = document.UpdatedAt
             };
     }    
 }

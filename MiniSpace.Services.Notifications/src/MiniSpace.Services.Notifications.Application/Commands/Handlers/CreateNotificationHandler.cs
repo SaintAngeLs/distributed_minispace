@@ -20,7 +20,14 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
         public async Task HandleAsync(CreateNotification command, CancellationToken cancellationToken = default)
         {
-            var notification = new Notification(command.NotificationId, command.UserId, command.Message);
+            var notification = new Notification(
+                command.NotificationId, 
+                command.UserId, 
+                command.Message, 
+                NotificationStatus.Unread,
+                DateTime.UtcNow, 
+                null
+            );
             await _notificationRepository.AddAsync(notification);
 
             var events = _eventMapper.MapAll(notification.Events);
