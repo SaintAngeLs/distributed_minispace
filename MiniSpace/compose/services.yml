@@ -38,7 +38,52 @@ services:
       - 5008:80
     networks:
       - minispace
-    
+
+  comments-service:
+    image: adrianvsaint/minispace.services.comments:latest
+    container_name: comments-service
+    restart: unless-stopped
+    ports:
+      - 5009:80
+    networks:
+      - minispace
+
+  reactions-service:
+    image: adrianvsaint/minispace.services.reactions:latest
+    container_name: reactions-service
+    restart: unless-stopped
+    ports:
+      - 5010:80
+    networks:
+      - minispace
+
+  friends-service:
+    image: adrianvsaint/minispace.services.friends:latest
+    container_name: friends-service
+    restart: unless-stopped
+    ports:
+      - 5012:80
+    networks:
+      - minispace
+
+  posts-service:
+    image: adrianvsaint/minispace.services.posts:latest
+    container_name: posts-service
+    restart: unless-stopped
+    ports:
+      - 5013:80
+    networks:
+      - minispace
+
+  organizations-service:
+    image: adrianvsaint/minispace.services.organizations:latest
+    container_name: organizations-service
+    restart: unless-stopped
+    ports:
+      - 5015:80
+    networks:
+      - minispace
+  
   web:
     image: adrianvsaint/minispace.web:latest
     container_name: web
