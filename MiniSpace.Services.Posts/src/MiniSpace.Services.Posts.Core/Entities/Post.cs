@@ -7,20 +7,20 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public Guid EventId { get; private set; }
         public Guid OrganizerId { get; private set; }
         public string TextContent { get; private set; }
-        public string MediaContent { get; private set; }
+        public IEnumerable<Guid> MediaFiles { get; private set; }
         public State State { get; private set; }
         public DateTime? PublishDate { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         
-        public Post(Guid id, Guid eventId, Guid organizerId, string textContent,
-            string mediaContent, DateTime createdAt, State state, DateTime? publishDate, DateTime? updatedAt = null)
+        public Post(Guid id, Guid eventId, Guid organizerId, string textContent, IEnumerable<Guid> mediaFiles, 
+            DateTime createdAt, State state, DateTime? publishDate, DateTime? updatedAt = null)
         {
             Id = id;
             EventId = eventId;
             OrganizerId = organizerId;
             TextContent = textContent;
-            MediaContent = mediaContent;
+            MediaFiles = mediaFiles;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
             State = state;
@@ -68,19 +68,19 @@ namespace MiniSpace.Services.Posts.Core.Entities
         }
         
         public static Post Create(AggregateId id, Guid eventId, Guid studentId, string textContent,
-            string mediaContent, DateTime createdAt, State state, DateTime? publishDate)
+            IEnumerable<Guid> mediaFiles, DateTime createdAt, State state, DateTime? publishDate)
         {
             CheckTextContent(id, textContent);
             
-            return new Post(id, eventId, studentId, textContent, mediaContent, createdAt, state, publishDate);
+            return new Post(id, eventId, studentId, textContent, mediaFiles, createdAt, state, publishDate);
         }
 
-        public void Update(string textContent, string mediaContent, DateTime now)
+        public void Update(string textContent, IEnumerable<Guid> mediaFiles, DateTime now)
         {
             CheckTextContent(Id, textContent);
 
             TextContent = textContent;
-            MediaContent = mediaContent;
+            MediaFiles = mediaFiles;
             UpdatedAt = now;
         }
         
