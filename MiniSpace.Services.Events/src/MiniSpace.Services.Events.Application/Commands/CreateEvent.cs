@@ -6,7 +6,7 @@ using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.Commands
 {
-    public class AddEvent : ICommand
+    public class CreateEvent : ICommand
     {
         public Guid EventId { get; }
         public string Name { get; }
@@ -27,12 +27,12 @@ namespace MiniSpace.Services.Events.Application.Commands
         public string Category { get; }
         public string PublishDate { get; }
 
-        public AddEvent(Guid eventId, string name, Guid organizerId, Guid organizationId, string startDate, 
+        public CreateEvent(Guid eventId, string name, Guid organizerId, Guid organizationId, string startDate, 
             string endDate, string buildingName, string street, string buildingNumber, string apartmentNumber, 
             string city, string zipCode, IEnumerable<Guid> mediaFiles, string description, int capacity, decimal fee, 
             string category, string publishDate)
         {
-            EventId = eventId == Guid.Empty ? Guid.NewGuid() : eventId;
+            EventId = eventId;
             Name = name;
             OrganizerId = organizerId;
             OrganizationId = organizationId;

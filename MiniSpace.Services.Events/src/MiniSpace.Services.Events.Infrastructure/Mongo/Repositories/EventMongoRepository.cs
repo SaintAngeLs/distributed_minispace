@@ -86,5 +86,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         public Task AddAsync(Event @event) => _repository.AddAsync(@event.AsDocument());
         public Task UpdateAsync(Event @event) => _repository.UpdateAsync(@event.AsDocument());
         public Task DeleteAsync(Guid id) => _repository.DeleteAsync(id);
+        public Task<bool> ExistsAsync(Guid id) => _repository.ExistsAsync(e => e.Id == id);
     }
 }

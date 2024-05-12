@@ -13,6 +13,7 @@ namespace MiniSpace.Services.Events.Core.Repositories
         Task AddAsync(Event @event);
         Task UpdateAsync(Event @event);
         Task DeleteAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
         Task<(IEnumerable<Event> events, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseEventsAsync(
             int pageNumber, int pageSize, string name, string organizer, DateTime dateFrom, DateTime dateTo, 
             Category? category, State? state, IEnumerable<Guid> friends,  EventEngagementType? friendsEngagementType,
