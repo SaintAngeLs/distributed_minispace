@@ -14,7 +14,7 @@
                         <RadzenTextBox @bind-Value="@TempSearchOrganizerEventsModel.Name" />
                     </RadzenFormField>
                     <RadzenFormField Text="Start date" Variant="Variant.Outlined">
-                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateFrom" DateFormat="dd/MM/yyyy HH:mm"/>
+                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateFrom" DateFormat="dd/MM/yyyy HH:mm" />
                     </RadzenFormField>
                     <RadzenFormField Text="Results on page" Variant="Variant.Outlined">
                         <RadzenNumeric @bind-Value="@TempSearchOrganizerEventsModel.Pageable.Size" />
@@ -27,10 +27,11 @@
                          <RadzenDropDown Data=@states @bind-Value="@TempSearchOrganizerEventsModel.State" />
                      </RadzenFormField>
                     <RadzenFormField Text="End date" Variant="Variant.Outlined">
-                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateTo" DateFormat="dd/MM/yyyy HH:mm"/>
+                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateTo" DateFormat="dd/MM/yyyy HH:mm" />
                     </RadzenFormField>
                     <RadzenFormField Text="Sort direction" Variant="Variant.Outlined">
-                        <RadzenDropDown Data=@directions @bind-Value="@TempSearchOrganizerEventsModel.Pageable.Sort.Direction"/>
+                        <RadzenDropDown Data=@directions @bind-Value="@TempSearchOrganizerEventsModel.Pageable.Sort.Direction"
+                                        TextProperty="Key" ValueProperty="Value" />
                     </RadzenFormField>
                 </RadzenStack>
             </RadzenColumn>
@@ -57,7 +58,6 @@
 
     private SearchOrganizerEventsModel TempSearchOrganizerEventsModel { get; set; }
     
-
     private List<string> states = 
     [
         "",
@@ -65,10 +65,18 @@
         "Archived"
     ];
     
-    private List<string> directions =
+    private List<KeyValuePair<string, string>> directions =
     [
-        "Ascending",
-        "Descending"
+        new KeyValuePair<string, string>("Descending", "des"),
+        new KeyValuePair<string, string>("Ascending", "asc")
+    ];
+
+    private List<KeyValuePair<string, string>> sortParameters =
+    [
+        new KeyValuePair<string, string>("Name", "name"),
+        new KeyValuePair<string, string>("Description", "description"),
+        new KeyValuePair<string, string>("Start date", "startDate"),
+        new KeyValuePair<string, string>("End date", "endDate"),
     ];
     
     protected override async Task OnInitializedAsync()
