@@ -14,7 +14,7 @@
                         <RadzenTextBox @bind-Value="@TempSearchOrganizerEventsModel.Name" />
                     </RadzenFormField>
                     <RadzenFormField Text="Start date" Variant="Variant.Outlined">
-                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateFrom"/>
+                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateFrom" DateFormat="dd/MM/yyyy HH:mm"/>
                     </RadzenFormField>
                     <RadzenFormField Text="Results on page" Variant="Variant.Outlined">
                         <RadzenNumeric @bind-Value="@TempSearchOrganizerEventsModel.Pageable.Size" />
@@ -27,7 +27,7 @@
                          <RadzenDropDown Data=@states @bind-Value="@TempSearchOrganizerEventsModel.State" />
                      </RadzenFormField>
                     <RadzenFormField Text="End date" Variant="Variant.Outlined">
-                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateTo"/>
+                        <RadzenDatePicker @bind-Value="@TempSearchOrganizerEventsModel.DateTo" DateFormat="dd/MM/yyyy HH:mm"/>
                     </RadzenFormField>
                     <RadzenFormField Text="Sort direction" Variant="Variant.Outlined">
                         <RadzenDropDown Data=@directions @bind-Value="@TempSearchOrganizerEventsModel.Pageable.Sort.Direction"/>
@@ -62,7 +62,6 @@
     [
         "",
         "Published",
-        "Cancelled",
         "Archived"
     ];
     
