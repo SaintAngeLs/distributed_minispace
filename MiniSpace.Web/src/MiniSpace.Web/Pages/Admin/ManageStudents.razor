@@ -70,7 +70,8 @@
         {
             adminId = IdentityService.GetCurrentUserId();
             
-            students = await StudentsService.GetStudentsAsync();
+            var paginatedResponse = await StudentsService.GetStudentsAsync();
+            students = paginatedResponse.Results;
             totalStudents = students.Count();
         }
         
