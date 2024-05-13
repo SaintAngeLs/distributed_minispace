@@ -99,7 +99,7 @@
         var response = await PostsService.CreatePostAsync(Guid.Empty, createPostModel.EventId,
             createPostModel.OrganizerId, createPostModel.TextContent, createPostModel.MediaContent,
             publishInfo == 2 ? "ToBePublished" : "Published",
-            publishInfo == 2 ? createPostModel.PublishDate : null);
+            publishInfo == 2 ? createPostModel.PublishDate.ToUniversalTime() : null);
         
         if (response.ErrorMessage != null)
         {

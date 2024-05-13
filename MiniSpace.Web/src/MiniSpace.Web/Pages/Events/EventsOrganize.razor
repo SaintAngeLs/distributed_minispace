@@ -20,8 +20,8 @@
 <div class="rz-p-8">
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Size="ButtonSize.Medium" Text="Add new event" ButtonStyle="ButtonStyle.Secondary"
-                          Click="@(() => NavigationManager.NavigateTo("/events/add"))"/>
+            <RadzenButton Size="ButtonSize.Medium" Text="Create new event" ButtonStyle="ButtonStyle.Secondary"
+                          Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
             <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
         </RadzenStack>
     </RadzenStack>
@@ -121,8 +121,8 @@
         
             var tmp = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
                 searchOrganizerEventsModel.Name, searchOrganizerEventsModel.State,
-                searchOrganizerEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                searchOrganizerEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                searchOrganizerEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                searchOrganizerEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                 searchOrganizerEventsModel.Pageable);
             if (tmp.Content != null)
             {
@@ -147,8 +147,8 @@
         
         var tmp = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
             searchOrganizerEventsModel.Name, searchOrganizerEventsModel.State,
-            searchOrganizerEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchOrganizerEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchOrganizerEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchOrganizerEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchOrganizerEventsModel.Pageable);
         events = tmp.Content.Content;
         StateHasChanged();

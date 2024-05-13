@@ -113,8 +113,8 @@
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
             searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
             searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
-            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
         if (tmp.Content != null)
         {
@@ -139,8 +139,8 @@
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
             searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
             searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
-            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
         events = tmp.Content.Content;
         StateHasChanged();

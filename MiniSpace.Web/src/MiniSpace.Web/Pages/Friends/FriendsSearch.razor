@@ -68,9 +68,9 @@
                             <li><strong>Email:</strong> @student?.Email</li>
                             <li><strong>Description:</strong> @student?.Description</li>
                             <li><strong>Number of Friends:</strong> @student?.NumberOfFriends</li>
-                            <li><strong>Date of Birth:</strong> @student?.DateOfBirth.ToString("yyyy-MM-dd")</li>
+                            <li><strong>Date of Birth:</strong> @student?.DateOfBirth.ToLocalTime().ToString("yyyy-MM-dd")</li>
                             <li><strong>State:</strong> @student?.State</li>
-                            <li><strong>Created At:</strong> @student?.CreatedAt.ToString("yyyy-MM-dd")</li>
+                            <li><strong>Created At:</strong> @student?.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</li>
                         </ul>
                         @if (!sentRequests.Any(r => r.InviteeId == student.Id))
                             {
