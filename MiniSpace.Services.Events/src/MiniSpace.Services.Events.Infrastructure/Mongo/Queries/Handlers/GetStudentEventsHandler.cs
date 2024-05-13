@@ -21,13 +21,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
     {
         private readonly IEventRepository _eventRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IEventValidator _eventValidator;
         private readonly IAppContext _appContext;
         
         public GetStudentEventsHandler(IEventRepository eventRepository, 
-            IStudentsServiceClient studentsServiceClient, IAppContext appContext)
+            IStudentsServiceClient studentsServiceClient, IEventValidator eventValidator, IAppContext appContext)
         {
             _eventRepository = eventRepository;
             _studentsServiceClient = studentsServiceClient;
+            _eventValidator = eventValidator;
             _appContext = appContext;
         }
 
@@ -40,14 +42,20 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                     1, query.NumberOfResults, 0, 0);
             }
             
-            var studentEvents = await _studentsServiceClient.GetAsync(query.StudentId);
-            var studentEventIds = studentEvents.InterestedInEvents.Union(studentEvents.SignedUpEvents).ToList();
+            var engagementType = _eventValidator.ParseEngagementType(query.EngagementType);
             
-            var result = await _eventRepository.BrowseEventsAsync(query.Page, query.NumberOfResults,
-                string.Empty, string.Empty, DateTime.MinValue, DateTime.MinValue, null, null,
-                Enumerable.Empty<Guid>(), null, Enumerable.Empty<string>(), "asc", studentEventIds);
+            var studentEvents = await _studentsServiceClient.GetAsync(query.StudentId);
+            var studentEventIds = engagementType switch
+            {
+                EventEngagementType.SignedUp => studentEvents.SignedUpEvents.ToList(),
+                EventEngagementType.InterestedIn => studentEvents.InterestedInEvents.ToList(),
+                _ => []
+            };
+            
+            var result = await _eventRepository.BrowseStudentEventsAsync(query.Page, 
+                query.NumberOfResults, studentEventIds, Enumerable.Empty<string>(), "asc");
 
-            return new PagedResponse<IEnumerable<EventDto>>(result.Item1.Select(e => new EventDto(e, identity.Id)), 
+            return new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, identity.Id)), 
                 result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
         }
     }
