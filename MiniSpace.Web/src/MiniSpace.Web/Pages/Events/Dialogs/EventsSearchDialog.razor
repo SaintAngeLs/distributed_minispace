@@ -42,7 +42,26 @@
                 </RadzenStack>
             </RadzenColumn>
         </RadzenRow>
-            
+
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenPickList @bind-Source="@notSelectedSortParams" @bind-Target="@selectedSortParams" Style="height: 180px; width: 100%;"
+                                Orientation="@Orientation.Horizontal" TextProperty="Key" AllowFiltering="false" Multiple="false"
+                                ShowHeader="true" ButtonGap="12px" ButtonJustifyContent="JustifyContent.Center"
+                                ButtonStyle="@ButtonStyle.Secondary" ButtonSize="@ButtonSize.Medium" ButtonVariant="Variant.Outlined">
+                    <SourceHeader>
+                        Not selected parameters:
+                    </SourceHeader>
+                    <TargetHeader>
+                        Sorting parameters (order important):
+                    </TargetHeader>
+                    <Template>
+                        @context.Key
+                    </Template>
+                </RadzenPickList>
+            </RadzenColumn>
+        </RadzenRow>
+        
         <RadzenRow AlignItems="AlignItems.Center">
             <RadzenColumn Size="12" SizeMD="12">
                 
@@ -92,18 +111,33 @@
         new KeyValuePair<string, string>("Ascending", "asc")
     ];
 
-    private List<KeyValuePair<string, string>> sortParameters =
+    private List<KeyValuePair<string, string>> initialSortParams =
     [
         new KeyValuePair<string, string>("Name", "name"),
-        new KeyValuePair<string, string>("Description", "description"),
+        new KeyValuePair<string, string>("Capacity", "capacity"),
         new KeyValuePair<string, string>("Start date", "startDate"),
         new KeyValuePair<string, string>("End date", "endDate"),
     ];
+    
+    private IEnumerable<KeyValuePair<string, string>> notSelectedSortParams = [];
+    private IEnumerable<KeyValuePair<string, string>> selectedSortParams = [];
     
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         TempSearchEventsModel = SearchEventsModel.DeepClone();
+        
+        List<KeyValuePair<string, string>> selectedTmp = new();
+        
+        foreach (var value in TempSearchEventsModel.Pageable.Sort.SortBy)
+        {
+            var element = initialSortParams.FirstOrDefault(sortParam => sortParam.Value == value);
+            initialSortParams.Remove(element);
+            selectedTmp.Add(element);
+        }
+
+        notSelectedSortParams = initialSortParams;
+        selectedSortParams = selectedTmp;
     }
     
     private void HandleFiltering()
@@ -115,6 +149,8 @@
         SearchEventsModel.DateFrom = TempSearchEventsModel.DateFrom;
         SearchEventsModel.DateTo = TempSearchEventsModel.DateTo;
         SearchEventsModel.Pageable = TempSearchEventsModel.Pageable.DeepClone();
+        SearchEventsModel.Pageable.Sort.SortBy = selectedSortParams != null
+            ? selectedSortParams.Select(sortParam => sortParam.Value) : [];
         
         DialogService.Close(true);
     }
