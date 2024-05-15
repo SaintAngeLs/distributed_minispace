@@ -10,9 +10,5 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
         public Guid InviteeId { get; set; }
         public DateTime RequestedAt { get; set; }
         public FriendState State { get; set; }
-        public string InviterFullName { get; set; }
-        public string InviterEmail { get; set; }
-        public string InviteeFullName { get; set; }
-        public string InviteeEmail { get; set; }
-    }  
+    }    
 }

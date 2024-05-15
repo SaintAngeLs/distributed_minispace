@@ -9,8 +9,6 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
          public static Friend AsEntity(this FriendDocument document)
             => new Friend(document.StudentId, document.FriendId, document.CreatedAt, document.State);
 
-
-
          public static FriendDocument AsDocument(this Friend entity)
             => new FriendDocument
             {
@@ -48,7 +46,6 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
             {
                 throw new InvalidOperationException("FriendRequest.Id must be initialized.");
             }
-            Console.WriteLine($"******************************************************Friend request state {entity.State}");
             return new FriendRequestDocument
             {
                 Id = entity.Id,

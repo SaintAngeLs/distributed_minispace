@@ -15,11 +15,25 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
             _friendRepository = friendRepository;
         }
 
-        public async Task<IEnumerable<FriendDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
+         public async Task<IEnumerable<FriendDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
         {
-            var documents = await _friendRepository.FindAsync(p => p.StudentId == query.StudentId);
+            var documents = await _friendRepository.FindAsync(
+                doc => doc.StudentId == query.StudentId || doc.FriendId == query.StudentId);
 
-            return documents.Select(doc => doc.AsDto());
+            return documents.Select(doc => 
+            {
+                if (doc.StudentId == query.StudentId) {
+                    return doc.AsDto();
+                } else {
+                    return new FriendDto {
+                        Id = doc.Id,
+                        StudentId = doc.FriendId, 
+                        FriendId = doc.StudentId,
+                        CreatedAt = doc.CreatedAt,
+                        State = doc.State,
+                    };
+                }
+            });
         }
     }
 }
