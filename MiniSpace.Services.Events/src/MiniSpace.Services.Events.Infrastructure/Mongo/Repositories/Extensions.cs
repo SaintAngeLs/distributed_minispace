@@ -58,11 +58,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 
             return (totalPages, (int)count, data);
         }
-        
-        public static FilterDefinition<EventDocument> ToFilterDefinition(string name, DateTime dateFrom, 
-            DateTime dateTo, IEnumerable<Guid> eventIds = null)
+
+        public static FilterDefinition<EventDocument> CreateFilterDefinition()
         {
-            var filterDefinition = FilterDefinitionBuilder.Empty;
+            return FilterDefinitionBuilder.Empty;
+        }
+        
+        public static FilterDefinition<EventDocument> ToFilterDefinition(string name, DateTime dateFrom, DateTime dateTo)
+        {
+            var filterDefinition = CreateFilterDefinition();
 
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -78,11 +82,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             if (dateTo != DateTime.MinValue)
             {
                 filterDefinition &= FilterDefinitionBuilder.Lte(x => x.EndDate, dateTo);
-            }
-
-            if (eventIds != null)
-            {
-                filterDefinition &= FilterDefinitionBuilder.In(x => x.Id, eventIds);
             }
 
             return filterDefinition;
@@ -162,6 +161,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 filterDefinition &= FilterDefinitionBuilder.Or(interestedFilter, signedUpFilter);
             }
 
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<EventDocument> AddEventIdFilter(this FilterDefinition<EventDocument> filterDefinition,
+            IEnumerable<Guid> eventIds)
+        {
+            filterDefinition &= FilterDefinitionBuilder.In(x => x.Id, eventIds);
             return filterDefinition;
         }
         

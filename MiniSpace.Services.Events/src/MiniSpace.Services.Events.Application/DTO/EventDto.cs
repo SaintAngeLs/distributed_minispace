@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public DateTime UpdatedAt { get; set; }
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
-        public bool HasRated { get; set; }
+        public int? StudentRating { get; set; }
         public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
         public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
         
@@ -52,7 +52,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             PublishDate = @event.PublishDate;
             IsSignedUp = @event.SignedUpStudents.Any(x => x.StudentId == studentId);
             IsInterested = @event.InterestedStudents.Any(x => x.StudentId == studentId);
-            HasRated = @event.Ratings.Any(x => x.StudentId == studentId);
+            StudentRating = @event.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value;
             FriendsInterestedIn = Enumerable.Empty<ParticipantDto>();
             FriendsSignedUp = Enumerable.Empty<ParticipantDto>();
         }
