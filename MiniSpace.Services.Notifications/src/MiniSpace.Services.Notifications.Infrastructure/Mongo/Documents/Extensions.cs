@@ -6,7 +6,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        // Converts a NotificationDocument to its domain entity equivalent
         public static Notification AsEntity(this NotificationDocument document)
             => new Notification(
                 document.NotificationId,

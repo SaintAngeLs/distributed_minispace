@@ -72,6 +72,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<NotificationDocument, Guid>("notifications")
+                .AddMongoRepository<FriendEventDocument, Guid>("friend-service");
+                .AddMongoRepository<FriendEventDocument, Guid>("events-service");
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
