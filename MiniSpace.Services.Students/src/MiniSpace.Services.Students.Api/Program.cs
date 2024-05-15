@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Convey;
+using Convey.CQRS.Queries;
 using Convey.Logging;
 using Convey.Types;
 using Convey.WebApi;
@@ -31,7 +32,8 @@ namespace MiniSpace.Services.Students.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Get<GetStudents, IEnumerable<StudentDto>>("students")
+                        // .Get<GetStudents, IEnumerable<StudentDto>>("students")
+                        .Get<GetStudents, Application.Queries.PagedResult<StudentDto>>("students")
                         .Get<GetStudent, StudentDto>("students/{studentId}")
                         .Put<UpdateStudent>("students/{studentId}")
                         .Delete<DeleteStudent>("students/{studentId}")

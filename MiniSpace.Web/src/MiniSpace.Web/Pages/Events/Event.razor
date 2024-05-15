@@ -1,10 +1,8 @@
 @page "/events/{EventId}"
-@using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Events
-@using MiniSpace.Web.Areas.Posts
-@using MiniSpace.Web.Pages.Admin.Dialogs
 @using MiniSpace.Web.Pages.Events.Dialogs
+@using MiniSpace.Web.Areas.Posts
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -12,135 +10,160 @@
 @using Orientation = Radzen.Orientation
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
-@inject IStudentsService StudentsService
 @inject IEventsService EventsService
 @inject IPostsService PostsService
 @inject NavigationManager NavigationManager
 
-<h1>@ev.Name</h1>
+@if (!pageInitialized)
+{
+    <h3 class="rz-p-12">Loading...</h3>
+}
 
-<RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
-    <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-p-4">
-            <RadzenStack Gap="0">
-                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Description</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
-                @if (ev.Organizer != null)
+@if (pageInitialized)
+{
+    <h1>@ev.Name</h1>
+
+    <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
+        <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-p-4">
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Description</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
+                    @if (ev.Organizer != null)
+                    {
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.OrganizationName)</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Organizer</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.Name)</b></RadzenText>
+                    }
+                </RadzenStack>
+            </RadzenStack>
+            <RadzenCard class="rz-background-color-secondary rz-shadow-0 rz-border-radius-0 rz-p-8">
+                <RadzenRow RowGap="0">
+                    <RadzenColumn SizeSM="6">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Category</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.Category)</b></RadzenText>                    
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="6">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">End date</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Fee</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.Fee)</b></RadzenText>                    
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenCard>
+        </RadzenCard>
+        
+        <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                <RadzenButton Size="ButtonSize.Medium" Text="Show full details" ButtonStyle="ButtonStyle.Primary"
+                              Click="@(() => OpenEventDetailsDialog(ev))" />
+                <RadzenButton Size="ButtonSize.Medium" Text="Report event" ButtonStyle="ButtonStyle.Primary"
+                />
+            </RadzenStack>
+            
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev)
+                     && (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
                 {
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.OrganizationName)</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Organizer</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.Name)</b></RadzenText>
+                    @if (!ev.IsSignedUp)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" ButtonStyle="ButtonStyle.Secondary"
+                                      Click="@(() => SignUpToEvent(ev))"/>
+                    }
+                    else
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" ButtonStyle="ButtonStyle.Warning"
+                                      Click="@(() => CancelSignUpToEvent(ev))"/>
+                    }
+                    
+                    @if (!ev.IsInterested)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Interest in event" ButtonStyle="ButtonStyle.Secondary"
+                                      Click="@(() => ShowInterestInEvent(ev))"/>
+                    }
+                    else
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" ButtonStyle="ButtonStyle.Warning"
+                                      Click="@(() => CancelInterestInEvent(ev))"/>
+                    }
                 }
             </RadzenStack>
-        </RadzenStack>
-        <RadzenCard class="rz-background-color-secondary rz-shadow-0 rz-border-radius-0 rz-p-8">
-            <RadzenRow RowGap="0">
-                <RadzenColumn SizeSM="6">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Category</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.Category)</b></RadzenText>                    
-                </RadzenColumn>
-                <RadzenColumn SizeSM="6">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">End date</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Fee</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.Fee)</b></RadzenText>                    
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenCard>
-    </RadzenCard>
-    
-    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Size="ButtonSize.Medium" Text="Show full details" ButtonStyle="ButtonStyle.Primary"
-                          Click="@(() => OpenEventDetailsDialog(ev))" />
-            <RadzenButton Size="ButtonSize.Medium" Text="Report event" ButtonStyle="ButtonStyle.Primary"
-            />
-        </RadzenStack>
-        
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            @if (IdentityService.IsAuthenticated
-                 && (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
+
+            @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
             {
-                @if (!ev.IsSignedUp)
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => SignUpToEvent(ev))"/>
-                }
-                else
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => CancelSignUpToEvent(ev))"/>
-                }
-                
-                @if (!ev.IsInterested)
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Interest in event" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => ShowInterestInEvent(ev))"/>
-                }
-                else
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => CancelInterestInEvent(ev))"/>
-                }
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                    <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/update"))" />
+                    <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning" />
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                    <RadzenButton Size="ButtonSize.Medium" Text="Create new post" ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" />
+                </RadzenStack>   
             }
         </RadzenStack>
         
-        @* <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem"> *@
-        @*     @if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer" && studentId == ev.Organizer.Id) *@
-        @*     { *@
-        @*         <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary" /> *@
-        @*         <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning" /> *@
-        @*     } *@
-        @* </RadzenStack> *@
-    </RadzenStack>
-    
-    <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
-        <Tabs>
-            <RadzenTabsItem Text="Posts">
-                @if (pageInitialized && !posts.Any())
-                {
-                    <h3>No posts have been added by organizers yet.</h3>
-                }
-                <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
-                    <Template Context="post">
-                        <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
-                                    @onclick="@(() => NavigationManager.NavigateTo($"/posts/{post.Id}"))">
-                            <RadzenRow Gap="0.5rem">
-                                <RadzenColumn Size="12" class="rz-text-truncate">
-                                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                                    Text=@($"{GetStudentName(post.StudentId)}")/>
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                            Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+            <Tabs>
+                <RadzenTabsItem Text="Posts">
+                    @if (pageInitialized && !posts.Any())
+                    {
+                        <h3>No posts have been added by organizers yet.</h3>
+                    }
+                    <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
+                        <Template Context="post">
+                            <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
+                                        @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{GetAuthorName(post.OrganizerId)}"))">
+                                <RadzenRow Gap="0.5rem">
+                                    <RadzenColumn Size="12" class="rz-text-truncate">
+                                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                                        Text=@($"{GetAuthorName(post.OrganizerId)}")/>
+                                            @if (post.UpdatedAt != null)
+                                            {
+                                                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                                                </RadzenText>   
+                                            }
+                                            else
+                                            {
+                                                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                                    Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                                                </RadzenText>   
+                                            }
+                                        </RadzenStack>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                                    <RadzenStack Gap="1em">
+                                        <RadzenStack></RadzenStack>
+                                        <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
+                                            <strong>@(post.TextContent)</strong>
                                         </RadzenText>
                                     </RadzenStack>
-                                </RadzenColumn>
-                            </RadzenRow>
-                            <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
-                                <RadzenStack Gap="1em">
-                                    <RadzenStack></RadzenStack>
-                                    <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
-                                        <strong>@(post.TextContent)</strong>
-                                    </RadzenText>
                                 </RadzenStack>
-                            </RadzenStack>
-                        </RadzenCard>
-                    </Template>
-                </RadzenDataList>
-            </RadzenTabsItem>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenTabsItem>
 
-            <RadzenTabsItem Text="Comments">
-            </RadzenTabsItem>
+                <RadzenTabsItem Text="Comments">
+                </RadzenTabsItem>
 
-            <RadzenTabsItem Text="Interested friends">
-            </RadzenTabsItem>
-        </Tabs>
-    </RadzenTabs>
-</RadzenStack>
+                <RadzenTabsItem Text="Reactions">
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Interested friends">
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+    </RadzenStack>
+}
 
 @code {
     [Parameter]
@@ -166,9 +189,19 @@
         pageInitialized = true;
     }
 
-    private string GetStudentName(Guid studentId)
+    private string GetAuthorName(Guid authorId)
     {
-        return studentId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+        return authorId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+    }
+
+    private bool IsUserEventOrganizer(EventDto eventDto)
+    {
+        if (IdentityService.GetCurrentUserRole() != "organizer")
+        {
+            return false;
+        }
+
+        return eventDto.Organizer != null && studentId == eventDto.Organizer.Id;
     }
     
     private async void OnChange(int index)
