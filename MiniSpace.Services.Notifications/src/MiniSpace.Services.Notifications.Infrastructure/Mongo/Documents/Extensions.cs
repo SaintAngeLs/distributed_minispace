@@ -36,5 +36,44 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 CreatedAt = document.CreatedAt,
                 UpdatedAt = document.UpdatedAt
             };
+
+
+        public static FriendEvent AsEntity(this FriendEventDocument document)
+        {
+            return new FriendEvent(
+                document.Id,
+                document.EventId,
+                document.UserId,
+                document.EventType,
+                document.Details,
+                document.CreatedAt
+            );
+        }
+
+        public static FriendEventDocument AsDocument(this FriendEvent entity)
+        {
+            return new FriendEventDocument
+            {
+                Id = entity.Id,
+                EventId = entity.EventId,
+                UserId = entity.UserId,
+                EventType = entity.EventType,
+                Details = entity.Details,
+                CreatedAt = entity.CreatedAt
+            };
+        }
+
+        public static FriendEventDto AsDto(this FriendEventDocument document)
+        {
+            return new FriendEventDto
+            {
+                Id = document.Id,
+                EventId = document.EventId,
+                UserId = document.UserId,
+                EventType = document.EventType,
+                Details = document.Details,
+                CreatedAt = document.CreatedAt
+            };
+        }
     }    
 }
