@@ -22,11 +22,8 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<IEnumerable<FriendRequestDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Fetching sent friend requests for student ID: {query.StudentId}");
+            // Console.WriteLine($"Fetching sent friend requests for student ID: {query.StudentId}");
 
-            // Define options including the cancellation token
-       
-            // Assuming FindAsync only needs the filter and uses an options object for the cancellation token
             var documents = await _friendRequestRepository.FindAsync(
                 doc => doc.InviterId == query.StudentId
               
