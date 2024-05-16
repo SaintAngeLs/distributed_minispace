@@ -34,7 +34,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
             var key = message.GetType();
             if (MessageTemplates.TryGetValue(key, out var template))
             {
-                // Perform string replacement to match actual property names if necessary
                 if (template.After.Contains("{NewStatus}"))
                 {
                     template.After = template.After.Replace("{NewStatus}", "{Status}");

@@ -44,6 +44,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 document.Id,
                 document.EventId,
                 document.UserId,
+                document.FriendId,
                 document.EventType,
                 document.Details,
                 document.CreatedAt
@@ -57,6 +58,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 Id = entity.Id,
                 EventId = entity.EventId,
                 UserId = entity.UserId,
+                FriendId = entity.FriendId, 
                 EventType = entity.EventType,
                 Details = entity.Details,
                 CreatedAt = entity.CreatedAt

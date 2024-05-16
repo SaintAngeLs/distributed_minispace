@@ -48,6 +48,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
+            builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -72,8 +73,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<NotificationDocument, Guid>("notifications")
-                .AddMongoRepository<FriendEventDocument, Guid>("friend-service");
-                .AddMongoRepository<FriendEventDocument, Guid>("events-service");
+                .AddMongoRepository<FriendEventDocument, Guid>("friend-service")
+                // .AddMongoRepository<FriendEventDocument, Guid>("events-service")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -92,6 +93,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeCommand<CreateNotification>()
                 .SubscribeCommand<DeleteNotification>()
                 .SubscribeCommand<UpdateNotificationStatus>()
+                .SubscribeEvent<FriendRequestCreated>()
                 .SubscribeEvent<NotificationCreated>()
                 .SubscribeEvent<NotificationDeleted>()
                 .SubscribeEvent<NotificationUpdated>();
