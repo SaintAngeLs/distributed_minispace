@@ -27,6 +27,12 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
                         After = "Updated the status of notification with id: {NotificationId} to: {NewStatus}."
                     }
                 },
+                 {
+                    typeof(FriendRequestCreated), new HandlerLogTemplate
+                    {
+                        After = "New Friend request created: {NotificationId} "
+                    }
+                },
             };
         
          public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class

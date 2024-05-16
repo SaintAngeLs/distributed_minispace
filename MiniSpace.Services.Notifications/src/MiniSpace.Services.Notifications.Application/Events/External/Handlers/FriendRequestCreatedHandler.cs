@@ -1,4 +1,5 @@
 using Convey.CQRS.Events;
+using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Events;
@@ -12,16 +13,20 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly INotificationRepository _notificationRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
+        private readonly ILogger<FriendRequestCreatedHandler> _logger;
 
-        public FriendRequestCreatedHandler(IFriendEventRepository friendEventRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public FriendRequestCreatedHandler(IFriendEventRepository friendEventRepository, IEventMapper eventMapper, IMessageBroker messageBroker, ILogger<FriendRequestCreatedHandler> logger)
         {
             _friendEventRepository = friendEventRepository;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
+             _logger = logger;
         }
 
         public async Task HandleAsync(FriendRequestCreated friendEvent, CancellationToken cancellationToken)
         {
+             _logger.LogInformation($"Received FriendRequestCreated event: RequesterId={friendEvent.RequesterId}, FriendId={friendEvent.FriendId}");
+             Console.WriteLine("**************************************************************************************************************");
             var newFriendEvent = new FriendEvent(
                 id: Guid.NewGuid(),
                 eventId: Guid.NewGuid(),
@@ -46,7 +51,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _messageBroker.PublishAsync(friendEvent);
 
             await _notificationRepository.AddAsync(notification);
-
+  _logger.LogInformation($"Stored new friend event and notification for UserId={friendEvent.RequesterId}");
             var notificationCreated = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
@@ -55,6 +60,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             await _messageBroker.PublishAsync(notificationCreated);
+              _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
         }
     }
 }
