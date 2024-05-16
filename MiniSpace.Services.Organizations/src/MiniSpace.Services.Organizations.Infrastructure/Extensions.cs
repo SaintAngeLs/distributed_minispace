@@ -88,7 +88,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<AddOrganization>()
+                .SubscribeCommand<CreateOrganization>()
                 .SubscribeCommand<AddOrganizerToOrganization>()
                 .SubscribeCommand<RemoveOrganizerFromOrganization>()
                 .SubscribeEvent<OrganizerRightsGranted>()
