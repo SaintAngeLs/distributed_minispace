@@ -4,7 +4,7 @@ using System;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
-    [Message("notifications")]
+    [Message("friends")]
     public class FriendRequestCreated : IEvent
     {
         public Guid RequesterId { get; }

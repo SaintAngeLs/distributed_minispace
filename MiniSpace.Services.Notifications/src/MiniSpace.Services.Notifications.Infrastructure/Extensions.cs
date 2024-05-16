@@ -40,6 +40,8 @@ using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Notifications.Infrastructure.Services;
 using MiniSpace.Services.Notifications.Infrastructure;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Infrastructure
 {
@@ -53,6 +55,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
+            builder.Services.AddTransient<IFriendsServiceClient, FriendsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));

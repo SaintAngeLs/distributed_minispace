@@ -21,8 +21,10 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
 
         public Task<IEnumerable<FriendDto>> GetAsync(Guid studentId)
             => _httpClient.GetAsync<IEnumerable<FriendDto>>($"{_url}/friends/{studentId}");
+        public Task<IEnumerable<FriendDto>> GetFriendsAsync(Guid studentId)
+            => _httpClient.GetAsync<IEnumerable<FriendDto>>($"{_url}/friends/{studentId}");
+        public Task<IEnumerable<FriendRequestDto>> GetRequestsAsync(Guid studentId)
+            => _httpClient.GetAsync<IEnumerable<FriendRequestDto>>($"{_url}/friends/requests/{studentId}");
 
-        // public Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync(Guid studentId)
-        //     => _httpClient.GetAsync<IEnumerable<FriendRequestDto>>($"{_url}/friends/requests/sent/{studentId}");
     }
 }

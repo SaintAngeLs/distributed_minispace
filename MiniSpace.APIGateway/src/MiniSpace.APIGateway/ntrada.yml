@@ -179,18 +179,41 @@ modules:
         method: POST
         use: downstream
         downstream: notifications-service/notifications
-        auth: true
+        auth: true 
 
       - upstream: /{userId}
         method: GET
         use: downstream
         downstream: notifications-service/notifications/{userId}
-        auth: true
+        auth: true 
+
+      - upstream: /{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/{notificationId}
+        auth: true  
+
+      - upstream: /{notificationId}
+        method: DELETE
+        use: downstream
+        downstream: notifications-service/notifications/{notificationId}
+        # afterDispatch: (cmd, ctx) => ctx.Response.NoContent() 
+        auth: true 
+
+      - upstream: /{notificationId}/status
+        method: PUT
+        use: downstream
+        downstream: notifications-service/notifications/{notificationId}/status
+        auth: true  
 
     services:
       notifications-service:
         localUrl: localhost:5006
-        url: notifications-service
+        url: notifications-service 
+
+        
+        
+
 
 
 
@@ -657,5 +680,4 @@ modules:
       organizations-service:
         localUrl: localhost:5015
         url: organizations-service
-        
-        
+

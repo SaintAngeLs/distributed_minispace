@@ -7,6 +7,7 @@ namespace MiniSpace.Services.Notifications.Application.Services.Clients
 {
     public interface IFriendsServiceClient
     {
-        Task<IEnumerable<FriendDto>> GetAsync(Guid studentId);
+        Task<IEnumerable<FriendDto>> GetFriendsAsync(Guid studentId);
+        Task<IEnumerable<FriendRequestDto>> GetRequestsAsync(Guid studentId);
     }
 }
