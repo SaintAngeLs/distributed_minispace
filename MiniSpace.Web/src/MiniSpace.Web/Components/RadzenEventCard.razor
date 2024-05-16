@@ -1,0 +1,46 @@
+@using MiniSpace.Web.DTO
+@inject NavigationManager NavigationManager
+
+<RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
+            @onclick="@(() => NavigationManager.NavigateTo($"/events/{Event.Id}"))">
+    <RadzenRow Size="12">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@(Event.Name)</b></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="5">
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Status</RadzenText>
+            @switch (Event.Status)
+            {
+                case "Published":
+                    <RadzenText TextStyle="TextStyle.Body1" Style="color: green"><b>@Event.Status</b></RadzenText>
+                    break;
+                case "Archived":
+                    <RadzenText TextStyle="TextStyle.Body1" Style="color: indianred"><b>@Event.Status</b></RadzenText>
+                    break;
+                default:
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@Event.Status</b></RadzenText>
+                    break;
+            }
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow Size="12">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Start date</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@(Event.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="5">
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">End date</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@(Event.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+        </RadzenColumn>
+    </RadzenRow>
+    <hr style="border: none; background-color: rgba(0,0,0,.2); height: 1px; margin: 1rem 0;"/>
+</RadzenCard>
+
+@code
+{
+    [Parameter]
+    public EventDto Event { get; set; }
+    
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+}
