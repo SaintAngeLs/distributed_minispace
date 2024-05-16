@@ -21,8 +21,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             => new OrganizationDto()
             {
                 Id = document.Id,
-                Name = document.Name,
-                Org
+                Name = document.Name
             };
         
         public static OrganizationDetailsDto AsDetailsDto(this OrganizationDocument document)
@@ -30,8 +29,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             {
                 Id = document.Id,
                 Name = document.Name,
-                ParentId = document.ParentId,
-                IsLeaf = document.IsLeaf,
                 Organizers = document.Organizers.Select(x => x.Id)
             };
         

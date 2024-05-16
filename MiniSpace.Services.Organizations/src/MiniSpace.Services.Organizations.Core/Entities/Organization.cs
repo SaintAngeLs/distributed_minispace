@@ -69,5 +69,26 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         
         public void AddSubOrganization(Organization organization)
             => _subOrganizations.Add(organization);
+        
+        public static List<Organization> FindOrganizations(Guid targetOrganizerId, Organization rootOrganization)
+        {
+            var organizations = new List<Organization>();
+            FindOrganizationsRecursive(targetOrganizerId, rootOrganization, organizations);
+            return organizations;
+        }
+
+        private static void FindOrganizationsRecursive(Guid targetOrganizerId, Organization currentOrganization, 
+            ICollection<Organization> organizations)
+        {
+            if (currentOrganization.Organizers.Any(x => x.Id == targetOrganizerId))
+            {
+                organizations.Add(currentOrganization);
+            }
+
+            foreach (var subOrg in currentOrganization.SubOrganizations)
+            {
+                FindOrganizationsRecursive(targetOrganizerId, subOrg, organizations);
+            }
+        }
     }
 }

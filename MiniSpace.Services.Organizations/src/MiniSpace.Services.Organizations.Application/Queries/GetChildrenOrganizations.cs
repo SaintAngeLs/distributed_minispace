@@ -6,5 +6,6 @@ namespace MiniSpace.Services.Organizations.Application.Queries
     public class GetChildrenOrganizations: IQuery<IEnumerable<OrganizationDto>>
     {
         public Guid ParentId { get; set; }
+        public Guid RootId { get; set; }
     }
 }

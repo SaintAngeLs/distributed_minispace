@@ -216,4 +216,4 @@ namespace MiniSpace.Services.Events.Core.Entities
         public bool IsOrganizer(Guid organizerId)
             => Organizer.Id == organizerId;
     }
-}
+}   
