@@ -97,7 +97,8 @@
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                     <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary"
                                   Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/update"))" />
-                    <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning" />
+                    <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning"
+                                  Click="@(() => OpenDeleteEventDialog(ev.Id))" />
                 </RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
@@ -330,6 +331,17 @@
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenDeleteEventDialog(Guid postId)
+    {
+        await DialogService.OpenAsync<DeleteEventDialog>("Are you sure? This action cannot be undone!",
+            new Dictionary<string, object>() { {"EventId", new Guid(EventId) } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "100px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }

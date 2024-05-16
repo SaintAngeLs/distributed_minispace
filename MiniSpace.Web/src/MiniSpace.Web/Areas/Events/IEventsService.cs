@@ -20,6 +20,7 @@ namespace MiniSpace.Web.Areas.Events
             string startDate, string endDate, string buildingName, string street, string buildingNumber,
             string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
             string category, string publishDate);
+        Task DeleteEventAsync(Guid eventId);
         Task SignUpToEventAsync(Guid eventId, Guid studentId);
         Task CancelSignUpToEventAsync(Guid eventId, Guid studentId);
         Task ShowInterestInEventAsync(Guid eventId, Guid studentId);

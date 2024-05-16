@@ -53,6 +53,12 @@ namespace MiniSpace.Web.Areas.Events
                 capacity, fee, category, publishDate});
         }
 
+        public Task DeleteEventAsync(Guid eventId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"events/{eventId}");
+        }
+
         public Task SignUpToEventAsync(Guid eventId, Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
