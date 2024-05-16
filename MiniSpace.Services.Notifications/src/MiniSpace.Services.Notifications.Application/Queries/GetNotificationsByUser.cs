@@ -5,9 +5,9 @@ namespace MiniSpace.Services.Notifications.Application.Queries
 {
     public class GetNotificationsByUser : IQuery<IEnumerable<NotificationDto>>
     {
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
 
-        public GetNotificationsByUser(string userId)
+        public GetNotificationsByUser(Guid userId)
         {
             UserId = userId;
         }

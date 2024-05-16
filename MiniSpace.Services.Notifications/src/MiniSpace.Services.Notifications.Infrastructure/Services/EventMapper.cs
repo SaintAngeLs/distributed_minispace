@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services
             {
                 case NotificationCreated e:
                     return new MiniSpace.Services.Notifications.Application.Events.External.NotificationCreated(
-                        e.NotificationId, e.UserId, e.Message);
+                        e.NotificationId, e.UserId, e.Message, e.CreatedAt);
                 case NotificationUpdated e:
                     return new MiniSpace.Services.Notifications.Application.Events.External.NotificationUpdated(
                         e.NotificationId, e.UserId, e.NewStatus);
