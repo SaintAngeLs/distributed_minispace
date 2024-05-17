@@ -98,7 +98,13 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeCommand<CreateNotification>()
                 .SubscribeCommand<DeleteNotification>()
                 .SubscribeCommand<UpdateNotificationStatus>()
-                .SubscribeEvent<FriendRequestCreated>();
+                .SubscribeEvent<FriendRequestCreated>()
+                // .SubscribeEvent<FriendRequestCreated>()
+                // .SubscribeEvent<FriendRequestSent>()
+                .SubscribeEvent<FriendInvited>()
+                .SubscribeEvent<FriendAdded>()
+                .SubscribeEvent<PendingFriendAccepted>()
+                .SubscribeEvent<PendingFriendDeclined>();
                 // .SubscribeEvent<NotificationCreated>()
                 // .SubscribeEvent<NotificationDeleted>()
                 // .SubscribeEvent<NotificationUpdated>();
