@@ -58,6 +58,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IFriendsServiceClient, FriendsServiceClient>();
+            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
@@ -79,6 +80,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .AddHandlersLogging()
                 .AddMongoRepository<NotificationDocument, Guid>("notifications")
                 .AddMongoRepository<FriendEventDocument, Guid>("friend-service")
+                .AddMongoRepository<StudentDocument, Guid>("students")
                 // .AddMongoRepository<FriendEventDocument, Guid>("events-service")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()

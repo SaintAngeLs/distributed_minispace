@@ -77,5 +77,34 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 CreatedAt = document.CreatedAt
             };
         }
+
+        public static Student AsEntity(this StudentDocument document)
+        {
+            return new Student(
+                document.Id,
+                document.Name,
+                document.ProfileImage
+            );
+        }
+
+        public static StudentDocument AsDocument(this Student entity)
+        {
+            return new StudentDocument
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                ProfileImage = entity.ProfileImage
+            };
+        }
+
+        public static StudentDto AsDto(this StudentDocument document)
+        {
+            return new StudentDto
+            {
+                Id = document.Id,
+                Name = document.Name,
+                ProfileImage = document.ProfileImage
+            };
+        }
     }    
 }

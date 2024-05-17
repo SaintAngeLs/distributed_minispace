@@ -4,6 +4,8 @@ using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
 using System.Collections.Generic;
 using MiniSpace.Services.Notifications.Application.Exceptions;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -12,12 +14,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                                         IEventHandler<FriendInvited>
     {
         private readonly INotificationRepository _notificationRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public FriendInvitedHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public FriendInvitedHandler(INotificationRepository notificationRepository,  IStudentsServiceClient studentsServiceClient, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _notificationRepository = notificationRepository;
+            _studentsServiceClient = studentsServiceClient;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
         }
@@ -37,11 +41,20 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(FriendInvited @event, CancellationToken cancellationToken)
         {
+            // Fetch student names based on their IDs
+            var inviter = await _studentsServiceClient.GetAsync(@event.InviterId);
+            var invitee = await _studentsServiceClient.GetAsync(@event.InviteeId);
+               Console.WriteLine("Inviter Object:");
+    Console.WriteLine(JsonSerializer.Serialize(inviter, new JsonSerializerOptions { WriteIndented = true }));
+
+
+            var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
+
             // Create a notification object based on the event details
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: @event.InviteeId, // Assuming the invitee should receive the notification
-                message: $"You have been invited by user {@event.InviterId} to be friends.",
+                message: notificationMessage,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null
@@ -50,23 +63,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             // Save the notification to the repository
             await _notificationRepository.AddAsync(notification);
 
-              // Create a new event to indicate that a notification has been created
+            // Create a new event to indicate that a notification has been created
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
-                createdAt: notification.CreatedAt 
-                // status: notification.Status
+                createdAt: notification.CreatedAt
             );
 
             // Publish the NotificationCreated event
             await _messageBroker.PublishAsync(notificationCreatedEvent);
-
-            // Optionally, if there are any other domain events resulting from this, publish them
-            // Here we can use the _messageBroker to publish any further events if required by the domain logic
-            // For instance:
-            // var additionalEvents = new[] { new NotificationEvent(notification.NotificationId, "NotificationCreated") };
-            // await _messageBroker.PublishAsync(additionalEvents);
         }
     }
 }
