@@ -609,23 +609,24 @@ modules:
         use: downstream
         downstream: organizations-service/organizations
         auth: true
+
+      - upstream: /{organizationId}/children
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children
+        auth: true
         
-      - upstream: /organizer/{organizationId}/organizer
+      - upstream: /{organizationId}/organizer
         method: POST
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer
         auth: true
         
-      - upstream: /organizer/{organizationId}/organizer/{organizerId}
+      - upstream: /{organizationId}/organizer/{organizerId}
         method: DELETE
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
         auth: true
-
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations
         
       - upstream: /{organizationId}
         method: GET
@@ -646,6 +647,11 @@ modules:
         method: GET
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children  
+
+      - upstream: /{organizationId}/children/all
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children/all  
 
       - upstream: /organizer/{organizerId}
         method: GET
