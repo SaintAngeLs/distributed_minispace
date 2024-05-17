@@ -5,6 +5,7 @@ using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Entities;
 using MiniSpace.Services.Friends.Core.Repositories;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
@@ -50,6 +51,9 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 
             // Optionally, publish an event about the friend request
             var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
+
+              string eventJson = JsonSerializer.Serialize(friendInvitedEvent);
+    Console.WriteLine($"Publishing event: {eventJson}");
             await _messageBroker.PublishAsync(friendInvitedEvent);
 
             
