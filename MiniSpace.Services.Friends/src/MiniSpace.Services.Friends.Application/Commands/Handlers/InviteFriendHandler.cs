@@ -60,19 +60,19 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             // Publish FriendInvited Event
             var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
             string friendInvitedJson = JsonSerializer.Serialize(friendInvitedEvent);
-            Console.WriteLine($"Publishing FriendInvited event: {friendInvitedJson}");
+            // Console.WriteLine($"Publishing FriendInvited event: {friendInvitedJson}");
             await _messageBroker.PublishAsync(friendInvitedEvent);
 
-            // Publish FriendRequestCreated Event
-            var friendRequestCreatedEvent = new FriendRequestCreated(command.InviterId, command.InviteeId);
-            string friendRequestCreatedJson = JsonSerializer.Serialize(friendRequestCreatedEvent);
-            Console.WriteLine($"Publishing FriendRequestCreated event: {friendRequestCreatedJson}");
-            await _messageBroker.PublishAsync(friendRequestCreatedEvent);
+            // // Publish FriendRequestCreated Event
+            // var friendRequestCreatedEvent = new FriendRequestCreated(command.InviterId, command.InviteeId);
+            // string friendRequestCreatedJson = JsonSerializer.Serialize(friendRequestCreatedEvent);
+            // // Console.WriteLine($"Publishing FriendRequestCreated event: {friendRequestCreatedJson}");
+            // await _messageBroker.PublishAsync(friendRequestCreatedEvent);
 
             // Publish FriendRequestSent Event
             var friendRequestSentEvent = new FriendRequestSent(command.InviterId, command.InviteeId);
             string friendRequestSentJson = JsonSerializer.Serialize(friendRequestSentEvent);
-            Console.WriteLine($"Publishing FriendRequestSent event: {friendRequestSentJson}");
+            // Console.WriteLine($"Publishing FriendRequestSent event: {friendRequestSentJson}");
             await _messageBroker.PublishAsync(friendRequestSentEvent);
 
             
