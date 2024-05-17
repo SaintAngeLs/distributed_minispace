@@ -36,23 +36,26 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
         }
 
         public Task AddAsync(Student student)
-        {
-            return _repository.AddAsync(student.AsDocument());
-        }
+            => _repository.AddAsync(student.AsDocument());
 
         public async Task UpdateAsync(Student student)
         {
             var filter = Builders<StudentDocument>.Filter.Eq(doc => doc.Id, student.Id);
             var update = Builders<StudentDocument>.Update
-                .Set(doc => doc.Name, student.Name)
-                .Set(doc => doc.ProfileImage, student.ProfileImage);
+                .Set(doc => doc.FirstName, student.FirstName)
+                .Set(doc => doc.LastName, student.LastName)
+                .Set(doc => doc.ProfileImage, student.ProfileImage)
+                // Ensure to update other fields as necessary
+                .Set(doc => doc.Email, student.Email)
+                .Set(doc => doc.Description, student.Description)
+                .Set(doc => doc.DateOfBirth, student.DateOfBirth)
+                .Set(doc => doc.State, student.State);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
         }
 
+
         public Task DeleteAsync(Guid id)
-        {
-            return _repository.DeleteAsync(id);
-        }
+            => _repository.DeleteAsync(id);
     }
 }
