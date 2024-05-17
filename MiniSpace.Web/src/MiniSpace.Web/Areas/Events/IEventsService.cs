@@ -11,7 +11,8 @@ namespace MiniSpace.Web.Areas.Events
     public interface IEventsService
     {
         Task<EventDto> GetEventAsync(Guid eventId);
-        Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId, int numberOfResults);
+        Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
+            string engagementType, int page, int numberOfResults);
         Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
             string startDate, string endDate, string buildingName, string street, string buildingNumber,
             string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,

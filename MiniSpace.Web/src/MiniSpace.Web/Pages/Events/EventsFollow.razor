@@ -1,0 +1,192 @@
+@page "/events/follow"
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Components
+@using MiniSpace.Web.Pages.Events.Dialogs
+@using MudBlazor
+@using Radzen
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@using Orientation = Radzen.Orientation
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@inject IEventsService EventsService
+@inject NavigationManager NavigationManager
+
+<h1>Follow events</h1>
+
+@if (!pageInitialized)
+{
+    <h3 class="rz-p-12">Loading...</h3>
+}
+
+@if (pageInitialized && studentId != Guid.Empty)
+{
+    <RadzenStack class="rz-pt-12" Gap="1rem" Style="height: 100%">
+        <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
+            <Tabs>
+                <RadzenTabsItem Text="Signed up">
+                    @if (signedUpTotalElements == 0)
+                    {
+                        <h3>You haven't been signed up for any event yet.</h3>
+                    }
+                    else
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                            <MudPagination Count="@signedUpTotalPages" SelectedChanged="@SignedUpSelectedPageChanged"
+                                           Selected="@signedUpPageNumber" Rectangular="true" ShowFirstButton="true"
+                                           ShowLastButton="true"/>
+                        </RadzenStack>
+                        
+                        <RadzenDataList AllowPaging="false" Data="@signedUpEvents" TItem="EventDto">
+                            <Template Context="ev">
+                                <RadzenEventCard Event="ev" />
+                            </Template>
+                        </RadzenDataList>
+
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                            <MudPagination Count="@signedUpTotalPages" SelectedChanged="@SignedUpSelectedPageChanged"
+                                           Selected="@signedUpPageNumber" Rectangular="true" ShowFirstButton="true"
+                                           ShowLastButton="true"/>
+                        </RadzenStack>
+                    }
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Interested in">
+                    @if (interestedInTotalElements == 0)
+                    {
+                        <h3>You haven't been interested in any event yet.</h3>
+                    }
+                    else
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                            <MudPagination Count="@interestedInTotalPages" SelectedChanged="@InterestedInSelectedPageChanged"
+                                           Selected="@interestedInPageNumber" Rectangular="true" ShowFirstButton="true"
+                                           ShowLastButton="true"/>
+                        </RadzenStack>
+
+                        <RadzenDataList AllowPaging="false" Data="@interestedInEvents" TItem="EventDto">
+                            <Template Context="ev">
+                                <RadzenEventCard Event="ev" />
+                            </Template>
+                        </RadzenDataList>
+
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                            <MudPagination Count="@interestedInTotalPages" SelectedChanged="@InterestedInSelectedPageChanged"
+                                           Selected="@interestedInPageNumber" Rectangular="true" ShowFirstButton="true"
+                                           ShowLastButton="true"/>
+                        </RadzenStack>
+                    }
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+    </RadzenStack>
+}
+
+@code {
+    private Guid studentId;
+    private bool pageInitialized = false;
+
+    int signedUpPageNumber = 1;
+    int signedUpPageSize = 5;
+    int signedUpTotalPages = 0;
+    int signedUpTotalElements = 0;
+    IEnumerable<EventDto> signedUpEvents;
+
+    int interestedInPageNumber = 1;
+    int interestedInPageSize = 5;
+    int interestedInTotalPages = 0;
+    int interestedInTotalElements = 0;
+    IEnumerable<EventDto> interestedInEvents;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            studentId = IdentityService.GetCurrentUserId();
+            
+            var tmp = await EventsService.GetStudentEventsAsync(studentId, "SignedUp",
+                signedUpPageNumber, signedUpPageSize);
+            if (tmp != null)
+            {
+                signedUpTotalPages = tmp.TotalPages;
+                signedUpTotalElements = tmp.TotalElements;
+                signedUpEvents = tmp.Content;
+            }
+            else
+            {
+                signedUpTotalPages = 0;
+                signedUpTotalElements = 0;
+                signedUpEvents = new List<EventDto>();
+            }
+        }
+        
+        pageInitialized = true;
+    }
+    
+    private async void OnChange(int index)
+    {
+        if (!IdentityService.IsAuthenticated)
+        {
+            return;
+        }
+        
+        switch (index)
+        {
+            case 0:
+                var tmp = await EventsService.GetStudentEventsAsync(studentId, "SignedUp",
+                    signedUpPageNumber, signedUpPageSize);
+                if (tmp != null)
+                {
+                    signedUpTotalPages = tmp.TotalPages;
+                    signedUpTotalElements = tmp.TotalElements;
+                    signedUpEvents = tmp.Content;
+                }
+                else
+                {
+                    signedUpTotalPages = 0;
+                    signedUpTotalElements = 0;
+                    signedUpEvents = new List<EventDto>();
+                }
+                break;
+            case 1:
+                tmp = await EventsService.GetStudentEventsAsync(studentId, "InterestedIn",
+                    interestedInPageNumber, interestedInPageSize);
+                if (tmp != null)
+                {
+                    interestedInTotalPages = tmp.TotalPages;
+                    interestedInTotalElements = tmp.TotalElements;
+                    interestedInEvents = tmp.Content;
+                }
+                else
+                {
+                    interestedInTotalPages = 0;
+                    interestedInTotalElements = 0;
+                    interestedInEvents = new List<EventDto>();
+                }
+                break;
+        }
+        StateHasChanged();
+    }
+    
+    private async void SignedUpSelectedPageChanged(int pageNumber)
+    {
+        signedUpPageNumber = pageNumber;
+        
+        var tmp = await EventsService.GetStudentEventsAsync(studentId, "SignedUp",
+            signedUpPageNumber, signedUpPageSize);
+        signedUpEvents = tmp.Content;
+        StateHasChanged();
+    }
+    
+    private async void InterestedInSelectedPageChanged(int pageNumber)
+    {
+        interestedInPageNumber = pageNumber;
+        
+        var tmp = await EventsService.GetStudentEventsAsync(studentId, "InterestedIn",
+            interestedInPageNumber, interestedInPageSize);
+        interestedInEvents = tmp.Content;
+        StateHasChanged();
+    }
+}

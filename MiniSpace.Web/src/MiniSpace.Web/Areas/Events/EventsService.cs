@@ -25,11 +25,12 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.GetAsync<EventDto>($"events/{eventId}");
         }
 
-        public Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId, int numberOfResults)
+        public Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
+            string engagementType, int page, int numberOfResults)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<PagedResponseDto<IEnumerable<EventDto>>>(
-                $"events/student/{studentId}?numberOfResults={numberOfResults}");
+                $"events/student/{studentId}?engagementType={engagementType}&page={page}&numberOfResults={numberOfResults}");
         }
 
         public Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
