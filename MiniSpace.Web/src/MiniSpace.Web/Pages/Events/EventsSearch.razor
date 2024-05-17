@@ -2,6 +2,7 @@
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Events
@@ -35,51 +36,28 @@
 @if (pageInitialized && totalElements != 0)
 {
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged" Selected="@searchEventsModel.Pageable.Page"
+        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                       Selected="@searchEventsModel.Pageable.Page"
                        Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
     </RadzenStack>   
 }
 
 <RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
     <Template Context="ev">
-        <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
-                    @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}"))">
-            <RadzenRow Size="12">
-                <RadzenColumn Size="12" SizeMD="6">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Name</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Name)</b></RadzenText>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="6">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-1 rz-my-0">Status</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Status)</b></RadzenText>
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow Size="12">
-                <RadzenColumn Size="12" SizeMD="6">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Start date</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="6">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-3 rz-mb-0">Capacity</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.SignedUpStudents)/@(ev.Capacity)</b></RadzenText>
-                </RadzenColumn>
-            </RadzenRow>
-            <hr style="border: none; background-color: rgba(0,0,0,.2); height: 1px; margin: 1rem 0;"/>
-        </RadzenCard>
+        <RadzenEventCard Event="ev" />
     </Template>
 </RadzenDataList>
 
 @if (pageInitialized && totalElements != 0)
 {
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged" Selected="@searchEventsModel.Pageable.Page"
+        <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                       Selected="@searchEventsModel.Pageable.Page"
                        Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
     </RadzenStack>   
 }
 
 @code {
-    private const string dateFormat = "dd/MM/yyyy HH:mm";
-    
     private SearchEventsModel searchEventsModel = new()
     {
         Name = "",
@@ -88,7 +66,7 @@
         State = "",
         Friends = [],
         FriendsEngagementType = "",
-        DateFrom = new DateTime(2024, 04, 14),
+        DateFrom = new DateTime(2024, 05, 14),
         DateTo = new DateTime(2024, 05, 31),
         Pageable = new PageableDto()
         {
@@ -96,8 +74,8 @@
             Size = 5,
             Sort = new SortDto()
             {
-                SortBy = new List<string>() { "dateFrom" },
-                Direction = "Ascending"
+                SortBy = new List<string>() { "name" },
+                Direction = "des"
             }
         }
     };
@@ -113,8 +91,8 @@
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
             searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
             searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
-            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
         if (tmp.Content != null)
         {
@@ -139,8 +117,8 @@
         var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
             searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
             searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
-            searchEventsModel.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.DateTo.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
         events = tmp.Content.Content;
         StateHasChanged();

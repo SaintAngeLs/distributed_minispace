@@ -1,4 +1,4 @@
-@page "/events/add"
+@page "/events/create"
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Http
@@ -12,7 +12,7 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
-<h3>Add new event</h3>
+<h3>Create new event</h3>
 
 @if (!pageInitialized)
 {
@@ -212,12 +212,12 @@
     {
         var response = await EventsService.AddEventAsync(Guid.Empty, addEventModel.Name,
             addEventModel.OrganizerId, addEventModel.OrganizationId,
-            addEventModel.StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            addEventModel.EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
+            addEventModel.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            addEventModel.EndDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
             addEventModel.BuildingName, addEventModel.Street,  addEventModel.BuildingNumber,
             addEventModel.ApartmentNumber, addEventModel.City, addEventModel.ZipCode,
             addEventModel.Description, addEventModel.Capacity, addEventModel.Fee, addEventModel.Category,
-            publishInfo == 2 ? addEventModel.PublishDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : string.Empty);
+            publishInfo == 2 ? addEventModel.PublishDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : string.Empty);
         
         if (response.ErrorMessage != null)
         {

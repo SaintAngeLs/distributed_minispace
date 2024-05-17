@@ -20,9 +20,9 @@ else
         <div class="card-body">
             <p><strong>Description:</strong> @student.Description</p>
             <p><strong>Number of Friends:</strong> @student.NumberOfFriends</p>
-            <p><strong>Date of Birth:</strong> @student.DateOfBirth.ToString("yyyy-MM-dd")</p>
+            <p><strong>Date of Birth:</strong> @student.DateOfBirth.ToLocalTime().ToString("yyyy-MM-dd")</p>
             <p><strong>State:</strong> @student.State</p>
-            <p><strong>Joined:</strong> @student.CreatedAt.ToString("yyyy-MM-dd")</p>
+            <p><strong>Joined:</strong> @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
         </div>
     </div>
 }

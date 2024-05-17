@@ -79,7 +79,7 @@
                     
                     <RadzenPanelMenuItem Text="Events" Icon="event">
                         <RadzenPanelMenuItem Text="Follow" Icon="bookmark"
-                                             Click="@(() => NavigationManager.NavigateTo("events/"))"/>
+                                             Click="@(() => NavigationManager.NavigateTo("events/follow"))"/>
                         <RadzenPanelMenuItem Text="Search" Icon="find_in_page"
                                              Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
                         @if (IdentityService.GetCurrentUserRole() == "organizer")

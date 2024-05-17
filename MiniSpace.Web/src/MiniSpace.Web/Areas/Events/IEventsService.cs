@@ -11,7 +11,8 @@ namespace MiniSpace.Web.Areas.Events
     public interface IEventsService
     {
         Task<EventDto> GetEventAsync(Guid eventId);
-        Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId, int numberOfResults);
+        Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
+            string engagementType, int page, int numberOfResults);
         Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
             string startDate, string endDate, string buildingName, string street, string buildingNumber,
             string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
@@ -20,6 +21,7 @@ namespace MiniSpace.Web.Areas.Events
             string startDate, string endDate, string buildingName, string street, string buildingNumber,
             string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
             string category, string publishDate);
+        Task DeleteEventAsync(Guid eventId);
         Task SignUpToEventAsync(Guid eventId, Guid studentId);
         Task CancelSignUpToEventAsync(Guid eventId, Guid studentId);
         Task ShowInterestInEventAsync(Guid eventId, Guid studentId);
@@ -30,5 +32,8 @@ namespace MiniSpace.Web.Areas.Events
             string dateTo, PageableDto pageable);
         Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(Guid organizerId,
             string name, string state, string dateFrom, string dateTo, PageableDto pageable);
+        Task<EventParticipantsDto> GetEventParticipants(Guid eventId);
+        Task AddEventParticipant(Guid eventId, Guid studentId, string studentName);
+        Task RemoveEventParticipant(Guid eventId, Guid participantId);
     }
 }
