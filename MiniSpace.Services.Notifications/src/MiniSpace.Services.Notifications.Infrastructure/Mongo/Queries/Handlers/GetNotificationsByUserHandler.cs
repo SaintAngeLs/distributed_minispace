@@ -13,18 +13,18 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
 {
     public class GetNotificationsByUserHandler : IQueryHandler<GetNotificationsByUser, IEnumerable<NotificationDto>>
     {
-        private readonly IMongoRepository<NotificationDocument, Guid> _repository;
+        private readonly IMongoRepository<StudentNotificationsDocument, Guid> _repository;
 
-        public GetNotificationsByUserHandler(IMongoRepository<NotificationDocument, Guid> repository)
+        public GetNotificationsByUserHandler(IMongoRepository<StudentNotificationsDocument, Guid> repository)
         {
             _repository = repository;
         }
 
         public async Task<IEnumerable<NotificationDto>> HandleAsync(GetNotificationsByUser query, CancellationToken cancellationToken)
         {
-            var documents = await _repository.FindAsync(d => d.UserId == query.UserId);
+            var studentNotificationDoc = await _repository.GetAsync(d => d.StudentId == query.UserId);
 
-            return documents.Select(document => document.AsDto());
+            return studentNotificationDoc.Notifications.Select(document => document.AsDto());
         }
     }
 }

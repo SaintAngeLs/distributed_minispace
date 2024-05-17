@@ -1,0 +1,51 @@
+@page "/notifications/all"
+@using MiniSpace.Web.Areas.Notifications
+@inject INotificationsService NotificationsService
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.DTO.Notifications
+@using Radzen;
+@using System.Linq; 
+
+<h3>All Notifications</h3>
+
+@if (notifications == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (notifications.Any())
+{
+    <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowSorting="true">
+        <Columns>
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Title" Title="Title" />
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message" />
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Date" Title="Date" FormatString="{0:dd MMM yyyy}" />
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Status" Title="Status" />
+            <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
+                <Template>
+                    <RadzenButton Text="Delete" Style="color: red;" Click="@(async () => await DeleteNotification(notification.NotificationId))" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <p>No notifications found.</p>
+}
+
+@code {
+    private List<NotificationDto> notifications;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var notifList = await NotificationsService.GetNotificationsByUserAsync("user-id"); // Replace "user-id" with actual user ID retrieval logic
+        notifications = notifList.ToList();
+    }
+
+    private async Task DeleteNotification(Guid notificationId)
+    {
+        await NotificationsService.DeleteNotificationAsync(notificationId.ToString());
+        notifications.RemoveAll(n => n.NotificationId == notificationId);
+        StateHasChanged(); // Re-render the component
+    }
+}

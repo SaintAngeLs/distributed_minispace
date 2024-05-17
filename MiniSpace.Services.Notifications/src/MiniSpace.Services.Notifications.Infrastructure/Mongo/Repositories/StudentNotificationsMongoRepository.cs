@@ -34,7 +34,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
         {
             var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentNotifications.StudentId);
             var update = Builders<StudentNotificationsDocument>.Update
-                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId) // Ensure Id is set on insert
+                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId) 
                 .PushEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument()));
 
             var options = new UpdateOptions { IsUpsert = true };
