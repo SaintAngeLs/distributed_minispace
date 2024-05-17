@@ -303,8 +303,9 @@ html, body {
 }
 
 .rz-menu {
+    z-index: 100 !important;
     background-color: #2F4E6F !important;
-    color: #fff !important;
+    color: #000 !important;
     height: 50px;
 }
 
@@ -327,25 +328,30 @@ html, body {
 }
 
 .rz-menu-item {
-    color: white;
     padding: 10px;
     cursor: pointer;
     text-align: center;
     border: none; 
     background: none;
-    color: #fff !important;
+    color: #000 !important;
 }
 
 @media (max-width: 767.98px) {
     .rz-menu-stack {
         flex-direction: column;
         align-items: center;
-        width: 100%;
+        width: 100% !important;
+       
+        background-color: #2F4E6F !important;
     }
 
     .rz-menu-item {
-        width: 100%;
+        width: 100%!important;
         padding: 8px 0;
+    }
+
+    .rz-navigation-item-link {
+        width: 100% !important;
     }
 
     /*.rz-display-flex {*/
