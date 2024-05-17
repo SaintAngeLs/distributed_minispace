@@ -63,11 +63,11 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             // Console.WriteLine($"Publishing FriendInvited event: {friendInvitedJson}");
             await _messageBroker.PublishAsync(friendInvitedEvent);
 
-            // // Publish FriendRequestCreated Event
-            // var friendRequestCreatedEvent = new FriendRequestCreated(command.InviterId, command.InviteeId);
-            // string friendRequestCreatedJson = JsonSerializer.Serialize(friendRequestCreatedEvent);
-            // // Console.WriteLine($"Publishing FriendRequestCreated event: {friendRequestCreatedJson}");
-            // await _messageBroker.PublishAsync(friendRequestCreatedEvent);
+            // Publish FriendRequestCreated Event
+            var friendRequestCreatedEvent = new FriendRequestCreated(command.InviterId, command.InviteeId);
+            string friendRequestCreatedJson = JsonSerializer.Serialize(friendRequestCreatedEvent);
+            // Console.WriteLine($"Publishing FriendRequestCreated event: {friendRequestCreatedJson}");
+            await _messageBroker.PublishAsync(friendRequestCreatedEvent);
 
             // Publish FriendRequestSent Event
             var friendRequestSentEvent = new FriendRequestSent(command.InviterId, command.InviteeId);

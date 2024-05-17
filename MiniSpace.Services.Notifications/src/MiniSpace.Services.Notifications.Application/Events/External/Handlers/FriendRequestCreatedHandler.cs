@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Convey.CQRS.Events;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Services;
@@ -27,6 +28,13 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         {
              _logger.LogInformation($"Received FriendRequestCreated event: RequesterId={friendEvent.RequesterId}, FriendId={friendEvent.FriendId}");
              Console.WriteLine("**************************************************************************************************************");
+
+                 string eventJson = JsonSerializer.Serialize(friendEvent, new JsonSerializerOptions { WriteIndented = true });
+    Console.WriteLine("**************************************************************************************************************");
+    Console.WriteLine("Received FriendRequestCreated Event JSON:");
+    Console.WriteLine(eventJson);
+    Console.WriteLine("**************************************************************************************************************");
+
             var newFriendEvent = new FriendEvent(
                 id: Guid.NewGuid(),
                 eventId: Guid.NewGuid(),
@@ -50,7 +58,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             
             await _messageBroker.PublishAsync(friendEvent);
 
-            await _notificationRepository.AddAsync(notification);
+            // await _notificationRepository.AddAsync(notification);
             _logger.LogInformation($"Stored new friend event and notification for UserId={friendEvent.RequesterId}");
             var notificationCreated = new NotificationCreated(
                 notificationId: notification.NotificationId,

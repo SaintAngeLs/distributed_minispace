@@ -94,7 +94,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .SubscribeCommand<InviteFriend>()
                 .SubscribeCommand<PendingFriendAccept>()
                 .SubscribeCommand<PendingFriendDecline>()
-                .SubscribeEvent<FriendRequestCreated>()
+                // .SubscribeEvent<FriendRequestCreated>()
                 .SubscribeEvent<FriendRequestSent>()
                 .SubscribeEvent<Application.Events.FriendAdded>()
                 .SubscribeEvent<Application.Events.FriendRemoved>()

@@ -7,7 +7,8 @@ using MiniSpace.Services.Notifications.Application.Exceptions;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
-    public class FriendInvitedHandler : IEventHandler<NotificationCreated>,  
+    public class FriendInvitedHandler : 
+    // IEventHandler<NotificationCreated>,  
                                         IEventHandler<FriendInvited>
     {
         private readonly INotificationRepository _notificationRepository;
@@ -21,18 +22,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             _messageBroker = messageBroker;
         }
 
-        public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
-        {
-            var notification = await _notificationRepository.GetAsync(@event.NotificationId);
-            if (notification == null)
-            {
-                throw new NotificationNotFoundException(@event.NotificationId);
-            }
+        // public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
+        // {
+        //     var notification = await _notificationRepository.GetAsync(@event.NotificationId);
+        //     if (notification == null)
+        //     {
+        //         throw new NotificationNotFoundException(@event.NotificationId);
+        //     }
 
-            await _notificationRepository.AddAsync(notification);
-            var events = _eventMapper.MapAll(notification.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
-        }
+        //     await _notificationRepository.AddAsync(notification);
+        //     var events = _eventMapper.MapAll(notification.Events);
+        //     await _messageBroker.PublishAsync(events.ToArray());
+        // }
 
         public async Task HandleAsync(FriendInvited @event, CancellationToken cancellationToken)
         {
@@ -48,6 +49,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             // Save the notification to the repository
             await _notificationRepository.AddAsync(notification);
+
+              // Create a new event to indicate that a notification has been created
+            var notificationCreatedEvent = new NotificationCreated(
+                notificationId: notification.NotificationId,
+                userId: notification.UserId,
+                message: notification.Message,
+                createdAt: notification.CreatedAt 
+                // status: notification.Status
+            );
+
+            // Publish the NotificationCreated event
+            await _messageBroker.PublishAsync(notificationCreatedEvent);
 
             // Optionally, if there are any other domain events resulting from this, publish them
             // Here we can use the _messageBroker to publish any further events if required by the domain logic

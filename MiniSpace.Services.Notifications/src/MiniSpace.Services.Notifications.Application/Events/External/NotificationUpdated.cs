@@ -4,7 +4,7 @@ using MiniSpace.Services.Notifications.Core.Entities;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
-    [Message("friends")]
+    [Contract]
     public class NotificationUpdated : IEvent
     {
         public Guid NotificationId { get; }

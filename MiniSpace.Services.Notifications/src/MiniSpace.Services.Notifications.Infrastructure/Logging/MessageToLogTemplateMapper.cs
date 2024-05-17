@@ -27,10 +27,24 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
                         After = "Updated the status of notification with id: {NotificationId} to: {NewStatus}."
                     }
                 },
-                 {
-                    typeof(FriendRequestCreated), new HandlerLogTemplate
+                {typeof(FriendRequestCreated), new HandlerLogTemplate
                     {
-                        After = "New Friend request created: {NotificationId} "
+                        After = "Processed creation of friend request from {RequesterId} to {FriendId}."
+                    }
+                },
+                {typeof(FriendRequestSent), new HandlerLogTemplate
+                    {
+                        After = "Processed friend request sent from {InviterId} to {InviteeId}."
+                    }
+                },
+                {typeof(FriendInvited), new HandlerLogTemplate
+                    {
+                        After = "Handled invitation sent by {InviterId} to {InviteeId}."
+                    }
+                },
+                {typeof(NotificationCreated), new HandlerLogTemplate
+                    {
+                        After = "Notification created with ID: {NotificationId} for user: {UserId}, message: '{Message}' at {CreatedAt}."
                     }
                 },
             };
