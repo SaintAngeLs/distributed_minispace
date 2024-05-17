@@ -152,6 +152,9 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             _interestedInEvents.Add(eventId);
         }
+        
+        public void RemoveInterestedInEvent(Guid eventId)
+            => _interestedInEvents.Remove(eventId);
 
         public void AddSignedUpEvent(Guid eventId)
         {
@@ -162,6 +165,9 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             _signedUpEvents.Add(eventId);
         }
+        
+        public void RemoveSignedUpEvent(Guid eventId)
+            => _signedUpEvents.Remove(eventId);
 
         public void Ban() => IsBanned = true;
         public void Unban() => IsBanned = false;
