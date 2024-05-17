@@ -417,3 +417,12 @@ html, body {
         border-radius: 10px 10px 0 0;
     }
 }
+
+
+.sign-in-up-pre-info {
+    padding: 3rem 1rem 3rem 1rem;
+}
+
+.sign-in-up-pre-info p {
+    margin: 2rem 1rem 2rem 2rem !important;
+}

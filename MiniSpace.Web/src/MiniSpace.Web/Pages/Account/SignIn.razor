@@ -110,9 +110,11 @@
     </div>
     <div class="right-side">
         <div class="form-container">
-            <h2>Welcome to MiniSpace</h2>
-            <p>Please sign in to access your account and manage your details.</p>
-            <h3>Sign In</h3>
+            <div class="sign-in-up-pre-info">
+                <h2>Welcome to MiniSpace</h2>
+                <p>Please sign in to access your account and manage your details.</p>
+                <h3>Sign In</h3>
+            </div>
             <RadzenTemplateForm Data="@signInModel" Submit="@(async (SignInModel args) => { await HandleSignIn(); })">
                 <RadzenFieldset>
                     <RadzenStack Gap="1rem">
@@ -128,7 +130,7 @@
                 </RadzenFieldset>
             </RadzenTemplateForm>
 
-            <div style="text-align: center; margin-top: 1rem;">
+            <div style="text-align: center; margin-top: 3rem !important;">
                 <a href="/forgot-password">Forgot Password?</a> | <a href="/signup">Create Account</a>
             </div>
         </div>
