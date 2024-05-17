@@ -27,7 +27,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             _logger = logger;
         }
 
-         public async Task HandleAsync(FriendRequestCreated friendEvent, CancellationToken cancellationToken)
+        public async Task HandleAsync(FriendRequestCreated friendEvent, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Received FriendRequestCreated event: RequesterId={friendEvent.RequesterId}, FriendId={friendEvent.FriendId}");
             Console.WriteLine("**************************************************************************************************************");
@@ -35,6 +35,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             // Fetch student names based on their IDs
             var requester = await _studentsServiceClient.GetAsync(friendEvent.RequesterId);
             var friend = await _studentsServiceClient.GetAsync(friendEvent.FriendId);
+
+            if (requester == null || friend == null)
+            {
+                _logger.LogError($"Failed to fetch student data for RequesterId={friendEvent.RequesterId} or FriendId={friendEvent.FriendId}");
+                return; // Early exit if any student data is missing
+            }
 
             var eventDetails = $"A new friend request created from {requester.FirstName} {requester.LastName} to {friend.FirstName} {friend.LastName}";
             var notificationMessage = $"You have received a friend request from {requester.FirstName} {requester.LastName}";
