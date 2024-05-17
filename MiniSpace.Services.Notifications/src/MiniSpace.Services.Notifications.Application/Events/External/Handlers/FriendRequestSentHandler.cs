@@ -7,13 +7,13 @@ using MiniSpace.Services.Notifications.Application.Exceptions;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
-    public class NotificationCreatedHandler : IEventHandler<NotificationCreated>
+    public class FriendRequestSentHandler : IEventHandler<NotificationCreated>
     {
         private readonly INotificationRepository _notificationRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public NotificationCreatedHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public FriendRequestSentHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _notificationRepository = notificationRepository;
             _eventMapper = eventMapper;
@@ -29,7 +29,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             }
 
             await _notificationRepository.AddAsync(notification);
-
             var events = _eventMapper.MapAll(notification.Events);
             await _messageBroker.PublishAsync(events.ToArray());
         }

@@ -49,6 +49,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
+            builder.Services.AddSingleton<IEventMapper, EventMapper>();
+            builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
             builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();

@@ -3,7 +3,7 @@ using Convey.MessageBrokers;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
-    [Message("notifications")]
+    [Message("friends")]
     public class NotificationDeleted : IEvent
     {
         public Guid NotificationId { get; }

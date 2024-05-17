@@ -51,6 +51,8 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             // Optionally, publish an event about the friend request
             var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
             await _messageBroker.PublishAsync(friendInvitedEvent);
+
+            
         }
 
     }

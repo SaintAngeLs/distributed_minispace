@@ -51,7 +51,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _messageBroker.PublishAsync(friendEvent);
 
             await _notificationRepository.AddAsync(notification);
-  _logger.LogInformation($"Stored new friend event and notification for UserId={friendEvent.RequesterId}");
+            _logger.LogInformation($"Stored new friend event and notification for UserId={friendEvent.RequesterId}");
             var notificationCreated = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,

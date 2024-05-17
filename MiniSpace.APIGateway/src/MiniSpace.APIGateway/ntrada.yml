@@ -515,6 +515,12 @@ modules:
           bind:
             - userId: {userId}
           auth: true
+          afterDispatch:
+            - use: publish
+              event: FriendInviteSent
+              target: notifications-service/events
+              routingKey: friend_request_created
+
 
         - upstream: /{requesterId}/{friendId}/remove
           method: DELETE
