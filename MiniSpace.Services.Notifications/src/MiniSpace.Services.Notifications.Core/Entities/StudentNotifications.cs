@@ -1,46 +1,38 @@
 using System;
 using System.Collections.Generic;
-using MiniSpace.Services.Notifications.Core.Entities;
+using System.Linq;
 
 namespace MiniSpace.Services.Notifications.Core.Entities
 {
-    public class StudentNotifications : IEnumerable<Notification>
+    public class StudentNotifications
     {
         public Guid StudentId { get; private set; }
-        private List<Notification> Notifications { get; set; }
+        private List<Notification> _notifications;
+
+        public IEnumerable<Notification> Notifications => _notifications.AsReadOnly();
 
         public StudentNotifications(Guid studentId)
         {
             StudentId = studentId;
-            Notifications = new List<Notification>();
+            _notifications = new List<Notification>();
         }
 
         public void AddNotification(Notification notification)
         {
             if (notification != null)
             {
-                Notifications.Add(notification);
+                _notifications.Add(notification);
             }
-        }
-
-        public IEnumerator<Notification> GetEnumerator()
-        {
-            return Notifications.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
         }
 
         public void RemoveNotification(Guid notificationId)
         {
-            Notifications.RemoveAll(n => n.NotificationId == notificationId);
+            _notifications.RemoveAll(n => n.NotificationId == notificationId);
         }
 
         public void MarkNotificationAsRead(Guid notificationId)
         {
-            var notification = Notifications.Find(n => n.NotificationId == notificationId);
+            var notification = _notifications.FirstOrDefault(n => n.NotificationId == notificationId);
             if (notification != null)
             {
                 notification.MarkAsRead();
