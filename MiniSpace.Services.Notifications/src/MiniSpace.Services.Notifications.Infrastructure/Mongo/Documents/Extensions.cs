@@ -140,5 +140,42 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 SignedUpEvents = document.SignedUpEvents
             };
         }
+
+        public static StudentNotifications AsEntity(this StudentNotificationsDocument document)
+        {
+            var studentNotifications = new StudentNotifications(document.StudentId);
+            foreach (var notificationDocument in document.Notifications)
+            {
+                var notification = notificationDocument.AsEntity(); 
+                studentNotifications.AddNotification(notification);
+            }
+            return studentNotifications;
+        }
+
+        public static StudentNotificationsDocument AsDocument(this StudentNotifications entity)
+        {
+            var notifications = new List<NotificationDocument>();
+            foreach (var notification in entity.Notifications) 
+            {
+                notifications.Add(notification.AsDocument()); 
+            }
+
+            return new StudentNotificationsDocument
+            {
+                Id = Guid.NewGuid(), 
+                StudentId = entity.StudentId,
+                Notifications = notifications
+            };
+        }
+
+        public static IEnumerable<NotificationDto> AsDto(this StudentNotificationsDocument document)
+        {
+            return document.Notifications.Select(nd => nd.AsDto()); 
+        }
+
+        public static List<NotificationDocument> AsDocumentList(this IEnumerable<Notification> notifications)
+        {
+            return notifications.Select(n => n.AsDocument()).ToList();
+        }
     }    
 }

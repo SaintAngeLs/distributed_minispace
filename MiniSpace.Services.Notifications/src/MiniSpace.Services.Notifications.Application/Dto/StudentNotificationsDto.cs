@@ -1,16 +1,24 @@
 using System;
 using System.Collections.Generic;
+using MiniSpace.Services.Notifications.Core.Entities;
 
 namespace MiniSpace.Services.Notifications.Application.Dto
 {
     public class StudentNotificationsDto
     {
-        public Guid StudentId { get; set; }
-        public IEnumerable<NotificationDto> Notifications { get; set; }
+        private List<Notification> notifications = new List<Notification>();
+        public Guid StudentId { get; private set; }
 
-        public StudentNotificationsDto()
+        public StudentNotificationsDto(Guid studentId)
         {
-            Notifications = new List<NotificationDto>();
+            StudentId = studentId;
         }
+
+        public void AddNotification(Notification notification)
+        {
+            notifications.Add(notification);
+        }
+
+        public IEnumerable<Notification> Notifications => notifications.AsReadOnly();
     }
 }
