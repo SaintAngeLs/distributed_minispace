@@ -20,13 +20,13 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _subOrganizations = new HashSet<Organization>(value);
         }
         
-        public Organization(Guid id, string name, IEnumerable<Organizer> organizers = null,
-            IEnumerable<Organization> subOrganizations = null)
+        public Organization(Guid id, string name, IEnumerable<Organizer> organizationOrganizers = null,
+            IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
-            Organizers = organizers ?? Enumerable.Empty<Organizer>();
-            SubOrganizations = subOrganizations ?? Enumerable.Empty<Organization>();
+            Organizers = organizationOrganizers ?? Enumerable.Empty<Organizer>();
+            SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
         }
         
         public void AddOrganizer(Guid organizerId)
