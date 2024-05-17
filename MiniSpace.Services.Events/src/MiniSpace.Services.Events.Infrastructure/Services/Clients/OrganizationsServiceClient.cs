@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Convey.HTTP;
 using MiniSpace.Services.Events.Application.DTO;
@@ -19,6 +20,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
         
         public Task<OrganizationDto> GetAsync(Guid id)
             => _httpClient.GetAsync<OrganizationDto>($"{_url}/organizations/{id}/details");
+
+        public Task<IEnumerable<Guid>> GetAllChildrenOrganizations(Guid organizationId, Guid rootId)
+            => _httpClient.GetAsync<IEnumerable<Guid>>($"{_url}/organizations/{organizationId}/children/all?rootId={rootId}");
 
     }
 }
