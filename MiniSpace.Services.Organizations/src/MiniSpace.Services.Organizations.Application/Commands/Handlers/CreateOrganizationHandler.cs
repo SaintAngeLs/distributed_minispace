@@ -41,6 +41,11 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new ParentOrganizationNotFoundException(command.ParentId);
             }
             
+            if (string.IsNullOrWhiteSpace(command.Name))
+            {
+                throw new InvalidOrganizationNameException(command.Name);
+            }
+            
             var organization = new Organization(command.OrganizationId, command.Name);  
             parent.AddSubOrganization(organization);
             await _organizationRepository.UpdateAsync(root);

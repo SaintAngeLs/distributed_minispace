@@ -1,5 +1,6 @@
 ﻿using Convey.CQRS.Commands;
 using MiniSpace.Services.Organizations.Application.Events;
+using MiniSpace.Services.Organizations.Application.Exceptions;
 using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
@@ -26,6 +27,11 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             if(identity.IsAuthenticated && !identity.IsAdmin)
             {
                 throw new Exceptions.UnauthorizedAccessException("admin");
+            }
+
+            if (string.IsNullOrWhiteSpace(command.Name))
+            {
+                throw new InvalidOrganizationNameException(command.Name);
             }
             
             var organization = new Organization(command.OrganizationId, command.Name);
