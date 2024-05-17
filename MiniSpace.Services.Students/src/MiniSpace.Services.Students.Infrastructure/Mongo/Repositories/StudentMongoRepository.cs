@@ -1,11 +1,13 @@
 using Convey.Persistence.MongoDB;
+using MongoDB.Driver;
+using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 {
-    public class StudentMongoRepository : IStudentRepository
+    public class StudentMongoRepository : IExtendedStudentRepository, IStudentRepository
     {
         private readonly IMongoRepository<StudentDocument, Guid> _repository;
 
@@ -29,5 +31,30 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);
+            
+        public async Task<PagedResult<StudentDocument>> FindAsync(FilterDefinition<StudentDocument> filter, int page, int pageSize, CancellationToken cancellationToken)
+        {
+            var options = new FindOptions<StudentDocument, StudentDocument>
+            {
+                Limit = pageSize,
+                Skip = (page - 1) * pageSize,
+                Sort = Builders<StudentDocument>.Sort.Descending(x => x.CreatedAt),
+            };
+
+            var result = await _repository.Collection
+                .FindAsync(filter, options, cancellationToken)
+                .ConfigureAwait(false);
+
+            string baseUrl = "students";                
+
+             // Fix CS4034: Mark the lambda expression as async
+            return new PagedResult<StudentDocument>(await result.ToListAsync(cancellationToken).ConfigureAwait(false), page, pageSize, (int)await CountAsync(filter, cancellationToken).ConfigureAwait(false), baseUrl);
+        }
+
+         private async Task<long> CountAsync(FilterDefinition<StudentDocument> filter, CancellationToken cancellationToken)
+        {
+            // Use the CountDocumentsAsync method of IMongoCollection to count documents that match the filter
+            return await _repository.Collection.CountDocumentsAsync(filter).ConfigureAwait(false);
+        }
     }    
 }

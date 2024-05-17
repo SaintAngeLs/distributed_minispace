@@ -27,10 +27,15 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 return Enumerable.Empty<OrganizationDto>();
             }
             
-            var organizations = await _repository
-                .FindAsync(o => o.Organizers.Any(x => x.Id == query.OrganizerId));
+            var roots = (await _repository.FindAsync(o => true)).Select(o =>o.AsEntity());
+            var organizerOrganizations = new List<Organization>();
+            foreach (var root in roots)
+            {
+                var organizations = Organization.FindOrganizations(query.OrganizerId, root);
+                organizerOrganizations.AddRange(organizations);
+            }
 
-            return organizations.Select(o => o.AsDto());
+            return organizerOrganizations.Select(o => new OrganizationDto(o));
         }
     }
 }

@@ -17,6 +17,11 @@ namespace MiniSpace.Web.Areas.Posts
             _httpClient = httpClient;
             _identityService = identityService;
         }
+
+        public Task<PostDto> GetPostAsync(Guid postId)
+        {
+            return _httpClient.GetAsync<PostDto>($"posts/{postId}");
+        }
         
         public Task ChangePostStateAsync(Guid postId, string state, DateTime publishDate)
         {
@@ -24,11 +29,12 @@ namespace MiniSpace.Web.Areas.Posts
             return _httpClient.PutAsync($"posts/{postId}/state/{state}", new {postId, state, publishDate});
         }
         
-        public Task CreatePostAsync(Guid postId, Guid eventId, Guid studentId, string textContext, string mediaContext, string state,
-            DateTime publishedDate)
+        public Task<HttpResponse<object>> CreatePostAsync(Guid postId, Guid eventId, Guid organizerId, string textContent,
+            string mediaContext, string state, DateTime? publishDate)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync("posts", new {postId, eventId, studentId, textContext, mediaContext, state, publishedDate});
+            return _httpClient.PostAsync<object, object>("posts", new {postId, eventId, organizerId, textContent,
+                mediaContext, state, publishDate});
         }
 
         public Task DeletePostAsync(Guid postId)
@@ -42,10 +48,10 @@ namespace MiniSpace.Web.Areas.Posts
             return _httpClient.GetAsync<IEnumerable<PostDto>>($"posts?eventId={eventId}");
         }
 
-        public Task UpdatePostAsync(Guid postId, string textContext, string mediaContext)
+        public Task<HttpResponse<object>> UpdatePostAsync(Guid postId, string textContent, string mediaContent)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync($"posts/{postId}", new {postId, textContext, mediaContext});
+            return _httpClient.PutAsync<object, object>($"posts/{postId}", new {postId, textContent, mediaContent});
         }
     }
 }

@@ -5,9 +5,8 @@ namespace MiniSpace.Services.Organizations.Core.Entities
     public class Organization : AggregateRoot
     {
         private ISet<Organizer> _organizers = new HashSet<Organizer>();
+        private ISet<Organization> _subOrganizations = new HashSet<Organization>();
         public string Name { get; private set; }
-        public Guid ParentId { get; private set; }
-        public bool IsLeaf { get; private set; }
 
         public IEnumerable<Organizer> Organizers
         {
@@ -15,13 +14,28 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _organizers = new HashSet<Organizer>(value);
         }
         
-        public Organization(Guid id, string name, Guid parentId, bool isLeaf = true, IEnumerable<Organizer> organizers = null)
+        public IEnumerable<Organization> SubOrganizations
+        {
+            get => _subOrganizations;
+            private set => _subOrganizations = new HashSet<Organization>(value);
+        }
+        
+        public Organization(Guid id, string name, IEnumerable<Organizer> organizationOrganizers = null,
+            IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
-            ParentId = parentId;
-            IsLeaf = isLeaf;
-            Organizers = organizers ?? Enumerable.Empty<Organizer>();
+            Organizers = organizationOrganizers ?? Enumerable.Empty<Organizer>();
+            SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
+        }
+        
+        public void AddOrganizer(Guid organizerId)
+        {
+            if(Organizers.Any(x => x.Id == organizerId))
+            {
+                throw new OrganizerAlreadyAddedToOrganizationException(organizerId, Id);
+            }
+            _organizers.Add(new Organizer(organizerId));
         }
         
         public void RemoveOrganizer(Guid organizerId)
@@ -34,18 +48,65 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             _organizers.Remove(organizer);
         }
 
-        public void AddOrganizer(Guid organizerId)
+        public Organization GetSubOrganization(Guid id)
         {
-            if(Organizers.Any(x => x.Id == organizerId))
+            if (Id == id)
             {
-                throw new OrganizerAlreadyAddedToOrganizationException(organizerId, Id);
+                return this;
             }
-            _organizers.Add(new Organizer(organizerId));
+            
+            foreach (var subOrg in SubOrganizations)
+            {
+                var result = subOrg.GetSubOrganization(id);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            
+            return null;
         }
         
+        public void AddSubOrganization(Organization organization)
+            => _subOrganizations.Add(organization);
         
+        public static List<Organization> FindOrganizations(Guid targetOrganizerId, Organization rootOrganization)
+        {
+            var organizations = new List<Organization>();
+            FindOrganizationsRecursive(targetOrganizerId, rootOrganization, organizations);
+            return organizations;
+        }
+
+        private static void FindOrganizationsRecursive(Guid targetOrganizerId, Organization currentOrganization, 
+            ICollection<Organization> organizations)
+        {
+            if (currentOrganization.Organizers.Any(x => x.Id == targetOrganizerId))
+            {
+                organizations.Add(currentOrganization);
+            }
+
+            foreach (var subOrg in currentOrganization.SubOrganizations)
+            {
+                FindOrganizationsRecursive(targetOrganizerId, subOrg, organizations);
+            }
+        }
         
-        public void MakeParent()
-            => IsLeaf = false;
+        public static List<Guid> FindAllChildrenOrganizations(Organization rootOrganization)
+        {
+            var organizations = new List<Guid>();
+            FindAllChildrenOrganizationsRecursive(rootOrganization, organizations);
+            return organizations;
+        }
+        
+        private static void FindAllChildrenOrganizationsRecursive(Organization currentOrganization, 
+            ICollection<Guid> organizations)
+        {
+            organizations.Add(currentOrganization.Id);
+
+            foreach (var subOrg in currentOrganization.SubOrganizations)
+            {
+                FindAllChildrenOrganizationsRecursive(subOrg, organizations);
+            }
+        }
     }
 }

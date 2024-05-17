@@ -53,7 +53,6 @@ namespace MiniSpace.Web.Areas.Friends
                 foreach (var friend in friends)
                 {
                     friend.StudentDetails = await GetStudentAsync(friend.FriendId);
-                    Console.WriteLine($"Friend ID: {friend.FriendId}, Friend's Student ID: {friend.StudentDetails.Id}, Name: {friend.StudentDetails.FirstName} {friend.StudentDetails.LastName}");
                 }
             }
             else
@@ -101,6 +100,14 @@ namespace MiniSpace.Web.Areas.Friends
 
             _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
+        }
+
+        public async Task<PaginatedResponseDto<StudentDto>> GetAllStudentsAsync(int page = 1, int resultsPerPage = 10)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            string url = $"students?page={page}&resultsPerPage={resultsPerPage}";
+            return await _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>(url);
         }
 
         public async Task<StudentDto> GetStudentAsync(Guid studentId)

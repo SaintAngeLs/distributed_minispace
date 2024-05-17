@@ -75,7 +75,7 @@
     {
         var response = await StudentsService.CompleteStudentRegistrationAsync(completeRegistrationModel.StudentId,
             completeRegistrationModel.ProfileImage, completeRegistrationModel.Description,
-            completeRegistrationModel.DateOfBirth, completeRegistrationModel.EmailNotifications);
+            completeRegistrationModel.DateOfBirth.ToUniversalTime(), completeRegistrationModel.EmailNotifications);
         // Handle the post-sign-up logic, such as redirection or displaying a success message
         if (response.ErrorMessage != null)
         {

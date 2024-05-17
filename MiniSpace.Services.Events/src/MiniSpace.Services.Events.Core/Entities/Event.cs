@@ -179,12 +179,18 @@ namespace MiniSpace.Services.Events.Core.Entities
                 throw new InvalidRatingValueException(rating);
             }
 
-            if (_ratings.Any(r => r.StudentId == studentId))
+            _ratings.Add(new Rating(studentId, rating));
+        }
+        
+        public void CancelRate(Guid studentId)
+        {
+            var rating = _ratings.SingleOrDefault(r => r.StudentId == studentId);
+            if (rating is null)
             {
-                throw new StudentAlreadyRatedEventException(Id, studentId);
+                throw new StudentNotRatedEventException(studentId, Id);
             }
 
-            _ratings.Add(new Rating(studentId, rating));
+            _ratings.Remove(rating);
         }
 
         public bool UpdateState(DateTime now)
@@ -226,4 +232,4 @@ namespace MiniSpace.Services.Events.Core.Entities
         public bool IsOrganizer(Guid organizerId)
             => Organizer.Id == organizerId;
     }
-}
+}   

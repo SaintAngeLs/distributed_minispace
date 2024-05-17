@@ -35,10 +35,10 @@
                                 Value="@studentDto.NumberOfFriends" Disabled="true"/>
 
         <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:"
-                                   Value="@studentDto.DateOfBirth" Disabled="true"/>
+                                   Value="@studentDto.DateOfBirth.ToLocalTime()" Disabled="true"/>
 
         <RadzenLabelWithDatePicker Id="created-at" LabelText="Created at:"
-                                   Value="@studentDto.CreatedAt" Disabled="true"/>
+                                   Value="@studentDto.CreatedAt.ToLocalTime()" Disabled="true"/>
 
         <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
                                  @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
