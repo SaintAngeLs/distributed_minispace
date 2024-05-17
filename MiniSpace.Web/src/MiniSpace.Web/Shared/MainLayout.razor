@@ -43,7 +43,7 @@
                                  <ChildContent>
                                     <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
                                     <RadzenProfileMenuItem Text="Notifications" Path="/notifications" Icon="notifications"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Sign out" Click="@SignOut" Icon="exit_to_app"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Sign out" Click="@(() => SignOut())" Icon="exit_to_app"></RadzenProfileMenuItem>
                                 </ChildContent>
                             </RadzenProfileMenu>
                         </div>
@@ -93,7 +93,13 @@
                         <RadzenPanelMenuItem Text="Search" Icon="search" Click="@(() => NavigationManager.NavigateTo("friends/search"))" />
                         <RadzenPanelMenuItem Text="Friends" Icon="group" Click="@(() => NavigationManager.NavigateTo("friends"))" />
                         <RadzenPanelMenuItem Text="Requests" Icon="mail_outline" Click="@(() => NavigationManager.NavigateTo("friends/requests"))" />
-                        <RadzenPanelMenuItem Text="Sent Requests" Icon="send" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
+                        <RadzenPanelMenuItem Text="Sent Requests" Icon="compare_arrows" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
+                    </RadzenPanelMenuItem>
+
+                    <RadzenPanelMenuItem Text="Notifications" Icon="send">
+                        <RadzenPanelMenuItem Text="All" Icon="accessibility" Click="@(() => NavigationManager.NavigateTo("notifications/all"))" />
+                        <RadzenPanelMenuItem Text="New" Icon="send" Click="@(() => NavigationManager.NavigateTo("notifications/new"))" />
+                        <RadzenPanelMenuItem Text="History" Icon="history" Click="@(() => NavigationManager.NavigateTo("notifications/history"))" />
                     </RadzenPanelMenuItem>
                     
                     @if (IdentityService.GetCurrentUserRole() == "admin")

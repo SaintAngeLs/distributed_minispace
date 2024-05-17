@@ -392,3 +392,28 @@ html, body {
 /*.rz-layout .rz-body {*/
 /*    overflow: unset !important;*/
 /*}*/
+@media (max-width: 768px) {
+    .split-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+  
+    .left-side, .right-side {
+        width: 100%;
+        flex: none !important;
+    }
+
+    .left-side {
+        height: 10vh !important;
+    }
+
+    video {
+        height: 10vh !important; /* Adjust video height on smaller screens */
+    }
+
+    .form-container {
+        margin-top: -50px; /* Overlap form on video slightly */
+        border-radius: 10px 10px 0 0;
+    }
+}

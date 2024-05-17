@@ -8,57 +8,131 @@
 @inject IStudentsService StudentsService
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
-<h2>Welcome to MiniSpace</h2>
-<p>Please sign in to access your account and manage your details.</p>
-<div>&nbsp;</div>
-<h3 class="rz-pt-6">Sign In</h3>
+<style>
 
-<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
-                Shade="Shade.Lighter">
-        @errorMessage
-    </RadzenAlert>
+    /* General body and font styles */
+    body {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        background: #f4f4f9;
+        color: #333;
+    }
 
-    <RadzenTemplateForm Data="@signInModel" Submit="@(async (SignInModel args) => { await HandleSignIn(); })">
-        <RadzenFieldset>
-            <RadzenStack Gap="1rem">
-                <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenColumn Size="12" SizeMD="3">
-                        <RadzenLabel Text="Email:" Component="email" />
-                    </RadzenColumn>
-                    <RadzenColumn Size="12" SizeMD="9">
-                        <RadzenTextBox Style="width: 100%;" Name="email" @bind-Value="signInModel.Email" />
-                        <RadzenRequiredValidator Component="email" Text="Email is required" Popup=@popup
-                                                Style="position: absolute"/>
-                        <RadzenEmailValidator Component="email" Text="Email is invalid" Popup=@popup
-                                            Style="position: absolute"/>
-                    </RadzenColumn>
-                </RadzenRow>
-                
-                <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenColumn Size="12" SizeMD="3">
-                        <RadzenLabel Text="Password:" Component="password" />
-                    </RadzenColumn>
-                    <RadzenColumn Size="12" SizeMD="9">
-                        <RadzenPassword Style="width: 100%;" Name="password" @bind-Value="signInModel.Password"/>
-                        <RadzenRequiredValidator Component="password" Text="Password is required" Popup=@popup
-                                                Style="position: absolute"/>
-                    </RadzenColumn>
-                </RadzenRow>
-                
-                <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Large" Text="Sign In"/>
-                    </RadzenColumn>
-                </RadzenRow>
-                <div>
-                    <a href="/forgot-password">Forgot Password?</a> | <a href="/signup">Create Account</a>
-                </div>
-            </RadzenStack>
-        </RadzenFieldset>
-    </RadzenTemplateForm>
+    /* Flexbox container for video and form */
+    .split-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Styling for the video and form sections */
+    .left-side, .right-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Specific styles for video background */
+    .left-side {
+        margin-top: 5rem !important;
+        background: black; /* Fallback for non-supported browsers */
+        position: relative;
+    }
+     .right-side {
+        margin-top: 5rem !important;
      
+    }
+
+    /* Fullscreen background video */
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Form container with adaptive sizing and padding */
+    .form-container {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Responsive adjustments */
+    @* @media (max-width: 768px) {
+        .split-container {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .left-side, .right-side {
+            width: 100%;
+            flex: none;
+        }
+
+        video {
+            height: 50vh; /* Adjust video height on smaller screens */
+        }
+
+        .form-container {
+            margin-top: -50px; /* Overlap form on video slightly */
+            border-radius: 10px 10px 0 0;
+        }
+    } *@
+
+    /* Link and button styles for interaction */
+    a, button {
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    a:hover, button:hover {
+        color: #007BFF; /* Highlight color on hover */
+    }
+
+    /* Custom styles for Radzen components can be added here */
+</style>
+
+
+<div class="split-container">
+    <div class="left-side">
+        <video id="videoPlayer" autoplay muted loop>
+            <source src="videos/video-component/video_1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="right-side">
+        <div class="form-container">
+            <h2>Welcome to MiniSpace</h2>
+            <p>Please sign in to access your account and manage your details.</p>
+            <h3>Sign In</h3>
+            <RadzenTemplateForm Data="@signInModel" Submit="@(async (SignInModel args) => { await HandleSignIn(); })">
+                <RadzenFieldset>
+                    <RadzenStack Gap="1rem">
+                        <RadzenTextBox Name="email" Placeholder="Email" Style="width: 100%;" @bind-Value="signInModel.Email" />
+                        <RadzenRequiredValidator Component="email" Text="Email is required" />
+                        <RadzenEmailValidator Component="email" Text="Email is invalid" />
+
+                        <RadzenPassword Name="password" Placeholder="Password" Style="width: 100%;" @bind-Value="signInModel.Password" />
+                        <RadzenRequiredValidator Component="password" Text="Password is required" />
+
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Large" Text="Sign In"/>
+                    </RadzenStack>
+                </RadzenFieldset>
+            </RadzenTemplateForm>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="/forgot-password">Forgot Password?</a> | <a href="/signup">Create Account</a>
+            </div>
+        </div>
+    </div>
 </div>
 @code {
     private SignInModel signInModel = new SignInModel();
@@ -90,7 +164,6 @@
         var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
         if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
         {
-            // Assuming UpdateStudentDto and other subsequent methods correctly handle null checks
             await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
             var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/account";
             NavigationManager.NavigateTo(nextPage);
@@ -99,16 +172,22 @@
         {
             showError = true;
             errorMessage = "Invalid login attempt";
-            StateHasChanged(); // Force the component to re-render
+            StateHasChanged(); 
         }
     }
     catch (Exception ex)
     {
-        // Log the exception or handle it accordingly
+    
         showError = true;
         errorMessage = $"Error during sign in: {ex.Message}";
-        StateHasChanged(); // Update UI to show error message
+        StateHasChanged(); 
     }
 }
+
+ protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            await JSRuntime.InvokeVoidAsync("initializeVideoPlayer", "videos/video-component/video_1.mp4", "videos/video-component/video_2.mp4");
+        }
+    }
 
 }

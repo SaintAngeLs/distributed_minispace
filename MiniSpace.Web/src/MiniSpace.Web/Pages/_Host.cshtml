@@ -47,6 +47,21 @@
             audio.play();
         }
 
+        function initializeVideoPlayer(video1, video2) {
+        var player = document.getElementById('videoPlayer');
+        var videos = [video1, video2];
+        var currentVideo = 0;
+
+        player.src = videos[currentVideo];  // Ensure the player starts with the first video
+        player.addEventListener('ended', function() {
+            currentVideo = (currentVideo + 1) % videos.length;  // Move to the next video in the array
+            player.src = videos[currentVideo];  // Update the video source
+            player.load();  // Load the new video
+            player.play();  // Play the new video
+        });
+    }
+
+
 
 
     </script>
