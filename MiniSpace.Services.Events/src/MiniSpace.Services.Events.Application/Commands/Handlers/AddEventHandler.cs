@@ -64,7 +64,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 state = State.ToBePublished;
             }
             
-            var organization = await _organizationsServiceClient.GetAsync(command.OrganizationId);
+            var organization = await _organizationsServiceClient.GetAsync(command.OrganizationId, command.RootOrganizationId);
             if (organization == null)
             {
                 throw new OrganizationNotFoundException(command.OrganizationId);
@@ -75,7 +75,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
             }
             
-            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizerId, organization.Name);
+            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizationId, organization.Name);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
                 address, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
             

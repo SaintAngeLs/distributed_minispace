@@ -163,6 +163,18 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 
             return filterDefinition;
         }
+
+        public static FilterDefinition<EventDocument> AddOrganizationsIdFilter(this FilterDefinition<EventDocument> filterDefinition,
+            IEnumerable<Guid> organizationsEnumerable)
+        {
+            var organizations = organizationsEnumerable.ToList();
+            if (organizations.Count > 0)
+            {
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.Organizer.OrganizationId, organizations);
+            }
+
+            return filterDefinition;
+        }
         
         public static FilterDefinition<EventDocument> AddEventIdFilter(this FilterDefinition<EventDocument> filterDefinition,
             IEnumerable<Guid> eventIds)
