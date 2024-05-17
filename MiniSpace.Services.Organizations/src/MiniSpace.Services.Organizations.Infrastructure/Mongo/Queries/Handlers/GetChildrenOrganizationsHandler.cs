@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 return Enumerable.Empty<OrganizationDto>();
             }
 
-            var parent = root.AsEntity().GetSubOrganization(query.ParentId);
+            var parent = root.AsEntity().GetSubOrganization(query.OrganizationId);
             return parent == null ? Enumerable.Empty<OrganizationDto>() 
                 : parent.SubOrganizations.Select(o => new OrganizationDto(o));
         }
