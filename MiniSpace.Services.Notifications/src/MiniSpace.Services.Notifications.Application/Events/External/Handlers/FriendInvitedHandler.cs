@@ -51,9 +51,9 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         {
             // Fetch student names based on their IDs
             var inviter = await _studentsServiceClient.GetAsync(@event.InviterId);
-            var invitee = await _studentsServiceClient.GetAsync(@event.InviteeId);
-               Console.WriteLine("Inviter Object:");
-    Console.WriteLine(JsonSerializer.Serialize(inviter, new JsonSerializerOptions { WriteIndented = true }));
+            // var invitee = await _studentsServiceClient.GetAsync(@event.InviteeId);
+            // Console.WriteLine("Inviter Object:");
+            // Console.WriteLine(JsonSerializer.Serialize(inviter, new JsonSerializerOptions { WriteIndented = true }));
 
 
             var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
@@ -68,19 +68,30 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 updatedAt: null
             );
 
-            // Save the notification to the repository
+           // Save the notification to the repository
             await _notificationRepository.AddAsync(notification);
-
+            // Console.WriteLine("Notification added to repository: " + JsonSerializer.Serialize(notification));
 
             // Retrieve or create the StudentNotifications for the invitee
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId) ?? 
-                                        new StudentNotifications(@event.InviteeId);
+            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId);
+            if (studentNotifications == null)
+            {
+                studentNotifications = new StudentNotifications(@event.InviteeId);
+                // Console.WriteLine($"No existing notifications found for studentId {@event.InviterId}. Creating new StudentNotifications object.");
+            }
+            else
+            {
+                // Console.WriteLine($"Retrieved existing notifications for studentId {@event.InviterId}.");
+            }
 
             // Add the notification to student notifications
             studentNotifications.AddNotification(notification);
+            // Console.WriteLine("Notification added to StudentNotifications: " + JsonSerializer.Serialize(notification));
 
             // Update the student notifications in the repository
             await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+            // Console.WriteLine($"StudentNotifications updated for studentId {@event.InviterId}: " + JsonSerializer.Serialize(studentNotifications));
+
 
             // Create a new event to indicate that a notification has been created
             var notificationCreatedEvent = new NotificationCreated(

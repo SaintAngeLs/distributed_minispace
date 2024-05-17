@@ -32,11 +32,10 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
 
         public async Task UpdateAsync(StudentNotifications studentNotifications)
         {
-            var document = studentNotifications.AsDocument();
-            var filter = Builders<StudentNotificationsDocument>.Filter.Eq(d => d.StudentId, studentNotifications.StudentId);
+            var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentNotifications.StudentId);
             var update = Builders<StudentNotificationsDocument>.Update
-                .SetOnInsert(d => d.Id, document.Id)
-                .Set(d => d.Notifications, document.Notifications);
+                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId) // Ensure Id is set on insert
+                .PushEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument()));
 
             var options = new UpdateOptions { IsUpsert = true };
             await _repository.Collection.UpdateOneAsync(filter, update, options);

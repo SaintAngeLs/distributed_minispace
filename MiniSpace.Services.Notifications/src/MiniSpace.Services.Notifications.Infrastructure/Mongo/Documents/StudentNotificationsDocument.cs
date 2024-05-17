@@ -8,7 +8,11 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
 {
     public class StudentNotificationsDocument : IIdentifiable<Guid>
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.String)]  
         public Guid Id { get; set; }
+        
+        [BsonRepresentation(BsonType.String)]
         public Guid StudentId { get; set; }
         public List<NotificationDocument> Notifications { get; set; }
     }
