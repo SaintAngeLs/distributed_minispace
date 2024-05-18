@@ -4,6 +4,8 @@ using MiniSpace.Services.MediaFiles.Application.Exceptions;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Core.Entities;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 {
@@ -37,12 +39,17 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             {
                 throw new InvalidContextTypeException(command.SourceType);
             }
+            
             byte[] bytes = Convert.FromBase64String(command.Base64Content);
-            var stream = new MemoryStream(bytes);
+            using var inStream = new MemoryStream(bytes);
+            using var myImage = await Image.LoadAsync(inStream, cancellationToken);
+            using var outStream = new MemoryStream();
+            await myImage.SaveAsync(outStream, new WebpEncoder(), cancellationToken);
 
-            var objectId = await _gridFSService.UploadFileAsync(command.FileName, stream);
+            var originalObjectId = await _gridFSService.UploadFileAsync(command.FileName, inStream);
+            var objectId = await _gridFSService.UploadFileAsync(command.FileName, outStream);
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
-                command.UploaderId, State.Unassociated, _dateTimeProvider.Now, objectId, command.FileName);
+                command.UploaderId, State.Unassociated, _dateTimeProvider.Now, originalObjectId,objectId, command.FileName);
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, command.FileName));
         }

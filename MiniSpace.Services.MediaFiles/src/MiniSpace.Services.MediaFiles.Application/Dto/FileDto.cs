@@ -14,7 +14,7 @@
         public FileDto(Guid mediaFileId, Guid sourceId, string sourceType, Guid uploaderId, string state,
             DateTime createdAt, string fileName, string base64Content)
         {
-            MediaFileId = mediaFileId == Guid.Empty ? Guid.NewGuid() : mediaFileId;
+            MediaFileId = mediaFileId;
             SourceId = sourceId;
             SourceType = sourceType;
             UploaderId = uploaderId;
