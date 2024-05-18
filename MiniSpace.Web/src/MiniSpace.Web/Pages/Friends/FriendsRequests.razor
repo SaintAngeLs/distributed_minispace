@@ -9,7 +9,19 @@
 @using MiniSpace.Services.Friends.Application.Dto;
 @inject IIdentityService IdentityService
 @inject Radzen.NotificationService NotificationService
+@using MudBlazor
 
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.Create),
+        new BreadcrumbItem("Requests", href: "/friends", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
+    };
+}
 <h3>Incoming Friend Requests</h3>
 
 @if (incomingRequests == null)

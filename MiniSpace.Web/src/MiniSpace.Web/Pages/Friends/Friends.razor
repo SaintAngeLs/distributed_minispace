@@ -8,6 +8,20 @@
 @inject NavigationManager NavigationManager
 @inject Radzen.NotificationService NotificationService
 @inject Radzen.DialogService DialogService
+@using MudBlazor
+
+
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+    };
+}
 
 <div style="padding: 20px;">
     <div class="search-bar">
