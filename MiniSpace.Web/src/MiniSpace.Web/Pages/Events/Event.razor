@@ -179,7 +179,26 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
-                    
+                    @if (pageInitialized && !reactions.Any())
+                    {
+                        <h3>No reactions have been added by students yet.</h3>
+                    }
+                    <RadzenDataList PageSize="10" AllowPaging="true" Data="@reactions" TItem="ReactionDto">
+                        <Template Context="reaction">
+                            <RadzenCard Class="rz-border-radius-3">
+                                <RadzenRow Gap="0.5rem">
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+                                                    Text=@(reaction.StudentFullName)/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                                    Text=@(ReactionTypeExtensions.GetReactionText(reaction.Type))/>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
                 </RadzenTabsItem>
 
                 @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
@@ -283,7 +302,8 @@
     private bool pageInitialized = false;
 
     IEnumerable<PostDto> posts;
-
+    IEnumerable<ReactionDto> reactions;
+    
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes =
     [
@@ -310,6 +330,7 @@
         ev = await EventsService.GetEventAsync(new Guid(EventId));
         reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
         posts = await PostsService.GetPostsAsync(ev.Id);
+        reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
         
         pageInitialized = true;
     }
@@ -340,6 +361,9 @@
         {
             case 0:
                 posts = await PostsService.GetPostsAsync(ev.Id);
+                break;
+            case 2:
+                reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
                 break;
             case 3:
                 if (IsUserEventOrganizer(ev))

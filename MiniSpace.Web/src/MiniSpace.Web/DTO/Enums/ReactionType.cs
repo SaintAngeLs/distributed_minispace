@@ -22,6 +22,6 @@ namespace MiniSpace.Web.DTO.Enums
                 ReactionType.HateIt => "Hate it!",
                 _ => "No reactions!"
             };
-        }   
+        }
     }
 }
