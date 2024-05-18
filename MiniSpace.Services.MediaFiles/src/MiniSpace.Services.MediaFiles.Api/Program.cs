@@ -33,6 +33,7 @@ namespace MiniSpace.Services.MediaFiles.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetMediaFile, FileDto>("media-files/{mediaFileId}")
+                        .Get<GetOriginalMediaFile, FileDto>("media-files/{mediaFileId}/original") 
                         .Post<UploadMediaFile>("media-files",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"media-files/{cmd.MediaFileId}"))
                         .Delete<DeleteMediaFile>("media-files/{mediaFileId}")
