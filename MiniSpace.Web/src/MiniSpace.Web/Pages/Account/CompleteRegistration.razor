@@ -5,9 +5,12 @@
 @using MiniSpace.Web.Models.Students
 @using System.IO
 @using MiniSpace.Web.Areas.Http
+@using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.DTO.Types
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject IMediaFilesService MediaFilesService
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
@@ -66,7 +69,7 @@
         if (IdentityService.IsAuthenticated)
         {
             completeRegistrationModel.StudentId = IdentityService.UserDto.Id;
-            completeRegistrationModel.ProfileImage = "null";
+            completeRegistrationModel.ProfileImage = Guid.Empty;
             completeRegistrationModel.DateOfBirth = DateTime.Now;
         }
     }
@@ -118,7 +121,11 @@
                 long maxFileSize = 10 * 1024 * 1024;
                 var stream = file.OpenReadStream(maxFileSize);
                 byte[] bytes = await ReadFully(stream);
-                completeRegistrationModel.ProfileImage = Convert.ToBase64String(bytes);
+                var base64Content = Convert.ToBase64String(bytes);
+                var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
+                    MediaFileContextType.StudentProfile.ToString(), IdentityService.UserDto.Id,
+                    file.Name, file.ContentType, base64Content);
+                if(response)
                 stream.Close();
             }
             catch (Exception ex)
