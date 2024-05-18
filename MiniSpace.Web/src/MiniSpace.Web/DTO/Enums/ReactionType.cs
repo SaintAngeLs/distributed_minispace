@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace MiniSpace.Web.DTO.Enums
 {
     public enum ReactionType
@@ -23,5 +25,15 @@ namespace MiniSpace.Web.DTO.Enums
                 _ => "No reactions!"
             };
         }
+
+        public static List<KeyValuePair<string, ReactionType?>> GenerateReactionPairs()
+        => [
+            new KeyValuePair<string, ReactionType?>("", null),
+            new KeyValuePair<string, ReactionType?>(GetReactionText(ReactionType.LoveIt), ReactionType.LoveIt),
+            new KeyValuePair<string, ReactionType?>(GetReactionText(ReactionType.LikeIt), ReactionType.LikeIt),
+            new KeyValuePair<string, ReactionType?>(GetReactionText(ReactionType.Wow), ReactionType.Wow),
+            new KeyValuePair<string, ReactionType?>(GetReactionText(ReactionType.ItWasOkay), ReactionType.ItWasOkay),
+            new KeyValuePair<string, ReactionType?>(GetReactionText(ReactionType.HateIt), ReactionType.HateIt)
+        ];
     }
 }

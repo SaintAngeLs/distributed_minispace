@@ -305,15 +305,7 @@
     IEnumerable<ReactionDto> reactions;
     
     ReactionsSummaryDto reactionsSummary = new();
-    List<KeyValuePair<string, ReactionType?>> reactionTypes =
-    [
-        new KeyValuePair<string, ReactionType?>("", null),
-        new KeyValuePair<string, ReactionType?>(ReactionTypeExtensions.GetReactionText(ReactionType.LoveIt), ReactionType.LoveIt),
-        new KeyValuePair<string, ReactionType?>(ReactionTypeExtensions.GetReactionText(ReactionType.LikeIt), ReactionType.LikeIt),
-        new KeyValuePair<string, ReactionType?>(ReactionTypeExtensions.GetReactionText(ReactionType.Wow), ReactionType.Wow),
-        new KeyValuePair<string, ReactionType?>(ReactionTypeExtensions.GetReactionText(ReactionType.ItWasOkay), ReactionType.ItWasOkay),
-        new KeyValuePair<string, ReactionType?>(ReactionTypeExtensions.GetReactionText(ReactionType.HateIt), ReactionType.HateIt)
-    ];
+    List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
     
     private int participantPageSize = 10;
     IEnumerable<int> participantPageSizeOptions = new int[] { 10, 20, 40};

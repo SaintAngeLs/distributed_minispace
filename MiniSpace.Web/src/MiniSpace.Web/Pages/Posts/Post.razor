@@ -3,6 +3,8 @@
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Posts.Dialogs
+@using MiniSpace.Web.Areas.Reactions
+@using MiniSpace.Web.DTO.Enums
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -11,6 +13,7 @@
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IPostsService PostsService
+@inject IReactionsService ReactionsService
 @inject NavigationManager NavigationManager
 
 @if (!pageInitialized)
@@ -21,7 +24,7 @@
 @if (pageInitialized)
 {
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
-        <RadzenCard Class="rz-border-radius-3">
+        <RadzenCard Class="rz-my-12 rz-mx-md-12 rz-border-radius-3">
             <RadzenRow Gap="0.5rem">
                 <RadzenColumn Size="12" class="rz-text-truncate">
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
@@ -70,6 +73,25 @@
                                   Click="@(() => OpenDeletePostDialog(post.Id))" />
                 </RadzenStack>
             }
+
+            <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
+                <RadzenCard class="rz-background-color-success rz-shadow-0 rz-border-radius-0 rz-p-8">
+                    <RadzenRow RowGap="0">
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Number of reactions</RadzenText>
+                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(reactionsSummary.NumberOfReactions)</b></RadzenText>
+                            <RadzenText Text="Your reaction" TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0" />
+                            <RadzenDropDown Name="your-reaction" Data="reactionTypes" Value="@(reactionsSummary.AuthUserReactionType)"
+                                            ValueChanged="@((ReactionType? reactionType) => ReactionChanged(reactionType))"
+                                            TextProperty="Key" ValueProperty="Value" />
+                        </RadzenColumn>
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Dominant reaction</RadzenText>
+                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(ReactionTypeExtensions.GetReactionText(reactionsSummary.DominantReaction))</b></RadzenText>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </RadzenCard>
         </RadzenStack>
         
         <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
@@ -97,7 +119,10 @@
     private Guid studentId;
     private PostDto post = new();
     private bool pageInitialized = false;
-     
+    
+    ReactionsSummaryDto reactionsSummary = new();
+    List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
+    
     protected override async Task OnInitializedAsync()
     {
         if (IdentityService.IsAuthenticated)
@@ -105,6 +130,7 @@
             studentId = IdentityService.GetCurrentUserId();
         }
         post = await PostsService.GetPostAsync(new Guid(PostId));
+        reactionsSummary = await ReactionsService.GetReactionsSummary(post.Id, ReactionContentType.Post);
         
         pageInitialized = true;
     }
@@ -128,5 +154,22 @@
                 Width = "500px", Height = "100px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+    
+    private async void ReactionChanged(ReactionType? reactionType)
+    {
+        if (reactionsSummary.AuthUserReactionId != null)
+        {
+            await ReactionsService.DeleteReaction((Guid)reactionsSummary.AuthUserReactionId);
+        }
+        
+        if (reactionType != null)
+        {
+            await ReactionsService.CreateReaction(Guid.Empty, studentId, reactionType.ToString(),
+                post.Id, ReactionContentType.Post.ToString());
+        }
+
+        reactionsSummary = await ReactionsService.GetReactionsSummary(post.Id, ReactionContentType.Post);
+        StateHasChanged();
     }
 }
