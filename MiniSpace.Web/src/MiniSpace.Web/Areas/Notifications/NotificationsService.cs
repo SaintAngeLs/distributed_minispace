@@ -22,7 +22,7 @@ namespace MiniSpace.Web.Areas.Notifications
             _identityService = identityService;
         }
 
-        public async Task<IEnumerable<NotificationDto>> GetNotificationsByUserAsync(string userId)
+        public async Task<IEnumerable<NotificationDto>> GetNotificationsByUserAsync(Guid userId)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -36,14 +36,14 @@ namespace MiniSpace.Web.Areas.Notifications
         //     return await _httpClient.PostAsync<NotificationDto, NotificationDto>("notifications", notification);
         // }
 
-        public async Task UpdateNotificationStatusAsync(string notificationId, string status)
+        public async Task UpdateNotificationStatusAsync(Guid notificationId, string status)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
             await _httpClient.PutAsync<object, object>($"notifications/{notificationId}/status", new { Status = status });
         }
 
-        public async Task DeleteNotificationAsync(string notificationId)
+        public async Task DeleteNotificationAsync(Guid notificationId)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);

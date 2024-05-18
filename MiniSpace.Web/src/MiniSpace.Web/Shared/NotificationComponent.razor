@@ -1,0 +1,55 @@
+@using MiniSpace.Web.Areas.Notifications
+@inject INotificationsService NotificationsService
+@inject IIdentityService IdentityService
+@using MiniSpace.Web.DTO.Notifications;
+@using System.Threading
+
+<h3 style="background-color: #007BFF; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
+
+<div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px;">
+@if (notifications != null && notifications.Any())
+{
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        @foreach (var notification in notifications)
+        {
+            <li style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;">
+                <span style="display: block; color: #333; margin-bottom: 4px;">@notification.Message</span>
+                <span style="display: block; font-size: 0.8em; color: #666;">@notification.CreatedAt.ToString("g")</span>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p style="text-align: center; color: #888;">No new notifications.</p>
+}
+</div>
+@code {
+    private List<NotificationDto> notifications;
+    private Timer timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotifications();
+        timer = new Timer(new TimerCallback(_ => InvokeAsync(LoadNotifications)), null, 0, 15000);
+    }
+
+    private async Task LoadNotifications()
+    {
+        try
+        {
+            var userId = IdentityService.GetCurrentUserId(); 
+            notifications = (await NotificationsService.GetNotificationsByUserAsync(userId)).ToList();
+            StateHasChanged(); 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading notifications: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}

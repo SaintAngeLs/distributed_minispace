@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
@@ -7,9 +8,9 @@ namespace MiniSpace.Web.Areas.Notifications
 {
     public interface INotificationsService
     {
-        Task<IEnumerable<NotificationDto>> GetNotificationsByUserAsync(string userId);
+        Task<IEnumerable<NotificationDto>> GetNotificationsByUserAsync(Guid userId);
         // Task<NotificationDto> CreateNotificationAsync(NotificationDto notification);
-        Task UpdateNotificationStatusAsync(string notificationId, string status);
-        Task DeleteNotificationAsync(string notificationId);
+        Task UpdateNotificationStatusAsync(Guid notificationId, string status);
+        Task DeleteNotificationAsync(Guid notificationId);
     }
 }

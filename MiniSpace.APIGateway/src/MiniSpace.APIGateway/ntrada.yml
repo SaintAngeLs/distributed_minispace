@@ -187,16 +187,16 @@ modules:
         downstream: notifications-service/notifications/{userId}
         auth: true 
 
-      - upstream: /{notificationId}
+      - upstream: /notification/{notificationId}
         method: GET
         use: downstream
-        downstream: notifications-service/notifications/{notificationId}
+        downstream: notifications-service/notifications/notification/{notificationId}
         auth: true  
 
-      - upstream: /{notificationId}
+      - upstream: /notification/{notificationId}
         method: DELETE
         use: downstream
-        downstream: notifications-service/notifications/{notificationId}
+        downstream: notifications-service/notifications/notification/{notificationId}
         # afterDispatch: (cmd, ctx) => ctx.Response.NoContent() 
         auth: true 
 

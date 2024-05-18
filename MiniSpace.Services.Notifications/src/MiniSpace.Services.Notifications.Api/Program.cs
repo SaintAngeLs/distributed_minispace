@@ -35,7 +35,7 @@ namespace MiniSpace.Services.Notifications.Api
                         // .Get<GetNotification, NotificationDto>("notifications/{notificationId}")
                         .Post<CreateNotification>("notifications")
                         .Put<UpdateNotificationStatus>("notifications/{notificationId}/status")
-                        .Delete<DeleteNotification>("notifications/{notificationId}", afterDispatch: (cmd, ctx) => ctx.Response.NoContent())))
+                        .Delete<DeleteNotification>("notifications/notification/{notificationId}", afterDispatch: (cmd, ctx) => ctx.Response.NoContent())))
                 .UseLogging()
                 .UseLogging()
                 .Build()

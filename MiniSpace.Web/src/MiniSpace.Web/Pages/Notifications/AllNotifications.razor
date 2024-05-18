@@ -5,6 +5,7 @@
 @using MiniSpace.Web.DTO.Notifications
 @using Radzen;
 @using System.Linq; 
+@inject IIdentityService IdentityService
 
 <h3>All Notifications</h3>
 
@@ -36,15 +37,16 @@ else
 @code {
     private List<NotificationDto> notifications;
 
-    protected override async Task OnInitializedAsync()
+   protected override async Task OnInitializedAsync()
     {
-        var notifList = await NotificationsService.GetNotificationsByUserAsync("user-id"); // Replace "user-id" with actual user ID retrieval logic
+        var userId = IdentityService.GetCurrentUserId(); 
+        Console.WriteLine($"******************************* {userId} ******************************************************");
+        var notifList = await NotificationsService.GetNotificationsByUserAsync(userId);
         notifications = notifList.ToList();
     }
-
     private async Task DeleteNotification(Guid notificationId)
     {
-        await NotificationsService.DeleteNotificationAsync(notificationId.ToString());
+        await NotificationsService.DeleteNotificationAsync(notificationId);
         notifications.RemoveAll(n => n.NotificationId == notificationId);
         StateHasChanged(); // Re-render the component
     }

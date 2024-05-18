@@ -59,8 +59,10 @@
                     }
                 </div>
             </RadzenMenu>
+
         </RadzenStack>
     </header>
+
 
     <div style="display: flex; flex: 1; flex-direction: row;">
         @*
@@ -115,11 +117,26 @@
             </RadzenSidebar>
         }
 
-        <RadzenBody class="radzen-body">
-            <div class="">
-                @Body
+         <div style="display: flex; flex: 1; flex-direction: row; align-items: stretch;">
+           
+            <!-- Main content and Notification Area -->
+            <div style="display: flex; flex: 1;">
+                <RadzenBody class="radzen-body">
+                    <div class="">
+                        @Body
+                    </div>
+                </RadzenBody>
+
+                <!-- Notification Component on the right -->
+                @if(_isUserAuthenticated)
+                {
+                    <div style="width: 300px; align-self: stretch; padding: 10px;">
+                        <NotificationComponent />
+                    </div>
+                }
             </div>
-        </RadzenBody>
+        </div>
+
     </div>
 
     <CustomRadzenFooter />
