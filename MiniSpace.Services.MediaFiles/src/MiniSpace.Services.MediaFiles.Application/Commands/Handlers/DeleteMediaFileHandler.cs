@@ -36,6 +36,7 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
                 throw new UnauthorizedMediaFileAccessException(fileSourceInfo.Id, identity.Id, fileSourceInfo.UploaderId);
             }
             
+            await _gridFSService.DeleteFileAsync(fileSourceInfo.OriginalFileId);
             await _gridFSService.DeleteFileAsync(fileSourceInfo.FileId);
             await _fileSourceInfoRepository.DeleteAsync(command.MediaFileId);
             await _messageBroker.PublishAsync(new MediaFileDeleted(command.MediaFileId, 
