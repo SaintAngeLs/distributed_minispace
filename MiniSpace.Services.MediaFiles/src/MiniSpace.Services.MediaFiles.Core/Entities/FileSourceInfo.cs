@@ -10,12 +10,12 @@ namespace MiniSpace.Services.MediaFiles.Core.Entities
         public State State { get; set; }
         public DateTime CreatedAt { get; set; }
         public ObjectId OriginalFileId { get; set; }
-        public string OriginalFileContextType { get; set; }
+        public string OriginalFileContentType { get; set; }
         public ObjectId FileId { get; set; }
         public string FileName { get; set; }
         
         public FileSourceInfo(Guid id, Guid sourceId, ContextType sourceType, Guid uploaderId, State state,
-            DateTime createdAt, ObjectId originalFileId, string originalFileContextType, ObjectId fileId, string fileName)
+            DateTime createdAt, ObjectId originalFileId, string originalFileContentType, ObjectId fileId, string fileName)
         {
             Id = id;
             SourceId = sourceId;
@@ -24,7 +24,7 @@ namespace MiniSpace.Services.MediaFiles.Core.Entities
             State = state;
             CreatedAt = createdAt;
             OriginalFileId = originalFileId;
-            OriginalFileContextType = originalFileContextType;
+            OriginalFileContentType = originalFileContentType;
             FileId = fileId;
             FileName = fileName;
         }

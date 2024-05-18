@@ -3,5 +3,6 @@
     public interface IFileValidator
     {
         public void ValidateFileSize(int size);
+        public void ValidateFileExtensions(byte[] bytes, string contentType);
     }
 }

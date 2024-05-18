@@ -2,7 +2,7 @@
 {
     public class InvalidFileSizeException : AppException
     {
-        public override string Code { get; } = "invalid_file_size_exception";
+        public override string Code { get; } = "invalid_file_size";
         public int FileSize { get; }
         public int MaxFileSize { get; }
 

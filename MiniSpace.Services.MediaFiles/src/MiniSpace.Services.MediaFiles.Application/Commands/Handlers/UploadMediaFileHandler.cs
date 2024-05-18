@@ -43,10 +43,9 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
                 throw new InvalidContextTypeException(command.SourceType);
             }
             
-            _fileValidator.
-            
             byte[] bytes = Convert.FromBase64String(command.Base64Content);
             _fileValidator.ValidateFileSize(bytes.Length);
+            _fileValidator.ValidateFileExtensions(bytes, command.FileContentType);
             
             using var inStream = new MemoryStream(bytes);
             using var myImage = await Image.LoadAsync(inStream, cancellationToken);
@@ -57,7 +56,7 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             var objectId = await _gridFSService.UploadFileAsync(command.FileName, outStream);
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
                 command.UploaderId, State.Unassociated, _dateTimeProvider.Now, originalObjectId, 
-                command.FileContextType, objectId, command.FileName);
+                command.FileContentType, objectId, command.FileName);
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, command.FileName));
         }

@@ -27,11 +27,18 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             }
         }
 
-        public void ValidateFileExtensions(byte[] bytes, string contextType)
+        public void ValidateFileExtensions(byte[] bytes, string contentType)
         {
-            if (!_mimeTypes.ContainsValue(contextType))
+            if (!_mimeTypes.ContainsValue(contentType))
             {
-                throw new InvalidFileContextTypeException(contextType);
+                throw new InvalidFileContentTypeException(contentType);
+            }
+            
+            string hex = BitConverter.ToString(bytes, 0, 4).Replace("-", string.Empty);
+            _mimeTypes.TryGetValue(hex, out var mimeType);
+            if (mimeType != contentType)
+            {
+                throw new FileTypeDoesNotMatchContentTypeException(mimeType, contentType);
             }
         }
         
