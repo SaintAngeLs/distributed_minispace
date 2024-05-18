@@ -14,6 +14,7 @@ using MiniSpace.Services.MediaFiles.Application;
 using MiniSpace.Services.MediaFiles.Application.Commands;
 using MiniSpace.Services.MediaFiles.Application.Dto;
 using MiniSpace.Services.MediaFiles.Application.Queries;
+using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Infrastructure;
 
 namespace MiniSpace.Services.MediaFiles.Api
@@ -30,12 +31,17 @@ namespace MiniSpace.Services.MediaFiles.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
+                    .UseEndpoints(endpoints => endpoints
+                        .Post<UploadMediaFile>("media-files", async (cmd, ctx) =>
+                        {
+                            var fileId = await ctx.RequestServices.GetService<IMediaFilesService>().UploadAsync(cmd);
+                            await ctx.Response.WriteJsonAsync(fileId);
+                        })
+                    )
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetMediaFile, FileDto>("media-files/{mediaFileId}")
-                        .Get<GetOriginalMediaFile, FileDto>("media-files/{mediaFileId}/original") 
-                        .Post<UploadMediaFile>("media-files",
-                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"media-files/{cmd.MediaFileId}"))
+                        .Get<GetOriginalMediaFile, FileDto>("media-files/{mediaFileId}/original")
                         .Delete<DeleteMediaFile>("media-files/{mediaFileId}")
                         ))
                 .UseLogging()
