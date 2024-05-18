@@ -18,7 +18,8 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             { "47494638", "image/gif" }, 
             { "49492A00", "image/tiff" },
             { "4D4D002A", "image/tiff" },
-            { "52494646", "image/webp" }
+            { "52494646", "image/webp" },
+            { "57454250", "image/webp" }
         };
 
         public void ValidateFileSize(int size)
