@@ -3,6 +3,8 @@
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.Areas.Reactions
+@using MiniSpace.Web.DTO.Enums
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -12,6 +14,7 @@
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
 @inject IPostsService PostsService
+@inject IReactionsService ReactionsService
 @inject NavigationManager NavigationManager
 
 @if (!pageInitialized)
@@ -106,6 +109,24 @@
                                   Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" />
                 </RadzenStack>   
             }
+
+            <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
+                <RadzenCard class="rz-background-color-success rz-shadow-0 rz-border-radius-0 rz-p-8">
+                    <RadzenRow RowGap="0">
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Number of reactions</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(reactionsSummary.NumberOfReactions)</b></RadzenText>
+                            <RadzenLabel Text="Your reaction" TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0" />
+                            <RadzenDropDown Name="your-reaction" Data="reactionTypes" @bind-Value=@reactionsSummary.AuthUserReactionType
+                                            TextProperty="Key" ValueProperty="Value" />
+                        </RadzenColumn>
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Dominant reaction</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(reactionsSummary.DominantReaction)</b></RadzenText>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </RadzenCard>
         </RadzenStack>
         
         <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
@@ -157,6 +178,7 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
+                    
                 </RadzenTabsItem>
 
                 @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
@@ -260,6 +282,17 @@
     private bool pageInitialized = false;
 
     IEnumerable<PostDto> posts;
+
+    ReactionsSummaryDto reactionsSummary = new();
+    List<KeyValuePair<string, ReactionType?>> reactionTypes =
+    [
+        new KeyValuePair<string, ReactionType?>("", null),
+        new KeyValuePair<string, ReactionType?>("Love it!", ReactionType.LoveIt),
+        new KeyValuePair<string, ReactionType?>("Like it!", ReactionType.LikeIt),
+        new KeyValuePair<string, ReactionType?>("Wow!", ReactionType.Wow),
+        new KeyValuePair<string, ReactionType?>("It was okay!", ReactionType.ItWasOkay),
+        new KeyValuePair<string, ReactionType?>("Hate it!", ReactionType.HateIt)
+    ];
     
     private int participantPageSize = 10;
     IEnumerable<int> participantPageSizeOptions = new int[] { 10, 20, 40};
@@ -274,7 +307,8 @@
             studentId = IdentityService.GetCurrentUserId();
         }
         ev = await EventsService.GetEventAsync(new Guid(EventId));
-        posts = await PostsService.GetPostsAsync(new Guid(EventId));
+        reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
+        posts = await PostsService.GetPostsAsync(ev.Id);
         
         pageInitialized = true;
     }

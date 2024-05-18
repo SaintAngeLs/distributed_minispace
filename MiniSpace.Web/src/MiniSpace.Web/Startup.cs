@@ -23,6 +23,7 @@ using MudBlazor.Services;
 using MiniSpace.Web.Areas.Friends;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
+using MiniSpace.Web.Areas.Reactions;
 
 namespace MiniSpace.Web
 {
@@ -68,6 +69,7 @@ namespace MiniSpace.Web
             services.AddScoped<IOrganizationsService, OrganizationsService>();
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
             services.AddScoped<IFriendsService, FriendsService>();
+            services.AddScoped<IReactionsService, ReactionsService>();
 
         }
 
