@@ -438,3 +438,51 @@ html, body {
 .sign-in-up-pre-info p {
     margin: 2rem 1rem 2rem 2rem !important;
 }
+
+
+.breadcrumbs-container {
+    padding: 12px 24px;
+    background-color: #f9f9f9; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 20px; 
+}
+
+.custom-breadcrumbs .mud-breadcrumbs-item {
+    color: #505050; 
+    font-size: 16px; 
+    font-weight: 500; 
+}
+
+.custom-breadcrumbs .mud-breadcrumbs-item:hover {
+    color: #007BFF; 
+    text-decoration: none;
+}
+
+.custom-breadcrumbs .mud-breadcrumbs-divider {
+    color: #C0C0C0; 
+}
+
+.custom-breadcrumbs .mud-breadcrumbs-item:last-child {
+    color: #A0A0A0; 
+    pointer-events: none;
+}
+
+.custom-breadcrumbs .mud-icon {
+    margin-right: 8px; 
+}
+
+.custom-breadcrumbs .mud-svg-icon {
+    fill: #505050;
+}
+
+.custom-breadcrumbs .mud-svg-icon:hover {
+    fill: #007BFF;
+}
+
+
+
+.custom-breadcrumbs .mud-breadcrumbs-item:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}

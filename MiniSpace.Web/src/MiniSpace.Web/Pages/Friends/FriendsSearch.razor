@@ -10,7 +10,19 @@
 @inject IIdentityService IdentityService
 @inject Radzen.NotificationService NotificationService
 @inject IJSRuntime JSRuntime
+@using MudBlazor
 
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Search", href: "/friends/search", disabled: true, icon: Icons.Material.Filled.Create)
+    };
+}
 
 <div style="display: flex; padding: 50px;">
     <div class="left-panel">

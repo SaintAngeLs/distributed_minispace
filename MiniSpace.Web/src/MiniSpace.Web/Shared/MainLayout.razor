@@ -74,7 +74,7 @@
             <RadzenSidebar @bind-Expanded="@_sidebarExpanded" Width="@(IsUserAuthenticated ? "100px" : "0px")" style="transition: width 0.5s;">
                 <RadzenPanelMenu>
                     <RadzenPanelMenuItem Text="Home" Icon="home"
-                                         Click="@(() => NavigationManager.NavigateTo("service-home"))" />
+                                         Click="@(() => NavigationManager.NavigateTo(""))" />
                     
                     <RadzenPanelMenuItem Text="Account" Icon="account_box"
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
@@ -117,9 +117,15 @@
             </RadzenSidebar>
         }
 
-           <div style="flex: 1; display: flex; margin-left: @(IsUserAuthenticated ? "200px" : "0px");">
-            <div style="flex: 1; display: flex; justify-content: @(IsUserAuthenticated ? "flex-end" : "center");">
-                    <div class="main-content" style="flex-grow: 1; max-width: 1200px; ">
+           <div style="flex: 1; display: flex; margin-left: @(_isUserAuthenticated ? "200px" : "0px");">
+                <div style="flex: 1; display: flex; justify-content: @(_isUserAuthenticated ? " center" : "center");">
+                    <div class="main-content" style="flex-grow: 1; max-width: @(_isUserAuthenticated ? " 960px " : "1200px");">
+                        <div style="flex: 1; display: flex; justify-content: @(_isUserAuthenticated ? "flex-end" : "center");">
+                            <div class="main-content" style="flex-grow: 1; max-width: @(_isUserAuthenticated ? " 960px " : "1200px");">
+                                <DynamicContentComponent Route="@currentRoute" />
+                            </div>
+                        </div>
+
                         @* <RadzenBody> *@
                             <div>
                                 @Body
@@ -155,6 +161,8 @@
     private string _userEmail;
 
     private bool _isUserAuthenticated;
+
+    private string currentRoute;
 
      protected override async Task OnAfterRenderAsync(bool firstRender) {
         if (firstRender) {
