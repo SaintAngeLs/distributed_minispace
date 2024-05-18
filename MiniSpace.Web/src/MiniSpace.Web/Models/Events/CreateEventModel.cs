@@ -1,4 +1,5 @@
 using System;
+using MiniSpace.Web.DTO;
 
 namespace MiniSpace.Web.Models.Events
 {
@@ -7,8 +8,7 @@ namespace MiniSpace.Web.Models.Events
         public Guid EventId { get; set; }
         public string Name { get; set; }
         public Guid OrganizerId { get; set; }
-        public Guid OrganizationId { get; set; }
-        public Guid RootOrganizationId { get; set; }
+        public OrganizationDto Organization { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string BuildingName { get; set; }

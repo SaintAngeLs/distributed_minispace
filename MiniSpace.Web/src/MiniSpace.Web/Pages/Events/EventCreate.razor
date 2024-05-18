@@ -72,8 +72,8 @@
                                                              Text="Capacity should be between 1 and 1000" />
                             </RadzenFormField>
                             <RadzenFormField Text="Organization" Variant="Variant.Outlined">
-                                <RadzenDropDown Data=@organizations @bind-Value="@_createEventModel.OrganizationId"
-                                                TextProperty="Name" ValueProperty="Id" />
+                                <RadzenDropDown Data=@organizations @bind-Value="@_createEventModel.Organization"
+                                                TextProperty="Name" />
                             </RadzenFormField>
                         </RadzenStack>
                     </RadzenColumn>
@@ -207,12 +207,12 @@
         {
             organizerId = IdentityService.GetCurrentUserId();
             organizations = await OrganizationsService.GetOrganizerOrganizationsAsync(organizerId);
-
+            
             if (organizations.Any())
             {
                 organizationsFound = true;
                 _createEventModel.OrganizerId = organizerId;
-                _createEventModel.OrganizationId = organizations.First().Id;
+                _createEventModel.Organization = organizations.First();
             }
         }
         
@@ -222,7 +222,7 @@
     private async Task HandleCreateEvent()
     {
         var response = await EventsService.AddEventAsync(Guid.Empty, _createEventModel.Name,
-            _createEventModel.OrganizerId, _createEventModel.OrganizationId, _createEventModel.RootOrganizationId,
+            _createEventModel.OrganizerId, _createEventModel.Organization.Id, _createEventModel.Organization.RootId,
             _createEventModel.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             _createEventModel.EndDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
             _createEventModel.BuildingName, _createEventModel.Street,  _createEventModel.BuildingNumber,
