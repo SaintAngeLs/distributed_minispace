@@ -2,12 +2,13 @@ using System;
 
 namespace MiniSpace.Web.Models.Events
 {
-    public class AddEventModel
+    public class CreateEventModel
     {
         public Guid EventId { get; set; }
         public string Name { get; set; }
         public Guid OrganizerId { get; set; }
         public Guid OrganizationId { get; set; }
+        public Guid RootOrganizationId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string BuildingName { get; set; }

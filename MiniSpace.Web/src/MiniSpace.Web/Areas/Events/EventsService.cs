@@ -34,14 +34,14 @@ namespace MiniSpace.Web.Areas.Events
         }
 
         public Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
-            string startDate, string endDate, string buildingName, string street, string buildingNumber,
-            string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
-            string category, string publishDate)
+            Guid rootOrganizationId, string startDate, string endDate, string buildingName, string street,
+            string buildingNumber, string apartmentNumber, string city, string zipCode, string description,
+            int capacity, decimal fee, string category, string publishDate)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object,object>("events", new {eventId, name, organizerId, organizationId,
-                startDate, endDate, buildingName, street, buildingNumber, apartmentNumber, city, zipCode, description,
-                capacity, fee, category, publishDate});
+                rootOrganizationId, startDate, endDate, buildingName, street, buildingNumber, apartmentNumber, city,
+                zipCode, description, capacity, fee, category, publishDate});
         }
 
         public Task<HttpResponse<object>> UpdateEventAsync(Guid eventId, string name, Guid organizerId, string startDate, string endDate,

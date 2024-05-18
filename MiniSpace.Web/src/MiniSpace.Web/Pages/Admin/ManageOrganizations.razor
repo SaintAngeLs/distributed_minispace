@@ -2,6 +2,7 @@
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Organizations
+@using MiniSpace.Web.Models.Organizations
 @using MiniSpace.Web.Pages.Admin.Dialogs
 @using Radzen
 @using DialogOptions = Radzen.DialogOptions
@@ -9,6 +10,7 @@
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IOrganizationsService OrganizationsService
+@inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 
 <h1>Manage organizations</h1>
@@ -24,15 +26,15 @@ else
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Add root organization"
-                          Click="@(() => OpenAddOrganizationDialog((ParentOrganization)selectedItem, true))" />
+                          Click="@(() => OpenAddOrganizationDialog(selectedItem as OrganizationModel, true))" />
             <RadzenButton Size="ButtonSize.Medium" Text="Add child organization" Disabled="@(selectedItem == null)"
-                          Click="@(() => OpenAddOrganizationDialog((ParentOrganization)selectedItem, false))" />
+                          Click="@(() => OpenAddOrganizationDialog(selectedItem as OrganizationModel, false))" />
         </RadzenStack>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Clear selection" Disabled="@(selectedItem == null)"
                           Click="@(() => selectedItem = null)" />
             <RadzenButton Size="ButtonSize.Medium" Text="Show organization details" Disabled="@(selectedItem == null)"
-                          Click="@(() => OpenOrganizationDetailsDialog(selectedItem as ParentOrganization))" />
+                          Click="@(() => OpenOrganizationDetailsDialog(selectedItem as OrganizationModel, organizers))" />
            
         </RadzenStack>
     </RadzenStack>
@@ -56,17 +58,11 @@ else
 
 @code {
     private bool pageInitialized = false;
-
-    public class ParentOrganization
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public Guid RootId { get; set; }
-        public List<ParentOrganization> Children { get; set; }
-    }
     
     private int totalRootOrganizations = 0;
-    private List<ParentOrganization> rootOrganizations = new();
+    private List<OrganizationModel> rootOrganizations = new();
+
+    private IEnumerable<OrganizerModel> organizers;
     
     protected override async Task OnInitializedAsync()
     {
@@ -78,34 +74,39 @@ else
         }
         
         pageInitialized = true;
+        
+        var paginatedResponse = await StudentsService.GetStudentsAsync();
+        organizers = paginatedResponse.Results
+            .Where(o => o.IsOrganizer)
+            .Select(s => new OrganizerModel(s.Id, s.Email, $"{s.FirstName} {s.LastName}"));
     }
     
     private async void OnExpand(TreeExpandEventArgs args)
     {
-        var parent = (ParentOrganization)args.Value;
+        var parent = (OrganizationModel)args.Value;
         var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(parent.Id, parent.RootId);
         ConvertOrganizationDtoList(childOrganizations, parent.Children, parent.RootId);
         StateHasChanged();
     }
 
-    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<ParentOrganization> result, Guid? rootId)
+    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result, Guid? rootId)
     {
         result.Clear();
         foreach (var organization in input)
         {
-            result.Add(new ParentOrganization()
+            result.Add(new OrganizationModel()
             {
                 Id = organization.Id,
                 Name = organization.Name,
                 RootId = rootId ?? organization.Id,
-                Children = new List<ParentOrganization>()
+                Children = new List<OrganizationModel>()
             });
         }
     }
     
     private object selectedItem;
     
-    private async Task OpenAddOrganizationDialog(ParentOrganization parentOrganization, bool isRootOrganization)
+    private async Task OpenAddOrganizationDialog(OrganizationModel parentOrganization, bool isRootOrganization)
     {
         await DialogService.OpenAsync<AddOrganizationDialog>("Add new organization:",
             new Dictionary<string, object>()
@@ -123,7 +124,7 @@ else
         {
             await OnInitializedAsync();
         }
-        else if (selectedItem is ParentOrganization selectedOrg)
+        else if (selectedItem is OrganizationModel selectedOrg)
         {
             var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(selectedOrg.Id, selectedOrg.RootId);
             ConvertOrganizationDtoList(childOrganizations, selectedOrg.Children, selectedOrg.RootId);
@@ -131,10 +132,14 @@ else
         }
     }
     
-    private async Task OpenOrganizationDetailsDialog(ParentOrganization parentOrganization)
+    private async Task OpenOrganizationDetailsDialog(OrganizationModel Organization, IEnumerable<OrganizerModel> organizers)
     {
         await DialogService.OpenAsync<OrganizationDetailsDialog>("Details of the organization:",
-            new Dictionary<string, object>() { { "ParentOrganization", parentOrganization } },
+            new Dictionary<string, object>()
+            {
+                { "Organization", Organization },
+                { "Organizers", organizers }
+            },
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,

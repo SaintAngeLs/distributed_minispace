@@ -1,6 +1,7 @@
 @page "/admin/organizations/add"
 @using Radzen
 @using MiniSpace.Web.Areas.Organizations
+@using MiniSpace.Web.Models.Organizations
 @inject IOrganizationsService OrganizationsService
 @inject NavigationManager NavigationManager
 @inject Radzen.DialogService DialogService
@@ -34,7 +35,7 @@
 
 @code {
     [Parameter]
-    public ManageOrganizations.ParentOrganization ParentOrganization { get; set; }
+    public OrganizationModel ParentOrganization { get; set; }
     [Parameter]
     public bool IsRootOrganization { get; set; }
     

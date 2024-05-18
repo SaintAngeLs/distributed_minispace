@@ -2,6 +2,7 @@
 @using Radzen
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Organizations
+@using MiniSpace.Web.Models.Organizations
 @inject IOrganizationsService OrganizationsService
 @inject NavigationManager NavigationManager
 @inject Radzen.DialogService DialogService
@@ -45,13 +46,26 @@
             </RadzenStack>
         </HeaderTemplate>
         <ChildContent>
-            <RadzenListBox @bind-Value=@selectedOrganizer Data=@OrganizationDetailsDto.Organizers Style="width: 100%; height:200px"
-                           InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})"/>
+            <RadzenPickList @bind-Source="@notBelongingOrganizers" @bind-Target="@belongingOrganizers" Style="height: 180px; width: 100%;"
+                            Orientation="@Orientation.Horizontal" AllowFiltering="false" Multiple="false"
+                            ShowHeader="true" ButtonGap="12px" ButtonJustifyContent="JustifyContent.Center"
+                            ButtonStyle="@ButtonStyle.Secondary" ButtonSize="@ButtonSize.Medium" ButtonVariant="Variant.Outlined">
+                <SourceHeader>
+                    Organizers not belonging:
+                </SourceHeader>
+                <TargetHeader>
+                    Organizers belonging:
+                </TargetHeader>
+                <Template>
+                    @context.Name (@context.Email)
+                </Template>
+            </RadzenPickList>
         </ChildContent>
     </RadzenFieldset>
 
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Click="@HandleSubmitting" Variant="Variant.Flat" Text="Submit" Style="width: 120px"/>
             <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
         </RadzenStack>
     </RadzenStack>
@@ -59,15 +73,67 @@
 
 @code {
     [Parameter]
-    public ManageOrganizations.ParentOrganization ParentOrganization { get; set; }
+    public OrganizationModel Organization { get; set; }
+    [Parameter]
+    public IEnumerable<OrganizerModel> Organizers { get; set; }
 
-    public OrganizationDetailsDto OrganizationDetailsDto { get; set; } = new();
-    private Guid selectedOrganizer;
+    private OrganizationDetailsDto OrganizationDetailsDto { get; set; } = new();
+
+    private IEnumerable<OrganizerModel> notBelongingOrganizers = [];
+    private IEnumerable<OrganizerModel> belongingOrganizers = [];
     
     protected override async Task OnInitializedAsync()
     {
-        OrganizationDetailsDto = await OrganizationsService.GetOrganizationDetailsAsync(ParentOrganization.Id,
-            ParentOrganization.RootId);
         await base.OnInitializedAsync();
+        OrganizationDetailsDto = await OrganizationsService.GetOrganizationDetailsAsync(Organization.Id,
+            Organization.RootId);
+
+        HashSet<Guid> belongingGuids = OrganizationDetailsDto.Organizers.ToHashSet();
+        List<OrganizerModel> notBelongingTmp = new();
+        List<OrganizerModel> belongingTmp = new();
+
+        foreach (var organizer in Organizers)
+        {
+            if (belongingGuids.Contains(organizer.Id))
+            {
+                organizer.WasBelonging = true;
+                belongingTmp.Add(organizer);
+            }
+            else
+            {
+                organizer.WasBelonging = false;
+                notBelongingTmp.Add(organizer);
+            }
+        }
+
+        notBelongingOrganizers = notBelongingTmp;
+        belongingOrganizers = belongingTmp;
+    }
+
+    private async void HandleSubmitting()
+    {
+        if (belongingOrganizers != null)
+        {
+            foreach (var organizer in belongingOrganizers)
+            {
+                if (!organizer.WasBelonging)
+                {
+                    await OrganizationsService.AddOrganizerToOrganization(Organization.RootId, Organization.Id, organizer.Id);
+                }
+            }   
+        }
+
+        if (notBelongingOrganizers != null)
+        {
+            foreach (var organizer in notBelongingOrganizers)
+            {
+                if (organizer.WasBelonging)
+                {
+                    await OrganizationsService.RemoveOrganizerFromOrganization(Organization.RootId, Organization.Id, organizer.Id);
+                }
+            }   
+        }
+        
+        DialogService.Close(true);
     }
 }
