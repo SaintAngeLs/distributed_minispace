@@ -614,6 +614,11 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files/{mediaFileId}
 
+      - upstream: /{mediaFileId}/original
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}/original
+
       - upstream: /{mediaFileId}
         method: DELETE
         use: downstream
