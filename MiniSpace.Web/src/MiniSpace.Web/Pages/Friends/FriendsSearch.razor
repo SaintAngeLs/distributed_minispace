@@ -26,7 +26,7 @@
                  <div class="friend-card" @onclick="@(() => OnDetails(student))">
                      @if(images.ContainsKey(student.Id))
                      { 
-                         <img class="card-img-top" src="@GetImage(images[student.Id])" alt="Student Image">
+                         <img src="@GetImage(images[student.Id])" alt="Student Image" class="friend-img">
                      }
                     <div class="friend-info">
                         <h5>@student.FirstName @student.LastName</h5>
@@ -326,6 +326,10 @@
     }
 
     private void SearchFriends() {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return;
+        }
         students = students.Where(s => s.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                                        s.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
