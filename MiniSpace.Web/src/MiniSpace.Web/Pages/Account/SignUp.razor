@@ -75,7 +75,7 @@
 <div class="split-container">
     <div class="left-side">
         <video id="videoPlayer" autoplay muted loop>
-            <source src="videos/video-component/video_1.mp4" type="video/mp4">
+            <source src="videos/video-component/video_2.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
@@ -130,9 +130,9 @@
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender) {
+    @* protected override async Task OnAfterRenderAsync(bool firstRender) {
         if (firstRender) {
             await JSRuntime.InvokeVoidAsync("initializeVideoPlayer", "videos/video-component/video_1.mp4", "videos/video-component/video_2.mp4");
         }
-    }
+    } *@
 }

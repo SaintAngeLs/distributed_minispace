@@ -71,7 +71,7 @@
         *@
         @if (IsUserAuthenticated)
         {
-            <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
+            <RadzenSidebar @bind-Expanded="@_sidebarExpanded" Width="@(IsUserAuthenticated ? "100px" : "0px")" style="transition: width 0.5s;">
                 <RadzenPanelMenu>
                     <RadzenPanelMenuItem Text="Home" Icon="home"
                                          Click="@(() => NavigationManager.NavigateTo("service-home"))" />
@@ -117,17 +117,18 @@
             </RadzenSidebar>
         }
 
-         <div style="display: flex; flex: 1; flex-direction: row; align-items: stretch;">
-           
-            <!-- Main content and Notification Area -->
-            <div style="display: flex; flex: 1;">
-                <RadzenBody class="radzen-body">
-                    <div class="">
-                        @Body
+           <div style="flex: 1; display: flex; margin-left: @(IsUserAuthenticated ? "200px" : "0px");">
+            <div style="flex: 1; display: flex; justify-content: @(IsUserAuthenticated ? "flex-end" : "center");">
+                    <div class="main-content" style="flex-grow: 1; max-width: 1200px; ">
+                        @* <RadzenBody> *@
+                            <div>
+                                @Body
+                            </div>
+                        @* </RadzenBody> *@
                     </div>
-                </RadzenBody>
+                </div>
 
-                <!-- Notification Component on the right -->
+                <!-- Notification Component on the right, always at fixed width if user is authenticated -->
                 @if(_isUserAuthenticated)
                 {
                     <div style="width: 300px; align-self: stretch; padding: 10px;">
@@ -135,7 +136,7 @@
                     </div>
                 }
             </div>
-        </div>
+            
 
     </div>
 

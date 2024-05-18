@@ -17,9 +17,9 @@ else if (notifications.Any())
 {
     <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowSorting="true">
         <Columns>
-            <RadzenDataGridColumn TItem="NotificationDto" Property="Title" Title="Title" />
+            @* <RadzenDataGridColumn TItem="NotificationDto" Property="Title" Title="Title" /> *@
             <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message" />
-            <RadzenDataGridColumn TItem="NotificationDto" Property="Date" Title="Date" FormatString="{0:dd MMM yyyy}" />
+            <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
             <RadzenDataGridColumn TItem="NotificationDto" Property="Status" Title="Status" />
             <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
                 <Template>

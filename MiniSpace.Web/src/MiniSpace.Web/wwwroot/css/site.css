@@ -1,6 +1,12 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import url('https://cdn.jsdelivr.net/npm/mudblazor/css/mudblazor.min.css');
 
+:root {
+    --header-color: #102338;
+    --link-color: #0366d6;
+    --primary-btn-bg: #1b6ec2;
+    --primary-btn-border: #1861ac;
+}
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -162,7 +168,7 @@ app {
 }
 
 header {
-    background-color: #2F4E6F; 
+    background-color: var(--header-color);; 
     color: white;
     padding: 0.5rem 1rem;
     display: flex;
@@ -244,7 +250,7 @@ html, body {
 .logo-container {
     display: inline-block;
     padding: 5px 10px; 
-    background-color: #2F4E6F; 
+    background-color: var(--header-color); 
     border-radius: 5px; 
     margin-right: 15px; 
 }
@@ -268,7 +274,7 @@ html, body {
 }
 
 .rz-navigation-menu {
-    background-color: #2F4E6F !important;
+    background-color: var(--header-color) !important;
     color: #fff !important;
     transition: background-color 0.3s ease; 
 }
@@ -304,8 +310,8 @@ html, body {
 
 .rz-menu {
     z-index: 100 !important;
-    background-color: #2F4E6F !important;
-    color: #000 !important;
+    background-color: var(--header-color) !important;
+    color: #fff !important;
     height: 50px;
 }
 
@@ -342,7 +348,7 @@ html, body {
         align-items: center;
         width: 100% !important;
        
-        background-color: #2F4E6F !important;
+        background-color: var(--header-color) !important;
     }
 
     .rz-menu-item {

@@ -37,7 +37,7 @@
 
     /* Specific styles for video background */
     .left-side {
-        margin-top: 5rem !important;
+        @* margin-top: 5rem !important; *@
         background: black; /* Fallback for non-supported browsers */
         position: relative;
     }
@@ -160,36 +160,30 @@
     } *@
 
     private async Task HandleSignIn()
-{
-    try
     {
-        var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
-        if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
+        try
         {
-            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-            var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/account";
-            NavigationManager.NavigateTo(nextPage);
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+            if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
+            {
+                await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/account";
+                // Force a page reload when navigating
+                NavigationManager.NavigateTo(nextPage, true);
+            }
+            else
+            {
+                showError = true;
+                errorMessage = "Invalid login attempt";
+                StateHasChanged(); 
+            }
         }
-        else
+        catch (Exception ex)
         {
+        
             showError = true;
-            errorMessage = "Invalid login attempt";
+            errorMessage = $"Error during sign in: {ex.Message}";
             StateHasChanged(); 
         }
     }
-    catch (Exception ex)
-    {
-    
-        showError = true;
-        errorMessage = $"Error during sign in: {ex.Message}";
-        StateHasChanged(); 
-    }
-}
-
- protected override async Task OnAfterRenderAsync(bool firstRender) {
-        if (firstRender) {
-            await JSRuntime.InvokeVoidAsync("initializeVideoPlayer", "videos/video-component/video_1.mp4", "videos/video-component/video_2.mp4");
-        }
-    }
-
 }
