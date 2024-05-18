@@ -5,7 +5,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
 {
     public class FileValidator : IFileValidator
     {
-        private const int MaxFileSize = 200_000;
+        private const int MaxFileSize = 1_000_000;
 
         private readonly Dictionary<string, string> _mimeTypes = new Dictionary<string, string>()
         {
@@ -16,7 +16,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             { "47494638", "image/gif" }, 
             { "49492A00", "image/tiff" },
             { "4D4D002A", "image/tiff" },
-            { "424D", "image/bmp" }      
+            { "52494646", "image/webp" }
         };
 
         public void ValidateFileSize(int size)
