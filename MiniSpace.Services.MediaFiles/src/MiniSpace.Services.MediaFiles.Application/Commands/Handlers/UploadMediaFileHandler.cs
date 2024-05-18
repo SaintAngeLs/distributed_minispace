@@ -51,6 +51,8 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             using var myImage = await Image.LoadAsync(inStream, cancellationToken);
             using var outStream = new MemoryStream();
             await myImage.SaveAsync(outStream, new WebpEncoder(), cancellationToken);
+            inStream.Position = 0;
+            outStream.Position = 0;
 
             var originalObjectId = await _gridFSService.UploadFileAsync(command.FileName, inStream);
             var objectId = await _gridFSService.UploadFileAsync(command.FileName, outStream);
