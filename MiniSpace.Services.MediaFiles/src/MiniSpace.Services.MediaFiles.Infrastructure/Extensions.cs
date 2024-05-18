@@ -48,6 +48,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IFileSourceInfoRepository, FileSourceInfoMongoRepository>();
+            builder.Services.AddSingleton<IFileValidator, FileValidator>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();

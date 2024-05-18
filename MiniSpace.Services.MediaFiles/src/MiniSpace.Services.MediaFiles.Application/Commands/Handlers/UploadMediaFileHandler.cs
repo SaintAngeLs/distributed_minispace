@@ -12,15 +12,18 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
     public class UploadMediaFileHandler: ICommandHandler<UploadMediaFile>
     {
         private readonly IFileSourceInfoRepository _fileSourceInfoRepository;
+        private readonly IFileValidator _fileValidator;
         private readonly IGridFSService _gridFSService;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
         
-        public UploadMediaFileHandler(IFileSourceInfoRepository fileSourceInfoRepository, IGridFSService gridFSService,
-            IDateTimeProvider dateTimeProvider, IAppContext appContext, IMessageBroker messageBroker)
+        public UploadMediaFileHandler(IFileSourceInfoRepository fileSourceInfoRepository, IFileValidator fileValidator, 
+            IGridFSService gridFSService, IDateTimeProvider dateTimeProvider, IAppContext appContext,
+            IMessageBroker messageBroker)
         {
             _fileSourceInfoRepository = fileSourceInfoRepository;
+            _fileValidator = fileValidator;
             _gridFSService = gridFSService;
             _dateTimeProvider = dateTimeProvider;
             _appContext = appContext;
@@ -41,6 +44,8 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             }
             
             byte[] bytes = Convert.FromBase64String(command.Base64Content);
+            _fileValidator.ValidateFileSize(bytes.Length);
+            
             using var inStream = new MemoryStream(bytes);
             using var myImage = await Image.LoadAsync(inStream, cancellationToken);
             using var outStream = new MemoryStream();
