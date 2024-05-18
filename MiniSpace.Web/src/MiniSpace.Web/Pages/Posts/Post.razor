@@ -94,12 +94,32 @@
             </RadzenCard>
         </RadzenStack>
         
-        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+        <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
             <Tabs>
                 <RadzenTabsItem Text="Comments">
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
+                    @if (pageInitialized && !reactions.Any())
+                    {
+                    <h3>No reactions have been added by students yet.</h3>
+                    }
+                    <RadzenDataList PageSize="10" AllowPaging="true" Data="@reactions" TItem="ReactionDto">
+                        <Template Context="reaction">
+                            <RadzenCard Class="rz-border-radius-3">
+                                <RadzenRow Gap="0.5rem">
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+                                                    Text=@(reaction.StudentFullName)/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                                    Text=@(ReactionTypeExtensions.GetReactionText(reaction.Type))/>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
                 </RadzenTabsItem>
             </Tabs>
         </RadzenTabs>
@@ -120,6 +140,8 @@
     private PostDto post = new();
     private bool pageInitialized = false;
     
+    IEnumerable<ReactionDto> reactions;
+    
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
     
@@ -131,6 +153,7 @@
         }
         post = await PostsService.GetPostAsync(new Guid(PostId));
         reactionsSummary = await ReactionsService.GetReactionsSummary(post.Id, ReactionContentType.Post);
+        reactions = await ReactionsService.GetReactions(post.Id, ReactionContentType.Post);
         
         pageInitialized = true;
     }
@@ -143,6 +166,22 @@
         }
 
         return studentId == postDto.OrganizerId;
+    }
+    
+    private async void OnChange(int index)
+    {
+        if (!IdentityService.IsAuthenticated)
+        {
+            return;
+        }
+        
+        switch (index)
+        {
+            case 1:
+                reactions = await ReactionsService.GetReactions(post.Id, ReactionContentType.Post);
+                break;
+        }
+        StateHasChanged();
     }
     
     private async Task OpenDeletePostDialog(Guid postId)
