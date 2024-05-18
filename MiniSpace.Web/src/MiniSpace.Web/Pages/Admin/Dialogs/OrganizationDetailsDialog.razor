@@ -59,14 +59,15 @@
 
 @code {
     [Parameter]
-    public Guid OrganizationId { get; set; }
+    public ManageOrganizations.ParentOrganization ParentOrganization { get; set; }
 
     public OrganizationDetailsDto OrganizationDetailsDto { get; set; } = new();
     private Guid selectedOrganizer;
     
     protected override async Task OnInitializedAsync()
     {
-        OrganizationDetailsDto = await OrganizationsService.GetOrganizationDetailsAsync(OrganizationId);
+        OrganizationDetailsDto = await OrganizationsService.GetOrganizationDetailsAsync(ParentOrganization.Id,
+            ParentOrganization.RootId);
         await base.OnInitializedAsync();
     }
 }

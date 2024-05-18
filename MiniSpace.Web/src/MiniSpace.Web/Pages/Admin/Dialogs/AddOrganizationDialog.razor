@@ -1,6 +1,5 @@
 @page "/admin/organizations/add"
 @using Radzen
-@using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Organizations
 @inject IOrganizationsService OrganizationsService
 @inject NavigationManager NavigationManager
@@ -12,7 +11,7 @@
             <RadzenColumn Size="12" SizeSM="12">
                 <RadzenStack size="12">
                     <RadzenFormField Text="Name" Variant="Variant.Outlined">
-                        <RadzenTextBox @bind-Value="@NewOrganization.Name" />
+                        <RadzenTextBox @bind-Value="@newOrganizationName" />
                     </RadzenFormField>
                 </RadzenStack>
             </RadzenColumn>
@@ -35,9 +34,11 @@
 
 @code {
     [Parameter]
-    public OrganizationDto NewOrganization { get; set; }
+    public ManageOrganizations.ParentOrganization ParentOrganization { get; set; }
     [Parameter]
     public bool IsRootOrganization { get; set; }
+    
+    private string newOrganizationName { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
@@ -46,8 +47,15 @@
     
     private async void HandleAddingNewOrganization()
     {
-        await OrganizationsService.AddOrganization(Guid.Empty, NewOrganization.Name,
-            IsRootOrganization ? Guid.Empty : NewOrganization.ParentId);
+        if (IsRootOrganization)
+        {
+            await OrganizationsService.CreateRootOrganization(Guid.Empty, newOrganizationName);   
+        }
+        else
+        {
+            await OrganizationsService.CreateOrganization(Guid.Empty, newOrganizationName,
+                ParentOrganization.RootId, ParentOrganization.Id);
+        }
         DialogService.Close(true);
     }
 }

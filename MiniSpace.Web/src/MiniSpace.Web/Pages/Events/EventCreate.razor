@@ -19,7 +19,13 @@
     <h3 class="rz-p-12">Loading...</h3>
 }
 
-@if (pageInitialized && organizerId != Guid.Empty)
+@if (pageInitialized && !organizationsFound)
+{
+    <h3 class="rz-p-12">You have been granted the organizer rights, but have not been added to any organization yet!</h3>
+    <h3>Therefore, you cannot create any event.</h3>
+}
+
+@if (pageInitialized && organizationsFound && organizerId != Guid.Empty)
 {
     <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
                     Shade="Shade.Lighter">
@@ -152,6 +158,7 @@
 @code {
     private Guid organizerId;
     private bool pageInitialized = false;
+    private bool organizationsFound = false;
     
     private AddEventModel addEventModel = new()
     {
@@ -201,8 +208,12 @@
             organizerId = IdentityService.GetCurrentUserId();
             organizations = await OrganizationsService.GetOrganizerOrganizationsAsync(organizerId);
 
-            addEventModel.OrganizerId = organizerId;
-            addEventModel.OrganizationId = organizations.First().Id;
+            if (organizations.Any())
+            {
+                organizationsFound = true;
+                addEventModel.OrganizerId = organizerId;
+                addEventModel.OrganizationId = organizations.First().Id;
+            }
         }
         
         pageInitialized = true;

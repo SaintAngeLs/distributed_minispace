@@ -24,9 +24,9 @@ else
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Add root organization"
-                          Click="@(() => OpenAddOrganizationDialog(newOrganization, true))" />
+                          Click="@(() => OpenAddOrganizationDialog((ParentOrganization)selectedItem, true))" />
             <RadzenButton Size="ButtonSize.Medium" Text="Add child organization" Disabled="@(selectedItem == null)"
-                          Click="@(() => OpenAddOrganizationDialog(newOrganization, false))" />
+                          Click="@(() => OpenAddOrganizationDialog((ParentOrganization)selectedItem, false))" />
         </RadzenStack>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Clear selection" Disabled="@(selectedItem == null)"
@@ -37,13 +37,13 @@ else
         </RadzenStack>
     </RadzenStack>
     
-    <RadzenStack Gap="1rem" Style="height: 100%">
+    <RadzenStack class="rz-p-8" Gap="1rem" Style="height: 100%">
         @if (totalRootOrganizations == 0)
         {
             <h3>There are not any organizations created.</h3>
         }
         
-        <RadzenTree Data="@rootOrganizations" Expand="@OnExpand" Change="@OnChange" @bind-Value=@selectedItem>
+        <RadzenTree Data="@rootOrganizations" Expand="@OnExpand" @bind-Value=@selectedItem>
             <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
             <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
             <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
@@ -61,8 +61,7 @@ else
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Guid ParentId { get; set; }
-        public bool IsLeaf { get; set; }
+        public Guid RootId { get; set; }
         public List<ParentOrganization> Children { get; set; }
     }
     
@@ -74,7 +73,7 @@ else
         if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
             var tmpOrganizations = await OrganizationsService.GetRootOrganizationsAsync();
-            ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations);
+            ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations, null);
             totalRootOrganizations = rootOrganizations.Count;
         }
         
@@ -84,12 +83,12 @@ else
     private async void OnExpand(TreeExpandEventArgs args)
     {
         var parent = (ParentOrganization)args.Value;
-        var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(parent.Id);
-        ConvertOrganizationDtoList(childOrganizations, parent.Children);
+        var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(parent.Id, parent.RootId);
+        ConvertOrganizationDtoList(childOrganizations, parent.Children, parent.RootId);
         StateHasChanged();
     }
 
-    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<ParentOrganization> result)
+    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<ParentOrganization> result, Guid? rootId)
     {
         result.Clear();
         foreach (var organization in input)
@@ -98,36 +97,20 @@ else
             {
                 Id = organization.Id,
                 Name = organization.Name,
-                ParentId = organization.ParentId,
-                IsLeaf = organization.IsLeaf,
+                RootId = rootId ?? organization.Id,
                 Children = new List<ParentOrganization>()
             });
         }
     }
-
-    private bool HasChildren(object org)
-    {
-        var organization = (ParentOrganization)org;
-        return !organization.IsLeaf;
-    }
     
     private object selectedItem;
-    private OrganizationDto newOrganization = new();
-
-    private void OnChange()
-    {
-        if (selectedItem is ParentOrganization selectedOrganization)
-        {
-            newOrganization.ParentId = selectedOrganization.Id;
-        }
-    }
     
-    private async Task OpenAddOrganizationDialog(OrganizationDto newOrganization, bool isRootOrganization)
+    private async Task OpenAddOrganizationDialog(ParentOrganization parentOrganization, bool isRootOrganization)
     {
-        await DialogService.OpenAsync<AddOrganizationDialog>($"Add new organization:",
+        await DialogService.OpenAsync<AddOrganizationDialog>("Add new organization:",
             new Dictionary<string, object>()
             {
-                { "NewOrganization", newOrganization },
+                { "ParentOrganization", parentOrganization },
                 { "IsRootOrganization", isRootOrganization }
             },
             new DialogOptions()
@@ -140,18 +123,18 @@ else
         {
             await OnInitializedAsync();
         }
-        else if (selectedItem is ParentOrganization selectedOrganization)
+        else if (selectedItem is ParentOrganization selectedOrg)
         {
-            var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(selectedOrganization.Id);
-            ConvertOrganizationDtoList(childOrganizations, selectedOrganization.Children);
+            var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(selectedOrg.Id, selectedOrg.RootId);
+            ConvertOrganizationDtoList(childOrganizations, selectedOrg.Children, selectedOrg.RootId);
             StateHasChanged();
         }
     }
     
-    private async Task OpenOrganizationDetailsDialog(ParentOrganization organization)
+    private async Task OpenOrganizationDetailsDialog(ParentOrganization parentOrganization)
     {
-        await DialogService.OpenAsync<OrganizationDetailsDialog>($"Details of the organization:",
-            new Dictionary<string, object>() { { "OrganizationId", organization.Id } },
+        await DialogService.OpenAsync<OrganizationDetailsDialog>("Details of the organization:",
+            new Dictionary<string, object>() { { "ParentOrganization", parentOrganization } },
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
