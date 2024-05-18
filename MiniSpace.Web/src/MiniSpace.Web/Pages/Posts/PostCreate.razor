@@ -175,11 +175,12 @@
             }
             finally
             {
-                StateHasChanged();
+               
             }
         }
-        images = uploadedImages;
         isUploading = false;
+        StateHasChanged();
+        images = uploadedImages;
         clientChangeCompletionSource.SetResult(true);
     }
     
