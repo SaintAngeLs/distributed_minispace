@@ -74,6 +74,15 @@
                         <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100" Name="profile-image"
                                       InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "select file" } })"/>
                     </RadzenColumn>
+                    <RadzenColumn>
+                        @if (isUploading)
+                        {
+                            <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                                       Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                                <Template>Uploading</Template>
+                            </RadzenProgressBarCircular>
+                        }
+                    </RadzenColumn>
                     <RadzenColumn Size="12" SizeMD="5">
                         <RadzenButton Size="ButtonSize.Large" Text="Save account"
                                       Click=@HandleUpdateStudent/>
@@ -92,6 +101,8 @@ else
     private StudentDto studentDto = new();
     private bool editionDisabled = true;
     private string profileImage = string.Empty;
+    private TaskCompletionSource<bool> clientChangeCompletionSource;
+    private bool isUploading = false;
     
     protected override async Task OnInitializedAsync()
     {
@@ -116,6 +127,10 @@ else
 
     private async Task HandleUpdateStudent()
     {
+        if (clientChangeCompletionSource != null)
+        {
+            await clientChangeCompletionSource.Task;
+        }
         editionDisabled = true;
         await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImage,
             studentDto.Description, studentDto.EmailNotifications);
@@ -125,10 +140,13 @@ else
     async void OnClientChange(UploadChangeEventArgs args)
     {
         Console.WriteLine("Client-side upload changed");
+        clientChangeCompletionSource = new TaskCompletionSource<bool>();
 
         foreach (var file in args.Files)
         {
             Console.WriteLine($"File: {file.Name} / {file.Size} bytes");
+            isUploading = true;
+            StateHasChanged();
 
             try
             {
@@ -143,11 +161,19 @@ else
                 {
                     studentDto.ProfileImage = response.Content.FileId;
                 }
+
                 stream.Close();
+                clientChangeCompletionSource.SetResult(true);
             }
             catch (Exception ex)
-            { 
+            {
                 Console.WriteLine($"Client-side file read error: {ex.Message}");
+                clientChangeCompletionSource.SetResult(false);
+            }
+            finally
+            {
+                isUploading = false;
+                StateHasChanged();
             }
         }
     }
