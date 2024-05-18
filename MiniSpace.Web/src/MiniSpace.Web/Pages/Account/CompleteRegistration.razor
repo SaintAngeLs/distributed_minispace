@@ -125,7 +125,10 @@
                 var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
                     MediaFileContextType.StudentProfile.ToString(), IdentityService.UserDto.Id,
                     file.Name, file.ContentType, base64Content);
-                if(response)
+                if (response.Content != null && response.Content.FileId != Guid.Empty)
+                {
+                    completeRegistrationModel.ProfileImage = response.Content.FileId;
+                }
                 stream.Close();
             }
             catch (Exception ex)
