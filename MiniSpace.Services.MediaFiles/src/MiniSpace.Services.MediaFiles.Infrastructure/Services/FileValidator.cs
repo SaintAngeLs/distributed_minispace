@@ -9,9 +9,11 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
 
         private readonly Dictionary<string, string> _mimeTypes = new Dictionary<string, string>()
         {
+            { "FFD8FFDB", "image/jpeg" },
             { "FFD8FFE0", "image/jpeg" },
             { "FFD8FFE1", "image/jpeg" },
             { "FFD8FFE2", "image/jpeg" },
+            { "FFD8FFEE", "image/jpeg" },
             { "89504E47", "image/png" }, 
             { "47494638", "image/gif" }, 
             { "49492A00", "image/tiff" },
