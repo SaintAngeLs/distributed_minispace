@@ -70,7 +70,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<StudentDocument, Guid>("studentsUpdated")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
