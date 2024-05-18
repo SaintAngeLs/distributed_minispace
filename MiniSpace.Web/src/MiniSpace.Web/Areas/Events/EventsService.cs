@@ -90,12 +90,13 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.PostAsync($"events/{eventId}/rate", new {eventId, rating, studentId});
         }
         
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name,
-            string organizer, string category, string state, IEnumerable<Guid> friends, string friendsEngagementType,
-            string dateFrom, string dateTo, PageableDto pageable)
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer,
+            Guid organizationId, Guid rootOrganizationId, string category, string state, IEnumerable<Guid> friends,
+            string friendsEngagementType, string dateFrom, string dateTo, PageableDto pageable)
         {
             return _httpClient.PostAsync<SearchEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search", 
-                new (name, organizer, category, state, friends, friendsEngagementType, dateFrom, dateTo, pageable));
+                new (name, organizer, organizationId, rootOrganizationId, category, state, friends,
+                    friendsEngagementType, dateFrom, dateTo, pageable));
         }
 
         public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(Guid organizerId,

@@ -8,6 +8,8 @@ namespace MiniSpace.Web.Data.Events
     {
         public string Name { get; set; }
         public string Organizer { get; set; }
+        public Guid OrganizationId { get; set; }
+        public Guid RootOrganizationId { get; set; }
         public string Category { get; set; }
         public string State { get; set; }
         public IEnumerable<Guid> Friends { get; set; }
@@ -16,11 +18,14 @@ namespace MiniSpace.Web.Data.Events
         public string DateTo { get; set; }
         public PageableDto Pageable { get; set; }
         
-        public SearchEvents(string name, string organizer, string category, string state, IEnumerable<Guid> friends,
-            string friendsEngagementType, string dateFrom, string dateTo, PageableDto pageable)
+        public SearchEvents(string name, string organizer, Guid organizationId, Guid rootOrganizationId,
+            string category, string state, IEnumerable<Guid> friends, string friendsEngagementType,
+            string dateFrom, string dateTo, PageableDto pageable)
         {
             Name = name;
             Organizer = organizer;
+            OrganizationId = organizationId;
+            RootOrganizationId = rootOrganizationId;
             Category = category;
             State = state;
             Friends = friends;

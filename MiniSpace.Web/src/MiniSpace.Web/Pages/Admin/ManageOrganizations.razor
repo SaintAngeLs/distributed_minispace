@@ -61,7 +61,8 @@ else
     
     private int totalRootOrganizations = 0;
     private List<OrganizationModel> rootOrganizations = new();
-
+    private object selectedItem;
+    
     private IEnumerable<OrganizerModel> organizers;
     
     protected override async Task OnInitializedAsync()
@@ -106,8 +107,6 @@ else
             });
         }
     }
-    
-    private object selectedItem;
     
     private async Task OpenAddOrganizationDialog(OrganizationModel parentOrganization, bool isRootOrganization)
     {
