@@ -10,5 +10,6 @@ namespace MiniSpace.Services.Posts.Core.Repositories
         Task AddAsync(Post post);
         Task UpdateAsync(Post post);
         Task DeleteAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
     }    
 }

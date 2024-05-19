@@ -7,6 +7,7 @@ using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
@@ -17,12 +18,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEventValidator _eventValidator;
+        private readonly IOrganizationsServiceClient _organizationsServiceClient;
         private readonly IAppContext _appContext;
 
-        public EventService(IEventRepository eventRepository, IEventValidator eventValidator, IAppContext appContext)
+        public EventService(IEventRepository eventRepository, IEventValidator eventValidator, 
+            IOrganizationsServiceClient organizationsServiceClient, IAppContext appContext)
         {
             _eventRepository = eventRepository;
             _eventValidator = eventValidator;
+            _organizationsServiceClient = organizationsServiceClient;
             _appContext = appContext;
         }
 
@@ -33,6 +37,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             Category? category = null;
             State? state = null;
             EventEngagementType? friendsEngagementType = null;
+            IEnumerable<Guid> organizations = new List<Guid>();
             if(command.DateFrom != string.Empty)
             {
                 dateFrom =_eventValidator.ParseDate(command.DateFrom, "DateFrom");
@@ -54,11 +59,16 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             {
                 friendsEngagementType = _eventValidator.ParseEngagementType(command.FriendsEngagementType);
             }
+            if (command.OrganizationId != Guid.Empty && command.RootOrganizationId != Guid.Empty)
+            {
+                organizations = await _organizationsServiceClient
+                    .GetAllChildrenOrganizations(command.OrganizationId, command.RootOrganizationId) ?? new List<Guid>();
+            }
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
             
             var result = await _eventRepository.BrowseEventsAsync(
-                pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, category, state, command.Friends,
-                friendsEngagementType, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
+                pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, category, state, organizations,
+                command.Friends, friendsEngagementType, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
             
             var identity = _appContext.Identity;
             var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, identity.Id)), 

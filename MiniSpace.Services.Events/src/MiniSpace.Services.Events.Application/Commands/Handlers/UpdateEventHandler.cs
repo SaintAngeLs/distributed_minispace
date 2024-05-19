@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
@@ -54,6 +55,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             var address = @event.Location.Update(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
+            _eventValidator.ValidateMediaFiles(command.MediaFiles.ToList());
             var capacity = command.Capacity == 0 ? @event.Capacity : command.Capacity;
             _eventValidator.ValidateUpdatedCapacity(capacity, @event.Capacity);
             var fee = command.Fee == 0 ? @event.Fee : command.Fee;
@@ -71,7 +73,8 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             @event.Update(name, description, startDate, endDate, address, capacity, fee, category, state, publishDate, now);
             await _eventRepository.UpdateAsync(@event);
-            await _messageBroker.PublishAsync(new EventUpdated(@event.Id, _dateTimeProvider.Now, identity.Id));
+            await _messageBroker.PublishAsync(new EventUpdated(@event.Id, _dateTimeProvider.Now, 
+                identity.Id, @event.MediaFiles));
         }
     }
 }

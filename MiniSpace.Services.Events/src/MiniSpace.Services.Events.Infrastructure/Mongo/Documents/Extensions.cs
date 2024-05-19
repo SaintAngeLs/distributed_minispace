@@ -18,6 +18,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 StartDate = document.StartDate,
                 EndDate = document.EndDate,
                 Location = document.Location.AsDto(),
+                MediaFiles = document.MediaFiles,
                 InterestedStudents = document.InterestedStudents.Count(),
                 SignedUpStudents = document.SignedUpStudents.Count(),
                 Capacity = document.Capacity,
@@ -28,7 +29,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 UpdatedAt = document.UpdatedAt,
                 IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == studentId),
                 IsInterested = document.InterestedStudents.Any(x => x.StudentId == studentId),
-                HasRated = document.Ratings.Any(x => x.StudentId == studentId)
+                StudentRating = document.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value,
             };
 
         public static EventDto AsDtoWithFriends(this EventDocument document, Guid studentId, IEnumerable<FriendDto> friends)
@@ -45,8 +46,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         
         public static Event AsEntity(this EventDocument document)
             => new (document.Id, document.Name, document.Description, document.StartDate, document.EndDate,
-                document.Location, document.Capacity, document.Fee, document.Category, document.State, document.PublishDate,
-                document.Organizer, document.UpdatedAt,document.InterestedStudents, document.SignedUpStudents, document.Ratings);
+                document.Location, document.MediaFiles, document.Capacity, document.Fee, document.Category, 
+                document.State, document.PublishDate, document.Organizer, document.UpdatedAt,document.InterestedStudents, 
+                document.SignedUpStudents, document.Ratings);
         
         public static EventDocument AsDocument(this Event entity)
             => new ()
@@ -58,6 +60,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Location = entity.Location,
+                MediaFiles = entity.MediaFiles,
                 InterestedStudents = entity.InterestedStudents,
                 SignedUpStudents = entity.SignedUpStudents,
                 Capacity = entity.Capacity,
@@ -75,6 +78,14 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 EventId = document.Id,
                 InterestedStudents = document.InterestedStudents.Select(p => p.AsDto()),
                 SignedUpStudents = document.SignedUpStudents.Select(p => p.AsDto())
+            };
+        
+        public static EventRatingDto AsRatingDto(this EventDocument document)
+            => new ()
+            {
+                EventId = document.Id,
+                TotalRatings = document.Ratings.Count(),
+                AverageRating = document.Ratings.Any() ? document.Ratings.Average(x => x.Value) : 0
             };
 
         public static AddressDto AsDto(this Address entity)

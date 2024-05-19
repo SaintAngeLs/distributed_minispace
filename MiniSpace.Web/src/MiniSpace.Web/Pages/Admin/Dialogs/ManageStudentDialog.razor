@@ -103,7 +103,7 @@
 
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Profile image</RadzenText>
-                        <RadzenImage Path="@($"data:image/jpeg;base64,{@StudentDto.ProfileImage}")"
+                        <RadzenImage Path="@($"data:image/jpeg;base64,{StudentDto.ProfileImage}")"
                                      AlternateText="Not set"
                                      Style="width: 5em" class="rz-border-radius-5"/>
                     </RadzenColumn>
@@ -142,7 +142,7 @@
                 <RadzenRow Size="12">
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Date of birth</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.DateOfBirth.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.DateOfBirth.ToLocalTime().ToString(shortDateFormat))</b></RadzenText>
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">
@@ -172,6 +172,7 @@
     public StudentDto StudentDto { get; set; }
 
     private const string dateFormat = "dd/MM/yyyy HH:mm";
+    private const string shortDateFormat = "dd/MM/yyyy";
     
     protected override async Task OnInitializedAsync()
     {

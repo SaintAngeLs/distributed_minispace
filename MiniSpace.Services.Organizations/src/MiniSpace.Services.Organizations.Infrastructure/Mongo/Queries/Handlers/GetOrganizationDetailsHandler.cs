@@ -18,9 +18,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<OrganizationDetailsDto> HandleAsync(GetOrganizationDetails query, CancellationToken cancellationToken)
         {
-            var organization = await _repository.GetAsync(query.OrganizationId);
-            
-            return organization?.AsDetailsDto();
+            var root = await _repository.GetAsync(o => o.Id == query.RootId);
+            var organization = root?.AsEntity().GetSubOrganization(query.OrganizationId);
+            return organization == null ? null : new OrganizationDetailsDto(organization, root.Id);
         }
     }
 }

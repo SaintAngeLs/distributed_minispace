@@ -3,6 +3,8 @@
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.Areas.Reactions
+@using MiniSpace.Web.DTO.Enums
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -12,6 +14,7 @@
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
 @inject IPostsService PostsService
+@inject IReactionsService ReactionsService
 @inject NavigationManager NavigationManager
 
 @if (!pageInitialized)
@@ -97,7 +100,8 @@
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                     <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary"
                                   Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/update"))" />
-                    <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning" />
+                    <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning"
+                                  Click="@(() => OpenDeleteEventDialog(ev.Id))" />
                 </RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
@@ -105,9 +109,28 @@
                                   Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" />
                 </RadzenStack>   
             }
+
+            <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
+                <RadzenCard class="rz-background-color-success rz-shadow-0 rz-border-radius-0 rz-p-8">
+                    <RadzenRow RowGap="0">
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Number of reactions</RadzenText>
+                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(reactionsSummary.NumberOfReactions)</b></RadzenText>
+                            <RadzenText Text="Your reaction" TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0" />
+                            <RadzenDropDown Name="your-reaction" Data="reactionTypes" Value="@(reactionsSummary.AuthUserReactionType)"
+                                            ValueChanged="@((ReactionType? reactionType) => ReactionChanged(reactionType))"
+                                            TextProperty="Key" ValueProperty="Value" />
+                        </RadzenColumn>
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Dominant reaction</RadzenText>
+                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(ReactionTypeExtensions.GetReactionText(reactionsSummary.DominantReaction))</b></RadzenText>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </RadzenCard>
         </RadzenStack>
         
-        <RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Client">
+        <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
             <Tabs>
                 <RadzenTabsItem Text="Posts">
                     @if (pageInitialized && !posts.Any())
@@ -156,10 +179,113 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
+                    @if (pageInitialized && !reactions.Any())
+                    {
+                        <h3>No reactions have been added by students yet.</h3>
+                    }
+                    <RadzenDataList PageSize="10" AllowPaging="true" Data="@reactions" TItem="ReactionDto">
+                        <Template Context="reaction">
+                            <RadzenCard Class="rz-border-radius-3">
+                                <RadzenRow Gap="0.5rem">
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+                                                    Text=@(reaction.StudentFullName)/>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                                    Text=@(ReactionTypeExtensions.GetReactionText(reaction.Type))/>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
                 </RadzenTabsItem>
 
-                <RadzenTabsItem Text="Interested friends">
-                </RadzenTabsItem>
+                @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
+                {
+                    <RadzenTabsItem Text="Signed up friends">
+                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" 
+                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
+                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
+                                        Data="@ev.FriendsSignedUp" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            <Columns>
+                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn Context="friend" Title="Options" TextAlign="TextAlign.Center"
+                                                      Filterable="false" Sortable="false" Frozen="true">
+                                    <Template Context="friend">
+                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
+                                                      ButtonStyle="ButtonStyle.Secondary"
+                                                      Click="@(() => OpenParticipantDetailsDialog(friend, "friend"))" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenTabsItem>
+                    
+                    <RadzenTabsItem Text="Interested friends">
+                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
+                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
+                                        Data="@ev.FriendsInterestedIn" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            <Columns>
+                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn Context="friend" Title="Options" TextAlign="TextAlign.Center"
+                                                      Filterable="false" Sortable="false" Frozen="true">
+                                    <Template Context="friend">
+                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
+                                                      ButtonStyle="ButtonStyle.Secondary"
+                                                      Click="@(() => OpenParticipantDetailsDialog(friend, "friend"))" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenTabsItem>
+                }
+
+                @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
+                {
+                    <RadzenTabsItem Text="Signed up students">
+                        <RadzenDataGrid @ref="signedUpDataGrid"
+                                        AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
+                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
+                                        Data="@signedUpStudents" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            <Columns>
+                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn Context="participant" Title="Options" TextAlign="TextAlign.Center"
+                                                      Filterable="false" Sortable="false" Frozen="true">
+                                    <Template Context="participant">
+                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
+                                                      ButtonStyle="ButtonStyle.Secondary"
+                                                      Click="@(() => OpenParticipantDetailsDialog(participant, "participant"))" />
+                                        <RadzenButton Size="ButtonSize.Medium" Text="Remove"
+                                                      ButtonStyle="ButtonStyle.Warning"
+                                                      Click="@(() => RemoveEventParticipant(ev, participant))"/>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenTabsItem>
+                    
+                    <RadzenTabsItem Text="Interested students">
+                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
+                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
+                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
+                                        Data="@interestedStudents" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            <Columns>
+                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
+                                <RadzenDataGridColumn Context="participant" Title="Options" TextAlign="TextAlign.Center"
+                                                      Filterable="false" Sortable="false" Frozen="true">
+                                    <Template Context="participant">
+                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
+                                                      ButtonStyle="ButtonStyle.Secondary"
+                                                      Click="@(() => OpenParticipantDetailsDialog(participant, "participant"))" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenTabsItem>
+                }
             </Tabs>
         </RadzenTabs>
     </RadzenStack>
@@ -176,6 +302,16 @@
     private bool pageInitialized = false;
 
     IEnumerable<PostDto> posts;
+    IEnumerable<ReactionDto> reactions;
+    
+    ReactionsSummaryDto reactionsSummary = new();
+    List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
+    
+    private int participantPageSize = 10;
+    IEnumerable<int> participantPageSizeOptions = new int[] { 10, 20, 40};
+    RadzenDataGrid<ParticipantDto> signedUpDataGrid;
+    List<ParticipantDto> signedUpStudents;
+    List<ParticipantDto> interestedStudents;
      
     protected override async Task OnInitializedAsync()
     {
@@ -184,7 +320,9 @@
             studentId = IdentityService.GetCurrentUserId();
         }
         ev = await EventsService.GetEventAsync(new Guid(EventId));
-        posts = await PostsService.GetPostsAsync(new Guid(EventId));
+        reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
+        posts = await PostsService.GetPostsAsync(ev.Id);
+        reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
         
         pageInitialized = true;
     }
@@ -211,20 +349,62 @@
             return;
         }
         
-        pageInitialized = false;
         switch (index)
         {
             case 0:
                 posts = await PostsService.GetPostsAsync(ev.Id);
                 break;
+            case 2:
+                reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
+                break;
+            case 3:
+                if (IsUserEventOrganizer(ev))
+                {
+                    var eventParticipantsDto = await EventsService.GetEventParticipants(ev.Id);
+                    signedUpStudents = eventParticipantsDto.SignedUpStudents.ToList();
+                }
+                break;
+            case 4:
+                if (IsUserEventOrganizer(ev))
+                {
+                    var eventParticipantsDto = await EventsService.GetEventParticipants(ev.Id);
+                    interestedStudents = eventParticipantsDto.InterestedStudents.ToList();
+                }
+                break;
         }
-        pageInitialized = true;
+        StateHasChanged();
     }
     
     private async Task OpenEventDetailsDialog(EventDto eventDto)
     {
         await DialogService.OpenAsync<EventDetailsDialog>($"Details of the event:",
             new Dictionary<string, object>() { { "EventDto", eventDto } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenDeleteEventDialog(Guid postId)
+    {
+        await DialogService.OpenAsync<DeleteEventDialog>("Are you sure? This action cannot be undone!",
+            new Dictionary<string, object>() { {"EventId", new Guid(EventId) } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "100px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenParticipantDetailsDialog(ParticipantDto participantDto, string term)
+    {
+        await DialogService.OpenAsync<ParticipantDetailsDialog>($"Details of the {term}:",
+            new Dictionary<string, object>()
+            {
+                { "EventId", EventId },
+                { "ParticipantDto", participantDto }
+            },
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
@@ -257,6 +437,30 @@
     {
         await EventsService.CancelInterestInEventAsync(eventDto.Id, studentId);
         eventDto.IsInterested = false;
+        StateHasChanged();
+    }
+    
+    private async void RemoveEventParticipant(EventDto eventDto, ParticipantDto participant)
+    {
+        await EventsService.RemoveEventParticipant(eventDto.Id, participant.StudentId);
+        signedUpStudents.Remove(participant);
+        await signedUpDataGrid.Reload();
+    }
+
+    private async void ReactionChanged(ReactionType? reactionType)
+    {
+        if (reactionsSummary.AuthUserReactionId != null)
+        {
+            await ReactionsService.DeleteReaction((Guid)reactionsSummary.AuthUserReactionId);
+        }
+        
+        if (reactionType != null)
+        {
+            await ReactionsService.CreateReaction(Guid.Empty, studentId, reactionType.ToString(),
+                ev.Id, ReactionContentType.Event.ToString());
+        }
+
+        reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
         StateHasChanged();
     }
 }

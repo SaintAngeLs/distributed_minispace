@@ -46,9 +46,21 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
                     }
                 },
                 {
+                    typeof(StudentCancelledInterestInEvent), new HandlerLogTemplate
+                    {
+                        After = "A student with id: {StudentId} has cancelled interest in the event with id: {EventId}."
+                    }
+                },
+                {
                     typeof(StudentSignedUpToEvent), new HandlerLogTemplate
                     {
                         After = "A student with id: {StudentId} has signed up for the event with id: {EventId}."
+                    }
+                },
+                {
+                    typeof(StudentCancelledSignUpToEvent), new HandlerLogTemplate
+                    {
+                        After = "A student with id: {StudentId} has cancelled sign up for the event with id: {EventId}."
                     }
                 },
                 {

@@ -47,7 +47,7 @@ namespace MiniSpace.Services.Identity.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get<GetEvent, EventDto>("events/{eventId}")
                         .Put<UpdateEvent>("events/{eventId}")
-                        .Post<AddEvent>("events", 
+                        .Post<CreateEvent>("events", 
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))
                         .Delete<DeleteEvent>("events/{eventId}")
                         .Post<SignUpToEvent>("events/{eventId}/sign-up")
@@ -55,8 +55,10 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<ShowInterestInEvent>("events/{eventId}/show-interest")
                         .Delete<CancelInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
+                        .Delete<CancelRateEvent>("events/{eventId}/rate")
                         .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
                         .Get<GetEventParticipants, EventParticipantsDto>("events/{eventId}/participants")
+                        .Get<GetEventRating, EventRatingDto>("events/{eventId}/rating")
                         .Post<AddEventParticipant>("events/{eventId}/participants")
                         .Delete<RemoveEventParticipant>("events/{eventId}/participants")
                     )

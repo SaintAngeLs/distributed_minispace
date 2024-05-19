@@ -33,7 +33,11 @@ else if (incomingRequests.Any())
     <RadzenDataGrid Data="@incomingRequests" TItem="FriendRequestDto" AllowSorting="true" AllowPaging="true" PageSize="5">
         <Columns>
             <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviterName" Title="Inviter Name" />
-            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On" FormatString="{0:yyyy-MM-dd}" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On">
+                <Template Context="data">
+                    @data.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="FriendRequestDto" Property="State" Title="Status" />
             <RadzenDataGridColumn TItem="FriendRequestDto" Context="request">
                 <Template>

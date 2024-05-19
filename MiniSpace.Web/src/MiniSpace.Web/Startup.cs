@@ -23,7 +23,12 @@ using MudBlazor.Services;
 using MiniSpace.Web.Areas.Friends;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
+<<<<<<< HEAD
 using MiniSpace.Web.Areas.Notifications;
+=======
+using MiniSpace.Web.Areas.MediaFiles;
+using MiniSpace.Web.Areas.Reactions;
+>>>>>>> remotes/origin/dev
 
 namespace MiniSpace.Web
 {
@@ -66,10 +71,12 @@ namespace MiniSpace.Web
             services.AddScoped<IStudentsService, StudentsService>();
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IPostsService, PostsService>();
+            services.AddScoped<IMediaFilesService, MediaFilesService>();
             services.AddScoped<IOrganizationsService, OrganizationsService>();
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
             services.AddScoped<IFriendsService, FriendsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
+            services.AddScoped<IReactionsService, ReactionsService>();
 
         }
 

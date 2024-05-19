@@ -39,20 +39,20 @@ namespace MiniSpace.Web.Areas.Students
             return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
         }
 
-        public Task<IEnumerable<StudentDto>> GetStudentsAsync()
+        public Task<PaginatedResponseDto<StudentDto>> GetStudentsAsync()
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
+            return _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>("students");
         }
 
-        public Task UpdateStudentAsync(Guid studentId, string profileImage, string description, bool emailNotifications)
+        public Task UpdateStudentAsync(Guid studentId, Guid profileImage, string description, bool emailNotifications)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PutAsync($"students/{studentId}", new {studentId, profileImage,
                 description, emailNotifications});
         }
 
-        public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImage,
+        public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, Guid profileImage,
             string description, DateTime dateOfBirth, bool emailNotifications)
             => _httpClient.PostAsync<object,object>("students", new {studentId, profileImage,
                 description, dateOfBirth, emailNotifications});

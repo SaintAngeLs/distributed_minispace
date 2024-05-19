@@ -10,9 +10,15 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(AddOrganization),  new HandlerLogTemplate
+                    typeof(CreateRootOrganization),  new HandlerLogTemplate
                     {
-                        After = "Added a new organization with id: {OrganizationId}."
+                        After = "Created a new root organization with id: {OrganizationId}."
+                    }
+                },
+                {
+                    typeof(CreateOrganization),  new HandlerLogTemplate
+                    {
+                        After = "Added a new child organization with id: {OrganizationId} for parent with id: {ParentId}."
                     }
                 },
                 {

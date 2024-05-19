@@ -40,7 +40,11 @@ else if (sentRequests.Any())
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviteeEmail" Title="Invitee Email" />
-            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On" FormatString="{0:yyyy-MM-dd}" />
+            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On">
+                <Template Context="data">
+                    @data.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="FriendRequestDto" Property="State" Title="Status" />
         </Columns>
     </RadzenDataGrid>

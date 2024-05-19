@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Exceptions
             => exception switch
             {
                 // TODO: Add more exceptions
-                AuthorizedUserIsNotAnOrganizerException ex => new AddEventRejected(ex.UserId, ex.Message, ex.Code),
+                AuthorizedUserIsNotAnOrganizerException ex => new CreateEventRejected(ex.UserId, ex.Message, ex.Code),
                 EventNotFoundException ex 
                     => message switch
                     {
@@ -30,25 +30,25 @@ namespace MiniSpace.Services.Events.Infrastructure.Exceptions
                 InvalidEventCategoryException ex 
                     => message switch
                     {
-                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        CreateEvent m => new CreateEventRejected(m.OrganizerId, ex.Message, ex.Code),
                         _ => null
                     },
                 InvalidEventDateTimeException ex 
                     => message switch
                     {
-                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        CreateEvent m => new CreateEventRejected(m.OrganizerId, ex.Message, ex.Code),
                         _ => null
                     },
                 InvalidEventDateTimeOrderException ex
                     => message switch
                     {
-                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        CreateEvent m => new CreateEventRejected(m.OrganizerId, ex.Message, ex.Code),
                         _ => null
                     },
                 OrganizerCannotAddEventForAnotherOrganizerException ex
                     => message switch
                     {
-                        AddEvent m => new AddEventRejected(m.OrganizerId, ex.Message, ex.Code),
+                        CreateEvent m => new CreateEventRejected(m.OrganizerId, ex.Message, ex.Code),
                         _ => null
                     },
                 StudentNotFoundException ex 

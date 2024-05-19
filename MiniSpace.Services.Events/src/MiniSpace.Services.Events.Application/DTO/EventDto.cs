@@ -15,7 +15,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public AddressDto Location { get; set; }
-        //public string Image { get; set; }
+        public IEnumerable<Guid> MediaFiles { get; set; }
         public int InterestedStudents { get; set; }
         public int SignedUpStudents { get; set; }
         public int Capacity { get; set; }
@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public DateTime UpdatedAt { get; set; }
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
-        public bool HasRated { get; set; }
+        public int? StudentRating { get; set; }
         public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
         public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
         
@@ -43,6 +43,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             StartDate = @event.StartDate;
             EndDate = @event.EndDate;
             Location = new AddressDto(@event.Location);
+            MediaFiles = @event.MediaFiles;
             InterestedStudents = @event.InterestedStudents.Count();
             SignedUpStudents = @event.SignedUpStudents.Count();
             Capacity = @event.Capacity;
@@ -52,7 +53,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             PublishDate = @event.PublishDate;
             IsSignedUp = @event.SignedUpStudents.Any(x => x.StudentId == studentId);
             IsInterested = @event.InterestedStudents.Any(x => x.StudentId == studentId);
-            HasRated = @event.Ratings.Any(x => x.StudentId == studentId);
+            StudentRating = @event.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value;
             FriendsInterestedIn = Enumerable.Empty<ParticipantDto>();
             FriendsSignedUp = Enumerable.Empty<ParticipantDto>();
         }

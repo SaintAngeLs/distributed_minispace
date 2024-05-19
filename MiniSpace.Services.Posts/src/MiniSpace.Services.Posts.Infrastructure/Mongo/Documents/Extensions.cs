@@ -7,7 +7,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
     {
         public static Post AsEntity(this PostDocument document)
             => new Post(document.Id, document.EventId, document.OrganizerId, document.TextContent,
-                document.MediaContent, document.CreatedAt, document.State, document.PublishDate, document.UpdatedAt);
+                document.MediaFiles, document.CreatedAt, document.State, document.PublishDate, document.UpdatedAt);
 
         public static PostDocument AsDocument(this Post entity)
             => new PostDocument()
@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 EventId = entity.EventId,
                 OrganizerId = entity.OrganizerId,
                 TextContent = entity.TextContent,
-                MediaContent = entity.MediaContent,
+                MediaFiles = entity.MediaFiles,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 State = entity.State,
@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 EventId = document.EventId,
                 OrganizerId = document.OrganizerId,
                 TextContent = document.TextContent,
-                MediaContent = document.MediaContent,
+                MediaFiles = document.MediaFiles,
                 CreatedAt = document.CreatedAt,
                 UpdatedAt = document.UpdatedAt,
                 State = document.State.ToString().ToLowerInvariant(),

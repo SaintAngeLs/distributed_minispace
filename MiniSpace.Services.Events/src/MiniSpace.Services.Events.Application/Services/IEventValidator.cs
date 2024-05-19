@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.Services
@@ -13,6 +14,7 @@ namespace MiniSpace.Services.Events.Application.Services
         (int pageNumber, int pageSize) PageFilter(int pageNumber, int pageSize);
         void ValidateName(string name);
         void ValidateDescription(string description);
+        void ValidateMediaFiles(List<Guid> mediaFiles);
         void ValidateCapacity(int capacity);
         void ValidateFee(decimal fee);
         void ValidateUpdatedCapacity(int currentCapacity, int newCapacity);
