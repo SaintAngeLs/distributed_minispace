@@ -194,7 +194,7 @@ namespace MiniSpace.Web.Areas.Friends
 
 
 
-         public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
+        public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
         {
             try
             {
@@ -234,11 +234,11 @@ namespace MiniSpace.Web.Areas.Friends
             }
             catch (Exception ex)
             {
-                // Log the exception (optional)
                 Console.WriteLine($"Error retrieving incoming friend requests: {ex.Message}");
                 return new List<FriendRequestDto>();
             }
         }
+
 
         // private async Task<StudentDto> GetUserDetails(Guid userId)
         // {

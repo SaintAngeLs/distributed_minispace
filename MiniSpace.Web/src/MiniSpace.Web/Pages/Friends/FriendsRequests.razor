@@ -9,56 +9,253 @@
 @using MiniSpace.Services.Friends.Application.Dto;
 @inject IIdentityService IdentityService
 @inject Radzen.NotificationService NotificationService
+@inject IJSRuntime JSRuntime
+@using MiniSpace.Web.Areas.MediaFiles
+@inject IMediaFilesService MediaFilesService
 @using MudBlazor
 
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
+
 @code {
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
         new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.Create),
-        new BreadcrumbItem("Requests", href: "/friends", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Requests", href: "/friends/requests", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
     };
 }
+
 <h3>Incoming Friend Requests</h3>
 
-@if (incomingRequests == null)
-{
-    <p>Loading...</p>
-}
-else if (incomingRequests.Any())
-{
-    <RadzenDataGrid Data="@incomingRequests" TItem="FriendRequestDto" AllowSorting="true" AllowPaging="true" PageSize="5">
-        <Columns>
-            <RadzenDataGridColumn TItem="FriendRequestDto" Property="InviterName" Title="Inviter Name" />
-            <RadzenDataGridColumn TItem="FriendRequestDto" Property="RequestedAt" Title="Requested On">
-                <Template Context="data">
-                    @data.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="FriendRequestDto" Property="State" Title="Status" />
-            <RadzenDataGridColumn TItem="FriendRequestDto" Context="request">
-                <Template>
-                    <RadzenButton Text="Accept" Click="@(() => AcceptRequest(request.Id))" Style="margin-right: 10px;" />
-                    <RadzenButton Text="Decline" Click="@(() => DeclineRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
-                </Template>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>
-}
-else
-{
-    <p>No incoming requests.</p>
-}
+<div style="display: flex; padding: 50px;">
+    <div class="left-panel">
+        <div class="search-bar">
+            <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search incoming requests..." Style="width: 75%;" />
+            <RadzenButton Text="Search" Click="@SearchIncomingRequests" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
+        </div>
+        <div class="card-container">
+            @if (incomingRequests == null)
+            {
+                <p>Loading...</p>
+            }
+            else if (filteredIncomingRequests != null && filteredIncomingRequests.Any())
+            {
+                @foreach (var request in filteredIncomingRequests)
+                {
+                    <div class="friend-card" @onclick="@(() => RedirectToDetails(request.InviterId))">
+                        @if (images.ContainsKey(request.InviterId))
+                        {
+                            <img src="@GetImage(images[request.InviterId])" alt="Inviter Image" class="friend-img">
+                        }
+                        <div class="friend-info">
+                            <h5>@request.InviterName</h5>
+                            <p>Email: @request.InviterEmail</p>
+                            <p>Requested On: @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                            <p>Status: @request.State</p>
+                        </div>
+                    </div>
+                    <RadzenButton Text="Accept" Click="@(() => AcceptRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Success" Icon="check" Style="margin-right: 10px;" />
+                    <RadzenButton Text="Decline" Click="@(() => DeclineRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
+                }
+            }
+            else
+            {
+                <p>No incoming requests.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .notification-block {
+        position: fixed; 
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        max-width: 300px;
+    }
+
+    .main-container { 
+        overflow: visible; 
+        display: flex;   
+        align-items: 
+        flex-start; 
+    }
+
+    .left-panel {  
+        width: 100%;   
+        overflow-y: auto; 
+    }
+
+    .right-panel {
+        width: 70%; 
+        padding: 25px;
+        position: sticky;
+        top: 100px; 
+        background-color: white; 
+    }
+
+    .left-panel, .right-panel {
+        background-color: #f7f7f7; /* Soft background color for subtle contrast */
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Light shadow for depth */
+    }
+
+    .search-bar {
+        display: flex; 
+        margin-bottom: 20px; 
+    }
+    
+    .card-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .friend-card {
+        display: flex;
+        background-color: #ffffff;
+        margin-bottom: 1rem !important;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+        align-items: center;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .friend-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+
+    .friend-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-right: 20px;
+        object-fit: cover;
+        border: 3px solid #007BFF; 
+    }
+
+    .friend-info {
+        flex: 1;
+    }
+
+    .search-bar input:focus {
+        outline: none;
+        border: 2px solid #0056b3;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    }
+
+    .profile-image {
+        width: 400px; 
+        height: 400px;
+        border-radius: 5%;
+        object-fit: cover;
+        border: 4px solid #ffffff; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+        transition: transform 0.3s ease-in-out; 
+    }
+
+    .profile-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+    }
+
+    .info-block {
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-top: 15px;
+    }
+
+    .details-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+    }
+
+    .details-list li {
+        margin-bottom: 8px;
+        font-size: 16px; /* Larger font for readability */
+    }
+</style>
 
 @code {
+    private string searchTerm;
+    private List<StudentDto> students = new List<StudentDto>();
     private IEnumerable<FriendRequestDto> incomingRequests;
+    private IEnumerable<FriendRequestDto> filteredIncomingRequests;
+    private Dictionary<Guid, string> images = new();
 
     protected override async Task OnInitializedAsync()
     {
         incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
+
+        if (incomingRequests == null || !incomingRequests.Any())
+        {
+            Console.WriteLine("No incoming friend requests found.");
+            return;
+        }
+
+        var inviterIds = incomingRequests.Select(r => r.InviterId).Distinct();
+        var studentTasks = inviterIds.Select(id => FriendsService.GetStudentAsync(id));
+
+        students = (await Task.WhenAll(studentTasks)).ToList();
+
+        var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
+        await Task.WhenAll(imageTasks);
+
+        foreach (var request in incomingRequests)
+        {
+            var student = students.FirstOrDefault(s => s.Id == request.InviterId);
+            if (student != null)
+            {
+                request.InviterName = $"{student.FirstName} {student.LastName}";
+                request.InviterEmail = student.Email;
+                if (images.ContainsKey(student.Id))
+                {
+                    request.InviterImage = images[student.Id];
+                }
+            }
+        }
+
+        filteredIncomingRequests = incomingRequests;
+    }
+
+    private async Task FetchImageAsync(Guid inviterId, Guid profileImage)
+    {
+        var result = await MediaFilesService.GetFileAsync(profileImage);
+        images[inviterId] = result.Base64Content;
+    }
+
+    private string GetImage(string base64Image)
+    {
+        if (string.IsNullOrWhiteSpace(base64Image))
+        {
+            return "images/user_image.png";
+        }
+        else
+        {
+            return $"data:image/jpeg;base64,{base64Image}";
+        }
+    }
+
+    private void SearchIncomingRequests()
+    {
+        filteredIncomingRequests = string.IsNullOrWhiteSpace(searchTerm) 
+            ? incomingRequests 
+            : incomingRequests.Where(x => x.InviterName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void RedirectToDetails(Guid id)
+    {
+        NavigationManager.NavigateTo($"/student-details/{id}");
     }
 
     private async Task AcceptRequest(Guid requestId)
@@ -68,8 +265,8 @@ else
         {
             await FriendsService.AcceptFriendRequestAsync(request.Id, request.InviterId, request.InviteeId);
             incomingRequests = incomingRequests.Where(r => r.Id != requestId).ToList();
+            SearchIncomingRequests(); // Reapply search filter to update the UI
             NotificationService.Notify(Radzen.NotificationSeverity.Success, "Request Accepted", duration: 4000);
-            StateHasChanged(); // Refresh the UI
         }
     }
 
@@ -80,9 +277,8 @@ else
         {
             await FriendsService.DeclineFriendRequestAsync(request.Id, request.InviterId, request.InviteeId);
             incomingRequests = incomingRequests.Where(r => r.Id != requestId).ToList();
+            SearchIncomingRequests(); // Reapply search filter to update the UI
             NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Request Declined", duration: 4000);
-            StateHasChanged(); // Update the UI
         }
     }
-
 }
