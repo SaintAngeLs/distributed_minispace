@@ -21,10 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniSpace.Services.Posts.Api\MiniSpace.Services.Posts.Api.csproj" />
-    <ProjectReference Include="..\MiniSpace.Services.Posts.Application\MiniSpace.Services.Posts.Application.csproj" />
-    <ProjectReference Include="..\MiniSpace.Services.Posts.Core\MiniSpace.Services.Posts.Core.csproj" />
-    <ProjectReference Include="..\MiniSpace.Services.Posts.Infrastructure\MiniSpace.Services.Posts.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\MiniSpace.Services.Posts.Api\MiniSpace.Services.Posts.Api.csproj" />
+    <ProjectReference Include="..\..\src\MiniSpace.Services.Posts.Application\MiniSpace.Services.Posts.Application.csproj" />
+    <ProjectReference Include="..\..\src\MiniSpace.Services.Posts.Core\MiniSpace.Services.Posts.Core.csproj" />
+    <ProjectReference Include="..\..\src\MiniSpace.Services.Posts.Infrastructure\MiniSpace.Services.Posts.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

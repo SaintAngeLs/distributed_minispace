@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Posts.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Posts.Application", "MiniSpace.Services.Posts.Application\MiniSpace.Services.Posts.Application.csproj", "{4D79B5C0-6E85-44B6-9BF4-E36822BF711C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Posts.UnitTests", "MiniSpace.Services.Posts.UnitTests\MiniSpace.Services.Posts.UnitTests.csproj", "{26DA1AF1-E17D-47EB-B36A-C4C31E59B3D9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{4D79B5C0-6E85-44B6-9BF4-E36822BF711C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D79B5C0-6E85-44B6-9BF4-E36822BF711C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D79B5C0-6E85-44B6-9BF4-E36822BF711C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26DA1AF1-E17D-47EB-B36A-C4C31E59B3D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26DA1AF1-E17D-47EB-B36A-C4C31E59B3D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26DA1AF1-E17D-47EB-B36A-C4C31E59B3D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26DA1AF1-E17D-47EB-B36A-C4C31E59B3D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
