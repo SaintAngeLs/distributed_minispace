@@ -91,7 +91,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
         //     return studentFriends;
         // }
 
-        public static StudentRequestsDocument AsDocument(this StudentRequests entity)
+         public static StudentRequestsDocument AsDocument(this StudentRequests entity)
             => new StudentRequestsDocument
             {
                 Id = entity.Id,

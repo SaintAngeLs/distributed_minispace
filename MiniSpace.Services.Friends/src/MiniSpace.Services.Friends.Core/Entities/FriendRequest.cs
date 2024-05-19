@@ -41,5 +41,14 @@ namespace MiniSpace.Services.Friends.Core.Entities
             AddEvent(new FriendshipDeclined(InviterId, InviteeId));
         }
 
+        public void Cancel()
+        {
+            if (State != FriendState.Requested)
+                throw new InvalidOperationException("Only requested friend requests can be cancelled.");
+
+            _state = FriendState.Cancelled;
+            AddEvent(new FriendRequestCancelled(InviterId, InviteeId));
+        }
+
     }
 }

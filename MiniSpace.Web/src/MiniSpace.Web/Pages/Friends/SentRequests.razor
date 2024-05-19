@@ -196,13 +196,27 @@
     {
         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         
-        var inviteeIds = sentRequests.Select(r => r.InviterId).Distinct();
+        var inviteeIds = sentRequests.Select(r => r.InviteeId).Distinct();
         var studentTasks = inviteeIds.Select(id => FriendsService.GetStudentAsync(id));
 
         students = (await Task.WhenAll(studentTasks)).ToList();
 
         var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
         await Task.WhenAll(imageTasks);
+
+        foreach (var request in sentRequests)
+        {
+            var student = students.FirstOrDefault(s => s.Id == request.InviteeId);
+            if (student != null)
+            {
+                request.InviteeName = $"{student.FirstName} {student.LastName}";
+                request.InviteeEmail = student.Email;
+                if (images.ContainsKey(student.Id))
+                {
+                    request.InviteeImage = images[student.Id];
+                }
+            }
+        }
 
         filteredSentRequests = sentRequests;
     }
@@ -234,6 +248,6 @@
 
     private void RedirectToDetails(Guid id)
     {
-        NavigationManager.NavigateTo($"/students/details/{id}");
+        NavigationManager.NavigateTo($"/student-details/{id}");
     }
 }

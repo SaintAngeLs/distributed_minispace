@@ -101,6 +101,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .SubscribeCommand<InviteFriend>()
                 .SubscribeCommand<PendingFriendAccept>()
                 .SubscribeCommand<PendingFriendDecline>()
+                .SubscribeCommand<SentFriendRequestWithdraw>()
                 // .SubscribeEvent<FriendRequestCreated>()
                 .SubscribeEvent<FriendRequestSent>()
                 .SubscribeEvent<Application.Events.FriendAdded>()
