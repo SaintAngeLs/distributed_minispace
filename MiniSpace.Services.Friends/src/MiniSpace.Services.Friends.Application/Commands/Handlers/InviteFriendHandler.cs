@@ -12,13 +12,20 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
     public class InviteFriendHandler : ICommandHandler<InviteFriend>
     {
         private readonly IFriendRequestRepository _friendRequestRepository;
+        private readonly IStudentRequestsRepository _studentRequestsRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IEventMapper _eventMapper;
         private readonly IAppContext _appContext;
 
-        public InviteFriendHandler(IFriendRequestRepository friendRequestRepository, IMessageBroker messageBroker, IEventMapper eventMapper, IAppContext appContext)
+        public InviteFriendHandler(
+            IFriendRequestRepository friendRequestRepository,
+            IStudentRequestsRepository studentRequestsRepository, 
+            IMessageBroker messageBroker, 
+            IEventMapper eventMapper, 
+            IAppContext appContext)
         {
             _friendRequestRepository = friendRequestRepository;
+            _studentRequestsRepository = studentRequestsRepository;
             _messageBroker = messageBroker;
             _eventMapper = eventMapper;
             _appContext = appContext;
@@ -49,6 +56,10 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 
             await _friendRequestRepository.AddAsync(friendRequest);
 
+            await AddOrUpdateStudentRequest(command.InviterId, friendRequest);
+            await AddOrUpdateStudentRequest(command.InviteeId, friendRequest);
+
+
     //         // Optionally, publish an event about the friend request
     //         var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
 
@@ -76,6 +87,19 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             await _messageBroker.PublishAsync(friendRequestSentEvent);
 
             
+        }
+
+         private async Task AddOrUpdateStudentRequest(Guid studentId, FriendRequest friendRequest)
+        {
+            var studentRequests = await _studentRequestsRepository.GetAsync(studentId);
+            if (studentRequests == null)
+            {
+                studentRequests = new StudentRequests(studentId);
+                await _studentRequestsRepository.AddAsync(studentRequests);
+            }
+
+            studentRequests.AddRequest(friendRequest.InviterId, friendRequest.InviteeId, friendRequest.RequestedAt, friendRequest.State);
+            await _studentRequestsRepository.UpdateAsync(studentRequests);
         }
 
     }
