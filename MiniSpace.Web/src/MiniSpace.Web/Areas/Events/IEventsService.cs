@@ -32,8 +32,8 @@ namespace MiniSpace.Web.Areas.Events
             string friendsEngagementType, string dateFrom, string dateTo, PageableDto pageable);
         Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(Guid organizerId,
             string name, string state, string dateFrom, string dateTo, PageableDto pageable);
-        Task<EventParticipantsDto> GetEventParticipants(Guid eventId);
-        Task AddEventParticipant(Guid eventId, Guid studentId, string studentName);
-        Task RemoveEventParticipant(Guid eventId, Guid participantId);
+        Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId);
+        Task AddEventParticipantAsync(Guid eventId, Guid studentId, string studentName);
+        Task RemoveEventParticipantAsync(Guid eventId, Guid participantId);
     }
 }

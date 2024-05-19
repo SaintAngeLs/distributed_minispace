@@ -360,14 +360,14 @@
             case 3:
                 if (IsUserEventOrganizer(ev))
                 {
-                    var eventParticipantsDto = await EventsService.GetEventParticipants(ev.Id);
+                    var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
                     signedUpStudents = eventParticipantsDto.SignedUpStudents.ToList();
                 }
                 break;
             case 4:
                 if (IsUserEventOrganizer(ev))
                 {
-                    var eventParticipantsDto = await EventsService.GetEventParticipants(ev.Id);
+                    var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
                     interestedStudents = eventParticipantsDto.InterestedStudents.ToList();
                 }
                 break;
@@ -442,7 +442,7 @@
     
     private async void RemoveEventParticipant(EventDto eventDto, ParticipantDto participant)
     {
-        await EventsService.RemoveEventParticipant(eventDto.Id, participant.StudentId);
+        await EventsService.RemoveEventParticipantAsync(eventDto.Id, participant.StudentId);
         signedUpStudents.Remove(participant);
         await signedUpDataGrid.Reload();
     }
