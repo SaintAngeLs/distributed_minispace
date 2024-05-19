@@ -270,25 +270,25 @@ namespace MiniSpace.Web.Areas.Identity
             return string.Empty;
         }
         
-        public Task GrantOrganizerRights(Guid userId)
+        public Task GrantOrganizerRightsAsync(Guid userId)
         {
             _httpClient.SetAccessToken(JwtDto.AccessToken);
             return _httpClient.PostAsync($"identity/users/{userId}/organizer-rights", new {userId});
         }
 
-        public Task RevokeOrganizerRights(Guid userId)
+        public Task RevokeOrganizerRightsAsync(Guid userId)
         {
             _httpClient.SetAccessToken(JwtDto.AccessToken);
             return _httpClient.DeleteAsync($"identity/users/{userId}/organizer-rights");
         }
 
-        public Task BanUser(Guid userId)
+        public Task BanUserAsync(Guid userId)
         {
             _httpClient.SetAccessToken(JwtDto.AccessToken);
             return _httpClient.PostAsync($"identity/users/{userId}/ban", new {userId});
         }
 
-        public Task UnbanUser(Guid userId)
+        public Task UnbanUserAsync(Guid userId)
         {
             _httpClient.SetAccessToken(JwtDto.AccessToken);
             return _httpClient.DeleteAsync($"identity/users/{userId}/ban");
