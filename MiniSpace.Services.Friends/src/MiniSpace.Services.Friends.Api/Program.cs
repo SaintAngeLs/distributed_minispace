@@ -40,7 +40,7 @@ namespace MiniSpace.Services.Friends.Api
                         //     (query, ctx) => ctx.Response.WriteAsJsonAsync(query), // Correctly define delegate with parameters
                         //     afterDispatch: ctx => ctx.Response.Ok())
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/{studentId}") 
-                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/{studentId}")
+                        .Get<GetIncomingFriendRequests, IEnumerable<StudentRequestsDto>>("friends/requests/{studentId}")
                         .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
                         .Get<GetSentFriendRequests, IEnumerable<StudentRequestsDto>>("friends/requests/sent/{studentId}")

@@ -158,6 +158,11 @@ namespace MiniSpace.Web.Areas.Friends
                 _httpClient.SetAccessToken(accessToken);
                 var studentRequests = await _httpClient.GetAsync<IEnumerable<StudentRequestsDto>>($"friends/requests/sent/{studentId}");
 
+                if (studentRequests == null || !studentRequests.Any())
+                {
+                    return Enumerable.Empty<FriendRequestDto>();
+                }
+
                 var friendRequests = studentRequests.SelectMany(request => request.FriendRequests).ToList();
 
                 var inviteeIds = friendRequests.Select(r => r.InviteeId).Distinct();
@@ -172,7 +177,7 @@ namespace MiniSpace.Web.Areas.Friends
                     {
                         request.InviteeName = $"{userDetails.FirstName} {userDetails.LastName}";
                         request.InviteeEmail = userDetails.Email;
-                        //request.InviteeImage = userDetails.ProfileImage;
+                        // request.InviteeImage = userDetails.ProfileImage; // Uncomment if you have a profile image field
                     }
                 }
 
@@ -181,24 +186,66 @@ namespace MiniSpace.Web.Areas.Friends
             catch (Exception ex)
             {
                 // Log the exception (optional)
+                Console.WriteLine($"Error retrieving sent friend requests: {ex.Message}");
                 return new List<FriendRequestDto>();
             }
         }
 
 
-        public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
-        {
-            var userId = _identityService.GetCurrentUserId();
-            if (userId == Guid.Empty)
-            {
-                throw new InvalidOperationException("User ID is not valid.");
-            }
 
-            string accessToken = await _identityService.GetAccessTokenAsync();
-            _httpClient.SetAccessToken(accessToken);
-            var endpoint = $"friends/requests/{userId}";
-            return await _httpClient.GetAsync<IEnumerable<FriendRequestDto>>(endpoint);
+
+         public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
+        {
+            try
+            {
+                var userId = _identityService.GetCurrentUserId();
+                if (userId == Guid.Empty)
+                {
+                    throw new InvalidOperationException("User ID is not valid.");
+                }
+
+                string accessToken = await _identityService.GetAccessTokenAsync();
+                _httpClient.SetAccessToken(accessToken);
+
+                var studentRequests = await _httpClient.GetAsync<IEnumerable<StudentRequestsDto>>($"friends/requests/{userId}");
+                if (studentRequests == null || !studentRequests.Any())
+                {
+                    return Enumerable.Empty<FriendRequestDto>();
+                }
+
+                var incomingRequests = studentRequests.SelectMany(request => request.FriendRequests).ToList();
+
+                var inviterIds = incomingRequests.Select(r => r.InviterId).Distinct();
+                var userDetailsTasks = inviterIds.Select(id => GetUserDetails(id));
+                var userDetailsResults = await Task.WhenAll(userDetailsTasks);
+
+                var userDetailsDict = userDetailsResults.ToDictionary(user => user.Id, user => user);
+
+                foreach (var request in incomingRequests)
+                {
+                    if (userDetailsDict.TryGetValue(request.InviterId, out var userDetails))
+                    {
+                        request.InviterName = $"{userDetails.FirstName} {userDetails.LastName}";
+                        request.InviterEmail = userDetails.Email;
+                    }
+                }
+
+                return incomingRequests;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                Console.WriteLine($"Error retrieving incoming friend requests: {ex.Message}");
+                return new List<FriendRequestDto>();
+            }
         }
+
+        // private async Task<StudentDto> GetUserDetails(Guid userId)
+        // {
+        //     string accessToken = await _identityService.GetAccessTokenAsync();
+        //     _httpClient.SetAccessToken(accessToken);
+        //     return await _httpClient.GetAsync<StudentDto>($"students/{userId}");
+        // }
 
         public async Task AcceptFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId)
         {

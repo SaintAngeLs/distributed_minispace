@@ -54,42 +54,26 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
                 state: FriendState.Requested
             );
 
-            await _friendRequestRepository.AddAsync(friendRequest);
-
             await AddOrUpdateStudentRequest(command.InviterId, friendRequest, FriendState.Requested);
             await AddOrUpdateStudentRequest(command.InviteeId, friendRequest, FriendState.Pending);
-
-
-    //         // Optionally, publish an event about the friend request
-    //         var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
-
-    //           string eventJson = JsonSerializer.Serialize(friendInvitedEvent);
-    // Console.WriteLine($"Publishing event: {eventJson}");
-    //         await _messageBroker.PublishAsync(friendInvitedEvent);
-
 
             // Publish FriendInvited Event
             var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
             string friendInvitedJson = JsonSerializer.Serialize(friendInvitedEvent);
-            // Console.WriteLine($"Publishing FriendInvited event: {friendInvitedJson}");
             await _messageBroker.PublishAsync(friendInvitedEvent);
 
             // Publish FriendRequestCreated Event
             var friendRequestCreatedEvent = new FriendRequestCreated(command.InviterId, command.InviteeId);
             string friendRequestCreatedJson = JsonSerializer.Serialize(friendRequestCreatedEvent);
-            // Console.WriteLine($"Publishing FriendRequestCreated event: {friendRequestCreatedJson}");
             await _messageBroker.PublishAsync(friendRequestCreatedEvent);
 
             // Publish FriendRequestSent Event
             var friendRequestSentEvent = new FriendRequestSent(command.InviterId, command.InviteeId);
             string friendRequestSentJson = JsonSerializer.Serialize(friendRequestSentEvent);
-            // Console.WriteLine($"Publishing FriendRequestSent event: {friendRequestSentJson}");
             await _messageBroker.PublishAsync(friendRequestSentEvent);
-
-            
         }
 
-         private async Task AddOrUpdateStudentRequest(Guid studentId, FriendRequest friendRequest, FriendState state)
+        private async Task AddOrUpdateStudentRequest(Guid studentId, FriendRequest friendRequest, FriendState state)
         {
             var studentRequests = await _studentRequestsRepository.GetAsync(studentId);
             if (studentRequests == null)
@@ -99,7 +83,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             }
 
             studentRequests.AddRequest(friendRequest.InviterId, friendRequest.InviteeId, friendRequest.RequestedAt, state);
-            await _studentRequestsRepository.UpdateAsync(studentRequests);
+            await _studentRequestsRepository.UpdateAsync(studentRequests.StudentId, studentRequests.FriendRequests);
         }
 
     }
