@@ -33,25 +33,25 @@ namespace MiniSpace.Web.Areas.Events
                 $"events/student/{studentId}?engagementType={engagementType}&page={page}&numberOfResults={numberOfResults}");
         }
 
-        public Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
+        public Task<HttpResponse<object>> CreateEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
             Guid rootOrganizationId, string startDate, string endDate, string buildingName, string street,
-            string buildingNumber, string apartmentNumber, string city, string zipCode, string description,
-            int capacity, decimal fee, string category, string publishDate)
+            string buildingNumber, string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles,
+            string description, int capacity, decimal fee, string category, string publishDate)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object,object>("events", new {eventId, name, organizerId, organizationId,
                 rootOrganizationId, startDate, endDate, buildingName, street, buildingNumber, apartmentNumber, city,
-                zipCode, description, capacity, fee, category, publishDate});
+                zipCode, mediaFiles, description, capacity, fee, category, publishDate});
         }
 
         public Task<HttpResponse<object>> UpdateEventAsync(Guid eventId, string name, Guid organizerId, string startDate, string endDate,
             string buildingName, string street, string buildingNumber, string apartmentNumber, string city, string zipCode,
-            string description, int capacity, decimal fee, string category, string publishDate)
+            IEnumerable<Guid> mediaFiles, string description, int capacity, decimal fee, string category, string publishDate)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PutAsync<object, object>($"events/{eventId}", new {eventId, name, organizerId,
-                startDate, endDate, buildingName, street, buildingNumber, apartmentNumber, city, zipCode, description,
-                capacity, fee, category, publishDate});
+                startDate, endDate, buildingName, street, buildingNumber, apartmentNumber, city, zipCode, mediaFiles,
+                description, capacity, fee, category, publishDate});
         }
 
         public Task DeleteEventAsync(Guid eventId)
