@@ -320,9 +320,9 @@
             studentId = IdentityService.GetCurrentUserId();
         }
         ev = await EventsService.GetEventAsync(new Guid(EventId));
-        reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
         posts = await PostsService.GetPostsAsync(ev.Id);
-        reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
+        reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
         
         pageInitialized = true;
     }
@@ -355,7 +355,7 @@
                 posts = await PostsService.GetPostsAsync(ev.Id);
                 break;
             case 2:
-                reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
+                reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
                 break;
             case 3:
                 if (IsUserEventOrganizer(ev))
@@ -451,16 +451,16 @@
     {
         if (reactionsSummary.AuthUserReactionId != null)
         {
-            await ReactionsService.DeleteReaction((Guid)reactionsSummary.AuthUserReactionId);
+            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
         }
         
         if (reactionType != null)
         {
-            await ReactionsService.CreateReaction(Guid.Empty, studentId, reactionType.ToString(),
+            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
                 ev.Id, ReactionContentType.Event.ToString());
         }
 
-        reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
         StateHasChanged();
     }
 }

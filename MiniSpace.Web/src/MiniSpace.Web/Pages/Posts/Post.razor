@@ -152,8 +152,8 @@
             studentId = IdentityService.GetCurrentUserId();
         }
         post = await PostsService.GetPostAsync(new Guid(PostId));
-        reactionsSummary = await ReactionsService.GetReactionsSummary(post.Id, ReactionContentType.Post);
-        reactions = await ReactionsService.GetReactions(post.Id, ReactionContentType.Post);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
+        reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
         
         pageInitialized = true;
     }
@@ -178,7 +178,7 @@
         switch (index)
         {
             case 1:
-                reactions = await ReactionsService.GetReactions(post.Id, ReactionContentType.Post);
+                reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
                 break;
         }
         StateHasChanged();
@@ -199,16 +199,16 @@
     {
         if (reactionsSummary.AuthUserReactionId != null)
         {
-            await ReactionsService.DeleteReaction((Guid)reactionsSummary.AuthUserReactionId);
+            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
         }
         
         if (reactionType != null)
         {
-            await ReactionsService.CreateReaction(Guid.Empty, studentId, reactionType.ToString(),
+            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
                 post.Id, ReactionContentType.Post.ToString());
         }
 
-        reactionsSummary = await ReactionsService.GetReactionsSummary(post.Id, ReactionContentType.Post);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
         StateHasChanged();
     }
 }
