@@ -23,12 +23,10 @@ using MudBlazor.Services;
 using MiniSpace.Web.Areas.Friends;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
-<<<<<<< HEAD
 using MiniSpace.Web.Areas.Notifications;
-=======
 using MiniSpace.Web.Areas.MediaFiles;
 using MiniSpace.Web.Areas.Reactions;
->>>>>>> remotes/origin/dev
+
 
 namespace MiniSpace.Web
 {
