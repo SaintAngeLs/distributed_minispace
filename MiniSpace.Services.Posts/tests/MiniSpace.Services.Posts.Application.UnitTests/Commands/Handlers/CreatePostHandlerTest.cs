@@ -41,10 +41,27 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
         }
 
         [Fact]
-        public async Task HandleAsync_XXX_ShouldXXX() {
+        public async Task HandleAsync_WithNonPermittedIdentity_ShouldThrowUnauthorizedPostCreationAttemptException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Published;
 
+            var @event = new Event(eventId, contextId);
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+                nameof(state), DateTime.Today);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
+            _appContextMock.Setup(ctx => ctx.Identity.IsAuthenticated).Returns(true);
+            _appContextMock.Setup(ctx => ctx.Identity.Id).Should().NotBeEquivalentTo(command.OrganizerId);
+            _appContextMock.Setup(ctx => ctx.Identity.IsAdmin).Returns(false);
+
+            // Act & Assert
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<UnauthorizedPostCreationAttemptException>();
         }
-
-        
     }
 }

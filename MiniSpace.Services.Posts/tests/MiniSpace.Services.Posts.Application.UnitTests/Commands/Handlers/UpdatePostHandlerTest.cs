@@ -38,10 +38,10 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
                 );
         }
 
-        [Fact]
-        public async Task HandleAsync_XXX_ShouldXXX() {
+        // [Fact]
+        // public async Task HandleAsync_XXX_ShouldXXX() {
 
-        }
+        // }
 
         
     }

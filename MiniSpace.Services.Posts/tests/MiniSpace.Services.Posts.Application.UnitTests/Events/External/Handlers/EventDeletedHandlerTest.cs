@@ -33,9 +33,9 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
                 _postRepositoryMock.Object, _commandDispatcherMock.Object);
         }
 
-        [Fact]
-        public async Task HandleAsync_XXX_ShouldXXX() {
+        // [Fact]
+        // public async Task HandleAsync_XXX_ShouldXXX() {
 
-        }
+        // }
     }
 }

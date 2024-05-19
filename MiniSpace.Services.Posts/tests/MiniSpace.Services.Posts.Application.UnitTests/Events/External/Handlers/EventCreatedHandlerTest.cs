@@ -32,9 +32,9 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
             _eventDeletedHandler = new EventCreatedHandler(_eventRepositoryMock.Object);
         }
 
-        [Fact]
-        public async Task HandleAsync_XXX_ShouldXXX() {
+        // [Fact]
+        // public async Task HandleAsync_XXX_ShouldXXX() {
 
-        }
+        // }
     }
 }
