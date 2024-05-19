@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Comments
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Comments.Infrastructure", "src\MiniSpace.Services.Comments.Infrastructure\MiniSpace.Services.Comments.Infrastructure.csproj", "{85941F19-E28E-467B-A338-7D358D32CFC8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Comments.Application.UnitTests", "tests\MiniSpace.Services.Comments.Application.UnitTests\MiniSpace.Services.Comments.Application.UnitTests.csproj", "{63DF71AF-1D31-4A4D-8127-9B8EB359889D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{85941F19-E28E-467B-A338-7D358D32CFC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85941F19-E28E-467B-A338-7D358D32CFC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85941F19-E28E-467B-A338-7D358D32CFC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63DF71AF-1D31-4A4D-8127-9B8EB359889D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63DF71AF-1D31-4A4D-8127-9B8EB359889D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63DF71AF-1D31-4A4D-8127-9B8EB359889D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63DF71AF-1D31-4A4D-8127-9B8EB359889D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
