@@ -20,8 +20,8 @@ namespace MiniSpace.Services.Friends.Core.Entities
 
         public void AddRequest(Guid inviterId, Guid inviteeId, DateTime requestedAt, FriendState state)
         {
-            if (state != FriendState.Requested)
-                throw new ArgumentException("Initial state must be 'Requested' when adding a new friend request.");
+            // if (state != FriendState.Requested || state != FriendState.Pending)
+            //     throw new ArgumentException("Initial state must be 'Requested' or 'Pending' when adding a new friend request.");
 
             var friendRequest = new FriendRequest(inviterId, inviteeId, requestedAt, state);
             _friendRequests.Add(friendRequest);

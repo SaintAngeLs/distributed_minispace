@@ -56,8 +56,8 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 
             await _friendRequestRepository.AddAsync(friendRequest);
 
-            await AddOrUpdateStudentRequest(command.InviterId, friendRequest);
-            await AddOrUpdateStudentRequest(command.InviteeId, friendRequest);
+            await AddOrUpdateStudentRequest(command.InviterId, friendRequest, FriendState.Requested);
+            await AddOrUpdateStudentRequest(command.InviteeId, friendRequest, FriendState.Pending);
 
 
     //         // Optionally, publish an event about the friend request
@@ -89,7 +89,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             
         }
 
-         private async Task AddOrUpdateStudentRequest(Guid studentId, FriendRequest friendRequest)
+         private async Task AddOrUpdateStudentRequest(Guid studentId, FriendRequest friendRequest, FriendState state)
         {
             var studentRequests = await _studentRequestsRepository.GetAsync(studentId);
             if (studentRequests == null)
@@ -98,7 +98,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
                 await _studentRequestsRepository.AddAsync(studentRequests);
             }
 
-            studentRequests.AddRequest(friendRequest.InviterId, friendRequest.InviteeId, friendRequest.RequestedAt, friendRequest.State);
+            studentRequests.AddRequest(friendRequest.InviterId, friendRequest.InviteeId, friendRequest.RequestedAt, state);
             await _studentRequestsRepository.UpdateAsync(studentRequests);
         }
 
