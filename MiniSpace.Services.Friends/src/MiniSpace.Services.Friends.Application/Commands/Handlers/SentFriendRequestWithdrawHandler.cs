@@ -1,4 +1,5 @@
 using Convey.CQRS.Commands;
+using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
@@ -17,47 +18,66 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
         private readonly IStudentRequestsRepository _studentRequestsRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
+        private readonly ILogger<SentFriendRequestWithdrawHandler> _logger;
 
         public SentFriendRequestWithdrawHandler(
             IFriendRequestRepository friendRequestRepository,
             IStudentRequestsRepository studentRequestsRepository,
             IMessageBroker messageBroker,
-            IAppContext appContext)
+            IAppContext appContext,
+            ILogger<SentFriendRequestWithdrawHandler> logger)
         {
             _friendRequestRepository = friendRequestRepository;
             _studentRequestsRepository = studentRequestsRepository;
             _messageBroker = messageBroker;
             _appContext = appContext;
+            _logger = logger;
         }
 
-        public async Task HandleAsync(SentFriendRequestWithdraw command, CancellationToken cancellationToken = default)
+       public async Task HandleAsync(SentFriendRequestWithdraw command, CancellationToken cancellationToken = default)
         {
-            var identity = _appContext.Identity;
-            if (!identity.IsAuthenticated || identity.Id != command.InviterId)
-            {
-                throw new UnauthorizedFriendActionException(command.InviterId, command.InviteeId);
-            }
+            _logger.LogInformation("Handling SentFriendRequestWithdraw command: InviterId: {InviterId}, InviteeId: {InviteeId}", command.InviterId, command.InviteeId);
 
-            var friendRequest = await _friendRequestRepository.FindByInviterAndInvitee(command.InviterId, command.InviteeId);
+            // if (!_appContext.Identity.IsAuthenticated || _appContext.Identity.Id != command.InviterId)
+            // {
+            //     throw new UnauthorizedFriendActionException(command.InviterId, command.InviteeId);
+            // }
 
-            if (friendRequest == null || friendRequest.State != FriendState.Requested)
+            var inviterRequests = await _studentRequestsRepository.GetAsync(command.InviterId);
+            var inviteeRequests = await _studentRequestsRepository.GetAsync(command.InviteeId);
+
+            var friendRequest = inviterRequests?.FriendRequests.FirstOrDefault(fr => fr.InviterId == command.InviterId && fr.InviteeId == command.InviteeId)
+                                 ?? inviteeRequests?.FriendRequests.FirstOrDefault(fr => fr.InviterId == command.InviterId && fr.InviteeId == command.InviteeId);
+
+            if (friendRequest == null)
             {
+                _logger.LogError("Friend request not found for InviterId: {InviterId} and InviteeId: {InviteeId}", command.InviterId, command.InviteeId);
                 throw new FriendRequestNotFoundException(command.InviterId, command.InviteeId);
             }
 
-            friendRequest.Cancel();
+            friendRequest.State = FriendState.Cancelled;
+            _logger.LogInformation("Updating friend request state to Cancelled for request ID: {RequestId}", friendRequest.Id);
 
-            await _friendRequestRepository.UpdateAsync(friendRequest);
+            UpdateAndSaveRequests(inviterRequests, friendRequest);
+            UpdateAndSaveRequests(inviteeRequests, friendRequest);
 
-            var inviterRequests = await _studentRequestsRepository.GetAsync(command.InviterId);
-            inviterRequests?.RemoveRequest(friendRequest.Id);
-            await _studentRequestsRepository.UpdateAsync(inviterRequests);
+            // await _friendRequestRepository.DeleteAsync(friendRequest.Id);
+            _logger.LogInformation("Deleted friend request from the database for request ID: {RequestId}", friendRequest.Id);
 
-            var inviteeRequests = await _studentRequestsRepository.GetAsync(command.InviteeId);
-            inviteeRequests?.RemoveRequest(friendRequest.Id);
-            await _studentRequestsRepository.UpdateAsync(inviteeRequests);
-
-            await _messageBroker.PublishAsync(new FriendRequestWithdrawn(command.InviterId, command.InviteeId));
+            await _messageBroker.PublishAsync(new FriendRequestWithdrawn(friendRequest.InviterId, friendRequest.InviteeId));
+            _logger.LogInformation("Published FriendRequestWithdrawn event for InviterId: {InviterId} and InviteeId: {InviteeId}", friendRequest.InviterId, friendRequest.InviteeId);
         }
+
+        private async void UpdateAndSaveRequests(StudentRequests requests, FriendRequest friendRequest)
+        {
+            if (requests != null && requests.FriendRequests.Any(fr => fr.Id == friendRequest.Id))
+            {
+                requests.UpdateRequestState(friendRequest.Id, FriendState.Cancelled);
+                requests.RemoveRequest(friendRequest.Id);
+                await _studentRequestsRepository.UpdateAsync(requests);
+                _logger.LogInformation("Updated requests successfully in the database for StudentId: {StudentId}", requests.StudentId);
+            }
+        }
+
     }
 }

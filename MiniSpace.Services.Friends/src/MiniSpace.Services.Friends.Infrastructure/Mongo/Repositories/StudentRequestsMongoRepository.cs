@@ -5,6 +5,7 @@ using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
@@ -17,12 +18,24 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
         {
             _repository = repository;
         }
-
-        public async Task<StudentRequests> GetAsync(Guid studentId)
+     
+    public async Task<StudentRequests> GetAsync(Guid studentId)
         {
-            var document = await _repository.GetAsync(studentId);
-            return document?.AsEntity(); 
+            Console.WriteLine($"{studentId}");
+            var document = await _repository.FindAsync(doc => doc.StudentId == studentId);
+            var studentRequestDocument = document.SingleOrDefault();
+            if (studentRequestDocument == null)
+            {
+                return null;
+            }
+
+            var entity = studentRequestDocument.AsEntity();
+            var json = JsonSerializer.Serialize(entity, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine(json);
+
+            return entity;
         }
+
 
         public async Task<IEnumerable<StudentRequests>> GetAllAsync()
         {
@@ -42,9 +55,14 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
             await _repository.UpdateAsync(document);
         }
 
-        public async Task DeleteAsync(Guid studentId)
+         public async Task DeleteAsync(Guid studentId)
         {
-            await _repository.DeleteAsync(studentId);
+            var documents = await _repository.FindAsync(doc => doc.StudentId == studentId);
+            var document = documents.SingleOrDefault();
+            if (document != null)
+            {
+                await _repository.DeleteAsync(document.Id);
+            }
         }
     }
 }

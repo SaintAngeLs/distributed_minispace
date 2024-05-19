@@ -55,8 +55,10 @@
                             <p>Email: @request.InviteeEmail</p>
                             <p>Requested On: @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
                             <p>Status: @request.State</p>
+                             
                         </div>
                     </div>
+                    <RadzenButton Text="Withdraw" Click="@(() => WithdrawRequest(request.InviteeId))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
                 }
             }
             else
@@ -249,5 +251,21 @@
     private void RedirectToDetails(Guid id)
     {
         NavigationManager.NavigateTo($"/student-details/{id}");
+    }
+
+    private async Task WithdrawRequest(Guid inviteeId)
+    {
+        var inviterId = IdentityService.GetCurrentUserId();
+        if (inviterId != Guid.Empty)
+        {
+            await FriendsService.WithdrawFriendRequestAsync(inviterId, inviteeId);
+            sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+            SearchSentRequests(); // Reapply search filter to update the UI
+        }
+        else
+        {
+            // Optionally show an error notification
+            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Error", "Invalid user ID.");
+        }
     }
 }

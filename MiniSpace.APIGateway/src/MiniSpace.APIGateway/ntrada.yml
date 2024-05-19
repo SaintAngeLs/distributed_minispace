@@ -574,7 +574,7 @@ modules:
           auth: true
 
         - upstream: /requests/{userId}/withdraw
-          method: POST
+          method: PUT
           use: downstream
           downstream: friends-service/friends/requests/{userId}/withdraw
           bind:

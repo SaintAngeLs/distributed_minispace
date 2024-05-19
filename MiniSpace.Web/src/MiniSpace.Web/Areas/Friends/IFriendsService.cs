@@ -24,5 +24,6 @@ namespace MiniSpace.Web.Areas.Friends
         Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync();
         Task AcceptFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId);
         Task DeclineFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId);
+        Task WithdrawFriendRequestAsync(Guid inviterId, Guid inviteeId);
     }
 }

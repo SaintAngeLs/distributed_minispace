@@ -99,8 +99,13 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
                 FriendRequests = entity.FriendRequests.Select(fr => fr.AsDocument()).ToList()
             };
 
-        public static StudentRequests AsEntity(this StudentRequestsDocument document)
+     public static StudentRequests AsEntity(this StudentRequestsDocument document)
         {
+            if (document == null)
+            {
+                throw new ArgumentNullException(nameof(document), "StudentRequestsDocument cannot be null.");
+            }
+
             var studentRequests = new StudentRequests(document.StudentId);
             foreach (var friendRequestDoc in document.FriendRequests)
             {

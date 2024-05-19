@@ -88,9 +88,6 @@ namespace MiniSpace.Web.Areas.Friends
             await _httpClient.DeleteAsync($"friends/{requesterId}/{friendId}/remove");
         }
 
-
-
-
         public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
         {
             if (_httpClient == null) throw new InvalidOperationException("HTTP client is not initialized.");
@@ -224,7 +221,7 @@ namespace MiniSpace.Web.Areas.Friends
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
             var payload = new { InviterId = inviterId, InviteeId = inviteeId };
-            await _httpClient.PostAsync<object, object>($"friends/requests/{inviteeId}/withdraw", payload);
+            await _httpClient.PutAsync<object, object>($"friends/requests/{inviteeId}/withdraw", payload);
         }
     }    
 }

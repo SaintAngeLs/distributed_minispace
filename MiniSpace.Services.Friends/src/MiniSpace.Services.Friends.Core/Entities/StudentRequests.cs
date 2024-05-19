@@ -50,10 +50,22 @@ namespace MiniSpace.Services.Friends.Core.Entities
         {
             var request = _friendRequests.Find(r => r.Id == requestId);
             if (request == null)
-                throw new KeyNotFoundException("Friend request not found.");
+            {
+                // // _logger.LogWarning("Attempted to remove a friend request that does not exist: {RequestId}", requestId);
+                // return;  // Just return without throwing exception
+            }
 
             _friendRequests.Remove(request);
             AddEvent(new FriendRequestRemoved(request));
+        }
+
+        public void UpdateRequestState(Guid requestId, FriendState newState)
+        {
+            var request = FriendRequests.FirstOrDefault(r => r.Id == requestId);
+            if (request != null)
+            {
+                request.State = newState;
+            }
         }
     }
 }
