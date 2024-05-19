@@ -83,16 +83,16 @@
                     </RadzenColumn>
                     <RadzenColumn Size="12" SizeSM="4">
                         <RadzenStack>
-                             <RadzenFormField Text="Category" Variant="Variant.Outlined">
-                                 <RadzenDropDown Data=@categories @bind-Value="@_createEventModel.Category" />
-                             </RadzenFormField>
-                             <RadzenFormField Text="End date" Variant="Variant.Outlined">
-                                 <RadzenDatePicker @bind-Value="@_createEventModel.EndDate" Name="end-date"
-                                                   ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
-                                 <RadzenCustomValidator Component="end-date" Style="position: relative"
-                                                        Validator="@(() => ValidateDate(_createEventModel.EndDate))"
-                                                        Text="Minute number has to be divisible by 5"/>
-                             </RadzenFormField>
+                            <RadzenFormField Text="Category" Variant="Variant.Outlined">
+                                <RadzenDropDown Data=@categories @bind-Value="@_createEventModel.Category" />
+                            </RadzenFormField>
+                            <RadzenFormField Text="End date" Variant="Variant.Outlined">
+                                <RadzenDatePicker @bind-Value="@_createEventModel.EndDate" Name="end-date"
+                                                  ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                                <RadzenCustomValidator Component="end-date" Style="position: relative"
+                                                       Validator="@(() => ValidateDate(_createEventModel.EndDate))"
+                                                       Text="Minute number has to be divisible by 5"/>
+                            </RadzenFormField>
                             <RadzenFormField Text="Street" Variant="Variant.Outlined">
                                 <RadzenTextBox @bind-Value="@_createEventModel.Street" Name="street" />
                                 <RadzenRequiredValidator Component="street" Style="position: relative"
@@ -131,25 +131,6 @@
                                     }
                                 </RadzenStack>
                             </RadzenFormField>
-                            <RadzenLabel Text="Add event images:" Component="event-images" />
-                             <RadzenCard>
-                                 <RadzenRow class="rz-text-align-center rz-border-info-light" Gap="1rem">
-                                     <RadzenColumn Size="3" class="center-content">
-                                         @if (isUploading)
-                                         {
-                                             <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light"
-                                                                        Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
-                                                 <Template>Uploading</Template>
-                                             </RadzenProgressBarCircular>
-                                         }
-                                     </RadzenColumn>
-                                     <RadzenColumn Size="6" Offset="3">
-                                         <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Choose files to upload (max 5)</RadzenText>
-                                         <RadzenUpload Multiple="true" Change=@OnClientChange class="w-100" Accept="image/*" MaxFileCount="5"
-                                                       InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "select file" } })"/>
-                                     </RadzenColumn>
-                                 </RadzenRow>
-                             </RadzenCard>
                         </RadzenStack>
                     </RadzenColumn>
                 </RadzenRow>
@@ -167,7 +148,29 @@
                         </RadzenStack>
                     </RadzenColumn>
                 </RadzenRow>
-                
+                <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
+                    <RadzenColumn Size="12" SizeSM="8">
+                        <RadzenLabel Text="Add event images:" Component="event-images"/>
+                        <RadzenCard class="horizontal-margin">
+                            <RadzenRow class="rz-text-align-center rz-border-info-light" Gap="1rem">
+                                <RadzenColumn Size="3" class="center-content">
+                                    @if (isUploading)
+                                    {
+                                        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light"
+                                                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                                            <Template>Uploading</Template>
+                                        </RadzenProgressBarCircular>
+                                    }
+                                </RadzenColumn>
+                                <RadzenColumn Size="6" Offset="3">
+                                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Choose files to upload (max 5)</RadzenText>
+                                    <RadzenUpload Multiple="true" Change=@OnClientChange class="w-100" Accept="image/*" MaxFileCount="5"
+                                                  InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "select file" } })"/>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenCard>
+                    </RadzenColumn>
+                </RadzenRow>
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
                         <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Text="Submit"/>
