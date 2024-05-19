@@ -67,5 +67,56 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
                 State = document.State,
                 StudentId = document.InviteeId
             };
+
+        public static StudentFriendsDocument AsDocument(this StudentFriends entity)
+            => new StudentFriendsDocument
+            {
+                Id = entity.Id,
+                StudentId = entity.StudentId,
+                Friends = entity.Friends.Select(friend => friend.AsDocument()).ToList()
+            };
+
+        public static StudentFriends AsEntity(this StudentFriendsDocument document)
+            => new StudentFriends(document.StudentId);  
+
+        // With the correct definitions of the Object-Value method in Core.
+        // ...
+        // public static StudentFriends AsEntity(this StudentFriendsDocument document)
+        // {
+        //     var studentFriends = new StudentFriends(document.StudentId);
+        //     foreach (var friendDoc in document.Friends)
+        //     {
+        //         studentFriends.AddFriend(friendDoc.AsEntity());
+        //     }
+        //     return studentFriends;
+        // }
+
+        public static StudentRequestsDocument AsDocument(this StudentRequests entity)
+            => new StudentRequestsDocument
+            {
+                Id = entity.Id,
+                StudentId = entity.StudentId,
+                FriendRequests = entity.FriendRequests.Select(fr => fr.AsDocument()).ToList()
+            };
+
+        public static StudentRequests AsEntity(this StudentRequestsDocument document)
+        {
+            var studentRequests = new StudentRequests(document.StudentId);
+            foreach (var friendRequestDoc in document.FriendRequests)
+            {
+                studentRequests.AddRequest(friendRequestDoc.InviterId, friendRequestDoc.InviteeId, friendRequestDoc.RequestedAt, friendRequestDoc.State);
+            }
+            return studentRequests;
+        }
+
+        public static StudentRequestsDto AsDto(this StudentRequestsDocument document)
+            => new StudentRequestsDto
+            {
+                Id = document.Id,
+                StudentId = document.StudentId,
+                FriendRequests = document.FriendRequests.Select(fr => fr.AsDto()).ToList()
+            };
+
+
     }    
 }

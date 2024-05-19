@@ -17,5 +17,11 @@ namespace MiniSpace.Services.Friends.Core.Entities
             StudentId = studentId;
             _friends = new List<Friend>();
         }
+
+        public void AddFriend(Friend friend)
+        {
+            _friends.Add(friend);
+        }
+
     }
 }

@@ -23,7 +23,6 @@ namespace MiniSpace.Services.Friends.Core.Entities
             _state = state;
         }
 
-
         public void Accept()
         {
             if (State != FriendState.Requested)
