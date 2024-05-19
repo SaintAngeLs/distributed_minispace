@@ -6,6 +6,7 @@
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Events
+@using MiniSpace.Web.Models.Organizations
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using MudBlazor
 @using Radzen
@@ -62,6 +63,7 @@
     {
         Name = "",
         Organizer = "",
+        Organization = new OrganizationModel(),
         Category = "",
         State = "",
         Friends = [],
@@ -88,9 +90,9 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
-            searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
-            searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
+        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
+            searchEventsModel.Organization.Id, searchEventsModel.Organization.RootId, searchEventsModel.Category,
+            searchEventsModel.State, searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
             searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
@@ -114,9 +116,9 @@
     {
         searchEventsModel.Pageable.Page = pageNumber;
         
-        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name,
-            searchEventsModel.Organizer, searchEventsModel.Category, searchEventsModel.State,
-            searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
+        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
+            searchEventsModel.Organization.Id, searchEventsModel.Organization.RootId, searchEventsModel.Category,
+            searchEventsModel.State, searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
             searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             searchEventsModel.Pageable);
@@ -130,7 +132,7 @@
             new Dictionary<string, object>() { { "SearchEventsModel", searchEventsModel } },
             new DialogOptions()
             {
-                Width = "700px", Resizable = true, Draggable = true,
+                Width = "800px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
         await OnInitializedAsync();

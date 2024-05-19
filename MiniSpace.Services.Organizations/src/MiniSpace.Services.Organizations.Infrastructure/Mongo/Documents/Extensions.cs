@@ -17,18 +17,20 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 SubOrganizations = entity.SubOrganizations.Select(o => o.AsDocument())
             };
         
-        public static OrganizationDto AsDto(this OrganizationDocument document)
+        public static OrganizationDto AsDto(this OrganizationDocument document, Guid rootId)
             => new OrganizationDto()
             {
                 Id = document.Id,
-                Name = document.Name
+                Name = document.Name,
+                RootId = rootId
             };
         
-        public static OrganizationDetailsDto AsDetailsDto(this OrganizationDocument document)
+        public static OrganizationDetailsDto AsDetailsDto(this OrganizationDocument document, Guid rootId)
             => new OrganizationDetailsDto()
             {
                 Id = document.Id,
                 Name = document.Name,
+                RootId = rootId,
                 Organizers = document.Organizers.Select(x => x.Id)
             };
         
