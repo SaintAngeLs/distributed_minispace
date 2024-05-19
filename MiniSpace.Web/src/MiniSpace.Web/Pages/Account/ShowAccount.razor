@@ -3,9 +3,12 @@
 @using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
 @using System.IO
+@using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.DTO.Types
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
 <h1>Your account</h1>
@@ -14,7 +17,7 @@
 {
     <RadzenStack Gap="1rem">
         <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
-            <RadzenImage Path="@($"data:image/jpeg;base64,{@studentDto.ProfileImage}")"
+            <RadzenImage Path="@($"data:image/webp;base64,{profileImage}")"
                          AlternateText="base64 image"
                          Style="width: 20em" class="rz-border-radius-10"/>
         </RadzenStack>
@@ -71,6 +74,15 @@
                         <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100" Name="profile-image"
                                       InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "select file" } })"/>
                     </RadzenColumn>
+                    <RadzenColumn>
+                        @if (isUploading)
+                        {
+                            <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                                       Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                                <Template>Uploading</Template>
+                            </RadzenProgressBarCircular>
+                        }
+                    </RadzenColumn>
                     <RadzenColumn Size="12" SizeMD="5">
                         <RadzenButton Size="ButtonSize.Large" Text="Save account"
                                       Click=@HandleUpdateStudent/>
@@ -88,6 +100,9 @@ else
 @code {
     private StudentDto studentDto = new();
     private bool editionDisabled = true;
+    private string profileImage = string.Empty;
+    private TaskCompletionSource<bool> clientChangeCompletionSource;
+    private bool isUploading = false;
     
     protected override async Task OnInitializedAsync()
     {
@@ -95,6 +110,12 @@ else
         {
             await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
             studentDto = StudentsService.StudentDto;
+            StateHasChanged();
+            if (studentDto.ProfileImage != Guid.Empty)
+            {
+                var imageResponse = await MediaFilesService.GetFileAsync(studentDto.ProfileImage);
+                profileImage = imageResponse.Base64Content;
+            }
         }
     }
 
@@ -106,6 +127,10 @@ else
 
     private async Task HandleUpdateStudent()
     {
+        if (clientChangeCompletionSource != null)
+        {
+            await clientChangeCompletionSource.Task;
+        }
         editionDisabled = true;
         await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImage,
             studentDto.Description, studentDto.EmailNotifications);
@@ -115,22 +140,40 @@ else
     async void OnClientChange(UploadChangeEventArgs args)
     {
         Console.WriteLine("Client-side upload changed");
+        clientChangeCompletionSource = new TaskCompletionSource<bool>();
 
         foreach (var file in args.Files)
         {
             Console.WriteLine($"File: {file.Name} / {file.Size} bytes");
+            isUploading = true;
+            StateHasChanged();
 
             try
             {
                 long maxFileSize = 10 * 1024 * 1024;
                 var stream = file.OpenReadStream(maxFileSize);
                 byte[] bytes = await ReadFully(stream);
-                studentDto.ProfileImage = Convert.ToBase64String(bytes);
+                var base64Content = Convert.ToBase64String(bytes);
+                var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
+                    MediaFileContextType.StudentProfile.ToString(), IdentityService.UserDto.Id,
+                    file.Name, file.ContentType, base64Content);
+                if (response.Content != null && response.Content.FileId != Guid.Empty)
+                {
+                    studentDto.ProfileImage = response.Content.FileId;
+                }
+
                 stream.Close();
+                clientChangeCompletionSource.SetResult(true);
             }
             catch (Exception ex)
-            { 
+            {
                 Console.WriteLine($"Client-side file read error: {ex.Message}");
+                clientChangeCompletionSource.SetResult(false);
+            }
+            finally
+            {
+                isUploading = false;
+                StateHasChanged();
             }
         }
     }

@@ -82,7 +82,7 @@
             postDto = await PostsService.GetPostAsync(new Guid(PostId));
             updatePostModel.PostId = postDto.Id;
             updatePostModel.TextContent = postDto.TextContent;
-            updatePostModel.MediaContent = postDto.MediaContent;
+            updatePostModel.MediaFiles = postDto.MediaFiles;
         }
 
         pageInitialized = true;
@@ -91,7 +91,7 @@
     private async Task HandleUpdatePost()
     {
         var response = await PostsService.UpdatePostAsync(updatePostModel.PostId,
-            updatePostModel.TextContent, updatePostModel.MediaContent);
+            updatePostModel.TextContent, updatePostModel.MediaFiles);
         
         if (response.ErrorMessage != null)
         {

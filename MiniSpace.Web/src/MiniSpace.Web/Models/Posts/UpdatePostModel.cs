@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace MiniSpace.Web.Models.Posts
 {
@@ -6,6 +7,6 @@ namespace MiniSpace.Web.Models.Posts
     {
         public Guid PostId { get; set; }
         public string TextContent { get; set; }
-        public string MediaContent { get; set; }
+        public IEnumerable<Guid> MediaFiles { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
 {
-    public class AddEventHandler: ICommandHandler<AddEvent>
+    public class CreateEventHandler: ICommandHandler<CreateEvent>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMessageBroker _messageBroker;
@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         private readonly IEventValidator _eventValidator;
         private readonly IAppContext _appContext;
         
-        public AddEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, 
+        public CreateEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, 
             IOrganizationsServiceClient organizationsServiceClient, IDateTimeProvider dateTimeProvider, 
             IEventValidator eventValidator, IAppContext appContext)
         {
@@ -33,13 +33,18 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _appContext = appContext;
         }
         
-        public async Task HandleAsync(AddEvent command, CancellationToken cancellationToken)
+        public async Task HandleAsync(CreateEvent command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
             if (!identity.IsOrganizer)
                 throw new AuthorizedUserIsNotAnOrganizerException(identity.Id);
             if(identity.Id != command.OrganizerId)
                 throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
+
+            if (command.EventId == Guid.Empty || await _eventRepository.ExistsAsync(command.EventId))
+            {
+                throw new InvalidEventIdException(command.EventId);
+            }
             
             _eventValidator.ValidateName(command.Name);
             _eventValidator.ValidateDescription(command.Description);
@@ -50,6 +55,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
                 command.ApartmentNumber, command.City, command.ZipCode);
+            _eventValidator.ValidateMediaFiles(command.MediaFiles.ToList());
             _eventValidator.ValidateCapacity(command.Capacity);
             _eventValidator.ValidateFee(command.Fee);
             var category = _eventValidator.ParseCategory(command.Category);
@@ -77,10 +83,10 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             
             var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizationId, organization.Name);
             var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
-                address, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
+                address, command.MediaFiles, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
             
             await _eventRepository.AddAsync(@event);
-            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id));
+            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id, @event.MediaFiles));
         }
     }
 }

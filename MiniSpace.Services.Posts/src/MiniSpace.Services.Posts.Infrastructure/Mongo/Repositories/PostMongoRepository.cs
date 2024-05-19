@@ -46,5 +46,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);
+        
+        public Task<bool> ExistsAsync(Guid id)
+            => _repository.ExistsAsync(p => p.Id == id);
     }    
 }

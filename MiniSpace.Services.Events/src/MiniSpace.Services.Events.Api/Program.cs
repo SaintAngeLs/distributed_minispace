@@ -47,7 +47,7 @@ namespace MiniSpace.Services.Identity.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get<GetEvent, EventDto>("events/{eventId}")
                         .Put<UpdateEvent>("events/{eventId}")
-                        .Post<AddEvent>("events", 
+                        .Post<CreateEvent>("events", 
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))
                         .Delete<DeleteEvent>("events/{eventId}")
                         .Post<SignUpToEvent>("events/{eventId}/sign-up")

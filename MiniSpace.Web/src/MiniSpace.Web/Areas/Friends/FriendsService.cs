@@ -166,7 +166,7 @@ namespace MiniSpace.Web.Areas.Friends
                     var userDetails = await GetUserDetails(request.InviteeId);
                     request.InviteeName = userDetails.FirstName + " " + userDetails.LastName;
                     request.InviteeEmail = userDetails.Email;
-                    request.InviteeImage = userDetails.ProfileImage;
+                    //request.InviteeImage = userDetails.ProfileImage;
                 }
 
                 return friendRequests;

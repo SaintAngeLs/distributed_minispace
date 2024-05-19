@@ -17,7 +17,7 @@ namespace MiniSpace.Services.Events.Core.Entities
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public Address Location { get; private set; }
-        //public string Image { get; set; }
+        public IEnumerable<Guid> MediaFiles { get; set; }
         public int Capacity { get; private set; }
         public decimal Fee { get; private set; }
         public Category Category { get; private set; }
@@ -44,8 +44,8 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
 
         public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate,
-            Organizer organizer, DateTime updatedAt, IEnumerable<Participant> interestedStudents = null, 
+            Address location, IEnumerable<Guid> mediaFiles, int capacity, decimal fee, Category category, State state, 
+            DateTime publishDate, Organizer organizer, DateTime updatedAt, IEnumerable<Participant> interestedStudents = null, 
             IEnumerable<Participant> signedUpStudents = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
@@ -54,6 +54,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             StartDate = startDate;
             EndDate = endDate;
             Location = location;
+            MediaFiles = mediaFiles;
             Capacity = capacity;
             Fee = fee;
             Category = category;
@@ -67,11 +68,11 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
         
         public static Event Create(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, int capacity, decimal fee, Category category, State state, DateTime publishDate, 
-            Organizer organizer, DateTime now)
+            Address location, IEnumerable<Guid> mediaFiles, int capacity, decimal fee, Category category, State state,
+            DateTime publishDate, Organizer organizer, DateTime now)
         {
-            var @event = new Event(id, name, description, startDate, endDate, location, capacity, fee, category, 
-                state, publishDate, organizer, now);
+            var @event = new Event(id, name, description, startDate, endDate, location, mediaFiles, capacity, fee, 
+                category, state, publishDate, organizer, now);
             return @event;
         }
         
@@ -217,6 +218,15 @@ namespace MiniSpace.Services.Events.Core.Entities
             }
 
             State = state;
+        }
+        
+        public void RemoveMediaFile(Guid mediaFileId)
+        {
+            var mediaFile = MediaFiles.SingleOrDefault(mf => mf == mediaFileId);
+            if (mediaFile == Guid.Empty)
+            {
+                throw new MediaFileNotFoundException(mediaFileId, Id);
+            }
         }
         
         public bool IsOrganizer(Guid organizerId)

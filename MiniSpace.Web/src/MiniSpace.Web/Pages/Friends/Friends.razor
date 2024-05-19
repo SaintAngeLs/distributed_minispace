@@ -20,7 +20,7 @@
             foreach (var friend in friends)
             {
                 <div class="friend-card">
-                    <img src="@GetImage(friend.StudentDetails.ProfileImage)" alt="Friend Image" class="friend-img">
+                    @*<img src="@GetImage(friend.StudentDetails.ProfileImage)" alt="Friend Image" class="friend-img">*@
                     <div class="friend-info">
                         <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
                         <p>@friend.StudentDetails.Email</p>
