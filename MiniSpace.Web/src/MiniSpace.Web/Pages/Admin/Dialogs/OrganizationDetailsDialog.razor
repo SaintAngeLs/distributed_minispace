@@ -118,7 +118,7 @@
             {
                 if (!organizer.WasBelonging)
                 {
-                    await OrganizationsService.AddOrganizerToOrganization(Organization.RootId, Organization.Id, organizer.Id);
+                    await OrganizationsService.AddOrganizerToOrganizationAsync(Organization.RootId, Organization.Id, organizer.Id);
                 }
             }   
         }
@@ -129,7 +129,7 @@
             {
                 if (organizer.WasBelonging)
                 {
-                    await OrganizationsService.RemoveOrganizerFromOrganization(Organization.RootId, Organization.Id, organizer.Id);
+                    await OrganizationsService.RemoveOrganizerFromOrganizationAsync(Organization.RootId, Organization.Id, organizer.Id);
                 }
             }   
         }
