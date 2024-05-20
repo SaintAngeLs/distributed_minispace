@@ -10,7 +10,9 @@ namespace MiniSpace.Web.Areas.Comments
 {
     public interface ICommentsService
     {
-        Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchCommentsAsync(Guid contextId,
+        Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchRootCommentsAsync(Guid contextId,
+            string commentContext, PageableDto pageable);
+        Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchSubCommentsAsync(Guid contextId,
             string commentContext, Guid parentId, PageableDto pageable);
         Task<HttpResponse<object>> CreateCommentAsync(Guid commentId, Guid contextId, string commentContext,
             Guid studentId, Guid parentId, string comment);

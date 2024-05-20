@@ -20,13 +20,20 @@ namespace MiniSpace.Web.Areas.Comments
             _identityService = identityService;
         }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchCommentsAsync(Guid contextId,
-            string commentContext, Guid parentId, PageableDto pageable)
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchRootCommentsAsync(Guid contextId,
+            string commentContext, PageableDto pageable)
         {
-            return _httpClient.PostAsync<SearchComments, PagedResponseDto<IEnumerable<EventDto>>>("comments/search", 
-                new (contextId, commentContext, parentId, pageable));
+            return _httpClient.PostAsync<SearchRootComments, PagedResponseDto<IEnumerable<CommentDto>>>("comments/search", 
+                new (contextId, commentContext, pageable));
         }
 
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchSubCommentsAsync(Guid contextId,
+            string commentContext, Guid parentId, PageableDto pageable)
+        {
+            return _httpClient.PostAsync<SearchSubComments, PagedResponseDto<IEnumerable<CommentDto>>>("comments/search", 
+                new (contextId, commentContext, parentId, pageable));
+        }
+        
         public Task<HttpResponse<object>> CreateCommentAsync(Guid commentId, Guid contextId, string commentContext,
             Guid studentId, Guid parentId, string comment)
         {
