@@ -1,4 +1,5 @@
 using Convey.CQRS.Events;
+using MiniSpace.Services.Friends.Application.Commands;
 using MiniSpace.Services.Friends.Core.Events;
 
 namespace MiniSpace.Services.Friends.Application.Services
@@ -7,5 +8,7 @@ namespace MiniSpace.Services.Friends.Application.Services
     {
         IEvent Map(IDomainEvent @event);
         IEnumerable<IEvent> MapAll(IEnumerable<IDomainEvent> events);
+        // IEnumerable<IEvent> MapAll(IDomainEvent @event);
+        IEnumerable<IEvent> MapAll(PendingFriendAccepted pendingFriendAccept);
     }    
 }

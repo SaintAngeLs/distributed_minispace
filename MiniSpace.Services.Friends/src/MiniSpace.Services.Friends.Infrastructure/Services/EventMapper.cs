@@ -22,8 +22,8 @@ namespace MiniSpace.Services.Friends.Infrastructure.Services
                 case Core.Events.FriendRemoved e:
                     return new Application.Events.FriendRemoved(e.Requester.Id, e.Friend.Id);
 
-                case Core.Events.FriendshipConfirmed e:
-                    return new PendingFriendAccepted(e.FriendId, e.FriendId);
+                // case Core.Events.FriendshipConfirmed e:
+                //     return new PendingFriendAccepted(e.FriendId, e.FriendId);
 
                 case Core.Events.FriendshipDeclined e:
                     return new PendingFriendDeclined(e.RequesterId, e.FriendId);
@@ -34,9 +34,18 @@ namespace MiniSpace.Services.Friends.Infrastructure.Services
                 case FriendRequest e when !(e is Core.Events.FriendInvited):
                     return new Application.Events.External.FriendRequestCreated(e.InviterId, e.InviteeId);
 
+                case Core.Events.PendingFriendAccepted e:
+                    return new Application.Events.External.PendingFriendAccepted(e.RequesterId, e.FriendId);
+
                 default:
                     return null; 
             }
+        }
+
+        public IEnumerable<IEvent> MapAll(Core.Events.PendingFriendAccepted pendingFriendAccept)
+        {
+            // Implementation for the new method
+            return new List<IEvent> { new Application.Events.External.PendingFriendAccepted(pendingFriendAccept.RequesterId, pendingFriendAccept.FriendId) };
         }
     }
 }
