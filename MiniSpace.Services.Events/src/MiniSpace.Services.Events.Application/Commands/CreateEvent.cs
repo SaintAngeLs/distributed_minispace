@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.Commands
 {
-    public class AddEvent : ICommand
+    public class CreateEvent : ICommand
     {
         public Guid EventId { get; }
         public string Name { get; }
@@ -19,18 +21,19 @@ namespace MiniSpace.Services.Events.Application.Commands
         public string ApartmentNumber { get; }
         public string City { get; }
         public string ZipCode { get; }
+        public IEnumerable<Guid> MediaFiles { get; }
         public string Description { get; }
         public int Capacity { get; }
         public decimal Fee { get; }
         public string Category { get; }
         public string PublishDate { get; }
 
-        public AddEvent(Guid eventId, string name, Guid organizerId, Guid organizationId, Guid rootOrganizationId,
-            string startDate, string endDate, string buildingName, string street, string buildingNumber,
-            string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee, 
-            string category, string publishDate)
+        public CreateEvent(Guid eventId, string name, Guid organizerId, Guid organizationId, Guid rootOrganizationId,
+            string startDate, string endDate, string buildingName, string street, string buildingNumber, 
+            string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles, string description, 
+            int capacity, decimal fee, string category, string publishDate)
         {
-            EventId = eventId == Guid.Empty ? Guid.NewGuid() : eventId;
+            EventId = eventId;
             Name = name;
             OrganizerId = organizerId;
             OrganizationId = organizationId;
@@ -43,6 +46,7 @@ namespace MiniSpace.Services.Events.Application.Commands
             ApartmentNumber = apartmentNumber;
             City = city;
             ZipCode = zipCode;
+            MediaFiles = mediaFiles;
             Description = description;
             Capacity = capacity;
             Fee = fee;

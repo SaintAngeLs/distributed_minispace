@@ -15,7 +15,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public Address Location { get; set; }
-        //public string Image { get; set; }
+        public IEnumerable<Guid> MediaFiles { get; set; }
         public IEnumerable<Participant> InterestedStudents { get; set; }
         public IEnumerable<Participant> SignedUpStudents { get; set; }
         public int Capacity { get; set; }

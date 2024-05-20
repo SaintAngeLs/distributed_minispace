@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Events.Application.Events
 {
-    public class EventUpdated(Guid eventId, DateTime updatedAt, Guid updatedBy) : IEvent
+    public class EventUpdated(Guid eventId, DateTime updatedAt, Guid updatedBy, IEnumerable<Guid> mediaFilesIds) : IEvent
     {
         public Guid EventId { get; set; } = eventId;
         public DateTime UpdatedAt { get; set; } = updatedAt;
         public Guid UpdatedBy { get; set; } = updatedBy;
+        public IEnumerable<Guid> MediaFilesIds { get; set; } = mediaFilesIds;
     }
 }

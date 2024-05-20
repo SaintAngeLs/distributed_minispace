@@ -195,6 +195,7 @@
             updateEventModel.ApartmentNumber = eventDto.Location.ApartmentNumber;
             updateEventModel.City = eventDto.Location.City;
             updateEventModel.ZipCode = eventDto.Location.ZipCode;
+            updateEventModel.MediaFiles = eventDto.MediaFiles;
             updateEventModel.Description = eventDto.Description;
             updateEventModel.Capacity = eventDto.Capacity;
             updateEventModel.Fee = eventDto.Fee;
@@ -211,7 +212,7 @@
             updateEventModel.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             updateEventModel.EndDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
             updateEventModel.BuildingName, updateEventModel.Street,  updateEventModel.BuildingNumber,
-            updateEventModel.ApartmentNumber, updateEventModel.City, updateEventModel.ZipCode,
+            updateEventModel.ApartmentNumber, updateEventModel.City, updateEventModel.ZipCode, updateEventModel.MediaFiles,
             updateEventModel.Description, updateEventModel.Capacity, updateEventModel.Fee, updateEventModel.Category,
             publishInfo == 2 ? updateEventModel.PublishDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : string.Empty);
         
