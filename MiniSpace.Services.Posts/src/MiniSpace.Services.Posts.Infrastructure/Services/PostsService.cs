@@ -24,12 +24,18 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
         public async Task<PagedResponse<IEnumerable<PostDto>>> BrowsePostsAsync(SearchPosts command)
         {
             var identity = _appContext.Identity;
+            if (identity.IsAuthenticated && identity.Id != command.StudentId)
+            {
+                throw new UnauthorizedPostSearchException(command.StudentId, identity.Id);
+            }
+            
+            
 
             var pageNumber = command.Pageable.Page < 1 ? 1 : command.Pageable.Page;
             var pageSize = command.Pageable.Size > 10 ? 10 : command.Pageable.Size;
 
             var result = await _postRepository.BrowseCommentsAsync(
-                pageNumber, pageSize, command.ContextId, context, command.ParentId,
+                pageNumber, pageSize, ,
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
 
             var pagedEvents = new PagedResponse<IEnumerable<PostDto>>(

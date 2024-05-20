@@ -1,4 +1,5 @@
-﻿using MiniSpace.Services.Posts.Application.Dto;
+﻿using MiniSpace.Services.Posts.Application.Commands;
+using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Core.Wrappers;
 
 namespace MiniSpace.Services.Posts.Application.Services
