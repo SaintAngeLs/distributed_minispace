@@ -1,0 +1,164 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Application/MiniSpace.Services.MediaFiles.Application.csproj": {}
+  },
+  "projects": {
+    "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Application/MiniSpace.Services.MediaFiles.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Application/MiniSpace.Services.MediaFiles.Application.csproj",
+        "projectName": "MiniSpace.Services.MediaFiles.Application",
+        "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Application/MiniSpace.Services.MediaFiles.Application.csproj",
+        "packagesPath": "/home/kaliuser/.nuget/packages/",
+        "outputPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/kaliuser/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Core/MiniSpace.Services.MediaFiles.Core.csproj": {
+                "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Core/MiniSpace.Services.MediaFiles.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Convey": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.CQRS.Commands": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.CQRS.Events": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.CQRS.Queries": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.MessageBrokers": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.25.0, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.4, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Core/MiniSpace.Services.MediaFiles.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Core/MiniSpace.Services.MediaFiles.Core.csproj",
+        "projectName": "MiniSpace.Services.MediaFiles.Core",
+        "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Core/MiniSpace.Services.MediaFiles.Core.csproj",
+        "packagesPath": "/home/kaliuser/.nuget/packages/",
+        "outputPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/kaliuser/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.25.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
