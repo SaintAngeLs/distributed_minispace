@@ -64,6 +64,8 @@
 
 @code {
     [Parameter]
+    public string EventId { get; set; }
+    [Parameter]
     public SearchCommentsModel SearchCommentsModel { get; set; }
 
     private SearchCommentsModel TempSearchCommentsModel { get; set; }

@@ -183,8 +183,10 @@
                 <RadzenTabsItem Text="Comments">
                     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                            <RadzenButton Size="ButtonSize.Medium" Text="Create comment" ButtonStyle="ButtonStyle.Secondary" />
-                            <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria" Click="@OpenSearchCommentsDialog" />
+                            <RadzenButton Size="ButtonSize.Medium" Text="Create comment" ButtonStyle="ButtonStyle.Secondary"
+                                          Click="@OpenCreateCommentDialog" />
+                            <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria"
+                                          Click="@OpenSearchCommentsDialog" />
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenTabsItem>
@@ -333,6 +335,11 @@
             }
         }
     };
+
+    private CreateCommentModel createCommentModel = new()
+    {
+        CommentContext = "Event"
+    };
     
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
@@ -348,11 +355,14 @@
         if (IdentityService.IsAuthenticated)
         {
             studentId = IdentityService.GetCurrentUserId();
+            ev = await EventsService.GetEventAsync(new Guid(EventId));
+            reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
+            posts = await PostsService.GetPostsAsync(ev.Id);
+            
+            searchCommentsModel.ContextId = ev.Id;
+            createCommentModel.ContextId = ev.Id;
+            createCommentModel.StudentId = studentId;
         }
-        ev = await EventsService.GetEventAsync(new Guid(EventId));
-        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
-        posts = await PostsService.GetPostsAsync(ev.Id);
-        searchCommentsModel.ContextId = ev.Id;
         
         pageInitialized = true;
     }
@@ -410,7 +420,7 @@
 
     private async Task OpenEventDetailsDialog(EventDto eventDto)
     {
-        await DialogService.OpenAsync<EventDetailsDialog>($"Details of the event:",
+        await DialogService.OpenAsync<EventDetailsDialog>("Details of the event:",
             new Dictionary<string, object>() { { "EventDto", eventDto } },
             new DialogOptions()
             {
@@ -419,10 +429,30 @@
             });
     }
     
+    private async Task OpenCreateCommentDialog()
+    {
+        await DialogService.OpenAsync<CreateCommentDialog>("Create new comment:",
+            new Dictionary<string, object>()
+            {
+                { "EventId", EventId },
+                { "CreateCommentModel", createCommentModel }
+            },
+            new DialogOptions()
+            {
+                Width = "800px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+        InitializeComments();
+    }
+    
     private async Task OpenSearchCommentsDialog()
     {
-        await DialogService.OpenAsync<CommentsSearchDialog>("Sort your comments by criteria:",
-            new Dictionary<string, object>() { { "SearchCommentsModel", searchCommentsModel } },
+        await DialogService.OpenAsync<SearchCommentsDialog>("Sort your comments by criteria:",
+            new Dictionary<string, object>()
+            {
+                { "EventId", EventId },
+                { "SearchCommentsModel", searchCommentsModel }
+            },
             new DialogOptions()
             {
                 Width = "800px", Resizable = true, Draggable = true,
