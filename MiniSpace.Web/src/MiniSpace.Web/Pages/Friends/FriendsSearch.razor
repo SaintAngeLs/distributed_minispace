@@ -7,7 +7,9 @@
 @inject IFriendsService FriendsService
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Web.Areas.MediaFiles
 @inject IIdentityService IdentityService
+@inject IMediaFilesService MediaFilesService
 @inject Radzen.NotificationService NotificationService
 @inject IJSRuntime JSRuntime
 
@@ -22,7 +24,10 @@
             @foreach (var student in students)
             {
                  <div class="friend-card" @onclick="@(() => OnDetails(student))">
-                    <img src="@GetImage(student.ProfileImage)" alt="Student Image" class="friend-img">
+                     @if(images.ContainsKey(student.Id))
+                     { 
+                         <img src="@GetImage(images[student.Id])" alt="Student Image" class="friend-img">
+                     }
                     <div class="friend-info">
                         <h5>@student.FirstName @student.LastName</h5>
                         <p>Email: @student.Email</p>
@@ -60,7 +65,7 @@
                 <div class="student-details">
                    
                    <div>
-                    <img src="@GetImage(student.ProfileImage)" alt="Profile Image" class="profile-image"/>
+                    <img src="@GetImage(images[student.Id])" alt="Profile Image" class="profile-image"/>
                     <div class="info-block">
                         <h3 class="name">@student?.FirstName @student?.LastName</h3>
                         <ul class="details-list">
@@ -254,11 +259,26 @@
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalStudents;
+    private Dictionary<Guid, string> images = new ();
 
     protected override async Task OnInitializedAsync() {
-         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+        sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         await LoadStudents();
         StateHasChanged();
+        
+        var tasks = new List<Task>();
+        foreach (var student in students)
+        {
+            tasks.Add(FetchImageAsync(student));
+        }
+
+        await Task.WhenAll(tasks);
+    }
+    
+    private async Task FetchImageAsync(StudentDto student)
+    {
+        var result = await MediaFilesService.GetFileAsync(student.ProfileImage);
+        images.Add(student.Id, result.Base64Content);
     }
 
     @* private async Task LoadStudents() {
@@ -306,6 +326,10 @@
     }
 
     private void SearchFriends() {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return;
+        }
         students = students.Where(s => s.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                                        s.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
@@ -321,13 +345,13 @@
         var currentUserId = IdentityService.GetCurrentUserId();
         await FriendsService.InviteStudent(currentUserId, studentId);
 
-         var student = students.FirstOrDefault(s => s.Id == studentId);
+        var student = students.FirstOrDefault(s => s.Id == studentId);
         if (student != null)
         {
             student.InvitationSent = true;
             student.IsInvitationPending = true;
         }
-         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+        sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
         await JSRuntime.InvokeVoidAsync("playNotificationSound");
         StateHasChanged(); 

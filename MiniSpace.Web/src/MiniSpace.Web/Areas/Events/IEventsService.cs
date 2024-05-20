@@ -13,14 +13,14 @@ namespace MiniSpace.Web.Areas.Events
         Task<EventDto> GetEventAsync(Guid eventId);
         Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
             string engagementType, int page, int numberOfResults);
-        Task<HttpResponse<object>> AddEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
+        Task<HttpResponse<object>> CreateEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
             Guid rootOrganizationId, string startDate, string endDate, string buildingName, string street,
-            string buildingNumber, string apartmentNumber, string city, string zipCode, string description,
-            int capacity, decimal fee, string category, string publishDate);
+            string buildingNumber, string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles,
+            string description, int capacity, decimal fee, string category, string publishDate);
         Task<HttpResponse<object>> UpdateEventAsync(Guid eventId, string name, Guid organizerId,
             string startDate, string endDate, string buildingName, string street, string buildingNumber,
-            string apartmentNumber, string city, string zipCode, string description, int capacity, decimal fee,
-            string category, string publishDate);
+            string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles, string description,
+            int capacity, decimal fee, string category, string publishDate);
         Task DeleteEventAsync(Guid eventId);
         Task SignUpToEventAsync(Guid eventId, Guid studentId);
         Task CancelSignUpToEventAsync(Guid eventId, Guid studentId);

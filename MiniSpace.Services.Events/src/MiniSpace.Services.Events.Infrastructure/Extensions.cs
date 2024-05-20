@@ -103,7 +103,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UseMetrics()
                 .UseAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<AddEvent>()
+                .SubscribeCommand<CreateEvent>()
                 .SubscribeCommand<DeleteEvent>()
                 .SubscribeCommand<UpdateEvent>()
                 .SubscribeCommand<RateEvent>()

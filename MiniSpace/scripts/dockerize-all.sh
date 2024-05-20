@@ -10,6 +10,7 @@ directories=(
     "MiniSpace.Services.Reactions"
     "MiniSpace.Services.Posts"
     "MiniSpace.Services.Comments"
+    "MiniSpace.Services.MediaFiles"
     "MiniSpace.Services.Organizations"
 )
 

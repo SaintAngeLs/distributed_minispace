@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Events.Application.Commands
@@ -16,6 +18,7 @@ namespace MiniSpace.Services.Events.Application.Commands
         public string ApartmentNumber { get; }
         public string City { get; }
         public string ZipCode { get; }
+        public IEnumerable<Guid> MediaFiles { get; }
         public string Description { get; }
         public int Capacity { get; }
         public decimal Fee { get; }
@@ -24,7 +27,8 @@ namespace MiniSpace.Services.Events.Application.Commands
 
         public UpdateEvent(Guid eventId, string name, Guid organizerId, string startDate, string endDate, 
             string buildingName, string street, string buildingNumber, string apartmentNumber, string city, 
-            string zipCode, string description, int capacity, decimal fee, string category, string publishDate)
+            string zipCode, IEnumerable<Guid> mediaFiles, string description, int capacity, decimal fee, 
+            string category, string publishDate)
         {
             EventId = eventId;
             Name = name;
@@ -37,6 +41,7 @@ namespace MiniSpace.Services.Events.Application.Commands
             ApartmentNumber = apartmentNumber;
             City = city;
             ZipCode = zipCode;
+            MediaFiles = mediaFiles;
             Description = description;
             Capacity = capacity;
             Fee = fee;
