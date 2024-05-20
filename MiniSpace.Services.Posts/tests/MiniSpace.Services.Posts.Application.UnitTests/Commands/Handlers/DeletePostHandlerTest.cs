@@ -35,11 +35,160 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
                 );
         }
 
-        // [Fact]
-        // public async Task HandleAsync_XXX_ShouldXXX() {
+        [Fact]
+        public async Task HandleAsync_WithValidParametersAndStatePublished_ShouldNotThrowException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Published;
 
-        // }
+            var @event = new Event(eventId, contextId);
+            var command = new DeletePost(postId);
 
-        
+            var post = Post.Create(new AggregateId(postId), eventId, contextId,
+                "Text", "Media content", DateTime.Today,
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+            _postRepositoryMock.Setup(repo => repo.GetAsync(postId)).ReturnsAsync(post);
+
+            // Act & Assert
+            Func<Task> act = async () => await _deletePostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNullPost_ShouldThrowPostNotFoundException() {
+            // Arrange
+            var postId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var command = new DeletePost(postId);
+
+            _postRepositoryMock.Setup(repo => repo.GetAsync(postId)).ReturnsAsync((Post)null);
+
+            // Act & Assert
+            Func<Task> act = async () => await _deletePostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<PostNotFoundException>();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNonPermittedIdentity_ShouldThrowUnauthorizedPostAccessException() {
+            // Arrange
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.ToBePublished;
+            var eventId = Guid.NewGuid();
+
+            Guid differentOrganizer;
+            do {
+                differentOrganizer = Guid.NewGuid();
+            } while (differentOrganizer == contextId);
+
+            var command = new DeletePost(postId);
+
+            var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
+                "Text", "Media content", DateTime.Today,
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            _postRepositoryMock.Setup(repo => repo.GetAsync(command.PostId)).ReturnsAsync(post);
+
+            // Act & Assert
+            Func<Task> act = async () => await _deletePostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<UnauthorizedPostAccessException>();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithIdentityAsAdminAndForeignPost_ShouldNotThrowException() {
+            // Arrange
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.ToBePublished;
+            var eventId = Guid.NewGuid();
+
+            Guid differentOrganizer;
+            do {
+                differentOrganizer = Guid.NewGuid();
+            } while (differentOrganizer == contextId);
+
+            var command = new DeletePost(postId);
+
+            var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
+                "Text", "Media content", DateTime.Today,
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            _postRepositoryMock.Setup(repo => repo.GetAsync(command.PostId)).ReturnsAsync(post);
+
+            // Act & Assert
+            Func<Task> act = async () => await _deletePostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithIdentityAsAdminAndReportedPost_ShouldNotThrowException() {
+            // Arrange
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Reported;
+            var eventId = Guid.NewGuid();
+
+            Guid differentOrganizer;
+            do {
+                differentOrganizer = Guid.NewGuid();
+            } while (differentOrganizer == contextId);
+
+            var command = new DeletePost(postId);
+
+            var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
+                "Text", "Media content", DateTime.Today,
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            _postRepositoryMock.Setup(repo => repo.GetAsync(command.PostId)).ReturnsAsync(post);
+
+            // Act & Assert
+            Func<Task> act = async () => await _deletePostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithIdentityAsNotAdminAndReportedPost_ShouldThrowUnauthorizedPostOperationException() {
+            // Arrange
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Reported;
+            var eventId = Guid.NewGuid();
+
+            var command = new DeletePost(postId);
+
+            var post = Post.Create(new AggregateId(postId), eventId, contextId,
+                "Text", "Media content", DateTime.Today,
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            _postRepositoryMock.Setup(repo => repo.GetAsync(command.PostId)).ReturnsAsync(post);
+
+            // Act & Assert
+            Func<Task> act = async () => await _deletePostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<UnauthorizedPostOperationException>();
+        }
     }
 }

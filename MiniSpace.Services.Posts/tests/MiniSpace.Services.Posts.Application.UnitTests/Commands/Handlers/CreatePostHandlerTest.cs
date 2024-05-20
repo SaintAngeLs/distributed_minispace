@@ -2,7 +2,6 @@ using Xunit;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
 using MiniSpace.Services.Posts.Application.Events;
@@ -17,6 +16,8 @@ using Convey.CQRS.Commands;
 using System.Threading;
 using System.Security.Claims;
 using FluentAssertions;
+using MiniSpace.Services.Posts.Core.Exceptions;
+using Microsoft.OpenApi.Extensions;
 
 namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
     public class CreatePostHandlerTest {
@@ -41,6 +42,77 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
         }
 
         [Fact]
+        public async Task HandleAsync_WithValidParametersAndStatePublished_ShouldNotThrowException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Published.GetDisplayName();
+
+            var @event = new Event(eventId, contextId);
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            // Act & Assert
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().NotThrowAsync();
+        }
+        
+        [Fact]
+        public async Task HandleAsync_WithNonAuthenticated_ShouldNotThrowException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Published.GetDisplayName();
+
+            var @event = new Event(eventId, contextId);
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+                state, DateTime.Today);
+
+            var isAuthenticated = false;
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", isAuthenticated, default);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            // Act & Assert
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNullEvent_ShouldThrowEventNotFoundException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var state = State.Published;
+            var cancelationToken = new CancellationToken();
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+                state.GetDisplayName(), DateTime.Today);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync((Event)null);
+            
+            // Act
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            
+            // Assert
+            await act.Should().ThrowAsync<EventNotFoundException>();
+        }
+
+        [Fact]
         public async Task HandleAsync_WithNonPermittedIdentity_ShouldThrowUnauthorizedPostCreationAttemptException() {
             // Arrange
             var eventId = Guid.NewGuid();
@@ -50,18 +122,125 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var cancelationToken = new CancellationToken();
             var state = State.Published;
 
+            Guid differentOrganizer;
+            do {
+                differentOrganizer = Guid.NewGuid();
+            } while (differentOrganizer == contextId);
+
             var @event = new Event(eventId, contextId);
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
-                nameof(state), DateTime.Today);
+            var command = new CreatePost(postId, eventId, differentOrganizer, "Post", "Media Content",
+                state.GetDisplayName(), DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
 
             _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
-            _appContextMock.Setup(ctx => ctx.Identity.IsAuthenticated).Returns(true);
-            _appContextMock.Setup(ctx => ctx.Identity.Id).Should().NotBeEquivalentTo(command.OrganizerId);
-            _appContextMock.Setup(ctx => ctx.Identity.IsAdmin).Returns(false);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
 
             // Act & Assert
             Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
             await act.Should().ThrowAsync<UnauthorizedPostCreationAttemptException>();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithIdentityNotRelatedToEvent_ShouldThrowUnauthorizedPostCreationAttemptException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Published;
+
+            Guid differentOrganizer;
+            do {
+                differentOrganizer = Guid.NewGuid();
+            } while (differentOrganizer == contextId);
+
+            var @event = new Event(eventId, differentOrganizer);
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+                state.GetDisplayName(), DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            // Act & Assert
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<UnauthorizedPostCreationAttemptException>();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithInvalidStateName_ShouldThrowInvalidPostStateException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = "a";
+
+            var @event = new Event(eventId, contextId);
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            // Act & Assert
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<InvalidPostStateException>();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithNewStateReported_ShouldThrowNotAllowedPostStateException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Reported.GetDisplayName();
+
+            var @event = new Event(eventId, contextId);
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            // Act & Assert
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<NotAllowedPostStateException>();
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithStateToBePublishedAndNullPublishDate_ShouldThrowPublishDateNullException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.ToBePublished.GetDisplayName();
+            DateTime? publishDate = null;
+
+            var @event = new Event(eventId, contextId);
+            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content", state,
+                publishDate);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+
+            _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync(@event);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            // Act & Assert
+            Func<Task> act = async () => await _createPostHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<PublishDateNullException>();
         }
     }
 }

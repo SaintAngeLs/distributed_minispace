@@ -22,19 +22,44 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
     public class EventCreatedHandlerTest
     {
         private readonly EventCreatedHandler _eventDeletedHandler;
-        private readonly Mock<IPostRepository> _postRepositoryMock;
         private readonly Mock<IEventRepository> _eventRepositoryMock;
-        private readonly Mock<ICommandDispatcher> _commandDispatcherMock;
 
         public EventCreatedHandlerTest()
         {
-            _postRepositoryMock = new Mock<IPostRepository>();
+            _eventRepositoryMock = new();
             _eventDeletedHandler = new EventCreatedHandler(_eventRepositoryMock.Object);
         }
 
-        // [Fact]
-        // public async Task HandleAsync_XXX_ShouldXXX() {
+        [Fact]
+        public async Task HandleAsync_ValidData_ShouldNotThrowExeption()
+        {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var organizerId = Guid.NewGuid();
+            var @event = new EventCreated(eventId, organizerId);
 
-        // }
+            _eventRepositoryMock.Setup(repo => repo.ExistsAsync(eventId))
+                .ReturnsAsync(false);
+
+            // Act & Assert
+            Func<Task> act = async () => await _eventDeletedHandler.HandleAsync(@event);
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task HandleAsync_EventAlreadyCreated_ShouldThrowEventAlreadyExistsException()
+        {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var organizerId = Guid.NewGuid();
+            var @event = new EventCreated(eventId, organizerId);
+
+            _eventRepositoryMock.Setup(repo => repo.ExistsAsync(eventId))
+                .ReturnsAsync(true);
+
+            // Act & Assert
+            Func<Task> act = async () => await _eventDeletedHandler.HandleAsync(@event);
+            await act.Should().ThrowAsync<EventAlreadyAddedException>();
+        }
     }
 }
