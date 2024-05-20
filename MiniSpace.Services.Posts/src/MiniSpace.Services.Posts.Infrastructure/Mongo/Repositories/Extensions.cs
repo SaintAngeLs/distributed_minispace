@@ -59,6 +59,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
             var filterDefinition = FilterDefinitionBuilder.Empty;
 
             filterDefinition &= FilterDefinitionBuilder.In(p => p.EventId, eventsIds);
+            filterDefinition &= FilterDefinitionBuilder.Eq(p => p.State, State.Published);
 
             return filterDefinition;
         }
