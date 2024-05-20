@@ -580,6 +580,12 @@ modules:
         use: downstream
         downstream: posts-service/posts
         auth: true
+    
+      - upstream: /search
+        method: POST
+        use: downstream
+        downstream: posts-service/posts/search
+        auth: true
 
       - upstream: /{postId}
         method: PUT
