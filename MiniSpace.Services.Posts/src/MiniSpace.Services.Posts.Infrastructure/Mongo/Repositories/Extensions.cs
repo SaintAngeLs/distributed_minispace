@@ -1,4 +1,5 @@
-﻿using MiniSpace.Services.Posts.Core.Entities;
+﻿using System.Collections;
+using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 
@@ -52,37 +53,22 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 
             return (totalPages, (int)count, data);
         }
-        
-        public static FilterDefinition<PostDocument> ToFilterDefinition(Guid contextId, PostDocument context)
+
+        public static FilterDefinition<PostDocument> ToFilterDefinition(IEnumerable<Guid> eventsIds)
         {
             var filterDefinition = FilterDefinitionBuilder.Empty;
 
-            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.ContextId, contextId);
-            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.CommentContext, context);
+            filterDefinition &= FilterDefinitionBuilder.In(p => p.EventId, eventsIds);
 
             return filterDefinition;
         }
-        
-        public static FilterDefinition<CommentDocument> AddParentFilter (this FilterDefinition<CommentDocument> filterDefinition)
-        {
-            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.ParentId, Guid.Empty);
-            return filterDefinition;
-        }
-        
-        public static FilterDefinition<CommentDocument> AddChildrenFilter (this FilterDefinition<CommentDocument> filterDefinition, 
-            Guid parentId)
-        {
-            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.ParentId, parentId);
-            return filterDefinition;
-        }
-        
+
         public static SortDefinition<PostDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
             var sort = sortByArguments.ToList();
-            if(!sort.Any())
+            if(sort.Count == 0)
             {
-                sort.Add("LastReplyAt");
-                sort.Add("LastUpdatedAt");sadadasdadaadas
+                sort.Add("PublishDate");
             }
             var sortDefinitionBuilder = Builders<PostDocument>.Sort;
             var sortDefinition = sort
