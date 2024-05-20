@@ -12,8 +12,8 @@ jobs:
           - project: 'MiniSpace.APIGateway/src/MiniSpace.APIGateway'
           - project: 'MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api'
             test_dir: 'MiniSpace.Services.Identity/tests'
-          - project: 'MiniSpace.Services.Comments/tests'
-            test_dir: 'MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api'
+          - project: 'MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api'
+            test_dir: 'MiniSpace.Services.Comments/tests'
           - project: 'MiniSpace.Web/src/MiniSpace.Web'
     steps:
       - uses: actions/checkout@v2
