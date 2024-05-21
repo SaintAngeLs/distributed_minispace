@@ -185,7 +185,7 @@
                     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                             <RadzenButton Size="ButtonSize.Medium" Text="Create comment" ButtonStyle="ButtonStyle.Secondary"
-                                          Click="@OpenCreateCommentDialog" />
+                                          Click="@(() => OpenCreateCommentDialog("Create new comment:"))" />
                             <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria"
                                           Click="@OpenSearchCommentsDialog" />
                         </RadzenStack>
@@ -227,7 +227,7 @@
                                                             <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
                                                                            Color="Color.Inherit"/>
                                                             <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium"
-                                                                           Color="Color.Inherit"/>
+                                                                           Color="Color.Inherit" OnClick="() => CreateSubComment(comment.Id)" />
                                                         </MudStack>
                                                     </RadzenColumn>
                                                 </RadzenRow>
@@ -482,9 +482,9 @@
             });
     }
     
-    private async Task OpenCreateCommentDialog()
+    private async Task OpenCreateCommentDialog(string title)
     {
-        await DialogService.OpenAsync<CreateCommentDialog>("Create new comment:",
+        await DialogService.OpenAsync<CreateCommentDialog>(title,
             new Dictionary<string, object>()
             {
                 { "EventId", EventId },
@@ -611,5 +611,11 @@
             commentsLast = true;
         }
         StateHasChanged();
+    }
+    
+    private async void CreateSubComment(Guid parentId)
+    {
+        createCommentModel.ParentId = parentId;
+        await OpenCreateCommentDialog("Answer for the comment:");
     }
 }
