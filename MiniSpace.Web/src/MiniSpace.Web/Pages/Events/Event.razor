@@ -196,7 +196,8 @@
                                 <h3>No comments have been added by students yet.</h3>
                             }
                             <CommentsTree Comments="commentsHashSet" StudentId="studentId"
-                                          CreateSubComment="@CreateSubComment" />
+                                          CreateSubComment="@CreateSubComment"
+                                          LoadSubComments="@LoadSubComments" />
                         </RadzenColumn>
                     </RadzenRow>    
                         
@@ -574,12 +575,7 @@
 
         foreach (var comment in commentsHashSet)
         {
-            var subTmp = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
-                searchCommentsModel.CommentContext, comment.Id, searchCommentsModel.Pageable);
-            if (subTmp.Content != null)
-            {
-                comment.Children = subTmp.Content.Content.ToHashSet();
-            }
+            comment.CanExpand = true;
         }
         
         StateHasChanged();
@@ -589,5 +585,17 @@
     {
         createCommentModel.ParentId = parentId;
         await OpenCreateCommentDialog("Reply for the comment:");
+    }
+
+    private async Task<HashSet<CommentDto>> LoadSubComments(CommentDto parentComment)
+    {
+        var response = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
+            searchCommentsModel.CommentContext, parentComment.Id, searchCommentsModel.Pageable);
+        HashSet<CommentDto> result = [];
+        if (response.Content != null)
+        {
+            result = response.Content.Content.ToHashSet();
+        }
+        return result;
     }
 }

@@ -1,9 +1,9 @@
 @using MiniSpace.Web.DTO
 @using MudBlazor
 
-<MudTreeView Items="@Comments" Hover="true" Width="100%">
+<MudTreeView ServerData="LoadSubComments" Items="@Comments" Hover="true" Width="100%">
     <ItemTemplate Context="comment">
-        <MudTreeViewItem Items="@comment.Children">
+        <MudTreeViewItem Value="@comment" CanExpand="@comment.CanExpand" @bind-Expanded="@comment.IsExpanded">
             <BodyContent>
                 <MudGrid Justify="Justify.FlexEnd">
                     @if (comment.ParentId == Guid.Empty)
@@ -91,6 +91,8 @@
     public Guid StudentId { get; set; }
     [Parameter]
     public EventCallback<Guid> CreateSubComment { get; set; }
-
+    [Parameter]
+    public Func<CommentDto, Task<HashSet<CommentDto>>> LoadSubComments { get; set; }
+    
     private const string dateFormat = "dd/MM/yyyy HH:mm";
 }
