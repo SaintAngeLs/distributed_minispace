@@ -8,8 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Convey" Version="1.1.448" />
+    <PackageReference Include="Convey.Logging" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi" Version="1.1.448" />
+    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
   </ItemGroup>
 
 </Project>
