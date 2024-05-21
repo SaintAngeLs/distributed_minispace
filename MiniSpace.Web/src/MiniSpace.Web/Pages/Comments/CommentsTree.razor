@@ -1,0 +1,96 @@
+@using MiniSpace.Web.DTO
+@using MudBlazor
+
+<MudTreeView Items="@Comments" Hover="true" Width="100%">
+    <ItemTemplate Context="comment">
+        <MudTreeViewItem Items="@comment.Children">
+            <BodyContent>
+                <MudGrid Justify="Justify.FlexEnd">
+                    @if (comment.ParentId == Guid.Empty)
+                    {
+                        <RadzenCard Class="rz-border-radius-3" Style="width: 100%">
+                            <RadzenRow Gap="0.5rem">
+                                <RadzenColumn Size="3">
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+                                                Text=@(comment.StudentName)/>
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                        @(comment.LastUpdatedAt.ToLocalTime().ToString(dateFormat))
+                                    </RadzenText>
+                                    @if (comment.StudentId == StudentId)
+                                    {
+                                        <MudStack Row="true" Justify="Justify.Center">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium"
+                                                           Color="Color.Inherit"/>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium"
+                                                           Color="Color.Inherit"/>
+                                        </MudStack>
+                                    }
+                                </RadzenColumn>
+                                <RadzenColumn Size="6">
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0"
+                                                Text=@(comment.TextContent)/>
+                                </RadzenColumn>
+                                <RadzenColumn Size="3">
+                                    <MudStack Row="true" Justify="Justify.Center">
+                                        <MudText>@(comment.Likes.Count().ToString())</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                                       Color="Color.Inherit"/>
+                                        <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium"
+                                                       Color="Color.Inherit"
+                                                       OnClick="() => CreateSubComment.InvokeAsync(comment.Id)" />
+                                    </MudStack>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenCard>
+                    }
+                    else
+                    {
+                        <RadzenCard Class="rz-border-radius-3" Style="width: 95%">
+                            <RadzenRow Gap="0.5rem">
+                                <RadzenColumn Size="3">
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+                                                Text=@(comment.StudentName)/>
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                        @(comment.LastUpdatedAt.ToLocalTime().ToString(dateFormat))
+                                    </RadzenText>
+                                    @if (comment.StudentId == StudentId)
+                                    {
+                                        <MudStack Row="true" Justify="Justify.Center">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium"
+                                                           Color="Color.Inherit"/>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium"
+                                                           Color="Color.Inherit"/>
+                                        </MudStack>
+                                    }
+                                </RadzenColumn>
+                                <RadzenColumn Size="6">
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0"
+                                                Text=@(comment.TextContent)/>
+                                </RadzenColumn>
+                                <RadzenColumn Size="3">
+                                    <MudStack Row="true" Justify="Justify.Center">
+                                        <MudText>@(comment.Likes.Count().ToString())</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                                       Color="Color.Inherit"/>
+                                    </MudStack>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenCard> 
+                    }
+                </MudGrid>
+            </BodyContent>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>
+
+@code
+{
+    [Parameter]
+    public HashSet<CommentDto> Comments { get; set; }
+    [Parameter]
+    public Guid StudentId { get; set; }
+    [Parameter]
+    public EventCallback<Guid> CreateSubComment { get; set; }
+
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+}
