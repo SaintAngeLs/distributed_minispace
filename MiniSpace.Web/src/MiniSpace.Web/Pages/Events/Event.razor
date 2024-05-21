@@ -9,6 +9,7 @@
 @using MiniSpace.Web.Models.Comments
 @using MiniSpace.Web.Pages.Comments.Dialogs
 @using MiniSpace.Web.Pages.Events.Dialogs
+@using MudBlazor
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -106,7 +107,7 @@
                     <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary"
                                   Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/update"))" />
                     <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => OpenDeleteEventDialog(ev.Id))" />
+                                  Click="@(() => OpenDeleteEventDialog())" />
                 </RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
@@ -149,7 +150,7 @@
                                 <RadzenRow Gap="0.5rem">
                                     <RadzenColumn Size="12" class="rz-text-truncate">
                                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
                                                         Text=@($"{GetAuthorName(post.OrganizerId)}")/>
                                             @if (post.UpdatedAt != null)
                                             {
@@ -188,6 +189,56 @@
                             <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria"
                                           Click="@OpenSearchCommentsDialog" />
                         </RadzenStack>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="12">
+                            @if (pageInitialized && commentsEmpty)
+                            {
+                                <h3>No comments have been added by students yet.</h3>
+                            }
+                            <MudTreeView Items="@commentsHashSet" Hover="true" Width="100%">
+                                <ItemTemplate Context="comment">
+                                    <MudTreeViewItem Items="@comment.Children">
+                                        <BodyContent>
+                                            <RadzenCard Class="rz-border-radius-3" Style="width: 100%">
+                                                <RadzenRow Gap="0.5rem">
+                                                    <RadzenColumn Size="3">
+                                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+                                                                    Text=@(comment.StudentName)/>
+                                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                                                            Last updated at @(comment.LastUpdatedAt.ToLocalTime().ToString(dateFormat))
+                                                        </RadzenText>
+                                                        @if (comment.StudentId == studentId)
+                                                        {
+                                                            <MudStack Row="true" Justify="Justify.Center">
+                                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium"
+                                                                               Color="Color.Inherit"/>
+                                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium"
+                                                                               Color="Color.Inherit"/>
+                                                            </MudStack>
+                                                        }
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0"
+                                                                    Text=@(comment.TextContent)/>
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="3">
+                                                        <MudStack Row="true" Justify="Justify.Center">
+                                                            <MudText>@(comment.Likes.Count().ToString())</MudText>
+                                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                                                           Color="Color.Inherit"/>
+                                                            <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium"
+                                                                           Color="Color.Inherit"/>
+                                                        </MudStack>
+                                                    </RadzenColumn>
+                                                </RadzenRow>
+                                            </RadzenCard>
+                                        </BodyContent>
+                                    </MudTreeViewItem>
+                                </ItemTemplate>
+                            </MudTreeView>
+                        </RadzenColumn>
+                    </RadzenRow>    
+                        
                     </RadzenStack>
                 </RadzenTabsItem>
 
@@ -320,6 +371,8 @@
     IEnumerable<CommentDto> subComments = [];
     bool commentsEmpty = true;
     bool commentsLast = false;
+    private object selectedComment;
+    HashSet<CommentDto> commentsHashSet = new();
     
     private SearchCommentsModel searchCommentsModel = new()
     {
@@ -395,7 +448,7 @@
                 posts = await PostsService.GetPostsAsync(ev.Id);
                 break;
             case 1:
-                InitializeComments();
+                SearchComments();
                 break;
             case 2:
                 reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
@@ -442,7 +495,7 @@
                 Width = "800px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        InitializeComments();
+        SearchComments();
     }
     
     private async Task OpenSearchCommentsDialog()
@@ -458,10 +511,10 @@
                 Width = "800px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        InitializeComments();
+        SearchComments();
     }
 
-    private async Task OpenDeleteEventDialog(Guid postId)
+    private async Task OpenDeleteEventDialog()
     {
         await DialogService.OpenAsync<DeleteEventDialog>("Are you sure? This action cannot be undone!",
             new Dictionary<string, object>() { {"EventId", new Guid(EventId) } },
@@ -539,17 +592,24 @@
         StateHasChanged();
     }
 
-    private async void InitializeComments()
+    private async void SearchComments()
     {
         var tmp = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
             searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
         if (tmp.Content != null)
         {
             comments = tmp.Content.Content;
+            commentsHashSet = comments.ToHashSet();
+            commentsEmpty = tmp.Content.Empty;
+            commentsLast = tmp.Content.Last;
         }
         else
         {
             comments = new List<CommentDto>();
+            commentsHashSet = new HashSet<CommentDto>();
+            commentsEmpty = true;
+            commentsLast = true;
         }
+        StateHasChanged();
     }
 }
