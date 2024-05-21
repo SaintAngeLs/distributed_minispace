@@ -1,4 +1,5 @@
 @page "/events/{EventId}"
+@using Blazorise.DeepCloner
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Posts
@@ -185,7 +186,7 @@
                     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                             <RadzenButton Size="ButtonSize.Medium" Text="Create comment" ButtonStyle="ButtonStyle.Secondary"
-                                          Click="@(() => OpenCreateCommentDialog("Create new comment:"))" />
+                                          Click="@(() => CreateRootComment())" />
                             <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria"
                                           Click="@OpenSearchCommentsDialog" />
                         </RadzenStack>
@@ -195,9 +196,14 @@
                             {
                                 <h3>No comments have been added by students yet.</h3>
                             }
-                            <CommentsTree Comments="commentsHashSet" StudentId="studentId"
+                            <CommentsTree Comments="comments" StudentId="studentId"
                                           CreateSubComment="@CreateSubComment"
                                           LoadSubComments="@LoadSubComments" />
+                            @if (commentsAvailable)
+                            {
+                                <RadzenButton Size="ButtonSize.Medium" Text="Load more comments"
+                                              Click="@LoadMoreComments" />
+                            }
                         </RadzenColumn>
                     </RadzenRow>    
                         
@@ -329,12 +335,9 @@
 
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions = [];
-    IEnumerable<CommentDto> comments = [];
-    IEnumerable<CommentDto> subComments = [];
+    HashSet<CommentDto> comments = [];
     bool commentsEmpty = true;
-    bool commentsLast = false;
-    private object selectedComment;
-    HashSet<CommentDto> commentsHashSet = new();
+    bool commentsAvailable = false;
     
     private SearchCommentsModel searchCommentsModel = new()
     {
@@ -345,7 +348,7 @@
             Size = 5,
             Sort = new SortDto()
             {
-                SortBy = new List<string>() { "lastReplyAt" },
+                SortBy = new List<string>() { "lastUpdatedAt" },
                 Direction = "des"
             }
         }
@@ -457,9 +460,13 @@
                 Width = "800px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        SearchComments();
+        if (createCommentModel.CreatingSubmitted)
+        {
+            createCommentModel.CreatingSubmitted = false;
+            SearchComments();
+        }
     }
-    
+
     private async Task OpenSearchCommentsDialog()
     {
         await DialogService.OpenAsync<SearchCommentsDialog>("Sort your comments by criteria:",
@@ -473,7 +480,11 @@
                 Width = "800px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        SearchComments();
+        if (searchCommentsModel.SearchingSubmitted)
+        {
+            searchCommentsModel.SearchingSubmitted = false;
+            SearchComments();
+        }
     }
 
     private async Task OpenDeleteEventDialog()
@@ -556,46 +567,90 @@
 
     private async void SearchComments()
     {
-        var tmp = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
+        comments = [];
+        searchCommentsModel.Pageable.Page = 1;
+        
+        var response = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
             searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
-        if (tmp.Content != null)
+        if (response.Content != null)
         {
-            comments = tmp.Content.Content;
-            commentsHashSet = comments.ToHashSet();
-            commentsEmpty = tmp.Content.Empty;
-            commentsLast = tmp.Content.Last;
+            comments = response.Content.Content.ToHashSet();
+            commentsEmpty = response.Content.Empty;
+            commentsAvailable = response.Content.Number < response.Content.TotalPages;
         }
         else
         {
-            comments = new List<CommentDto>();
-            commentsHashSet = new HashSet<CommentDto>();
             commentsEmpty = true;
-            commentsLast = true;
+            commentsAvailable = false;
         }
-
-        foreach (var comment in commentsHashSet)
+        
+        foreach (var comment in comments.Where(comment => comment.RepliesCount > 0))
         {
             comment.CanExpand = true;
+        }
+
+        foreach (var comment in comments)
+        {
+            var response1 = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
+                searchCommentsModel.CommentContext, comment.Id, searchCommentsModel.Pageable);
+            if (response.Content != null)
+            {
+                comment.SubComments = response1.Content.Content.ToHashSet();
+            }
         }
         
         StateHasChanged();
     }
-    
-    private async void CreateSubComment(Guid parentId)
+
+    private async void LoadMoreComments()
     {
-        createCommentModel.ParentId = parentId;
+        ++searchCommentsModel.Pageable.Page;
+        var response = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
+            searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
+        IEnumerable<CommentDto> moreComments = [];
+        if (response.Content != null)
+        {
+            moreComments = response.Content.Content;
+            commentsAvailable = response.Content.Number < response.Content.TotalPages;
+        }
+        else
+        {
+            commentsAvailable = false;
+        }
+
+        foreach (var comment in moreComments)
+        {
+            if (comment.RepliesCount > 0)
+            {
+                comment.CanExpand = true;
+            }
+            comments.Add(comment);
+        }
+        
+        StateHasChanged();
+    }
+
+    private async void CreateRootComment()
+    {
+        createCommentModel.ParentId = Guid.Empty;
+        await OpenCreateCommentDialog("Create new comment:");
+    }
+
+    private async void CreateSubComment(CommentDto subComment)
+    {
+        createCommentModel.ParentId = subComment.Id;
         await OpenCreateCommentDialog("Reply for the comment:");
     }
 
-    private async Task<HashSet<CommentDto>> LoadSubComments(CommentDto parentComment)
+    private async void LoadSubComments(CommentDto parentComment)
     {
-        var response = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
-            searchCommentsModel.CommentContext, parentComment.Id, searchCommentsModel.Pageable);
-        HashSet<CommentDto> result = [];
+        var searchSubCommentsModel = searchCommentsModel.DeepClone();
+        searchSubCommentsModel.Pageable.Page = 1;
+        var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
+            searchSubCommentsModel.CommentContext, parentComment.Id, searchSubCommentsModel.Pageable);
         if (response.Content != null)
         {
-            result = response.Content.Content.ToHashSet();
+            parentComment.SubComments = response.Content.Content.ToHashSet();
         }
-        return result;
     }
 }

@@ -10,5 +10,6 @@ namespace MiniSpace.Web.Models.Comments
         public Guid StudentId { get; set; }
         public Guid ParentId { get; set; }
         public string Comment { get; set; }
+        public bool CreatingSubmitted { get; set; }
     }
 }

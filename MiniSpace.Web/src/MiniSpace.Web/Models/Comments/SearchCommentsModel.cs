@@ -9,5 +9,6 @@ namespace MiniSpace.Web.Models.Comments
         public string CommentContext { get; set; }
         public Guid ParentId { get; set; }
         public PageableDto Pageable { get; set; }
+        public bool SearchingSubmitted { get; set; }
     }
 }

@@ -19,6 +19,6 @@ namespace MiniSpace.Web.DTO
         public int RepliesCount { get; set; }
         public bool IsDeleted { get; set; }
         public bool CanExpand { get; set; }
-        public bool IsExpanded { get; set; }
-    }    
+        public HashSet<CommentDto> SubComments { get; set; }
+    }
 }

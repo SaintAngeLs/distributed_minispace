@@ -46,6 +46,7 @@
             createCommentModel.CommentContext, createCommentModel.StudentId,
             createCommentModel.ParentId, createCommentModel.Comment);
         createCommentModel.Comment = string.Empty;
+        createCommentModel.CreatingSubmitted = true;
         DialogService.Close(true);
     }
 }

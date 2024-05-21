@@ -112,7 +112,7 @@
         SearchCommentsModel.Pageable = TempSearchCommentsModel.Pageable.DeepClone();
         SearchCommentsModel.Pageable.Sort.SortBy = selectedSortParams != null
             ? selectedSortParams.Select(sortParam => sortParam.Value) : [];
-        
+        SearchCommentsModel.SearchingSubmitted = true;
         DialogService.Close(true);
     }
 }
