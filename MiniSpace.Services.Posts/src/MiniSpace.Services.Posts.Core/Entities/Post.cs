@@ -38,7 +38,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public void SetPublished(DateTime now)
         {
             State = State.Published;
-            PublishDate = null;
+            PublishDate = now;
             UpdatedAt = now;
         }
         
@@ -72,7 +72,8 @@ namespace MiniSpace.Services.Posts.Core.Entities
         {
             CheckTextContent(id, textContent);
             
-            return new Post(id, eventId, studentId, textContent, mediaFiles, createdAt, state, publishDate);
+            return new Post(id, eventId, studentId, textContent, mediaFiles, createdAt, state, 
+                publishDate ?? createdAt);
         }
 
         public void Update(string textContent, IEnumerable<Guid> mediaFiles, DateTime now)
