@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
         {
             var root = await _repository.GetAsync(o => o.Id == query.RootId);
             var organization = root?.AsEntity().GetSubOrganization(query.OrganizationId);
-            return organization == null ? null : new OrganizationDto(organization);
+            return organization == null ? null : new OrganizationDto(organization, root.Id);
         }
     }
 }

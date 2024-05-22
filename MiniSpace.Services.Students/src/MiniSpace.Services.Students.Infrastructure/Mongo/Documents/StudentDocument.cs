@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int NumberOfFriends { get; set; }
-        public string ProfileImage { get; set; }
+        public Guid ProfileImage { get; set; }
         public string Description { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public bool EmailNotifications { get; set; }

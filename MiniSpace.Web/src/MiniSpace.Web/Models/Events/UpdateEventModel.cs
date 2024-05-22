@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace MiniSpace.Web.Models.Events
 {
@@ -15,6 +16,7 @@ namespace MiniSpace.Web.Models.Events
         public string ApartmentNumber { get; set; }
         public string City { get; set; }
         public string ZipCode { get; set; }
+        public IEnumerable<Guid> MediaFiles { get; set; }
         public string Description { get; set; }
         public int Capacity { get; set; }
         public decimal Fee { get; set; }

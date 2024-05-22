@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
+using MiniSpace.Web.DTO;
 
 namespace MiniSpace.Web.Models.Events
 {
-    public class AddEventModel
+    public class CreateEventModel
     {
         public Guid EventId { get; set; }
         public string Name { get; set; }
         public Guid OrganizerId { get; set; }
-        public Guid OrganizationId { get; set; }
+        public OrganizationDto Organization { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string BuildingName { get; set; }
@@ -16,6 +18,7 @@ namespace MiniSpace.Web.Models.Events
         public string ApartmentNumber { get; set; }
         public string City { get; set; }
         public string ZipCode { get; set; }
+        public IEnumerable<Guid> MediaFiles { get; }
         public string Description { get; set; }
         public int Capacity { get; set; }
         public decimal Fee { get; set; }

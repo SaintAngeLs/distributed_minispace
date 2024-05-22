@@ -95,6 +95,7 @@ modules:
         method: GET
         use: return_value
         returnValue: Welcome to MiniSpace API [async]!
+  
   identity:
     path: /identity
     routes:
@@ -352,6 +353,24 @@ modules:
         downstream: events-service/events/organizer/{organizerId}
         auth: true
 
+      - upstream: /{eventId}/participants
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
     services:
       events-service:
         localUrl: localhost:5008
@@ -562,6 +581,12 @@ modules:
         downstream: posts-service/posts
         auth: true
 
+      - upstream: /search
+        method: POST
+        use: downstream
+        downstream: posts-service/posts/search
+        auth: true
+
       - upstream: /{postId}
         method: PUT
         use: downstream
@@ -595,13 +620,44 @@ modules:
         downstream: posts-service/posts/{postId}
         auth: true
 
-
     services:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
+
+
         
-        
+  mediafiles:
+    path: /media-files
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: mediafiles-service/media-files
+        auth: true
+
+      - upstream: /{mediaFileId}
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+
+      - upstream: /{mediaFileId}/original
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}/original
+
+      - upstream: /{mediaFileId}
+        method: DELETE
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+        auth: true
+
+    services:
+      mediafiles-service:
+        localUrl: localhost:5014
+        url: mediafiles-service
+
+
         
   organizations:
     path: /organizations
@@ -611,23 +667,24 @@ modules:
         use: downstream
         downstream: organizations-service/organizations
         auth: true
+
+      - upstream: /{organizationId}/children
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children
+        auth: true
         
-      - upstream: /organizer/{organizationId}/organizer
+      - upstream: /{organizationId}/organizer
         method: POST
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer
         auth: true
         
-      - upstream: /organizer/{organizationId}/organizer/{organizerId}
+      - upstream: /{organizationId}/organizer/{organizerId}
         method: DELETE
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
         auth: true
-
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations
         
       - upstream: /{organizationId}
         method: GET
@@ -648,6 +705,11 @@ modules:
         method: GET
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children  
+
+      - upstream: /{organizationId}/children/all
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children/all  
 
       - upstream: /organizer/{organizerId}
         method: GET

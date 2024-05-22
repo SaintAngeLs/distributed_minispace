@@ -14,10 +14,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(AddEvent),     
+                    typeof(CreateEvent),     
                     new HandlerLogTemplate
                     {
-                        After = "Added an event with id: {EventId}."
+                        After = "Created an event with id: {EventId}."
                     }
                 },
                 {

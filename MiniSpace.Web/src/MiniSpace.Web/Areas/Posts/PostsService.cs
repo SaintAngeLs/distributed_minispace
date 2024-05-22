@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
@@ -30,11 +31,11 @@ namespace MiniSpace.Web.Areas.Posts
         }
         
         public Task<HttpResponse<object>> CreatePostAsync(Guid postId, Guid eventId, Guid organizerId, string textContent,
-            string mediaContext, string state, DateTime? publishDate)
+            IEnumerable<Guid> mediaFiles, string state, DateTime? publishDate)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object, object>("posts", new {postId, eventId, organizerId, textContent,
-                mediaContext, state, publishDate});
+                mediaFiles, state, publishDate});
         }
 
         public Task DeletePostAsync(Guid postId)
@@ -48,10 +49,10 @@ namespace MiniSpace.Web.Areas.Posts
             return _httpClient.GetAsync<IEnumerable<PostDto>>($"posts?eventId={eventId}");
         }
 
-        public Task<HttpResponse<object>> UpdatePostAsync(Guid postId, string textContent, string mediaContent)
+        public Task<HttpResponse<object>> UpdatePostAsync(Guid postId, string textContent, IEnumerable<Guid> mediaFiles)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"posts/{postId}", new {postId, textContent, mediaContent});
+            return _httpClient.PutAsync<object, object>($"posts/{postId}", new {postId, textContent, mediaFiles});
         }
     }
 }

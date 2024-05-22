@@ -134,6 +134,8 @@ modules:
         localUrl: localhost:5004
         url: identity-service
       
+
+
   reports:
     path: /reports
     routes:
@@ -166,6 +168,8 @@ modules:
         localUrl: localhost:5005
         url: reports-service
 
+
+
   notifications:
     path: /notifications
     routes:
@@ -185,6 +189,8 @@ modules:
       notifications-service:
         localUrl: localhost:5006
         url: notifications-service
+
+
 
   students:
     path: /students
@@ -242,6 +248,8 @@ modules:
       students-service:
         localUrl: localhost:5007
         url: students-service
+
+
 
   events:
     path: /events
@@ -322,10 +330,30 @@ modules:
         downstream: events-service/events/organizer/{organizerId}
         auth: true
 
+      - upstream: /{eventId}/participants
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
     services:
       events-service:
         localUrl: localhost:5008
         url: events-service
+
+
 
   comments:
       path: /comments
@@ -376,6 +404,8 @@ modules:
           localUrl: localhost:5009
           url: comments-service
 
+
+
   reactions:
       path: /reactions
       routes:
@@ -406,6 +436,8 @@ modules:
           localUrl: localhost:5010
           url: reactions-service
 
+
+
   statistics:
       path: /statistics
       routes:
@@ -432,6 +464,8 @@ modules:
           localUrl: localhost:5011
           url: statistics-service
           
+
+
   friends:
       path: /friends
       routes:
@@ -513,6 +547,8 @@ modules:
           localUrl: localhost:5012
           url: friends-service
 
+
+
   posts:
     path: /posts
     routes:
@@ -520,6 +556,12 @@ modules:
         method: POST
         use: downstream
         downstream: posts-service/posts
+        auth: true
+
+      - upstream: /search
+        method: POST
+        use: downstream
+        downstream: posts-service/posts/search
         auth: true
 
       - upstream: /{postId}
@@ -555,12 +597,45 @@ modules:
         downstream: posts-service/posts/{postId}
         auth: true
 
-
     services:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
-    
+
+
+        
+  mediafiles:
+    path: /media-files
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: mediafiles-service/media-files
+        auth: true
+
+      - upstream: /{mediaFileId}
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+
+      - upstream: /{mediaFileId}/original
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}/original
+
+      - upstream: /{mediaFileId}
+        method: DELETE
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+        auth: true
+
+    services:
+      mediafiles-service:
+        localUrl: localhost:5014
+        url: mediafiles-service
+
+
+        
   organizations:
     path: /organizations
     routes:
@@ -569,23 +644,24 @@ modules:
         use: downstream
         downstream: organizations-service/organizations
         auth: true
+
+      - upstream: /{organizationId}/children
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children
+        auth: true
         
-      - upstream: /organizer/{organizationId}/organizer
+      - upstream: /{organizationId}/organizer
         method: POST
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer
         auth: true
         
-      - upstream: /organizer/{organizationId}/organizer/{organizerId}
+      - upstream: /{organizationId}/organizer/{organizerId}
         method: DELETE
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
         auth: true
-
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations
         
       - upstream: /{organizationId}
         method: GET
@@ -606,6 +682,11 @@ modules:
         method: GET
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children  
+
+      - upstream: /{organizationId}/children/all
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children/all  
 
       - upstream: /organizer/{organizerId}
         method: GET
