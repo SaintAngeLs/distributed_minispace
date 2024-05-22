@@ -91,7 +91,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
         //     return studentFriends;
         // }
 
-         public static StudentRequestsDocument AsDocument(this StudentRequests entity)
+        public static StudentRequestsDocument AsDocument(this StudentRequests entity)
             => new StudentRequestsDocument
             {
                 Id = entity.Id,
@@ -99,7 +99,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
                 FriendRequests = entity.FriendRequests.Select(fr => fr.AsDocument()).ToList()
             };
 
-     public static StudentRequests AsEntity(this StudentRequestsDocument document)
+        public static StudentRequests AsEntity(this StudentRequestsDocument document)
         {
             if (document == null)
             {

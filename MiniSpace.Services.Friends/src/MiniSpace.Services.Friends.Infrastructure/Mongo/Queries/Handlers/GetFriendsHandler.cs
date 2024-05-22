@@ -23,6 +23,11 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
         public async Task<IEnumerable<StudentFriendsDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
         {
             var friends = await _studentFriendsRepository.GetFriendsAsync(query.StudentId);
+            if (!friends.Any())
+            {
+                return Enumerable.Empty<StudentFriendsDto>();
+            }
+
             return new List<StudentFriendsDto>
             {
                 new StudentFriendsDto
@@ -34,9 +39,11 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
                         StudentId = f.StudentId,
                         FriendId = f.FriendId,
                         CreatedAt = f.CreatedAt,
+                        State = f.FriendState
                     }).ToList()
                 }
             };
         }
     }
+
 }

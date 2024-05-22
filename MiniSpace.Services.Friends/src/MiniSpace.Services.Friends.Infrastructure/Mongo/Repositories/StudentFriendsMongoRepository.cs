@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Friends.Core.Entities;
 using MiniSpace.Services.Friends.Core.Repositories;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
+using MongoDB.Driver;
 
 public class StudentFriendsMongoRepository : IStudentFriendsRepository
 {
@@ -53,20 +55,60 @@ public class StudentFriendsMongoRepository : IStudentFriendsRepository
 
     public async Task<IEnumerable<Friend>> GetFriendsAsync(Guid studentId)
     {
-        var document = await _repository.GetAsync(studentId);
-        return document?.Friends.Select(f => f.AsEntity()) ?? Enumerable.Empty<Friend>();
+        // Using a LINQ expression instead of a MongoDB filter
+        var documents = await _repository.FindAsync(doc => doc.StudentId == studentId);
+        if (documents == null || !documents.Any())
+        {
+            Console.WriteLine($"No document found for student ID: {studentId}");
+            return Enumerable.Empty<Friend>();
+        }
+
+        var document = documents.First();  // Assuming you expect only one document per studentId or taking the first one
+        Console.WriteLine($"Document found: {document.StudentId}, Friends Count: {document.Friends.Count}");
+        return document.Friends.Select(doc => new Friend(
+            doc.StudentId,
+            doc.FriendId,
+            doc.CreatedAt,
+            doc.State)).ToList();
     }
 
+
     public async Task AddOrUpdateAsync(StudentFriends studentFriends)
+{
+    // Ensuring that the document ID (MongoDB _id) is explicitly set to StudentId
+    var filter = Builders<StudentFriendsDocument>.Filter.Eq(doc => doc.StudentId, studentFriends.StudentId);
+    var update = Builders<StudentFriendsDocument>.Update
+        .SetOnInsert(doc => doc.StudentId, studentFriends.StudentId) // Ensuring the document _id is set to StudentId on insert
+        .Set(doc => doc.Id, studentFriends.StudentId) // Setting the document _id field explicitly
+        .AddToSetEach(doc => doc.Friends, studentFriends.Friends.Select(f => f.AsDocument())); // Use AddToSetEach to append new items to the list
+
+    var options = new UpdateOptions { IsUpsert = true };
+    var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
+
+    Console.WriteLine("********************************************************");
+    // Check if the document was actually inserted or updated
+    if (result.ModifiedCount > 0 || result.UpsertedId != null)
     {
-        var exists = await ExistsAsync(studentFriends.StudentId);
-        if (exists)
+        // Retrieve the updated or inserted document
+        var updatedDocument = await _repository.GetAsync(studentFriends.StudentId);
+        if (updatedDocument != null)
         {
-            await UpdateAsync(studentFriends);
+            // Serialize the updated document to JSON and log it
+            var json = JsonSerializer.Serialize(updatedDocument, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Updated StudentFriends document:");
+            Console.WriteLine(json);
         }
         else
         {
-            await AddAsync(studentFriends);
+            Console.WriteLine("Failed to retrieve the updated document.");
         }
     }
+    else
+    {
+        Console.WriteLine("No changes were made to the document.");
+    }
+}
+
+
+
 }

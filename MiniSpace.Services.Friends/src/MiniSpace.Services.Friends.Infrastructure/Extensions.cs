@@ -104,10 +104,10 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .SubscribeCommand<SentFriendRequestWithdraw>()
                 // .SubscribeEvent<FriendRequestCreated>()
                 .SubscribeEvent<FriendRequestSent>()
-                .SubscribeEvent<Application.Events.FriendAdded>()
-                .SubscribeEvent<Application.Events.FriendRemoved>()
-                .SubscribeEvent<PendingFriendAccepted>()
-                .SubscribeEvent<PendingFriendDeclined>()
+                // .SubscribeEvent<Application.Events.FriendAdded>()
+                // .SubscribeEvent<Application.Events.FriendRemoved>()
+                // .SubscribeEvent<PendingFriendAccepted>()
+                // .SubscribeEvent<PendingFriendDeclined>()
                 .SubscribeEvent<UserStatusUpdated>();
 
             return app;

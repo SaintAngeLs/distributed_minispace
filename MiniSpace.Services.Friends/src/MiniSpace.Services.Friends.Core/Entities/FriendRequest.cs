@@ -25,7 +25,8 @@ namespace MiniSpace.Services.Friends.Core.Entities
 
         public void Accept()
         {
-            if (State != FriendState.Requested)
+            Console.WriteLine($"State: {State}");
+            if (State != FriendState.Requested || State != FriendState.Pending)
                 throw new InvalidOperationException("Only requested friend requests can be accepted.");
 
             _state  = FriendState.Accepted;
@@ -34,7 +35,7 @@ namespace MiniSpace.Services.Friends.Core.Entities
 
         public void Decline()
         {
-            if (State != FriendState.Requested)
+            if (State != FriendState.Requested || State != FriendState.Pending)
                 throw new InvalidOperationException("Only requested friend requests can be declined.");
 
             _state = FriendState.Declined;
@@ -43,7 +44,7 @@ namespace MiniSpace.Services.Friends.Core.Entities
 
         public void Cancel()
         {
-            if (State != FriendState.Requested)
+            if (State != FriendState.Requested || State != FriendState.Pending)
                 throw new InvalidOperationException("Only requested friend requests can be cancelled.");
 
             _state = FriendState.Cancelled;

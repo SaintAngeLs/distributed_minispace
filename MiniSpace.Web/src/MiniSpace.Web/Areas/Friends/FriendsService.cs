@@ -47,13 +47,11 @@ namespace MiniSpace.Web.Areas.Friends
             var url = $"friends/{studentId}";
             var studentFriends = await _httpClient.GetAsync<IEnumerable<StudentFriendsDto>>(url);
 
-            // Assuming we want to flatten the list of friends for easier handling in the UI
             var allFriends = studentFriends.SelectMany(sf => sf.Friends).ToList();
 
-            // Optionally enrich friend details (e.g., with additional student info)
             foreach (var friend in allFriends)
             {
-                friend.StudentDetails = await GetStudentAsync(friend.FriendId); // Ensure this method fetches the necessary student info
+                friend.StudentDetails = await GetStudentAsync(friend.FriendId);
             }
 
             return allFriends;

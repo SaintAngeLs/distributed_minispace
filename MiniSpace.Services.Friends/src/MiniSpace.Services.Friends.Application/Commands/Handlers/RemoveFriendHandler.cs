@@ -9,14 +9,14 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
     public class RemoveFriendHandler : ICommandHandler<RemoveFriend>
     {
-        private readonly IFriendRepository _friendRepository;
+        private readonly IStudentFriendsRepository _studentFriendsRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IEventMapper _eventMapper;
         private readonly IAppContext _appContext; 
 
-        public RemoveFriendHandler(IFriendRepository friendRepository, IMessageBroker messageBroker, IEventMapper eventMapper, IAppContext appContext)
+        public RemoveFriendHandler(IStudentFriendsRepository studentFriendsRepository, IMessageBroker messageBroker, IEventMapper eventMapper, IAppContext appContext)
         {
-            _friendRepository = friendRepository;
+            _studentFriendsRepository = studentFriendsRepository;
             _messageBroker = messageBroker;
             _eventMapper = eventMapper;
             _appContext = appContext; 
@@ -25,22 +25,24 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
         public async Task HandleAsync(RemoveFriend command, CancellationToken cancellationToken = default)
         {
             var identity = _appContext.Identity;
-            // if (!identity.IsAuthenticated)
-            // {
-            //     throw new UnauthorizedFriendActionException(command.RequesterId, identity.Id);
-            // }
-             Console.WriteLine($"Handling RemoveFriend for RequesterId: {command.RequesterId} and FriendId: {command.FriendId}. Authenticated: {identity.IsAuthenticated}");
-    
+            Console.WriteLine($"Handling RemoveFriend for RequesterId: {command.RequesterId} and FriendId: {command.FriendId}. Authenticated: {identity.IsAuthenticated}");
 
-            var exists = await _friendRepository.IsFriendAsync(command.RequesterId, command.FriendId);
-            if (!exists)
+            // Check if the friendship exists for both directions
+            var requesterFriends = await _studentFriendsRepository.GetAsync(command.RequesterId);
+            var friendFriends = await _studentFriendsRepository.GetAsync(command.FriendId);
+
+            if (!requesterFriends.Friends.Any(f => f.FriendId == command.FriendId) || !friendFriends.Friends.Any(f => f.FriendId == command.RequesterId))
             {
                 throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
             }
 
             // Remove the friendship in both directions
-            await _friendRepository.RemoveFriendAsync(command.RequesterId, command.FriendId);
-            await _friendRepository.RemoveFriendAsync(command.FriendId, command.RequesterId);
+            requesterFriends.RemoveFriend(command.FriendId);
+            friendFriends.RemoveFriend(command.RequesterId);
+
+            // Save the updates to both friend records
+            await _studentFriendsRepository.UpdateAsync(requesterFriends);
+            await _studentFriendsRepository.UpdateAsync(friendFriends);
 
             // Publish an event indicating the friend has been removed
             var eventToPublish = new PendingFriendDeclined(command.RequesterId, command.FriendId);

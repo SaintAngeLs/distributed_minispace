@@ -55,27 +55,39 @@
     </div>
 </div>
 <style>
+    .main-container { 
+        display: flex; 
+        padding: 50px;
+    }
+
+    .search-bar {
+        display: flex; 
+        margin-bottom: 20px; 
+        width: 100%;
+    }
+
     .friends-container {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding: 20px;
+        flex-direction: column;
+        width: 100%;
+        overflow-y: auto;
     }
 
     .friend-card {
-        width: 30%;
-        margin: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        transition: box-shadow 0.3s ease-in-out;
         display: flex;
+        background-color: #ffffff;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        cursor: pointer;
         align-items: center;
-        background-color: white;
+        padding: 20px;
         border-radius: 8px;
     }
 
     .friend-card:hover {
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     }
 
     .friend-img {
@@ -87,21 +99,15 @@
         border: 3px solid #007BFF; 
     }
 
-    using MiniSpace.Web.Areas.MediaFiles;
     .friend-info {
         flex: 1;
         font-family: 'Segoe UI', 'Arial', sans-serif;
+        padding-left: 20px;
     }
 
-    h5 {
+    h5, p {
         margin-bottom: 5px;
         color: #333;
-        font-size: 18px;
-    }
-
-    p {
-        margin-bottom: 10px;
-        color: #666;
     }
 
     .buttons {
