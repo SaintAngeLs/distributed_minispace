@@ -73,14 +73,5 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
             {
                 Id = entity.Id,
             };
-        
-        public static MediaFile AsEntity(this MediaFileDocument document)
-            => new MediaFile(document.Id);
-
-        public static MediaFileDocument AsDocument(this MediaFile entity)
-            => new MediaFileDocument()
-            {
-                Id = entity.Id,
-            };
     }    
 }

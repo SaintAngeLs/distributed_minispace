@@ -51,7 +51,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
             builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
             builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
-            builder.Services.AddTransient<IMediaFileRepository, MediaFileMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -80,7 +79,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .AddMongoRepository<EventDocument, Guid>("events")
                 .AddMongoRepository<PostDocument, Guid>("posts")
                 .AddMongoRepository<CommentDocument, Guid>("comments")
-                .AddMongoRepository<MediaFileDocument, Guid>("mediaFiles")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -99,8 +97,10 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .SubscribeCommand<CreateOrganization>()
                 .SubscribeCommand<AddOrganizerToOrganization>()
                 .SubscribeCommand<RemoveOrganizerFromOrganization>()
-                .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>();
+                .SubscribeEvent<StudentCreated>()
+                .SubscribeEvent<EventCreated>()
+                .SubscribeEvent<PostCreated>()
+                .SubscribeEvent<CommentCreated>();
 
             return app;
         }
