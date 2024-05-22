@@ -46,8 +46,12 @@ namespace MiniSpace.Services.Reports.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IOrganizationRepository, OrganizationMongoRepository>();
-            builder.Services.AddTransient<IOrganizerRepository, OrganizerMongoRepository>();
+            builder.Services.AddTransient<IReportRepository, ReportMongoRepository>();
+            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
+            builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
+            builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
+            builder.Services.AddTransient<IMediaFileRepository, MediaFileMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
