@@ -14,4 +14,8 @@
     <PackageReference Include="Convey.MessageBrokers" Version="1.1.448" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Reports.Core\MiniSpace.Services.Reports.Core.csproj" />
+  </ItemGroup>
+
 </Project>

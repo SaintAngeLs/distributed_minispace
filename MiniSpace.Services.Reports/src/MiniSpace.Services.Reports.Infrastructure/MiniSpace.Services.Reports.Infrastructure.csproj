@@ -32,4 +32,8 @@
     <PackageReference Include="Convey.WebApi.Swagger" Version="1.1.448" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Reports.Application\MiniSpace.Services.Reports.Application.csproj" />
+  </ItemGroup>
+
 </Project>

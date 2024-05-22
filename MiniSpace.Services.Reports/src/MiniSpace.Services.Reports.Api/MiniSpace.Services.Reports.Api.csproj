@@ -14,4 +14,10 @@
     <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Reports.Application\MiniSpace.Services.Reports.Application.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Reports.Core\MiniSpace.Services.Reports.Core.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Reports.Infrastructure\MiniSpace.Services.Reports.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

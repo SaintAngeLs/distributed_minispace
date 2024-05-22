@@ -71,8 +71,7 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<OrganizationDocument, Guid>("organizations")
-                .AddMongoRepository<OrganizerDocument, Guid>("organizers")
+                .AddMongoRepository<ReportDocument, Guid>("reports")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
