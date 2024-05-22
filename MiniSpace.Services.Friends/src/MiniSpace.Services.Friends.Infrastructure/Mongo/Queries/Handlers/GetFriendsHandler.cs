@@ -1,39 +1,42 @@
 using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Application.Queries;
+using MiniSpace.Services.Friends.Core.Repositories;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetFriendsHandler : IQueryHandler<GetFriends, IEnumerable<FriendDto>>
+    public class GetFriendsHandler : IQueryHandler<GetFriends, IEnumerable<StudentFriendsDto>>
     {
-        private readonly IMongoRepository<FriendDocument, Guid> _friendRepository;
+        private readonly IStudentFriendsRepository _studentFriendsRepository;
 
-        public GetFriendsHandler(IMongoRepository<FriendDocument, Guid> friendRepository)
+        public GetFriendsHandler(IStudentFriendsRepository studentFriendsRepository)
         {
-            _friendRepository = friendRepository;
+            _studentFriendsRepository = studentFriendsRepository;
         }
 
-         public async Task<IEnumerable<FriendDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<StudentFriendsDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
         {
-            var documents = await _friendRepository.FindAsync(
-                doc => doc.StudentId == query.StudentId || doc.FriendId == query.StudentId);
-
-            return documents.Select(doc => 
+            var friends = await _studentFriendsRepository.GetFriendsAsync(query.StudentId);
+            return new List<StudentFriendsDto>
             {
-                if (doc.StudentId == query.StudentId) {
-                    return doc.AsDto();
-                } else {
-                    return new FriendDto {
-                        Id = doc.Id,
-                        StudentId = doc.FriendId, 
-                        FriendId = doc.StudentId,
-                        CreatedAt = doc.CreatedAt,
-                        State = doc.State,
-                    };
+                new StudentFriendsDto
+                {
+                    StudentId = query.StudentId,
+                    Friends = friends.Select(f => new FriendDto
+                    {
+                        Id = f.Id,
+                        StudentId = f.StudentId,
+                        FriendId = f.FriendId,
+                        CreatedAt = f.CreatedAt,
+                    }).ToList()
                 }
-            });
+            };
         }
     }
 }

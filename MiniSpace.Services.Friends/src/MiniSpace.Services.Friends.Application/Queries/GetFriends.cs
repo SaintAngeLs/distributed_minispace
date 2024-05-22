@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MiniSpace.Services.Friends.Application.Queries
 {
-    public class GetFriends : IQuery<IEnumerable<FriendDto>>
+    public class GetFriends : IQuery<IEnumerable<StudentFriendsDto>>
     {
         public Guid StudentId { get; set; }
     }    

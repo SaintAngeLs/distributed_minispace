@@ -10,8 +10,6 @@
 @inject Radzen.DialogService DialogService
 @using MudBlazor
 
-
-
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
@@ -19,61 +17,73 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.People)
     };
 }
 
-<div style="padding: 20px;">
-    <div class="search-bar">
+<div style="display: flex; padding: 50px;">
+    <div class="left-panel">
+        <div class="search-bar">
             <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
             <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
         </div>
-    <div class="friends-container">
-        @if (friends != null && friends.Any())
-        {
-            foreach (var friend in friends)
+        <div class="card-container">
+            @if (friends != null && friends.Any())
             {
-                <div class="friend-card">
-                    @*<img src="@GetImage(friend.StudentDetails.ProfileImage)" alt="Friend Image" class="friend-img">*@
-                    <div class="friend-info">
-                        <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
-                        <p>@friend.StudentDetails.Email</p>
-                        <div class="buttons">
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.FriendId))" Style="margin-right: 10px;" />
-                            <RadzenButton Text="Remove" Click="@(() => ConfirmRemoveFriend(friend.StudentDetails.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
+                foreach (var friend in friends)
+                {
+                    <div class="friend-card">
+                        <img src="@GetImage(friend.StudentDetails.ProfileImage)" alt="Friend Image" class="friend-img">
+                        <div class="friend-info">
+                            <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
+                            <p>@friend.StudentDetails.Email</p>
+                            <div class="buttons">
+                                <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.FriendId))" Style="margin-right: 10px;" />
+                                <RadzenButton Text="Remove" Click="@(() => ConfirmRemoveFriend(friend.StudentDetails.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
-        else
-        {
-            <p>No friends to show. Start connecting now!</p>
-        }
+            else
+            {
+                <p>No friends to show. Start connecting now!</p>
+            }
+        </div>
     </div>
 </div>
+
 <style>
-    .friends-container {
+    .left-panel {
+        width: 100%;
+        overflow-y: auto;
+    }
+
+    .search-bar {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card-container {
+        display: flex;
+        flex-direction: column;
     }
 
     .friend-card {
-        width: 30%;
-        margin: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        transition: box-shadow 0.3s ease-in-out;
         display: flex;
+        background-color: #ffffff;
+        margin-bottom: 1rem !important;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        cursor: pointer;
         align-items: center;
-        background-color: white;
+        padding: 20px;
         border-radius: 8px;
     }
 
     .friend-card:hover {
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     }
 
     .friend-img {
@@ -87,65 +97,36 @@
 
     .friend-info {
         flex: 1;
-        font-family: 'Segoe UI', 'Arial', sans-serif;
-    }
-
-    h5 {
-        margin-bottom: 5px;
-        color: #333;
-        font-size: 18px;
-    }
-
-    p {
-        margin-bottom: 10px;
-        color: #666;
-    }
-
-    .buttons {
-        display: flex;
-        align-items: center;
     }
 </style>
 
-
 @code {
     private List<FriendDto> friends;
-    private Guid studentId;
     private string searchTerm;
-    
+
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            studentId = IdentityService.GetCurrentUserId();
-            var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
-            if (friendsResult != null)
-            {
-                friends = friendsResult.ToList();
-            }
-            else
-            {
-                friends = new List<FriendDto>();  
-            }
-        }
-        catch (Exception ex)
-        {
-            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
-            friends = new List<FriendDto>();  
-        }
+        await LoadFriends();
     }
 
-    private void ViewDetails(Guid friendId)
+    private async Task LoadFriends()
     {
-        NavigationManager.NavigateTo($"/student-details/{friendId}");
+        var currentUserId = IdentityService.GetCurrentUserId();
+        var result = await FriendsService.GetAllFriendsAsync(currentUserId);
+        friends = result.ToList();
     }
 
-    private async Task RemoveFriend(Guid friendId)
+    private void SearchFriends()
     {
-        await FriendsService.RemoveFriendAsync(friendId);
-        friends.RemoveAll(f => f.StudentId == friendId);
-    
-        NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Friend Removed", $"You have removed a friend.", 5000);
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            LoadFriends().Wait();
+        }
+        else
+        {
+            friends = friends.Where(f => f.StudentDetails.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) 
+                                      || f.StudentDetails.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
         StateHasChanged();
     }
 
@@ -153,52 +134,30 @@
     {
         if (string.IsNullOrWhiteSpace(base64Image))
         {
-            return "images/user_default.png";  
+            return "images/user_default.png";
         }
         return $"data:image/jpeg;base64,{base64Image}";
     }
 
-      private async Task ConfirmRemoveFriend(Guid friendId)
+    private async Task ConfirmRemoveFriend(string friendId)
     {
         var confirm = await DialogService.Confirm("Are you sure you want to remove this friend?", "Confirm Removal", new Radzen.ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
         if (confirm.HasValue && confirm.Value)
         {
-            await RemoveFriend(friendId);
+            await RemoveFriend(Guid.Parse(friendId));
         }
     }
 
-     private async Task LoadFriends()
+    private async Task RemoveFriend(Guid friendId)
     {
-        try
-        {
-            var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
-            if (friendsResult != null)
-            {
-                friends = friendsResult.ToList();
-            }
-            else
-            {
-                friends = new List<FriendDto>();
-            }
-        }
-        catch (Exception ex)
-        {
-            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
-            friends = new List<FriendDto>();
-        }
-    }
-
-    private void SearchFriends()
-    {
-        searchTerm = searchTerm.Trim();
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            friends = friends.Where(f => f.StudentDetails.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || f.StudentDetails.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-        else
-        {
-            LoadFriends().Wait(); 
-        }
+        await FriendsService.RemoveFriendAsync(friendId);
+        friends.RemoveAll(f => f.StudentId == friendId);
+        NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Friend Removed", $"You have removed a friend.", 5000);
         StateHasChanged();
+    }
+
+    private void ViewDetails(string friendId)
+    {
+        NavigationManager.NavigateTo($"/student-details/{friendId}");
     }
 }

@@ -43,24 +43,19 @@ namespace MiniSpace.Web.Areas.Friends
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            string url = $"friends/{studentId}";
-            var friends = await _httpClient.GetAsync<IEnumerable<FriendDto>>(url);
-            
-            Console.WriteLine($"Retrieved {friends.Count()} friends for student ID {studentId}.");
+            var url = $"friends/{studentId}";
+            var studentFriends = await _httpClient.GetAsync<IEnumerable<StudentFriendsDto>>(url);
 
-            if (friends != null && friends.Any())
+            // Assuming we want to flatten the list of friends for easier handling in the UI
+            var allFriends = studentFriends.SelectMany(sf => sf.Friends).ToList();
+
+            // Optionally enrich friend details (e.g., with additional student info)
+            foreach (var friend in allFriends)
             {
-                foreach (var friend in friends)
-                {
-                    friend.StudentDetails = await GetStudentAsync(friend.FriendId);
-                }
-            }
-            else
-            {
-                Console.WriteLine("No friends found.");
+                friend.StudentDetails = await GetStudentAsync(friend.FriendId); // Ensure this method fetches the necessary student info
             }
 
-            return friends;
+            return allFriends;
         }
 
         public async Task<HttpResponse<object>> AddFriendAsync(Guid friendId)
@@ -190,9 +185,6 @@ namespace MiniSpace.Web.Areas.Friends
                 return new List<FriendRequestDto>();
             }
         }
-
-
-
 
         public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
         {
