@@ -38,7 +38,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
                     Id = doc.Id,
                     StudentId = doc.StudentId,
                     FriendRequests = doc.FriendRequests
-                        .Where(request => request.InviteeId == query.StudentId)
+                        .Where(request => request.InviteeId == query.StudentId && request.State != Core.Entities.FriendState.Accepted)
                         .Select(request => new FriendRequestDto
                         {
                             Id = request.Id,

@@ -31,10 +31,10 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var requesterFriends = await _studentFriendsRepository.GetAsync(command.RequesterId);
             var friendFriends = await _studentFriendsRepository.GetAsync(command.FriendId);
 
-            if (!requesterFriends.Friends.Any(f => f.FriendId == command.FriendId) || !friendFriends.Friends.Any(f => f.FriendId == command.RequesterId))
-            {
-                throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
-            }
+            // if (!requesterFriends.Friends.Any(f => f.FriendId == command.FriendId) || !friendFriends.Friends.Any(f => f.FriendId == command.RequesterId))
+            // {
+            //     throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
+            // }
 
             // Remove the friendship in both directions
             requesterFriends.RemoveFriend(command.FriendId);

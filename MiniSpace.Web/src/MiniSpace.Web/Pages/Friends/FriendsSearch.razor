@@ -49,16 +49,26 @@
                                 ButtonStyle="Radzen.ButtonStyle.Secondary" 
                                 Style="width: 100%; margin-top: 8px;" /> *@
 
-                             @if (!sentRequests.Any(r => r.InviteeId == student.Id))
+                            @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
                             {
                                 <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
-                                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                                              Style="width: 100%; margin-top: 8px;" />
+                                            ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                            Style="width: 100%; margin-top: 8px;" />
                             }
-                            else
+                            else if (allFriends.Any(f => f.FriendId == student.Id))
+                            {
+                                <RadzenButton Text="Connected" Disabled="true" 
+                                            Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc;" />
+                            }
+                            else if (sentRequests.Any(r => r.InviteeId == student.Id))
                             {
                                 <RadzenButton Text="Pending" Disabled="true" 
-                                              Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                            }
+                            else if (student.Id == IdentityService.GetCurrentUserId())
+                            {
+                                <RadzenButton Text="It's You" Disabled="true" 
+                                            Style="width: 100%; margin-top: 8px; background-color: grey; color: white;" />
                             }
                         </div>
                     </div>
@@ -89,17 +99,29 @@
                             <li><strong>State:</strong> @student?.State</li>
                             <li><strong>Created At:</strong> @student?.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</li>
                         </ul>
-                        @if (!sentRequests.Any(r => r.InviteeId == student.Id))
+                         <div class="buttons">
+                            @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
                             {
                                 <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
-                                              ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                                              Style="width: 100%; margin-top: 8px;" />
+                                            ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                            Style="width: 100%; margin-top: 8px;" />
                             }
-                            else
+                            else if (allFriends.Any(f => f.FriendId == student.Id))
+                            {
+                                <RadzenButton Text="Connected" Disabled="true" 
+                                            Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc;" />
+                            }
+                            else if (sentRequests.Any(r => r.InviteeId == student.Id))
                             {
                                 <RadzenButton Text="Pending" Disabled="true" 
-                                              Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
                             }
+                            else if (student.Id == IdentityService.GetCurrentUserId())
+                            {
+                                <RadzenButton Text="It's You" Disabled="true" 
+                                            Style="width: 100%; margin-top: 8px; background-color: grey; color: white;" />
+                            }
+                        </div>
                      </div>
                     
                    </div> 
@@ -271,9 +293,13 @@
     private int pageSize = 10;
     private int totalStudents;
     private Dictionary<Guid, string> images = new ();
+    private IEnumerable<FriendDto> allFriends;
 
     protected override async Task OnInitializedAsync() {
         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+        allFriends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
+                Console.WriteLine($"Total Friends Loaded: {allFriends.Count()}");
+
         await LoadStudents();
         StateHasChanged();
         
