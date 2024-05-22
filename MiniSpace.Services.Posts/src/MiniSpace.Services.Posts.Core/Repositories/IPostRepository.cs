@@ -1,4 +1,5 @@
 using MiniSpace.Services.Posts.Core.Entities;
+using MiniSpace.Services.Posts.Core.Wrappers;
 
 namespace MiniSpace.Services.Posts.Core.Repositories
 {
@@ -11,5 +12,7 @@ namespace MiniSpace.Services.Posts.Core.Repositories
         Task UpdateAsync(Post post);
         Task DeleteAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
+        Task<(IEnumerable<Post> posts, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseCommentsAsync(int pageNumber, int pageSize, 
+            IEnumerable<Guid> eventsIds, IEnumerable<string> sortBy, string direction);
     }    
 }
