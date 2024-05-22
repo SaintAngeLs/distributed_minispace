@@ -1,5 +1,4 @@
 @page "/events/{EventId}"
-@using Blazorise.DeepCloner
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Posts
@@ -9,7 +8,6 @@
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Comments
 @using MiniSpace.Web.Pages.Comments
-@using MiniSpace.Web.Pages.Comments.Dialogs
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using Radzen
 @using AlignItems = Radzen.AlignItems
@@ -183,31 +181,10 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Comments">
-                    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                            <RadzenButton Size="ButtonSize.Medium" Text="Create comment" ButtonStyle="ButtonStyle.Secondary"
-                                          Click="@(() => CreateRootComment())" />
-                            <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria"
-                                          Click="@OpenSearchCommentsDialog" />
-                        </RadzenStack>
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenColumn Size="12" SizeMD="12">
-                            @if (pageInitialized && commentsEmpty)
-                            {
-                                <h3>No comments have been added by students yet.</h3>
-                            }
-                            <CommentsTree Comments="comments" StudentId="studentId"
-                                          CreateSubComment="@CreateSubComment"
-                                          LoadSubComments="@LoadSubComments" />
-                            @if (commentsAvailable)
-                            {
-                                <RadzenButton Size="ButtonSize.Medium" Text="Load more comments"
-                                              Click="@LoadMoreComments" />
-                            }
-                        </RadzenColumn>
-                    </RadzenRow>    
-                        
-                    </RadzenStack>
+                    <CommentsTab Comments="comments" EventId="@EventId" StudentId="studentId"
+                                 SearchCommentsModel="searchCommentsModel" CreateCommentModel="createCommentModel"
+                                 PageInitialized="pageInitialized" CommentsEmpty="commentsEmpty"
+                                 CommentsAvailable="commentsAvailable" SearchComments="@SearchComments" />
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
@@ -336,6 +313,7 @@
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions = [];
     HashSet<CommentDto> comments = [];
+    
     bool commentsEmpty = true;
     bool commentsAvailable = false;
     
@@ -353,7 +331,6 @@
             }
         }
     };
-
     private CreateCommentModel createCommentModel = new()
     {
         CommentContext = "Event"
@@ -413,7 +390,7 @@
                 posts = await PostsService.GetPostsAsync(ev.Id);
                 break;
             case 1:
-                SearchComments();
+                await SearchComments();
                 break;
             case 2:
                 reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
@@ -445,46 +422,6 @@
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-    }
-    
-    private async Task OpenCreateCommentDialog(string title)
-    {
-        await DialogService.OpenAsync<CreateCommentDialog>(title,
-            new Dictionary<string, object>()
-            {
-                { "EventId", EventId },
-                { "CreateCommentModel", createCommentModel }
-            },
-            new DialogOptions()
-            {
-                Width = "800px", Resizable = true, Draggable = true,
-                AutoFocusFirstElement = false
-            });
-        if (createCommentModel.CreatingSubmitted)
-        {
-            createCommentModel.CreatingSubmitted = false;
-            SearchComments();
-        }
-    }
-
-    private async Task OpenSearchCommentsDialog()
-    {
-        await DialogService.OpenAsync<SearchCommentsDialog>("Sort your comments by criteria:",
-            new Dictionary<string, object>()
-            {
-                { "EventId", EventId },
-                { "SearchCommentsModel", searchCommentsModel }
-            },
-            new DialogOptions()
-            {
-                Width = "800px", Resizable = true, Draggable = true,
-                AutoFocusFirstElement = false
-            });
-        if (searchCommentsModel.SearchingSubmitted)
-        {
-            searchCommentsModel.SearchingSubmitted = false;
-            SearchComments();
-        }
     }
 
     private async Task OpenDeleteEventDialog()
@@ -564,8 +501,8 @@
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
         StateHasChanged();
     }
-
-    private async void SearchComments()
+    
+    private async Task SearchComments()
     {
         comments = [];
         searchCommentsModel.Pageable.Page = 1;
@@ -584,13 +521,13 @@
             commentsAvailable = false;
         }
         
-        foreach (var comment in comments.Where(comment => comment.RepliesCount > 0))
-        {
-            comment.CanExpand = true;
-        }
-
         foreach (var comment in comments)
         {
+            if (comment.RepliesCount > 0)
+            {
+                comment.CanExpand = true;
+            }
+            
             var response1 = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
                 searchCommentsModel.CommentContext, comment.Id, searchCommentsModel.Pageable);
             if (response.Content != null)
@@ -600,57 +537,5 @@
         }
         
         StateHasChanged();
-    }
-
-    private async void LoadMoreComments()
-    {
-        ++searchCommentsModel.Pageable.Page;
-        var response = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
-            searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
-        IEnumerable<CommentDto> moreComments = [];
-        if (response.Content != null)
-        {
-            moreComments = response.Content.Content;
-            commentsAvailable = response.Content.Number < response.Content.TotalPages;
-        }
-        else
-        {
-            commentsAvailable = false;
-        }
-
-        foreach (var comment in moreComments)
-        {
-            if (comment.RepliesCount > 0)
-            {
-                comment.CanExpand = true;
-            }
-            comments.Add(comment);
-        }
-        
-        StateHasChanged();
-    }
-
-    private async void CreateRootComment()
-    {
-        createCommentModel.ParentId = Guid.Empty;
-        await OpenCreateCommentDialog("Create new comment:");
-    }
-
-    private async void CreateSubComment(CommentDto subComment)
-    {
-        createCommentModel.ParentId = subComment.Id;
-        await OpenCreateCommentDialog("Reply for the comment:");
-    }
-
-    private async void LoadSubComments(CommentDto parentComment)
-    {
-        var searchSubCommentsModel = searchCommentsModel.DeepClone();
-        searchSubCommentsModel.Pageable.Page = 1;
-        var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
-            searchSubCommentsModel.CommentContext, parentComment.Id, searchSubCommentsModel.Pageable);
-        if (response.Content != null)
-        {
-            parentComment.SubComments = response.Content.Content.ToHashSet();
-        }
     }
 }

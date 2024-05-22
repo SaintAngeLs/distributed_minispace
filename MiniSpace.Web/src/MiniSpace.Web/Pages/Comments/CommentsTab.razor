@@ -1,0 +1,163 @@
+@using Blazorise.DeepCloner
+@using MiniSpace.Web.Areas.Comments
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Models.Comments
+@using MiniSpace.Web.Pages.Comments.Dialogs
+@using Radzen
+@using AlignItems = Radzen.AlignItems
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@using Orientation = Radzen.Orientation
+@inject DialogService DialogService
+@inject ICommentsService CommentsService
+
+<RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+        <RadzenButton Size="ButtonSize.Medium" Text="Create comment" ButtonStyle="ButtonStyle.Secondary"
+                      Click="@(() => CreateRootComment())" />
+        <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria"
+                      Click="@OpenSearchCommentsDialog" />
+    </RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="12">
+            @if (PageInitialized && CommentsEmpty)
+            {
+                <h3>No comments have been added by students yet.</h3>
+            }
+            <CommentsTree Comments="Comments" StudentId="StudentId"
+                          CreateSubComment="@CreateSubComment"
+                          LoadSubComments="@LoadSubComments" />
+            @if (CommentsAvailable)
+            {
+                <RadzenButton Size="ButtonSize.Medium" Text="Load more comments"
+                              Click="@LoadMoreComments" />
+            }
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public HashSet<CommentDto> Comments { get; set; }
+    [Parameter]
+    public string EventId { get; set; }
+    [Parameter]
+    public SearchCommentsModel SearchCommentsModel { get; set; }
+    [Parameter]
+    public CreateCommentModel CreateCommentModel { get; set; }
+    [Parameter]
+    public Guid StudentId { get; set; }
+    [Parameter]
+    public bool PageInitialized { get; set; }
+    [Parameter]
+    public bool CommentsEmpty { get; set; }
+    [Parameter]
+    public bool CommentsAvailable { get; set; }
+    [Parameter]
+    public Func<Task> SearchComments { get; set; }
+    
+    private async Task OpenCreateCommentDialog(string title)
+    {
+        await DialogService.OpenAsync<CreateCommentDialog>(title,
+            new Dictionary<string, object>()
+            {
+                { "EventId", EventId },
+                { "CreateCommentModel", CreateCommentModel }
+            },
+            new DialogOptions()
+            {
+                Width = "800px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+
+    private async Task OpenSearchCommentsDialog()
+    {
+        await DialogService.OpenAsync<SearchCommentsDialog>("Sort your comments by criteria:",
+            new Dictionary<string, object>()
+            {
+                { "EventId", EventId },
+                { "SearchCommentsModel", SearchCommentsModel }
+            },
+            new DialogOptions()
+            {
+                Width = "800px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+        if (SearchCommentsModel.SearchingSubmitted)
+        {
+            SearchCommentsModel.SearchingSubmitted = false;
+            await SearchComments();
+        }
+    }
+
+    private async Task LoadMoreComments()
+    {
+        ++SearchCommentsModel.Pageable.Page;
+        var response = await CommentsService.SearchRootCommentsAsync(SearchCommentsModel.ContextId,
+            SearchCommentsModel.CommentContext, SearchCommentsModel.Pageable);
+        IEnumerable<CommentDto> moreComments = [];
+        if (response.Content != null)
+        {
+            moreComments = response.Content.Content;
+            CommentsAvailable = response.Content.Number < response.Content.TotalPages;
+        }
+        else
+        {
+            CommentsAvailable = false;
+        }
+
+        foreach (var comment in moreComments)
+        {
+            if (comment.RepliesCount > 0)
+            {
+                comment.CanExpand = true;
+            }
+            
+            var response1 = await CommentsService.SearchSubCommentsAsync(SearchCommentsModel.ContextId,
+                SearchCommentsModel.CommentContext, comment.Id, SearchCommentsModel.Pageable);
+            if (response.Content != null)
+            {
+                comment.SubComments = response1.Content.Content.ToHashSet();
+            }
+            
+            Comments.Add(comment);
+        }
+        
+        StateHasChanged();
+    }
+
+    private async Task CreateRootComment()
+    {
+        CreateCommentModel.ParentId = Guid.Empty;
+        await OpenCreateCommentDialog("Create new comment:");
+        if (CreateCommentModel.CreatingSubmitted)
+        {
+            CreateCommentModel.CreatingSubmitted = false;
+            await SearchComments();
+        }
+    }
+
+    private async Task CreateSubComment(CommentDto parentComment)
+    {
+        CreateCommentModel.ParentId = parentComment.Id;
+        await OpenCreateCommentDialog("Reply for the comment:");
+        if (CreateCommentModel.CreatingSubmitted)
+        {
+            CreateCommentModel.CreatingSubmitted = false;
+            ++parentComment.RepliesCount;
+        }
+    }
+
+    private async Task LoadSubComments(CommentDto parentComment)
+    {
+        var searchSubCommentsModel = SearchCommentsModel.DeepClone();
+        searchSubCommentsModel.Pageable.Page = 1;
+        var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
+            searchSubCommentsModel.CommentContext, parentComment.Id, searchSubCommentsModel.Pageable);
+        if (response.Content != null)
+        {
+            parentComment.SubComments = response.Content.Content.ToHashSet();
+        }
+    }
+}
