@@ -76,6 +76,11 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<ReportDocument, Guid>("reports")
+                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<EventDocument, Guid>("events")
+                .AddMongoRepository<PostDocument, Guid>("posts")
+                .AddMongoRepository<CommentDocument, Guid>("comments")
+                .AddMongoRepository<MediaFileDocument, Guid>("mediaFiles")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
