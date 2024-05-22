@@ -13,6 +13,7 @@ namespace MiniSpace.Web.Areas.Friends
     {
         private readonly IHttpClient _httpClient;
         private readonly IIdentityService _identityService;
+        
 
         public FriendDto FriendDto { get; private set; }
         
