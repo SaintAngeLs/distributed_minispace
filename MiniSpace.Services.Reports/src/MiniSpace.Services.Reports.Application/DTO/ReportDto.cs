@@ -5,6 +5,7 @@
         public Guid Id { get;  set; }
         public Guid IssuerId { get;  set; }
         public Guid TargetId { get;  set; }
+        public Guid TargetOwnerId { get;  set; }
         public string ContextType { get;  set; }
         public string Category { get;  set; }
         public string Reason { get;  set; }

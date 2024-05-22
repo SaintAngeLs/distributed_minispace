@@ -6,8 +6,8 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Report AsEntity(this ReportDocument document)
-            => new Report(document.Id, document.IssuerId, document.TargetId, document.ContextType, document.Category,
-                document.Reason, document.Status, document.CreatedAt);
+            => new Report(document.Id, document.IssuerId, document.TargetId, document.TargetOwnerId, 
+                document.ContextType, document.Category, document.Reason, document.Status, document.CreatedAt);
         
         public static ReportDocument AsDocument(this Report entity)
             => new ReportDocument()
@@ -15,6 +15,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
                 Id = entity.Id,
                 IssuerId = entity.IssuerId,
                 TargetId = entity.TargetId,
+                TargetOwnerId = entity.TargetOwnerId,
                 ContextType = entity.ContextType,
                 Category = entity.Category,
                 Reason = entity.Reason,
@@ -28,6 +29,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
                 Id = document.Id,
                 IssuerId = document.IssuerId,
                 TargetId = document.TargetId,
+                TargetOwnerId = document.TargetOwnerId,
                 ContextType = document.ContextType.ToString(),
                 Category = document.Category.ToString(),
                 Reason = document.Reason,
