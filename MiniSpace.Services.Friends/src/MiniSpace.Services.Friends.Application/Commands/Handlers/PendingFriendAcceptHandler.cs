@@ -51,8 +51,8 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             CreateAndAddFriends(command.RequesterId, command.FriendId, FriendState.Accepted);
 
             // Publish related events
-            var events = _eventMapper.MapAll(new Core.Events.PendingFriendAccepted(command.RequesterId, command.FriendId));
-            await _messageBroker.PublishAsync(events);
+            // var events = _eventMapper.MapAll(new Core.Events.PendingFriendAccepted(command.RequesterId, command.FriendId));
+            // await _messageBroker.PublishAsync(events);
 
             var pendingFriendAcceptedEvent = new PendingFriendAccepted(command.RequesterId, command.FriendId);
             await _messageBroker.PublishAsync(pendingFriendAcceptedEvent);
