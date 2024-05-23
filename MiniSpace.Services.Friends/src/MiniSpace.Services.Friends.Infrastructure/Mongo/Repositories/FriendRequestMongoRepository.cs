@@ -38,11 +38,11 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
                 documentToUpdate.State = friendRequest.State;
 
-                Console.WriteLine("Attempting to update document in database: " + JsonSerializer.Serialize(documentToUpdate));
+                // Console.WriteLine("Attempting to update document in database: " + JsonSerializer.Serialize(documentToUpdate));
                 await _repository.UpdateAsync(documentToUpdate);
 
                 var documentAfterUpdate = await _repository.GetAsync(friendRequest.Id);
-                Console.WriteLine("Document after update: " + JsonSerializer.Serialize(documentAfterUpdate));
+                // Console.WriteLine("Document after update: " + JsonSerializer.Serialize(documentAfterUpdate));
         }
 
         public async Task DeleteAsync(Guid id)

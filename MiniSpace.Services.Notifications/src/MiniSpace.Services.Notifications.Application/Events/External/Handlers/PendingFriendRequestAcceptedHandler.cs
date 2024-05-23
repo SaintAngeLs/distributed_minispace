@@ -31,7 +31,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(PendingFriendAccepted @event, CancellationToken cancellationToken)
         {
-            // Fetch student names based on their IDs to personalize the notification message
             var requester = await _studentsServiceClient.GetAsync(@event.RequesterId);
             var friend = await _studentsServiceClient.GetAsync(@event.FriendId);
 
@@ -52,7 +51,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 updatedAt: null
             );
 
-            // Retrieve or create the StudentNotifications for the requester
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.RequesterId);
             if (studentNotifications == null)
             {
@@ -60,11 +58,9 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 _logger.LogInformation($"Creating new StudentNotifications for UserId={@event.RequesterId}");
             }
 
-            // Add the notification to student notifications
             studentNotifications.AddNotification(notification);
             _logger.LogInformation($"Adding notification to StudentNotifications for UserId={@event.RequesterId}");
 
-            // Update the student notifications in the repository
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
             _logger.LogInformation($"Updated StudentNotifications for UserId={@event.RequesterId}");
 
@@ -76,8 +72,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             // Publish the NotificationCreated event through the message broker
-            await _messageBroker.PublishAsync(notificationCreatedEvent);
-            _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
+            // await _messageBroker.PublishAsync(notificationCreatedEvent);
+            // _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
         }
     }
 }

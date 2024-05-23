@@ -59,12 +59,12 @@ public class StudentFriendsMongoRepository : IStudentFriendsRepository
         var documents = await _repository.FindAsync(doc => doc.StudentId == studentId);
         if (documents == null || !documents.Any())
         {
-            Console.WriteLine($"No document found for student ID: {studentId}");
+            // Console.WriteLine($"No document found for student ID: {studentId}");
             return Enumerable.Empty<Friend>();
         }
 
         var document = documents.First();  // Assuming you expect only one document per studentId or taking the first one
-        Console.WriteLine($"Document found: {document.StudentId}, Friends Count: {document.Friends.Count}");
+        // Console.WriteLine($"Document found: {document.StudentId}, Friends Count: {document.Friends.Count}");
         return document.Friends.Select(doc => new Friend(
             doc.StudentId,
             doc.FriendId,
@@ -86,7 +86,7 @@ public class StudentFriendsMongoRepository : IStudentFriendsRepository
     var options = new UpdateOptions { IsUpsert = true };
     var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
 
-    Console.WriteLine("********************************************************");
+    // Console.WriteLine("********************************************************");
     // Check if the document was actually inserted or updated
     if (result.ModifiedCount > 0 || result.UpsertedId != null)
     {
@@ -96,17 +96,17 @@ public class StudentFriendsMongoRepository : IStudentFriendsRepository
         {
             // Serialize the updated document to JSON and log it
             var json = JsonSerializer.Serialize(updatedDocument, new JsonSerializerOptions { WriteIndented = true });
-            Console.WriteLine("Updated StudentFriends document:");
-            Console.WriteLine(json);
+            // Console.WriteLine("Updated StudentFriends document:");
+            // Console.WriteLine(json);
         }
         else
         {
-            Console.WriteLine("Failed to retrieve the updated document.");
+            // Console.WriteLine("Failed to retrieve the updated document.");
         }
     }
     else
     {
-        Console.WriteLine("No changes were made to the document.");
+        // Console.WriteLine("No changes were made to the document.");
     }
 }
 
@@ -119,11 +119,11 @@ public async Task RemoveFriendAsync(Guid studentId, Guid friendId)
 
     if (result.ModifiedCount == 0)
     {
-        Console.WriteLine($"No friend removed for Student ID: {studentId} with Friend ID: {friendId}");
+        // Console.WriteLine($"No friend removed for Student ID: {studentId} with Friend ID: {friendId}");
     }
     else
     {
-        Console.WriteLine($"Friend ID: {friendId} removed from Student ID: {studentId}'s friends list.");
+        // Console.WriteLine($"Friend ID: {friendId} removed from Student ID: {studentId}'s friends list.");
     }
 }
 

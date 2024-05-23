@@ -41,14 +41,20 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             await _repository.Collection.UpdateOneAsync(filter, update, options);
         }
 
-        public async Task AddOrUpdateAsync(StudentNotifications studentNotifications)
+         public async Task AddOrUpdateAsync(StudentNotifications studentNotifications)
         {
             var document = studentNotifications.AsDocument();
-            var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.Id, studentNotifications.StudentId);
+            var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentNotifications.StudentId);
+            var updates = new List<UpdateDefinition<StudentNotificationsDocument>>();
+
+            foreach (var notification in studentNotifications.Notifications)
+            {
+                updates.Add(Builders<StudentNotificationsDocument>.Update.Push(doc => doc.Notifications, notification.AsDocument()));
+            }
+
             var update = Builders<StudentNotificationsDocument>.Update
-                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId)
-                .Set(doc => doc.StudentId, studentNotifications.StudentId) 
-                .PushEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument()));
+                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId)  // Ensures the ID is set on insert
+                .AddToSetEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument()));  // Use AddToSetEach to avoid duplicates
 
             var options = new UpdateOptions { IsUpsert = true };
             await _repository.Collection.UpdateOneAsync(filter, update, options);

@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
      
         public async Task<StudentRequests> GetAsync(Guid studentId)
         {
-            Console.WriteLine($"{studentId}");
+            // Console.WriteLine($"{studentId}");
             var document = await _repository.FindAsync(doc => doc.StudentId == studentId);
             var studentRequestDocument = document.SingleOrDefault();
             if (studentRequestDocument == null)
@@ -32,7 +32,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
             var entity = studentRequestDocument.AsEntity();
             var json = JsonSerializer.Serialize(entity, new JsonSerializerOptions { WriteIndented = true });
-            Console.WriteLine(json);
+            // Console.WriteLine(json);
 
             return entity;
         }
@@ -60,14 +60,14 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
         {
             var document = await _repository.FindAsync(doc => doc.StudentId == studentId);
             var studentRequestDocument = document.SingleOrDefault();
-            Console.WriteLine($"*******************************************************************************");
+            // Console.WriteLine($"*******************************************************************************");
             if (studentRequestDocument == null)
             {
-                Console.WriteLine($"No document found with Student ID: {studentId}");
+                // Console.WriteLine($"No document found with Student ID: {studentId}");
                 return; // Consider handling this case appropriately, possibly by adding a new document.
             }
 
-            Console.WriteLine($"Before update - Document JSON: {JsonSerializer.Serialize(studentRequestDocument, new JsonSerializerOptions { WriteIndented = true })}");
+            // Console.WriteLine($"Before update - Document JSON: {JsonSerializer.Serialize(studentRequestDocument, new JsonSerializerOptions { WriteIndented = true })}");
 
             // Convert each FriendRequest to a FriendRequestDocument before assignment
             studentRequestDocument.FriendRequests = updatedFriendRequests.Select(fr => fr.AsDocument()).ToList();
@@ -81,16 +81,16 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
             var updatedDocument = await _repository.FindAsync(doc => doc.StudentId == studentId);
             var updatedStudentRequestDocument = updatedDocument.SingleOrDefault();
 
-            Console.WriteLine($"After update - Document JSON: {JsonSerializer.Serialize(updatedStudentRequestDocument, new JsonSerializerOptions { WriteIndented = true })}");
+            // Console.WriteLine($"After update - Document JSON: {JsonSerializer.Serialize(updatedStudentRequestDocument, new JsonSerializerOptions { WriteIndented = true })}");
 
             if (result.ModifiedCount == 0)
             {
-                Console.WriteLine("No documents were modified during the update operation.");
+                // Console.WriteLine("No documents were modified during the update operation.");
                 throw new Exception("Update failed, no document was modified.");
             }
             else
             {
-                Console.WriteLine($"Document with Student ID: {studentId} was successfully updated. Modified count: {result.ModifiedCount}");
+                // Console.WriteLine($"Document with Student ID: {studentId} was successfully updated. Modified count: {result.ModifiedCount}");
             }
         }
 

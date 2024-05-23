@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateNotificationStatus command, CancellationToken cancellationToken = default)
         {
-            Console.WriteLine($"Received NotificationId: {command.NotificationId}");
+            // Console.WriteLine($"Received NotificationId: {command.NotificationId}");
 
             var notification = await _notificationRepository.GetAsync(command.NotificationId);
             if (notification == null)
