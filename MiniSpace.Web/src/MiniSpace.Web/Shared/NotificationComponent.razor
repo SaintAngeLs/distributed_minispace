@@ -30,6 +30,7 @@ else
     private List<NotificationDto> previousNotifications = new List<NotificationDto>();
     private List<NotificationDto> notifications;
     private Timer timer;
+    private DateTime lastCheckedTime = DateTime.MinValue;
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,19 +45,20 @@ else
         {
             var userId = IdentityService.GetCurrentUserId(); 
             var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId);
-            notifications = paginatedResponse.Results;
+            var latestNotifications = paginatedResponse.Results;
 
-            if (isNewNotificationReceived())
+            if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
             {
                 PlayNotificationSound();
+                lastCheckedTime = DateTime.Now; 
             }
 
-            previousNotifications = notifications.ToList();
-            StateHasChanged(); // Ensure UI updates
+            notifications = latestNotifications;
+            StateHasChanged();
         }
         catch (Exception ex)
         {
-            @* Console.WriteLine($"Error loading notifications: {ex.Message}"); *@
+            Console.WriteLine($"Error loading notifications: {ex.Message}");
         }
     }
 
