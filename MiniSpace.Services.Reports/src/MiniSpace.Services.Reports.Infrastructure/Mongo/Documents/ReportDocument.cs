@@ -14,5 +14,6 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
         public string Reason { get; set; }
         public ReportState State { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Guid? ReviewerId { get; set; }
     }
 }

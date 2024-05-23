@@ -11,5 +11,6 @@
         public string Reason { get;  set; }
         public string Status { get;  set; }
         public DateTime CreatedAt { get;  set; }
+        public Guid? ReviewerId { get;  set; }
     }
 }

@@ -93,7 +93,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<CreateReport>()
                 .SubscribeEvent<EventCreated>()
                 .SubscribeEvent<PostCreated>()
                 .SubscribeEvent<CommentCreated>();

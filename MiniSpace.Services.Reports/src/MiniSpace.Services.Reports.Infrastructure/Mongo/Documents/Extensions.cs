@@ -7,7 +7,8 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
     {
         public static Report AsEntity(this ReportDocument document)
             => new Report(document.Id, document.IssuerId, document.TargetId, document.TargetOwnerId, 
-                document.ContextType, document.Category, document.Reason, document.State, document.CreatedAt);
+                document.ContextType, document.Category, document.Reason, document.State, document.CreatedAt,
+                document.ReviewerId);
         
         public static ReportDocument AsDocument(this Report entity)
             => new ReportDocument()
@@ -20,7 +21,8 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
                 Category = entity.Category,
                 Reason = entity.Reason,
                 State = entity.State,
-                CreatedAt = entity.CreatedAt
+                CreatedAt = entity.CreatedAt,
+                ReviewerId = entity.ReviewerId
             };
         
         public static ReportDto AsDto(this ReportDocument document)
@@ -34,7 +36,8 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
                 Category = document.Category.ToString(),
                 Reason = document.Reason,
                 Status = document.State.ToString(),
-                CreatedAt = document.CreatedAt
+                CreatedAt = document.CreatedAt,
+                ReviewerId = document.ReviewerId
             };
         
         public static Event AsEntity(this EventDocument document)

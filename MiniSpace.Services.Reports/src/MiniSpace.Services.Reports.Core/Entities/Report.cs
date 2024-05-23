@@ -12,9 +12,10 @@ namespace MiniSpace.Services.Reports.Core.Entities
         public string Reason { get; private set; }
         public ReportState State { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public Guid? ReviewerId { get; private set; }
         
         public Report(Guid id, Guid issuerId, Guid targetId, Guid targetOwnerId, ContextType contextType, 
-            ReportCategory category, string reason, ReportState state, DateTime createdAt)
+            ReportCategory category, string reason, ReportState state, DateTime createdAt, Guid? reviewerId = null)
         {
             Id = id;
             IssuerId = issuerId;
@@ -25,6 +26,7 @@ namespace MiniSpace.Services.Reports.Core.Entities
             Reason = reason;
             State = state;
             CreatedAt = createdAt;
+            ReviewerId = reviewerId;
         }
 
         public static Report Create(Guid id, Guid issuerId, Guid targetId, Guid targetOwnerId, ContextType contextType,
@@ -39,6 +41,16 @@ namespace MiniSpace.Services.Reports.Core.Entities
                 throw new InvalidReportStateException(Id, ReportState.Submitted, State);
             }
             State = ReportState.Cancelled;
+        }
+        
+        public void StartReview(Guid reviewerId)
+        {
+            if (State != ReportState.Submitted)
+            {
+                throw new InvalidReportStateException(Id, ReportState.Submitted, State);
+            }
+            State = ReportState.UnderReview;
+            ReviewerId = reviewerId;
         }
     }
 }
