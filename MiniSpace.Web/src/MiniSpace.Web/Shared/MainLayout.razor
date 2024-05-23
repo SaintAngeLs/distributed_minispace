@@ -182,14 +182,14 @@
     public async Task<bool> CheckAuthentication()
     {
         _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
-        Console.WriteLine($"IsUserAuthenticated: {_isUserAuthenticated}");
+        @* Console.WriteLine($"IsUserAuthenticated: {_isUserAuthenticated}"); *@
         return _isUserAuthenticated;
     }
 
     public bool IsUserAuthenticated => _isUserAuthenticated;
     async Task SignOut()
     {
-        Console.WriteLine("Signing out...");
+        @* Console.WriteLine("Signing out..."); *@
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
         NavigationManager.NavigateTo("signin", forceLoad: true);

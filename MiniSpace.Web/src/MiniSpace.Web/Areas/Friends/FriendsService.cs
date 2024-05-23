@@ -69,16 +69,16 @@ namespace MiniSpace.Web.Areas.Friends
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
             var requesterId = _identityService.GetCurrentUserId();
-            Console.WriteLine($"Requester ID: {requesterId}"); // Log the requester ID
+            // Console.WriteLine($"Requester ID: {requesterId}"); // Log the requester ID
 
             if (requesterId == Guid.Empty)
             {
-                Console.WriteLine("Invalid Requester ID: ID is empty.");
+                // Console.WriteLine("Invalid Requester ID: ID is empty.");
                 return; // Optionally handle the case where the requester ID is invalid
             }
 
             var payload = new { RequesterId = requesterId, FriendId = friendId };
-            Console.WriteLine($"Payload: {payload.RequesterId}, {payload.FriendId}");
+            // Console.WriteLine($"Payload: {payload.RequesterId}, {payload.FriendId}");
             await _httpClient.DeleteAsync($"friends/{requesterId}/{friendId}/remove");
         }
 
@@ -180,7 +180,7 @@ namespace MiniSpace.Web.Areas.Friends
             catch (Exception ex)
             {
                 // Log the exception (optional)
-                Console.WriteLine($"Error retrieving sent friend requests: {ex.Message}");
+                // Console.WriteLine($"Error retrieving sent friend requests: {ex.Message}");
                 return new List<FriendRequestDto>();
             }
         }
@@ -225,7 +225,7 @@ namespace MiniSpace.Web.Areas.Friends
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error retrieving incoming friend requests: {ex.Message}");
+                // Console.WriteLine($"Error retrieving incoming friend requests: {ex.Message}");
                 return new List<FriendRequestDto>();
             }
         }

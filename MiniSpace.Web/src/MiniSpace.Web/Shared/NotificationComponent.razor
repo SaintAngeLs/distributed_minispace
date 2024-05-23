@@ -1,7 +1,7 @@
 @using MiniSpace.Web.Areas.Notifications
 @inject INotificationsService NotificationsService
 @inject IIdentityService IdentityService
-@using MiniSpace.Web.DTO.Notifications;
+@using MiniSpace.Web.DTO.Notifications
 @using System.Threading
 
 <h3 style="background-color: #007BFF; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
@@ -31,6 +31,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadNotifications();
+        // Setup a timer to refresh notifications every 15 seconds
         timer = new Timer(new TimerCallback(_ => InvokeAsync(LoadNotifications)), null, 0, 15000);
     }
 
@@ -39,12 +40,13 @@ else
         try
         {
             var userId = IdentityService.GetCurrentUserId(); 
-            notifications = (await NotificationsService.GetNotificationsByUserAsync(userId)).ToList();
-            StateHasChanged(); 
+            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId);
+            notifications = paginatedResponse.Results;
+            StateHasChanged(); // Ensure UI updates
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading notifications: {ex.Message}");
+            @* Console.WriteLine($"Error loading notifications: {ex.Message}"); *@
         }
     }
 

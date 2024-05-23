@@ -8,7 +8,7 @@ namespace MiniSpace.Web.Areas.Notifications
 {
     public interface INotificationsService
     {
-        Task<IEnumerable<NotificationDto>> GetNotificationsByUserAsync(Guid userId);
+        Task<PaginatedResponseDto<NotificationDto>> GetNotificationsByUserAsync(Guid userId, int page = 1, int pageSize = 10);
         // Task<NotificationDto> CreateNotificationAsync(NotificationDto notification);
         Task UpdateNotificationStatusAsync(Guid notificationId, string status);
         Task DeleteNotificationAsync(Guid notificationId);

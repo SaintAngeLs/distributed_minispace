@@ -17,7 +17,6 @@ else if (notifications.Any())
 {
     <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowSorting="true">
         <Columns>
-            @* <RadzenDataGridColumn TItem="NotificationDto" Property="Title" Title="Title" /> *@
             <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message" />
             <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
             <RadzenDataGridColumn TItem="NotificationDto" Property="Status" Title="Status" />
@@ -37,13 +36,20 @@ else
 @code {
     private List<NotificationDto> notifications;
 
-   protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotifications();
+    }
+
+    private async Task LoadNotifications()
     {
         var userId = IdentityService.GetCurrentUserId(); 
-        Console.WriteLine($"******************************* {userId} ******************************************************");
-        var notifList = await NotificationsService.GetNotificationsByUserAsync(userId);
-        notifications = notifList.ToList();
+        Console.WriteLine($"User ID: {userId}"); 
+        var response = await NotificationsService.GetNotificationsByUserAsync(userId);
+        notifications = response.Results;
+        StateHasChanged(); 
     }
+
     private async Task DeleteNotification(Guid notificationId)
     {
         await NotificationsService.DeleteNotificationAsync(notificationId);
