@@ -52,5 +52,10 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
         {
             return _repository.DeleteAsync(studentId);
         }
+
+        public async Task<UpdateResult> BulkUpdateAsync(FilterDefinition<StudentNotificationsDocument> filter, UpdateDefinition<StudentNotificationsDocument> update)
+        {
+            return await _repository.Collection.UpdateManyAsync(filter, update);
+        }
     }
 }
