@@ -1,6 +1,6 @@
 ﻿namespace MiniSpace.Services.Reports.Core.Entities
 {
-    public enum ReportStatus
+    public enum ReportState
     {
         Submitted,
         UnderReview,

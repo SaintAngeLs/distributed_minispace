@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
         public ContextType ContextType { get; set; }
         public ReportCategory Category { get; set; }
         public string Reason { get; set; }
-        public ReportStatus Status { get; set; }
+        public ReportState State { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
