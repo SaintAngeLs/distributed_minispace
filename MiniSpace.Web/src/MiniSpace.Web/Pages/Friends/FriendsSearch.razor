@@ -65,6 +65,11 @@
                                 <RadzenButton Text="Pending" Disabled="true" 
                                             Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
                             }
+                            else if (incomingRequests.Any(r => r.InviteeId == IdentityService.GetCurrentUserId() && r.State == DTO.States.FriendState.Requested))
+                            {
+                                <RadzenButton Text="Incoming Request" Disabled="true" 
+                                            Style="width: 100%; margin-top: 8px; background-color: blue; color: white;" />
+                            }
                             else if (student.Id == IdentityService.GetCurrentUserId())
                             {
                                 <RadzenButton Text="It's You" Disabled="true" 
@@ -116,11 +121,17 @@
                                 <RadzenButton Text="Pending" Disabled="true" 
                                             Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
                             }
+                            else if (incomingRequests.Any(r => r.InviteeId == student.Id))
+                            {
+                                <RadzenButton Text="Incoming Request" Disabled="true" 
+                                            Style="width: 100%; margin-top: 8px; background-color: blue; color: white;" />
+                            }
                             else if (student.Id == IdentityService.GetCurrentUserId())
                             {
                                 <RadzenButton Text="It's You" Disabled="true" 
                                             Style="width: 100%; margin-top: 8px; background-color: grey; color: white;" />
                             }
+                       
                         </div>
                      </div>
                     
@@ -294,9 +305,11 @@
     private int totalStudents;
     private Dictionary<Guid, string> images = new ();
     private IEnumerable<FriendDto> allFriends;
+    private IEnumerable<FriendRequestDto> incomingRequests;
 
     protected override async Task OnInitializedAsync() {
         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+        incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
         allFriends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
                 Console.WriteLine($"Total Friends Loaded: {allFriends.Count()}");
 

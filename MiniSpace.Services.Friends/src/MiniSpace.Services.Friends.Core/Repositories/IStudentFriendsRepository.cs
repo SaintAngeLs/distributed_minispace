@@ -15,5 +15,6 @@ namespace MiniSpace.Services.Friends.Core.Repositories
         Task<bool> ExistsAsync(Guid studentId);
         Task<IEnumerable<Friend>> GetFriendsAsync(Guid studentId);
         Task AddOrUpdateAsync(StudentFriends studentFriends);
+        Task RemoveFriendAsync(Guid studentId, Guid friendId);
     }
 }

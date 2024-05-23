@@ -27,30 +27,23 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var identity = _appContext.Identity;
             Console.WriteLine($"Handling RemoveFriend for RequesterId: {command.RequesterId} and FriendId: {command.FriendId}. Authenticated: {identity.IsAuthenticated}");
 
-            // Check if the friendship exists for both directions
             var requesterFriends = await _studentFriendsRepository.GetAsync(command.RequesterId);
             var friendFriends = await _studentFriendsRepository.GetAsync(command.FriendId);
 
-            // if (!requesterFriends.Friends.Any(f => f.FriendId == command.FriendId) || !friendFriends.Friends.Any(f => f.FriendId == command.RequesterId))
-            // {
-            //     throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
-            // }
+            if (requesterFriends == null || friendFriends == null)
+            {
+                throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
+            }
 
-            // Remove the friendship in both directions
-            requesterFriends.RemoveFriend(command.FriendId);
-            friendFriends.RemoveFriend(command.RequesterId);
+            // Call specific methods to remove the friend connection
+            await _studentFriendsRepository.RemoveFriendAsync(command.RequesterId, command.FriendId);
+            await _studentFriendsRepository.RemoveFriendAsync(command.FriendId, command.RequesterId);
 
-            // Save the updates to both friend records
-            await _studentFriendsRepository.UpdateAsync(requesterFriends);
-            await _studentFriendsRepository.UpdateAsync(friendFriends);
-
-            // Publish an event indicating the friend has been removed
             var eventToPublish = new PendingFriendDeclined(command.RequesterId, command.FriendId);
             await _messageBroker.PublishAsync(eventToPublish);
-
-            // Publish a reciprocal event for the inverse relationship
             var reciprocalEventToPublish = new PendingFriendDeclined(command.FriendId, command.RequesterId);
             await _messageBroker.PublishAsync(reciprocalEventToPublish);
         }
+
     }
 }

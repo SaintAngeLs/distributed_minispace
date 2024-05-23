@@ -71,6 +71,7 @@ public class StudentFriendsMongoRepository : IStudentFriendsRepository
             doc.CreatedAt,
             doc.State)).ToList();
     }
+    
 
 
     public async Task AddOrUpdateAsync(StudentFriends studentFriends)
@@ -108,6 +109,24 @@ public class StudentFriendsMongoRepository : IStudentFriendsRepository
         Console.WriteLine("No changes were made to the document.");
     }
 }
+
+public async Task RemoveFriendAsync(Guid studentId, Guid friendId)
+{
+    var filter = Builders<StudentFriendsDocument>.Filter.Eq(doc => doc.StudentId, studentId);
+    var update = Builders<StudentFriendsDocument>.Update.PullFilter(doc => doc.Friends, Builders<FriendDocument>.Filter.Eq("FriendId", friendId));
+
+    var result = await _repository.Collection.UpdateOneAsync(filter, update);
+
+    if (result.ModifiedCount == 0)
+    {
+        Console.WriteLine($"No friend removed for Student ID: {studentId} with Friend ID: {friendId}");
+    }
+    else
+    {
+        Console.WriteLine($"Friend ID: {friendId} removed from Student ID: {studentId}'s friends list.");
+    }
+}
+
 
 
 
