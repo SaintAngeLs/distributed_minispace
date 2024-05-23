@@ -47,7 +47,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IReportRepository, ReportMongoRepository>();
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
             builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
             builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
@@ -76,7 +75,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<ReportDocument, Guid>("reports")
-                .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddMongoRepository<EventDocument, Guid>("events")
                 .AddMongoRepository<PostDocument, Guid>("posts")
                 .AddMongoRepository<CommentDocument, Guid>("comments")
@@ -96,7 +94,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
                 .SubscribeCommand<CreateReport>()
-                .SubscribeEvent<StudentCreated>()
                 .SubscribeEvent<EventCreated>()
                 .SubscribeEvent<PostCreated>()
                 .SubscribeEvent<CommentCreated>();

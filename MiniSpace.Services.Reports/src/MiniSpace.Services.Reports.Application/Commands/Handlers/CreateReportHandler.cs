@@ -5,7 +5,7 @@ using MiniSpace.Services.Reports.Application.Services;
 using MiniSpace.Services.Reports.Core.Entities;
 using MiniSpace.Services.Reports.Core.Repositories;
 
-namespace MiniSpace.Services.Reports.Application.Commands
+namespace MiniSpace.Services.Reports.Application.Commands.Handlers
 {
     public class CreateReportHandler : ICommandHandler<CreateReport>
     {

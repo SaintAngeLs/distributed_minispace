@@ -37,15 +37,6 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
                 CreatedAt = document.CreatedAt
             };
         
-        public static StudentDocument AsDocument(this Student entity)
-            => new ()
-            {
-                Id = entity.Id,
-            };
-        
-        public static Student AsEntity(this StudentDocument document)
-            => new (document.Id);
-        
         public static Event AsEntity(this EventDocument document)
             => new Event(document.Id);
 
