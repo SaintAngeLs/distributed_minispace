@@ -3,6 +3,8 @@
 @inject IIdentityService IdentityService
 @using MiniSpace.Web.DTO.Notifications
 @using System.Threading
+@inject IJSRuntime JSRuntime
+
 
 <h3 style="background-color: #007BFF; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
 
@@ -25,6 +27,7 @@ else
 }
 </div>
 @code {
+    private List<NotificationDto> previousNotifications = new List<NotificationDto>();
     private List<NotificationDto> notifications;
     private Timer timer;
 
@@ -42,12 +45,36 @@ else
             var userId = IdentityService.GetCurrentUserId(); 
             var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId);
             notifications = paginatedResponse.Results;
+
+            if (isNewNotificationReceived())
+            {
+                PlayNotificationSound();
+            }
+
+            previousNotifications = notifications.ToList();
             StateHasChanged(); // Ensure UI updates
         }
         catch (Exception ex)
         {
             @* Console.WriteLine($"Error loading notifications: {ex.Message}"); *@
         }
+    }
+
+    private bool isNewNotificationReceived()
+    {
+        if (previousNotifications == null || !previousNotifications.Any())
+        {
+            return notifications.Any();
+        }
+        else
+        {
+            return notifications.Any(n => !previousNotifications.Any(p => p.NotificationId == n.NotificationId));
+        }
+    }
+
+    private void PlayNotificationSound()
+    {
+        JSRuntime.InvokeVoidAsync("playNotificationSoundNotificationsService");
     }
 
     public void Dispose()

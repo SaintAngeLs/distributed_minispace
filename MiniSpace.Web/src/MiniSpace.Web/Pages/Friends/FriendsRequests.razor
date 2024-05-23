@@ -264,6 +264,9 @@
         if (request != null)
         {
             await FriendsService.AcceptFriendRequestAsync(request.Id, request.InviterId, request.InviteeId);
+            await JSRuntime.InvokeVoidAsync("playNotificationSound");
+            NotificationService.Notify(Radzen.NotificationSeverity.Success, "Friend Request Accepted", duration: 4000);
+            StateHasChanged();
             incomingRequests = incomingRequests.Where(r => r.Id != requestId).ToList();
             SearchIncomingRequests(); // Reapply search filter to update the UI
             NotificationService.Notify(Radzen.NotificationSeverity.Success, "Request Accepted", duration: 4000);
