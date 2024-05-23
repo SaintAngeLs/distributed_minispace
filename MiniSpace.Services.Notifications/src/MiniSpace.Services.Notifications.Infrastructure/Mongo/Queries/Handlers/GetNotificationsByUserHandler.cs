@@ -24,34 +24,37 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
         public async Task<Application.Queries.PagedResult<NotificationDto>> HandleAsync(GetNotificationsByUser query, CancellationToken cancellationToken)
         {
             var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, query.UserId);
-            var sortBy = Builders<StudentNotificationsDocument>.Sort.Descending(query.OrderBy); 
+            var sortBy = Builders<StudentNotificationsDocument>.Sort.Descending(doc => doc.Notifications[-1].CreatedAt);
 
             if (query.SortOrder.ToLower() == "asc")
             {
-                sortBy = Builders<StudentNotificationsDocument>.Sort.Ascending(query.OrderBy);
+                sortBy = Builders<StudentNotificationsDocument>.Sort.Ascending(doc => doc.Notifications[-1].CreatedAt);
             }
 
-            var options = new FindOptions<StudentNotificationsDocument, StudentNotificationsDocument>
+            var notificationsList = new List<NotificationDto>();
+
+            var documents = await _repository.Collection.Find(filter).ToListAsync(cancellationToken);
+            
+            var allNotifications = documents.SelectMany(doc => doc.Notifications
+                .Where(n => (!query.StartDate.HasValue || n.CreatedAt >= query.StartDate.Value) &&
+                            (!query.EndDate.HasValue || n.CreatedAt <= query.EndDate.Value))
+                .Select(n => n.AsDto()))
+                .OrderByDescending(n => n.CreatedAt)
+                .ToList();
+
+            if (query.SortOrder.ToLower() == "asc")
             {
-                Limit = query.ResultsPerPage,
-                Skip = (query.Page - 1) * query.ResultsPerPage,
-                Sort = sortBy
-            };
-
-            using (var cursor = await _repository.Collection.FindAsync(filter, options, cancellationToken))
-            {
-                var documents = await cursor.ToListAsync(cancellationToken);
-                var notificationDtos = documents
-                    .SelectMany(doc => doc.Notifications
-                        .Where(n => (!query.StartDate.HasValue || n.CreatedAt >= query.StartDate.Value) &&
-                                    (!query.EndDate.HasValue || n.CreatedAt <= query.EndDate.Value))
-                        .Select(n => n.AsDto()))
-                    .ToList();
-
-                var total = await _repository.Collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
-
-                return new Application.Queries.PagedResult<NotificationDto>(notificationDtos, (int)total, query.ResultsPerPage, query.Page, BaseUrl);
+                allNotifications = allNotifications.OrderBy(n => n.CreatedAt).ToList();
             }
+
+            var totalNotifications = allNotifications.Count;
+            var paginatedNotifications = allNotifications
+                .Skip((query.Page - 1) * query.ResultsPerPage)
+                .Take(query.ResultsPerPage)
+                .ToList();
+
+            return new Application.Queries.PagedResult<NotificationDto>(paginatedNotifications, totalNotifications, query.ResultsPerPage, query.Page, BaseUrl);
         }
+
     }
 }

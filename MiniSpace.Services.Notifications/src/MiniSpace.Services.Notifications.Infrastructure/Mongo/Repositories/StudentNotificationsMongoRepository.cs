@@ -41,6 +41,13 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             await _repository.Collection.UpdateOneAsync(filter, update, options);
         }
 
+       public async Task<List<StudentNotifications>> FindAsync(FilterDefinition<StudentNotificationsDocument> filter, FindOptions options)
+        {
+            var documents = await _repository.Collection.Find(filter, options).ToListAsync();
+            return documents.Select(doc => doc.AsEntity()).ToList();
+        }
+
+
         public Task DeleteAsync(Guid studentId)
         {
             return _repository.DeleteAsync(studentId);
