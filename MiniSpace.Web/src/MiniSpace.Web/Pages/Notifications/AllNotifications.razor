@@ -28,7 +28,7 @@
 else if (notifications.Any())
 {
     <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowColumnResize="true" 
-    AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" 
+    AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="25" 
     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
         <Columns>
             <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message" />
