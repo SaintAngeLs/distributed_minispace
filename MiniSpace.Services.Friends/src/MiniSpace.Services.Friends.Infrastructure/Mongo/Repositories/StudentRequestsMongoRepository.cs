@@ -103,5 +103,28 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
                 await _repository.DeleteAsync(document.Id);
             }
         }
+
+        public async Task RemoveFriendRequestAsync(Guid requesterId, Guid friendId)
+        {
+            var filter = Builders<StudentRequestsDocument>.Filter.Eq(doc => doc.StudentId, requesterId) &
+                        Builders<StudentRequestsDocument>.Filter.Or(
+                            Builders<StudentRequestsDocument>.Filter.ElemMatch(doc => doc.FriendRequests, Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviterId, friendId)),
+                            Builders<StudentRequestsDocument>.Filter.ElemMatch(doc => doc.FriendRequests, Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviteeId, friendId))
+                        );
+
+            var update = Builders<StudentRequestsDocument>.Update.PullFilter(doc => doc.FriendRequests,
+                Builders<FriendRequestDocument>.Filter.Or(
+                    Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviterId, friendId),
+                    Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviteeId, friendId)
+                ));
+
+            var result = await _repository.Collection.UpdateOneAsync(filter, update);
+
+            if (result.ModifiedCount == 0)
+            {
+                throw new Exception("No friend request was removed.");
+            }
+        }
+
     }
 }

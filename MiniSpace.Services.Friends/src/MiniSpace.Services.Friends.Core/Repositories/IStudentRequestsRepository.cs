@@ -13,5 +13,6 @@ namespace MiniSpace.Services.Friends.Core.Repositories
         Task UpdateAsync(StudentRequests studentRequests);
         Task UpdateAsync(Guid studentId, IEnumerable<FriendRequest> updatedFriendRequests);
         Task DeleteAsync(Guid studentId);
+        Task RemoveFriendRequestAsync(Guid requesterId, Guid friendId); 
     }
 }
