@@ -1,4 +1,4 @@
-﻿eusing System;
+﻿using System;
 using System.Collections.Generic;
 using Convey.CQRS.Events;
 
