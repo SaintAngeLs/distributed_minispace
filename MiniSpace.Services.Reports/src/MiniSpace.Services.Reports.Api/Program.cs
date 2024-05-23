@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Reports.Application;
 using MiniSpace.Services.Reports.Application.Commands;
 using MiniSpace.Services.Reports.Application.DTO;
-using MiniSpace.Services.Reports.Application.Queries;
+//using MiniSpace.Services.Reports.Application.Queries;
 using MiniSpace.Services.Reports.Core.Entities;
 using MiniSpace.Services.Reports.Infrastructure;
 
@@ -32,7 +32,8 @@ namespace MiniSpace.Services.Reports.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        
+                        .Post<CreateReport>("reports", afterDispatch: (cmd, ctx) 
+                            => ctx.Response.Created($"reports/{cmd.ReportId}"))
                         ))
                 .UseLogging()
                 .Build()

@@ -24,5 +24,10 @@
             Status = status;
             CreatedAt = createdAt;
         }
+
+        public static Report Create(Guid id, Guid issuerId, Guid targetId, Guid targetOwnerId, ContextType contextType,
+            ReportCategory category, string reason, DateTime now)   
+            => new Report(id, issuerId, targetId, targetOwnerId, contextType, category, reason, ReportStatus.Submitted,
+                now);
     }
 }

@@ -10,41 +10,11 @@ namespace MiniSpace.Services.Reports.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(CreateRootOrganization),  new HandlerLogTemplate
+                    typeof(CreateReport),  new HandlerLogTemplate
                     {
-                        After = "Created a new root organization with id: {OrganizationId}."
+                        After = "Created a new report with ID: {ReportId}."
                     }
                 },
-                {
-                    typeof(CreateOrganization),  new HandlerLogTemplate
-                    {
-                        After = "Added a new child organization with id: {OrganizationId} for parent with id: {ParentId}."
-                    }
-                },
-                {
-                    typeof(AddOrganizerToOrganization), new HandlerLogTemplate
-                    {
-                        After = "Added an organizer with id: {OrganizerId} to the organization with id: {OrganizationId}."
-                    }
-                },
-                {
-                    typeof(RemoveOrganizerFromOrganization), new HandlerLogTemplate
-                    {
-                        After = "Removed an organizer with id: {OrganizerId} from the organization with id: {OrganizationId}."
-                    }
-                },
-                {
-                    typeof(OrganizerRightsGranted), new HandlerLogTemplate
-                    {
-                        After = "Created an organizer with id: {UserId}."
-                    }
-                },
-                {
-                    typeof(OrganizerRightsRevoked), new HandlerLogTemplate
-                    {
-                        After = "Deleted an organizer with id: {UserId}."
-                    }
-                }
             };
         
         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class

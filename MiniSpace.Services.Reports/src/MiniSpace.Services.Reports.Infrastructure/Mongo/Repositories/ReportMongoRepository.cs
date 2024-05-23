@@ -20,6 +20,14 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
 
             return report?.AsEntity();
         }
+        
+        public async Task<IEnumerable<Report>> GetStudentActiveReportsAsync(Guid studentId)
+        {
+            var reports = await _repository.FindAsync(r => r.IssuerId == studentId 
+                && r.Status == ReportStatus.Submitted || r.Status == ReportStatus.UnderReview);
+
+            return reports.Select(r => r.AsEntity());
+        }
 
         public Task AddAsync(Report report)
             => _repository.AddAsync(report.AsDocument());

@@ -41,11 +41,10 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
             => new ()
             {
                 Id = entity.Id,
-                ActiveReports = entity.ActiveReports
             };
         
         public static Student AsEntity(this StudentDocument document)
-            => new (document.Id, document.ActiveReports);
+            => new (document.Id);
         
         public static Event AsEntity(this EventDocument document)
             => new Event(document.Id);
