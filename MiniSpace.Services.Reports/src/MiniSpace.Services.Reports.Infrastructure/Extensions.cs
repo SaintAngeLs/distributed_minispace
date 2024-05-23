@@ -53,6 +53,7 @@ namespace MiniSpace.Services.Reports.Infrastructure
             builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
+            builder.Services.AddSingleton<IReportValidator, ReportValidator>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());

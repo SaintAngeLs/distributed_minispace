@@ -5,6 +5,7 @@
         Submitted,
         UnderReview,
         Resolved,
-        Rejected
+        Rejected,
+        Cancelled
     }
 }
