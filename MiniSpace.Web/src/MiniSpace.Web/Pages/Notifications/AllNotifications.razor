@@ -3,9 +3,21 @@
 @inject INotificationsService NotificationsService
 @inject NavigationManager NavigationManager
 @using MiniSpace.Web.DTO.Notifications
-@using Radzen;
-@using System.Linq; 
+@using Radzen
+@using System.Linq
 @inject IIdentityService IdentityService
+@using MudBlazor
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+    };
+}
 
 <h3>All Notifications</h3>
 
@@ -15,14 +27,27 @@
 }
 else if (notifications.Any())
 {
-    <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowSorting="true">
+    <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowColumnResize="true" 
+    AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" 
+    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
         <Columns>
             <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message" />
             <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
-            <RadzenDataGridColumn TItem="NotificationDto" Property="Status" Title="Status" />
+            <RadzenDataGridColumn TItem="NotificationDto" Property="IsActive" Title="Active Status">
+                <Template Context="notification">
+                    <RadzenToggleButton  Shade="Shade.Lighter" @bind-Value=notification.IsActive 
+                    Text="@(notification.IsActive ? "Active" : "Inactive")" 
+                    Change="@(value => UpdateNotificationStatus(notification, value))"  
+                    ToggleShade="Shade.Darker" ButtonStyle="ButtonStyle.Primary"
+                    Style="margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0" 
+                    />
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
                 <Template>
-                    <RadzenButton Text="Delete" Style="color: red;" Click="@(async () => await DeleteNotification(notification.NotificationId))" />
+                    <RadzenButton Text="Delete" 
+                    Style="color: #fff; margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0"  
+                    Click="@(async () => await DeleteNotification(notification.NotificationId))" />
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -43,17 +68,21 @@ else
 
     private async Task LoadNotifications()
     {
-        var userId = IdentityService.GetCurrentUserId(); 
-        Console.WriteLine($"User ID: {userId}"); 
+        var userId = IdentityService.GetCurrentUserId();
         var response = await NotificationsService.GetNotificationsByUserAsync(userId);
         notifications = response.Results;
-        StateHasChanged(); 
+        StateHasChanged();
     }
 
+    private async Task UpdateNotificationStatus(NotificationDto notification, bool newValue)
+    {
+        await NotificationsService.UpdateNotificationStatusAsync(notification.NotificationId, newValue);
+        StateHasChanged();
+    }
     private async Task DeleteNotification(Guid notificationId)
     {
         await NotificationsService.DeleteNotificationAsync(notificationId);
         notifications.RemoveAll(n => n.NotificationId == notificationId);
-        StateHasChanged(); // Re-render the component
+        StateHasChanged(); 
     }
 }

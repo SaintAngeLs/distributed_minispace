@@ -10,6 +10,8 @@ namespace MiniSpace.Web.Areas.Notifications
     {
        Task<PaginatedResponseDto<NotificationDto>> GetNotificationsByUserAsync(Guid userId, int page = 1, int pageSize = 10, string sortOrder = "desc");
         Task UpdateNotificationStatusAsync(Guid notificationId, string status);
+
+         Task UpdateNotificationStatusAsync(Guid notificationId, bool isActive); 
         Task DeleteNotificationAsync(Guid notificationId);
     }
 }
