@@ -10,6 +10,7 @@ namespace MiniSpace.Services.Notifications.Core.Repositories
         Task<StudentNotifications> GetByStudentIdAsync(Guid studentId);
         Task AddAsync(StudentNotifications studentNotifications);
         Task UpdateAsync(StudentNotifications studentNotifications);
+        Task AddOrUpdateAsync(StudentNotifications studentNotifications);
         Task DeleteAsync(Guid studentId);
     }
 }

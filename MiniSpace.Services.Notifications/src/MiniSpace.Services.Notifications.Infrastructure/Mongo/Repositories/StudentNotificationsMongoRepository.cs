@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
 {
-    public class StudentNotificationsMongoRepository : IStudentNotificationsRepository
+    public class StudentNotificationsMongoRepository : IExtendedStudentNotificationsRepository
     {
         private readonly IMongoRepository<StudentNotificationsDocument, Guid> _repository;
 
@@ -40,6 +40,20 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             var options = new UpdateOptions { IsUpsert = true };
             await _repository.Collection.UpdateOneAsync(filter, update, options);
         }
+
+        public async Task AddOrUpdateAsync(StudentNotifications studentNotifications)
+        {
+            var document = studentNotifications.AsDocument();
+            var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.Id, studentNotifications.StudentId);
+            var update = Builders<StudentNotificationsDocument>.Update
+                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId)
+                .Set(doc => doc.StudentId, studentNotifications.StudentId) 
+                .PushEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument()));
+
+            var options = new UpdateOptions { IsUpsert = true };
+            await _repository.Collection.UpdateOneAsync(filter, update, options);
+        }
+
 
        public async Task<List<StudentNotifications>> FindAsync(FilterDefinition<StudentNotificationsDocument> filter, FindOptions options)
         {

@@ -14,7 +14,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                                         IEventHandler<FriendInvited>
     {
         private readonly INotificationRepository _notificationRepository;
-           private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;

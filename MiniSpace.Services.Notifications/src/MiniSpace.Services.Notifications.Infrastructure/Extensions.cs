@@ -54,6 +54,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
             builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
             builder.Services.AddTransient<IStudentNotificationsRepository, StudentNotificationsMongoRepository>();
+            builder.Services.AddTransient<IExtendedStudentNotificationsRepository, StudentNotificationsMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();

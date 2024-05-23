@@ -22,16 +22,14 @@ namespace MiniSpace.Web.Areas.Notifications
             _identityService = identityService;
         }
 
-        public async Task<PaginatedResponseDto<NotificationDto>> GetNotificationsByUserAsync(Guid userId, int page = 1, int pageSize = 10)
+        public async Task<PaginatedResponseDto<NotificationDto>> GetNotificationsByUserAsync(Guid userId, int page = 1, int pageSize = 10, string sortOrder = "desc")
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            var url = $"notifications/{userId}?page={page}&pageSize={pageSize}";
+            var url = $"notifications/{userId}?page={page}&pageSize={pageSize}&sortOrder={sortOrder}";
 
             // Fetch the paginated response from the server
             var response = await _httpClient.GetAsync<PaginatedResponseDto<NotificationDto>>(url);
-
-           
 
             return response;
         }

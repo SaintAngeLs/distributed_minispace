@@ -53,6 +53,9 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             // Publish related events
             var events = _eventMapper.MapAll(new Core.Events.PendingFriendAccepted(command.RequesterId, command.FriendId));
             await _messageBroker.PublishAsync(events);
+
+            var pendingFriendAcceptedEvent = new PendingFriendAccepted(command.RequesterId, command.FriendId);
+            await _messageBroker.PublishAsync(pendingFriendAcceptedEvent);
         }
 
         private FriendRequest FindFriendRequest(StudentRequests inviter, StudentRequests invitee, Guid inviterId, Guid inviteeId)
