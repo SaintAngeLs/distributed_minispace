@@ -71,8 +71,9 @@
         *@
         @if (IsUserAuthenticated)
         {
-            <RadzenSidebar @bind-Expanded="@_sidebarExpanded" Width="@(IsUserAuthenticated ? "100px" : "0px")" style="transition: width 0.5s;">
-                <RadzenPanelMenu>
+            <RadzenSidebar @bind-Expanded="@_sidebarExpanded" Width="@(IsUserAuthenticated ? "100px" : "0px")" style="transition: width 0.5s;"
+            DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
+                <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
                     <RadzenPanelMenuItem Text="Home" Icon="home"
                                          Click="@(() => NavigationManager.NavigateTo(""))" />
                     
