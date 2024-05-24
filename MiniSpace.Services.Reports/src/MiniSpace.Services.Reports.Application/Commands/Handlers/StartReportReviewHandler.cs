@@ -10,13 +10,15 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
     {
         private readonly IReportRepository _reportRepository;
         private readonly IAppContext _appContext;
+        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
         
         public StartReportReviewHandler(IReportRepository reportRepository, IAppContext appContext,
-            IMessageBroker messageBroker)
+            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
         {
             _reportRepository = reportRepository;
             _appContext = appContext;
+            _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
         }
 
@@ -34,7 +36,7 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
                 throw new UnauthorizedReportAccessAttemptException(report.Id, identity.Id);
             }
 
-            report.StartReview(command.ReviewerId);
+            report.StartReview(command.ReviewerId, _dateTimeProvider.Now);
             await _reportRepository.UpdateAsync(report);
             await _messageBroker.PublishAsync(new ReportReviewStarted(report.Id, command.ReviewerId));
         }

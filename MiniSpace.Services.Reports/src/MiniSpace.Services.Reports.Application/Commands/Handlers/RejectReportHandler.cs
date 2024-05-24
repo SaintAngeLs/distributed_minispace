@@ -6,14 +6,14 @@ using MiniSpace.Services.Reports.Core.Repositories;
 
 namespace MiniSpace.Services.Reports.Application.Commands.Handlers
 {
-    public class CancelReportHandler : ICommandHandler<CancelReport>
+    public class RejectReportHandler : ICommandHandler<RejectReport>
     {
         private readonly IReportRepository _reportRepository;
         private readonly IAppContext _appContext;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
-
-        public CancelReportHandler(IReportRepository reportRepository, IAppContext appContext,
+        
+        public RejectReportHandler(IReportRepository reportRepository, IAppContext appContext,
             IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
         {
             _reportRepository = reportRepository;
@@ -21,23 +21,24 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
             _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
         }
-        public async Task HandleAsync(CancelReport command, CancellationToken cancellationToken)
+        
+        public async Task HandleAsync(RejectReport command, CancellationToken cancellationToken)
         {
             var report = await _reportRepository.GetAsync(command.ReportId);
             if (report is null)
             {
                 throw new ReportNotFoundException(command.ReportId);
             }
-            
+
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != report.IssuerId)
+            if (identity.IsAuthenticated && identity.Id != report.ReviewerId)
             {
                 throw new UnauthorizedReportAccessAttemptException(report.Id, identity.Id);
             }
 
-            report.Cancel(_dateTimeProvider.Now);
+            report.Reject(_dateTimeProvider.Now);
             await _reportRepository.UpdateAsync(report);
-            await _messageBroker.PublishAsync(new ReportCancelled(report.Id));
+            await _messageBroker.PublishAsync(new ReportResolved(report.Id));
         }
     }
 }

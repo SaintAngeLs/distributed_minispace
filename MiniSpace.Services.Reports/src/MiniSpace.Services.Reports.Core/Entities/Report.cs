@@ -12,10 +12,12 @@ namespace MiniSpace.Services.Reports.Core.Entities
         public string Reason { get; private set; }
         public ReportState State { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
         public Guid? ReviewerId { get; private set; }
         
         public Report(Guid id, Guid issuerId, Guid targetId, Guid targetOwnerId, ContextType contextType, 
-            ReportCategory category, string reason, ReportState state, DateTime createdAt, Guid? reviewerId = null)
+            ReportCategory category, string reason, ReportState state, DateTime createdAt, DateTime? updatedAt = null,
+            Guid? reviewerId = null)
         {
             Id = id;
             IssuerId = issuerId;
@@ -26,6 +28,7 @@ namespace MiniSpace.Services.Reports.Core.Entities
             Reason = reason;
             State = state;
             CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
             ReviewerId = reviewerId;
         }
 
@@ -34,23 +37,45 @@ namespace MiniSpace.Services.Reports.Core.Entities
             => new Report(id, issuerId, targetId, targetOwnerId, contextType, category, reason, ReportState.Submitted,
                 now);
 
-        public void Cancel()
+        public void Cancel(DateTime now)
         {
             if (State != ReportState.Submitted)
             {
                 throw new InvalidReportStateException(Id, ReportState.Submitted, State);
             }
             State = ReportState.Cancelled;
+            UpdatedAt = now;
         }
         
-        public void StartReview(Guid reviewerId)
+        public void StartReview(Guid reviewerId, DateTime now)
         {
             if (State != ReportState.Submitted)
             {
                 throw new InvalidReportStateException(Id, ReportState.Submitted, State);
             }
             State = ReportState.UnderReview;
+            UpdatedAt = now;
             ReviewerId = reviewerId;
+        }
+        
+        public void Resolve(DateTime now)
+        {
+            if (State != ReportState.UnderReview)
+            {
+                throw new InvalidReportStateException(Id, ReportState.UnderReview, State);
+            }
+            State = ReportState.Resolved;
+            UpdatedAt = now;
+        }
+        
+        public void Reject(DateTime now)
+        {
+            if (State != ReportState.UnderReview)
+            {
+                throw new InvalidReportStateException(Id, ReportState.UnderReview, State);
+            }
+            State = ReportState.Rejected;
+            UpdatedAt = now;
         }
     }
 }
