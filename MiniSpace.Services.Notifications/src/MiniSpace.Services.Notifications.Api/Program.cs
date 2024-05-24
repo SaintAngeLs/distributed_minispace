@@ -32,7 +32,7 @@ namespace MiniSpace.Services.Notifications.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetNotificationsByUser, Application.Queries.PagedResult<NotificationDto>>("notifications/{userId}")
-                        // .Get<GetNotification, NotificationDto>("notifications/{notificationId}")
+                        .Get<GetNotification, NotificationDto>("notifications/{userId}/{notificationId}")
                         .Post<CreateNotification>("notifications")
                         .Put<UpdateNotificationStatus>("notifications/{notificationId}/status")
                         .Delete<DeleteNotification>("notifications/notification/{notificationId}", afterDispatch: (cmd, ctx) => ctx.Response.NoContent())))
