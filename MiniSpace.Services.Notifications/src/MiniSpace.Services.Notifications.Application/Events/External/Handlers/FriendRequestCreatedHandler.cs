@@ -37,7 +37,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             if (requester == null || friend == null)
             {
                 _logger.LogError($"Failed to fetch student data for RequesterId={friendEvent.RequesterId} or FriendId={friendEvent.FriendId}");
-                return; // Early exit if any student data is missing
+                return; 
             }
 
             var eventDetails = $"A new friend request created from {requester.FirstName} {requester.LastName} to {friend.FirstName} {friend.LastName}";

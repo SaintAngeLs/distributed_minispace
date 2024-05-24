@@ -23,8 +23,6 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
         public async Task HandleAsync(DeleteNotification command, CancellationToken cancellationToken = default)
         {
-            // Console.WriteLine("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
-            // Console.WriteLine($"{command.UserId}");
             var exists = await _studentNotificationsRepository.NotificationExists(command.UserId, command.NotificationId);
             if (!exists)
             {

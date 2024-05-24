@@ -36,10 +36,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         {
             var inviter = await _studentsServiceClient.GetAsync(@event.InviterId);
             // var invitee = await _studentsServiceClient.GetAsync(@event.InviteeId);
-            // Console.WriteLine("Inviter Object:");
-            // Console.WriteLine(JsonSerializer.Serialize(inviter, new JsonSerializerOptions { WriteIndented = true }));
-
-
+       
             var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
 
             var notification = new Notification(
@@ -52,25 +49,20 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             await _notificationRepository.AddAsync(notification);
-            // Console.WriteLine("Notification added to repository: " + JsonSerializer.Serialize(notification));
 
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId);
             if (studentNotifications == null)
             {
                 studentNotifications = new StudentNotifications(@event.InviteeId);
-                // Console.WriteLine($"No existing notifications found for studentId {@event.InviterId}. Creating new StudentNotifications object.");
             }
             else
             {
-                // Console.WriteLine($"Retrieved existing notifications for studentId {@event.InviterId}.");
+                // _logger.AddInformation($"Retrieved existing notifications for studentId {@event.InviterId}.");
             }
 
             studentNotifications.AddNotification(notification);
-            // Console.WriteLine("Notification added to StudentNotifications: " + JsonSerializer.Serialize(notification));
 
             await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-            // Console.WriteLine($"StudentNotifications updated for studentId {@event.InviterId}: " + JsonSerializer.Serialize(studentNotifications));
-
 
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,

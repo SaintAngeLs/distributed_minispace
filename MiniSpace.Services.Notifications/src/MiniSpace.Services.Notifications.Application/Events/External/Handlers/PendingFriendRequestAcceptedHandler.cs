@@ -70,10 +70,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 message: notification.Message,
                 createdAt: notification.CreatedAt
             );
-
-            // Publish the NotificationCreated event through the message broker
-            // await _messageBroker.PublishAsync(notificationCreatedEvent);
-            // _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
         }
     }
 }
