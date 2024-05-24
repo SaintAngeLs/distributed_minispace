@@ -35,17 +35,17 @@ else if (notifications.Any())
             <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
             <RadzenDataGridColumn TItem="NotificationDto" Property="IsActive" Title="Active Status">
                 <Template Context="notification">
-                    <RadzenToggleButton  Shade="Shade.Lighter" @bind-Value=notification.IsActive 
+                    <RadzenToggleButton  ButtonStyle="ButtonStyle.Light"  ToggleButtonStyle="ButtonStyle.Dark"  @bind-Value=notification.IsActive 
                     Text="@(notification.IsActive ? "Active" : "Inactive")" 
                     Change="@(value => UpdateNotificationStatus(notification, value))"  
-                    ToggleShade="Shade.Darker" ButtonStyle="ButtonStyle.Primary"
+                    Shade="Shade.Lighter" ToggleShade="Shade.Darker"
                     Style="margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0" 
                     />
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
                 <Template>
-                    <RadzenButton Text="Delete" 
+                    <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Primary"  
                     Style="color: #fff; margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0"  
                     Click="@(async () => await DeleteNotification(notification.NotificationId))" />
                 </Template>
