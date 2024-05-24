@@ -1,16 +1,15 @@
-﻿using System;
+using System;
 using Convey.CQRS.Events;
 using Convey.MessageBrokers;
 
-namespace MiniSpace.Services.Events.Application.Events
+namespace MiniSpace.Services.Notifications.Application.Events
 {
-    [Message("notifications")]
-    public class StudentCancelledInterestInEvent: IEvent
+    public class StudentCancelledSignUpToEvent: IEvent
     {
         public Guid EventId { get; }
         public Guid StudentId { get; }
         
-        public StudentCancelledInterestInEvent(Guid eventId, Guid studentId)
+        public StudentCancelledSignUpToEvent(Guid eventId, Guid studentId)
         {
             EventId = eventId;
             StudentId = studentId;
