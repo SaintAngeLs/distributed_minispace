@@ -4,6 +4,7 @@
 @using MiniSpace.Web.DTO.Notifications
 @using System.Threading
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
 <div style="background-color: #fff; color: white; padding: 10px; border-radius: 5px;">
     <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
@@ -14,7 +15,8 @@
         <ul style="list-style: none; padding: 0; margin: 0;">
             @foreach (var notification in notifications)
             {
-                <li style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;">
+                <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)" 
+                    style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;" >
                     <span style="display: block; color: #333; margin-bottom: 4px;">@notification.Message</span>
                     <span style="display: block; font-size: 0.8em; color: #666;">@notification.CreatedAt.ToString("g")</span>
                 </li>
@@ -79,6 +81,11 @@
     private void PlayNotificationSound()
     {
         JSRuntime.InvokeVoidAsync("playNotificationSoundNotificationsService");
+    }
+
+    private void NavigateToNotificationDetail(Guid notificationId)
+    {
+        NavigationManager.NavigateTo($"/notification/{notificationId}");
     }
 
     public void Dispose()
