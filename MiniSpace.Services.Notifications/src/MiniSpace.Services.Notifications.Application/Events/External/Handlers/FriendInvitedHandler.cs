@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
-                relatedEntityId: @event.InviteeId,
+                relatedEntityId: @event.InviterId,
                 eventType: NotificationEventType.NewFriendRequest
             );
 

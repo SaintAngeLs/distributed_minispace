@@ -25,7 +25,7 @@
 @if (notification != null)
 {
     <div>
-        <p><strong>Message:</strong> @notification.Message</p>
+        <p><strong>Message:</strong> @RenderMessage(notification)</p>
         <p><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</p>
         <p><strong>Status:</strong> @notification.Status</p>
         <input type="hidden" value="@notification.NotificationId" />
@@ -54,5 +54,17 @@ else
         await NotificationsService.UpdateNotificationStatusAsync(userId, notificationId, newStatus);
         notification.Status = newStatus;
         StateHasChanged();
+    }
+
+    private MarkupString RenderMessage(NotificationDto notification)
+    {
+        if (!string.IsNullOrEmpty(notification.RelatedEntityId.ToString()))
+        {
+            return new MarkupString($"{notification.Message} <a href='/student-details/{notification.RelatedEntityId}'>View Profile</a>");
+        }
+        else
+        {
+            return new MarkupString(notification.Message);
+        }
     }
 }
