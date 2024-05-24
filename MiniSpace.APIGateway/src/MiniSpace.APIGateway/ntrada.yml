@@ -197,8 +197,14 @@ modules:
         method: DELETE
         use: downstream
         downstream: notifications-service/notifications/notification/{notificationId}
-        # afterDispatch: (cmd, ctx) => ctx.Response.NoContent() 
         auth: true 
+
+      - upstream: /{userId}/{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/{userId}/{notificationId}
+        auth: true
+        description: Retrieves a specific notification for a user by notification ID.
 
       - upstream: /{notificationId}/status
         method: PUT
@@ -209,7 +215,8 @@ modules:
     services:
       notifications-service:
         localUrl: localhost:5006
-        url: notifications-service 
+        url: notifications-service
+  
 
         
         
