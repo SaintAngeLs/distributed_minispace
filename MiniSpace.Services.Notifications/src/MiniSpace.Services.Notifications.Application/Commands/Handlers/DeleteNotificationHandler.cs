@@ -4,6 +4,7 @@ using MiniSpace.Services.Notifications.Application.Exceptions;
 using MiniSpace.Services.Notifications.Application.Services;
 using System.Threading.Tasks;
 using System;
+using MiniSpace.Services.Notifications.Application.Events.External;
 
 namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 {
@@ -22,19 +23,19 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
         public async Task HandleAsync(DeleteNotification command, CancellationToken cancellationToken = default)
         {
-            var exists = await _studentNotificationsRepository.NotificationExists(command.StudentId, command.NotificationId);
+            // Check if the notification exists before attempting to delete
+            var exists = await _studentNotificationsRepository.NotificationExists(command.UserId, command.NotificationId);
             if (!exists)
             {
                 throw new NotificationNotFoundException(command.NotificationId);
             }
 
-            // Assume that the Delete method in the repository takes care of marking it as deleted or actually removing it
-            await _studentNotificationsRepository.DeleteAsync(command.StudentId, command.NotificationId);
+            // Perform the deletion of the notification
+            await _studentNotificationsRepository.DeleteNotification(command.UserId, command.NotificationId);
 
-            // Optional: handle domain events associated with deleting notifications
-            // This could be publishing events that notification has been deleted etc.
-            var events = _eventMapper.MapAll(new [] { "NotificationDeleted" }); // Example of mapping deletion to an event
-            await _messageBroker.PublishAsync(events.ToArray());
+          
+              var notificationDeletedEvent = new NotificationDeleted(command.UserId, command.NotificationId);
+            await _messageBroker.PublishAsync(notificationDeletedEvent);
         }
     }
 }

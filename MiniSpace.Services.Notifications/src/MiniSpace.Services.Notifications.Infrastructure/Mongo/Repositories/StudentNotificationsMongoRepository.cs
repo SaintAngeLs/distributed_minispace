@@ -103,5 +103,16 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             return result;
         }
 
+        public async Task DeleteNotification(Guid studentId, Guid notificationId)
+        {
+            var filter = Builders<StudentNotificationsDocument>.Filter.And(
+                Builders<StudentNotificationsDocument>.Filter.Eq(d => d.StudentId, studentId),
+                Builders<StudentNotificationsDocument>.Filter.ElemMatch(e => e.Notifications, n => n.NotificationId == notificationId));
+
+            var update = Builders<StudentNotificationsDocument>.Update.PullFilter(
+                p => p.Notifications, n => n.NotificationId == notificationId);
+
+            await _repository.Collection.UpdateOneAsync(filter, update);
+        }
     }
 }
