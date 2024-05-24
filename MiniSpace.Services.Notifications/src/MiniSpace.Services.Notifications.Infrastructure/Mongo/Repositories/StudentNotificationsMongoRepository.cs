@@ -77,5 +77,31 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
         {
             return await _repository.Collection.UpdateManyAsync(filter, update);
         }
+
+        public async Task UpdateNotificationStatus(Guid studentId, Guid notificationId, string newStatus)
+        {
+            var filter = Builders<StudentNotificationsDocument>.Filter.And(
+                Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentId),
+                Builders<StudentNotificationsDocument>.Filter.ElemMatch(doc => doc.Notifications, n => n.NotificationId == notificationId)
+            );
+
+            var update = Builders<StudentNotificationsDocument>.Update
+                .Set("Notifications.$.Status", newStatus)
+                .CurrentDate("Notifications.$.UpdatedAt");
+
+            await _repository.Collection.UpdateOneAsync(filter, update);
+        }
+        
+        public async Task<bool> NotificationExists(Guid studentId, Guid notificationId)
+        {
+            var filter = Builders<StudentNotificationsDocument>.Filter.And(
+                Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentId),
+                Builders<StudentNotificationsDocument>.Filter.ElemMatch(doc => doc.Notifications, n => n.NotificationId == notificationId)
+            );
+
+            var result = await _repository.Collection.Find(filter).AnyAsync();
+            return result;
+        }
+
     }
 }

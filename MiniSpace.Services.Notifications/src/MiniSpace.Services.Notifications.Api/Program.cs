@@ -34,7 +34,7 @@ namespace MiniSpace.Services.Notifications.Api
                         .Get<GetNotificationsByUser, Application.Queries.PagedResult<NotificationDto>>("notifications/{userId}")
                         .Get<GetNotification, NotificationDto>("notifications/{userId}/{notificationId}")
                         .Post<CreateNotification>("notifications")
-                        .Put<UpdateNotificationStatus>("notifications/{notificationId}/status")
+                        .Put<UpdateNotificationStatus>("notifications/{userId}/{notificationId}/status")
                         .Delete<DeleteNotification>("notifications/notification/{notificationId}", afterDispatch: (cmd, ctx) => ctx.Response.NoContent())))
                 .UseLogging()
                 .UseLogging()

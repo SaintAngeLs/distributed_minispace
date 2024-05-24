@@ -12,5 +12,7 @@ namespace MiniSpace.Services.Notifications.Core.Repositories
         Task UpdateAsync(StudentNotifications studentNotifications);
         Task AddOrUpdateAsync(StudentNotifications studentNotifications);
         Task DeleteAsync(Guid studentId);
+        Task UpdateNotificationStatus(Guid studentId, Guid notificationId, string newStatus);
+        Task<bool> NotificationExists(Guid studentId, Guid notificationId);
     }
 }

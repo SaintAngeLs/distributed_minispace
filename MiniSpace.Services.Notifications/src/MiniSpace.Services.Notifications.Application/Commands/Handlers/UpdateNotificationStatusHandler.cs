@@ -1,47 +1,32 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Core.Entities;
-using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Exceptions;
+using MiniSpace.Services.Notifications.Core.Entities;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
-{
-    public class UpdateNotificationStatusHandler : ICommandHandler<UpdateNotificationStatus>
-    {
-        private readonly INotificationRepository _notificationRepository;
-        private readonly IEventMapper _eventMapper;
-        private readonly IMessageBroker _messageBroker;
+namespace MiniSpace.Services.Notifications.Application.Commands.Handlers {
+    public class UpdateNotificationStatusHandler : ICommandHandler<UpdateNotificationStatus> {
+        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
 
-        public UpdateNotificationStatusHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
-        {
-            _notificationRepository = notificationRepository;
-            _eventMapper = eventMapper;
-            _messageBroker = messageBroker;
+        public UpdateNotificationStatusHandler(IStudentNotificationsRepository studentNotificationsRepository) {
+            _studentNotificationsRepository = studentNotificationsRepository;
         }
 
         public async Task HandleAsync(UpdateNotificationStatus command, CancellationToken cancellationToken = default)
         {
-            // Console.WriteLine($"Received NotificationId: {command.NotificationId}");
-
-            var notification = await _notificationRepository.GetAsync(command.NotificationId);
-            if (notification == null)
-            {
+            var notificationExists = await _studentNotificationsRepository.NotificationExists(command.UserId, command.NotificationId);
+            if (!notificationExists)
                 throw new NotificationNotFoundException(command.NotificationId);
-            }
 
             if (Enum.TryParse<NotificationStatus>(command.Status, true, out var newStatus))
             {
-                notification.Status = newStatus;
-                notification.UpdatedAt = DateTime.UtcNow;
-                await _notificationRepository.UpdateAsync(notification);
+                await _studentNotificationsRepository.UpdateNotificationStatus(command.UserId, command.NotificationId, newStatus.ToString());
             }
             else
-            {
-                throw new InvalidNotificationStatusException($"Invalid status: {command.Status}");
-            }
-
-            var events = _eventMapper.MapAll(notification.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
+                throw new ArgumentException($"Invalid status value: {command.Status}");
         }
+
     }
 }
