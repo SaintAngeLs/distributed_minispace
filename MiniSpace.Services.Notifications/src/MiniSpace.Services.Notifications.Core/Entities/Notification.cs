@@ -4,14 +4,21 @@ namespace MiniSpace.Services.Notifications.Core.Entities
 {
     public class Notification : AggregateRoot
     {
-        public Guid NotificationId { get;  set; }
-        public Guid UserId { get;  set; }
+        public Guid NotificationId { get; set; }
+        public Guid UserId { get; set; }
         public string Message { get; set; }
         public NotificationStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; } 
+        public DateTime? UpdatedAt { get; set; }
+        public Guid? RelatedEntityId { get; set; }
 
-        public Notification(Guid notificationId, Guid userId, string message, NotificationStatus status, DateTime createdAt, DateTime? updatedAt)
+        public Notification(Guid notificationId, 
+                            Guid userId, 
+                            string message, 
+                            NotificationStatus status, 
+                            DateTime createdAt, 
+                            DateTime? updatedAt, 
+                            Guid? relatedEntityId = null)
         {
             NotificationId = notificationId;
             UserId = userId;
@@ -19,6 +26,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
             Status = status;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
+            RelatedEntityId = relatedEntityId;
         }
 
         public void MarkAsRead()
