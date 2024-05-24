@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
             _appContext = appContext;
         }
 
-        public async Task<PagedResponse<IEnumerable<ReportDto>>> BrowsePostsAsync(SearchReports command)
+        public async Task<PagedResponse<IEnumerable<ReportDto>>> BrowseReportsAsync(SearchReports command)
         {
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && !identity.IsAdmin)
@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
             var pageNumber = command.Pageable.Page < 1 ? 1 : command.Pageable.Page;
             var pageSize = command.Pageable.Size > 10 ? 10 : command.Pageable.Size;
 
-            var result = await _reportRepository.BrowseCommentsAsync(pageNumber, pageSize, 
+            var result = await _reportRepository.BrowseReportsAsync(pageNumber, pageSize, 
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
 
             var pagedReports = new PagedResponse<IEnumerable<ReportDto>>(

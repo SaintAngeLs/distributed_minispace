@@ -2,6 +2,7 @@
 using MiniSpace.Services.Reports.Core.Entities;
 using MiniSpace.Services.Reports.Core.Repositories;
 using MiniSpace.Services.Reports.Infrastructure.Mongo.Documents;
+using MongoDB.Driver;
 
 namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
 {
@@ -37,5 +38,30 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);
+        
+        private async Task<(int totalPages, int totalElements, IEnumerable<ReportDocument> data)> BrowseAsync(
+            FilterDefinition<ReportDocument> filterDefinition, SortDefinition<ReportDocument> sortDefinition, 
+            int pageNumber, int pageSize)
+        {
+            var pagedEvents = await _repository.Collection.AggregateByPage(
+                filterDefinition,
+                sortDefinition,
+                pageNumber,
+                pageSize);
+
+            return pagedEvents;
+        }
+        
+        public async Task<(IEnumerable<Report> posts, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseReportsAsync(int pageNumber, int pageSize, 
+            IEnumerable<string> sortBy, string direction)
+        {
+            var filterDefinition = Extensions.ToFilterDefinition();
+            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
+            
+            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+            
+            return (pagedEvents.data.Select(r => r.AsEntity()), pageNumber, pageSize,
+                pagedEvents.totalPages, pagedEvents.totalElements);
+        }
     }    
 }

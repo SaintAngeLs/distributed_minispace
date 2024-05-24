@@ -6,6 +6,6 @@ namespace MiniSpace.Services.Reports.Application.Services
 {
     public interface IReportsService
     {
-        Task<PagedResponse<IEnumerable<ReportDto>>> BrowsePostsAsync(SearchReports command);
+        Task<PagedResponse<IEnumerable<ReportDto>>> BrowseReportsAsync(SearchReports command);
     }
 }
