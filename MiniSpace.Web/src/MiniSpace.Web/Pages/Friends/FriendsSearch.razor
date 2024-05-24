@@ -50,32 +50,32 @@
                                 Style="width: 100%; margin-top: 8px;" /> *@
                             <RadzenButton Text="Details" ButtonStyle="Radzen.ButtonStyle.Secondary" 
                                           Click="@(() => ViewDetails(student.Id))" 
-                                          Style="width: 100%; margin-top: 8px;" />
+                                          Style="width: 100%; margin-top: 8px; border-radius: 5px;" />
                             @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
                             {
                                 <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
                                             ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                                            Style="width: 100%; margin-top: 8px;" />
+                                            Style="width: 100%; margin-top: 8px; border-radius: 5px;" />
                             }
                             else if (allFriends.Any(f => f.FriendId == student.Id))
                             {
                                 <RadzenButton Text="Connected" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc; border-radius: 5px;" />
                             }
                             else if (sentRequests.Any(r => r.InviteeId == student.Id))
                             {
                                 <RadzenButton Text="Pending" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black; border-radius: 5px;" />
                             }
                             else if (incomingRequests.Any(r => r.InviteeId == IdentityService.GetCurrentUserId() && r.State == DTO.States.FriendState.Requested))
                             {
                                 <RadzenButton Text="Incoming Request" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: blue; color: white;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: blue; color: white; border-radius: 5px;" />
                             }
                             else if (student.Id == IdentityService.GetCurrentUserId())
                             {
                                 <RadzenButton Text="It's You" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: grey; color: white;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: grey; color: white; border-radius: 10px; border-radius: 5px;" />
                             }
                         </div>
                     </div>
@@ -112,27 +112,27 @@
                             {
                                 <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
                                             ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                                            Style="width: 100%; margin-top: 8px;" />
+                                            Style="width: 100%; margin-top: 8px; border-radius: 5px;" />
                             }
                             else if (allFriends.Any(f => f.FriendId == student.Id))
                             {
                                 <RadzenButton Text="Connected" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc; border-radius: px;" />
                             }
                             else if (sentRequests.Any(r => r.InviteeId == student.Id))
                             {
                                 <RadzenButton Text="Pending" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black; border-radius: 5px;" />
                             }
                              else if (incomingRequests.Any(r => r.InviteeId == IdentityService.GetCurrentUserId() && r.State == DTO.States.FriendState.Requested))
                             {
                                 <RadzenButton Text="Incoming Request" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: blue; color: white;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: blue; color: white; border-radius: px; border-radius: 5px;" />
                             }
                             else if (student.Id == IdentityService.GetCurrentUserId())
                             {
                                 <RadzenButton Text="It's You" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: grey; color: white;" />
+                                            Style="width: 100%; margin-top: 8px; background-color: grey; color: white; border-radius: 5px;" />
                             }
                        
                         </div>
@@ -292,6 +292,13 @@
     .details-list li {
         margin-bottom: 8px;
         font-size: 16px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        margin: 20px 0px 0px 10px !important;
     }
 
 
