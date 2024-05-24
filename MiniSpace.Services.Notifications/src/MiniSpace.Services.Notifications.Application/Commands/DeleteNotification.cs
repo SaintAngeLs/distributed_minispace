@@ -1,10 +1,14 @@
 using Convey.CQRS.Commands;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MiniSpace.Services.Notifications.Application.Commands
 {
     public class DeleteNotification : ICommand
     {
-        public Guid UserId { get; set; }
+        [FromQuery]
+        public Guid UserId { get; }
+
+        [FromRoute]
         public Guid NotificationId { get; }
 
         public DeleteNotification(Guid userId, Guid notificationId)

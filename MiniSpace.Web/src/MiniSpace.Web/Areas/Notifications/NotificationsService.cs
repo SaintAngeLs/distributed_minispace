@@ -57,11 +57,13 @@ namespace MiniSpace.Web.Areas.Notifications
             await _httpClient.PutAsync($"notifications/{notificationId}/status", new { IsActive = isActive }); 
         }
 
-        public async Task DeleteNotificationAsync(Guid notificationId)
+        public async Task DeleteNotificationAsync(Guid userId, Guid notificationId)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
+            var payload = new { UserId = userId, NotificationId = notificationId};
             _httpClient.SetAccessToken(accessToken);
-            await _httpClient.DeleteAsync($"notifications/{notificationId}");
+            var url = $"notifications/notification/{userId}/{notificationId}";
+            await _httpClient.DeleteAsync(url, payload);
         }
 
 
@@ -83,8 +85,5 @@ namespace MiniSpace.Web.Areas.Notifications
 
             return response;
         }
-
-
-    
     }
 }

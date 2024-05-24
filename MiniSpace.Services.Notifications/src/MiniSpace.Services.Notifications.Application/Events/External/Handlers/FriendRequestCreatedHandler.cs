@@ -30,9 +30,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         public async Task HandleAsync(FriendRequestCreated friendEvent, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Received FriendRequestCreated event: RequesterId={friendEvent.RequesterId}, FriendId={friendEvent.FriendId}");
-            Console.WriteLine("**************************************************************************************************************");
 
-            // Fetch student names based on their IDs
             var requester = await _studentsServiceClient.GetAsync(friendEvent.RequesterId);
             var friend = await _studentsServiceClient.GetAsync(friendEvent.FriendId);
 
@@ -57,7 +55,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
-                userId: friendEvent.FriendId, // Notifying the friend, not the requester
+                userId: friendEvent.FriendId, 
                 message: notificationMessage,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,

@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services
                         e.NotificationId, e.UserId, e.NewStatus);
                 case NotificationDeleted e:
                     return new MiniSpace.Services.Notifications.Application.Events.External.NotificationDeleted(
-                        e.NotificationId);
+                         e.UserId, e.NotificationId);
             }
 
             return null;

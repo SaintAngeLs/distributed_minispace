@@ -193,12 +193,15 @@ modules:
         downstream: notifications-service/notifications/notification/{notificationId}
         auth: true  
 
-      - upstream: /notification/{notificationId}
+      - upstream: /notification/{userId}/{notificationId}
         method: DELETE
         use: downstream
-        downstream: notifications-service/notifications/notification/{notificationId}
+        downstream: notifications-service/notifications/notification/{userId}/{notificationId}
         auth: true 
-
+        bind:
+          - userId:{userId}
+          - notificationId:{notificationId}
+        
       - upstream: /{userId}/{notificationId}
         method: GET
         use: downstream

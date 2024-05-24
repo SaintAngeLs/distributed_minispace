@@ -52,7 +52,7 @@ else if (notifications.Any())
                 <Template>
                     <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Primary"  
                     Style="color: #fff; margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0"  
-                    Click="@(async () => await DeleteNotification(notification.NotificationId))" />
+                    Click="@(async () => await DeleteNotification(notification.UserId, notification.NotificationId))" />
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -86,9 +86,9 @@ else
         StateHasChanged();
     }
 
-    private async Task DeleteNotification(Guid notificationId)
+    private async Task DeleteNotification(Guid userId, Guid notificationId)
     {
-        await NotificationsService.DeleteNotificationAsync(notificationId);
+        await NotificationsService.DeleteNotificationAsync(userId, notificationId);
         notifications.RemoveAll(n => n.NotificationId == notificationId);
         StateHasChanged(); 
     }
