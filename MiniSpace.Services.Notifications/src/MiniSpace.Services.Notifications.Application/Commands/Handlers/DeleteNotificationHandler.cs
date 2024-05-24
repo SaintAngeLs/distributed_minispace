@@ -9,30 +9,31 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 {
     public class DeleteNotificationHandler : ICommandHandler<DeleteNotification>
     {
-        private readonly INotificationRepository _notificationRepository;
+        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public DeleteNotificationHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public DeleteNotificationHandler(IStudentNotificationsRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
-            _notificationRepository = notificationRepository;
+            _studentNotificationsRepository = notificationRepository;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(DeleteNotification command, CancellationToken cancellationToken = default)
         {
-            var notification = await _notificationRepository.GetAsync(command.NotificationId);
-             if (notification == null)
+            var exists = await _studentNotificationsRepository.NotificationExists(command.StudentId, command.NotificationId);
+            if (!exists)
             {
                 throw new NotificationNotFoundException(command.NotificationId);
             }
 
-            notification.MarkAsDeleted();
+            // Assume that the Delete method in the repository takes care of marking it as deleted or actually removing it
+            await _studentNotificationsRepository.DeleteAsync(command.StudentId, command.NotificationId);
 
-            await _notificationRepository.UpdateAsync(notification);
-
-            var events = _eventMapper.MapAll(notification.Events);
+            // Optional: handle domain events associated with deleting notifications
+            // This could be publishing events that notification has been deleted etc.
+            var events = _eventMapper.MapAll(new [] { "NotificationDeleted" }); // Example of mapping deletion to an event
             await _messageBroker.PublishAsync(events.ToArray());
         }
     }
