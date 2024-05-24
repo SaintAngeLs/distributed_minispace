@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
                 ContextType = document.ContextType.ToString(),
                 Category = document.Category.ToString(),
                 Reason = document.Reason,
-                Status = document.State.ToString(),
+                State = document.State.ToString(),
                 CreatedAt = document.CreatedAt,
                 UpdatedAt = document.UpdatedAt,
                 ReviewerId = document.ReviewerId
