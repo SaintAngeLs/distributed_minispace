@@ -24,7 +24,7 @@
     <div>
         <p><strong>Message:</strong> @notification.Message</p>
         <p><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</p>
-        <p><strong>Status:</strong> @((bool)notification.IsActive ? "Active" : "Inactive")</p>
+        @* <p><strong>Status:</strong> @((bool)notification.IsActive ? "Active" : "Inactive")</p> *@
         <input type="hidden" value="@notification.NotificationId" />
     </div>
 }

@@ -8,14 +8,11 @@
 @inject IIdentityService IdentityService
 @using MudBlazor
 
-<div class="breadcrumbs-container">
-    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
-</div>
 @code {
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications)
     };
 }
 
@@ -37,14 +34,15 @@ else if (notifications.Any())
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
-            <RadzenDataGridColumn TItem="NotificationDto" Property="IsActive" Title="Active Status">
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Status" Title="Read Status">
                 <Template Context="notification">
-                    <RadzenToggleButton  ButtonStyle="ButtonStyle.Light"  ToggleButtonStyle="ButtonStyle.Dark"  @bind-Value=notification.IsActive 
-                    Text="@(notification.IsActive ? "Active" : "Inactive")" 
-                    Change="@(value => UpdateNotificationStatus(notification, value))"  
-                    Shade="Shade.Lighter" ToggleShade="Shade.Darker"
-                    Style="margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0" 
-                    />
+                    <RadzenToggleButton ButtonStyle="ButtonStyle.Light" ToggleButtonStyle="ButtonStyle.Dark"
+                        Value=@(notification.Status == "Unread")
+                        Text="@(notification.Status == "Unread" ? "Unread" : "Read")"
+                        Change="@(args => UpdateNotificationStatus(notification.UserId, notification.NotificationId, args ? "Unread" : "Read"))"
+                        Shade="Shade.Lighter" ToggleShade="Shade.Darker"
+                        Style="margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0" />
+
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
@@ -78,11 +76,13 @@ else
         StateHasChanged();
     }
 
-    private async Task UpdateNotificationStatus(NotificationDto notification, bool newValue)
+    private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, string newStatus)
     {
-        await NotificationsService.UpdateNotificationStatusAsync(notification.NotificationId, newValue);
+        await NotificationsService.UpdateNotificationStatusAsync(userId, notificationId, newStatus);
+        notifications.Find(n => n.NotificationId == notificationId).Status = newStatus;
         StateHasChanged();
     }
+
     private async Task DeleteNotification(Guid notificationId)
     {
         await NotificationsService.DeleteNotificationAsync(notificationId);

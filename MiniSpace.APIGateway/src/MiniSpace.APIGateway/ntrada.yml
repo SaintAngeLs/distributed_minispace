@@ -206,7 +206,7 @@ modules:
         auth: true
         description: Retrieves a specific notification for a user by notification ID.
 
-      - upstream: /{userId}/notifications/{notificationId}/status
+      - upstream: /{userId}/{notificationId}/status
         method: PUT
         use: downstream
         downstream: notifications-service/notifications/{userId}/{notificationId}/status

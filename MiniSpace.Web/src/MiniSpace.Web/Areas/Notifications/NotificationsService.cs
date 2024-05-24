@@ -41,11 +41,13 @@ namespace MiniSpace.Web.Areas.Notifications
         //     return await _httpClient.PostAsync<NotificationDto, NotificationDto>("notifications", notification);
         // }
 
-        public async Task UpdateNotificationStatusAsync(Guid notificationId, string status)
+        public async Task UpdateNotificationStatusAsync(Guid userId, Guid notificationId, string status)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            await _httpClient.PutAsync<object, object>($"notifications/{notificationId}/status", new { Status = status });
+            var payload = new { UserId = userId, NotificationId = notificationId, Status = status };
+            var url = $"notifications/{userId}/{notificationId}/status";
+            await _httpClient.PutAsync<object, object>(url, payload);
         }
 
         public async Task UpdateNotificationStatusAsync(Guid notificationId, bool isActive)
