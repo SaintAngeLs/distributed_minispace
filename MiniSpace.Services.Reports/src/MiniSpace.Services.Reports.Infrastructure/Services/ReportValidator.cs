@@ -1,6 +1,8 @@
 ﻿using MiniSpace.Services.Reports.Application.Exceptions;
 using MiniSpace.Services.Reports.Application.Services;
 using MiniSpace.Services.Reports.Core.Entities;
+using MiniSpace.Services.Reports.Core.Exceptions;
+using InvalidReportStateException = MiniSpace.Services.Reports.Application.Exceptions.InvalidReportStateException;
 
 namespace MiniSpace.Services.Reports.Infrastructure.Services
 {
@@ -27,6 +29,16 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
             }
 
             return parsedCategory;
+        }
+        
+        public ReportState ParseStatus(string status)
+        {
+            if (!Enum.TryParse<ReportState>(status, true, out var parsedStatus))
+            {
+                throw new InvalidReportStateException(status);
+            }
+
+            return parsedStatus;
         }
         
         public void ValidateActiveReports(int activeReports)

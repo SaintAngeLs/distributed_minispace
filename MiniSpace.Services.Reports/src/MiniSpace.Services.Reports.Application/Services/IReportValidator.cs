@@ -6,6 +6,7 @@ namespace MiniSpace.Services.Reports.Application.Services
     {
         ContextType ParseContextType(string contextType);
         ReportCategory ParseCategory(string category);
+        ReportState ParseStatus(string status);
         void ValidateActiveReports(int activeReports);
         void ValidateReason(string reason);
     }

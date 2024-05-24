@@ -60,6 +60,28 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
 
             return filterDefinition;
         }
+        
+        public static FilterDefinition<ReportDocument> AddContextTypesFilter (this FilterDefinition<ReportDocument> filterDefinition, 
+            IEnumerable<ContextType> contextTypesEnumerable)
+        {
+            var contextTypes = contextTypesEnumerable.ToList();
+            if(contextTypes.Any())
+            {
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.ContextType, contextTypes);
+            }
+            return filterDefinition;
+        }
+        
+        public static FilterDefinition<ReportDocument> AddStatesFilter (this FilterDefinition<ReportDocument> filterDefinition, 
+            IEnumerable<ReportState> statesEnumerable)
+        {
+            var states = statesEnumerable.ToList();
+            if(states.Count != 0)
+            {
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, states);
+            }
+            return filterDefinition;
+        }
 
         public static SortDefinition<ReportDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
