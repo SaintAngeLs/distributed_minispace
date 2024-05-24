@@ -19,7 +19,7 @@
     };
 }
 
-<h3>All Notifications</h3>
+<h3>Notifications History</h3>
 
 @if (notifications == null)
 {
@@ -74,7 +74,7 @@ else
     private async Task LoadNotifications()
     {
         var userId = IdentityService.GetCurrentUserId();
-         var response = await NotificationsService.GetNotificationsByUserAsync(userId, page: 1, pageSize: 10, sortOrder: "desc", status: "Read");
+         var response = await NotificationsService.GetNotificationsByUserAsync(userId, page: 1, pageSize: 10, sortOrder: "desc");
         notifications = response.Results;
         StateHasChanged();
     }
