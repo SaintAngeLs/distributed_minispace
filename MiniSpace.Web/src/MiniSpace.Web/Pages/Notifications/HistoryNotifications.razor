@@ -1,0 +1,95 @@
+@page "/notifications/history"
+@using MiniSpace.Web.Areas.Notifications
+@inject INotificationsService NotificationsService
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.DTO.Notifications
+@using Radzen
+@using System.Linq
+@inject IIdentityService IdentityService
+@using MudBlazor
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications)
+    };
+}
+
+<h3>All Notifications</h3>
+
+@if (notifications == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (notifications.Any())
+{
+    <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowColumnResize="true" 
+    AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="25" 
+    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
+        <Columns>
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message">
+                <Template Context="notification">
+                    <RadzenLink Path="@($"/notification/{notification.NotificationId}")" Text="@notification.Message" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Status" Title="Read Status">
+                <Template Context="notification">
+                    <RadzenToggleButton ButtonStyle="ButtonStyle.Light" ToggleButtonStyle="ButtonStyle.Dark"
+                        Value=@(notification.Status == "Unread")
+                        Text="@(notification.Status == "Unread" ? "Unread" : "Read")"
+                        Change="@(args => UpdateNotificationStatus(notification.UserId, notification.NotificationId, args ? "Unread" : "Read"))"
+                        Shade="Shade.Lighter" ToggleShade="Shade.Darker"
+                        Style="margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0" />
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
+                <Template>
+                    <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Primary"  
+                    Style="color: #fff; margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0"  
+                    Click="@(async () => await DeleteNotification(notification.NotificationId))" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <p>No notifications found.</p>
+}
+
+@code {
+    private List<NotificationDto> notifications;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotifications();
+    }
+
+    private async Task LoadNotifications()
+    {
+        var userId = IdentityService.GetCurrentUserId();
+         var response = await NotificationsService.GetNotificationsByUserAsync(userId, page: 1, pageSize: 10, sortOrder: "desc", status: "Read");
+        notifications = response.Results;
+        StateHasChanged();
+    }
+
+    private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, string newStatus)
+    {
+        await NotificationsService.UpdateNotificationStatusAsync(userId, notificationId, newStatus);
+        notifications.Find(n => n.NotificationId == notificationId).Status = newStatus;
+        StateHasChanged();
+    }
+
+    private async Task DeleteNotification(Guid notificationId)
+    {
+        await NotificationsService.DeleteNotificationAsync(notificationId);
+        notifications.RemoveAll(n => n.NotificationId == notificationId);
+        StateHasChanged(); 
+    }
+}
