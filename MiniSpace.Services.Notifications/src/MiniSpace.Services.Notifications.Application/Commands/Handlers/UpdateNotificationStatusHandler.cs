@@ -7,10 +7,12 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Notifications.Application.Commands.Handlers {
-    public class UpdateNotificationStatusHandler : ICommandHandler<UpdateNotificationStatus> {
+    public class UpdateNotificationStatusHandler : ICommandHandler<UpdateNotificationStatus> 
+    {
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
 
-        public UpdateNotificationStatusHandler(IStudentNotificationsRepository studentNotificationsRepository) {
+        public UpdateNotificationStatusHandler(IStudentNotificationsRepository studentNotificationsRepository) 
+        {
             _studentNotificationsRepository = studentNotificationsRepository;
         }
 
