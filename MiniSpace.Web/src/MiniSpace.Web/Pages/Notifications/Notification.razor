@@ -24,7 +24,7 @@
     <div>
         <p><strong>Message:</strong> @notification.Message</p>
         <p><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</p>
-        @* <p><strong>Status:</strong> @((bool)notification.IsActive ? "Active" : "Inactive")</p> *@
+        <p><strong>Status:</strong> @notification.Status</p>
         <input type="hidden" value="@notification.NotificationId" />
     </div>
 }
@@ -41,7 +41,15 @@ else
     {
         var userId = IdentityService.GetCurrentUserId();
         notification = await NotificationsService.GetNotificationByIdAsync(userId, NotificationId);
+        if (notification.Status == "Unread") {
+            await UpdateNotificationStatus(userId, NotificationId, "Read");
+        }
     }
 
-    
+    private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, string newStatus)
+    {
+        await NotificationsService.UpdateNotificationStatusAsync(userId, notificationId, newStatus);
+        notification.Status = newStatus;
+        StateHasChanged();
+    }
 }

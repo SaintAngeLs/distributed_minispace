@@ -48,7 +48,9 @@
                                 Click="@(e => ConnectWithStudent(student.Id, e))" 
                                 ButtonStyle="Radzen.ButtonStyle.Secondary" 
                                 Style="width: 100%; margin-top: 8px;" /> *@
-
+                            <RadzenButton Text="Details" ButtonStyle="Radzen.ButtonStyle.Secondary" 
+                                          Click="@(() => ViewDetails(student.Id))" 
+                                          Style="width: 100%; margin-top: 8px;" />
                             @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
                             {
                                 <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
@@ -105,6 +107,7 @@
                             <li><strong>Created At:</strong> @student?.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</li>
                         </ul>
                          <div class="buttons">
+                             
                             @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
                             {
                                 <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
@@ -186,12 +189,12 @@
     }
 
     .left-panel, .right-panel {
-    background-color: #f7f7f7; /* Soft background color for subtle contrast */
-    border-radius: 8px;
-    padding: 20px;
-    margin: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Light shadow for depth */
-}
+        background-color: #f7f7f7; 
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    }
     .search-bar {
         display: flex; 
         margin-bottom: 20px; 
@@ -273,23 +276,23 @@
     }
 
     .info-block {
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-top: 15px;
-}
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-top: 15px;
+    }
 
-.details-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 10px;
-}
+    .details-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+    }
 
-.details-list li {
-    margin-bottom: 8px;
-    font-size: 16px; /* Larger font for readability */
-}
+    .details-list li {
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
 
 
 </style>
@@ -418,6 +421,11 @@
         Console.WriteLine($"Page set to {currentPage}");
         await LoadStudents();
         StateHasChanged(); 
+    }
+
+    private void ViewDetails(Guid studentId)
+    {
+        NavigationManager.NavigateTo($"/student-details/{studentId}");
     }
 
 }

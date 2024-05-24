@@ -172,7 +172,7 @@
     }
 
 
-      private async Task ConfirmRemoveFriend(Guid friendId)
+    private async Task ConfirmRemoveFriend(Guid friendId)
     {
         var confirm = await DialogService.Confirm("Are you sure you want to remove this friend?", "Confirm Removal", new Radzen.ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
         if (confirm.HasValue && confirm.Value)
