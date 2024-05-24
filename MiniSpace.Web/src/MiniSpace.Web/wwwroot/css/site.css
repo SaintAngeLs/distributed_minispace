@@ -498,3 +498,30 @@ html, body {
         display: none;
     }
 }
+
+.header-services {
+    /* background-color: #152d4d; */    /*  <----- more powerful */ 
+    background-color: #30445F;
+}
+
+.header-services .rz-sidebar-toggle {
+    background-color: #007BFF;   
+    color: white;                
+    border: none;                
+    padding: 10px 15px;          
+    font-size: 16px;             
+    border-radius: 5px;          
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+    transition: background-color 0.3s, transform 0.3s; 
+}
+
+.header-services .rz-sidebar-toggle:hover, .header-services .rz-sidebar-toggle:focus {
+    background-color: #0056b3;   
+    transform: scale(1.05);      
+    outline: none;               
+}
+
+.header-services .rz-sidebar-toggle:active {
+    background-color: #004085;  
+    transform: scale(0.95);      
+}

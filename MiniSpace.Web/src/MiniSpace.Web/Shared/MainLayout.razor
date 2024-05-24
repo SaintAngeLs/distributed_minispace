@@ -80,9 +80,8 @@
         *@
         @if (IsUserAuthenticated)
         {
-            <RadzenSidebar Responsive="false" style="transition: width 0.5s; width: max-content;"
-                >
-                <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition: width 0.5s">
+            <RadzenSidebar Responsive="false" style="transition: width 0.5s; width: max-content">
+                <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition: width 0.5s;">
                     <RadzenPanelMenuItem Text="Home" Icon="home"
                                          Click="@(() => NavigationManager.NavigateTo(""))" />
                     
