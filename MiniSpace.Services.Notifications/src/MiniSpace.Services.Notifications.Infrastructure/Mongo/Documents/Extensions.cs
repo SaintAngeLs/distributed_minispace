@@ -13,7 +13,9 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 document.Message,
                 Enum.Parse<NotificationStatus>(document.Status, true),
                 document.CreatedAt,
-                document.UpdatedAt);
+                document.UpdatedAt,
+                document.EventType,
+                document.RelatedEntityId);
 
         public static NotificationDocument AsDocument(this Notification entity)
             => new NotificationDocument
@@ -23,7 +25,22 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 Message = entity.Message,
                 Status = entity.Status.ToString(),
                 CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
+                UpdatedAt = entity.UpdatedAt,
+                RelatedEntityId = entity.RelatedEntityId,
+                EventType = entity.EventType
+            };
+
+        public static NotificationDto AsDto(this Notification entity)
+            => new NotificationDto
+            {
+                NotificationId = entity.NotificationId,
+                UserId = entity.UserId,
+                Message = entity.Message,
+                Status = entity.Status.ToString(),
+                CreatedAt = entity.CreatedAt,
+                UpdatedAt = entity.UpdatedAt,
+                RelatedEntityId = entity.RelatedEntityId,
+                EventType = entity.EventType
             };
 
         public static NotificationDto AsDto(this NotificationDocument document)
@@ -34,7 +51,9 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 Message = document.Message,
                 Status = document.Status,
                 CreatedAt = document.CreatedAt,
-                UpdatedAt = document.UpdatedAt
+                UpdatedAt = document.UpdatedAt,
+                RelatedEntityId = document.RelatedEntityId,
+                EventType = document.EventType
             };
 
 

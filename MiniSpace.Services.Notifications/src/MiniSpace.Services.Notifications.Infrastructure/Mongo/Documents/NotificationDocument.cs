@@ -1,4 +1,5 @@
 using Convey.Types;
+using MiniSpace.Services.Notifications.Core.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
@@ -14,6 +15,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
         public string Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public Guid? RelatedEntityId { get; set; }
+        public NotificationEventType EventType { get; set; } 
 
     }
 }

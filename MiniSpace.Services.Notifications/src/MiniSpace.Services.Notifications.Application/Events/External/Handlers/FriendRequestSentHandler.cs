@@ -33,7 +33,9 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 message: notificationMessage,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
-                updatedAt: null
+                updatedAt: null,
+                relatedEntityId: @event.InviterId,
+                eventType: NotificationEventType.NewFriendRequest
             );
 
             await _notificationRepository.AddAsync(notification);

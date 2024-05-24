@@ -1,4 +1,5 @@
 using System;
+using MiniSpace.Services.Notifications.Core.Entities;
 
 namespace MiniSpace.Services.Notifications.Application.Dto
 {
@@ -10,5 +11,7 @@ namespace MiniSpace.Services.Notifications.Application.Dto
         public string Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }  
+        public Guid? RelatedEntityId { get; set; }
+        public NotificationEventType EventType { get; set; } 
     }
 }

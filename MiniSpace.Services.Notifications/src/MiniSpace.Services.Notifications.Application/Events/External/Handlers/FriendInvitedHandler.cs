@@ -39,13 +39,15 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
        
             var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
 
-            var notification = new Notification(
+             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: @event.InviteeId, 
                 message: notificationMessage,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
-                updatedAt: null
+                updatedAt: null,
+                relatedEntityId: @event.InviteeId,
+                eventType: NotificationEventType.NewFriendRequest
             );
 
             await _notificationRepository.AddAsync(notification);

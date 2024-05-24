@@ -26,7 +26,10 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
                 command.Message, 
                 NotificationStatus.Unread,
                 DateTime.UtcNow, 
-                null
+                null,
+                NotificationEventType.Other,
+                command.UserId
+                
             );
             await _notificationRepository.AddAsync(notification);
 
