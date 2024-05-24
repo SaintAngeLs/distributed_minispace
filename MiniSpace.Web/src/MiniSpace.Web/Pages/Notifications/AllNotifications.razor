@@ -31,7 +31,11 @@ else if (notifications.Any())
     AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="25" 
     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
         <Columns>
-            <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message" />
+            <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message">
+                <Template Context="notification">
+                    <RadzenLink Path="@($"/notification/{notification.NotificationId}")" Text="@notification.Message" />
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
             <RadzenDataGridColumn TItem="NotificationDto" Property="IsActive" Title="Active Status">
                 <Template Context="notification">
