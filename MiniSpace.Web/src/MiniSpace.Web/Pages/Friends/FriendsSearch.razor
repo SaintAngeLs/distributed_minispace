@@ -325,6 +325,8 @@
 
         await LoadStudents();
         StateHasChanged();
+
+        
         
         var tasks = new List<Task>();
         foreach (var student in students)
@@ -335,11 +337,22 @@
         await Task.WhenAll(tasks);
     }
     
-    private async Task FetchImageAsync(StudentDto student)
+   private async Task FetchImageAsync(StudentDto student)
     {
         var result = await MediaFilesService.GetFileAsync(student.ProfileImage);
-        images.Add(student.Id, result.Base64Content);
+        if (result != null)
+        {
+            if (images.ContainsKey(student.Id))
+            {
+                images[student.Id] = result.Base64Content; // Update existing entry
+            }
+            else
+            {
+                images.Add(student.Id, result.Base64Content); // Add new entry
+            }
+        }
     }
+
 
     @* private async Task LoadStudents() {
         var result = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
@@ -348,23 +361,27 @@
             students = result.ToList();
         }
     } *@
-    private async Task LoadStudents()
-    {
+   private async Task LoadStudents() {
         int maxPage = (int)Math.Ceiling((double)totalStudents / pageSize);
         if (currentPage > maxPage) currentPage = maxPage;
         if (currentPage < 1) currentPage = 1;
 
         var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
-        if (response != null)
-        {
+        if (response != null) {
             students = response.Results;
             totalStudents = response.Total; 
-        }
-        else
-        {
+             StateHasChanged();
+            await LoadImagesForStudents(students);
+        } else {
             students = new List<StudentDto>();
         }
         StateHasChanged(); 
+    }
+
+     private async Task LoadImagesForStudents(List<StudentDto> students) {
+        images = new Dictionary<Guid, string>();  // Clear previous images
+        var tasks = students.Select(student => FetchImageAsync(student)).ToList();
+        await Task.WhenAll(tasks);
     }
 
     private string GetImage(string base64Image)
