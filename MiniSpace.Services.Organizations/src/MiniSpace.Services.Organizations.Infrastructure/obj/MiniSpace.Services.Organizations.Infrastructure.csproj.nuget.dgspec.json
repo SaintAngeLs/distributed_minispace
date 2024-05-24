@@ -1,0 +1,309 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Infrastructure/MiniSpace.Services.Organizations.Infrastructure.csproj": {}
+  },
+  "projects": {
+    "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Application/MiniSpace.Services.Organizations.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Application/MiniSpace.Services.Organizations.Application.csproj",
+        "projectName": "MiniSpace.Services.Organizations.Application",
+        "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Application/MiniSpace.Services.Organizations.Application.csproj",
+        "packagesPath": "/home/kaliuser/.nuget/packages/",
+        "outputPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/kaliuser/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/MiniSpace.Services.Organizations.Core.csproj": {
+                "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/MiniSpace.Services.Organizations.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Convey": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.CQRS.Commands": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.CQRS.Events": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.CQRS.Queries": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.MessageBrokers": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/MiniSpace.Services.Organizations.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/MiniSpace.Services.Organizations.Core.csproj",
+        "projectName": "MiniSpace.Services.Organizations.Core",
+        "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/MiniSpace.Services.Organizations.Core.csproj",
+        "packagesPath": "/home/kaliuser/.nuget/packages/",
+        "outputPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/kaliuser/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Infrastructure/MiniSpace.Services.Organizations.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Infrastructure/MiniSpace.Services.Organizations.Infrastructure.csproj",
+        "projectName": "MiniSpace.Services.Organizations.Infrastructure",
+        "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Infrastructure/MiniSpace.Services.Organizations.Infrastructure.csproj",
+        "packagesPath": "/home/kaliuser/.nuget/packages/",
+        "outputPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/kaliuser/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Application/MiniSpace.Services.Organizations.Application.csproj": {
+                "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Application/MiniSpace.Services.Organizations.Application.csproj"
+              },
+              "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/MiniSpace.Services.Organizations.Core.csproj": {
+                "projectPath": "/home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Core/MiniSpace.Services.Organizations.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Convey": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Auth": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.CQRS.Queries": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Discovery.Consul": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.HTTP": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.LoadBalancing.Fabio": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Logging": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Logging.CQRS": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.MessageBrokers": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.MessageBrokers.CQRS": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.MessageBrokers.Outbox": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.MessageBrokers.Outbox.Mongo": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.MessageBrokers.RabbitMQ": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Metrics.AppMetrics": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Persistence.MongoDB": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Persistence.Redis": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Secrets.Vault": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Security": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Tracing.Jaeger": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.Tracing.Jaeger.RabbitMQ": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.WebApi.CQRS": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.WebApi.Security": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            },
+            "Convey.WebApi.Swagger": {
+              "target": "Package",
+              "version": "[1.1.448, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

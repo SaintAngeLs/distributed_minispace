@@ -321,7 +321,6 @@
         sentRequests = await FriendsService.GetSentFriendRequestsAsync();
         incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
         allFriends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
-                @* Console.WriteLine($"Total Friends Loaded: {allFriends.Count()}"); *@
 
         await LoadStudents();
         StateHasChanged();
@@ -344,11 +343,11 @@
         {
             if (images.ContainsKey(student.Id))
             {
-                images[student.Id] = result.Base64Content; // Update existing entry
+                images[student.Id] = result.Base64Content; 
             }
             else
             {
-                images.Add(student.Id, result.Base64Content); // Add new entry
+                images.Add(student.Id, result.Base64Content);
             }
         }
     }
@@ -400,6 +399,7 @@
     private void OnDetails(StudentDto selectedStudent) 
     {
         student = selectedStudent;
+        StateHasChanged();
     }
 
     private void SearchFriends() {
@@ -442,9 +442,10 @@
             return;
         }
         currentPage = page;
-        Console.WriteLine($"Page set to {currentPage}");
+        @* Console.WriteLine($"Page set to {currentPage}"); *@
+        student = null;
         await LoadStudents();
-        StateHasChanged(); 
+        @* StateHasChanged();  *@
     }
 
     private void ViewDetails(Guid studentId)

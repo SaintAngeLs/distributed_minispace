@@ -1,0 +1,28 @@
+2024-05-25 00:50:54.441 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/wwwroot. Static files may be unavailable.
+2024-05-25 00:50:54.547 +02:00 [INF] Registering a service [id: organizations-service:d88c585415b14e489308b04e308dd9c5] in Consul...
+2024-05-25 00:50:54.570 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-25 00:50:54.574 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 00:50:54.574 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 00:50:54.610 +02:00 [INF] Received HTTP response headers after 32.4405ms - 200
+2024-05-25 00:50:54.615 +02:00 [INF] End processing HTTP request after 41.5146ms - 200
+2024-05-25 00:50:54.619 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-25 00:50:54.620 +02:00 [INF] Registered a service [id: organizations-service:d88c585415b14e489308b04e308dd9c5] in Consul.
+2024-05-25 00:50:54.628 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.create_organization' with routing key: 'create_organization' for an exchange: 'organizations'.
+2024-05-25 00:50:54.650 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.add_organizer_to_organization' with routing key: 'add_organizer_to_organization' for an exchange: 'organizations'.
+2024-05-25 00:50:54.657 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.remove_organizer_from_organization' with routing key: 'remove_organizer_from_organization' for an exchange: 'organizations'.
+2024-05-25 00:50:54.666 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_granted' with routing key: 'organizer_rights_granted' for an exchange: 'identity'.
+2024-05-25 00:50:54.673 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_revoked' with routing key: 'organizer_rights_revoked' for an exchange: 'identity'.
+2024-05-25 01:01:49.076 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/wwwroot. Static files may be unavailable.
+2024-05-25 01:01:49.192 +02:00 [INF] Registering a service [id: organizations-service:8552b759587a4cc184d070fdd9ba85a6] in Consul...
+2024-05-25 01:01:49.216 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-25 01:01:49.220 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 01:01:49.221 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 01:01:49.227 +02:00 [INF] Received HTTP response headers after 4.132ms - 200
+2024-05-25 01:01:49.229 +02:00 [INF] End processing HTTP request after 9.7012ms - 200
+2024-05-25 01:01:49.231 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-25 01:01:49.232 +02:00 [INF] Registered a service [id: organizations-service:8552b759587a4cc184d070fdd9ba85a6] in Consul.
+2024-05-25 01:01:49.237 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.create_organization' with routing key: 'create_organization' for an exchange: 'organizations'.
+2024-05-25 01:01:49.247 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.add_organizer_to_organization' with routing key: 'add_organizer_to_organization' for an exchange: 'organizations'.
+2024-05-25 01:01:49.249 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.remove_organizer_from_organization' with routing key: 'remove_organizer_from_organization' for an exchange: 'organizations'.
+2024-05-25 01:01:49.252 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_granted' with routing key: 'organizer_rights_granted' for an exchange: 'identity'.
+2024-05-25 01:01:49.254 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_revoked' with routing key: 'organizer_rights_revoked' for an exchange: 'identity'.
