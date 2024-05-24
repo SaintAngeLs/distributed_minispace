@@ -15,11 +15,14 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications)
+        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications),
+        new BreadcrumbItem("New Notifications", href: "/notifications/new", disabled: true, icon: Icons.Material.Filled.Notifications)
     };
 }
 
-<h3>Recent Notifications</h3>
+<div class="notifications-page-title">
+   <h3>Recent Notifications</h3>
+</div>
 
 @if (notifications == null)
 {

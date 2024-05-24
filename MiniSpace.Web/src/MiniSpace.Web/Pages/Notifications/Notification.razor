@@ -14,10 +14,13 @@
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
         new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.VideoLibrary),
         new BreadcrumbItem("New notification", href: "/notifications/all", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
+         new BreadcrumbItem("Notifications History", href: "/notifications/history", disabled: true, icon: Icons.Material.Filled.Notifications)
     };
 }
 
-<h3>Notification Details</h3>
+<div class="notifications-page-title">
+    <h3>Notification Details</h3>
+</div>
 
 @if (notification != null)
 {
