@@ -110,7 +110,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<FriendInvited>()
                 .SubscribeEvent<FriendAdded>()
                 .SubscribeEvent<PendingFriendAccepted>()
-                .SubscribeEvent<PendingFriendDeclined>();
+                .SubscribeEvent<PendingFriendDeclined>()
+                .SubscribeEvent<EventCreated>();
                 // .SubscribeEvent<NotificationCreated>()
                 // .SubscribeEvent<NotificationDeleted>()
                 // .SubscribeEvent<NotificationUpdated>();
