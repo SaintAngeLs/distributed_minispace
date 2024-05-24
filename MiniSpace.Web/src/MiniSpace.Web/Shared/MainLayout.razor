@@ -17,10 +17,10 @@
                     TODO: do not forget about the code snippet chaned ❕❕❕
                         @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
                 *@
-                @if (_isUserAuthenticated )
+                @* @if (_isUserAuthenticated )
                 {
                     <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
-                }
+                } *@
                 <div class="logo-container" @onclick="NavigateToHome">
                     <RadzenLabel Text="MiniSpace" />
                 </div>
@@ -63,6 +63,15 @@
         </RadzenStack>
     </header>
 
+    @if (_isUserAuthenticated )
+    {
+
+        <header class="header-services">
+         <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
+        </header>
+
+    }
+
 
     <div style="display: flex; flex: 1; flex-direction: row;">
         @*
@@ -71,9 +80,9 @@
         *@
         @if (IsUserAuthenticated)
         {
-            <RadzenSidebar @bind-Expanded="@_sidebarExpanded" Width="@(IsUserAuthenticated ? "100px" : "0px")" style="transition: width 0.5s;"
-            DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
-                <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
+            <RadzenSidebar Responsive="false" style="transition: width 0.5s; width: max-content;"
+                >
+                <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition: width 0.5s">
                     <RadzenPanelMenuItem Text="Home" Icon="home"
                                          Click="@(() => NavigationManager.NavigateTo(""))" />
                     
@@ -135,7 +144,6 @@
                     </div>
                 </div>
 
-                <!-- Notification Component on the right, always at fixed width if user is authenticated -->
                 @if(_isUserAuthenticated)
                 {
                     <div style="width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
