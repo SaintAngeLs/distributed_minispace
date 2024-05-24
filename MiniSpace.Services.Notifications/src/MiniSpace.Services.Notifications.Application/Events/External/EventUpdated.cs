@@ -5,6 +5,7 @@ using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Notifications.Application.Events
 {
+    [Contract]
     public class EventUpdated(Guid eventId, DateTime updatedAt, Guid updatedBy, IEnumerable<Guid> mediaFilesIds) : IEvent
     {
         public Guid EventId { get; set; } = eventId;

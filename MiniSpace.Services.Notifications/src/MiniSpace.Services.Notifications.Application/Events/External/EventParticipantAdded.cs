@@ -3,6 +3,7 @@ using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Notifications.Application.Events
 {
+    [Contract]
     public class EventParticipantAdded: IEvent
     {
         public Guid EventId { get; }

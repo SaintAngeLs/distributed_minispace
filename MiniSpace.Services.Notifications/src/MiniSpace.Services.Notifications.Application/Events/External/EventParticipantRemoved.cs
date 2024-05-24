@@ -4,6 +4,7 @@ using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Notifications.Application.Events
 {
+    [Contract]
     public class EventParticipantRemoved: IEvent
     {
         public Guid EventId { get; }
