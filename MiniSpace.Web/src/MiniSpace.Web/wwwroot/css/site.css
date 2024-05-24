@@ -525,3 +525,14 @@ html, body {
     background-color: #30445F;  
     transform: scale(0.95);      
 }
+
+.notification-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.notification-item:hover {
+    background-color: #f8f9fa; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}

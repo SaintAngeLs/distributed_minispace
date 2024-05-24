@@ -16,6 +16,7 @@
             @foreach (var notification in notifications)
             {
                 <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)" 
+                    class="notification-item"
                     style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;" >
                     <span style="display: block; color: #333; margin-bottom: 4px;">@notification.Message</span>
                     <span style="display: block; font-size: 0.8em; color: #666;">@notification.CreatedAt.ToString("g")</span>
@@ -29,6 +30,7 @@
     }
     </div>
 </div>
+
 @code {
     private List<NotificationDto> previousNotifications = new List<NotificationDto>();
     private List<NotificationDto> notifications;
