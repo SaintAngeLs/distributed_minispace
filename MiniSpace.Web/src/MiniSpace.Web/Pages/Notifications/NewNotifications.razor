@@ -1,4 +1,4 @@
-@page "/notifications/all"
+@page "/notifications/new"
 @using MiniSpace.Web.Areas.Notifications
 @inject INotificationsService NotificationsService
 @inject NavigationManager NavigationManager
@@ -74,7 +74,7 @@ else
     private async Task LoadNotifications()
     {
         var userId = IdentityService.GetCurrentUserId();
-         var response = await NotificationsService.GetNotificationsByUserAsync(userId, page: 1, pageSize: 10, sortOrder: "desc", status: null);
+         var response = await NotificationsService.GetNotificationsByUserAsync(userId, page: 1, pageSize: 10, sortOrder: "desc", status: "Unread");
         notifications = response.Results;
         StateHasChanged();
     }
