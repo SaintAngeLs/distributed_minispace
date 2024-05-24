@@ -73,6 +73,18 @@ namespace MiniSpace.Web.Areas.Notifications
             return await _httpClient.GetAsync<NotificationDto>(url);
         }
 
+        public async Task<PaginatedResponseDto<NotificationDto>> GetNotificationsByUserAsync(Guid userId, int page = 1, int pageSize = 10, string sortOrder = "desc", string status = "Unread")
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            var url = $"notifications/{userId}?page={page}&pageSize={pageSize}&sortOrder={sortOrder}&status={status}";
+
+            var response = await _httpClient.GetAsync<PaginatedResponseDto<NotificationDto>>(url);
+
+            return response;
+        }
+
+
     
     }
 }

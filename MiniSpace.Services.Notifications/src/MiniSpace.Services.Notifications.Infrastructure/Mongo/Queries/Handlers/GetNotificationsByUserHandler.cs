@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
@@ -24,6 +25,18 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
         public async Task<Application.Queries.PagedResult<NotificationDto>> HandleAsync(GetNotificationsByUser query, CancellationToken cancellationToken)
         {
             var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, query.UserId);
+
+            if (!string.IsNullOrEmpty(query.Status))
+            {
+                var regex = new MongoDB.Bson.BsonRegularExpression($"^{Regex.Escape(query.Status)}$", "i");
+                var statusFilter = Builders<StudentNotificationsDocument>.Filter.ElemMatch(x => x.Notifications,
+                    Builders<NotificationDocument>.Filter.Regex("Status", regex));
+
+                filter = Builders<StudentNotificationsDocument>.Filter.And(filter, statusFilter);
+
+                Console.WriteLine($"Applying status filter with regex: {regex}");
+            }
+
             var sortBy = Builders<StudentNotificationsDocument>.Sort.Descending(doc => doc.Notifications[-1].CreatedAt);
 
             if (query.SortOrder.ToLower() == "asc")
@@ -37,7 +50,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
             
             var allNotifications = documents.SelectMany(doc => doc.Notifications
                 .Where(n => (!query.StartDate.HasValue || n.CreatedAt >= query.StartDate.Value) &&
-                            (!query.EndDate.HasValue || n.CreatedAt <= query.EndDate.Value))
+                            (!query.EndDate.HasValue || n.CreatedAt <= query.EndDate.Value) &&
+                            (string.IsNullOrEmpty(query.Status) || n.Status.Equals(query.Status, StringComparison.OrdinalIgnoreCase)))
                 .Select(n => n.AsDto()))
                 .OrderByDescending(n => n.CreatedAt)
                 .ToList();
@@ -55,6 +69,5 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
 
             return new Application.Queries.PagedResult<NotificationDto>(paginatedNotifications, totalNotifications, query.ResultsPerPage, query.Page, BaseUrl);
         }
-
     }
 }

@@ -45,7 +45,7 @@
         try
         {
             var userId = IdentityService.GetCurrentUserId(); 
-            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId);
+            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, status: "Unread");
             var latestNotifications = paginatedResponse.Results;
 
             if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
@@ -62,6 +62,7 @@
             Console.WriteLine($"Error loading notifications: {ex.Message}");
         }
     }
+
 
     private bool isNewNotificationReceived()
     {

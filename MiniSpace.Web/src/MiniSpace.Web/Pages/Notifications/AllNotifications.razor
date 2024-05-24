@@ -71,7 +71,7 @@ else
     private async Task LoadNotifications()
     {
         var userId = IdentityService.GetCurrentUserId();
-        var response = await NotificationsService.GetNotificationsByUserAsync(userId);
+         var response = await NotificationsService.GetNotificationsByUserAsync(userId, page: 1, pageSize: 10, sortOrder: "desc", status: null);
         notifications = response.Results;
         StateHasChanged();
     }
