@@ -48,4 +48,5 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: '**/coverage.cobertura.xml'
           slug: SaintAngeLs/p_software_engineering_2
+          force: true
 
