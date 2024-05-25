@@ -17,6 +17,8 @@ jobs:
           - project: 'MiniSpace.Web/src/MiniSpace.Web'
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET 8.0.x
         uses: actions/setup-dotnet@v2
