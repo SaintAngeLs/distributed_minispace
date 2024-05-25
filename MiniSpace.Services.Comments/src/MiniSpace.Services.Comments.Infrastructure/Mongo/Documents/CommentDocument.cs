@@ -1,8 +1,10 @@
 using Convey.Types;
 using MiniSpace.Services.Comments.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     public class CommentDocument : IIdentifiable<Guid>
     {
         public Guid Id { get;  set; }

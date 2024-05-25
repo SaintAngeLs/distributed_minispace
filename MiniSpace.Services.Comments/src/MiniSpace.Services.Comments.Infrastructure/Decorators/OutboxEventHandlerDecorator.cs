@@ -2,9 +2,11 @@ using Convey.CQRS.Events;
 using Convey.MessageBrokers;
 using Convey.MessageBrokers.Outbox;
 using Convey.Types;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Decorators
 {
+    [ExcludeFromCodeCoverage]
     [Decorator]
     internal sealed class OutboxEventHandlerDecorator<TEvent> : IEventHandler<TEvent>
         where TEvent : class, IEvent
