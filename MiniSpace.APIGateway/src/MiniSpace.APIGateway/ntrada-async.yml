@@ -677,6 +677,12 @@ modules:
         downstream: organizations-service/organizations
         auth: true
 
+      - upstream: /{organizationId}
+        method: DELETE
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}
+        auth: true
+
       - upstream: /{organizationId}/children
         method: POST
         use: downstream
