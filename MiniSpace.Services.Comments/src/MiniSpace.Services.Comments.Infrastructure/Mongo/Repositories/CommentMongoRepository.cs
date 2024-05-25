@@ -5,9 +5,11 @@ using MiniSpace.Services.Comments.Core.Repositories;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class CommentMongoRepository : ICommentRepository
     {
         private readonly IMongoRepository<CommentDocument, Guid> _repository;

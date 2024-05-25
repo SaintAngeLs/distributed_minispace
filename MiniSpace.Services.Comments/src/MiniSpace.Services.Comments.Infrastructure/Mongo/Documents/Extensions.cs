@@ -1,8 +1,10 @@
 using MiniSpace.Services.Comments.Application.Dto;
 using MiniSpace.Services.Comments.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static Comment AsEntity(this CommentDocument document)

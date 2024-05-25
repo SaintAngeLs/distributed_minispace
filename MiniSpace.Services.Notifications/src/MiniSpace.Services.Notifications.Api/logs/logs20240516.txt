@@ -1,0 +1,420 @@
+2024-05-16 01:03:46.428 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 01:03:46.530 +02:00 [INF] Registering a service [id: notifications-service:d21a48018001472fb910788fe1337e5e] in Consul...
+2024-05-16 01:03:46.560 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 01:03:46.564 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 01:03:46.565 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 01:03:46.581 +02:00 [INF] Received HTTP response headers after 14.4851ms - 200
+2024-05-16 01:03:46.585 +02:00 [INF] End processing HTTP request after 21.4582ms - 200
+2024-05-16 01:03:46.589 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 01:03:46.590 +02:00 [INF] Registered a service [id: notifications-service:d21a48018001472fb910788fe1337e5e] in Consul.
+2024-05-16 01:03:46.596 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 01:03:46.608 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 01:03:46.611 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 01:03:46.613 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 01:03:46.615 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 01:03:46.617 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 01:03:49.632 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5006/favicon.ico - null null
+2024-05-16 01:03:49.644 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5006/favicon.ico - 404 0 null 12.2409ms
+2024-05-16 01:03:49.645 +02:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5006/favicon.ico, Response status code: 404
+2024-05-16 09:22:56.157 +02:00 [INF] Deregistering a service [id: notifications-service:d21a48018001472fb910788fe1337e5e] from Consul...
+2024-05-16 09:22:56.160 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:d21a48018001472fb910788fe1337e5e"
+2024-05-16 09:22:56.160 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:d21a48018001472fb910788fe1337e5e
+2024-05-16 09:22:56.160 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:d21a48018001472fb910788fe1337e5e
+2024-05-16 09:22:56.164 +02:00 [INF] Received HTTP response headers after 3.3135ms - 200
+2024-05-16 09:22:56.164 +02:00 [INF] End processing HTTP request after 3.8814ms - 200
+2024-05-16 09:22:56.164 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 09:22:56.165 +02:00 [INF] Deregistered a service [id: notifications-service:d21a48018001472fb910788fe1337e5e] from Consul.
+ 09:22:33.772 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 09:22:33.773 +02:00 [INF] Registered a service [id: notifications-service:9d90c7e7ddf24d0ea7cfbf39e2c99382] in Consul.
+2024-05-16 09:22:33.781 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 09:22:33.794 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 09:22:33.799 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 09:22:33.804 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 09:22:33.808 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 09:22:33.811 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 09:22:33.834 +02:00 [INF] Deregistering a service [id: notifications-service:9d90c7e7ddf24d0ea7cfbf39e2c99382] from Consul...
+2024-05-16 09:22:33.837 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:9d90c7e7ddf24d0ea7cfbf39e2c99382"
+2024-05-16 09:22:33.837 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:9d90c7e7ddf24d0ea7cfbf39e2c99382
+2024-05-16 09:22:33.838 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:9d90c7e7ddf24d0ea7cfbf39e2c99382
+2024-05-16 09:22:33.846 +02:00 [INF] Received HTTP response headers after 8.2267ms - 200
+2024-05-16 09:22:33.846 +02:00 [INF] End processing HTTP request after 9.4655ms - 200
+2024-05-16 09:22:33.847 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 09:22:33.847 +02:00 [INF] Deregistered a service [id: notifications-service:9d90c7e7ddf24d0ea7cfbf39e2c99382] from Consul.
+2024-05-16 09:23:07.031 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 09:23:07.092 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 09:23:07.148 +02:00 [INF] Registering a service [id: notifications-service:20c6dc9525584eefaa15bd551ea851b5] in Consul...
+2024-05-16 09:23:07.177 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 09:23:07.181 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 09:23:07.182 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 09:23:07.190 +02:00 [INF] Received HTTP response headers after 5.326ms - 200
+2024-05-16 09:23:07.191 +02:00 [INF] End processing HTTP request after 10.4511ms - 200
+2024-05-16 09:23:07.193 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 09:23:07.194 +02:00 [INF] Registered a service [id: notifications-service:20c6dc9525584eefaa15bd551ea851b5] in Consul.
+2024-05-16 09:23:07.201 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 09:23:07.214 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 09:23:07.217 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 09:23:07.221 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 09:23:07.225 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 09:23:07.228 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 09:34:42.281 +02:00 [INF] Deregistering a service [id: notifications-service:20c6dc9525584eefaa15bd551ea851b5] from Consul...
+2024-05-16 09:34:42.284 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:20c6dc9525584eefaa15bd551ea851b5"
+2024-05-16 09:34:42.284 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:20c6dc9525584eefaa15bd551ea851b5
+2024-05-16 09:34:42.284 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:20c6dc9525584eefaa15bd551ea851b5
+2024-05-16 09:34:42.287 +02:00 [INF] Received HTTP response headers after 2.1595ms - 200
+2024-05-16 09:34:42.287 +02:00 [INF] End processing HTTP request after 2.7662ms - 200
+2024-05-16 09:34:42.287 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 09:34:42.287 +02:00 [INF] Deregistered a service [id: notifications-service:20c6dc9525584eefaa15bd551ea851b5] from Consul.
+2024-05-16 09:34:49.681 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 09:34:49.717 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 09:34:49.769 +02:00 [INF] Registering a service [id: notifications-service:a22f4f9813ad4765abbc7c7ce8d98c4c] in Consul...
+2024-05-16 09:34:49.790 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 09:34:49.794 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 09:34:49.794 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 09:34:49.801 +02:00 [INF] Received HTTP response headers after 4.1552ms - 200
+2024-05-16 09:34:49.802 +02:00 [INF] End processing HTTP request after 8.4258ms - 200
+2024-05-16 09:34:49.804 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 09:34:49.805 +02:00 [INF] Registered a service [id: notifications-service:a22f4f9813ad4765abbc7c7ce8d98c4c] in Consul.
+2024-05-16 09:34:49.811 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 09:34:49.826 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 09:34:49.829 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 09:34:49.831 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'notifications'.
+2024-05-16 09:34:49.840 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 09:34:49.842 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 09:34:49.844 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 14:42:55.990 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 14:42:56.027 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 14:42:56.083 +02:00 [INF] Registering a service [id: notifications-service:af32a14bef1146dd89f220c7a7b62f85] in Consul...
+2024-05-16 14:42:56.102 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 14:42:56.105 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 14:42:56.105 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 14:42:56.111 +02:00 [INF] Received HTTP response headers after 3.8829ms - 200
+2024-05-16 14:42:56.112 +02:00 [INF] End processing HTTP request after 7.611ms - 200
+2024-05-16 14:42:56.114 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 14:42:56.114 +02:00 [INF] Registered a service [id: notifications-service:af32a14bef1146dd89f220c7a7b62f85] in Consul.
+2024-05-16 14:42:56.120 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 14:42:56.128 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 14:42:56.130 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 14:42:56.131 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'notifications'.
+2024-05-16 14:42:56.133 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 14:42:56.135 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 14:42:56.136 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 18:17:00.202 +02:00 [INF] Deregistering a service [id: notifications-service:af32a14bef1146dd89f220c7a7b62f85] from Consul...
+2024-05-16 18:17:00.207 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:af32a14bef1146dd89f220c7a7b62f85"
+2024-05-16 18:17:00.208 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:af32a14bef1146dd89f220c7a7b62f85
+2024-05-16 18:17:00.208 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:af32a14bef1146dd89f220c7a7b62f85
+2024-05-16 18:17:00.212 +02:00 [INF] Received HTTP response headers after 3.0797ms - 200
+2024-05-16 18:17:00.212 +02:00 [INF] End processing HTTP request after 3.8382ms - 200
+2024-05-16 18:17:00.212 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 18:17:00.213 +02:00 [INF] Deregistered a service [id: notifications-service:af32a14bef1146dd89f220c7a7b62f85] from Consul.
+2024-05-16 18:33:16.138 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 18:33:16.181 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 18:33:16.263 +02:00 [INF] Registering a service [id: notifications-service:fd548f55984f44f5b420f99de0e7675b] in Consul...
+2024-05-16 18:33:16.284 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 18:33:16.287 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 18:33:16.288 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 18:33:16.296 +02:00 [INF] Received HTTP response headers after 4.8383ms - 200
+2024-05-16 18:33:16.297 +02:00 [INF] End processing HTTP request after 10.7112ms - 200
+2024-05-16 18:33:16.300 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 18:33:16.301 +02:00 [INF] Registered a service [id: notifications-service:fd548f55984f44f5b420f99de0e7675b] in Consul.
+2024-05-16 18:33:16.307 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 18:33:16.317 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 18:33:16.320 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 18:33:16.323 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'notifications'.
+2024-05-16 18:33:16.329 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 18:33:16.331 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 18:33:16.334 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 18:47:09.646 +02:00 [INF] Deregistering a service [id: notifications-service:fd548f55984f44f5b420f99de0e7675b] from Consul...
+2024-05-16 18:47:09.664 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:fd548f55984f44f5b420f99de0e7675b"
+2024-05-16 18:47:09.665 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:fd548f55984f44f5b420f99de0e7675b
+2024-05-16 18:47:09.666 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:fd548f55984f44f5b420f99de0e7675b
+2024-05-16 18:47:09.678 +02:00 [INF] Received HTTP response headers after 10.774ms - 200
+2024-05-16 18:47:09.679 +02:00 [INF] End processing HTTP request after 13.5185ms - 200
+2024-05-16 18:47:09.680 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 18:47:09.682 +02:00 [INF] Deregistered a service [id: notifications-service:fd548f55984f44f5b420f99de0e7675b] from Consul.
+2024-05-16 18:47:17.407 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 18:47:17.452 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 18:47:17.511 +02:00 [INF] Registering a service [id: notifications-service:2eab5f3deac64bd08bb160f148886689] in Consul...
+2024-05-16 18:47:17.541 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 18:47:17.545 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 18:47:17.545 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 18:47:17.554 +02:00 [INF] Received HTTP response headers after 4.9569ms - 200
+2024-05-16 18:47:17.555 +02:00 [INF] End processing HTTP request after 11.3512ms - 200
+2024-05-16 18:47:17.559 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 18:47:17.560 +02:00 [INF] Registered a service [id: notifications-service:2eab5f3deac64bd08bb160f148886689] in Consul.
+2024-05-16 18:47:17.569 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 18:47:17.579 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 18:47:17.587 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 18:47:17.591 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'notifications'.
+2024-05-16 18:47:17.594 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 18:47:17.597 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 18:47:17.601 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 19:33:02.010 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 19:33:02.043 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 19:33:02.107 +02:00 [INF] Registering a service [id: notifications-service:010548acd17743809c439a7b615848a9] in Consul...
+2024-05-16 19:33:02.124 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 19:33:02.127 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 19:33:02.128 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 19:33:02.134 +02:00 [INF] Received HTTP response headers after 4.5273ms - 200
+2024-05-16 19:33:02.135 +02:00 [INF] End processing HTTP request after 8.4806ms - 200
+2024-05-16 19:33:02.138 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 19:33:02.138 +02:00 [INF] Registered a service [id: notifications-service:010548acd17743809c439a7b615848a9] in Consul.
+2024-05-16 19:33:02.143 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 19:33:02.151 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 19:33:02.153 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 19:33:02.155 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'notifications'.
+2024-05-16 19:33:02.157 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 19:33:02.158 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 19:33:02.160 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 19:40:11.549 +02:00 [INF] Deregistering a service [id: notifications-service:010548acd17743809c439a7b615848a9] from Consul...
+2024-05-16 19:40:11.555 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:010548acd17743809c439a7b615848a9"
+2024-05-16 19:40:11.556 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:010548acd17743809c439a7b615848a9
+2024-05-16 19:40:11.556 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:010548acd17743809c439a7b615848a9
+2024-05-16 19:40:11.560 +02:00 [INF] Received HTTP response headers after 3.7489ms - 200
+2024-05-16 19:40:11.561 +02:00 [INF] End processing HTTP request after 4.7643ms - 200
+2024-05-16 19:40:11.561 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 19:40:11.562 +02:00 [INF] Deregistered a service [id: notifications-service:010548acd17743809c439a7b615848a9] from Consul.
+2024-05-16 19:40:19.644 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 19:40:19.679 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 19:40:19.730 +02:00 [INF] Registering a service [id: notifications-service:7e52af678ead4074bd2ddba1e4496a2f] in Consul...
+2024-05-16 19:40:19.748 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 19:40:19.751 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 19:40:19.752 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 19:40:19.758 +02:00 [INF] Received HTTP response headers after 4.4729ms - 200
+2024-05-16 19:40:19.759 +02:00 [INF] End processing HTTP request after 8.4839ms - 200
+2024-05-16 19:40:19.762 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 19:40:19.762 +02:00 [INF] Registered a service [id: notifications-service:7e52af678ead4074bd2ddba1e4496a2f] in Consul.
+2024-05-16 19:40:19.768 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 19:40:19.778 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 19:40:19.781 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 19:40:19.783 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 19:40:19.795 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 19:40:19.797 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 19:40:19.800 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 21:02:26.614 +02:00 [INF] Deregistering a service [id: notifications-service:7e52af678ead4074bd2ddba1e4496a2f] from Consul...
+2024-05-16 21:02:26.623 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:7e52af678ead4074bd2ddba1e4496a2f"
+2024-05-16 21:02:26.624 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:7e52af678ead4074bd2ddba1e4496a2f
+2024-05-16 21:02:26.624 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:7e52af678ead4074bd2ddba1e4496a2f
+2024-05-16 21:02:26.629 +02:00 [INF] Received HTTP response headers after 4.5368ms - 200
+2024-05-16 21:02:26.630 +02:00 [INF] End processing HTTP request after 6.0951ms - 200
+2024-05-16 21:02:26.630 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:02:26.631 +02:00 [INF] Deregistered a service [id: notifications-service:7e52af678ead4074bd2ddba1e4496a2f] from Consul.
+2024-05-16 21:03:57.856 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 21:03:57.894 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 21:03:57.974 +02:00 [INF] Registering a service [id: notifications-service:c01e4457c53d494c98b32b539e301a20] in Consul...
+2024-05-16 21:03:57.995 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 21:03:57.999 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:03:58.000 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:03:58.006 +02:00 [INF] Received HTTP response headers after 4.6479ms - 200
+2024-05-16 21:03:58.007 +02:00 [INF] End processing HTTP request after 8.999ms - 200
+2024-05-16 21:03:58.010 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:03:58.011 +02:00 [INF] Registered a service [id: notifications-service:c01e4457c53d494c98b32b539e301a20] in Consul.
+2024-05-16 21:03:58.017 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 21:03:58.026 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 21:03:58.029 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 21:03:58.031 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 21:03:58.033 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 21:03:58.035 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 21:03:58.038 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 21:06:37.866 +02:00 [INF] Deregistering a service [id: notifications-service:c01e4457c53d494c98b32b539e301a20] from Consul...
+2024-05-16 21:06:37.873 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:c01e4457c53d494c98b32b539e301a20"
+2024-05-16 21:06:37.874 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:c01e4457c53d494c98b32b539e301a20
+2024-05-16 21:06:37.874 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:c01e4457c53d494c98b32b539e301a20
+2024-05-16 21:06:37.879 +02:00 [INF] Received HTTP response headers after 4.0969ms - 200
+2024-05-16 21:06:37.879 +02:00 [INF] End processing HTTP request after 5.2246ms - 200
+2024-05-16 21:06:37.879 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:06:37.880 +02:00 [INF] Deregistered a service [id: notifications-service:c01e4457c53d494c98b32b539e301a20] from Consul.
+2024-05-16 21:12:39.858 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 21:12:39.895 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 21:12:39.982 +02:00 [INF] Registering a service [id: notifications-service:64bef74aa109486cb501ee4dc2767363] in Consul...
+2024-05-16 21:12:40.003 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 21:12:40.006 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:12:40.007 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:12:40.013 +02:00 [INF] Received HTTP response headers after 3.9515ms - 200
+2024-05-16 21:12:40.014 +02:00 [INF] End processing HTTP request after 7.9623ms - 200
+2024-05-16 21:12:40.016 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:12:40.017 +02:00 [INF] Registered a service [id: notifications-service:64bef74aa109486cb501ee4dc2767363] in Consul.
+2024-05-16 21:12:40.022 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 21:12:40.031 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 21:12:40.033 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 21:12:40.035 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 21:12:40.037 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 21:12:40.039 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 21:12:40.041 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 21:18:28.144 +02:00 [INF] Deregistering a service [id: notifications-service:64bef74aa109486cb501ee4dc2767363] from Consul...
+2024-05-16 21:18:28.153 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:64bef74aa109486cb501ee4dc2767363"
+2024-05-16 21:18:28.154 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:64bef74aa109486cb501ee4dc2767363
+2024-05-16 21:18:28.154 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:64bef74aa109486cb501ee4dc2767363
+2024-05-16 21:18:28.159 +02:00 [INF] Received HTTP response headers after 4.4262ms - 200
+2024-05-16 21:18:28.160 +02:00 [INF] End processing HTTP request after 5.9453ms - 200
+2024-05-16 21:18:28.160 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:18:28.161 +02:00 [INF] Deregistered a service [id: notifications-service:64bef74aa109486cb501ee4dc2767363] from Consul.
+2024-05-16 21:22:52.345 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 21:22:52.406 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 21:22:52.457 +02:00 [INF] Registering a service [id: notifications-service:0fb9d9b1bda24c1f9b1f58ebca25ca3e] in Consul...
+2024-05-16 21:22:52.485 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 21:22:52.488 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:22:52.489 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:22:52.496 +02:00 [INF] Received HTTP response headers after 4.2126ms - 200
+2024-05-16 21:22:52.497 +02:00 [INF] End processing HTTP request after 9.8634ms - 200
+2024-05-16 21:22:52.501 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:22:52.501 +02:00 [INF] Registered a service [id: notifications-service:0fb9d9b1bda24c1f9b1f58ebca25ca3e] in Consul.
+2024-05-16 21:22:52.509 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 21:22:52.521 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 21:22:52.525 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 21:22:52.528 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 21:22:52.531 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 21:22:52.534 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 21:22:52.537 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 21:25:21.593 +02:00 [INF] Deregistering a service [id: notifications-service:0fb9d9b1bda24c1f9b1f58ebca25ca3e] from Consul...
+2024-05-16 21:25:21.600 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:0fb9d9b1bda24c1f9b1f58ebca25ca3e"
+2024-05-16 21:25:21.600 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:0fb9d9b1bda24c1f9b1f58ebca25ca3e
+2024-05-16 21:25:21.601 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:0fb9d9b1bda24c1f9b1f58ebca25ca3e
+2024-05-16 21:25:21.606 +02:00 [INF] Received HTTP response headers after 4.266ms - 200
+2024-05-16 21:25:21.606 +02:00 [INF] End processing HTTP request after 5.4975ms - 200
+2024-05-16 21:25:21.606 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:25:21.607 +02:00 [INF] Deregistered a service [id: notifications-service:0fb9d9b1bda24c1f9b1f58ebca25ca3e] from Consul.
+2024-05-16 21:25:27.497 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 21:25:27.535 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 21:25:27.608 +02:00 [INF] Registering a service [id: notifications-service:1ea58ff10ff04c66bbc3eb7af8173e58] in Consul...
+2024-05-16 21:25:27.627 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 21:25:27.630 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:25:27.631 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:25:27.637 +02:00 [INF] Received HTTP response headers after 4.2492ms - 200
+2024-05-16 21:25:27.638 +02:00 [INF] End processing HTTP request after 8.4799ms - 200
+2024-05-16 21:25:27.641 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:25:27.642 +02:00 [INF] Registered a service [id: notifications-service:1ea58ff10ff04c66bbc3eb7af8173e58] in Consul.
+2024-05-16 21:25:27.647 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 21:25:27.655 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 21:25:27.658 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 21:25:27.659 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 21:25:27.662 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-16 21:25:27.663 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_deleted' with routing key: 'notification_deleted' for an exchange: 'notifications'.
+2024-05-16 21:25:27.665 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.notification_updated' with routing key: 'notification_updated' for an exchange: 'notifications'.
+2024-05-16 21:37:35.233 +02:00 [INF] Deregistering a service [id: notifications-service:1ea58ff10ff04c66bbc3eb7af8173e58] from Consul...
+2024-05-16 21:37:35.247 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:1ea58ff10ff04c66bbc3eb7af8173e58"
+2024-05-16 21:37:35.248 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:1ea58ff10ff04c66bbc3eb7af8173e58
+2024-05-16 21:37:35.252 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:1ea58ff10ff04c66bbc3eb7af8173e58
+2024-05-16 21:37:35.265 +02:00 [INF] Received HTTP response headers after 11.1418ms - 200
+2024-05-16 21:37:35.266 +02:00 [INF] End processing HTTP request after 17.9682ms - 200
+2024-05-16 21:37:35.268 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:37:35.271 +02:00 [INF] Deregistered a service [id: notifications-service:1ea58ff10ff04c66bbc3eb7af8173e58] from Consul.
+2024-05-16 21:37:50.737 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 21:37:50.784 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 21:37:50.858 +02:00 [INF] Registering a service [id: notifications-service:8a97381161c74aed83c911a96b95d826] in Consul...
+2024-05-16 21:37:50.878 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 21:37:50.882 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:37:50.883 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:37:50.889 +02:00 [INF] Received HTTP response headers after 4.1265ms - 200
+2024-05-16 21:37:50.890 +02:00 [INF] End processing HTTP request after 8.4056ms - 200
+2024-05-16 21:37:50.893 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:37:50.894 +02:00 [INF] Registered a service [id: notifications-service:8a97381161c74aed83c911a96b95d826] in Consul.
+2024-05-16 21:37:50.902 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 21:37:50.911 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 21:37:50.915 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 21:37:50.917 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 21:58:30.736 +02:00 [INF] Deregistering a service [id: notifications-service:8a97381161c74aed83c911a96b95d826] from Consul...
+2024-05-16 21:58:30.749 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:8a97381161c74aed83c911a96b95d826"
+2024-05-16 21:58:30.750 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:8a97381161c74aed83c911a96b95d826
+2024-05-16 21:58:30.751 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:8a97381161c74aed83c911a96b95d826
+2024-05-16 21:58:30.763 +02:00 [INF] Received HTTP response headers after 10.8989ms - 200
+2024-05-16 21:58:30.764 +02:00 [INF] End processing HTTP request after 14.5283ms - 200
+2024-05-16 21:58:30.765 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:58:30.768 +02:00 [INF] Deregistered a service [id: notifications-service:8a97381161c74aed83c911a96b95d826] from Consul.
+2024-05-16 21:58:37.596 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 21:58:37.641 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 21:58:37.755 +02:00 [INF] Registering a service [id: notifications-service:736ce17f111246ff9d1639b95ee97864] in Consul...
+2024-05-16 21:58:37.783 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 21:58:37.789 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:58:37.789 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 21:58:37.800 +02:00 [INF] Received HTTP response headers after 7.7667ms - 200
+2024-05-16 21:58:37.802 +02:00 [INF] End processing HTTP request after 13.8307ms - 200
+2024-05-16 21:58:37.805 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 21:58:37.806 +02:00 [INF] Registered a service [id: notifications-service:736ce17f111246ff9d1639b95ee97864] in Consul.
+2024-05-16 21:58:37.813 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 21:58:37.826 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 21:58:37.830 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 21:58:37.832 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 22:08:32.853 +02:00 [INF] Deregistering a service [id: notifications-service:736ce17f111246ff9d1639b95ee97864] from Consul...
+2024-05-16 22:08:32.857 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:736ce17f111246ff9d1639b95ee97864"
+2024-05-16 22:08:32.857 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:736ce17f111246ff9d1639b95ee97864
+2024-05-16 22:08:32.857 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:736ce17f111246ff9d1639b95ee97864
+2024-05-16 22:08:32.860 +02:00 [INF] Received HTTP response headers after 2.0024ms - 200
+2024-05-16 22:08:32.860 +02:00 [INF] End processing HTTP request after 3.0283ms - 200
+2024-05-16 22:08:32.860 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:08:32.861 +02:00 [INF] Deregistered a service [id: notifications-service:736ce17f111246ff9d1639b95ee97864] from Consul.
+2024-05-16 22:08:59.623 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 22:08:59.671 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 22:08:59.737 +02:00 [INF] Registering a service [id: notifications-service:c0efdf8a5ebf41708427b1e1fae27edc] in Consul...
+2024-05-16 22:08:59.757 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 22:08:59.760 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:08:59.760 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:08:59.768 +02:00 [INF] Received HTTP response headers after 5.7211ms - 200
+2024-05-16 22:08:59.769 +02:00 [INF] End processing HTTP request after 10.2511ms - 200
+2024-05-16 22:08:59.772 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:08:59.772 +02:00 [INF] Registered a service [id: notifications-service:c0efdf8a5ebf41708427b1e1fae27edc] in Consul.
+2024-05-16 22:08:59.779 +02:00 [INF] Deregistering a service [id: notifications-service:c0efdf8a5ebf41708427b1e1fae27edc] from Consul...
+2024-05-16 22:08:59.780 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:c0efdf8a5ebf41708427b1e1fae27edc"
+2024-05-16 22:08:59.781 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:c0efdf8a5ebf41708427b1e1fae27edc
+2024-05-16 22:08:59.781 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:c0efdf8a5ebf41708427b1e1fae27edc
+2024-05-16 22:08:59.783 +02:00 [INF] Received HTTP response headers after 1.9074ms - 200
+2024-05-16 22:08:59.784 +02:00 [INF] End processing HTTP request after 2.7418ms - 200
+2024-05-16 22:08:59.784 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:08:59.784 +02:00 [INF] Deregistered a service [id: notifications-service:c0efdf8a5ebf41708427b1e1fae27edc] from Consul.
+2024-05-16 22:09:12.557 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 22:09:12.598 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 22:09:12.655 +02:00 [INF] Registering a service [id: notifications-service:abbfffd73124438cb1dffc229bae3e66] in Consul...
+2024-05-16 22:09:12.676 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 22:09:12.680 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:09:12.680 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:09:12.688 +02:00 [INF] Received HTTP response headers after 5.2121ms - 200
+2024-05-16 22:09:12.689 +02:00 [INF] End processing HTTP request after 10.1735ms - 200
+2024-05-16 22:09:12.691 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:09:12.692 +02:00 [INF] Registered a service [id: notifications-service:abbfffd73124438cb1dffc229bae3e66] in Consul.
+2024-05-16 22:09:12.698 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 22:09:12.709 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 22:09:12.713 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 22:09:12.718 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 22:10:15.261 +02:00 [INF] Deregistering a service [id: notifications-service:abbfffd73124438cb1dffc229bae3e66] from Consul...
+2024-05-16 22:10:15.265 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:abbfffd73124438cb1dffc229bae3e66"
+2024-05-16 22:10:15.265 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:abbfffd73124438cb1dffc229bae3e66
+2024-05-16 22:10:15.266 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:abbfffd73124438cb1dffc229bae3e66
+2024-05-16 22:10:15.268 +02:00 [INF] Received HTTP response headers after 2.0701ms - 200
+2024-05-16 22:10:15.268 +02:00 [INF] End processing HTTP request after 2.9936ms - 200
+2024-05-16 22:10:15.269 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:10:15.269 +02:00 [INF] Deregistered a service [id: notifications-service:abbfffd73124438cb1dffc229bae3e66] from Consul.
+2024-05-16 22:10:21.504 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 22:10:21.550 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 22:10:21.614 +02:00 [INF] Registering a service [id: notifications-service:d58144a3308e49d18a2a074c59cb6d9e] in Consul...
+2024-05-16 22:10:21.637 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 22:10:21.641 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:10:21.641 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:10:21.652 +02:00 [INF] Received HTTP response headers after 6.4099ms - 200
+2024-05-16 22:10:21.653 +02:00 [INF] End processing HTTP request after 12.698ms - 200
+2024-05-16 22:10:21.655 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:10:21.656 +02:00 [INF] Registered a service [id: notifications-service:d58144a3308e49d18a2a074c59cb6d9e] in Consul.
+2024-05-16 22:10:21.663 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 22:10:21.673 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 22:10:21.675 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 22:10:21.680 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.
+2024-05-16 22:14:19.651 +02:00 [INF] Deregistering a service [id: notifications-service:d58144a3308e49d18a2a074c59cb6d9e] from Consul...
+2024-05-16 22:14:19.661 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/notifications-service:d58144a3308e49d18a2a074c59cb6d9e"
+2024-05-16 22:14:19.663 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:d58144a3308e49d18a2a074c59cb6d9e
+2024-05-16 22:14:19.663 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/notifications-service:d58144a3308e49d18a2a074c59cb6d9e
+2024-05-16 22:14:19.674 +02:00 [INF] Received HTTP response headers after 9.6679ms - 200
+2024-05-16 22:14:19.677 +02:00 [INF] End processing HTTP request after 14.7992ms - 200
+2024-05-16 22:14:19.678 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:14:19.681 +02:00 [INF] Deregistered a service [id: notifications-service:d58144a3308e49d18a2a074c59cb6d9e] from Consul.
+2024-05-16 22:14:27.026 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/wwwroot. Static files may be unavailable.
+2024-05-16 22:14:27.068 +02:00 [INF] Outbox is enabled, type: 'Sequential', message processing every 2000 ms.
+2024-05-16 22:14:27.163 +02:00 [INF] Registering a service [id: notifications-service:4656cf4c3216434d8e5e8586009c8543] in Consul...
+2024-05-16 22:14:27.184 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-16 22:14:27.189 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:14:27.190 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-16 22:14:27.199 +02:00 [INF] Received HTTP response headers after 7.1225ms - 200
+2024-05-16 22:14:27.200 +02:00 [INF] End processing HTTP request after 12.398ms - 200
+2024-05-16 22:14:27.203 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-16 22:14:27.204 +02:00 [INF] Registered a service [id: notifications-service:4656cf4c3216434d8e5e8586009c8543] in Consul.
+2024-05-16 22:14:27.211 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.create_notification' with routing key: 'create_notification' for an exchange: 'notifications'.
+2024-05-16 22:14:27.220 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.delete_notification' with routing key: 'delete_notification' for an exchange: 'notifications'.
+2024-05-16 22:14:27.224 +02:00 [INF] Declaring a queue: 'notifications-service/notifications.update_notification_status' with routing key: 'update_notification_status' for an exchange: 'notifications'.
+2024-05-16 22:14:27.227 +02:00 [INF] Declaring a queue: 'notifications-service/friends.friend_request_created' with routing key: 'friend_request_created' for an exchange: 'friends'.

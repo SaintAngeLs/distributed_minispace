@@ -1,0 +1,618 @@
+2024-05-20 00:00:00.060 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 22:00:00.
+2024-05-20 00:00:06.112 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:00:06.112 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:00:06.112 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.112 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:00:06.113 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.112 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.114 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:00:06.114 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.115 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:00:06.116 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.214 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.214 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 102.1603ms
+2024-05-20 00:00:06.265 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.265 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 149.4933ms
+2024-05-20 00:00:06.270 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.270 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 157.7435ms
+2024-05-20 00:00:06.298 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.298 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 184.0745ms
+2024-05-20 00:00:06.325 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:00:06.325 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 212.6626ms
+2024-05-20 00:03:45.004 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:03:45.004 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:03:45.005 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:03:45.005 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.006 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.005 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:03:45.005 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:03:45.007 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.008 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.005 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.096 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.097 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 92.5336ms
+2024-05-20 00:03:45.151 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.153 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 148.7343ms
+2024-05-20 00:03:45.153 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.154 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 149.0628ms
+2024-05-20 00:03:45.184 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.184 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 179.8613ms
+2024-05-20 00:03:45.207 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:45.208 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 203.067ms
+2024-05-20 00:03:49.854 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:03:49.854 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:49.854 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:03:49.854 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:49.857 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:03:49.857 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:49.939 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:49.940 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 85.2432ms
+2024-05-20 00:03:49.991 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:49.992 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 138.1268ms
+2024-05-20 00:03:49.995 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:03:49.995 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 138.4746ms
+2024-05-20 00:04:00.807 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:04:00.807 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:04:00.807 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:04:00.807 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:04:00.808 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.808 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.808 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.807 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:04:00.808 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.808 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.896 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.896 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 89.1282ms
+2024-05-20 00:04:00.945 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.945 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 138.1493ms
+2024-05-20 00:04:00.952 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.953 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 145.6909ms
+2024-05-20 00:04:00.957 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:00.957 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 150.3246ms
+2024-05-20 00:04:01.032 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:01.033 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 225.4396ms
+2024-05-20 00:04:59.841 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:04:59.842 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.843 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:04:59.844 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:04:59.844 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:04:59.844 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.844 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.844 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.847 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:04:59.847 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.927 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.928 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 84.0237ms
+2024-05-20 00:04:59.991 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.991 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.991 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 144.4233ms
+2024-05-20 00:04:59.991 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 148.4662ms
+2024-05-20 00:04:59.994 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:04:59.994 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 150.6231ms
+2024-05-20 00:05:00.028 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:00.029 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 187.1996ms
+2024-05-20 00:05:26.236 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:05:26.236 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.237 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:05:26.237 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:05:26.238 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.238 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:05:26.238 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.237 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:05:26.239 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.238 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.387 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.387 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 149.6338ms
+2024-05-20 00:05:26.398 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.398 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 160.5216ms
+2024-05-20 00:05:26.465 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.465 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 227.4227ms
+2024-05-20 00:05:26.495 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.495 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 257.8858ms
+2024-05-20 00:05:26.547 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:05:26.547 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 311.1425ms
+2024-05-20 00:10:00.060 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 22:10:00.
+2024-05-20 00:15:46.032 +02:00 [INF] Received a message with ID: '5fc22a4546fe45db918657546af93af1', Correlation ID: '8d829ea8398a4de685dc18139844fe2b', timestamp: 1716156946, queue: mediafiles-service/students.student_created, routing key: student_created, exchange: students, payload: 
+2024-05-20 00:15:46.033 +02:00 [INF] Handling a message: student_created with ID: 5fc22a4546fe45db918657546af93af1, Correlation ID: 8d829ea8398a4de685dc18139844fe2b, retry: 0
+2024-05-20 00:15:46.061 +02:00 [INF] Associated profile picture with ID: 00000000-0000-0000-0000-000000000000 for student with ID: af98ceda-1483-4c51-a602-89e5537ec89e.
+2024-05-20 00:15:46.061 +02:00 [INF] Handled a message: student_created with ID: 5fc22a4546fe45db918657546af93af1, Correlation ID: 8d829ea8398a4de685dc18139844fe2b, retry: 0
+2024-05-20 00:15:52.192 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:15:52.193 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.194 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00000000-0000-0000-0000-000000000000 - null null
+2024-05-20 00:15:52.195 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.195 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:15:52.196 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.198 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:15:52.197 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:15:52.200 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.200 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.203 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:15:52.204 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.227 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.227 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00000000-0000-0000-0000-000000000000 - 404 0 null 33.7161ms
+2024-05-20 00:15:52.366 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.366 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 163.002ms
+2024-05-20 00:15:52.446 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.446 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 250.9373ms
+2024-05-20 00:15:52.589 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.590 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 392.2527ms
+2024-05-20 00:15:52.668 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.668 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 475.5326ms
+2024-05-20 00:15:52.703 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:15:52.704 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 505.6147ms
+2024-05-20 00:16:11.087 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:16:11.088 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.089 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:16:11.090 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.091 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:16:11.092 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.093 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00000000-0000-0000-0000-000000000000 - null null
+2024-05-20 00:16:11.093 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.094 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:16:11.095 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:16:11.095 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.095 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.177 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.178 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 86.3757ms
+2024-05-20 00:16:11.261 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.261 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 171.6589ms
+2024-05-20 00:16:11.281 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.281 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 194.2713ms
+2024-05-20 00:16:11.283 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.283 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 188.7169ms
+2024-05-20 00:16:11.317 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.318 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00000000-0000-0000-0000-000000000000 - 404 0 null 224.6527ms
+2024-05-20 00:16:11.460 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:11.460 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 366.4839ms
+2024-05-20 00:16:34.049 +02:00 [INF] Deregistering a service [id: mediafiles-service:fc52f20ed60c4d749be5413da8d7841a] from Consul...
+2024-05-20 00:16:34.050 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/mediafiles-service:fc52f20ed60c4d749be5413da8d7841a"
+2024-05-20 00:16:34.051 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/mediafiles-service:fc52f20ed60c4d749be5413da8d7841a
+2024-05-20 00:16:34.051 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/mediafiles-service:fc52f20ed60c4d749be5413da8d7841a
+2024-05-20 00:16:34.054 +02:00 [INF] Received HTTP response headers after 2.6493ms - 200
+2024-05-20 00:16:34.054 +02:00 [INF] End processing HTTP request after 3.0939ms - 200
+2024-05-20 00:16:34.054 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-20 00:16:34.055 +02:00 [INF] Deregistered a service [id: mediafiles-service:fc52f20ed60c4d749be5413da8d7841a] from Consul.
+2024-05-20 00:16:40.523 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/wwwroot. Static files may be unavailable.
+2024-05-20 00:16:40.671 +02:00 [INF] Registering a service [id: mediafiles-service:64976f29c4e24e04b8d0a1856da9b04f] in Consul...
+2024-05-20 00:16:40.694 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-20 00:16:40.698 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-20 00:16:40.698 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-20 00:16:40.705 +02:00 [INF] Received HTTP response headers after 4.6716ms - 200
+2024-05-20 00:16:40.707 +02:00 [INF] End processing HTTP request after 10.4808ms - 200
+2024-05-20 00:16:40.710 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-20 00:16:40.711 +02:00 [INF] Registered a service [id: mediafiles-service:64976f29c4e24e04b8d0a1856da9b04f] in Consul.
+2024-05-20 00:16:40.714 +02:00 [INF] Declaring a queue: 'mediafiles-service/mediafiles.upload_media_file' with routing key: 'upload_media_file' for an exchange: 'mediafiles'.
+2024-05-20 00:16:40.725 +02:00 [INF] Declaring a queue: 'mediafiles-service/mediafiles.delete_media_file' with routing key: 'delete_media_file' for an exchange: 'mediafiles'.
+2024-05-20 00:16:40.728 +02:00 [INF] Declaring a queue: 'mediafiles-service/mediafiles.cleanup_unassociated_files' with routing key: 'cleanup_unassociated_files' for an exchange: 'mediafiles'.
+2024-05-20 00:16:40.730 +02:00 [INF] Declaring a queue: 'mediafiles-service/students.student_created' with routing key: 'student_created' for an exchange: 'students'.
+2024-05-20 00:16:40.733 +02:00 [INF] Declaring a queue: 'mediafiles-service/students.student_updated' with routing key: 'student_updated' for an exchange: 'students'.
+2024-05-20 00:16:40.736 +02:00 [INF] Declaring a queue: 'mediafiles-service/posts.post_created' with routing key: 'post_created' for an exchange: 'posts'.
+2024-05-20 00:16:40.739 +02:00 [INF] Declaring a queue: 'mediafiles-service/events.event_created' with routing key: 'event_created' for an exchange: 'events'.
+2024-05-20 00:16:48.247 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:16:48.247 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:16:48.247 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00000000-0000-0000-0000-000000000000 - null null
+2024-05-20 00:16:48.247 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:16:48.247 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:16:48.247 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:16:48.299 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.299 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.299 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.299 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.299 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.299 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.706 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.722 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00000000-0000-0000-0000-000000000000 - 404 0 null 476.3375ms
+2024-05-20 00:16:48.940 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.941 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 695.4426ms
+2024-05-20 00:16:48.947 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.947 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 701.6568ms
+2024-05-20 00:16:48.956 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.956 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 710.6918ms
+2024-05-20 00:16:48.976 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:48.976 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 730.569ms
+2024-05-20 00:16:49.069 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:16:49.070 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 824.8737ms
+2024-05-20 00:17:10.492 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/media-files - application/json null
+2024-05-20 00:17:10.494 +02:00 [INF] Executing endpoint 'HTTP: POST media-files'
+2024-05-20 00:17:10.589 +02:00 [INF] Executed endpoint 'HTTP: POST media-files'
+2024-05-20 00:17:10.591 +02:00 [ERR] Invalid file size: 1068404. Maximum valid file size: 1000000.
+MiniSpace.Services.MediaFiles.Application.Exceptions.InvalidFileSizeException: Invalid file size: 1068404. Maximum valid file size: 1000000.
+   at MiniSpace.Services.MediaFiles.Infrastructure.Services.FileValidator.ValidateFileSize(Int32 size) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Infrastructure/Services/FileValidator.cs:line 29
+   at MiniSpace.Services.MediaFiles.Infrastructure.Services.MediaFilesService.UploadAsync(UploadMediaFile command) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Infrastructure/Services/MediaFilesService.cs:line 49
+   at MiniSpace.Services.MediaFiles.Api.Program.<>c.<<Main>b__0_4>d.MoveNext() in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/Program.cs:line 37
+--- End of stack trace from previous location ---
+   at Convey.WebApi.EndpointsBuilder.BuildRequestContext[T](HttpContext httpContext, Func`3 context)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ApdexMiddleware.MeasureTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.PerRequestTimerMiddleware.TimeTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.RequestTimerMiddleware.TimeTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ErrorRequestMeterMiddleware.Invoke(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ActiveRequestCounterEndpointMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Convey.WebApi.Exceptions.ErrorHandlerMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
+2024-05-20 00:17:10.605 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/media-files - 400 null application/json 113.0933ms
+2024-05-20 00:17:11.940 +02:00 [INF] Received a message with ID: '32deaab2adc843c8a3d27b6a51ed98cf', Correlation ID: '6f8b24a90b024f708fd1ff3bc271f5d3', timestamp: 1716157031, queue: mediafiles-service/students.student_updated, routing key: student_updated, exchange: students, payload: 
+2024-05-20 00:17:11.953 +02:00 [INF] Handling a message: student_updated with ID: 32deaab2adc843c8a3d27b6a51ed98cf, Correlation ID: 6f8b24a90b024f708fd1ff3bc271f5d3, retry: 0
+2024-05-20 00:17:12.015 +02:00 [INF] Associated profile picture with ID: 00000000-0000-0000-0000-000000000000 for student with ID: af98ceda-1483-4c51-a602-89e5537ec89e.
+2024-05-20 00:17:12.017 +02:00 [INF] Handled a message: student_updated with ID: 32deaab2adc843c8a3d27b6a51ed98cf, Correlation ID: 6f8b24a90b024f708fd1ff3bc271f5d3, retry: 0
+2024-05-20 00:17:33.940 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/media-files - application/json null
+2024-05-20 00:17:33.941 +02:00 [INF] Executing endpoint 'HTTP: POST media-files'
+2024-05-20 00:17:34.502 +02:00 [INF] Executed endpoint 'HTTP: POST media-files'
+2024-05-20 00:17:34.502 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/media-files - 200 null application/json 562.342ms
+2024-05-20 00:17:35.252 +02:00 [INF] Received a message with ID: 'cd300040edfc43fab4f826d241a892f4', Correlation ID: 'fcce16f73deb47648a5f000b7c67f216', timestamp: 1716157055, queue: mediafiles-service/students.student_updated, routing key: student_updated, exchange: students, payload: 
+2024-05-20 00:17:35.254 +02:00 [INF] Handling a message: student_updated with ID: cd300040edfc43fab4f826d241a892f4, Correlation ID: fcce16f73deb47648a5f000b7c67f216, retry: 0
+2024-05-20 00:17:35.327 +02:00 [INF] Associated profile picture with ID: 00994fe5-9379-4ee6-80f0-ae1282c3aa41 for student with ID: af98ceda-1483-4c51-a602-89e5537ec89e.
+2024-05-20 00:17:35.328 +02:00 [INF] Handled a message: student_updated with ID: cd300040edfc43fab4f826d241a892f4, Correlation ID: fcce16f73deb47648a5f000b7c67f216, retry: 0
+2024-05-20 00:17:39.129 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:17:39.132 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.132 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:17:39.133 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.133 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:17:39.134 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:17:39.134 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.136 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.137 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:17:39.139 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.140 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:17:39.141 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.236 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.236 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 99.0345ms
+2024-05-20 00:17:39.237 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.237 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 104.3808ms
+2024-05-20 00:17:39.281 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.281 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 147.0277ms
+2024-05-20 00:17:39.314 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.315 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 183.0342ms
+2024-05-20 00:17:39.342 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.342 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 213.234ms
+2024-05-20 00:17:39.585 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:17:39.585 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 445.5923ms
+2024-05-20 00:20:00.061 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 22:20:00.
+2024-05-20 00:21:15.610 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:21:15.611 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.610 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:21:15.613 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.613 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:21:15.613 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:21:15.614 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:21:15.614 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.614 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:21:15.614 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.613 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.615 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.700 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.700 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 86.5771ms
+2024-05-20 00:21:15.701 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.702 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 87.9219ms
+2024-05-20 00:21:15.752 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.752 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 139.3189ms
+2024-05-20 00:21:15.755 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.755 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 141.6477ms
+2024-05-20 00:21:15.807 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.813 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 203.5706ms
+2024-05-20 00:21:15.860 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:21:15.860 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 250.5347ms
+2024-05-20 00:26:43.152 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:26:43.155 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.162 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:26:43.162 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:26:43.163 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:26:43.163 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.164 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.163 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:26:43.163 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.167 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.163 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:26:43.170 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.256 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.256 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 93.0772ms
+2024-05-20 00:26:43.260 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.260 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 98.4293ms
+2024-05-20 00:26:43.310 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.310 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 147.5821ms
+2024-05-20 00:26:43.323 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.323 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 159.6786ms
+2024-05-20 00:26:43.326 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.326 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 163.829ms
+2024-05-20 00:26:43.367 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:26:43.368 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 215.4889ms
+2024-05-20 00:27:06.710 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:27:06.710 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:27:06.710 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:27:06.711 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.711 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.711 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.713 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:27:06.714 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:27:06.714 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.714 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.715 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:27:06.716 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.801 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.802 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 91.7538ms
+2024-05-20 00:27:06.807 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.808 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 92.5126ms
+2024-05-20 00:27:06.859 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.859 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 149.0673ms
+2024-05-20 00:27:06.860 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.860 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 146.3368ms
+2024-05-20 00:27:06.861 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.862 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 148.7256ms
+2024-05-20 00:27:06.912 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:27:06.913 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 202.3753ms
+2024-05-20 00:30:00.093 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 22:30:00.
+2024-05-20 00:30:14.161 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:30:14.161 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:30:14.162 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:30:14.163 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:30:14.163 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.163 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.162 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.167 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:30:14.167 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.167 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.168 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:30:14.168 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.256 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.257 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 95.8866ms
+2024-05-20 00:30:14.257 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.258 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 95.3864ms
+2024-05-20 00:30:14.310 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.310 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 142.3061ms
+2024-05-20 00:30:14.339 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.339 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 177.0013ms
+2024-05-20 00:30:14.358 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.358 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 197.0478ms
+2024-05-20 00:30:14.420 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:14.420 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 253.331ms
+2024-05-20 00:30:19.355 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:30:19.355 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:30:19.355 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:30:19.355 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.356 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.356 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:30:19.357 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.357 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:30:19.357 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.358 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:30:19.359 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.358 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.546 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.547 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 192.072ms
+2024-05-20 00:30:19.614 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.615 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 260.2849ms
+2024-05-20 00:30:19.626 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.627 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 272.2529ms
+2024-05-20 00:30:19.663 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.664 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 305.6269ms
+2024-05-20 00:30:19.667 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.668 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 311.5131ms
+2024-05-20 00:30:19.770 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:30:19.770 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 412.9785ms
+2024-05-20 00:34:14.936 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:34:14.936 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:34:14.937 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:14.937 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:14.938 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:34:14.939 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:14.939 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:34:14.939 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:14.940 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:34:14.940 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:34:14.940 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:14.940 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:15.035 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:15.035 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:15.035 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 95.5021ms
+2024-05-20 00:34:15.035 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 95.3706ms
+2024-05-20 00:34:15.074 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:15.075 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 136.4602ms
+2024-05-20 00:34:15.088 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:15.088 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 148.8754ms
+2024-05-20 00:34:15.098 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:15.098 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 161.8714ms
+2024-05-20 00:34:15.130 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:34:15.131 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 194.3684ms
+2024-05-20 00:37:11.351 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:37:11.352 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.355 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:37:11.355 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.356 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:37:11.356 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.355 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:37:11.355 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:37:11.357 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:37:11.357 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.357 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.357 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.444 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.444 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 87.6209ms
+2024-05-20 00:37:11.446 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.446 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 91.0626ms
+2024-05-20 00:37:11.490 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.490 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 139.5656ms
+2024-05-20 00:37:11.501 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.501 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 145.7116ms
+2024-05-20 00:37:11.554 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:11.554 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 198.6996ms
+2024-05-20 00:37:13.494 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:13.494 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 2139.0642ms
+2024-05-20 00:37:53.602 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:37:53.602 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.603 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:37:53.603 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.604 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:37:53.605 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:37:53.605 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.605 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.604 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:37:53.606 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.604 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:37:53.607 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.695 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.695 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.696 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 91.9724ms
+2024-05-20 00:37:53.696 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 91.7767ms
+2024-05-20 00:37:53.748 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.748 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 143.9387ms
+2024-05-20 00:37:53.750 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.750 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 145.8017ms
+2024-05-20 00:37:53.794 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.794 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 191.9281ms
+2024-05-20 00:37:53.871 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:37:53.871 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 267.9863ms
+2024-05-20 00:40:00.065 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 22:40:00.
+2024-05-20 00:40:58.313 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:40:58.316 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.316 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:40:58.317 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.321 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:40:58.321 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:40:58.324 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.324 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.326 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:40:58.327 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:40:58.327 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.330 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.422 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.423 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 101.7582ms
+2024-05-20 00:40:58.425 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.425 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 97.5734ms
+2024-05-20 00:40:58.483 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.483 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 156.9161ms
+2024-05-20 00:40:58.485 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.485 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 169.8073ms
+2024-05-20 00:40:58.490 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.490 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 168.7642ms
+2024-05-20 00:40:58.546 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:40:58.546 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 232.4304ms
+2024-05-20 00:45:37.150 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 00:45:37.151 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 00:45:37.152 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 00:45:37.152 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:45:37.153 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 00:45:37.153 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.153 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.153 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.153 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:45:37.154 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.153 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.153 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.235 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.236 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 83.1233ms
+2024-05-20 00:45:37.237 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.238 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 86.8094ms
+2024-05-20 00:45:37.307 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.308 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 156.0192ms
+2024-05-20 00:45:37.313 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.314 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 161.9761ms
+2024-05-20 00:45:37.335 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.335 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 182.5538ms
+2024-05-20 00:45:37.368 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:37.368 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 218.0945ms
+2024-05-20 00:45:47.545 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:45:47.545 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:47.546 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:45:47.547 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:47.631 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:47.631 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 85.0632ms
+2024-05-20 00:45:47.675 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:47.675 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 129.8292ms
+2024-05-20 00:45:51.094 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:45:51.094 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:45:51.095 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:51.095 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:51.176 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:51.177 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 82.6381ms
+2024-05-20 00:45:51.233 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:45:51.234 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 139.8232ms
+2024-05-20 00:47:07.060 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 00:47:07.060 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 00:47:07.060 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:47:07.060 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:47:07.144 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:47:07.145 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 85.0543ms
+2024-05-20 00:47:07.590 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 00:47:07.591 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 531.2423ms
+2024-05-20 00:50:00.066 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 22:50:00.
+2024-05-20 01:00:00.065 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 23:00:00.
+2024-05-20 01:10:00.071 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 23:10:00.
+2024-05-20 01:20:00.501 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 23:20:00.
+2024-05-20 01:30:00.503 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 23:30:00.
+2024-05-20 01:40:00.070 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 23:40:00.
+2024-05-20 01:50:00.071 +02:00 [INF] Cleaned unmatched files for all entities at 05/19/2024 23:50:00.
+2024-05-20 02:00:00.378 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 00:00:00.
+2024-05-20 02:10:00.374 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 00:10:00.
+2024-05-20 02:20:00.065 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 00:20:00.
+2024-05-20 02:30:00.068 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 00:30:00.
+2024-05-20 02:40:00.436 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 00:40:00.
+2024-05-20 02:50:00.435 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 00:50:00.
+2024-05-20 03:00:00.067 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 01:00:00.
+2024-05-20 03:10:00.061 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 01:10:00.
+2024-05-20 03:20:00.445 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 01:20:00.
+2024-05-20 03:30:00.448 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 01:30:00.
+2024-05-20 03:40:00.065 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 01:40:00.
+2024-05-20 03:50:00.429 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 01:50:00.
+2024-05-20 04:00:00.535 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 02:00:00.
+2024-05-20 04:10:00.173 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 02:10:00.
+2024-05-20 04:20:00.485 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 02:20:00.
+2024-05-20 04:30:00.475 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 02:30:00.
+2024-05-20 04:40:00.066 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 02:40:00.
+2024-05-20 04:50:00.066 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 02:50:00.
+2024-05-20 05:00:00.356 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 03:00:00.
+2024-05-20 05:10:00.359 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 03:10:00.
+2024-05-20 05:20:00.065 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 03:20:00.
+2024-05-20 05:30:00.375 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 03:30:00.
+2024-05-20 05:40:00.376 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 03:40:00.
+2024-05-20 05:50:00.081 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 03:50:00.
+2024-05-20 06:00:00.387 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 04:00:00.
+2024-05-20 06:10:00.372 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 04:10:00.
+2024-05-20 06:20:00.067 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 04:20:00.
+2024-05-20 06:30:00.067 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 04:30:00.
+2024-05-20 06:40:00.457 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 04:40:00.
+2024-05-20 06:50:00.453 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 04:50:00.
+2024-05-20 07:00:00.077 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 05:00:00.
+2024-05-20 07:10:00.425 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 05:10:00.
+2024-05-20 07:20:00.407 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 05:20:00.
+2024-05-20 07:30:00.061 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 05:30:00.
+2024-05-20 07:40:00.060 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 05:40:00.
+2024-05-20 07:50:00.430 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 05:50:00.
+2024-05-20 08:00:00.462 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 06:00:00.
+2024-05-20 08:10:00.099 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 06:10:00.
+2024-05-20 08:20:00.442 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 06:20:00.
+2024-05-20 08:30:00.442 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 06:30:00.
+2024-05-20 08:35:14.440 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - null null
+2024-05-20 08:35:14.440 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - null null
+2024-05-20 08:35:14.440 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - null null
+2024-05-20 08:35:14.440 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.440 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.440 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.441 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - null null
+2024-05-20 08:35:14.441 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 08:35:14.441 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.441 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.442 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - null null
+2024-05-20 08:35:14.442 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.667 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.667 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d803ea2c-4b5a-4981-bb5f-6c50eea3905d - 200 null application/json 227.4858ms
+2024-05-20 08:35:14.788 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.788 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/3a409f39-d9c0-46ac-aa42-72726a4981a2 - 200 null application/json 346.3491ms
+2024-05-20 08:35:14.889 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.890 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/4fb446a0-48e4-4410-98c3-ada8ba9782a1 - 200 null application/json 449.8493ms
+2024-05-20 08:35:14.895 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.896 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/d37fb852-a3d8-4c49-9949-175682e37ebe - 200 null application/json 454.5975ms
+2024-05-20 08:35:14.939 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.939 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/8e87be09-8732-4c69-b3e6-4ab5a0560d88 - 200 null application/json 499.8373ms
+2024-05-20 08:35:14.948 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:14.949 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 507.8483ms
+2024-05-20 08:35:18.077 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 08:35:18.077 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:18.162 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:18.163 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 85.5657ms
+2024-05-20 08:35:23.553 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - null null
+2024-05-20 08:35:23.553 +02:00 [INF] Executing endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:23.637 +02:00 [INF] Executed endpoint 'HTTP: GET media-files/{mediaFileId}'
+2024-05-20 08:35:23.638 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/media-files/00994fe5-9379-4ee6-80f0-ae1282c3aa41 - 200 null application/json 85.1135ms
+2024-05-20 08:40:00.062 +02:00 [INF] Cleaned unmatched files for all entities at 05/20/2024 06:40:00.
