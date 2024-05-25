@@ -519,7 +519,6 @@ modules:
             target: notifications-service/events
             routingKey: friend_request_created
 
-
       - upstream: /{requesterId}/{friendId}/remove
         method: DELETE
         use: downstream
