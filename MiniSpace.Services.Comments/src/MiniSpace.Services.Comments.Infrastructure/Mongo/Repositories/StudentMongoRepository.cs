@@ -2,9 +2,11 @@ using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Comments.Core.Entities;
 using MiniSpace.Services.Comments.Core.Repositories;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class StudentMongoRepository : IStudentRepository
     {
         private readonly IMongoRepository<StudentDocument, Guid> _repository;
