@@ -583,6 +583,11 @@ modules:
         bind:
           - userId: {userId}
         auth: true
+        
+    services:
+        friends-service:
+          localUrl: localhost:5012
+          url: friends-service
 
 
 
