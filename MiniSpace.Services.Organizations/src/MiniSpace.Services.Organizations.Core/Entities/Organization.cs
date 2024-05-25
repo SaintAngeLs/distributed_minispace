@@ -108,5 +108,34 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 FindAllChildrenOrganizationsRecursive(subOrg, organizations);
             }
         }
+        
+        private Organization GetParentOrganization(Guid id)
+        {
+            foreach (var subOrg in SubOrganizations)
+            {
+                if (subOrg.Id == id)
+                {
+                    return this;
+                }
+                
+                var result = subOrg.GetParentOrganization(id);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            
+            return null;
+        }
+        
+        public void RemoveChildOrganization(Organization organization)
+        {
+            var parent = GetParentOrganization(organization.Id);
+            if(parent is null)
+            {
+                throw new ParentOfOrganizationNotFoundException(organization.Id);
+            }
+            parent._subOrganizations.Remove(organization);
+        }
     }
 }
