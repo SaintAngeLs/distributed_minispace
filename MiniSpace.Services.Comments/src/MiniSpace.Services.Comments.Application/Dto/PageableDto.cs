@@ -1,5 +1,8 @@
-﻿namespace MiniSpace.Services.Comments.Application.Dto
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MiniSpace.Services.Comments.Application.Dto
 {
+    [ExcludeFromCodeCoverage]
     public class PageableDto
     {
         public int Page { get; set; }
