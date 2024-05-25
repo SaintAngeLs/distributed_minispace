@@ -2,12 +2,13 @@ namespace MiniSpace.Web.DTO.States
 {
     public enum FriendState
     {
-        Unknown,
-        Requested,
+        Unknown,      
+        Requested,    
         Accepted,
-        Declined,
-        Blocked,
+        Declined,        
+        Blocked,         
         Cancelled,
-        Confirmed
+        Confirmed,
+        Pending     
     }
 }

@@ -513,6 +513,12 @@ modules:
           bind:
             - userId: {userId}
           auth: true
+          afterDispatch:
+            - use: publish
+              event: FriendInviteSent
+              target: notifications-service/events
+              routingKey: friend_request_created
+
 
         - upstream: /{requesterId}/{friendId}/remove
           method: DELETE
@@ -565,10 +571,13 @@ modules:
           downstream: friends-service/friends/requests/sent/{userId}
           auth: true
 
-      services:
-        friends-service:
-          localUrl: localhost:5012
-          url: friends-service
+        - upstream: /requests/{userId}/withdraw
+          method: PUT
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/withdraw
+          bind:
+            - userId: {userId}
+          auth: true
 
 
 
@@ -579,6 +588,12 @@ modules:
         method: POST
         use: downstream
         downstream: posts-service/posts
+        auth: true
+
+      - upstream: /search
+        method: POST
+        use: downstream
+        downstream: posts-service/posts/search
         auth: true
 
       - upstream: /{postId}

@@ -8,6 +8,7 @@ namespace MiniSpace.Services.Friends.Core.Entities
         Declined,        
         Blocked,         
         Cancelled,
-        Confirmed        
+        Confirmed,
+        Pending        
     }    
 }

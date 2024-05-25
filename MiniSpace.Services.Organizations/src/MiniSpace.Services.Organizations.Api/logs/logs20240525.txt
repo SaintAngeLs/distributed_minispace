@@ -1,0 +1,111 @@
+2024-05-25 00:50:54.441 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/wwwroot. Static files may be unavailable.
+2024-05-25 00:50:54.547 +02:00 [INF] Registering a service [id: organizations-service:d88c585415b14e489308b04e308dd9c5] in Consul...
+2024-05-25 00:50:54.570 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-25 00:50:54.574 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 00:50:54.574 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 00:50:54.610 +02:00 [INF] Received HTTP response headers after 32.4405ms - 200
+2024-05-25 00:50:54.615 +02:00 [INF] End processing HTTP request after 41.5146ms - 200
+2024-05-25 00:50:54.619 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-25 00:50:54.620 +02:00 [INF] Registered a service [id: organizations-service:d88c585415b14e489308b04e308dd9c5] in Consul.
+2024-05-25 00:50:54.628 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.create_organization' with routing key: 'create_organization' for an exchange: 'organizations'.
+2024-05-25 00:50:54.650 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.add_organizer_to_organization' with routing key: 'add_organizer_to_organization' for an exchange: 'organizations'.
+2024-05-25 00:50:54.657 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.remove_organizer_from_organization' with routing key: 'remove_organizer_from_organization' for an exchange: 'organizations'.
+2024-05-25 00:50:54.666 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_granted' with routing key: 'organizer_rights_granted' for an exchange: 'identity'.
+2024-05-25 00:50:54.673 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_revoked' with routing key: 'organizer_rights_revoked' for an exchange: 'identity'.
+2024-05-25 01:01:49.076 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/wwwroot. Static files may be unavailable.
+2024-05-25 01:01:49.192 +02:00 [INF] Registering a service [id: organizations-service:8552b759587a4cc184d070fdd9ba85a6] in Consul...
+2024-05-25 01:01:49.216 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-25 01:01:49.220 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 01:01:49.221 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-25 01:01:49.227 +02:00 [INF] Received HTTP response headers after 4.132ms - 200
+2024-05-25 01:01:49.229 +02:00 [INF] End processing HTTP request after 9.7012ms - 200
+2024-05-25 01:01:49.231 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-25 01:01:49.232 +02:00 [INF] Registered a service [id: organizations-service:8552b759587a4cc184d070fdd9ba85a6] in Consul.
+2024-05-25 01:01:49.237 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.create_organization' with routing key: 'create_organization' for an exchange: 'organizations'.
+2024-05-25 01:01:49.247 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.add_organizer_to_organization' with routing key: 'add_organizer_to_organization' for an exchange: 'organizations'.
+2024-05-25 01:01:49.249 +02:00 [INF] Declaring a queue: 'organizations-service/organizations.remove_organizer_from_organization' with routing key: 'remove_organizer_from_organization' for an exchange: 'organizations'.
+2024-05-25 01:01:49.252 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_granted' with routing key: 'organizer_rights_granted' for an exchange: 'identity'.
+2024-05-25 01:01:49.254 +02:00 [INF] Declaring a queue: 'organizations-service/identity.organizer_rights_revoked' with routing key: 'organizer_rights_revoked' for an exchange: 'identity'.
+2024-05-25 01:40:27.637 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/organizer/bf759205-b6b2-4f41-ad79-9ab58ccff882 - null null
+2024-05-25 01:40:27.688 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:40:28.502 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:40:28.509 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/organizer/bf759205-b6b2-4f41-ad79-9ab58ccff882 - 200 null application/json 873.683ms
+2024-05-25 01:42:32.702 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/root - null null
+2024-05-25 01:42:32.705 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/root'
+2024-05-25 01:42:32.741 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/root'
+2024-05-25 01:42:32.742 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/root - 200 null application/json 39.9435ms
+2024-05-25 01:43:19.279 +02:00 [INF] Received a message with ID: '1c8772ab3c71491c93f228abca5d0c51', Correlation ID: '4df9e7c3206d45d9a8c553b6c805966d', timestamp: 1716594199, queue: organizations-service/identity.organizer_rights_granted, routing key: organizer_rights_granted, exchange: identity, payload: 
+2024-05-25 01:43:19.333 +02:00 [INF] Handling a message: organizer_rights_granted with ID: 1c8772ab3c71491c93f228abca5d0c51, Correlation ID: 4df9e7c3206d45d9a8c553b6c805966d, retry: 0
+2024-05-25 01:43:19.533 +02:00 [INF] Created an organizer with id: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7.
+2024-05-25 01:43:19.535 +02:00 [INF] Handled a message: organizer_rights_granted with ID: 1c8772ab3c71491c93f228abca5d0c51, Correlation ID: 4df9e7c3206d45d9a8c553b6c805966d, retry: 0
+2024-05-25 01:43:34.789 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/root - null null
+2024-05-25 01:43:34.798 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/root'
+2024-05-25 01:43:34.831 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/root'
+2024-05-25 01:43:34.832 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/root - 200 null application/json 42.835ms
+2024-05-25 01:43:41.443 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/root - null null
+2024-05-25 01:43:41.445 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/root'
+2024-05-25 01:43:41.477 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/root'
+2024-05-25 01:43:41.479 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/root - 200 null application/json 36.8899ms
+2024-05-25 01:44:13.061 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/organizations/00000000-0000-0000-0000-000000000000/children - application/json null
+2024-05-25 01:44:13.065 +02:00 [INF] Executing endpoint 'HTTP: POST organizations/{organizationId}/children'
+2024-05-25 01:44:13.252 +02:00 [INF] Added a new child organization with id: 3ff06b8c-368e-47af-8355-4a48af2128c9 for parent with id: a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5.
+2024-05-25 01:44:13.254 +02:00 [INF] Executed endpoint 'HTTP: POST organizations/{organizationId}/children'
+2024-05-25 01:44:13.255 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/organizations/00000000-0000-0000-0000-000000000000/children - 201 0 null 193.8176ms
+2024-05-25 01:44:13.259 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5/children?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - null null
+2024-05-25 01:44:13.260 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/{organizationId}/children'
+2024-05-25 01:44:13.294 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/{organizationId}/children'
+2024-05-25 01:44:13.295 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5/children?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - 200 null application/json 36.2171ms
+2024-05-25 01:44:18.318 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5/children?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - null null
+2024-05-25 01:44:18.321 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/{organizationId}/children'
+2024-05-25 01:44:18.356 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/{organizationId}/children'
+2024-05-25 01:44:18.356 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5/children?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - 200 null application/json 38.7549ms
+2024-05-25 01:44:22.724 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/children?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - null null
+2024-05-25 01:44:22.726 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/{organizationId}/children'
+2024-05-25 01:44:22.759 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/{organizationId}/children'
+2024-05-25 01:44:22.760 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/children?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - 200 null application/json 35.718ms
+2024-05-25 01:44:25.809 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/details?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - null null
+2024-05-25 01:44:25.810 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/{organizationId}/details'
+2024-05-25 01:44:25.869 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/{organizationId}/details'
+2024-05-25 01:44:25.870 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/details?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - 200 null application/json 60.9416ms
+2024-05-25 01:44:48.561 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/organizer - application/json null
+2024-05-25 01:44:48.563 +02:00 [INF] Executing endpoint 'HTTP: POST organizations/{organizationId}/organizer'
+2024-05-25 01:44:48.643 +02:00 [INF] Executed endpoint 'HTTP: POST organizations/{organizationId}/organizer'
+2024-05-25 01:44:48.652 +02:00 [ERR] Organizer with ID: bf759205-b6b2-4f41-ad79-9ab58ccff882 was not found.
+MiniSpace.Services.Organizations.Application.Exceptions.OrganizerNotFoundException: Organizer with ID: bf759205-b6b2-4f41-ad79-9ab58ccff882 was not found.
+   at MiniSpace.Services.Organizations.Application.Commands.Handlers.AddOrganizerToOrganizationHandler.HandleAsync(AddOrganizerToOrganization command, CancellationToken cancellationToken) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Application/Commands/Handlers/AddOrganizerToOrganizationHandler.cs:line 49
+   at Convey.Logging.CQRS.Decorators.CommandHandlerLoggingDecorator`1.HandleAsync(TCommand command, CancellationToken cancellationToken)
+   at Convey.CQRS.Commands.Dispatchers.CommandDispatcher.SendAsync[T](T command, CancellationToken cancellationToken)
+   at Convey.WebApi.CQRS.Builders.DispatcherEndpointsBuilder.BuildCommandContext[T](T command, HttpContext context, Func`3 beforeDispatch, Func`3 afterDispatch)
+   at Convey.WebApi.EndpointsBuilder.BuildRequestContext[T](HttpContext httpContext, Func`3 context)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ApdexMiddleware.MeasureTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.PerRequestTimerMiddleware.TimeTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.RequestTimerMiddleware.TimeTransaction(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ErrorRequestMeterMiddleware.Invoke(HttpContext context)
+   at App.Metrics.AspNetCore.Tracking.Middleware.ActiveRequestCounterEndpointMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Convey.WebApi.Exceptions.ErrorHandlerMiddleware.InvokeAsync(HttpContext context, RequestDelegate next)
+2024-05-25 01:44:48.666 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/organizer - 400 null application/json 104.8048ms
+2024-05-25 01:44:48.668 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/organizer - application/json null
+2024-05-25 01:44:48.668 +02:00 [INF] Executing endpoint 'HTTP: POST organizations/{organizationId}/organizer'
+2024-05-25 01:44:48.759 +02:00 [INF] Added an organizer with id: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7 to the organization with id: 3ff06b8c-368e-47af-8355-4a48af2128c9.
+2024-05-25 01:44:48.759 +02:00 [INF] Executed endpoint 'HTTP: POST organizations/{organizationId}/organizer'
+2024-05-25 01:44:48.760 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/organizer - 200 0 null 91.8079ms
+2024-05-25 01:45:26.777 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/organizer/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7 - null null
+2024-05-25 01:45:26.783 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:45:26.933 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:45:26.935 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/organizer/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7 - 200 null application/json 157.4731ms
+2024-05-25 01:48:06.069 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5015/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/details?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - null null
+2024-05-25 01:48:06.070 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/{organizationId}/details'
+2024-05-25 01:48:06.098 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/{organizationId}/details'
+2024-05-25 01:48:06.099 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5015/organizations/3ff06b8c-368e-47af-8355-4a48af2128c9/details?rootId=a34d0ba8-19e4-49e4-baf5-e8c6ebe3edc5 - 200 null application/json 29.5818ms
+2024-05-25 01:48:27.934 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/organizer/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7 - null null
+2024-05-25 01:48:27.935 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:48:27.967 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:48:27.968 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/organizer/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7 - 200 null application/json 34.1541ms
+2024-05-25 01:48:38.376 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/organizations/organizer/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7 - null null
+2024-05-25 01:48:38.378 +02:00 [INF] Executing endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:48:38.416 +02:00 [INF] Executed endpoint 'HTTP: GET organizations/organizer/{organizerId}'
+2024-05-25 01:48:38.417 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/organizations/organizer/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7 - 200 null application/json 41.049ms

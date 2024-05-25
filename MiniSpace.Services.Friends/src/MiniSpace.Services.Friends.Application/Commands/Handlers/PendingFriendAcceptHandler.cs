@@ -4,54 +4,81 @@ using MiniSpace.Services.Friends.Core.Repositories;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Entities;
+using MiniSpace.Services.Friends.Application.Events.External;
 
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
     public class PendingFriendAcceptHandler : ICommandHandler<PendingFriendAccept>
     {
-        private readonly IFriendRepository _friendRepository;
-        private readonly IFriendRequestRepository _friendRequestRepository;
+        private readonly IStudentRequestsRepository _studentRequestsRepository;
+        private readonly IStudentFriendsRepository _studentFriendsRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IEventMapper _eventMapper;
 
          public PendingFriendAcceptHandler(
-            IFriendRequestRepository friendRequestRepository,
-            IFriendRepository friendRepository,
+            // IFriendRequestRepository friendRequestRepository,
+            IStudentFriendsRepository studentFriendsRepository,
+            IStudentRequestsRepository studentRequestsRepository,
+            // IFriendRepository friendRepository,
             IMessageBroker messageBroker,
             IEventMapper eventMapper)
             
         {
-            _friendRequestRepository = friendRequestRepository;
-            _friendRepository = friendRepository;
+            // _friendRequestRepository = friendRequestRepository;
+            _studentFriendsRepository = studentFriendsRepository;
+            _studentRequestsRepository = studentRequestsRepository;
+            // _friendRepository = friendRepository;
             _messageBroker = messageBroker;
             _eventMapper = eventMapper;
         }
 
         public async Task HandleAsync(PendingFriendAccept command, CancellationToken cancellationToken = default)
         {
-            // Fetch the friend request to confirm it exists and is valid
-            var friendRequest = await _friendRequestRepository.FindByInviterAndInvitee(command.RequesterId, command.FriendId);
-            if (friendRequest == null)
-            {
-                throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
-            }
+            // Retrieve and validate the friend request between the inviter and invitee
+            var inviterRequests = await _studentRequestsRepository.GetAsync(command.RequesterId);
+            var inviteeRequests = await _studentRequestsRepository.GetAsync(command.FriendId);
+            var friendRequest = FindFriendRequest(inviterRequests, inviteeRequests, command.RequesterId, command.FriendId);
+            var friendRequestInvitee = FindFriendRequest(inviteeRequests, inviterRequests, command.RequesterId, command.FriendId);
+            // Update the friend request state to accepted
+            friendRequest.State = FriendState.Accepted;
+            friendRequestInvitee.State = FriendState.Accepted;
 
-            if (friendRequest.State != FriendState.Requested)
-            {
-                throw new InvalidOperationException("Friend request is not in the correct state to be accepted.");
-            }
+            // Save the updated FriendRequest states
+            await _studentRequestsRepository.UpdateAsync(command.RequesterId, inviterRequests.FriendRequests);
+            await _studentRequestsRepository.UpdateAsync(command.FriendId, inviteeRequests.FriendRequests);
 
-            // Accept the friend request
-            friendRequest.Accept();
-            await _friendRequestRepository.UpdateAsync(friendRequest);
+            // Create Friend relationships in both directions
+            CreateAndAddFriends(command.RequesterId, command.FriendId, FriendState.Accepted);
 
-            // Create a new friend relationship
-            var newFriend = new Friend(command.RequesterId, command.FriendId, DateTime.UtcNow, FriendState.Accepted);
-            await _friendRepository.AddAsync(newFriend);
+            // Publish related events
+            // var events = _eventMapper.MapAll(new Core.Events.PendingFriendAccepted(command.RequesterId, command.FriendId));
+            // await _messageBroker.PublishAsync(events);
 
-            // Optionally, create the reciprocal friendship to reflect the two-way relationship
-            var reciprocalFriend = new Friend(command.FriendId, command.RequesterId, DateTime.UtcNow, FriendState.Accepted);
-            await _friendRepository.AddAsync(reciprocalFriend);
+            var pendingFriendAcceptedEvent = new PendingFriendAccepted(command.RequesterId, command.FriendId);
+            await _messageBroker.PublishAsync(pendingFriendAcceptedEvent);
+        }
+
+        private FriendRequest FindFriendRequest(StudentRequests inviter, StudentRequests invitee, Guid inviterId, Guid inviteeId)
+        {
+            // Find the FriendRequest in both inviter and invitee collections
+            return inviter.FriendRequests.FirstOrDefault(fr => fr.InviterId == inviterId && fr.InviteeId == inviteeId)
+                ?? invitee.FriendRequests.FirstOrDefault(fr => fr.InviterId == inviterId && fr.InviteeId == inviteeId)
+                ?? throw new FriendRequestNotFoundException(inviterId, inviteeId);
+        }
+
+        private async void CreateAndAddFriends(Guid inviterId, Guid inviteeId, FriendState state)
+        {
+            // Retrieve or initialize the StudentFriends for both inviter and invitee
+            var inviterFriends = await _studentFriendsRepository.GetAsync(inviterId) ?? new StudentFriends(inviterId);
+            var inviteeFriends = await _studentFriendsRepository.GetAsync(inviteeId) ?? new StudentFriends(inviteeId);
+
+            // Add new Friend instances with accepted state
+            inviterFriends.AddFriend(new Friend(inviterId, inviteeId, DateTime.UtcNow, state));
+            inviteeFriends.AddFriend(new Friend(inviteeId, inviterId, DateTime.UtcNow, state));
+
+            // Update the StudentFriends repositories
+            await _studentFriendsRepository.AddOrUpdateAsync(inviterFriends);
+            await _studentFriendsRepository.AddOrUpdateAsync(inviteeFriends);
         }
     }
 }

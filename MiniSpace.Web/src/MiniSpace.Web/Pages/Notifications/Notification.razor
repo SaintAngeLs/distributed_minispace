@@ -1,0 +1,70 @@
+@page "/notification/{NotificationId:guid}"
+@using MiniSpace.Web.Areas.Notifications
+@inject INotificationsService NotificationsService
+@using MiniSpace.Web.DTO.Notifications
+@inject IIdentityService IdentityService
+@using MudBlazor
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("New notification", href: "/notifications/all", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
+         new BreadcrumbItem("Notifications History", href: "/notifications/history", disabled: true, icon: Icons.Material.Filled.Notifications)
+    };
+}
+
+<div class="notifications-page-title">
+    <h3>Notification Details</h3>
+</div>
+
+@if (notification != null)
+{
+    <div>
+        <p><strong>Message:</strong> @RenderMessage(notification)</p>
+        <p><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</p>
+        <p><strong>Status:</strong> @notification.Status</p>
+        <input type="hidden" value="@notification.NotificationId" />
+    </div>
+}
+else
+{
+    <p><em>Loading notification details...</em></p>
+}
+
+@code {
+    [Parameter] public Guid NotificationId { get; set; }
+    private NotificationDto notification;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = IdentityService.GetCurrentUserId();
+        notification = await NotificationsService.GetNotificationByIdAsync(userId, NotificationId);
+        if (notification.Status == "Unread") {
+            await UpdateNotificationStatus(userId, NotificationId, "Read");
+        }
+    }
+
+    private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, string newStatus)
+    {
+        await NotificationsService.UpdateNotificationStatusAsync(userId, notificationId, newStatus);
+        notification.Status = newStatus;
+        StateHasChanged();
+    }
+
+    private MarkupString RenderMessage(NotificationDto notification)
+    {
+        if (!string.IsNullOrEmpty(notification.RelatedEntityId.ToString()))
+        {
+            return new MarkupString($"{notification.Message} <a href='/student-details/{notification.RelatedEntityId}'>View Profile</a>");
+        }
+        else
+        {
+            return new MarkupString(notification.Message);
+        }
+    }
+}

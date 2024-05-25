@@ -45,6 +45,18 @@ namespace MiniSpace.Services.Friends.Infrastructure.Logging
                     {
                         After = "Friend request sent from: {InviterId} to: {InviteeId}."
                     }
+                },
+                { 
+                    typeof(FriendInvited), new HandlerLogTemplate 
+                    { 
+                        After = "Friend invited by: {InviterId} to {InviteeId}. Invitation created at: {CreatedAt}." 
+                    } 
+                },
+                { 
+                    typeof(FriendRequestCreated), new HandlerLogTemplate 
+                    { 
+                        After = "Friend request created between requester: {RequesterId} and friend: {FriendId}." 
+                    } 
                 }
             };
         

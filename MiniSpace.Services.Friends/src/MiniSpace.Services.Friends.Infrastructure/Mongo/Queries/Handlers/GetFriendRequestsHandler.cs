@@ -21,15 +21,15 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
         public async Task<IEnumerable<FriendRequestDto>> HandleAsync(GetFriendRequests query, CancellationToken cancellationToken)
         {
             string queryJson = JsonSerializer.Serialize(query);
-            Console.WriteLine($"Handling GetFriendRequests: {queryJson}");
-            Console.WriteLine($"Handling GetFriendRequests for UserId: {query.StudentId}");
+            // Console.WriteLine($"Handling GetFriendRequests: {queryJson}");
+            // Console.WriteLine($"Handling GetFriendRequests for UserId: {query.StudentId}");
 
             var documents = await _friendRequestRepository.FindAsync(p => p.InviteeId == query.StudentId && p.State == FriendState.Requested);
-            Console.WriteLine($"Found {documents.Count()} friend requests.");
+            // Console.WriteLine($"Found {documents.Count()} friend requests.");
 
             if (!documents.Any())
             {
-                Console.WriteLine($"No friend requests found for UserId: {query.StudentId}.");
+                // Console.WriteLine($"No friend requests found for UserId: {query.StudentId}.");
                 return Enumerable.Empty<FriendRequestDto>();
             }
 
