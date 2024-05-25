@@ -92,6 +92,15 @@ services:
       - 5015:80
     networks:
       - minispace
+
+  notifications-service:
+    image: adrianvsaint/minispace.services.notifications:latest
+    container_name: notifications-service
+    restart: unless-stopped
+    ports:
+      - 5006:80
+    networks:
+      - minispace
   
   web:
     image: adrianvsaint/minispace.web:latest

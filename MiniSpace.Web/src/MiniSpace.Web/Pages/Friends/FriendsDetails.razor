@@ -1,8 +1,22 @@
 @page "/student-details/{Id:guid}"
 @using MiniSpace.Web.Areas.Friends
 @inject IFriendsService FriendsService
+@using MiniSpace.Web.Areas.MediaFiles
+@inject IMediaFilesService MediaFilesService 
 @using MiniSpace.Web.DTO
 @using Radzen.Blazor
+@using MudBlazor
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+    };
+}
 
 <h3>Student Profile</h3>
 @if (student == null)
@@ -13,7 +27,7 @@ else
 {
     <div class="card">
         <div class="card-header">
-            <img src="@student.ProfileImage" alt="Profile Image" class="profile-image" />
+            <img src="@profileImage" alt="Profile Image" class="profile-image" /> <!-- Update the src attribute -->
             <h3>@student.FirstName @student.LastName</h3>
             <p>@student.Email</p>
         </div>
@@ -30,10 +44,19 @@ else
 @code {
     [Parameter] public Guid Id { get; set; }
     private StudentDto student;
+    private string profileImage; // Store the Base64 image string
 
     protected override async Task OnInitializedAsync()
     {
         student = await FriendsService.GetStudentAsync(Id);
+        if (student != null)
+        {
+            var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
+            if (imageResult != null)
+            {
+                profileImage = $"data:image/jpeg;base64,{imageResult.Base64Content}";
+            }
+        }
     }
 }
 

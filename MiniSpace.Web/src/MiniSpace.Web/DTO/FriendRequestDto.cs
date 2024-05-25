@@ -13,7 +13,10 @@ namespace MiniSpace.Services.Friends.Application.Dto
         public Guid StudentId { get; set; }
 
         public string InviteeName { get; set; }
+        public string InviterName { get; set; }
         public string InviteeEmail { get; set; }
         public string InviteeImage { get; set; }
+        public string InviterEmail { get; set; }
+        public string InviterImage { get; set; }
     }
 }

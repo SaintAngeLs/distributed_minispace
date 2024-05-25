@@ -3,10 +3,10 @@ name: Deploy to Cloud
 on:
   push:
     branches:
-      - dev # dev for the test purposes here
+      - main 
   pull_request:
     branches:
-      - dev 
+      - main 
 
 jobs:
   deploy:

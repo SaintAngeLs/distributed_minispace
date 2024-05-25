@@ -1,0 +1,97 @@
+@using MiniSpace.Web.Areas.Notifications
+@inject INotificationsService NotificationsService
+@inject IIdentityService IdentityService
+@using MiniSpace.Web.DTO.Notifications
+@using System.Threading
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<div style="background-color: #fff; color: white; padding: 10px; border-radius: 5px;">
+    <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
+
+    <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px;">
+    @if (notifications != null && notifications.Any())
+    {
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            @foreach (var notification in notifications)
+            {
+                <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)" 
+                    class="notification-item"
+                    style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;" >
+                    <span style="display: block; color: #333; margin-bottom: 4px;">@notification.Message</span>
+                    <span style="display: block; font-size: 0.8em; color: #666;">@notification.CreatedAt.ToString("g")</span>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p style="text-align: center; color: #888;">No new notifications.</p>
+    }
+    </div>
+</div>
+
+@code {
+    private List<NotificationDto> previousNotifications = new List<NotificationDto>();
+    private List<NotificationDto> notifications;
+    private Timer timer;
+    private DateTime lastCheckedTime = DateTime.MinValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotifications();
+        // Setup a timer to refresh notifications every 15 seconds
+        timer = new Timer(new TimerCallback(_ => InvokeAsync(LoadNotifications)), null, 0, 15000);
+    }
+
+    private async Task LoadNotifications()
+    {
+        try
+        {
+            var userId = IdentityService.GetCurrentUserId(); 
+            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, status: "Unread");
+            var latestNotifications = paginatedResponse.Results;
+
+            if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
+            {
+                PlayNotificationSound();
+                lastCheckedTime = DateTime.Now; 
+            }
+
+            notifications = latestNotifications;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading notifications: {ex.Message}");
+        }
+    }
+
+
+    private bool isNewNotificationReceived()
+    {
+        if (previousNotifications == null || !previousNotifications.Any())
+        {
+            return notifications.Any();
+        }
+        else
+        {
+            return notifications.Any(n => !previousNotifications.Any(p => p.NotificationId == n.NotificationId));
+        }
+    }
+
+    private void PlayNotificationSound()
+    {
+        JSRuntime.InvokeVoidAsync("playNotificationSoundNotificationsService");
+    }
+
+    private void NavigateToNotificationDetail(Guid notificationId)
+    {
+        NavigationManager.NavigateTo($"/notification/{notificationId}");
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}

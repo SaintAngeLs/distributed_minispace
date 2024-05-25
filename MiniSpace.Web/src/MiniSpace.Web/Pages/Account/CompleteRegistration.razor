@@ -110,11 +110,11 @@
     
     async void OnClientChange(UploadChangeEventArgs args)
     {
-        Console.WriteLine("Client-side upload changed");
+        @* Console.WriteLine("Client-side upload changed"); *@
 
         foreach (var file in args.Files)
         {
-            Console.WriteLine($"File: {file.Name} / {file.Size} bytes");
+            @* Console.WriteLine($"File: {file.Name} / {file.Size} bytes"); *@
 
             try
             {
@@ -133,7 +133,7 @@
             }
             catch (Exception ex)
             { 
-                Console.WriteLine($"Client-side file read error: {ex.Message}");
+                @* Console.WriteLine($"Client-side file read error: {ex.Message}"); *@
             }
         }
     }

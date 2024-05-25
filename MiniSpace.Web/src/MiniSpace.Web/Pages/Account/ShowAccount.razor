@@ -139,12 +139,12 @@ else
     
     async void OnClientChange(UploadChangeEventArgs args)
     {
-        Console.WriteLine("Client-side upload changed");
+        @* Console.WriteLine("Client-side upload changed"); *@
         clientChangeCompletionSource = new TaskCompletionSource<bool>();
 
         foreach (var file in args.Files)
         {
-            Console.WriteLine($"File: {file.Name} / {file.Size} bytes");
+            @* Console.WriteLine($"File: {file.Name} / {file.Size} bytes"); *@
             isUploading = true;
             StateHasChanged();
 
@@ -167,7 +167,7 @@ else
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Client-side file read error: {ex.Message}");
+                @* Console.WriteLine($"Client-side file read error: {ex.Message}"); *@
                 clientChangeCompletionSource.SetResult(false);
             }
             finally

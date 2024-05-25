@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Convey.CQRS.Events;
+using Convey.MessageBrokers;
 
 namespace MiniSpace.Services.Events.Application.Events
 {
+    [Message("notifications")]
     public class EventUpdated(Guid eventId, DateTime updatedAt, Guid updatedBy, IEnumerable<Guid> mediaFilesIds) : IEvent
     {
         public Guid EventId { get; set; } = eventId;

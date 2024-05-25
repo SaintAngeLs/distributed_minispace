@@ -177,13 +177,42 @@ modules:
         method: POST
         use: downstream
         downstream: notifications-service/notifications
-        auth: true
+        auth: true 
 
       - upstream: /{userId}
         method: GET
         use: downstream
         downstream: notifications-service/notifications/{userId}
+        auth: true 
+
+      - upstream: /notification/{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/notification/{notificationId}
+        auth: true  
+
+      - upstream: /notification/{userId}/{notificationId}
+        method: DELETE
+        use: downstream
+        downstream: notifications-service/notifications/notification/{userId}/{notificationId}
+        auth: true 
+        bind:
+          - userId:{userId}
+          - notificationId:{notificationId}
+        
+      - upstream: /{userId}/{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/{userId}/{notificationId}
         auth: true
+        description: Retrieves a specific notification for a user by notification ID.
+
+      - upstream: /{userId}/{notificationId}/status
+        method: PUT
+        use: downstream
+        downstream: notifications-service/notifications/{userId}/{notificationId}/status
+        auth: true  
+        description: Updates the status of a specific notification.
 
     services:
       notifications-service:
@@ -490,6 +519,12 @@ modules:
           bind:
             - userId: {userId}
           auth: true
+          afterDispatch:
+            - use: publish
+              event: FriendInviteSent
+              target: notifications-service/events
+              routingKey: friend_request_created
+
 
         - upstream: /{requesterId}/{friendId}/remove
           method: DELETE
@@ -542,10 +577,13 @@ modules:
           downstream: friends-service/friends/requests/sent/{userId}
           auth: true
 
-      services:
-        friends-service:
-          localUrl: localhost:5012
-          url: friends-service
+        - upstream: /requests/{userId}/withdraw
+          method: PUT
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/withdraw
+          bind:
+            - userId: {userId}
+          auth: true
 
 
 
