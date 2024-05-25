@@ -1,4 +1,5 @@
 @page "/events/{EventId}"
+@using Blazorise.DeepCloner
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Posts
@@ -181,10 +182,7 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Comments">
-                    <CommentsTab Comments="comments" EventId="@EventId" StudentId="studentId"
-                                 SearchCommentsModel="searchCommentsModel" CreateCommentModel="createCommentModel"
-                                 PageInitialized="pageInitialized" CommentsEmpty="commentsEmpty"
-                                 CommentsAvailable="commentsAvailable" SearchComments="@SearchComments" />
+                    <CommentsTab EventId="@EventId" StudentId="studentId" />
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
@@ -312,29 +310,6 @@
 
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions = [];
-    HashSet<CommentDto> comments = [];
-    
-    bool commentsEmpty = true;
-    bool commentsAvailable = false;
-    
-    private SearchCommentsModel searchCommentsModel = new()
-    {
-        CommentContext = "Event",
-        Pageable = new PageableDto()
-        {
-            Page = 1,
-            Size = 5,
-            Sort = new SortDto()
-            {
-                SortBy = new List<string>() { "lastUpdatedAt" },
-                Direction = "des"
-            }
-        }
-    };
-    private CreateCommentModel createCommentModel = new()
-    {
-        CommentContext = "Event"
-    };
     
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
@@ -353,10 +328,6 @@
             ev = await EventsService.GetEventAsync(new Guid(EventId));
             reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
             posts = await PostsService.GetPostsAsync(ev.Id);
-            
-            searchCommentsModel.ContextId = ev.Id;
-            createCommentModel.ContextId = ev.Id;
-            createCommentModel.StudentId = studentId;
         }
         
         pageInitialized = true;
@@ -390,7 +361,6 @@
                 posts = await PostsService.GetPostsAsync(ev.Id);
                 break;
             case 1:
-                await SearchComments();
                 break;
             case 2:
                 reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
@@ -502,40 +472,57 @@
         StateHasChanged();
     }
     
-    private async Task SearchComments()
-    {
-        comments = [];
-        searchCommentsModel.Pageable.Page = 1;
-        
-        var response = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
-            searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
-        if (response.Content != null)
-        {
-            comments = response.Content.Content.ToHashSet();
-            commentsEmpty = response.Content.Empty;
-            commentsAvailable = response.Content.Number < response.Content.TotalPages;
-        }
-        else
-        {
-            commentsEmpty = true;
-            commentsAvailable = false;
-        }
-        
-        foreach (var comment in comments)
-        {
-            if (comment.RepliesCount > 0)
-            {
-                comment.CanExpand = true;
-            }
-            
-            var response1 = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
-                searchCommentsModel.CommentContext, comment.Id, searchCommentsModel.Pageable);
-            if (response.Content != null)
-            {
-                comment.SubComments = response1.Content.Content.ToHashSet();
-            }
-        }
-        
-        StateHasChanged();
-    }
+    // private async Task SearchComments()
+    // {
+    //     comments = [];
+    //     searchCommentsModel.Pageable.Page = 1;
+    //     
+    //     var response = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
+    //         searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
+    //     if (response.Content != null)
+    //     {
+    //         comments = response.Content.Content.ToHashSet();
+    //         commentsEmpty = response.Content.Empty;
+    //         
+    //         if (response.Content.Number < response.Content.TotalPages)
+    //         {
+    //             comments.Last().IsLast = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         commentsEmpty = true;
+    //     }
+    //     
+    //     foreach (var comment in comments)
+    //     {
+    //         if (comment.RepliesCount > 0)
+    //         {
+    //             comment.CanExpand = true;
+    //         }
+    //         
+    //         var searchSubCommentsModel = searchCommentsModel.DeepClone();
+    //         searchSubCommentsModel.Pageable.Page = 1;
+    //         
+    //         var subResponse = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
+    //             searchCommentsModel.CommentContext, comment.Id, searchCommentsModel.Pageable);
+    //         if (subResponse.Content is { Empty: false })
+    //         {
+    //             comment.SubComments = subResponse.Content.Content.ToHashSet();
+    //             var moreSubCommentsAvailable = subResponse.Content.Number < subResponse.Content.TotalPages;
+    //
+    //             foreach (var subComment in comment.SubComments)
+    //             {
+    //                 subComment.Parent = comment;
+    //             }
+    //
+    //             if (moreSubCommentsAvailable)
+    //             {
+    //                 comment.SubComments.Last().IsLast = true;   
+    //             }
+    //         }
+    //     }
+    //     
+    //     StateHasChanged();
+    // }
 }

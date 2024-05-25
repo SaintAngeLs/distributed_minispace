@@ -1,8 +1,10 @@
 @using Blazorise.DeepCloner
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.DTO
+@using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Comments
 @using MiniSpace.Web.Pages.Comments.Dialogs
+@using MudBlazor
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -20,14 +22,15 @@
     </RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="12">
-            @if (PageInitialized && CommentsEmpty)
+            @if (pageInitialized && commentsEmpty)
             {
                 <h3>No comments have been added by students yet.</h3>
             }
             <CommentsTree Comments="Comments" StudentId="StudentId"
                           CreateSubComment="@CreateSubComment"
-                          LoadSubComments="@LoadSubComments" />
-            @if (CommentsAvailable)
+                          LoadSubComments="@LoadSubComments" 
+                          LoadMoreSubComments="@LoadMoreSubComments" />
+            @if (moreCommentsAvailable)
             {
                 <RadzenButton Size="ButtonSize.Medium" Text="Load more comments"
                               Click="@LoadMoreComments" />
@@ -38,23 +41,50 @@
 
 @code {
     [Parameter]
-    public HashSet<CommentDto> Comments { get; set; }
-    [Parameter]
     public string EventId { get; set; }
     [Parameter]
-    public SearchCommentsModel SearchCommentsModel { get; set; }
-    [Parameter]
-    public CreateCommentModel CreateCommentModel { get; set; }
-    [Parameter]
     public Guid StudentId { get; set; }
-    [Parameter]
-    public bool PageInitialized { get; set; }
-    [Parameter]
-    public bool CommentsEmpty { get; set; }
-    [Parameter]
-    public bool CommentsAvailable { get; set; }
-    [Parameter]
-    public Func<Task> SearchComments { get; set; }
+
+    private Guid eventId;
+    private Guid studentId;
+    
+    private HashSet<CommentDto> Comments;
+    
+    private SearchCommentsModel SearchCommentsModel = new()
+    {
+        CommentContext = "Event",
+        Pageable = new PageableDto()
+        {
+            Page = 1,
+            Size = 5,
+            Sort = new SortDto()
+            {
+                SortBy = new List<string>() { "lastUpdatedAt" },
+                Direction = "des"
+            }
+        }
+    };
+    private CreateCommentModel CreateCommentModel = new()
+    {
+        CommentContext = "Event"
+    };
+
+    private bool pageInitialized;
+    private bool moreCommentsAvailable;
+    private bool commentsEmpty = true;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        eventId = new Guid(EventId);
+        studentId = StudentId;
+        
+        SearchCommentsModel.ContextId = eventId;
+        CreateCommentModel.ContextId = eventId;
+        CreateCommentModel.StudentId = studentId;
+        await SearchComments();
+        
+        pageInitialized = true;
+    }
     
     private async Task OpenCreateCommentDialog(string title)
     {
@@ -91,20 +121,78 @@
         }
     }
 
-    private async Task LoadMoreComments()
+    private async Task SearchComments()
     {
-        ++SearchCommentsModel.Pageable.Page;
+        Comments = [];
+        SearchCommentsModel.Pageable.Page = 1;
+        
         var response = await CommentsService.SearchRootCommentsAsync(SearchCommentsModel.ContextId,
             SearchCommentsModel.CommentContext, SearchCommentsModel.Pageable);
-        IEnumerable<CommentDto> moreComments = [];
         if (response.Content != null)
         {
-            moreComments = response.Content.Content;
-            CommentsAvailable = response.Content.Number < response.Content.TotalPages;
+            Comments = response.Content.Content.ToHashSet();
+            commentsEmpty = response.Content.Empty;
+            moreCommentsAvailable = response.Content.Number < response.Content.TotalPages;
+            
+            if (moreCommentsAvailable)
+            {
+                Comments.Last().IsLast = true;
+            }
         }
         else
         {
-            CommentsAvailable = false;
+            commentsEmpty = true;
+        }
+        
+        foreach (var comment in Comments)
+        {
+            if (comment.RepliesCount > 0)
+            {
+                comment.CanExpand = true;
+            }
+            
+            var searchSubCommentsModel = SearchCommentsModel.DeepClone();
+            searchSubCommentsModel.Pageable.Page = 1;
+            
+            var subResponse = await CommentsService.SearchSubCommentsAsync(SearchCommentsModel.ContextId,
+                SearchCommentsModel.CommentContext, comment.Id, SearchCommentsModel.Pageable);
+            if (subResponse.Content is { Empty: false })
+            {
+                comment.SubComments = subResponse.Content.Content.ToHashSet();
+                var moreSubCommentsAvailable = subResponse.Content.Number < subResponse.Content.TotalPages;
+
+                foreach (var subComment in comment.SubComments)
+                {
+                    subComment.Parent = comment;
+                }
+
+                if (moreSubCommentsAvailable)
+                {
+                    comment.SubComments.Last().IsLast = true;   
+                }
+            }
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task LoadMoreComments()
+    {
+        List<CommentDto> moreComments = [];
+        ++SearchCommentsModel.Pageable.Page;
+        
+        var response = await CommentsService.SearchRootCommentsAsync(SearchCommentsModel.ContextId,
+            SearchCommentsModel.CommentContext, SearchCommentsModel.Pageable);
+        if (response.Content != null)
+        {
+            moreComments = response.Content.Content.ToList();
+            moreCommentsAvailable = response.Content.Number < response.Content.TotalPages;
+            Comments.Last().IsLast = false;
+            
+            if (moreCommentsAvailable)
+            {
+                moreComments.Last().IsLast = true;
+            }
         }
 
         foreach (var comment in moreComments)
@@ -114,11 +202,25 @@
                 comment.CanExpand = true;
             }
             
-            var response1 = await CommentsService.SearchSubCommentsAsync(SearchCommentsModel.ContextId,
-                SearchCommentsModel.CommentContext, comment.Id, SearchCommentsModel.Pageable);
-            if (response.Content != null)
+            var searchSubCommentsModel = SearchCommentsModel.DeepClone();
+            searchSubCommentsModel.Pageable.Page = 1;
+            
+            var subResponse = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
+                searchSubCommentsModel.CommentContext, comment.Id, searchSubCommentsModel.Pageable);
+            if (subResponse.Content != null)
             {
-                comment.SubComments = response1.Content.Content.ToHashSet();
+                comment.SubComments = subResponse.Content.Content.ToHashSet();
+                var moreSubCommentsAvailable = subResponse.Content.Number < subResponse.Content.TotalPages;
+                
+                foreach (var subComment in comment.SubComments)
+                {
+                    subComment.Parent = comment;
+                }
+                
+                if (moreSubCommentsAvailable)
+                {
+                    comment.SubComments.Last().IsLast = true;   
+                }
             }
             
             Comments.Add(comment);
@@ -152,12 +254,52 @@
     private async Task LoadSubComments(CommentDto parentComment)
     {
         var searchSubCommentsModel = SearchCommentsModel.DeepClone();
-        searchSubCommentsModel.Pageable.Page = 1;
+        searchSubCommentsModel.Pageable.Page = parentComment.SubCommentsPage = 1;
+        
         var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
             searchSubCommentsModel.CommentContext, parentComment.Id, searchSubCommentsModel.Pageable);
         if (response.Content != null)
         {
             parentComment.SubComments = response.Content.Content.ToHashSet();
+            var moreSubCommentsAvailable = response.Content.Number < response.Content.TotalPages;
+            
+            foreach (var subComment in parentComment.SubComments)
+            {
+                subComment.Parent = parentComment;
+            }
+
+            if (moreSubCommentsAvailable)
+            {
+                parentComment.SubComments.Last().IsLast = true;   
+            }
+        }
+    }
+    
+    private async Task LoadMoreSubComments(CommentDto lastComment)
+    {
+        var parentComment = lastComment.Parent;
+        
+        var searchSubCommentsModel = SearchCommentsModel.DeepClone();
+        searchSubCommentsModel.Pageable.Page = ++parentComment.SubCommentsPage;
+            
+        var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
+            searchSubCommentsModel.CommentContext, parentComment.Id, searchSubCommentsModel.Pageable);
+        if (response.Content != null)
+        {
+            IEnumerable<CommentDto> moreSubComments = response.Content.Content.ToHashSet();
+            var moreSubCommentsAvailable = response.Content.Number < response.Content.TotalPages;
+            parentComment.SubComments.Last().IsLast = false;
+            
+            foreach (var comment in moreSubComments)
+            {
+                comment.Parent = parentComment;
+                parentComment.SubComments.Add(comment);
+            }
+
+            if (moreSubCommentsAvailable)
+            {
+                parentComment.SubComments.Last().IsLast = true;   
+            }
         }
     }
 }

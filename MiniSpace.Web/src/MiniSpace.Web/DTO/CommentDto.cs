@@ -20,5 +20,8 @@ namespace MiniSpace.Web.DTO
         public bool IsDeleted { get; set; }
         public bool CanExpand { get; set; }
         public HashSet<CommentDto> SubComments { get; set; }
+        public int SubCommentsPage { get; set; }
+        public CommentDto Parent { get; set; }
+        public bool IsLast { get; set; }
     }
 }
