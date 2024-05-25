@@ -4,7 +4,6 @@ using Convey.MessageBrokers;
 
 namespace MiniSpace.Services.Events.Application.Events
 {
-    [Message("notifications")]
     public class StudentCancelledInterestInEvent: IEvent
     {
         public Guid EventId { get; }
