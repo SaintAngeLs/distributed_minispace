@@ -3,9 +3,11 @@ using MiniSpace.Services.Comments.Application.Commands;
 using MiniSpace.Services.Comments.Application.Events.Rejected;
 using MiniSpace.Services.Comments.Application.Exceptions;
 using MiniSpace.Services.Comments.Core.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class ExceptionToMessageMapper : IExceptionToMessageMapper
     {
         public object Map(Exception exception, object message)
