@@ -16,10 +16,10 @@ jobs:
             test_dir: 'MiniSpace.Services.Comments/tests'
           - project: 'MiniSpace.Web/src/MiniSpace.Web'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup .NET 8.0.x
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '8.0.x'
 
@@ -48,5 +48,3 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: '**/coverage.cobertura.xml'
           slug: SaintAngeLs/p_software_engineering_2
-          force: true
-
