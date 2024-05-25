@@ -1,4 +1,7 @@
 using MiniSpace.Services.Organizations.Application;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("MiniSpace.Services.Organizations.Application.UnitTests")]
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Contexts
 {

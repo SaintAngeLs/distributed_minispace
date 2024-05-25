@@ -1,7 +1,4 @@
 using MiniSpace.Services.Comments.Application;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("MiniSpace.Services.Organizations.Application.UnitTests")]
 
 namespace MiniSpace.Services.Comments.Infrastructure.Contexts
 {
