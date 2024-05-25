@@ -1,7 +1,8 @@
-using MiniSpace.Services.Posts.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Posts.Application.Dto
 {
+    [ExcludeFromCodeCoverage]
     public class PostDto
     {
         public Guid Id { get; set; }
