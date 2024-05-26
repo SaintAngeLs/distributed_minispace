@@ -9,13 +9,13 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using MiniSpace.Services.Notifications.Application;
-using MiniSpace.Services.Notifications.Application.Commands;
-using MiniSpace.Services.Notifications.Application.Dto;
-using MiniSpace.Services.Notifications.Application.Queries;
-using MiniSpace.Services.Notifications.Infrastructure;
+using MiniSpace.Services.Email.Application;
+using MiniSpace.Services.Email.Application.Commands;
+using MiniSpace.Services.Email.Application.Dto;
+using MiniSpace.Services.Email.Application.Queries;
+using MiniSpace.Services.Email.Infrastructure;
 
-namespace MiniSpace.Services.Notifications.Api
+namespace MiniSpace.Services.Email.Api
 {
     public class Program
     {
