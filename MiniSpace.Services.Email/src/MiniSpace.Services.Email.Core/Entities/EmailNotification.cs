@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Emails.Core.Entities
+namespace MiniSpace.Services.Email.Core.Entities
 {
     public class EmailNotification : AggregateRoot
     {

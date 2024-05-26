@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MiniSpace.Services.Emails.Core.Entities
+namespace MiniSpace.Services.Email.Core.Entities
 {
     public class StudentEmails
     {

@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Emails.Core.Events
+namespace MiniSpace.Services.Email.Core.Events
 {
     public interface IDomainEvent
     {

@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Notifications.Core.Exceptions
+namespace MiniSpace.Services.Email.Core.Exceptions
 {
     public class InvalidAggregateIdException : DomainException
     {

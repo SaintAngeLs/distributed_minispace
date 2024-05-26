@@ -1,6 +1,6 @@
 using System;
 
-namespace MiniSpace.Services.Emails.Core.Events
+namespace MiniSpace.Services.Email.Core.Events
 {
     public class EmailDeleted : IDomainEvent
     {

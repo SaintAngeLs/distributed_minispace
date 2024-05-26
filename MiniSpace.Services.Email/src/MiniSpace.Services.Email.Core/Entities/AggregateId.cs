@@ -1,6 +1,6 @@
-using MiniSpace.Services.Emails.Core.Exceptions;
+using MiniSpace.Services.Email.Core.Exceptions;
 
-namespace MiniSpace.Services.Emails.Core.Entities
+namespace MiniSpace.Services.Email.Core.Entities
 {
     public class AggregateId : IEquatable<AggregateId>
     {
