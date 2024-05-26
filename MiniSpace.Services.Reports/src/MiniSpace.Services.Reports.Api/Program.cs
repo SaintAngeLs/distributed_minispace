@@ -45,6 +45,7 @@ namespace MiniSpace.Services.Reports.Api
                         .Post<CreateReport>("reports", afterDispatch: (cmd, ctx) 
                             => ctx.Response.Created($"reports/{cmd.ReportId}"))
                         .Post<CancelReport>("reports/{reportId}/cancel")
+                        .Post<StartReportReview>("reports/{reportId}/start-review")
                         .Post<ResolveReport>("reports/{reportId}/resolve")
                         .Post<RejectReport>("reports/{reportId}/reject")
                         .Get<GetStudentReports, PagedResponse<IEnumerable<ReportDto>>>("reports/student/{studentId}")
