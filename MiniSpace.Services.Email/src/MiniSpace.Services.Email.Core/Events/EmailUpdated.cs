@@ -1,4 +1,5 @@
 using System;
+using MiniSpace.Services.Email.Core.Entities;
 
 namespace MiniSpace.Services.Email.Core.Events
 {

@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Email.Core.Entities;
 
-namespace MiniSpace.Services.Notifications.Core.Repositories
+namespace MiniSpace.Services.Email.Core.Repositories
 {
-    public interface IStudentNotificationsRepository
+    public interface IStudentEmailsRepository
     {
-        Task<StudentNotifications> GetByStudentIdAsync(Guid studentId);
-        Task AddAsync(StudentNotifications studentNotifications);
-        Task UpdateAsync(StudentNotifications studentNotifications);
-        Task AddOrUpdateAsync(StudentNotifications studentNotifications);
+        Task<StudentEmails> GetByStudentIdAsync(Guid studentId);
+        Task AddAsync(StudentEmails studentEmails);
+        Task UpdateAsync(StudentEmails studentEmails);
+        Task AddOrUpdateAsync(StudentEmails studentEmails);
         Task DeleteAsync(Guid studentId);
-        Task UpdateNotificationStatus(Guid studentId, Guid notificationId, string newStatus);
-        Task<bool> NotificationExists(Guid studentId, Guid notificationId);
-        Task DeleteNotification(Guid studentId, Guid notificationId);
+        Task UpdateEmailStatus(Guid studentId, Guid emailNotificationId, EmailNotificationStatus newStatus);
+        Task<bool> EmailExists(Guid studentId, Guid emailNotificationId);
+        Task DeleteEmail(Guid studentId, Guid emailNotificationId);
     }
 }

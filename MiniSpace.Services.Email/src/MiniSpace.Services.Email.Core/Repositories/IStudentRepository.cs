@@ -1,6 +1,6 @@
-using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Email.Core.Entities;
 
-namespace MiniSpace.Services.Notifications.Core.Repositories
+namespace MiniSpace.Services.Email.Core.Repositories
 {
     public interface IStudentRepository
     {
