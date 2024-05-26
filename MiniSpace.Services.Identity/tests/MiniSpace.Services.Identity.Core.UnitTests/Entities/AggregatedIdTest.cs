@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Identity.Core.UnitTests.Entities
             var id2 = new AggregateId(id);
 
             // Assert
-            Assert.Equal(id1.Value, id2.Value);
+            Assert.True(id1.Equals(id2));
         }
 
         [Fact]
