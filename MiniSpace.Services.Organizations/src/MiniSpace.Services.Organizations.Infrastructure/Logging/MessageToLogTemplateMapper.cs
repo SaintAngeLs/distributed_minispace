@@ -24,6 +24,12 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Logging
                     }
                 },
                 {
+                    typeof(DeleteOrganization),  new HandlerLogTemplate
+                    {
+                        After = "Deleted an organization with id: {OrganizationId} and its children."
+                    }
+                },
+                {
                     typeof(AddOrganizerToOrganization), new HandlerLogTemplate
                     {
                         After = "Added an organizer with id: {OrganizerId} to the organization with id: {OrganizationId}."
