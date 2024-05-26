@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Text.Json;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Application.Dto;
 
@@ -15,26 +14,25 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class EventDeletedHandler : IEventHandler<EventDeleted>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IEventsServiceClient _eventsServiceClient;  
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
 
         public EventDeletedHandler(
             IMessageBroker messageBroker,
-            IStudentsServiceClient studentsServiceClient,
+            IEventsServiceClient eventsServiceClient,  
             IStudentNotificationsRepository studentNotificationsRepository)
         {
             _messageBroker = messageBroker;
-            _studentsServiceClient = studentsServiceClient;
+            _eventsServiceClient = eventsServiceClient;  
             _studentNotificationsRepository = studentNotificationsRepository;
         }
 
-         public async Task HandleAsync(EventDeleted eventDeleted, CancellationToken cancellationToken)
+        public async Task HandleAsync(EventDeleted eventDeleted, CancellationToken cancellationToken)
         {
-            // Fetch participants who signed up for the event
             IEnumerable<StudentDto> participants;
             try
             {
-                participants = await _studentsServiceClient.GetStudentsSignedUpForEventAsync(eventDeleted.EventId);
+                participants = await _eventsServiceClient.GetParticipantsAsync(eventDeleted.EventId);  
             }
             catch (Exception ex)
             {
@@ -63,7 +61,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
                 Console.WriteLine($"Creating cancellation notification for user: {participant.Id}");
 
-                // Retrieve or initialize the notifications repository for this participant
                 var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(participant.Id);
                 if (studentNotifications == null)
                 {
@@ -73,7 +70,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 studentNotifications.AddNotification(notification);
                 await _studentNotificationsRepository.UpdateAsync(studentNotifications);
 
-                // Create and publish the event for the creation of this notification
                 var notificationCreatedEvent = new NotificationCreated(
                     notificationId: notification.NotificationId,
                     userId: notification.UserId,
