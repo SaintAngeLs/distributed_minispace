@@ -40,6 +40,8 @@ using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Friends.Infrastructure.Services;
 using MiniSpace.Services.Friends.Application.Events;
+using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
+using MiniSpace.Services.Friends.Application.Services.Clients;
 
 namespace MiniSpace.Services.Friends.Infrastructure
 {
@@ -49,10 +51,13 @@ namespace MiniSpace.Services.Friends.Infrastructure
         {
             builder.Services.AddTransient<IFriendRepository, FriendMongoRepository>();
             builder.Services.AddTransient<IFriendRequestRepository, FriendRequestMongoRepository>();
+            builder.Services.AddTransient<IStudentFriendsRepository, StudentFriendsMongoRepository>();
+            builder.Services.AddTransient<IStudentRequestsRepository, StudentRequestsMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
+            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
@@ -74,6 +79,8 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .AddHandlersLogging()
                 .AddMongoRepository<FriendRequestDocument, Guid>("friendRequests")
                 .AddMongoRepository<FriendDocument, Guid>("friends")
+                .AddMongoRepository<StudentFriendsDocument, Guid>("student-friends")
+                .AddMongoRepository<StudentRequestsDocument, Guid>("student-requests")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -94,12 +101,13 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .SubscribeCommand<InviteFriend>()
                 .SubscribeCommand<PendingFriendAccept>()
                 .SubscribeCommand<PendingFriendDecline>()
-                .SubscribeEvent<Application.Events.FriendAdded>()
-                .SubscribeEvent<Application.Events.FriendRemoved>()
-                .SubscribeEvent<PendingFriendAccepted>()
-                .SubscribeEvent<PendingFriendDeclined>()
-                .SubscribeEvent<FriendRequestCreated>()
+                .SubscribeCommand<SentFriendRequestWithdraw>()
+                // .SubscribeEvent<FriendRequestCreated>()
                 .SubscribeEvent<FriendRequestSent>()
+                // .SubscribeEvent<Application.Events.FriendAdded>()
+                // .SubscribeEvent<Application.Events.FriendRemoved>()
+                // .SubscribeEvent<PendingFriendAccepted>()
+                // .SubscribeEvent<PendingFriendDeclined>()
                 .SubscribeEvent<UserStatusUpdated>();
 
             return app;

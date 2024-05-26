@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
 using MiniSpace.Services.Posts.Application.Services;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("MiniSpace.Services.Posts.Infrastructure.UnitTests")]
 namespace MiniSpace.Services.Posts.Infrastructure.Services
 {
     internal sealed class MessageBroker : IMessageBroker

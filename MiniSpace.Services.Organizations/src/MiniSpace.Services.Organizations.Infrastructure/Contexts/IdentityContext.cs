@@ -1,7 +1,12 @@
 using MiniSpace.Services.Organizations.Application;
+using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
+
+[assembly: InternalsVisibleTo("MiniSpace.Services.Organizations.Application.UnitTests")]
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class IdentityContext : IIdentityContext
     {
         public Guid Id { get; }

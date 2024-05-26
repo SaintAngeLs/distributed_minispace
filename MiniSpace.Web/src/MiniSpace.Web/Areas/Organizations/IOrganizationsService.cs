@@ -10,13 +10,15 @@ namespace MiniSpace.Web.Areas.Organizations
 {
     public interface IOrganizationsService
     {
-        Task<OrganizationDto> GetOrganizationAsync(Guid organizationId);
-        Task<OrganizationDetailsDto> GetOrganizationDetailsAsync(Guid organizationId);
+        Task<OrganizationDto> GetOrganizationAsync(Guid organizationId, Guid rootId);
+        Task<OrganizationDetailsDto> GetOrganizationDetailsAsync(Guid organizationId, Guid rootId);
         Task<IEnumerable<OrganizationDto>> GetOrganizerOrganizationsAsync(Guid organizerId);
         Task<IEnumerable<OrganizationDto>> GetRootOrganizationsAsync();
-        Task<IEnumerable<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId);
-        Task<HttpResponse<object>> AddOrganization(Guid organizationId, string name, Guid parentId);
-        Task AddOrganizerToOrganization(Guid organizationId, Guid organizerId);
-        Task RemoveOrganizerFromOrganization(Guid organizationId, Guid organizerId);
+        Task<IEnumerable<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId, Guid rootId);
+        Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId, Guid rootId);
+        Task<HttpResponse<object>> CreateOrganization(Guid organizationId, string name, Guid rootId, Guid parentId);
+        Task<HttpResponse<object>> CreateRootOrganization(Guid organizationId, string name);
+        Task AddOrganizerToOrganization(Guid rootOrganizationId, Guid organizationId, Guid organizerId);
+        Task RemoveOrganizerFromOrganization(Guid rootOrganizationId, Guid organizationId, Guid organizerId);
     }    
 }

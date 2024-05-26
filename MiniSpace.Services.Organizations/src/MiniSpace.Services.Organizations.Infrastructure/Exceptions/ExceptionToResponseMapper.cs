@@ -4,9 +4,11 @@ using Convey;
 using Convey.WebApi.Exceptions;
 using MiniSpace.Services.Organizations.Application.Exceptions;
 using MiniSpace.Services.Organizations.Core.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class ExceptionToResponseMapper : IExceptionToResponseMapper
     {
         private static readonly ConcurrentDictionary<Type, string> Codes = new ConcurrentDictionary<Type, string>();

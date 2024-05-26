@@ -34,7 +34,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             }
 
             var identity = _appContext.Identity;
-            if (!identity.IsAuthenticated)
+            if (identity.IsAuthenticated && identity.Id != comment.StudentId)
             {
                 throw new UnauthorizedCommentAccessException(command.CommentId, identity.Id);
             }

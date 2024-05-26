@@ -39,9 +39,11 @@ using MiniSpace.Services.Organizations.Infrastructure.Logging;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Organizations.Infrastructure.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
@@ -88,7 +90,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<AddOrganization>()
+                .SubscribeCommand<CreateOrganization>()
+                .SubscribeCommand<DeleteOrganization>()
                 .SubscribeCommand<AddOrganizerToOrganization>()
                 .SubscribeCommand<RemoveOrganizerFromOrganization>()
                 .SubscribeEvent<OrganizerRightsGranted>()

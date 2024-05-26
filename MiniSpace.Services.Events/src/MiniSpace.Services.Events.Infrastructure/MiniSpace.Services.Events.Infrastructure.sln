@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Events.Infrastructure", "MiniSpace.Services.Events.Infrastructure.csproj", "{86A0DEA7-85B9-4D80-B43C-B41C8D985D54}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86A0DEA7-85B9-4D80-B43C-B41C8D985D54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86A0DEA7-85B9-4D80-B43C-B41C8D985D54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86A0DEA7-85B9-4D80-B43C-B41C8D985D54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86A0DEA7-85B9-4D80-B43C-B41C8D985D54}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69270B46-EAB0-4ABB-9203-6207ED340CD3}
+	EndGlobalSection
+EndGlobal

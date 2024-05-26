@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;
@@ -7,6 +8,7 @@ using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class PostMongoRepository : IPostRepository
     {
         private readonly IMongoRepository<PostDocument, Guid> _repository;

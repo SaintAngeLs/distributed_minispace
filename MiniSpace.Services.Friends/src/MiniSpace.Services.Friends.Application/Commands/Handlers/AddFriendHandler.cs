@@ -45,6 +45,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             }
             await _friendRepository.UpdateFriendshipAsync(requester);
             var events = _eventMapper.MapAll(requester.Events);
+            
             await _messageBroker.PublishAsync(events);
         }
         

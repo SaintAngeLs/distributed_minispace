@@ -44,8 +44,16 @@
                 <RadzenDataGridColumn Property="State" Title="State" Width="110px" TextAlign="TextAlign.Center" />
                 <RadzenDataGridColumn Property="IsBanned" Title="Is Banned" Width="110px" />
                 <RadzenDataGridColumn Property="IsOrganizer" Title="Is Organizer" Width="130px" />
-                <RadzenDataGridColumn Property="DateOfBirth" Title="Birth Date" FormatString="{0:d}" Width="120px" />
-                <RadzenDataGridColumn Property="CreatedAt" Title="Created At" Width="180px" />
+                <RadzenDataGridColumn Property="DateOfBirth" Title="Birth Date" FormatString="{0:d}" Width="120px">
+                    <Template Context="student">
+                        @student.DateOfBirth.ToLocalTime().ToString(shortDateFormat)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="CreatedAt" Title="Created At" Width="180px">
+                    <Template Context="student">
+                        @student.CreatedAt.ToLocalTime().ToString(dateFormat)
+                    </Template>
+                </RadzenDataGridColumn>
                 <RadzenDataGridColumn Property="Description" Title="Description" Width="150px" />
             </Columns>
         </RadzenDataGrid>
@@ -54,6 +62,7 @@
 
 @code {
     private const string dateFormat = "dd/MM/yyyy HH:mm";
+    private const string shortDateFormat = "dd/MM/yyyy";
     
     private int pageSize = 5;
     IEnumerable<int> pageSizeOptions = new int[] { 5, 10, 20, 40};
@@ -70,7 +79,8 @@
         {
             adminId = IdentityService.GetCurrentUserId();
             
-            students = await StudentsService.GetStudentsAsync();
+            var paginatedResponse = await StudentsService.GetStudentsAsync();
+            students = paginatedResponse.Results;
             totalStudents = students.Count();
         }
         

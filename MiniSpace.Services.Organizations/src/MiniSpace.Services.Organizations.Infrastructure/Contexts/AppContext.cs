@@ -1,7 +1,9 @@
 using MiniSpace.Services.Organizations.Application;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class AppContext : IAppContext
     {
         public string RequestId { get; }

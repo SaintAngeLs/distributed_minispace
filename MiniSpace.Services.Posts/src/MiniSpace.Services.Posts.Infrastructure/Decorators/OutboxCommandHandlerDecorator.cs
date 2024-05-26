@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Commands;
 using Convey.MessageBrokers;
 using Convey.MessageBrokers.Outbox;
@@ -5,6 +6,7 @@ using Convey.Types;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Decorators
 {
+    [ExcludeFromCodeCoverage]
     [Decorator]
     internal sealed class OutboxCommandHandlerDecorator<TCommand> : ICommandHandler<TCommand>
         where TCommand : class, ICommand

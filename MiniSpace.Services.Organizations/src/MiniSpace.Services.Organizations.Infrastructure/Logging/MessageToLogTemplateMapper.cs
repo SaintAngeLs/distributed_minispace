@@ -1,18 +1,32 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Organizations.Application.Commands;
 using MiniSpace.Services.Organizations.Application.Events.External;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Logging
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class MessageToLogTemplateMapper : IMessageToLogTemplateMapper
     {
         private static IReadOnlyDictionary<Type, HandlerLogTemplate> MessageTemplates 
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(AddOrganization),  new HandlerLogTemplate
+                    typeof(CreateRootOrganization),  new HandlerLogTemplate
                     {
-                        After = "Added a new organization with id: {OrganizationId}."
+                        After = "Created a new root organization with id: {OrganizationId}."
+                    }
+                },
+                {
+                    typeof(CreateOrganization),  new HandlerLogTemplate
+                    {
+                        After = "Added a new child organization with id: {OrganizationId} for parent with id: {ParentId}."
+                    }
+                },
+                {
+                    typeof(DeleteOrganization),  new HandlerLogTemplate
+                    {
+                        After = "Deleted an organization with id: {OrganizationId} and its children."
                     }
                 },
                 {

@@ -1,6 +1,10 @@
 name: .NET MiniSpace Microservice build & integration
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '*'
+  pull_request: 
 
 jobs:
   build-and-test:
@@ -12,12 +16,22 @@ jobs:
           - project: 'MiniSpace.APIGateway/src/MiniSpace.APIGateway'
           - project: 'MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api'
             test_dir: 'MiniSpace.Services.Identity/tests'
+          - project: 'MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api'
+            test_dir: 'MiniSpace.Services.Posts/tests'
+          - project: 'MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api'
+            test_dir: 'MiniSpace.Services.Comments/tests'
+          - project: 'MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api'
+            test_dir: 'MiniSpace.Services.Organizations/tests'
+          - project: 'MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api'
+            test_dir: 'MiniSpace.Services.Posts/tests'
           - project: 'MiniSpace.Web/src/MiniSpace.Web'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET 8.0.x
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '8.0.x'
 
@@ -45,5 +59,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: '**/coverage.cobertura.xml'
-          slug: SaintAngeLs/p_software_engineering_2
-
+          slug: SaintAngeLs/distributed_minispace
+          commit: ${{ github.event.pull_request.base.sha }}
+          # fail_ci_if_error: true 
