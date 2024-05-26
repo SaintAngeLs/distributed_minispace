@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Application.Dto;
@@ -6,6 +7,7 @@ using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetPostHandler : IQueryHandler<GetPost, PostDto>
     {
         private readonly IMongoRepository<PostDocument, Guid> _repository;

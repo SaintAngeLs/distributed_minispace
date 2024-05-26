@@ -8,18 +8,18 @@ namespace MiniSpace.Services.Posts.Application.Commands
         public Guid EventId { get; }
         public Guid OrganizerId { get; }
         public string TextContent { get; }
-        public IEnumerable<Guid> MediaFiles { get; }
+        public string MediaContent { get; }
         public string State { get; }
         public DateTime? PublishDate { get; }
 
         public CreatePost(Guid postId, Guid eventId, Guid organizerId, string textContent,
-            IEnumerable<Guid> mediaFiles, string state, DateTime? publishDate)
+            string mediaContent, string state, DateTime? publishDate)
         {
-            PostId = postId;
+            PostId = postId == Guid.Empty ? Guid.NewGuid() : postId;
             EventId = eventId;
             OrganizerId = organizerId;
             TextContent = textContent;
-            MediaFiles = mediaFiles;
+            MediaContent = mediaContent;
             State = state;
             PublishDate = publishDate;
         }
