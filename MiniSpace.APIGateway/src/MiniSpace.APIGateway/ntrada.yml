@@ -159,6 +159,12 @@ modules:
         downstream: reports-service/reports/{reportId}/cancel
         auth: true
 
+      - upstream: /{reportId}/start-review
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/{reportId}/start-review
+        auth: true
+
       - upstream: /{reportId}/resolve
         method: POST
         use: downstream
