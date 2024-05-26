@@ -121,6 +121,32 @@
         }
     }
 
+    private async Task<HashSet<CommentDto>> HandleSearchingSubComments(SearchCommentsModel searchSubCommentsModel,
+        CommentDto comment)
+    {
+        var subComments = new HashSet<CommentDto>();
+        var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
+            searchSubCommentsModel.CommentContext, comment.Id, searchSubCommentsModel.Pageable);
+        
+        if (response.Content != null && !response.Content.Empty)
+        {
+            subComments = response.Content.Content.ToHashSet();
+            var moreSubCommentsAvailable = response.Content.Number < response.Content.TotalPages;
+
+            foreach (var subComment in subComments)
+            {
+                subComment.Parent = comment;
+            }
+
+            if (moreSubCommentsAvailable)
+            {
+                subComments.Last().IsLast = true;
+            }
+        }
+
+        return subComments;
+    }
+    
     private async Task SearchComments()
     {
         Comments = [];
@@ -153,24 +179,7 @@
             
             var searchSubCommentsModel = SearchCommentsModel.DeepClone();
             searchSubCommentsModel.Pageable.Page = 1;
-            
-            var subResponse = await CommentsService.SearchSubCommentsAsync(SearchCommentsModel.ContextId,
-                SearchCommentsModel.CommentContext, comment.Id, SearchCommentsModel.Pageable);
-            if (subResponse.Content is { Empty: false })
-            {
-                comment.SubComments = subResponse.Content.Content.ToHashSet();
-                var moreSubCommentsAvailable = subResponse.Content.Number < subResponse.Content.TotalPages;
-
-                foreach (var subComment in comment.SubComments)
-                {
-                    subComment.Parent = comment;
-                }
-
-                if (moreSubCommentsAvailable)
-                {
-                    comment.SubComments.Last().IsLast = true;   
-                }
-            }
+            comment.SubComments = await HandleSearchingSubComments(searchSubCommentsModel, comment);
         }
         
         StateHasChanged();
@@ -204,24 +213,7 @@
             
             var searchSubCommentsModel = SearchCommentsModel.DeepClone();
             searchSubCommentsModel.Pageable.Page = 1;
-            
-            var subResponse = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
-                searchSubCommentsModel.CommentContext, comment.Id, searchSubCommentsModel.Pageable);
-            if (subResponse.Content != null)
-            {
-                comment.SubComments = subResponse.Content.Content.ToHashSet();
-                var moreSubCommentsAvailable = subResponse.Content.Number < subResponse.Content.TotalPages;
-                
-                foreach (var subComment in comment.SubComments)
-                {
-                    subComment.Parent = comment;
-                }
-                
-                if (moreSubCommentsAvailable)
-                {
-                    comment.SubComments.Last().IsLast = true;   
-                }
-            }
+            comment.SubComments = await HandleSearchingSubComments(searchSubCommentsModel, comment);
             
             Comments.Add(comment);
         }
@@ -255,24 +247,7 @@
     {
         var searchSubCommentsModel = SearchCommentsModel.DeepClone();
         searchSubCommentsModel.Pageable.Page = parentComment.SubCommentsPage = 1;
-        
-        var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
-            searchSubCommentsModel.CommentContext, parentComment.Id, searchSubCommentsModel.Pageable);
-        if (response.Content != null)
-        {
-            parentComment.SubComments = response.Content.Content.ToHashSet();
-            var moreSubCommentsAvailable = response.Content.Number < response.Content.TotalPages;
-            
-            foreach (var subComment in parentComment.SubComments)
-            {
-                subComment.Parent = parentComment;
-            }
-
-            if (moreSubCommentsAvailable)
-            {
-                parentComment.SubComments.Last().IsLast = true;   
-            }
-        }
+        parentComment.SubComments = await HandleSearchingSubComments(searchSubCommentsModel, parentComment);
     }
     
     private async Task LoadMoreSubComments(CommentDto lastComment)
@@ -281,24 +256,13 @@
         
         var searchSubCommentsModel = SearchCommentsModel.DeepClone();
         searchSubCommentsModel.Pageable.Page = ++parentComment.SubCommentsPage;
-            
-        var response = await CommentsService.SearchSubCommentsAsync(searchSubCommentsModel.ContextId,
-            searchSubCommentsModel.CommentContext, parentComment.Id, searchSubCommentsModel.Pageable);
-        if (response.Content != null)
+        var moreSubComments = await HandleSearchingSubComments(searchSubCommentsModel, parentComment);
+        if (moreSubComments.Any())
         {
-            IEnumerable<CommentDto> moreSubComments = response.Content.Content.ToHashSet();
-            var moreSubCommentsAvailable = response.Content.Number < response.Content.TotalPages;
             parentComment.SubComments.Last().IsLast = false;
-            
-            foreach (var comment in moreSubComments)
+            foreach (var subComment in moreSubComments)
             {
-                comment.Parent = parentComment;
-                parentComment.SubComments.Add(comment);
-            }
-
-            if (moreSubCommentsAvailable)
-            {
-                parentComment.SubComments.Last().IsLast = true;   
+                parentComment.SubComments.Add(subComment);
             }
         }
     }
