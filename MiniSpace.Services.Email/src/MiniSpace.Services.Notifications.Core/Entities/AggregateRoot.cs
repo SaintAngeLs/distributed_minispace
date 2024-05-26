@@ -1,6 +1,6 @@
-using MiniSpace.Services.Notifications.Core.Events;
+using MiniSpace.Services.Emails.Core.Events;
 
-namespace MiniSpace.Services.Notifications.Core.Entities
+namespace MiniSpace.Services.Emails.Core.Entities
 {
     public abstract class AggregateRoot
     {

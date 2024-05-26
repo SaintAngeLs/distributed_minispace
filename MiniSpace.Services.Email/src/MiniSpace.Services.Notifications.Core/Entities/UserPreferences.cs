@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Notifications.Core.Entities
+namespace MiniSpace.Services.Emails.Core.Entities
 {
     public class UserPreferences
     {

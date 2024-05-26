@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MiniSpace.Services.Notifications.Core.Entities
+namespace MiniSpace.Services.Emails.Core.Entities
 {
     public class Student
     {

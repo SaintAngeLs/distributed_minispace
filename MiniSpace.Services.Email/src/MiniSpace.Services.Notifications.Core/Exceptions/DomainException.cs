@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Notifications.Core.Exceptions
+namespace MiniSpace.Services.Emails.Core.Exceptions
 {
     public abstract class DomainException : Exception
     {
