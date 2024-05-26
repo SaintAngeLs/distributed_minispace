@@ -5,6 +5,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         NewFriendRequest,
         NewPost,
         NewEvent,
+        EventDeleted,
         FriendRequestAccepted,
         MentionedInPost,
         EventReminder,

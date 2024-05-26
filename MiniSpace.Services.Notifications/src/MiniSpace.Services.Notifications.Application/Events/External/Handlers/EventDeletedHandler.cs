@@ -12,13 +12,13 @@ using MiniSpace.Services.Notifications.Application.Dto;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
-    public class EventCreatedHandler : IEventHandler<EventCreated>
+    public class EventDeletedHandler : IEventHandler<EventDeleted>
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
 
-        public EventCreatedHandler(
+        public EventDeletedHandler(
             IMessageBroker messageBroker,
             IStudentsServiceClient studentsServiceClient,
             IStudentNotificationsRepository studentNotificationsRepository)
@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             _studentNotificationsRepository = studentNotificationsRepository;
         }
 
-        public async Task HandleAsync(EventCreated eventCreated, CancellationToken cancellationToken)
+        public async Task HandleAsync(EventDeleted eventDeleted, CancellationToken cancellationToken)
         {
             IEnumerable<StudentDto> users;
 
@@ -38,36 +38,40 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             }
             catch (Exception ex)
             {
-                //  Console.WriteLine($"Failed to get users: {ex.Message}");
+                Console.WriteLine($"Failed to get users: {ex.Message}");
                 throw;
             }
 
             if (users == null)
             {
-                //  Console.WriteLine("No users found.");
+                Console.WriteLine("No users found.");
                 return;
             }
 
             foreach (var user in users)
             {
-                var notification = new Notification(
-                    notificationId: Guid.NewGuid(),
-                    userId: user.Id,
-                    message: $"A new event has been created by Organizer {eventCreated.OrganizerId}",
-                    status: NotificationStatus.Unread,
-                    createdAt: DateTime.UtcNow,
-                    updatedAt: null,
-                    relatedEntityId: eventCreated.EventId,
-                    eventType: NotificationEventType.NewEvent
-                );
-
-                // Console.WriteLine($"Creating notification for user: {user.Id}");
-
                 var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(user.Id);
                 if (studentNotifications == null)
                 {
-                    studentNotifications = new StudentNotifications(user.Id);
+                    continue; // If there are no notifications for this user, skip
                 }
+
+                // Remove notifications related to the deleted event
+                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+
+                Console.WriteLine($"Removed notifications for user: {user.Id} related to deleted event: {eventDeleted.EventId}");
+
+                // Optionally, send a notification about the event cancellation
+                var notification = new Notification(
+                    notificationId: Guid.NewGuid(),
+                    userId: user.Id,
+                    message: $"An event has been cancelled.",
+                    status: NotificationStatus.Unread,
+                    createdAt: DateTime.UtcNow,
+                    updatedAt: null,
+                    relatedEntityId: eventDeleted.EventId,
+                    eventType: NotificationEventType.EventDeleted
+                );
 
                 studentNotifications.AddNotification(notification);
                 await _studentNotificationsRepository.UpdateAsync(studentNotifications);
@@ -84,4 +88,3 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         }
     }
 }
-
