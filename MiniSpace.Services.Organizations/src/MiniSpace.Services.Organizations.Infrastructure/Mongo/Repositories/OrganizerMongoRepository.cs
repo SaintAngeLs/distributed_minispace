@@ -4,9 +4,11 @@ using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class OrganizerMongoRepository : IOrganizerRepository
     {
         private readonly IMongoRepository<OrganizerDocument, Guid> _repository;

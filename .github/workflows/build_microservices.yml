@@ -20,6 +20,8 @@ jobs:
             test_dir: 'MiniSpace.Services.Posts/tests'
           - project: 'MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api'
             test_dir: 'MiniSpace.Services.Comments/tests'
+          - project: 'MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api'
+            test_dir: 'MiniSpace.Services.Organizations/tests'
           - project: 'MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api'
             test_dir: 'MiniSpace.Services.Posts/tests'
           - project: 'MiniSpace.Web/src/MiniSpace.Web'

@@ -1,9 +1,11 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Organizations.Application.Commands;
 using MiniSpace.Services.Organizations.Application.Events.External;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Logging
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class MessageToLogTemplateMapper : IMessageToLogTemplateMapper
     {
         private static IReadOnlyDictionary<Type, HandlerLogTemplate> MessageTemplates 
