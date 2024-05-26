@@ -6,6 +6,7 @@ using MiniSpace.Services.Notifications.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -13,17 +14,22 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IEventsServiceClient _eventsServiceClient;
 
         public StudentSignedUpToEventHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository)
+            IStudentNotificationsRepository studentNotificationsRepository,
+            IEventsServiceClient eventsServiceClient)  
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
+            _eventsServiceClient = eventsServiceClient;
         }
+
 
         public async Task HandleAsync(StudentSignedUpToEvent eventArgs, CancellationToken cancellationToken)
         {
+            Console.WriteLine("**************************************************************");
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.StudentId);
             if (studentNotifications == null)
             {
@@ -43,7 +49,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             studentNotifications.AddNotification(notification);
             await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-            
+
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
@@ -52,6 +58,39 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);
+            if (eventDetails != null && eventDetails.Organizer != null)
+            {
+                var organizerNotification = new Notification(
+                    notificationId: Guid.NewGuid(),
+                    userId: eventDetails.Organizer.Id,
+                    message: $"A new student has signed up for your event '{eventDetails.Name}'.",
+                    status: NotificationStatus.Unread,
+                    createdAt: DateTime.UtcNow,
+                    updatedAt: null,
+                    relatedEntityId: eventArgs.EventId,
+                    eventType: NotificationEventType.EventNewSignUp
+                );
+
+                var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventDetails.Organizer.Id);
+                if (organizerNotifications == null)
+                {
+                    organizerNotifications = new StudentNotifications(eventDetails.Organizer.Id);
+                }
+
+                organizerNotifications.AddNotification(organizerNotification);
+                await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
+
+                var organizerNotificationCreatedEvent = new NotificationCreated(
+                    notificationId: organizerNotification.NotificationId,
+                    userId: organizerNotification.UserId,
+                    message: organizerNotification.Message,
+                    createdAt: organizerNotification.CreatedAt
+                );
+
+                await _messageBroker.PublishAsync(organizerNotificationCreatedEvent);
+            }
         }
     }
 }
