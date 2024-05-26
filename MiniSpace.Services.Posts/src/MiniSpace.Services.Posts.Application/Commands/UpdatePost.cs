@@ -6,13 +6,13 @@ namespace MiniSpace.Services.Posts.Application.Commands
     {
         public Guid PostId { get; }
         public string TextContent { get; }
-        public IEnumerable<Guid> MediaFiles { get; }
+        public string MediaContent { get; }
 
-        public UpdatePost(Guid postId, string textContent, IEnumerable<Guid> mediaFiles)
+        public UpdatePost(Guid postId, string textContent, string mediaContent)
         {
             PostId = postId;
             TextContent = textContent;
-            MediaFiles = mediaFiles;
+            MediaContent = mediaContent;
         }
     }    
 }

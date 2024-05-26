@@ -5,12 +5,10 @@ namespace MiniSpace.Services.Posts.Application.Events
     public class PostUpdated : IEvent
     {
         public Guid PostId { get; }
-        public IEnumerable<Guid> MediaFilesIds { get; }
 
-        public PostUpdated(Guid postId, IEnumerable<Guid> mediaFilesIds)
+        public PostUpdated(Guid postId)
         {
             PostId = postId;
-            MediaFilesIds = mediaFilesIds;
         }
     }
 }

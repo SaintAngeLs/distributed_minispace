@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.MessageBrokers.RabbitMQ;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Events.Rejected;
@@ -6,6 +7,7 @@ using MiniSpace.Services.Posts.Core.Exceptions;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class ExceptionToMessageMapper : IExceptionToMessageMapper
     {
         public object Map(Exception exception, object message)
