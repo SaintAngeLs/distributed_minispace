@@ -40,7 +40,7 @@
                                         <MudText>@(comment.RepliesCount)</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium"
                                                        Color="Color.Inherit"
-                                                       OnClick="async () => { await CreateSubComment(comment); await LoadSubComments(comment); await currentItem.ReloadAsync(); }"/>
+                                                       OnClick="async () => { await CreateSubCommentAsync(comment); }"/>
                                     </MudStack>
                                 </RadzenColumn>
                             </RadzenRow>
@@ -82,7 +82,7 @@
                         @if (comment.IsLast)
                         {
                             <RadzenButton Size="ButtonSize.Medium" Text="Load more replies"
-                                          Click="@(() => LoadMoreReplies(comment))"/>
+                                          Click="@(() => LoadMoreSubCommentsAsync(comment))"/>
                         }
                     }
                 </MudGrid>
@@ -107,8 +107,15 @@
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     
     MudTreeViewItem<CommentDto> currentItem;
+
+    private async Task CreateSubCommentAsync(CommentDto comment)
+    {
+        await CreateSubComment(comment);
+        await LoadSubComments(comment);
+        await currentItem.ReloadAsync();
+    }
     
-    private async Task LoadMoreReplies(CommentDto lastSubComment)
+    private async Task LoadMoreSubCommentsAsync(CommentDto lastSubComment)
     {
         await LoadMoreSubComments(lastSubComment);
         await currentItem.ReloadAsync();
