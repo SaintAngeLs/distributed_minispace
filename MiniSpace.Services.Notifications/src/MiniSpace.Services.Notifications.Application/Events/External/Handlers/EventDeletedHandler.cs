@@ -28,44 +28,32 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             _studentNotificationsRepository = studentNotificationsRepository;
         }
 
-        public async Task HandleAsync(EventDeleted eventDeleted, CancellationToken cancellationToken)
+         public async Task HandleAsync(EventDeleted eventDeleted, CancellationToken cancellationToken)
         {
-            IEnumerable<StudentDto> users;
-
+            // Fetch participants who signed up for the event
+            IEnumerable<StudentDto> participants;
             try
             {
-                users = await _studentsServiceClient.GetAllAsync();
+                participants = await _studentsServiceClient.GetStudentsSignedUpForEventAsync(eventDeleted.EventId);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to get users: {ex.Message}");
+                Console.WriteLine($"Failed to get participants: {ex.Message}");
                 throw;
             }
 
-            if (users == null)
+            if (participants == null)
             {
-                Console.WriteLine("No users found.");
+                Console.WriteLine("No participants found for the event.");
                 return;
             }
 
-            foreach (var user in users)
+            foreach (var participant in participants)
             {
-                var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(user.Id);
-                if (studentNotifications == null)
-                {
-                    continue; // If there are no notifications for this user, skip
-                }
-
-                // Remove notifications related to the deleted event
-                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-
-                Console.WriteLine($"Removed notifications for user: {user.Id} related to deleted event: {eventDeleted.EventId}");
-
-                // Optionally, send a notification about the event cancellation
                 var notification = new Notification(
                     notificationId: Guid.NewGuid(),
-                    userId: user.Id,
-                    message: $"An event has been cancelled.",
+                    userId: participant.Id,
+                    message: $"The event you were signed up for has been cancelled.",
                     status: NotificationStatus.Unread,
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,
@@ -73,9 +61,19 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     eventType: NotificationEventType.EventDeleted
                 );
 
+                Console.WriteLine($"Creating cancellation notification for user: {participant.Id}");
+
+                // Retrieve or initialize the notifications repository for this participant
+                var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(participant.Id);
+                if (studentNotifications == null)
+                {
+                    studentNotifications = new StudentNotifications(participant.Id);
+                }
+
                 studentNotifications.AddNotification(notification);
                 await _studentNotificationsRepository.UpdateAsync(studentNotifications);
 
+                // Create and publish the event for the creation of this notification
                 var notificationCreatedEvent = new NotificationCreated(
                     notificationId: notification.NotificationId,
                     userId: notification.UserId,
