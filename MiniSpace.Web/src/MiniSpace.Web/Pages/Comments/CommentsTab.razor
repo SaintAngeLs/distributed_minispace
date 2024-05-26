@@ -28,6 +28,7 @@
             }
             <CommentsTree Comments="Comments" StudentId="StudentId"
                           UpdateComment="@UpdateComment"
+                          DeleteComment="@DeleteComment"
                           CreateSubComment="@CreateSubComment"
                           LoadSubComments="@LoadSubComments" 
                           LoadMoreSubComments="@LoadMoreSubComments" />
@@ -72,7 +73,9 @@
     };
 
     private UpdateCommentModel UpdateCommentModel = new();
-
+    
+    private DeleteCommentModel DeleteCommentModel = new();
+    
     private bool pageInitialized;
     private bool moreCommentsAvailable;
     private bool commentsEmpty = true;
@@ -116,6 +119,21 @@
             new DialogOptions()
             {
                 Width = "800px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenDeleteCommentDialog(string title)
+    {
+        await DialogService.OpenAsync<DeleteCommentDialog>(title,
+            new Dictionary<string, object>()
+            {
+                { "EventId", eventId },
+                { "DeleteCommentModel", DeleteCommentModel }
+            },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "100px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }
@@ -259,6 +277,17 @@
         if (UpdateCommentModel.UpdatingSubmitted)
         {
             UpdateCommentModel.UpdatingSubmitted = false;
+            await SearchComments();
+        }
+    }
+    
+    private async Task DeleteComment(CommentDto comment)
+    {
+        DeleteCommentModel.CommentId = comment.Id;
+        await OpenDeleteCommentDialog("Are you sure? This action cannot be undone!");
+        if (DeleteCommentModel.DeletingSubmitted)
+        {
+            DeleteCommentModel.DeletingSubmitted = false;
             await SearchComments();
         }
     }
