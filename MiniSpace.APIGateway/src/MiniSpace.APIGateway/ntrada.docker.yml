@@ -145,22 +145,34 @@ modules:
         downstream: reports-service/reports
         auth: true
 
-      - upstream: /
-        method: GET
+      - upstream: /search
+        method: POST
         use: downstream
-        downstream: reports-service/reports
+        downstream: reports-service/reports/search
         auth: true
 
-      - upstream: /
-        method: PUT
+      - upstream: /{reportId}/cancel
+        method: POST
         use: downstream
-        downstream: reports-service/reports
+        downstream: reports-service/reports/{reportId}/cancel
         auth: true
 
-      - upstream: /{reportId}
+      - upstream: /{reportId}/resolve
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/{reportId}/resolve
+        auth: true
+
+      - upstream: /{reportId}/reject
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/{reportId}/reject
+        auth: true
+
+      - upstream: /students/{studentId}
         method: GET
         use: downstream
-        downstream: reports-service/reports/{reportId}
+        downstream: reports-service/reports/students/{studentId}
         auth: true
 
     services:
