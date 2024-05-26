@@ -27,6 +27,14 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             return await HandleResponseAsync<IEnumerable<StudentDto>>(response);
         }
 
+        public async Task<EventDto> GetEventAsync(Guid eventId)
+        {
+            var url = $"{_eventsServiceUrl}/events/{eventId}";
+            var response = await _httpClient.GetAsync(url);
+            return await HandleResponseAsync<EventDto>(response);  
+        }
+  
+
         private async Task<T> HandleResponseAsync<T>(HttpResponseMessage response) where T : class
         {
             if (!response.IsSuccessStatusCode)
@@ -48,6 +56,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
                 Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}");
                 return null;
             }
-        }
+        }  
     }
 }
