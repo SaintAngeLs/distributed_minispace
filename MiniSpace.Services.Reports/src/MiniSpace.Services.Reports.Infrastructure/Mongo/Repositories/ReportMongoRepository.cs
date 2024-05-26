@@ -66,5 +66,18 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
             return (pagedEvents.data.Select(r => r.AsEntity()), pageNumber, pageSize,
                 pagedEvents.totalPages, pagedEvents.totalElements);
         }
+        
+        public async Task<(IEnumerable<Report> reports, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseStudentReportsAsync(int pageNumber, int pageSize,
+                Guid studentId, IEnumerable<string> sortBy, string direction)
+        {
+            var filterDefinition = Extensions.ToFilterDefinition()
+                .AddStudentIdFilter(studentId);
+            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
+            
+            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+            
+            return (pagedEvents.data.Select(r => r.AsEntity()), pageNumber, pageSize,
+                pagedEvents.totalPages, pagedEvents.totalElements);
+        }
     }    
 }

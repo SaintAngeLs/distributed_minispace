@@ -12,5 +12,7 @@ namespace MiniSpace.Services.Reports.Core.Repositories
         Task<(IEnumerable<Report> reports, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseReportsAsync(
             int pageNumber, int pageSize, IEnumerable<ContextType> contextTypes, IEnumerable<ReportState> states,
             IEnumerable<string> sortBy, string direction);
+        Task<(IEnumerable<Report> reports, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseStudentReportsAsync(
+            int pageNumber, int pageSize, Guid studentId, IEnumerable<string> sortBy, string direction);
     }
 }

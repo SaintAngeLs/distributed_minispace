@@ -82,6 +82,12 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
             }
             return filterDefinition;
         }
+        
+        public static FilterDefinition<ReportDocument> AddStudentIdFilter(this FilterDefinition<ReportDocument> filterDefinition, Guid studentId)
+        {
+            filterDefinition &= FilterDefinitionBuilder.Eq(x => x.IssuerId, studentId);
+            return filterDefinition;
+        }
 
         public static SortDefinition<ReportDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
