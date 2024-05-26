@@ -13,7 +13,7 @@ namespace MiniSpace.Services.Reports.Application.DTO
         public string Reason { get;  set; }
         public string State { get;  set; }
         public DateTime CreatedAt { get;  set; }
-        public DateTime? UpdatedAt { get;  set; }
+        public DateTime UpdatedAt { get;  set; }
         public Guid? ReviewerId { get;  set; }
 
         public ReportDto()

@@ -12,11 +12,11 @@ namespace MiniSpace.Services.Reports.Core.Entities
         public string Reason { get; private set; }
         public ReportState State { get; private set; }
         public DateTime CreatedAt { get; private set; }
-        public DateTime? UpdatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
         public Guid? ReviewerId { get; private set; }
         
         public Report(Guid id, Guid issuerId, Guid targetId, Guid targetOwnerId, ContextType contextType, 
-            ReportCategory category, string reason, ReportState state, DateTime createdAt, DateTime? updatedAt = null,
+            ReportCategory category, string reason, ReportState state, DateTime createdAt, DateTime updatedAt,
             Guid? reviewerId = null)
         {
             Id = id;
@@ -35,7 +35,7 @@ namespace MiniSpace.Services.Reports.Core.Entities
         public static Report Create(Guid id, Guid issuerId, Guid targetId, Guid targetOwnerId, ContextType contextType,
             ReportCategory category, string reason, DateTime now)   
             => new Report(id, issuerId, targetId, targetOwnerId, contextType, category, reason, ReportState.Submitted,
-                now);
+                now, now);
 
         public void Cancel(DateTime now)
         {
