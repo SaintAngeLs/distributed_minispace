@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Posts.Application.Events.Rejected
 {
+    [ExcludeFromCodeCoverage]
     public class CreatePostRejected : IRejectedEvent
     {
         public Guid PostId { get; }

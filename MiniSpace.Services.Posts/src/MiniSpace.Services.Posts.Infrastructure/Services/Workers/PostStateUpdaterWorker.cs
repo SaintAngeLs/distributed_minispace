@@ -11,7 +11,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services.Workers
         private readonly IMessageBroker _messageBroker;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private const int MinutesInterval = 5;
+        public const int MinutesInterval = 5;
 
         public PostStateUpdaterWorker(IMessageBroker messageBroker, ICommandDispatcher commandDispatcher,
             IDateTimeProvider dateTimeProvider)

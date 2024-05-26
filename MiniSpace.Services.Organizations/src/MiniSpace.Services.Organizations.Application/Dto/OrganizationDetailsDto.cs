@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using MiniSpace.Services.Organizations.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Application.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class OrganizationDetailsDto
     {
         public Guid Id { get; set; }

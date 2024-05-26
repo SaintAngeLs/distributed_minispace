@@ -1,8 +1,11 @@
 ﻿using Convey.Types;
 using MiniSpace.Services.Organizations.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
+
     public class OrganizationDocument: IIdentifiable<Guid>
     {
         public Guid Id { get; set; }
