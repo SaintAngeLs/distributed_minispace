@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiniSpace.Services.Notifications.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+33bbee9c1ce11668715f20343e667b8c838ad64e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d5b26a87db0599a0f2b1395d335bd0e9da8466d9")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiniSpace.Services.Notifications.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniSpace.Services.Notifications.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
