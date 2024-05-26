@@ -35,42 +35,6 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
                 _postRepositoryMock.Object, _commandDispatcherMock.Object);
         }
 
-        // TODO: connect ICommandDispatcher with IPostRepository
-
-        // [Fact]
-        // public async Task HandleAsync_ValidData_ShouldNotThrowException()
-        // {
-        //     // Arrange
-        //     var socialEventId = Guid.NewGuid();
-        //     var organizerId = Guid.NewGuid();
-        //     var socialEvent = new Event(socialEventId, organizerId);
-        //     var serviceEvent = new EventDeleted(socialEventId);
-        //     var postId1 = Guid.NewGuid();
-        //     var postId2 = Guid.NewGuid();
-        //     var post1 = Post.Create(new AggregateId(postId1), socialEventId, Guid.NewGuid(),
-        //         "a", "a", DateTime.Today,
-        //         State.Published, DateTime.Today);
-        //     var post2 = Post.Create(new AggregateId(postId2), socialEventId, Guid.NewGuid(),
-        //         "a", "a", DateTime.Today,
-        //         State.Published, DateTime.Today);
-        //     var postsList = new List<Post> { post1, post2 };
-
-        //     _postRepositoryMock.Setup(repo => repo.GetByEventIdAsync(socialEventId))
-        //         .ReturnsAsync(postsList.AsEnumerable());
-
-        //     var cancellationToken = new CancellationToken();
-
-        //     _eventRepositoryMock.Setup(repo => repo.ExistsAsync(socialEventId)).ReturnsAsync(true);
-        //     _eventRepositoryMock.Setup(repo => repo.GetAsync(socialEventId)).ReturnsAsync(socialEvent);
-
-        //     // Act
-        //     await _eventDeletedHandler.HandleAsync(serviceEvent, cancellationToken);
-
-        //     // Assert
-        //     _postRepositoryMock.Verify(repo => repo.DeleteAsync(postId1), Times.Once());
-        //     _postRepositoryMock.Verify(repo => repo.DeleteAsync(postId2), Times.Once());
-        // }
-
         [Fact]
         public async Task HandleAsync_NullEvent_ShouldThrowEventNotFoundException()
         {

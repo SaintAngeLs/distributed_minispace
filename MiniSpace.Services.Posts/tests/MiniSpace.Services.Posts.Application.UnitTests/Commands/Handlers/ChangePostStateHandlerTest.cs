@@ -42,6 +42,34 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
         }
 
         [Fact]
+        public async Task HandleAsync_WithValidParametersAndStateToBePublished_ShouldPublishAsync() {
+            // Arrange
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.ToBePublished;
+            var eventId = Guid.NewGuid();
+
+            var command = new ChangePostState(postId,
+                state.GetDisplayName(), DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+
+            var post = Post.Create(new AggregateId(postId), eventId, contextId, "Text", "Media content", DateTime.Today,
+                state, DateTime.Today);
+
+            _postRepositoryMock.Setup(repo => repo.GetAsync(command.PostId)).ReturnsAsync(post);
+
+            // Act
+            Func<Task> act = async () => await _changePostStateHandler.HandleAsync(command, cancelationToken);
+            await act();
+
+            // Assert
+            _messageBrokerMock.Verify(broker => broker.PublishAsync(It.IsAny<PostStateChanged>()), Times.Once());
+        }
+
+        [Fact]
         public async Task HandleAsync_WithValidParametersAndStateToBePublished_ShouldNotThrowException() {
             // Arrange
             var contextId = Guid.NewGuid();

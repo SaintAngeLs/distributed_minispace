@@ -48,5 +48,10 @@ namespace MiniSpace.Services.Posts.Core.UnitTests.Entities
             // Assert
             Assert.Equal(id1.Value, id2.Value);
         }
+
+        [Fact]
+        public void AggregateId_CreateWithEmptyGuid_ShouldThrowInvalidAggregateIdException() {
+            Assert.Throws<InvalidAggregateIdException>(() => { var id = new AggregateId(Guid.Empty); });
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;
@@ -5,6 +6,7 @@ using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class EventMongoRepository : IEventRepository
     {
         private readonly IMongoRepository<EventDocument, Guid> _repository;

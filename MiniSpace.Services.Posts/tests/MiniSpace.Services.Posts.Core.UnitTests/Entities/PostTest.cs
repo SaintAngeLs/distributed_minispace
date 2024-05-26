@@ -23,45 +23,53 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 namespace MiniSpace.Services.Posts.Core.UnitTests.Entities {
     public class PostTest
     {
-        // TODO: prevent exception leakage
+        [Fact]
+        public void Create_WithWhitespace_ShouldThrowInvalidPostTextContentException() {
+            // Arrange
+            var id = new AggregateId();
+            string textContent = " ";
+            
+            // Act & Assert
+            Assert.Throws<InvalidPostTextContentException>(() => { 
+                Post.Create(id, default, default, textContent, default, default, default, default);
+                });
+        }
 
-        // [Fact]
-        // public void Update_WithWhitespace_ShouldThrowInvalidPostTextContentException() {
-        //     // Arrange
-        //     var id = new AggregateId();
-        //     string textContent = " ";
-        //     var post = Post.Create(id, default, default, default, default, default, default, default);
-        //     // Act & Assert
-        //     Action act = () => { post.Update(textContent, "a", default); };
-        //     var ex = Record.Exception(act);
-        //     Assert.NotNull(ex);
-        //     Assert.IsType<InvalidPostTextContentException>(ex);
-        // }
+        [Fact]
+        public void Create_WithNullTextContent_ShouldThrowInvalidPostTextContentException() {
+            // Arrange
+            var id = new AggregateId();
+            string textContent = null;
+            
+            // Act & Assert
+            Assert.Throws<InvalidPostTextContentException>(() => { 
+                Post.Create(id, default, default, textContent, default, default, default, default);
+                });
+        }
 
-        // [Fact]
-        // public void Update_WithNullTextContent_ShouldThrowInvalidPostTextContentException() {
-        //     // Arrange
-        //     var id = new AggregateId();
-        //     string textContent = null;
-        //     var post = Post.Create(id, default, default, default, default, default, default, default);
-        //     // Act & Assert
-        //     Action act = () => { post.Update(textContent, "a", default); };
-        //     var ex = Record.Exception(act);
-        //     Assert.NotNull(ex);
-        //     Assert.IsType<InvalidPostTextContentException>(ex);
-        // }
+        [Fact]
+        public void Create_WithTooLongTextContent_ShouldThrowInvalidPostTextContentException() {
+            // Arrange
+            var id = new AggregateId();
+            string textContent = new('a', 100000);
+            
+            // Act & Assert
+            Assert.Throws<InvalidPostTextContentException>(() => { 
+                Post.Create(id, default, default, textContent, default, default, default, default);
+                });
+        }
 
-        // [Fact]
-        // public void Update_WithTooLongTextContent_ShouldThrowInvalidPostTextContentException() {
-        //     // Arrange
-        //     var id = new AggregateId();
-        //     string textContent = new('a', 100000);
-        //     var post = Post.Create(id, default, default, default, default, default, default, default);
-        //     // Act & Assert
-        //     Action act = () => { post.Update(textContent, "a", default); };
-        //     var ex = Record.Exception(act);
-        //     Assert.NotNull(ex);
-        //     Assert.IsType<InvalidPostTextContentException>(ex);
-        // }
+        [Fact]
+        public void CheckPublishDate_WithInappropriateDateTime_ShouldThrowInvalidPostPublishDateException() {
+            // Arrange
+            var id = new AggregateId();
+            string textContent = new('a', 100);
+            var post = Post.Create(id, default, default, textContent, default, DateTime.Now, default, DateTime.Now);
+            
+            // Act & Assert
+            Assert.Throws<InvalidPostPublishDateException>(() => { 
+                    post.SetToBePublished(new DateTime(2000, 1, 1, 1, 1, 1), DateTime.Now);
+                });
+        }
     }
 }

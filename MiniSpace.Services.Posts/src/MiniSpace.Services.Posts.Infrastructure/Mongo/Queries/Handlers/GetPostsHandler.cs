@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Application.Dto;
@@ -9,6 +10,7 @@ using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetPostsHandler : IQueryHandler<GetPosts, IEnumerable<PostDto>>
     {
         private readonly IMongoRepository<PostDocument, Guid> _postRepository;

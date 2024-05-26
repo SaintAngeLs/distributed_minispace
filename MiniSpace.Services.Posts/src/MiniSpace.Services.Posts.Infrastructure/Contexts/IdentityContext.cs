@@ -1,4 +1,5 @@
 using MiniSpace.Services.Posts.Application;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("MiniSpace.Services.Posts.Application.UnitTests")]
