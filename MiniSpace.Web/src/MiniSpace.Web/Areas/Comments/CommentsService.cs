@@ -42,10 +42,10 @@ namespace MiniSpace.Web.Areas.Comments
                 new { commentId, contextId, commentContext, studentId, parentId, comment });
         }
 
-        public Task<HttpResponse<object>> UpdateCommentAsync(Guid commentId, string textContext)
+        public Task<HttpResponse<object>> UpdateCommentAsync(Guid commentId, string textContent)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"comments/{commentId}", new { commentId, textContext});
+            return _httpClient.PutAsync<object, object>($"comments/{commentId}", new { commentId, textContent});
         }
 
         public Task DeleteCommentAsync(Guid commentId)

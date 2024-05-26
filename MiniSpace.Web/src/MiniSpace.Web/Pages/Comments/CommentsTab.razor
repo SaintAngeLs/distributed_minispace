@@ -27,6 +27,7 @@
                 <h3>No comments have been added by students yet.</h3>
             }
             <CommentsTree Comments="Comments" StudentId="StudentId"
+                          UpdateComment="@UpdateComment"
                           CreateSubComment="@CreateSubComment"
                           LoadSubComments="@LoadSubComments" 
                           LoadMoreSubComments="@LoadMoreSubComments" />
@@ -64,10 +65,13 @@
             }
         }
     };
+    
     private CreateCommentModel CreateCommentModel = new()
     {
         CommentContext = "Event"
     };
+
+    private UpdateCommentModel UpdateCommentModel = new();
 
     private bool pageInitialized;
     private bool moreCommentsAvailable;
@@ -101,6 +105,21 @@
             });
     }
 
+    private async Task OpenUpdateCommentDialog(string title)
+    {
+        await DialogService.OpenAsync<UpdateCommentDialog>(title,
+            new Dictionary<string, object>()
+            {
+                { "EventId", EventId },
+                { "UpdateCommentModel", UpdateCommentModel }
+            },
+            new DialogOptions()
+            {
+                Width = "800px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
     private async Task OpenSearchCommentsDialog()
     {
         await DialogService.OpenAsync<SearchCommentsDialog>("Sort your comments by criteria:",
@@ -232,6 +251,18 @@
         }
     }
 
+    private async Task UpdateComment(CommentDto comment)
+    {
+        UpdateCommentModel.CommentId = comment.Id;
+        UpdateCommentModel.TextContent = comment.TextContent;
+        await OpenUpdateCommentDialog("Update comment:");
+        if (UpdateCommentModel.UpdatingSubmitted)
+        {
+            UpdateCommentModel.UpdatingSubmitted = false;
+            await SearchComments();
+        }
+    }
+    
     private async Task CreateSubComment(CommentDto parentComment)
     {
         CreateCommentModel.ParentId = parentComment.Id;
@@ -242,7 +273,7 @@
             ++parentComment.RepliesCount;
         }
     }
-
+    
     private async Task LoadSubComments(CommentDto parentComment)
     {
         var searchSubCommentsModel = SearchCommentsModel.DeepClone();
