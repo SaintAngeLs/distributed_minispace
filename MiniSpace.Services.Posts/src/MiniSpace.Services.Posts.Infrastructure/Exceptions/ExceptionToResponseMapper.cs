@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Convey;
 using Convey.WebApi.Exceptions;
@@ -7,6 +8,7 @@ using MiniSpace.Services.Posts.Core.Exceptions;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class ExceptionToResponseMapper : IExceptionToResponseMapper
     {
         private static readonly ConcurrentDictionary<Type, string> Codes = new ConcurrentDictionary<Type, string>();

@@ -42,16 +42,10 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new UnauthorizedPostOperationException(command.PostId, identity.Id);
             }
             
-            var mediaFiles = command.MediaFiles.ToList();
-            if(mediaFiles.Count > 3)
-            {
-                throw new InvalidNumberOfPostMediaFilesException(post.Id, mediaFiles.Count);
-            }
-            
-            post.Update(command.TextContent, command.MediaFiles, _dateTimeProvider.Now);
+            post.Update(command.TextContent, command.MediaContent, _dateTimeProvider.Now);
             await _postRepository.UpdateAsync(post);
 
-            await _messageBroker.PublishAsync(new PostUpdated(command.PostId, post.MediaFiles));
+            await _messageBroker.PublishAsync(new PostUpdated(command.PostId));
         }
     }    
 }
