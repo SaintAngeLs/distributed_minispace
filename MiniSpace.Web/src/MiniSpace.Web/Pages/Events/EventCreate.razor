@@ -273,7 +273,7 @@
     
     async void OnClientChange(UploadChangeEventArgs args)
     {
-        Console.WriteLine("Client-side upload changed");
+        @* Console.WriteLine("Client-side upload changed"); *@
         clientChangeCompletionSource = new TaskCompletionSource<bool>();
         var uploadedImages = new Dictionary<string, Guid>();
         isUploading = true;
@@ -304,7 +304,7 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Client-side file read error: {ex.Message}");
+                @* Console.WriteLine($"Client-side file read error: {ex.Message}"); *@
             }
             finally
             {

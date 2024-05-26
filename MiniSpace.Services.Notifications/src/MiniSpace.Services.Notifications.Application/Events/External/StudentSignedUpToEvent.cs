@@ -1,0 +1,18 @@
+using System;
+using Convey.CQRS.Events;
+
+namespace MiniSpace.Services.Notifications.Application.Events
+{
+    [Contract]
+    public class StudentSignedUpToEvent: IEvent
+    {
+        public Guid EventId { get; }
+        public Guid StudentId { get; }
+        
+        public StudentSignedUpToEvent(Guid eventId, Guid studentId)
+        {
+            EventId = eventId;
+            StudentId = studentId;
+        }
+    }
+}

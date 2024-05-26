@@ -17,10 +17,10 @@
                     TODO: do not forget about the code snippet chaned ❕❕❕
                         @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
                 *@
-                @if (_isUserAuthenticated )
+                @* @if (_isUserAuthenticated )
                 {
                     <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
-                }
+                } *@
                 <div class="logo-container" @onclick="NavigateToHome">
                     <RadzenLabel Text="MiniSpace" />
                 </div>
@@ -43,7 +43,7 @@
                                  <ChildContent>
                                     <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
                                     <RadzenProfileMenuItem Text="Notifications" Path="/notifications" Icon="notifications"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Sign out" Click="@SignOut" Icon="exit_to_app"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Sign out" Click="@(() => SignOut())" Icon="exit_to_app"></RadzenProfileMenuItem>
                                 </ChildContent>
                             </RadzenProfileMenu>
                         </div>
@@ -59,8 +59,19 @@
                     }
                 </div>
             </RadzenMenu>
+
         </RadzenStack>
     </header>
+
+    @if (_isUserAuthenticated )
+    {
+
+        <header class="header-services">
+         <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
+        </header>
+
+    }
+
 
     <div style="display: flex; flex: 1; flex-direction: row;">
         @*
@@ -69,10 +80,10 @@
         *@
         @if (IsUserAuthenticated)
         {
-            <RadzenSidebar @bind-Expanded="@_sidebarExpanded">
-                <RadzenPanelMenu>
+            <RadzenSidebar Responsive="false" style="transition:  0.5s; width: max-content">
+                <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition:  0.5s;">
                     <RadzenPanelMenuItem Text="Home" Icon="home"
-                                         Click="@(() => NavigationManager.NavigateTo("service-home"))" />
+                                         Click="@(() => NavigationManager.NavigateTo(""))" />
                     
                     <RadzenPanelMenuItem Text="Account" Icon="account_box"
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
@@ -93,7 +104,13 @@
                         <RadzenPanelMenuItem Text="Search" Icon="search" Click="@(() => NavigationManager.NavigateTo("friends/search"))" />
                         <RadzenPanelMenuItem Text="Friends" Icon="group" Click="@(() => NavigationManager.NavigateTo("friends"))" />
                         <RadzenPanelMenuItem Text="Requests" Icon="mail_outline" Click="@(() => NavigationManager.NavigateTo("friends/requests"))" />
-                        <RadzenPanelMenuItem Text="Sent Requests" Icon="send" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
+                        <RadzenPanelMenuItem Text="Sent Requests" Icon="compare_arrows" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
+                    </RadzenPanelMenuItem>
+
+                    <RadzenPanelMenuItem Text="Notifications" Icon="send">
+                        <RadzenPanelMenuItem Text="All" Icon="accessibility" Click="@(() => NavigationManager.NavigateTo("notifications/all"))" />
+                        <RadzenPanelMenuItem Text="New" Icon="send" Click="@(() => NavigationManager.NavigateTo("notifications/new"))" />
+                        <RadzenPanelMenuItem Text="History" Icon="history" Click="@(() => NavigationManager.NavigateTo("notifications/history"))" />
                     </RadzenPanelMenuItem>
                     
                     @if (IdentityService.GetCurrentUserRole() == "admin")
@@ -109,11 +126,32 @@
             </RadzenSidebar>
         }
 
-        <RadzenBody class="radzen-body">
-            <div class="">
-                @Body
+           <div style="flex: 1; display: flex; margin-left: @(_isUserAuthenticated ? "200px" : "0px"); background: linear-gradient(to bottom, #f5f7fa, #c3cfe2)">
+                <div style="flex: 1; display: flex; justify-content: @(_isUserAuthenticated ? " center" : "center");">
+                    <div class="main-content" style="flex-grow: 1; max-width: @(_isUserAuthenticated ? " 960px " : "1200px");">
+                        <div style="flex: 1; display: flex; justify-content: @(_isUserAuthenticated ? "flex-end" : "center");">
+                            <div class="main-content" style="flex-grow: 1; max-width: @(_isUserAuthenticated ? " 960px " : "1200px");">
+                                <DynamicContentComponent Route="@currentRoute" />
+                            </div>
+                        </div>
+
+                        @* <RadzenBody> *@
+                            <div>
+                                @Body
+                            </div>
+                        @* </RadzenBody> *@
+                    </div>
+                </div>
+
+                @if(_isUserAuthenticated)
+                {
+                    <div style="width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
+                        <NotificationComponent />
+                    </div>
+                }
             </div>
-        </RadzenBody>
+            
+
     </div>
 
     <CustomRadzenFooter />
@@ -131,6 +169,8 @@
     private string _userEmail;
 
     private bool _isUserAuthenticated;
+
+    private string currentRoute;
 
      protected override async Task OnAfterRenderAsync(bool firstRender) {
         if (firstRender) {
@@ -150,14 +190,14 @@
     public async Task<bool> CheckAuthentication()
     {
         _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
-        Console.WriteLine($"IsUserAuthenticated: {_isUserAuthenticated}");
+        @* Console.WriteLine($"IsUserAuthenticated: {_isUserAuthenticated}"); *@
         return _isUserAuthenticated;
     }
 
     public bool IsUserAuthenticated => _isUserAuthenticated;
     async Task SignOut()
     {
-        Console.WriteLine("Signing out...");
+        @* Console.WriteLine("Signing out..."); *@
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
         NavigationManager.NavigateTo("signin", forceLoad: true);

@@ -200,13 +200,42 @@ modules:
         method: POST
         use: downstream
         downstream: notifications-service/notifications
-        auth: true
+        auth: true 
 
       - upstream: /{userId}
         method: GET
         use: downstream
         downstream: notifications-service/notifications/{userId}
+        auth: true 
+
+      - upstream: /notification/{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/notification/{notificationId}
+        auth: true  
+
+      - upstream: /notification/{userId}/{notificationId}
+        method: DELETE
+        use: downstream
+        downstream: notifications-service/notifications/notification/{userId}/{notificationId}
+        auth: true 
+        bind:
+          - userId:{userId}
+          - notificationId:{notificationId}
+        
+      - upstream: /{userId}/{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/{userId}/{notificationId}
         auth: true
+        description: Retrieves a specific notification for a user by notification ID.
+
+      - upstream: /{userId}/{notificationId}/status
+        method: PUT
+        use: downstream
+        downstream: notifications-service/notifications/{userId}/{notificationId}/status
+        auth: true  
+        description: Updates the status of a specific notification.
 
     services:
       notifications-service:
@@ -490,82 +519,95 @@ modules:
 
 
   friends:
-      path: /friends
-      routes:
-        - upstream: /
-          method: GET
-          use: downstream
-          downstream: friends-service/friends
-          auth: true
+    path: /friends
+    routes:
+      - upstream: /
+        method: GET
+        use: downstream
+        downstream: friends-service/friends
+        auth: true
 
-        - upstream: /{userId}
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/{userId}
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /{userId}
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/{userId}
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /{userId}/invite
-          method: POST
-          use: downstream
-          downstream: friends-service/friends/{userId}/invite
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /{userId}/invite
+        method: POST
+        use: downstream
+        downstream: friends-service/friends/{userId}/invite
+        bind:
+          - userId: {userId}
+        auth: true
+        afterDispatch:
+          - use: publish
+            event: FriendInviteSent
+            target: notifications-service/events
+            routingKey: friend_request_created
 
-        - upstream: /{requesterId}/{friendId}/remove
-          method: DELETE
-          use: downstream
-          downstream: friends-service/friends/{requesterId}/{friendId}/remove
-          bind:
-            - friendId: {friendId}
-            - requesterId: {requesterId}
-          auth: true
+      - upstream: /{requesterId}/{friendId}/remove
+        method: DELETE
+        use: downstream
+        downstream: friends-service/friends/{requesterId}/{friendId}/remove
+        bind:
+          - friendId: {friendId}
+          - requesterId: {requesterId}
+        auth: true
 
-        - upstream: /requests/{userId}
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/requests/{userId}
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /requests/{userId}
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /requests/{userId}/accept
-          method: POST
-          use: downstream
-          downstream: friends-service/friends/requests/{userId}/accept
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /requests/{userId}/accept
+        method: POST
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}/accept
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /requests/{userId}/decline
-          method: POST
-          use: downstream
-          downstream: friends-service/friends/requests/{userId}/decline
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /requests/{userId}/decline
+        method: POST
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}/decline
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /pending
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/pending
-          auth: true
+      - upstream: /pending
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/pending
+        auth: true
 
-        - upstream: /pending/all
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/pending/all
-          auth: true
+      - upstream: /pending/all
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/pending/all
+        auth: true
 
-        - upstream: /requests/sent/{userId}
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/requests/sent/{userId}
-          auth: true
+      - upstream: /requests/sent/{userId}
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/requests/sent/{userId}
+        auth: true
 
-      services:
+      - upstream: /requests/{userId}/withdraw
+        method: PUT
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}/withdraw
+        bind:
+          - userId: {userId}
+        auth: true
+
+    services:
         friends-service:
           localUrl: localhost:5012
           url: friends-service
@@ -666,6 +708,12 @@ modules:
         method: POST
         use: downstream
         downstream: organizations-service/organizations
+        auth: true
+
+      - upstream: /{organizationId}
+        method: DELETE
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}
         auth: true
 
       - upstream: /{organizationId}/children

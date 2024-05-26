@@ -39,11 +39,11 @@ namespace MiniSpace.Services.Friends.Api
                         //     ctx => new GetFriends { StudentId = Guid.Parse(ctx.Request.RouteValues["studentId"].ToString()) }, 
                         //     (query, ctx) => ctx.Response.WriteAsJsonAsync(query), // Correctly define delegate with parameters
                         //     afterDispatch: ctx => ctx.Response.Ok())
-                        .Get<GetFriends, IEnumerable<FriendDto>>("friends/{studentId}") 
-                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/{studentId}")
-                        .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
+                        .Get<GetFriends, IEnumerable<StudentFriendsDto>>("friends/{studentId}") 
+                        .Get<GetIncomingFriendRequests, IEnumerable<StudentRequestsDto>>("friends/requests/{studentId}")
+                        // .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
-                        .Get<GetSentFriendRequests, IEnumerable<FriendRequestDto>>("friends/requests/sent/{studentId}")
+                        .Get<GetSentFriendRequests, IEnumerable<StudentRequestsDto>>("friends/requests/sent/{studentId}")
                         // .Get("friends/requests/sent", ctx =>
                         // {
                         //     var query = new GetSentFriendRequests { StudentId = ctx.User.GetUserId() }; 
@@ -52,6 +52,7 @@ namespace MiniSpace.Services.Friends.Api
 
                         .Post<PendingFriendAccept>("friends/requests/{studentId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Post<PendingFriendDecline>("friends/requests/{studentId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Put<SentFriendRequestWithdraw>("friends/requests/{studentId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Delete<RemoveFriend>("friends/{requesterId}/{friendId}/remove")
                         .Post<InviteFriend>("friends/{studentId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["studentId"]}/invite")))) 
                 .UseLogging()
