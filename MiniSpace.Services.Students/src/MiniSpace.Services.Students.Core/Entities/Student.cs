@@ -13,7 +13,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string LastName { get; private set; }
         public string FullName => $"{FirstName} {LastName}";
         public int NumberOfFriends { get; private set; }
-        public string ProfileImage { get; private set; }
+        public Guid ProfileImage { get; private set; }
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public bool EmailNotifications { get; private set; }
@@ -34,14 +34,14 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
 
         public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
-            : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
+            : this(id, email, createdAt, firstName, lastName, 0, Guid.Empty, string.Empty, null,
                 false, false, false, State.Incomplete, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>())
         {
             CheckFullName(firstName, lastName);
         }
     
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
-            int numberOfFriends, string profileImage, string description, DateTime? dateOfBirth,
+            int numberOfFriends, Guid profileImage, string description, DateTime? dateOfBirth,
             bool emailNotifications, bool isBanned, bool isOrganizer, State state,
             IEnumerable<Guid> interestedInEvents = null, IEnumerable<Guid> signedUpEvents = null)
         {
@@ -73,10 +73,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentStateChanged(this, previousState));
         }
         
-        public void CompleteRegistration(string profileImage, string description,
+        public void CompleteRegistration(Guid profileImage, string description,
             DateTime dateOfBirth, DateTime now, bool emailNotifications)
         {
-            CheckProfileImage(profileImage);
             CheckDescription(description);
             CheckDateOfBirth(dateOfBirth, now);
             
@@ -94,9 +93,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-        public void Update(string profileImage, string description, bool emailNotifications)
+        public void Update(Guid profileImage, string description, bool emailNotifications)
         {
-            CheckProfileImage(profileImage);
             CheckDescription(description);
 
             if (State != State.Valid)
@@ -116,14 +114,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
             {
                 throw new InvalidStudentFullNameException(Id, $"{firstName} {lastName}");
-            }
-        }
-
-        private void CheckProfileImage(string profileImage)
-        {
-            if (string.IsNullOrWhiteSpace(profileImage))
-            {
-                throw new InvalidStudentProfileImageException(Id, profileImage);
             }
         }
 
@@ -152,6 +142,9 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             _interestedInEvents.Add(eventId);
         }
+        
+        public void RemoveInterestedInEvent(Guid eventId)
+            => _interestedInEvents.Remove(eventId);
 
         public void AddSignedUpEvent(Guid eventId)
         {
@@ -161,6 +154,19 @@ namespace MiniSpace.Services.Students.Core.Entities
             }
 
             _signedUpEvents.Add(eventId);
+        }
+        
+        public void RemoveSignedUpEvent(Guid eventId)
+            => _signedUpEvents.Remove(eventId);
+        
+        public void RemoveProfileImage(Guid mediaFileId)
+        {
+            if (ProfileImage != mediaFileId)
+            {
+                return;
+            }
+
+            ProfileImage = Guid.Empty;
         }
 
         public void Ban() => IsBanned = true;

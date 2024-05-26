@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Core.Entities;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static Post AsEntity(this PostDocument document)

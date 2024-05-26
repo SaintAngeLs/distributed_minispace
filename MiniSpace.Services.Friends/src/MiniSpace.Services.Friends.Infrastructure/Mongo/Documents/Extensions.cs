@@ -9,8 +9,6 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
          public static Friend AsEntity(this FriendDocument document)
             => new Friend(document.StudentId, document.FriendId, document.CreatedAt, document.State);
 
-
-
          public static FriendDocument AsDocument(this Friend entity)
             => new FriendDocument
             {
@@ -48,7 +46,6 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
             {
                 throw new InvalidOperationException("FriendRequest.Id must be initialized.");
             }
-            Console.WriteLine($"******************************************************Friend request state {entity.State}");
             return new FriendRequestDocument
             {
                 Id = entity.Id,
@@ -70,5 +67,61 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents
                 State = document.State,
                 StudentId = document.InviteeId
             };
+
+        public static StudentFriendsDocument AsDocument(this StudentFriends entity)
+            => new StudentFriendsDocument
+            {
+                Id = entity.Id,
+                StudentId = entity.StudentId,
+                Friends = entity.Friends.Select(friend => friend.AsDocument()).ToList()
+            };
+
+        public static StudentFriends AsEntity(this StudentFriendsDocument document)
+            => new StudentFriends(document.StudentId);  
+
+        // With the correct definitions of the Object-Value method in Core.
+        // ...
+        // public static StudentFriends AsEntity(this StudentFriendsDocument document)
+        // {
+        //     var studentFriends = new StudentFriends(document.StudentId);
+        //     foreach (var friendDoc in document.Friends)
+        //     {
+        //         studentFriends.AddFriend(friendDoc.AsEntity());
+        //     }
+        //     return studentFriends;
+        // }
+
+        public static StudentRequestsDocument AsDocument(this StudentRequests entity)
+            => new StudentRequestsDocument
+            {
+                Id = entity.Id,
+                StudentId = entity.StudentId,
+                FriendRequests = entity.FriendRequests.Select(fr => fr.AsDocument()).ToList()
+            };
+
+        public static StudentRequests AsEntity(this StudentRequestsDocument document)
+        {
+            if (document == null)
+            {
+                throw new ArgumentNullException(nameof(document), "StudentRequestsDocument cannot be null.");
+            }
+
+            var studentRequests = new StudentRequests(document.StudentId);
+            foreach (var friendRequestDoc in document.FriendRequests)
+            {
+                studentRequests.AddRequest(friendRequestDoc.InviterId, friendRequestDoc.InviteeId, friendRequestDoc.RequestedAt, friendRequestDoc.State);
+            }
+            return studentRequests;
+        }
+
+        public static StudentRequestsDto AsDto(this StudentRequestsDocument document)
+            => new StudentRequestsDto
+            {
+                Id = document.Id,
+                StudentId = document.StudentId,
+                FriendRequests = document.FriendRequests.Select(fr => fr.AsDto()).ToList()
+            };
+
+
     }    
 }

@@ -22,18 +22,15 @@ namespace MiniSpace.Services.Friends.Application.Events.External.Handlers
 
         public async Task HandleAsync(PendingFriendAccepted @event, CancellationToken cancellationToken)
         {
-            // Fetch the friendship and check existence
             var friendship = await _friendRepository.GetFriendshipAsync(@event.RequesterId, @event.FriendId);
             if (friendship == null)
             {
                 throw new FriendshipNotFoundException(@event.RequesterId, @event.FriendId);
             }
 
-            // Confirm the friendship
             friendship.MarkAsConfirmed();
             await _friendRepository.UpdateFriendshipAsync(friendship);
 
-            // Create reciprocal friendship to ensure mutual visibility and interaction
             if (await _friendRepository.GetFriendshipAsync(@event.FriendId, @event.RequesterId) == null)
             {
                 var reciprocalFriendship = new Core.Entities.Friend(@event.FriendId, @event.RequesterId, DateTime.UtcNow, Core.Entities.FriendState.Accepted);

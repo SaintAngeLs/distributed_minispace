@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.Types;
 using MiniSpace.Services.Posts.Core.Entities;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     public class PostDocument : IIdentifiable<Guid>
     {
         public Guid Id { get; set; }

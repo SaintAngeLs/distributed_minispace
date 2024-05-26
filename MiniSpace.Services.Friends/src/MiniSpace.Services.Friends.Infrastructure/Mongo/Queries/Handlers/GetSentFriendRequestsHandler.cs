@@ -7,46 +7,53 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, IEnumerable<FriendRequestDto>>
+    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, IEnumerable<StudentRequestsDto>>
     {
-        private readonly IMongoRepository<FriendRequestDocument, Guid> _friendRequestRepository;
+        private readonly IMongoRepository<StudentRequestsDocument, Guid> _studentRequestsRepository;
 
-        public GetSentFriendRequestsHandler(IMongoRepository<FriendRequestDocument, Guid> friendRequestRepository)
+        public GetSentFriendRequestsHandler(IMongoRepository<StudentRequestsDocument, Guid> studentRequestsRepository)
         {
-            _friendRequestRepository = friendRequestRepository;
+            _studentRequestsRepository = studentRequestsRepository;
         }
 
-        public async Task<IEnumerable<FriendRequestDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
+       public async Task<IEnumerable<StudentRequestsDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Fetching sent friend requests for student ID: {query.StudentId}");
+            var studentRequests = await _studentRequestsRepository.Collection
+                .Find(doc => doc.StudentId == query.StudentId)
+                .ToListAsync(cancellationToken);
 
-            // Define options including the cancellation token
-       
-            // Assuming FindAsync only needs the filter and uses an options object for the cancellation token
-            var documents = await _friendRequestRepository.FindAsync(
-                doc => doc.InviterId == query.StudentId
-              
-            );
-
-            if (!documents.Any()) {
-                Console.WriteLine("No documents found");
-                return Enumerable.Empty<FriendRequestDto>();
+            if (studentRequests == null || !studentRequests.Any())
+            {
+                return Enumerable.Empty<StudentRequestsDto>();
             }
 
-            return documents.Select(doc => new FriendRequestDto
-            {
-                Id = doc.Id,
-                InviterId = doc.InviterId,
-                InviteeId = doc.InviteeId,
-                RequestedAt = doc.RequestedAt,
-                State = doc.State
-            });
+            var sentRequests = studentRequests
+                .Select(doc => new StudentRequestsDto
+                {
+                    Id = doc.Id,
+                    StudentId = doc.StudentId,
+                    FriendRequests = doc.FriendRequests
+                        .Where(request => request.InviterId == query.StudentId && request.State == Core.Entities.FriendState.Requested)
+                        .Select(request => new FriendRequestDto
+                        {
+                            Id = request.Id,
+                            InviterId = request.InviterId,
+                            InviteeId = request.InviteeId,
+                            RequestedAt = request.RequestedAt,
+                            State = request.State, 
+                            StudentId = request.InviterId
+                        })
+                        .ToList()
+                })
+                .Where(dto => dto.FriendRequests.Any())
+                .ToList();
+
+            return sentRequests;
         }
-
-
     }
 }

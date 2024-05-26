@@ -1,5 +1,8 @@
-﻿namespace MiniSpace.Services.Comments.Application.Wrappers
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MiniSpace.Services.Comments.Application.Wrappers
 {
+    [ExcludeFromCodeCoverage]
     public class PagedResponse<T> : Response<T>
     {
         public int TotalPages { get; }

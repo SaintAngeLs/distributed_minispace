@@ -10,7 +10,9 @@ directories=(
     "MiniSpace.Services.Reactions"
     "MiniSpace.Services.Posts"
     "MiniSpace.Services.Comments"
+    "MiniSpace.Services.MediaFiles"
     "MiniSpace.Services.Organizations"
+    "MiniSpace.Services.Notifications"
 )
 
 for dir in "${directories[@]}"; do

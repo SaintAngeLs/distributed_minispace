@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,14 +53,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         
         public async Task<(IEnumerable<Event> events, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseEventsAsync(
             int pageNumber, int pageSize, string name, string organizer, DateTime dateFrom, DateTime dateTo, 
-            Category? category, State? state, IEnumerable<Guid> friends, EventEngagementType? friendsEngagementType,
-            IEnumerable<string> sortBy, string direction, IEnumerable<Guid> eventIds = null)
+            Category? category, State? state, IEnumerable<Guid> organizations, IEnumerable<Guid> friends, 
+            EventEngagementType? friendsEngagementType, IEnumerable<string> sortBy, string direction)
         {
-            var filterDefinition = Extensions.ToFilterDefinition(name, dateFrom, dateTo, eventIds)
+            var filterDefinition = Extensions.ToFilterDefinition(name, dateFrom, dateTo)
                 .AddOrganizerNameFilter(organizer)
                 .AddCategoryFilter(category)
                 .AddRestrictedStateFilter(state)
-                .AddFriendsFilter(friends, friendsEngagementType);
+                .AddFriendsFilter(friends, friendsEngagementType)
+                .AddOrganizationsIdFilter(organizations);
             var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
             
             var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
@@ -83,8 +85,23 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 pagedEvents.totalPages, pagedEvents.totalElements);
         }
 
+        public async Task<(IEnumerable<Event> events, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseStudentEventsAsync(
+                int pageNumber, int pageSize, IEnumerable<Guid> eventIds, IEnumerable<string> sortBy, string direction)
+        {
+            var filterDefinition = Extensions.CreateFilterDefinition()
+                .AddEventIdFilter(eventIds);
+            
+            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
+            
+            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+            
+            return (pagedEvents.data.Select(e => e.AsEntity()), pageNumber, pageSize, 
+                pagedEvents.totalPages, pagedEvents.totalElements);
+        }
+
         public Task AddAsync(Event @event) => _repository.AddAsync(@event.AsDocument());
         public Task UpdateAsync(Event @event) => _repository.UpdateAsync(@event.AsDocument());
         public Task DeleteAsync(Guid id) => _repository.DeleteAsync(id);
+        public Task<bool> ExistsAsync(Guid id) => _repository.ExistsAsync(e => e.Id == id);
     }
 }

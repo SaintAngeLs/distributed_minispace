@@ -31,8 +31,14 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new Exceptions.UnauthorizedAccessException("admin");
             }
             
-            var organization = await _organizationRepository.GetAsync(command.OrganizationId);
-            if (organization is null)
+            var root = await _organizationRepository.GetAsync(command.RootOrganizationId);
+            if (root is null)
+            {
+                throw new RootOrganizationNotFoundException(command.RootOrganizationId);
+            }
+
+            var organization = root.GetSubOrganization(command.OrganizationId);
+            if (organization == null)
             {
                 throw new OrganizationNotFoundException(command.OrganizationId);
             }
@@ -44,7 +50,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             }
 
             organization.AddOrganizer(command.OrganizerId);
-            await _organizationRepository.UpdateAsync(organization);
+            await _organizationRepository.UpdateAsync(root);
             await _messageBroker.PublishAsync(new OrganizerAddedToOrganization(organization.Id, organizer.Id));
         }
     }

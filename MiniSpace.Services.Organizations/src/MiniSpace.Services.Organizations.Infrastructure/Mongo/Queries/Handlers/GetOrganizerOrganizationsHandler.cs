@@ -5,9 +5,11 @@ using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Application.Queries;
 using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetOrganizerOrganizationsHandler : IQueryHandler<GetOrganizerOrganizations, IEnumerable<OrganizationDto>>
     {
         private readonly IMongoRepository<OrganizationDocument, Guid> _repository;
@@ -27,10 +29,15 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 return Enumerable.Empty<OrganizationDto>();
             }
             
-            var organizations = await _repository
-                .FindAsync(o => o.Organizers.Any(x => x.Id == query.OrganizerId));
+            var roots = (await _repository.FindAsync(o => true)).Select(o =>o.AsEntity());
+            var organizerOrganizations = new List<OrganizationDto>();
+            foreach (var root in roots)
+            {
+                var organizations = Organization.FindOrganizations(query.OrganizerId, root);
+                organizerOrganizations.AddRange(organizations.Select(o => new OrganizationDto(o, root.Id)));
+            }
 
-            return organizations.Select(o => o.AsDto());
+            return organizerOrganizations;
         }
     }
 }

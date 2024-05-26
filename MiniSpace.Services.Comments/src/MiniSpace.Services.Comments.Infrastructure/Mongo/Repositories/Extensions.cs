@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using MongoDB.Driver;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         private static readonly FilterDefinitionBuilder<CommentDocument> FilterDefinitionBuilder = Builders<CommentDocument>.Filter;

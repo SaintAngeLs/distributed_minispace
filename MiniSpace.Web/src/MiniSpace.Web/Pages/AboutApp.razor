@@ -2,7 +2,7 @@
 
 <div class="about-video">
     <video autoplay loop muted class="video-background">
-        <source src="videos/index1.mp4" type="video/mp4">
+        <source src="videos/video-component/index1.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <div class="video-overlay">
@@ -16,6 +16,7 @@
         </div>
     </div>
 </div>
+
 
 <style>
     .about-video {
@@ -32,7 +33,7 @@
         min-height: 100%;
         width: auto;
         height: auto;
-        z-index: -1;
+        z-index: 0;
     }
     .video-overlay {
         position: absolute;
@@ -43,7 +44,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.3); 
+        z-index: 1;
     }
     .text-container {
         text-align: center;

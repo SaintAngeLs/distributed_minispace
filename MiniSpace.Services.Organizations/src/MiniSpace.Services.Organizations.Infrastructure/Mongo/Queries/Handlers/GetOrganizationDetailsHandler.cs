@@ -4,9 +4,12 @@ using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Application.Queries;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
+using System.Diagnostics.CodeAnalysis;
+
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetOrganizationDetailsHandler : IQueryHandler<GetOrganizationDetails, OrganizationDetailsDto>
     {
         private readonly IMongoRepository<OrganizationDocument, Guid> _repository;
@@ -18,9 +21,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<OrganizationDetailsDto> HandleAsync(GetOrganizationDetails query, CancellationToken cancellationToken)
         {
-            var organization = await _repository.GetAsync(query.OrganizationId);
-            
-            return organization?.AsDetailsDto();
+            var root = await _repository.GetAsync(o => o.Id == query.RootId);
+            var organization = root?.AsEntity().GetSubOrganization(query.OrganizationId);
+            return organization == null ? null : new OrganizationDetailsDto(organization, root.Id);
         }
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Convey;
 using Convey.Logging;
@@ -17,6 +19,7 @@ using MiniSpace.Services.Posts.Infrastructure;
 
 namespace MiniSpace.Services.Posts.Api
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static async Task Main(string[] args)

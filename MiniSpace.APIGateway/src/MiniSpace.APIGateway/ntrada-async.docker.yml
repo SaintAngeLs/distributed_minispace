@@ -157,6 +157,8 @@ modules:
         localUrl: localhost:5004
         url: identity-service
       
+
+
   reports:
     path: /reports
     routes:
@@ -189,6 +191,8 @@ modules:
         localUrl: localhost:5005
         url: reports-service
 
+
+
   notifications:
     path: /notifications
     routes:
@@ -196,18 +200,49 @@ modules:
         method: POST
         use: downstream
         downstream: notifications-service/notifications
-        auth: true
+        auth: true 
 
       - upstream: /{userId}
         method: GET
         use: downstream
         downstream: notifications-service/notifications/{userId}
+        auth: true 
+
+      - upstream: /notification/{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/notification/{notificationId}
+        auth: true  
+
+      - upstream: /notification/{userId}/{notificationId}
+        method: DELETE
+        use: downstream
+        downstream: notifications-service/notifications/notification/{userId}/{notificationId}
+        auth: true 
+        bind:
+          - userId:{userId}
+          - notificationId:{notificationId}
+        
+      - upstream: /{userId}/{notificationId}
+        method: GET
+        use: downstream
+        downstream: notifications-service/notifications/{userId}/{notificationId}
         auth: true
+        description: Retrieves a specific notification for a user by notification ID.
+
+      - upstream: /{userId}/{notificationId}/status
+        method: PUT
+        use: downstream
+        downstream: notifications-service/notifications/{userId}/{notificationId}/status
+        auth: true  
+        description: Updates the status of a specific notification.
 
     services:
       notifications-service:
         localUrl: localhost:5006
         url: notifications-service
+
+
 
   students:
     path: /students
@@ -265,6 +300,8 @@ modules:
       students-service:
         localUrl: localhost:5007
         url: students-service
+
+
 
   events:
     path: /events
@@ -345,10 +382,30 @@ modules:
         downstream: events-service/events/organizer/{organizerId}
         auth: true
 
+      - upstream: /{eventId}/participants
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
+      - upstream: /{eventId}/participants
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/participants
+        auth: true
+
     services:
       events-service:
         localUrl: localhost:5008
         url: events-service
+
+
 
   comments:
       path: /comments
@@ -399,6 +456,8 @@ modules:
           localUrl: localhost:5009
           url: comments-service
 
+
+
   reactions:
       path: /reactions
       routes:
@@ -429,6 +488,8 @@ modules:
           localUrl: localhost:5010
           url: reactions-service
 
+
+
   statistics:
       path: /statistics
       routes:
@@ -455,86 +516,103 @@ modules:
           localUrl: localhost:5011
           url: statistics-service
           
+
+
   friends:
-      path: /friends
-      routes:
-        - upstream: /
-          method: GET
-          use: downstream
-          downstream: friends-service/friends
-          auth: true
+    path: /friends
+    routes:
+      - upstream: /
+        method: GET
+        use: downstream
+        downstream: friends-service/friends
+        auth: true
 
-        - upstream: /{userId}
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/{userId}
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /{userId}
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/{userId}
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /{userId}/invite
-          method: POST
-          use: downstream
-          downstream: friends-service/friends/{userId}/invite
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /{userId}/invite
+        method: POST
+        use: downstream
+        downstream: friends-service/friends/{userId}/invite
+        bind:
+          - userId: {userId}
+        auth: true
+        afterDispatch:
+          - use: publish
+            event: FriendInviteSent
+            target: notifications-service/events
+            routingKey: friend_request_created
 
-        - upstream: /{requesterId}/{friendId}/remove
-          method: DELETE
-          use: downstream
-          downstream: friends-service/friends/{requesterId}/{friendId}/remove
-          bind:
-            - friendId: {friendId}
-            - requesterId: {requesterId}
-          auth: true
+      - upstream: /{requesterId}/{friendId}/remove
+        method: DELETE
+        use: downstream
+        downstream: friends-service/friends/{requesterId}/{friendId}/remove
+        bind:
+          - friendId: {friendId}
+          - requesterId: {requesterId}
+        auth: true
 
-        - upstream: /requests/{userId}
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/requests/{userId}
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /requests/{userId}
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /requests/{userId}/accept
-          method: POST
-          use: downstream
-          downstream: friends-service/friends/requests/{userId}/accept
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /requests/{userId}/accept
+        method: POST
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}/accept
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /requests/{userId}/decline
-          method: POST
-          use: downstream
-          downstream: friends-service/friends/requests/{userId}/decline
-          bind:
-            - userId: {userId}
-          auth: true
+      - upstream: /requests/{userId}/decline
+        method: POST
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}/decline
+        bind:
+          - userId: {userId}
+        auth: true
 
-        - upstream: /pending
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/pending
-          auth: true
+      - upstream: /pending
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/pending
+        auth: true
 
-        - upstream: /pending/all
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/pending/all
-          auth: true
+      - upstream: /pending/all
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/pending/all
+        auth: true
 
-        - upstream: /requests/sent/{userId}
-          method: GET
-          use: downstream
-          downstream: friends-service/friends/requests/sent/{userId}
-          auth: true
+      - upstream: /requests/sent/{userId}
+        method: GET
+        use: downstream
+        downstream: friends-service/friends/requests/sent/{userId}
+        auth: true
 
-      services:
+      - upstream: /requests/{userId}/withdraw
+        method: PUT
+        use: downstream
+        downstream: friends-service/friends/requests/{userId}/withdraw
+        bind:
+          - userId: {userId}
+        auth: true
+
+    services:
         friends-service:
           localUrl: localhost:5012
           url: friends-service
+
+
 
   posts:
     path: /posts
@@ -543,6 +621,12 @@ modules:
         method: POST
         use: downstream
         downstream: posts-service/posts
+        auth: true
+    
+      - upstream: /search
+        method: POST
+        use: downstream
+        downstream: posts-service/posts/search
         auth: true
 
       - upstream: /{postId}
@@ -562,6 +646,11 @@ modules:
           - state:{state}
         auth: true
 
+      - upstream: /{postId}
+        method: GET
+        use: downstream
+        downstream: posts-service/posts/{postId}
+
       - upstream: /
         method: GET
         use: downstream
@@ -573,12 +662,45 @@ modules:
         downstream: posts-service/posts/{postId}
         auth: true
 
-
     services:
       posts-service:
         localUrl: localhost:5013
         url: posts-service
-    
+
+
+        
+  mediafiles:
+    path: /media-files
+    routes:
+      - upstream: /
+        method: POST
+        use: downstream
+        downstream: mediafiles-service/media-files
+        auth: true
+
+      - upstream: /{mediaFileId}
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+
+      - upstream: /{mediaFileId}/original
+        method: GET
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}/original
+
+      - upstream: /{mediaFileId}
+        method: DELETE
+        use: downstream
+        downstream: mediafiles-service/media-files/{mediaFileId}
+        auth: true
+
+    services:
+      mediafiles-service:
+        localUrl: localhost:5014
+        url: mediafiles-service
+
+
+        
   organizations:
     path: /organizations
     routes:
@@ -587,23 +709,30 @@ modules:
         use: downstream
         downstream: organizations-service/organizations
         auth: true
+
+      - upstream: /{organizationId}
+        method: DELETE
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}
+        auth: true
+
+      - upstream: /{organizationId}/children
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children
+        auth: true
         
-      - upstream: /organizer/{organizationId}/organizer
+      - upstream: /{organizationId}/organizer
         method: POST
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer
         auth: true
         
-      - upstream: /organizer/{organizationId}/organizer/{organizerId}
+      - upstream: /{organizationId}/organizer/{organizerId}
         method: DELETE
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
         auth: true
-
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations
         
       - upstream: /{organizationId}
         method: GET
@@ -624,6 +753,11 @@ modules:
         method: GET
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children  
+
+      - upstream: /{organizationId}/children/all
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children/all  
 
       - upstream: /organizer/{organizerId}
         method: GET

@@ -20,9 +20,10 @@ namespace MiniSpace.Web.Areas.Friends
         Task<IEnumerable<StudentDto>> GetAllStudentsAsync();
         Task<PaginatedResponseDto<StudentDto>> GetAllStudentsAsync(int page = 1, int resultsPerPage = 10);
         Task InviteStudent(Guid inviterId, Guid inviteeId);
-        Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync();
+         Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync();
         Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync();
         Task AcceptFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId);
         Task DeclineFriendRequestAsync(Guid requestId, Guid requesterId, Guid friendId);
+        Task WithdrawFriendRequestAsync(Guid inviterId, Guid inviteeId);
     }
 }

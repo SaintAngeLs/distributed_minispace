@@ -38,7 +38,7 @@
                             </RadzenFormField>
                             <RadzenFormField Text="Start date" Variant="Variant.Outlined">
                                 <RadzenDatePicker @bind-Value="@updateEventModel.StartDate" Name="start-date"
-                                                  ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                                                  ShowTime="true" MinutesStep="5" DateFormat="@dateFormat" />
                                 <RadzenCustomValidator Component="start-date" Style="position: relative"
                                                        Validator="@(() => ValidateDate(updateEventModel.StartDate))"
                                                        Text="Minute number has to be divisible by 5"/>
@@ -72,7 +72,7 @@
                              </RadzenFormField>
                              <RadzenFormField Text="End date" Variant="Variant.Outlined">
                                  <RadzenDatePicker @bind-Value="@updateEventModel.EndDate" Name="end-date"
-                                                   ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                                                   ShowTime="true" MinutesStep="5" DateFormat="@dateFormat" />
                                  <RadzenCustomValidator Component="end-date" Style="position: relative"
                                                         Validator="@(() => ValidateDate(updateEventModel.EndDate))"
                                                         Text="Minute number has to be divisible by 5"/>
@@ -107,7 +107,7 @@
                                     {
                                         <RadzenFormField Text="Publish date" Variant="Variant.Outlined">
                                             <RadzenDatePicker @bind-Value="@updateEventModel.PublishDate" Name="publish-date"
-                                                              ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
+                                                              ShowTime="true" MinutesStep="5" DateFormat="@dateFormat" />
                                             <RadzenCustomValidator Component="publish-date" Style="position: relative"
                                                                    Validator="@(() => ValidateDate(updateEventModel.PublishDate))"
                                                                    Text="Minute number has to be divisible by 5"/>
@@ -147,6 +147,8 @@
     [Parameter]
     public string EventId { get; set; }
     
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    
     private Guid organizerId;
     private EventDto eventDto;
     private bool pageInitialized = false;
@@ -185,14 +187,15 @@
             updateEventModel.EventId = eventDto.Id;
             updateEventModel.Name = eventDto.Name;
             updateEventModel.OrganizerId = eventDto.Organizer.Id;
-            updateEventModel.StartDate = eventDto.StartDate;
-            updateEventModel.EndDate = eventDto.EndDate;
+            updateEventModel.StartDate = eventDto.StartDate.ToLocalTime();
+            updateEventModel.EndDate = eventDto.EndDate.ToLocalTime();
             updateEventModel.BuildingName = eventDto.Location.BuildingName;
             updateEventModel.Street = eventDto.Location.Street;
             updateEventModel.BuildingNumber = eventDto.Location.BuildingNumber;
             updateEventModel.ApartmentNumber = eventDto.Location.ApartmentNumber;
             updateEventModel.City = eventDto.Location.City;
             updateEventModel.ZipCode = eventDto.Location.ZipCode;
+            updateEventModel.MediaFiles = eventDto.MediaFiles;
             updateEventModel.Description = eventDto.Description;
             updateEventModel.Capacity = eventDto.Capacity;
             updateEventModel.Fee = eventDto.Fee;
@@ -206,12 +209,12 @@
     {
         var response = await EventsService.UpdateEventAsync(updateEventModel.EventId,
             updateEventModel.Name, updateEventModel.OrganizerId,
-            updateEventModel.StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            updateEventModel.EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
+            updateEventModel.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            updateEventModel.EndDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), 
             updateEventModel.BuildingName, updateEventModel.Street,  updateEventModel.BuildingNumber,
-            updateEventModel.ApartmentNumber, updateEventModel.City, updateEventModel.ZipCode,
+            updateEventModel.ApartmentNumber, updateEventModel.City, updateEventModel.ZipCode, updateEventModel.MediaFiles,
             updateEventModel.Description, updateEventModel.Capacity, updateEventModel.Fee, updateEventModel.Category,
-            publishInfo == 2 ? updateEventModel.PublishDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : string.Empty);
+            publishInfo == 2 ? updateEventModel.PublishDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : string.Empty);
         
         if (response.ErrorMessage != null)
         {
