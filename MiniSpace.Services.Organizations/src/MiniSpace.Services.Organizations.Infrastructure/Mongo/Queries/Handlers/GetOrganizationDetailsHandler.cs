@@ -4,9 +4,12 @@ using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Application.Queries;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
+using System.Diagnostics.CodeAnalysis;
+
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetOrganizationDetailsHandler : IQueryHandler<GetOrganizationDetails, OrganizationDetailsDto>
     {
         private readonly IMongoRepository<OrganizationDocument, Guid> _repository;

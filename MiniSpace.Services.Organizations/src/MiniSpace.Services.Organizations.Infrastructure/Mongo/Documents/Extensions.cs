@@ -1,8 +1,11 @@
 using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
+
     public static class Extensions
     {
         public static Organization AsEntity(this OrganizationDocument document)
