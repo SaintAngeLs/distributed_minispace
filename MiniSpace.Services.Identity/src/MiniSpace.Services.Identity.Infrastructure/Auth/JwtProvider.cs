@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Convey.Auth;
 using MiniSpace.Services.Identity.Application.DTO;
 using MiniSpace.Services.Identity.Application.Services;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Auth
 {
+    [ExcludeFromCodeCoverage]
     public class JwtProvider : IJwtProvider
     {
         private readonly IJwtHandler _jwtHandler;
