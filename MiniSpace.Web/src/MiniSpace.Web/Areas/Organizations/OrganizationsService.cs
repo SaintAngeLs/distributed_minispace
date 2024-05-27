@@ -56,27 +56,27 @@ namespace MiniSpace.Web.Areas.Organizations
                 ($"organizations/{organizationId}/children/all?rootId={rootId}");
         }
         
-        public Task<HttpResponse<object>> CreateOrganization(Guid organizationId, string name, Guid rootId, Guid parentId)
+        public Task<HttpResponse<object>> CreateOrganizationAsync(Guid organizationId, string name, Guid rootId, Guid parentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object, object>($"organizations/{organizationId}/children",
                 new {organizationId, name, rootId, parentId});
         }
 
-        public Task<HttpResponse<object>> CreateRootOrganization(Guid organizationId, string name)
+        public Task<HttpResponse<object>> CreateRootOrganizationAsync(Guid organizationId, string name)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object, object>("organizations", new {organizationId, name});
         }
         
-        public Task AddOrganizerToOrganization(Guid rootOrganizationId, Guid organizationId, Guid organizerId)
+        public Task AddOrganizerToOrganizationAsync(Guid rootOrganizationId, Guid organizationId, Guid organizerId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync($"organizations/{organizationId}/organizer",
                 new {rootOrganizationId, organizationId, organizerId});
         }
 
-        public Task RemoveOrganizerFromOrganization(Guid rootOrganizationId, Guid organizationId, Guid organizerId)
+        public Task RemoveOrganizerFromOrganizationAsync(Guid rootOrganizationId, Guid organizationId, Guid organizerId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.DeleteAsync($"organizations/{organizationId}/organizer/{organizerId}?rootOrganizationId={rootOrganizationId}");

@@ -9,10 +9,10 @@ namespace MiniSpace.Web.Areas.Reactions
 {
     public interface IReactionsService
     {
-        Task<IEnumerable<ReactionDto>> GetReactions(Guid contentId, ReactionContentType contentType);
-        Task<ReactionsSummaryDto> GetReactionsSummary(Guid contentId, ReactionContentType contentType);
-        Task<HttpResponse<object>> CreateReaction(Guid reactionId, Guid studentId, string reactionType,
+        Task<IEnumerable<ReactionDto>> GetReactionsAsync(Guid contentId, ReactionContentType contentType);
+        Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType);
+        Task<HttpResponse<object>> CreateReactionAsync(Guid reactionId, Guid studentId, string reactionType,
             Guid contentId, string contentType);
-        Task DeleteReaction(Guid reactionId);
+        Task DeleteReactionAsync(Guid reactionId);
     }    
 }

@@ -50,11 +50,11 @@
     {
         if (IsRootOrganization)
         {
-            await OrganizationsService.CreateRootOrganization(Guid.Empty, newOrganizationName);   
+            await OrganizationsService.CreateRootOrganizationAsync(Guid.Empty, newOrganizationName);   
         }
         else
         {
-            await OrganizationsService.CreateOrganization(Guid.Empty, newOrganizationName,
+            await OrganizationsService.CreateOrganizationAsync(Guid.Empty, newOrganizationName,
                 ParentOrganization.RootId, ParentOrganization.Id);
         }
         DialogService.Close(true);
