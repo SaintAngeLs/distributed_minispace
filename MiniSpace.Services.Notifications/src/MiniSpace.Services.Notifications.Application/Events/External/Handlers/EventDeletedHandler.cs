@@ -29,6 +29,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(EventDeleted eventDeleted, CancellationToken cancellationToken)
         {
+            EventDto eventDetails = await _eventsServiceClient.GetEventAsync(eventDeleted.EventId);
+            if (eventDetails == null)
+            {
+                Console.WriteLine("Event details could not be retrieved.");
+                return;
+            }
+
+
             IEnumerable<StudentDto> participants;
             try
             {
@@ -48,6 +56,9 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var participant in participants)
             {
+                 var notificationMessage = $"The event you were signed up for has been cancelled.";
+                var detailsHtml = $"<p>Event <strong>{eventDetails.Name}</strong> scheduled on <strong>{eventDetails.StartDate:yyyy-MM-dd}</strong> has been cancelled. We apologize for any inconvenience.</p>";
+
                 var notification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: participant.Id,
@@ -74,8 +85,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     notificationId: notification.NotificationId,
                     userId: notification.UserId,
                     message: notification.Message,
-                    createdAt: notification.CreatedAt
+                    createdAt: notification.CreatedAt,
+                    eventType: notification.EventType.ToString(),
+                    relatedEntityId: notification.RelatedEntityId,
+                    details: detailsHtml
                 );
+
 
                 await _messageBroker.PublishAsync(notificationCreatedEvent);
             }

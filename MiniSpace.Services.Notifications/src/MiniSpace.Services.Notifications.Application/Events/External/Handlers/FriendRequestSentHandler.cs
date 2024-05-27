@@ -26,6 +26,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         public async Task HandleAsync(FriendRequestSent @event, CancellationToken cancellationToken)
         {
             var notificationMessage = $"You have received a friend request.";
+            var detailsHtml = $"<p>Click <a href='https://minispace.itsharppro.com/friend-requests'>here</a> to view the request.</p>";
 
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
@@ -40,12 +41,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             await _notificationRepository.AddAsync(notification);
 
-            var notificationCreatedEvent = new NotificationCreated(
+             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
-                createdAt: notification.CreatedAt
+                createdAt: notification.CreatedAt,
+                details: detailsHtml,
+                eventType: notification.EventType.ToString(),
+                relatedEntityId: notification.RelatedEntityId
             );
+
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
         }

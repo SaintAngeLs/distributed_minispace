@@ -50,6 +50,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var user in users)
             {
+                var notificationMessage = $"A new event has been created by Organizer {eventCreated.OrganizerId}";
+                var detailsHtml = $"<p>Check out the new event details <a href='https://minispace.itsharppro.com/event-details/{eventCreated.EventId}'>here</a>.</p>";
+
+
                 var notification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: user.Id,
@@ -72,11 +76,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 studentNotifications.AddNotification(notification);
                 await _studentNotificationsRepository.UpdateAsync(studentNotifications);
 
-                var notificationCreatedEvent = new NotificationCreated(
+                 var notificationCreatedEvent = new NotificationCreated(
                     notificationId: notification.NotificationId,
                     userId: notification.UserId,
                     message: notification.Message,
-                    createdAt: notification.CreatedAt
+                    createdAt: notification.CreatedAt,
+                    eventType: "NewEvent",
+                    relatedEntityId: notification.RelatedEntityId,
+                    details: detailsHtml
                 );
 
                 await _messageBroker.PublishAsync(notificationCreatedEvent);

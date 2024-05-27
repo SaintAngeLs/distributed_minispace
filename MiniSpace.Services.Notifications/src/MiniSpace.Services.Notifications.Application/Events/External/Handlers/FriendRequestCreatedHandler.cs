@@ -42,6 +42,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             var eventDetails = $"A new friend request created from {requester.FirstName} {requester.LastName} to {friend.FirstName} {friend.LastName}";
             var notificationMessage = $"You have received a friend request from {requester.FirstName} {requester.LastName}";
+            var detailsHtml = $"<p>Click <a href='https://minispace.itsharppro.com/friend-requests'>here</a> to view the request.</p>";
+
 
             var newFriendEvent = new FriendEvent(
                 id: Guid.NewGuid(),
@@ -68,14 +70,17 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _messageBroker.PublishAsync(friendEvent);
 
             _logger.LogInformation($"Stored new friend event for UserId={friendEvent.RequesterId} with details: {eventDetails}");
-            var notificationCreated = new NotificationCreated(
+            var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
-                createdAt: notification.CreatedAt
+                createdAt: notification.CreatedAt,
+                eventType: "FriendRequest",
+                relatedEntityId: friendEvent.RequesterId,
+                details: detailsHtml
             );
 
-            await _messageBroker.PublishAsync(notificationCreated);
+            await _messageBroker.PublishAsync(notificationCreatedEvent);
             _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
         }
     }

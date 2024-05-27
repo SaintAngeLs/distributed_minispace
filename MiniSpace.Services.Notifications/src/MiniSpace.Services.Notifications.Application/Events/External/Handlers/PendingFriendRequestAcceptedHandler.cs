@@ -66,12 +66,21 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
             _logger.LogInformation($"Updated StudentNotifications for UserId={@event.RequesterId}");
 
+            var detailsHtml = $"<p>Your friend request with <a href='https://minispace.itsharppro.com/student-details/{@event.FriendId}'>{friend.FirstName} {friend.LastName}</a> has been accepted.</p>";
+
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
-                createdAt: notification.CreatedAt
+                createdAt: notification.CreatedAt,
+                eventType: "FriendRequestAccepted",
+                relatedEntityId: notification.RelatedEntityId,
+                details: detailsHtml
             );
+
+            await _messageBroker.PublishAsync(notificationCreatedEvent);
+            _logger.LogInformation($"Published enhanced NotificationCreated event for UserId={notification.UserId}");
+
         }
     }
 }

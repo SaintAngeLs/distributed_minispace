@@ -17,6 +17,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
         public DateTime? UpdatedAt { get; set; }
         public Guid? RelatedEntityId { get; set; }
         public NotificationEventType EventType { get; set; } 
-
+        public string Details { get; set; }
     }
 }

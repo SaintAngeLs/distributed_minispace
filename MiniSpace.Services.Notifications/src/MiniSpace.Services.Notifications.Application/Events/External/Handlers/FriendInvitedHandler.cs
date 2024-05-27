@@ -38,8 +38,9 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             // var invitee = await _studentsServiceClient.GetAsync(@event.InviteeId);
        
             var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
+            var detailsHtml = $"<p>View <a href='https://minispace.itsharppro.com/user-details/{@event.InviterId}'>{inviter.FirstName} {inviter.LastName}</a>'s profile to respond to the friend invitation.</p>";
 
-             var notification = new Notification(
+            var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: @event.InviteeId, 
                 message: notificationMessage,
@@ -70,8 +71,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
-                createdAt: notification.CreatedAt
+                createdAt: notification.CreatedAt,
+                eventType: "FriendInvitation",
+                relatedEntityId: @event.InviterId,
+                details: detailsHtml
             );
+
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
         }
