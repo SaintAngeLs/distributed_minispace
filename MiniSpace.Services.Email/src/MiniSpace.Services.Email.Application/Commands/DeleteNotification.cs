@@ -1,7 +1,7 @@
 using Convey.CQRS.Commands;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MiniSpace.Services.Notifications.Application.Commands
+namespace MiniSpace.Services.Email.Email.Commands
 {
     public class DeleteNotification : ICommand
     {

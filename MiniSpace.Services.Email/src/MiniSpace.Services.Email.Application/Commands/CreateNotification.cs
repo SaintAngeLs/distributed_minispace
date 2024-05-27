@@ -1,6 +1,6 @@
 using Convey.CQRS.Commands;
 
-namespace MiniSpace.Services.Notifications.Application.Commands
+namespace MiniSpace.Services.Email.Application.Commands
 {
     public class CreateNotification : ICommand
     {

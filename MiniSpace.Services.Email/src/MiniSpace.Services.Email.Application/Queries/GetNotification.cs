@@ -1,18 +1,18 @@
 using Convey.CQRS.Queries;
-using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Email.Application.Dto;
 using System;
 
-namespace MiniSpace.Services.Notifications.Application.Queries
+namespace MiniSpace.Services.Email.Application.Queries
 {
-    public class GetNotification : IQuery<NotificationDto>
+    public class GetEmail : IQuery<EmailDto>
     {
         public Guid UserId { get; set; }
-        public Guid NotificationId { get; set; }
+        public Guid EmailId { get; set; }
 
-        public GetNotification(Guid userId, Guid notificationId)
+        public GetEmail(Guid userId, Guid notificationId)
         {
             UserId = userId;
-            NotificationId = notificationId;
+            EmailId = notificationId;
         }
     }
 }

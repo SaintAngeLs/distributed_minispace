@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Notifications.Application.Exceptions
+namespace MiniSpace.Services.Email.Application.Exceptions
 {
     public class NotificationNotFoundException : AppException
     {

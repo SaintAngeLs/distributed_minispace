@@ -1,9 +1,9 @@
 using Convey.CQRS.Queries;
-using MiniSpace.Services.Notifications.Application.Dto;
-using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Email.Application.Dto;
+using MiniSpace.Services.Email.Core.Entities;
 using System;
 
-namespace MiniSpace.Services.Notifications.Application.Queries
+namespace MiniSpace.Services.Email.Application.Queries
 {
     public class GetNotificationsByUser : IQuery<PagedResult<NotificationDto>>, IPagedNotificationsQuery
     {

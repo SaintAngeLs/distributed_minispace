@@ -1,6 +1,6 @@
 using Convey.CQRS.Queries;
 
-namespace MiniSpace.Services.Notifications.Application.Queries
+namespace MiniSpace.Services.Email.Application.Queries
 {
     public interface IPagedQuery
     {

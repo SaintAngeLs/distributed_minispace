@@ -1,6 +1,6 @@
 using System;
 
-namespace MiniSpace.Services.Notifications.Application.Exceptions
+namespace MiniSpace.Services.Email.Application.Exceptions
 {
     public class InvalidNotificationStatusException : AppException
     {

@@ -1,7 +1,7 @@
 using Convey.CQRS.Commands;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MiniSpace.Services.Notifications.Application.Commands
+namespace MiniSpace.Services.Email.Application.Commands
 {
     public class UpdateNotificationStatus : ICommand
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MiniSpace.Services.Notifications.Application.Dto
+namespace MiniSpace.Services.Email.Application.Dto
 {
     public class StudentDto
     {
