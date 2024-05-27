@@ -1,10 +1,10 @@
 @page "/events/{EventId}/posts/{PostId}/author/{AuthorName}"
-@using Microsoft.Extensions.Logging
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Posts.Dialogs
 @using MiniSpace.Web.Areas.Reactions
 @using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Pages.Comments
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -97,6 +97,7 @@
         <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
             <Tabs>
                 <RadzenTabsItem Text="Comments">
+                    <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
