@@ -1,37 +1,51 @@
+using System;
+using System.Threading.Tasks;
 using Convey.CQRS.Events;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Core.Entities;
-using System.Collections.Generic;
-using MiniSpace.Services.Notifications.Application.Exceptions;
+using Convey.MessageBrokers;
+using MiniSpace.Services.Email.Core.Repositories;
+using MiniSpace.Services.Email.Core.Entities;
+using MiniSpace.Services.Email.Application.Services;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 {
     public class NotificationCreatedHandler : IEventHandler<NotificationCreated>
     {
-        private readonly INotificationRepository _notificationRepository;
-        private readonly IEventMapper _eventMapper;
+        private readonly IStudentEmailsRepository _studentEmailsRepository;
         private readonly IMessageBroker _messageBroker;
 
-        public NotificationCreatedHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public NotificationCreatedHandler(IStudentEmailsRepository studentEmailsRepository, IMessageBroker messageBroker)
         {
-            _notificationRepository = notificationRepository;
-            _eventMapper = eventMapper;
+            _studentEmailsRepository = studentEmailsRepository;
             _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
         {
-            var notification = await _notificationRepository.GetAsync(@event.NotificationId);
-            if (notification == null)
+            var studentEmails = await _studentEmailsRepository.GetByStudentIdAsync(@event.UserId);
+            if (studentEmails == null)
             {
-                throw new NotificationNotFoundException(@event.NotificationId);
+                return;
             }
 
-            await _notificationRepository.AddAsync(notification);
+            var userPrefersEmails = studentEmails.ShouldReceiveEmailNotifications();
+            if (!userPrefersEmails)
+            {
+                return;
+            }
 
-            var events = _eventMapper.MapAll(notification.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
+            var emailNotification = new EmailNotification(
+                Guid.NewGuid(),
+                @event.UserId,
+                studentEmails.EmailAddress, 
+                "Notification: " + @event.Message,
+                "You have a new notification created at: " + @event.CreatedAt.ToString("g"),
+                EmailNotificationStatus.Pending
+            );
+
+            studentEmails.AddEmailNotification(emailNotification);
+            await _studentEmailsRepository.UpdateAsync(studentEmails);
+
+            await _messageBroker.PublishAsync(new EmailQueued(emailNotification.EmailNotificationId, @event.UserId));
         }
     }
 }
