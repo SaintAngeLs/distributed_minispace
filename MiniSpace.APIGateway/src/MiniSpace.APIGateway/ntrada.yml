@@ -147,6 +147,12 @@ modules:
         downstream: reports-service/reports
         auth: true
 
+      - upstream: /{reportId}
+        method: DELETE
+        use: downstream
+        downstream: reports-service/reports/{reportId}
+        auth: true
+
       - upstream: /search
         method: POST
         use: downstream
