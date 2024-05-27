@@ -1,12 +1,8 @@
 @page "/comments/search/dialog"
-@using MiniSpace.Web.DTO
 @using MiniSpace.Web.Models.Comments
 @using Radzen
 @using Blazorise.DeepCloner
-@using MiniSpace.Web.Areas.Organizations
-@inject NavigationManager NavigationManager
 @inject Radzen.DialogService DialogService
-@inject IOrganizationsService OrganizationsService
 
 <RadzenFieldset>
     <RadzenStack Gap="1rem">
@@ -20,8 +16,16 @@
             </RadzenColumn>
             <RadzenColumn Size="12" SizeSM="4">
                 <RadzenStack>
-                    <RadzenFormField Text="Sort direction" Variant="Variant.Outlined">
+                    <RadzenFormField Text="Sort direction for comments" Variant="Variant.Outlined">
                         <RadzenDropDown Data=@directions @bind-Value="@TempSearchCommentsModel.Pageable.Sort.Direction"
+                                        TextProperty="Key" ValueProperty="Value" />
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeSM="4">
+                <RadzenStack>
+                    <RadzenFormField Text="Sort direction for replies" Variant="Variant.Outlined">
+                        <RadzenDropDown Data=@directions @bind-Value="@TempSearchSubCommentsDirection"
                                         TextProperty="Key" ValueProperty="Value" />
                     </RadzenFormField>
                 </RadzenStack>
@@ -65,8 +69,11 @@
 @code {
     [Parameter]
     public SearchCommentsModel SearchCommentsModel { get; set; }
+    [Parameter]
+    public SearchCommentsModel SearchSubCommentsModel { get; set; }
 
     private SearchCommentsModel TempSearchCommentsModel { get; set; }
+    private string TempSearchSubCommentsDirection { get; set; }
     
     private List<KeyValuePair<string, string>> directions =
     [
@@ -91,6 +98,7 @@
     {
         await base.OnInitializedAsync();
         TempSearchCommentsModel = SearchCommentsModel.DeepClone();
+        TempSearchSubCommentsDirection = SearchSubCommentsModel.Pageable.Sort.Direction;
         
         List<KeyValuePair<string, string>> selectedTmp = new();
         
@@ -111,6 +119,10 @@
         SearchCommentsModel.Pageable.Sort.SortBy = selectedSortParams != null
             ? selectedSortParams.Select(sortParam => sortParam.Value) : [];
         SearchCommentsModel.SearchingSubmitted = true;
+
+        SearchSubCommentsModel.Pageable = TempSearchCommentsModel.Pageable.DeepClone();
+        SearchSubCommentsModel.Pageable.Sort.Direction = TempSearchSubCommentsDirection;
+
         DialogService.Close(true);
     }
 }

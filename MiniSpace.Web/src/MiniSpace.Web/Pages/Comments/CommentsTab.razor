@@ -1,4 +1,3 @@
-@using Blazorise.DeepCloner
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
@@ -63,8 +62,22 @@
             Size = 5,
             Sort = new SortDto()
             {
-                SortBy = new List<string>() { "lastUpdatedAt" },
+                SortBy = new List<string>() { "lastReplyAt", "lastUpdatedAt" },
                 Direction = "des"
+            }
+        }
+    };
+     
+    private SearchCommentsModel SearchSubCommentsModel= new()
+    {
+        Pageable = new PageableDto()
+        {
+            Page = 1,
+            Size = 5,
+            Sort = new SortDto()
+            {
+                SortBy = new List<string>() { "lastUpdatedAt" },
+                Direction = "asc"
             }
         }
     };
@@ -86,6 +99,8 @@
 
         SearchCommentsModel.CommentContext = CommentContext;
         SearchCommentsModel.ContextId = contextId;
+        SearchSubCommentsModel.CommentContext = CommentContext;
+        SearchSubCommentsModel.ContextId = contextId;
 
         CreateCommentModel.CommentContext = CommentContext;
         CreateCommentModel.ContextId = contextId;
@@ -139,10 +154,11 @@
     
     private async Task OpenSearchCommentsDialog()
     {
-        await DialogService.OpenAsync<SearchCommentsDialog>("Sort your comments by criteria:",
+        await DialogService.OpenAsync<SearchCommentsDialog>("Sort comments by criteria:",
             new Dictionary<string, object>()
             {
-                { "SearchCommentsModel", SearchCommentsModel }
+                { "SearchCommentsModel", SearchCommentsModel },
+                { "SearchSubCommentsModel", SearchSubCommentsModel }
             },
             new DialogOptions()
             {
@@ -212,9 +228,8 @@
                 comment.CanExpand = true;
             }
             
-            var searchSubCommentsModel = SearchCommentsModel.DeepClone();
-            searchSubCommentsModel.Pageable.Page = 1;
-            comment.SubComments = await HandleSearchingSubComments(searchSubCommentsModel, comment);
+            SearchSubCommentsModel.Pageable.Page = 1;
+            comment.SubComments = await HandleSearchingSubComments(SearchSubCommentsModel, comment);
         }
         
         StateHasChanged();
@@ -246,9 +261,8 @@
                 comment.CanExpand = true;
             }
             
-            var searchSubCommentsModel = SearchCommentsModel.DeepClone();
-            searchSubCommentsModel.Pageable.Page = 1;
-            comment.SubComments = await HandleSearchingSubComments(searchSubCommentsModel, comment);
+            SearchSubCommentsModel.Pageable.Page = 1;
+            comment.SubComments = await HandleSearchingSubComments(SearchSubCommentsModel, comment);
             
             Comments.Add(comment);
         }
@@ -315,18 +329,16 @@
     
     private async Task LoadSubComments(CommentDto parentComment)
     {
-        var searchSubCommentsModel = SearchCommentsModel.DeepClone();
-        searchSubCommentsModel.Pageable.Page = parentComment.SubCommentsPage = 1;
-        parentComment.SubComments = await HandleSearchingSubComments(searchSubCommentsModel, parentComment);
+        SearchSubCommentsModel.Pageable.Page = parentComment.SubCommentsPage = 1;
+        parentComment.SubComments = await HandleSearchingSubComments(SearchSubCommentsModel, parentComment);
     }
     
     private async Task LoadMoreSubComments(CommentDto lastComment)
     {
         var parentComment = lastComment.Parent;
         
-        var searchSubCommentsModel = SearchCommentsModel.DeepClone();
-        searchSubCommentsModel.Pageable.Page = ++parentComment.SubCommentsPage;
-        var moreSubComments = await HandleSearchingSubComments(searchSubCommentsModel, parentComment);
+        SearchSubCommentsModel.Pageable.Page = ++parentComment.SubCommentsPage;
+        var moreSubComments = await HandleSearchingSubComments(SearchSubCommentsModel, parentComment);
         if (moreSubComments.Any())
         {
             parentComment.SubComments.Last().IsLast = false;
