@@ -228,7 +228,7 @@
                 comment.CanExpand = true;
             }
             
-            SearchSubCommentsModel.Pageable.Page = 1;
+            SearchSubCommentsModel.Pageable.Page = comment.SubCommentsPage = 1;
             comment.SubComments = await HandleSearchingSubComments(SearchSubCommentsModel, comment);
         }
         
@@ -261,7 +261,7 @@
                 comment.CanExpand = true;
             }
             
-            SearchSubCommentsModel.Pageable.Page = 1;
+            SearchSubCommentsModel.Pageable.Page = comment.SubCommentsPage = 1;
             comment.SubComments = await HandleSearchingSubComments(SearchSubCommentsModel, comment);
             
             Comments.Add(comment);
