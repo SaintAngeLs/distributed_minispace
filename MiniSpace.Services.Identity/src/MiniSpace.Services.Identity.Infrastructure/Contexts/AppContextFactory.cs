@@ -2,9 +2,11 @@ using Convey.MessageBrokers;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using MiniSpace.Services.Identity.Application;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class AppContextFactory : IAppContextFactory
     {
         private readonly ICorrelationContextAccessor _contextAccessor;

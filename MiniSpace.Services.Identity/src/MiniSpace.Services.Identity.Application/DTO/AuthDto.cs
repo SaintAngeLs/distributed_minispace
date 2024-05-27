@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace MiniSpace.Services.Identity.Application.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class AuthDto
     {
         public string AccessToken { get; set; }

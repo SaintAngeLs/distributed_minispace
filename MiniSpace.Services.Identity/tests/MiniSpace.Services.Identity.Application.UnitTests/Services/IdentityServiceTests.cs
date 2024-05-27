@@ -15,6 +15,7 @@ using MiniSpace.Services.Identity.Core.Exceptions;
 using MiniSpace.Services.Identity.Core.Repositories;
 using MiniSpace.Services.Identity.Application.Services.Identity;
 using MiniSpace.Services.Identity.Application.DTO;
+using MiniSpace.Services.Identity.Application.Exceptions;
 
 namespace MiniSpace.Services.Identity.Application.UnitTests.Services
 {
@@ -209,6 +210,134 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             //Act and Assert
             await _identityService.Invoking(x => x.SignUpAsync(command)).Should().ThrowAsync<EmailInUseException>()
                 .WithMessage($"Email {command.Email} is already in use.");
+        }
+
+        [Fact]
+        public async Task GrantOrganizerRightsAsync_WhenUserNotInRepository_ShouldThrowUserNotFoundException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new GrantOrganizerRights(id);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync((User)null);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(async () => 
+            { 
+                await _identityService.GrantOrganizerRightsAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task GrantOrganizerRightsAsync_WhenUserInRepository_ShouldUpdateRepositoryAndPublishAsync()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new GrantOrganizerRights(id);
+            var user = new User(id, "name", "email", "password", "user", DateTime.Today);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync(user);
+            
+            // Act & Arrange
+            var act = async () => await _identityService.GrantOrganizerRightsAsync(command);
+            await act.Should().NotThrowAsync();
+            Assert.True(user.Role == Role.Organizer);
+            _mockUserRepository.Verify(repo => repo.UpdateAsync(user), Times.Once);
+            _mockMessageBroker.Verify(broker => broker.PublishAsync(It.IsAny<OrganizerRightsGranted>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RevokeOrganizerRightsAsync_WhenUserNotInRepository_ShouldThrowUserNotFoundException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new RevokeOrganizerRights(id);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync((User)null);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(async () => 
+            { 
+                await _identityService.RevokeOrganizerRightsAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task RevokeOrganizerRightsAsync_WhenUserInRepository_ShouldUpdateRepositoryAndPublishAsync()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new RevokeOrganizerRights(id);
+            var user = new User(id, "name", "email", "password", "organizer", DateTime.Today);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync(user);
+            
+            // Act & Arrange
+            var act = async () => await _identityService.RevokeOrganizerRightsAsync(command);
+            await act.Should().NotThrowAsync();
+            Assert.True(user.Role == Role.User);
+            _mockUserRepository.Verify(repo => repo.UpdateAsync(user), Times.Once);
+            _mockMessageBroker.Verify(broker => broker.PublishAsync(It.IsAny<OrganizerRightsRevoked>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task BanUserAsync_WhenUserNotInRepository_ShouldThrowUserNotFoundException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new BanUser(id);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync((User)null);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(async () => 
+            { 
+                await _identityService.BanUserAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task BanUserAsync_WhenUserInRepository_ShouldUpdateRepositoryAndPublishAsync()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new BanUser(id);
+            var user = new User(id, "name", "email", "password", "user", DateTime.Today);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync(user);
+            
+            // Act & Arrange
+            var act = async () => await _identityService.BanUserAsync(command);
+            await act.Should().NotThrowAsync();
+            Assert.True(user.Role == Role.Banned);
+            _mockUserRepository.Verify(repo => repo.UpdateAsync(user), Times.Once);
+            _mockMessageBroker.Verify(broker => broker.PublishAsync(It.IsAny<UserBanned>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UnbanUserAsync_WhenUserNotInRepository_ShouldThrowUserNotFoundException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new UnbanUser(id);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync((User)null);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(async () => 
+            { 
+                await _identityService.UnbanUserAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task UnbanUserAsync_WhenUserInRepository_ShouldUpdateRepositoryAndPublishAsync()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var command = new UnbanUser(id);
+            var user = new User(id, "name", "email", "password", "banned", DateTime.Today);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync(user);
+            
+            // Act & Arrange
+            var act = async () => await _identityService.UnbanUserAsync(command);
+            await act.Should().NotThrowAsync();
+            Assert.True(user.Role == Role.User);
+            _mockUserRepository.Verify(repo => repo.UpdateAsync(user), Times.Once);
+            _mockMessageBroker.Verify(broker => broker.PublishAsync(It.IsAny<UserUnbanned>()), Times.Once);
         }
     }
 }
