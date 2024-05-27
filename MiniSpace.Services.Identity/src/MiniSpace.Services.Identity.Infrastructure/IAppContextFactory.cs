@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Identity.Application;
 
 namespace MiniSpace.Services.Identity.Infrastructure

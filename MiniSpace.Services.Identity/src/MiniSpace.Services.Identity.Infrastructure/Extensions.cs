@@ -46,9 +46,11 @@ using MiniSpace.Services.Identity.Infrastructure.Mongo;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Identity.Infrastructure.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Identity.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)

@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Convey.Types;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     internal sealed  class RefreshTokenDocument : IIdentifiable<Guid>
     {
         public Guid Id { get; set; }

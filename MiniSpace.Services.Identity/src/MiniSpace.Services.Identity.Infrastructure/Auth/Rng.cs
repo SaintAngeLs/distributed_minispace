@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using MiniSpace.Services.Identity.Application.Services;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Auth
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class Rng : IRng
     {
         private static readonly string[] SpecialChars = new[] {"/", "\\", "=", "+", "?", ":", "&"};
