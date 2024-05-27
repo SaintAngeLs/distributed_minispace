@@ -1,4 +1,4 @@
-@page "/events/{EventId}/comments/search/dialog"
+@page "/comments/search/dialog"
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Models.Comments
 @using Radzen
@@ -63,8 +63,6 @@
 </RadzenFieldset>
 
 @code {
-    [Parameter]
-    public string EventId { get; set; }
     [Parameter]
     public SearchCommentsModel SearchCommentsModel { get; set; }
 

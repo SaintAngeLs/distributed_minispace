@@ -45,18 +45,19 @@
 
 @code {
     [Parameter]
-    public string EventId { get; set; }
+    public string ContextId { get; set; }
+    [Parameter]
+    public string CommentContext { get; set; }
     [Parameter]
     public Guid StudentId { get; set; }
 
-    private Guid eventId;
+    private Guid contextId;
     private Guid studentId;
     
     private HashSet<CommentDto> Comments;
     
     private SearchCommentsModel SearchCommentsModel = new()
     {
-        CommentContext = "Event",
         Pageable = new PageableDto()
         {
             Page = 1,
@@ -68,11 +69,8 @@
             }
         }
     };
-    
-    private CreateCommentModel CreateCommentModel = new()
-    {
-        CommentContext = "Event"
-    };
+
+    private CreateCommentModel CreateCommentModel = new();
 
     private UpdateCommentModel UpdateCommentModel = new();
     
@@ -84,11 +82,14 @@
     
     protected override async Task OnInitializedAsync()
     {
-        eventId = new Guid(EventId);
+        contextId = new Guid(ContextId);
         studentId = StudentId;
-        
-        SearchCommentsModel.ContextId = eventId;
-        CreateCommentModel.ContextId = eventId;
+
+        SearchCommentsModel.CommentContext = CommentContext;
+        SearchCommentsModel.ContextId = contextId;
+
+        CreateCommentModel.CommentContext = CommentContext;
+        CreateCommentModel.ContextId = contextId;
         CreateCommentModel.StudentId = studentId;
         await SearchComments();
         
@@ -100,7 +101,6 @@
         await DialogService.OpenAsync<CreateCommentDialog>(title,
             new Dictionary<string, object>()
             {
-                { "EventId", EventId },
                 { "CreateCommentModel", CreateCommentModel }
             },
             new DialogOptions()
@@ -115,7 +115,6 @@
         await DialogService.OpenAsync<UpdateCommentDialog>(title,
             new Dictionary<string, object>()
             {
-                { "EventId", EventId },
                 { "UpdateCommentModel", UpdateCommentModel }
             },
             new DialogOptions()
@@ -130,7 +129,6 @@
         await DialogService.OpenAsync<DeleteCommentDialog>(title,
             new Dictionary<string, object>()
             {
-                { "EventId", eventId },
                 { "DeleteCommentModel", DeleteCommentModel }
             },
             new DialogOptions()
@@ -145,7 +143,6 @@
         await DialogService.OpenAsync<SearchCommentsDialog>("Sort your comments by criteria:",
             new Dictionary<string, object>()
             {
-                { "EventId", EventId },
                 { "SearchCommentsModel", SearchCommentsModel }
             },
             new DialogOptions()
@@ -298,14 +295,12 @@
     {
         await CommentsService.AddLikeAsync(comment.Id);
         comment.Likes.Add(studentId);
-        StateHasChanged();
     }
     
     private async Task DeleteLike(CommentDto comment)
     {
         await CommentsService.DeleteLikeAsync(comment.Id);
         comment.Likes.Remove(studentId);
-        StateHasChanged();
     }
     
     private async Task CreateSubComment(CommentDto parentComment)

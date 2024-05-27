@@ -1,4 +1,4 @@
-@page "/events/{EventId}/comments/delete/dialog"
+@page "/comments/delete/dialog"
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.Models.Comments
 @using Radzen
@@ -16,8 +16,6 @@
 </RadzenStack>
 
 @code {
-    [Parameter]
-    public Guid EventId { get; set; }
     [Parameter]
     public DeleteCommentModel DeleteCommentModel { get; set; }
     

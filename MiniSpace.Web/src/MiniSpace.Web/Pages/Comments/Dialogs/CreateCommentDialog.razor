@@ -1,4 +1,4 @@
-@page "/events/{EventId}/comments/create/dialog"
+@page "/comments/create/dialog"
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.Models.Comments
 @using Radzen
@@ -30,8 +30,6 @@
 </RadzenTemplateForm>
 
 @code {
-    [Parameter]
-    public string EventId { get; set; }
     [Parameter]
     public CreateCommentModel CreateCommentModel { get; set; }
     
