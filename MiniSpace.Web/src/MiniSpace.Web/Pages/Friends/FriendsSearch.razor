@@ -35,11 +35,8 @@
         <div class="card-container">
             @foreach (var student in students)
             {
-                 <div class="friend-card" @onclick="@(() => OnDetails(student))">
-                     @if(images.ContainsKey(student.Id))
-                     { 
-                         <img src="@GetImage(images[student.Id])" alt="Student Image" class="friend-img">
-                     }
+                <div class="friend-card" @onclick="@(() => OnDetails(student))">
+                    <img src="@GetImage(student.Id)" alt="Student Image" class="friend-img">
                     <div class="friend-info">
                         <h5>@student.FirstName @student.LastName</h5>
                         <p>Email: @student.Email</p>
@@ -48,34 +45,34 @@
                                 Click="@(e => ConnectWithStudent(student.Id, e))" 
                                 ButtonStyle="Radzen.ButtonStyle.Secondary" 
                                 Style="width: 100%; margin-top: 8px;" /> *@
-                            <RadzenButton Text="Details" ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                                          Click="@(() => ViewDetails(student.Id))" 
-                                          Style="width: 100%; margin-top: 8px; border-radius: 5px;" />
+                            <RadzenButton Text="Details" ButtonStyle="Radzen.ButtonStyle.Secondary"
+                                          Click="@(() => ViewDetails(student.Id))"
+                                          Style="width: 100%; margin-top: 8px; border-radius: 5px;"/>
                             @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
                             {
-                                <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))" 
-                                            ButtonStyle="Radzen.ButtonStyle.Secondary" 
-                                            Style="width: 100%; margin-top: 8px; border-radius: 5px;" />
+                                <RadzenButton Text="Connect" Click="@(e => ConnectWithStudent(student.Id, e))"
+                                              ButtonStyle="Radzen.ButtonStyle.Secondary"
+                                              Style="width: 100%; margin-top: 8px; border-radius: 5px;"/>
                             }
                             else if (allFriends.Any(f => f.FriendId == student.Id))
                             {
-                                <RadzenButton Text="Connected" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc; border-radius: 5px;" />
+                                <RadzenButton Text="Connected" Disabled="true"
+                                              Style="width: 100%; margin-top: 8px; background-color: white; color: black; border: 1px solid #ccc; border-radius: 5px;"/>
                             }
                             else if (sentRequests.Any(r => r.InviteeId == student.Id))
                             {
-                                <RadzenButton Text="Pending" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black; border-radius: 5px;" />
+                                <RadzenButton Text="Pending" Disabled="true"
+                                              Style="width: 100%; margin-top: 8px; background-color: #ccc; color: black; border-radius: 5px;"/>
                             }
                             else if (incomingRequests.Any(r => r.InviteeId == IdentityService.GetCurrentUserId() && r.State == DTO.States.FriendState.Requested))
                             {
-                                <RadzenButton Text="Incoming Request" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: blue; color: white; border-radius: 5px;" />
+                                <RadzenButton Text="Incoming Request" Disabled="true"
+                                              Style="width: 100%; margin-top: 8px; background-color: blue; color: white; border-radius: 5px;"/>
                             }
                             else if (student.Id == IdentityService.GetCurrentUserId())
                             {
-                                <RadzenButton Text="It's You" Disabled="true" 
-                                            Style="width: 100%; margin-top: 8px; background-color: grey; color: white; border-radius: 10px; border-radius: 5px;" />
+                                <RadzenButton Text="It's You" Disabled="true"
+                                              Style="width: 100%; margin-top: 8px; background-color: grey; color: white; border-radius: 10px; border-radius: 5px;"/>
                             }
                         </div>
                     </div>
@@ -94,7 +91,7 @@
                 <div class="student-details">
                    
                    <div>
-                    <img src="@GetImage(images[student.Id])" alt="Profile Image" class="profile-image"/>
+                    <img src="@GetImage(student.Id)" alt="Profile Image" class="profile-image"/>
                     <div class="info-block">
                         <h3 class="name">@student?.FirstName @student?.LastName</h3>
                         <ul class="details-list">
@@ -383,16 +380,14 @@
         await Task.WhenAll(tasks);
     }
 
-    private string GetImage(string base64Image)
+    private string GetImage(Guid studentId)
     {
-        if (string.IsNullOrWhiteSpace(base64Image))
+        if (images.TryGetValue(studentId, out var image))
         {
-            return "images/user_image.png";
+            return $"data:image/webp;base64,{image}";
         }
-        else
-        {
-            return $"data:image/jpeg;base64,{base64Image}";
-        }
+
+        return "images/default_profile_image.webp";
     }
 
 

@@ -164,11 +164,14 @@
         StateHasChanged();
     }
 
-    private string GetImage(Guid studentId) {
-        if (images.ContainsKey(studentId)) {
-            return $"data:image/jpeg;base64,{images[studentId]}";
+    private string GetImage(Guid studentId)
+    {
+        if (images.TryGetValue(studentId, out var image))
+        {
+            return $"data:image/webp;base64,{image}";
         }
-        return "images/user_default.png";
+
+        return "images/default_profile_image.webp";
     }
 
 

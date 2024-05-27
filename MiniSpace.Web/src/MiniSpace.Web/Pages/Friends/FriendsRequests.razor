@@ -47,7 +47,7 @@
                     <div class="friend-card" @onclick="@(() => RedirectToDetails(request.InviterId))">
                         @if (images.ContainsKey(request.InviterId))
                         {
-                            <img src="@GetImage(images[request.InviterId])" alt="Inviter Image" class="friend-img">
+                            <img src="@GetImage(request.InviterId)" alt="Inviter Image" class="friend-img">
                         }
                         <div class="friend-info">
                             <h5>@request.InviterName</h5>
@@ -234,16 +234,14 @@
         images[inviterId] = result.Base64Content;
     }
 
-    private string GetImage(string base64Image)
+    private string GetImage(Guid studentId)
     {
-        if (string.IsNullOrWhiteSpace(base64Image))
+        if (images.TryGetValue(studentId, out var image))
         {
-            return "images/user_image.png";
+            return $"data:image/webp;base64,{image}";
         }
-        else
-        {
-            return $"data:image/jpeg;base64,{base64Image}";
-        }
+
+        return "images/default_profile_image.webp";
     }
 
     private void SearchIncomingRequests()
