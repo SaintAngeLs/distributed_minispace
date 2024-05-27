@@ -1,10 +1,10 @@
 @page "/events/{EventId}/posts/{PostId}/author/{AuthorName}"
-@using Microsoft.Extensions.Logging
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Posts.Dialogs
 @using MiniSpace.Web.Areas.Reactions
 @using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Pages.Comments
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -97,6 +97,7 @@
         <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
             <Tabs>
                 <RadzenTabsItem Text="Comments">
+                    <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
@@ -152,8 +153,8 @@
             studentId = IdentityService.GetCurrentUserId();
         }
         post = await PostsService.GetPostAsync(new Guid(PostId));
-        reactionsSummary = await ReactionsService.GetReactionsSummary(post.Id, ReactionContentType.Post);
-        reactions = await ReactionsService.GetReactions(post.Id, ReactionContentType.Post);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
+        reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
         
         pageInitialized = true;
     }
@@ -178,7 +179,7 @@
         switch (index)
         {
             case 1:
-                reactions = await ReactionsService.GetReactions(post.Id, ReactionContentType.Post);
+                reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
                 break;
         }
         StateHasChanged();
@@ -199,16 +200,16 @@
     {
         if (reactionsSummary.AuthUserReactionId != null)
         {
-            await ReactionsService.DeleteReaction((Guid)reactionsSummary.AuthUserReactionId);
+            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
         }
         
         if (reactionType != null)
         {
-            await ReactionsService.CreateReaction(Guid.Empty, studentId, reactionType.ToString(),
+            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
                 post.Id, ReactionContentType.Post.ToString());
         }
 
-        reactionsSummary = await ReactionsService.GetReactionsSummary(post.Id, ReactionContentType.Post);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
         StateHasChanged();
     }
 }

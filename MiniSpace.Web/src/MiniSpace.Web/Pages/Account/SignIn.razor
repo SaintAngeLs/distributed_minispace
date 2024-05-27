@@ -115,6 +115,9 @@
                 <p>Please sign in to access your account and manage your details.</p>
                 <h3>Sign In</h3>
             </div>
+            <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" Close="@OnAlertClose">
+                @errorMessage
+            </RadzenAlert>
             <RadzenTemplateForm Data="@signInModel" Submit="@(async (SignInModel args) => { await HandleSignIn(); })">
                 <RadzenFieldset>
                     <RadzenStack Gap="1rem">
@@ -140,8 +143,13 @@
     private SignInModel signInModel = new SignInModel();
     private bool showError = false;
     private string errorMessage = string.Empty;
-    private bool popup;
 
+    private void OnAlertClose()
+    {
+        showError = false;
+        errorMessage = string.Empty;
+    }
+    
     @* private async Task HandleSignIn()
     {
         var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
@@ -174,7 +182,7 @@
             else
             {
                 showError = true;
-                errorMessage = "Invalid login attempt";
+                errorMessage = $"Error during sign in: {response?.ErrorMessage.Reason}";
                 StateHasChanged(); 
             }
         }
