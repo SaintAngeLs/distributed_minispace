@@ -44,14 +44,28 @@
                                 </RadzenColumn>
                                 <RadzenColumn Size="3">
                                     <MudStack Row="true" Justify="Justify.Center">
-                                        <MudText>@(comment.Likes.Count().ToString())</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
-                                                       Color="Color.Inherit"/>
+                                        <MudText>@(comment.Likes.Count.ToString())</MudText>
+                                        @if (!comment.Likes.Contains(StudentId))
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                                           Color="Color.Inherit"
+                                                           OnClick="async () => { await AddLikeAsync(comment); }"/>
+                                        }
+                                        else
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                                           Color="Color.Success"
+                                                           OnClick="async () => { await DeleteLikeAsync(comment); }"/>
+                                        }
                                         <MudText>@(comment.RepliesCount)</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium"
                                                        Color="Color.Inherit"
                                                        OnClick="async () => { await CreateSubCommentAsync(comment); }"/>
                                     </MudStack>
+                                    @if (comment.Likes.Contains((StudentId)))
+                                    {
+                                        <MudText>You Liked!</MudText>
+                                    }
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenCard>
@@ -92,10 +106,24 @@
                                 </RadzenColumn>
                                 <RadzenColumn Size="3">
                                     <MudStack Row="true" Justify="Justify.Center">
-                                        <MudText>@(comment.Likes.Count().ToString())</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
-                                                       Color="Color.Inherit"/>
+                                        <MudText>@(comment.Likes.Count.ToString())</MudText>
+                                        @if (!comment.Likes.Contains(StudentId))
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                                           Color="Color.Inherit"
+                                                           OnClick="async () => { await AddLikeAsync(comment); }"/>
+                                        }
+                                        else
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                                           Color="Color.Success"
+                                                           OnClick="async () => { await DeleteLikeAsync(comment); }"/>
+                                        }
                                     </MudStack>
+                                    @if (comment.Likes.Contains((StudentId)))
+                                    {
+                                        <MudText>You Liked!</MudText>
+                                    }
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenCard>
@@ -127,6 +155,10 @@
     public Func<CommentDto, Task> LoadSubComments { get; set; }
     [Parameter]
     public Func<CommentDto, Task> LoadMoreSubComments { get; set; }
+    [Parameter]
+    public Func<CommentDto, Task> AddLike { get; set; }
+    [Parameter]
+    public Func<CommentDto, Task> DeleteLike { get; set; }
     
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     
@@ -154,6 +186,18 @@
     private async Task LoadMoreSubCommentsAsync(CommentDto lastSubComment)
     {
         await LoadMoreSubComments(lastSubComment);
+        await currentItem.ReloadAsync();
+    }
+
+    private async Task AddLikeAsync(CommentDto comment)
+    {
+        await AddLike(comment);
+        await currentItem.ReloadAsync();
+    }
+    
+    private async Task DeleteLikeAsync(CommentDto comment)
+    {
+        await DeleteLike(comment);
         await currentItem.ReloadAsync();
     }
 }

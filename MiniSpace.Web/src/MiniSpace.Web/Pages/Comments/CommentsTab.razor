@@ -31,7 +31,9 @@
                           DeleteComment="@DeleteComment"
                           CreateSubComment="@CreateSubComment"
                           LoadSubComments="@LoadSubComments" 
-                          LoadMoreSubComments="@LoadMoreSubComments" />
+                          LoadMoreSubComments="@LoadMoreSubComments"
+                          AddLike="@AddLike"
+                          DeleteLike="@DeleteLike" />
             @if (moreCommentsAvailable)
             {
                 <RadzenButton Size="ButtonSize.Medium" Text="Load more comments"
@@ -290,6 +292,20 @@
             DeleteCommentModel.DeletingSubmitted = false;
             await SearchComments();
         }
+    }
+
+    private async Task AddLike(CommentDto comment)
+    {
+        await CommentsService.AddLikeAsync(comment.Id);
+        comment.Likes.Add(studentId);
+        StateHasChanged();
+    }
+    
+    private async Task DeleteLike(CommentDto comment)
+    {
+        await CommentsService.DeleteLikeAsync(comment.Id);
+        comment.Likes.Remove(studentId);
+        StateHasChanged();
     }
     
     private async Task CreateSubComment(CommentDto parentComment)
