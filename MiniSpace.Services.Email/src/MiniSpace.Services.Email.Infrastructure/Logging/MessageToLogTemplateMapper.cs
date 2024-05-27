@@ -1,8 +1,8 @@
 using Convey.Logging.CQRS;
-using MiniSpace.Services.Notifications.Application.Commands;
-using MiniSpace.Services.Notifications.Application.Events.External;
+using MiniSpace.Services.Email.Application.Commands;
+using MiniSpace.Services.Email.Application.Events.External;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Logging
+namespace MiniSpace.Services.Email.Infrastructure.Logging
 {
     internal sealed class MessageToLogTemplateMapper : IMessageToLogTemplateMapper
     {

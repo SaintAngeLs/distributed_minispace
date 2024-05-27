@@ -1,9 +1,9 @@
 using Convey.CQRS.Events;
-using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Core;
-using MiniSpace.Services.Notifications.Core.Events;
+using MiniSpace.Services.Email.Application.Services;
+using MiniSpace.Services.Email.Core;
+using MiniSpace.Services.Email.Core.Events;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Services
+namespace MiniSpace.Services.Email.Infrastructure.Services
 {
     public class EventMapper : IEventMapper
     {

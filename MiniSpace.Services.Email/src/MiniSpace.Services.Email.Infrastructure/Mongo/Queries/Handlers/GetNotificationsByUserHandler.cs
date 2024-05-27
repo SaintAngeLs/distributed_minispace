@@ -1,8 +1,8 @@
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
-using MiniSpace.Services.Notifications.Application.Dto;
-using MiniSpace.Services.Notifications.Application.Queries;
-using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Email.Application.Dto;
+using MiniSpace.Services.Email.Application.Queries;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
+namespace MiniSpace.Services.Email.Infrastructure.Mongo.Queries.Handlers
 {
     public class GetNotificationsByUserHandler : IQueryHandler<GetNotificationsByUser, Application.Queries.PagedResult<NotificationDto>>
     {

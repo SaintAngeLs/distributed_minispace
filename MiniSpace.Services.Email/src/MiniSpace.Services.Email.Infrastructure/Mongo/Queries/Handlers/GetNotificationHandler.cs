@@ -1,15 +1,15 @@
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
-using MiniSpace.Services.Notifications.Application.Dto;
-using MiniSpace.Services.Notifications.Application.Exceptions;
-using MiniSpace.Services.Notifications.Application.Queries;
-using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Email.Application.Dto;
+using MiniSpace.Services.Email.Application.Exceptions;
+using MiniSpace.Services.Email.Application.Queries;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
+namespace MiniSpace.Services.Email.Infrastructure.Mongo.Queries.Handlers
 {
     public class GetNotificationHandler : IQueryHandler<GetNotification, NotificationDto>
     {

@@ -1,6 +1,6 @@
-using MiniSpace.Services.Notifications.Application;
+using MiniSpace.Services.Email.Application;
 
-namespace MiniSpace.Services.Notifications.Infrastructure
+namespace MiniSpace.Services.Email.Infrastructure
 {
     public interface IAppContextFactory
     {

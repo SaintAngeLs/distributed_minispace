@@ -1,6 +1,6 @@
-using MiniSpace.Services.Notifications.Application;
+using MiniSpace.Services.Email.Application;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Contexts
+namespace MiniSpace.Services.Email.Infrastructure.Contexts
 {
     internal class AppContext : IAppContext
     {

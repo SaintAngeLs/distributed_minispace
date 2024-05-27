@@ -1,9 +1,9 @@
 using Convey.MessageBrokers.RabbitMQ;
-using MiniSpace.Services.Notifications.Application.Commands;
-using MiniSpace.Services.Notifications.Application.Events.Rejected;
-using MiniSpace.Services.Notifications.Application.Exceptions;
+using MiniSpace.Services.Email.Application.Commands;
+using MiniSpace.Services.Email.Application.Events.Rejected;
+using MiniSpace.Services.Email.Application.Exceptions;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Exceptions
+namespace MiniSpace.Services.Email.Infrastructure.Exceptions
 {
     internal sealed class ExceptionToMessageMapper : IExceptionToMessageMapper
     {

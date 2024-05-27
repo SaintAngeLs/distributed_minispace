@@ -1,7 +1,7 @@
 using System;
 using Convey.Types;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
+namespace MiniSpace.Services.Email.Infrastructure.Mongo.Documents
 {
     public class StudentDocument : IIdentifiable<Guid>
     {

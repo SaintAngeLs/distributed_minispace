@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Email.Core.Repositories;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Repositories;
 using MongoDB.Driver;
 
 public class NotificationCleanupService : BackgroundService

@@ -1,10 +1,9 @@
 using Convey.MessageBrokers;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using MiniSpace.Services.Notifications.Application;
-using MiniSpace.Services.Notifications.Infrastructure;
+using MiniSpace.Services.Email.Infrastructure;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Contexts
+namespace MiniSpace.Services.Email.Infrastructure.Contexts
 {
     internal sealed class AppContextFactory : IAppContextFactory
     {

@@ -26,24 +26,24 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using MiniSpace.Services.Notifications.Application;
-using MiniSpace.Services.Notifications.Application.Commands;
-using MiniSpace.Services.Notifications.Application.Events.External;
-using MiniSpace.Services.Notifications.Application.Events.External.Handlers;
-using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Infrastructure.Contexts;
-using MiniSpace.Services.Notifications.Infrastructure.Decorators;
-using MiniSpace.Services.Notifications.Infrastructure.Exceptions;
-using MiniSpace.Services.Notifications.Infrastructure.Logging;
-using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
-using MiniSpace.Services.Notifications.Infrastructure.Services;
-using MiniSpace.Services.Notifications.Infrastructure;
-using MiniSpace.Services.Notifications.Application.Services.Clients;
-using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
+using MiniSpace.Services.Email.Application;
+using MiniSpace.Services.Email.Application.Commands;
+using MiniSpace.Services.Email.Application.Events.External;
+using MiniSpace.Services.Email.Application.Events.External.Handlers;
+using MiniSpace.Services.Email.Application.Services;
+using MiniSpace.Services.Email.Core.Repositories;
+using MiniSpace.Services.Email.Infrastructure.Contexts;
+using MiniSpace.Services.Email.Infrastructure.Decorators;
+using MiniSpace.Services.Email.Infrastructure.Exceptions;
+using MiniSpace.Services.Email.Infrastructure.Logging;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Email.Infrastructure.Services;
+using MiniSpace.Services.Email.Infrastructure;
+using MiniSpace.Services.Email.Application.Services.Clients;
+using MiniSpace.Services.Email.Infrastructure.Services.Clients;
 
-namespace MiniSpace.Services.Notifications.Infrastructure
+namespace MiniSpace.Services.Email.Infrastructure
 {
     public static class Extensions
     {

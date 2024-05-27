@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
+namespace MiniSpace.Services.Email.Infrastructure.Mongo.Documents
 {
     public class StudentNotificationsDocument : IIdentifiable<Guid>
     {

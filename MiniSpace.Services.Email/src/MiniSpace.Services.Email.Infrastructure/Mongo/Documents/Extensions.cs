@@ -1,8 +1,8 @@
-using MiniSpace.Services.Notifications.Application.Dto;
-using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Email.Application.Dto;
+using MiniSpace.Services.Email.Core.Entities;
 using System;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
+namespace MiniSpace.Services.Email.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {

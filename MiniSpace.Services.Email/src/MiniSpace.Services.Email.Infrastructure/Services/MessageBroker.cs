@@ -5,10 +5,10 @@ using Convey.MessageBrokers.RabbitMQ;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
-using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Infrastructure;
+using MiniSpace.Services.Email.Application.Services;
+using MiniSpace.Services.Email.Infrastructure;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Services
+namespace MiniSpace.Services.Email.Infrastructure.Services
 {
     internal sealed class MessageBroker : IMessageBroker
     {

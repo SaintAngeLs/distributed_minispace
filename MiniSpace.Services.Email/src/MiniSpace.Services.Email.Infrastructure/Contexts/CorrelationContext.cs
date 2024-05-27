@@ -1,4 +1,4 @@
-namespace MiniSpace.Services.Notifications.Infrastructure.Contexts
+namespace MiniSpace.Services.Email.Infrastructure.Contexts
 {
     internal class CorrelationContext
     {

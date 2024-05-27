@@ -2,10 +2,10 @@ using System.Collections.Concurrent;
 using System.Net;
 using Convey;
 using Convey.WebApi.Exceptions;
-using MiniSpace.Services.Notifications.Application.Exceptions;
-using MiniSpace.Services.Notifications.Core.Exceptions;
+using MiniSpace.Services.Email.Application.Exceptions;
+using MiniSpace.Services.Email.Core.Exceptions;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Exceptions
+namespace MiniSpace.Services.Email.Infrastructure.Exceptions
 {
     internal sealed class ExceptionToResponseMapper : IExceptionToResponseMapper
     {

@@ -3,7 +3,7 @@ using Convey.MessageBrokers;
 using Convey.MessageBrokers.Outbox;
 using Convey.Types;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Decorators
+namespace MiniSpace.Services.Email.Infrastructure.Decorators
 {
     [Decorator]
     internal sealed class OutboxCommandHandlerDecorator<TCommand> : ICommandHandler<TCommand>

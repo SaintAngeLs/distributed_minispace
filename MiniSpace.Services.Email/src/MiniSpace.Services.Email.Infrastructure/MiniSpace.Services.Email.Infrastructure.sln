@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Notifications.Infrastructure", "MiniSpace.Services.Notifications.Infrastructure.csproj", "{994B662D-5C21-4077-8970-C61A227B46D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Email.Infrastructure", "MiniSpace.Services.Email.Infrastructure.csproj", "{994B662D-5C21-4077-8970-C61A227B46D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

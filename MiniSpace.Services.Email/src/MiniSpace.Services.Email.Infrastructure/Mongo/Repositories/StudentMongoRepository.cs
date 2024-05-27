@@ -1,13 +1,13 @@
 using Convey.Persistence.MongoDB;
-using MiniSpace.Services.Notifications.Core.Entities;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Email.Core.Entities;
+using MiniSpace.Services.Email.Core.Repositories;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
+namespace MiniSpace.Services.Email.Infrastructure.Mongo.Repositories
 {
     public class StudentMongoRepository : IStudentRepository
     {
