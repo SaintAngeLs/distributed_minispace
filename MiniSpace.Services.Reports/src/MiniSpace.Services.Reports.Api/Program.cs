@@ -6,16 +6,11 @@ using Convey.Types;
 using Convey.WebApi;
 using Convey.WebApi.CQRS;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Reports.Application;
 using MiniSpace.Services.Reports.Application.Commands;
 using MiniSpace.Services.Reports.Application.DTO;
 using MiniSpace.Services.Reports.Application.Queries;
 using MiniSpace.Services.Reports.Application.Services;
-//using MiniSpace.Services.Reports.Application.Queries;
-using MiniSpace.Services.Reports.Core.Entities;
 using MiniSpace.Services.Reports.Core.Wrappers;
 using MiniSpace.Services.Reports.Infrastructure;
 
@@ -49,7 +44,7 @@ namespace MiniSpace.Services.Reports.Api
                         .Post<StartReportReview>("reports/{reportId}/start-review")
                         .Post<ResolveReport>("reports/{reportId}/resolve")
                         .Post<RejectReport>("reports/{reportId}/reject")
-                        .Get<GetStudentReports, PagedResponse<IEnumerable<ReportDto>>>("reports/student/{studentId}")
+                        .Get<GetStudentReports, PagedResponse<IEnumerable<ReportDto>>>("reports/students/{studentId}")
                         ))
                 .UseLogging()
                 .Build()
