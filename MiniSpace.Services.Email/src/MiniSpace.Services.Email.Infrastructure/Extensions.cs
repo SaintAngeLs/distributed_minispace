@@ -43,6 +43,7 @@ using MiniSpace.Services.Email.Infrastructure;
 using MiniSpace.Services.Email.Application.Services.Clients;
 using MiniSpace.Services.Email.Infrastructure.Services.Clients;
 using Elasticsearch.Net;
+using Microsoft.Extensions.Configuration;
 
 
 namespace MiniSpace.Services.Email.Infrastructure
@@ -51,6 +52,18 @@ namespace MiniSpace.Services.Email.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
+            var smtpConfig = builder.Services.BuildServiceProvider().GetService<IConfiguration>().GetSection("smtp").Get<SmtpSettings>();
+            builder.Services.AddSingleton(smtpConfig);
+
+            builder.Services.AddSingleton<IEmailService, SmtpEmailService>(provider =>
+            new SmtpEmailService(
+                smtpConfig.Host,
+                smtpConfig.Port,
+                smtpConfig.Username,
+                smtpConfig.Password,
+                smtpConfig.EnableSSL
+            ));
+
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IStudentEmailsRepository, StudentEmailsMongoRepository>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
