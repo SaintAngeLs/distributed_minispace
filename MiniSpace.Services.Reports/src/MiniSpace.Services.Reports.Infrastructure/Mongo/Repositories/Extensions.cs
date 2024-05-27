@@ -83,6 +83,15 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
+        public static FilterDefinition<ReportDocument> AddReviewerIdFilter(this FilterDefinition<ReportDocument> filterDefinition, Guid reviewerId)
+        {
+            if (reviewerId != Guid.Empty)
+            {
+                filterDefinition &= FilterDefinitionBuilder.Eq(x => x.ReviewerId, reviewerId);
+            }
+            return filterDefinition;
+        }
+        
         public static FilterDefinition<ReportDocument> AddStudentIdFilter(this FilterDefinition<ReportDocument> filterDefinition, Guid studentId)
         {
             filterDefinition &= FilterDefinitionBuilder.Eq(x => x.IssuerId, studentId);

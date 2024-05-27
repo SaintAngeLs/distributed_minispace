@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
             var pageSize = command.Pageable.Size > 10 ? 10 : command.Pageable.Size;
 
             var result = await _reportRepository.BrowseReportsAsync(pageNumber, pageSize, 
-                contextTypes, states, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
+                contextTypes, states, command.RevieverId, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
 
             var pagedReports = new PagedResponse<IEnumerable<ReportDto>>(
                 result.reports.Select(r => new ReportDto(r)),

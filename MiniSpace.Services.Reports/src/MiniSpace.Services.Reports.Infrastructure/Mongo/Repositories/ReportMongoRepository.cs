@@ -53,12 +53,13 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
         }
         
         public async Task<(IEnumerable<Report> reports, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseReportsAsync(int pageNumber, int pageSize, 
-            IEnumerable<ContextType> contextTypes, IEnumerable<ReportState> states, IEnumerable<string> sortBy,
-            string direction)
+            IEnumerable<ContextType> contextTypes, IEnumerable<ReportState> states, Guid reviewerId,
+            IEnumerable<string> sortBy, string direction)
         {
             var filterDefinition = Extensions.ToFilterDefinition()
                 .AddContextTypesFilter(contextTypes)
-                .AddStatesFilter(states);
+                .AddStatesFilter(states)
+                .AddReviewerIdFilter(reviewerId);
             var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
             
             var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
