@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
 using MiniSpace.Web.Areas.MediaFiles;
 using MiniSpace.Web.Areas.Reactions;
+using MiniSpace.Web.Areas.Reports;
 
 namespace MiniSpace.Web
 {
@@ -72,6 +73,7 @@ namespace MiniSpace.Web
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
             services.AddScoped<IFriendsService, FriendsService>();
             services.AddScoped<IReactionsService, ReactionsService>();
+            services.AddScoped<IReportsService, ReportsService>();
 
         }
 
