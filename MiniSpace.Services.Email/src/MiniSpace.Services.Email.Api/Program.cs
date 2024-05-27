@@ -31,11 +31,9 @@ namespace MiniSpace.Services.Email.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Get<GetNotificationsByUser, Application.Queries.PagedResult<NotificationDto>>("notifications/{userId}")
-                        .Get<GetNotification, NotificationDto>("notifications/{userId}/{notificationId}")
-                        .Post<CreateNotification>("notifications")
-                        .Put<UpdateNotificationStatus>("notifications/{userId}/{notificationId}/status")
-                        .Delete<DeleteNotification>("notifications/notification/{userId}/{notificationId}")))
+                        .Get<GetEmailNotificationsByUser, Application.Queries.PagedResult<EmailNotificationDto>>("email-notifications/{userId}")
+                        .Post<CreateEmailNotification>("email-notifications",
+                            afterDispatch: (cmd, ctx) => ctx.Response.WriteAsJsonAsync(new { Message = "Email notification created successfully.", NotificationId = cmd.EmailNotificationId }))))
                 .UseLogging()
                 .UseLogging()
                 .Build()
