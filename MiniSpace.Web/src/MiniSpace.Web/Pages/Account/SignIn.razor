@@ -116,7 +116,7 @@
                 <h3>Sign In</h3>
             </div>
             <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" Close="@OnAlertClose">
-                Error: @errorMessage
+                @errorMessage
             </RadzenAlert>
             <RadzenTemplateForm Data="@signInModel" Submit="@(async (SignInModel args) => { await HandleSignIn(); })">
                 <RadzenFieldset>
