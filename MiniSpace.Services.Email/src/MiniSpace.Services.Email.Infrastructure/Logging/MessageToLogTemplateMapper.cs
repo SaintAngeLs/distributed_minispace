@@ -13,13 +13,13 @@ namespace MiniSpace.Services.Email.Infrastructure.Logging
                 {
                     typeof(CreateEmailNotification), new HandlerLogTemplate
                     {
-                        After = "Sent email with ID: {EmailId} to user: {UserId}."
+                        After = "Sent email with ID: {EmailNotificationId} to user: {UserId}."
                     }
                 },
                 {
                     typeof(EmailSent), new HandlerLogTemplate
                     {
-                        After = "Email successfully sent with ID: {EmailId} at {SentAt}."
+                        After = "Email successfully sent with ID: {EmailNotificationId} at {SentAt}."
                     }
                 }
             };

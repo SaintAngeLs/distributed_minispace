@@ -27,7 +27,6 @@ namespace MiniSpace.Services.Email.Infrastructure.Services
 
         public async Task SendEmailAsync(string to, string subject, string htmlContent)
         {
-            Console.WriteLine($"Sending HTML email from: {_fromEmail} to: {to}"); 
             if (string.IsNullOrEmpty(_fromEmail))
             {
                 throw new InvalidOperationException("Sender email address ('fromEmail') is not configured.");
