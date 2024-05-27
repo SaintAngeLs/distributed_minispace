@@ -101,17 +101,10 @@ namespace MiniSpace.Services.Email.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<CreateNotification>()
-                .SubscribeCommand<DeleteNotification>()
-                .SubscribeCommand<UpdateNotificationStatus>()
+                .SubscribeCommand<CreateEmailNotification>()
                 // .SubscribeEvent<FriendRequestCreated>()
                 // .SubscribeEvent<FriendRequestCreated>()
-                .SubscribeEvent<FriendRequestSent>()
-                .SubscribeEvent<FriendInvited>()
-                .SubscribeEvent<FriendAdded>()
-                .SubscribeEvent<PendingFriendAccepted>()
-                .SubscribeEvent<PendingFriendDeclined>()
-                .SubscribeEvent<EventCreated>();
+                .SubscribeEvent<NotificationCreated>();
                 // .SubscribeEvent<NotificationCreated>()
                 // .SubscribeEvent<NotificationDeleted>()
                 // .SubscribeEvent<NotificationUpdated>();

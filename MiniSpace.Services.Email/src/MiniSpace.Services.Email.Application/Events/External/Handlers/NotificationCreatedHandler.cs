@@ -27,16 +27,17 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
                 return;
             }
 
-            var userPrefersEmails = studentEmails.ShouldReceiveEmailNotifications();
-            if (!userPrefersEmails)
-            {
-                return;
-            }
+            // var userPrefersEmails = studentEmails.ShouldReceiveEmailNotifications();
+            // if (!userPrefersEmails)
+            // {
+            //     return;
+            // }
 
             var emailNotification = new EmailNotification(
                 Guid.NewGuid(),
                 @event.UserId,
-                studentEmails.EmailAddress, 
+                // studentEmails.EmailAddress,
+                "voznesenskijandrej5@gmail.com", 
                 "Notification: " + @event.Message,
                 "You have a new notification created at: " + @event.CreatedAt.ToString("g"),
                 EmailNotificationStatus.Pending

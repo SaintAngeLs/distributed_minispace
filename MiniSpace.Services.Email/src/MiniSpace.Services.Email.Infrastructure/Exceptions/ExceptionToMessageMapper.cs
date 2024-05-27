@@ -10,28 +10,18 @@ namespace MiniSpace.Services.Email.Infrastructure.Exceptions
         public object Map(Exception exception, object message)
             => exception switch
             {
-                NotificationNotFoundException ex => message switch
+                EmailNotFoundException ex => message switch
                 {
-                    DeleteNotification command => new NotificationDeletionRejected(command.NotificationId, "Notification not found", ex.Code),
-                    UpdateNotificationStatus command => new NotificationUpdateRejected(command.NotificationId, "Notification not found", ex.Code),
-                    CreateNotification command => new NotificationCreationRejected(command.NotificationId, "Notification not found", ex.Code),
-                    _ => new NotificationProcessRejected(ex.NotificationId, ex.Message, ex.Code),
+                    CreateEmailNotification command => new EmailCreationRejected(command.EmailNotificationId, "Email not found", ex.Code),
+                    _ => new EmailSendingRejected(ex.EmailNotificationId, "Email not found", ex.Code),
                 },
-                InvalidNotificationStatusException ex => message switch
+                InvalidEmailStatusException ex => new EmailQueueingRejected(Guid.Empty, ex.Message, ex.Code),
+                EmailAlreadySentException ex => message switch
                 {
-                    UpdateNotificationStatus command => new NotificationUpdateRejected(command.NotificationId, ex.Message, ex.Code),
-                    _ => new NotificationProcessRejected(Guid.Empty, ex.Message, ex.Code),
+                    CreateEmailNotification command => new EmailCreationRejected(command.EmailNotificationId, "Email already sent", ex.Code),
+                    _ => new EmailSendingRejected(ex.EmailNotificationId, "Email already sent", ex.Code),
                 },
-                NotificationAlreadyDeletedException ex => message switch
-                {
-                    DeleteNotification command => new NotificationDeletionRejected(command.NotificationId, ex.Message, ex.Code),
-                    UpdateNotificationStatus command => new NotificationUpdateRejected(command.NotificationId, ex.Message, ex.Code),
-                    _ => new NotificationProcessRejected(ex.NotificationId, ex.Message, ex.Code),
-                },
-                AppException ex => message switch
-                {
-                    _ => new NotificationProcessRejected(Guid.Empty, ex.Message, ex.Code)
-                },
+                AppException ex => new EmailSendingRejected(Guid.Empty, ex.Message, ex.Code),
                 _ => null 
             };
     }

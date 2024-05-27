@@ -5,12 +5,12 @@ using System;
 
 namespace MiniSpace.Services.Email.Application.Queries
 {
-    public class GetEmail : IQuery<EmailNotification>
+    public class GetEmailNotification : IQuery<EmailNotification>
     {
         public Guid UserId { get; set; }
         public Guid EmailId { get; set; }
 
-        public GetEmail(Guid userId, Guid notificationId)
+        public GetEmailNotification(Guid userId, Guid notificationId)
         {
             UserId = userId;
             EmailId = notificationId;
