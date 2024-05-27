@@ -2,6 +2,7 @@ using Convey.MessageBrokers;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using MiniSpace.Services.Email.Infrastructure;
+using MiniSpace.Services.Email.Application;
 
 namespace MiniSpace.Services.Email.Infrastructure.Contexts
 {

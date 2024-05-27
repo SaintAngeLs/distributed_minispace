@@ -1,200 +1,114 @@
 using MiniSpace.Services.Email.Application.Dto;
 using MiniSpace.Services.Email.Core.Entities;
+using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace MiniSpace.Services.Email.Infrastructure.Mongo.Documents
+namespace MiniSpace.Services.Email.Infrastructure.Mongo.Extensions
 {
-    public static class Extensions
+    public static class EmailExtensions
     {
-        public static Notification AsEntity(this NotificationDocument document)
-            => new Notification(
-                document.NotificationId,
+        public static EmailNotificationDocument AsDocument(this EmailNotification entity)
+        {
+            return new EmailNotificationDocument
+            {
+                EmailNotificationId = entity.EmailNotificationId,
+                UserId = entity.UserId,
+                EmailAddress = entity.EmailAddress,
+                Subject = entity.Subject,
+                Body = entity.Body,
+                Status = entity.Status,
+                CreatedAt = entity.CreatedAt,
+                SentAt = entity.SentAt
+            };
+        }
+
+        public static EmailNotification AsEntity(this EmailNotificationDocument document)
+        {
+            return new EmailNotification(
+                document.EmailNotificationId,
                 document.UserId,
-                document.Message,
-                Enum.Parse<NotificationStatus>(document.Status, true),
-                document.CreatedAt,
-                document.UpdatedAt,
-                document.EventType,
-                document.RelatedEntityId);
-
-        public static NotificationDocument AsDocument(this Notification entity)
-            => new NotificationDocument
+                document.EmailAddress,
+                document.Subject,
+                document.Body,
+                document.Status
+            )
             {
-                NotificationId = entity.NotificationId,
-                UserId = entity.UserId,
-                Message = entity.Message,
-                Status = entity.Status.ToString(),
-                CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt,
-                RelatedEntityId = entity.RelatedEntityId,
-                EventType = entity.EventType
-            };
-
-        public static NotificationDto AsDto(this Notification entity)
-            => new NotificationDto
-            {
-                NotificationId = entity.NotificationId,
-                UserId = entity.UserId,
-                Message = entity.Message,
-                Status = entity.Status.ToString(),
-                CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt,
-                RelatedEntityId = entity.RelatedEntityId,
-                EventType = entity.EventType
-            };
-
-        public static NotificationDto AsDto(this NotificationDocument document)
-            => new NotificationDto
-            {
-                NotificationId = document.NotificationId,
-                UserId = document.UserId,
-                Message = document.Message,
-                Status = document.Status,
                 CreatedAt = document.CreatedAt,
-                UpdatedAt = document.UpdatedAt,
-                RelatedEntityId = document.RelatedEntityId,
-                EventType = document.EventType
-            };
-
-
-        public static FriendEvent AsEntity(this FriendEventDocument document)
-        {
-            return new FriendEvent(
-                document.Id,
-                document.EventId,
-                document.UserId,
-                document.FriendId,
-                document.EventType,
-                document.Details,
-                document.CreatedAt
-            );
-        }
-
-        public static FriendEventDocument AsDocument(this FriendEvent entity)
-        {
-            return new FriendEventDocument
-            {
-                Id = entity.Id,
-                EventId = entity.EventId,
-                UserId = entity.UserId,
-                FriendId = entity.FriendId, 
-                EventType = entity.EventType,
-                Details = entity.Details,
-                CreatedAt = entity.CreatedAt
+                SentAt = document.SentAt
             };
         }
-
-        public static FriendEventDto AsDto(this FriendEventDocument document)
+        public static StudentEmailsDocument AsDocument(this StudentEmails entity)
         {
-            return new FriendEventDto
+            return new StudentEmailsDocument
             {
-                Id = document.Id,
-                EventId = document.EventId,
-                UserId = document.UserId,
-                EventType = document.EventType,
-                Details = document.Details,
-                CreatedAt = document.CreatedAt
-            };
-        }
-
-       public static Student AsEntity(this StudentDocument document)
-        {
-            return new Student(
-                document.Id,
-                document.Email,
-                document.FirstName,
-                document.LastName,
-                document.NumberOfFriends,
-                document.ProfileImage,
-                document.Description,
-                document.DateOfBirth,
-                document.EmailNotifications,
-                document.IsBanned,
-                document.IsOrganizer,
-                document.State,
-                document.CreatedAt
-            );
-        }
-
-        public static StudentDocument AsDocument(this Student entity)
-        {
-            return new StudentDocument
-            {
-                Id = entity.Id,
-                Email = entity.Email,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                NumberOfFriends = entity.NumberOfFriends,
-                ProfileImage = entity.ProfileImage,
-                Description = entity.Description,
-                DateOfBirth = entity.DateOfBirth,
-                EmailNotifications = entity.EmailNotifications,
-                IsBanned = entity.IsBanned,
-                IsOrganizer = entity.IsOrganizer,
-                State = entity.State,
-                CreatedAt = entity.CreatedAt,
-                InterestedInEvents = entity.InterestedInEvents,
-                SignedUpEvents = entity.SignedUpEvents
-            };
-        }
-
-        public static StudentDto AsDto(this StudentDocument document)
-        {
-            return new StudentDto
-            {
-                Id = document.Id,
-                Email = document.Email,
-                FirstName = document.FirstName,
-                LastName = document.LastName,
-                NumberOfFriends = document.NumberOfFriends,
-                ProfileImage = document.ProfileImage,
-                Description = document.Description,
-                DateOfBirth = document.DateOfBirth,
-                EmailNotifications = document.EmailNotifications,
-                IsBanned = document.IsBanned,
-                IsOrganizer = document.IsOrganizer,
-                State = document.State,
-                CreatedAt = document.CreatedAt,
-                InterestedInEvents = document.InterestedInEvents,
-                SignedUpEvents = document.SignedUpEvents
-            };
-        }
-
-        public static StudentNotifications AsEntity(this StudentNotificationsDocument document)
-        {
-            var studentNotifications = new StudentNotifications(document.StudentId);
-            foreach (var notificationDocument in document.Notifications)
-            {
-                var notification = notificationDocument.AsEntity(); 
-                studentNotifications.AddNotification(notification);
-            }
-            return studentNotifications;
-        }
-
-        public static StudentNotificationsDocument AsDocument(this StudentNotifications entity)
-        {
-            var notifications = new List<NotificationDocument>();
-            foreach (var notification in entity.Notifications) 
-            {
-                notifications.Add(notification.AsDocument()); 
-            }
-
-            return new StudentNotificationsDocument
-            {
-                Id = Guid.NewGuid(), 
+                Id = entity.StudentId, 
                 StudentId = entity.StudentId,
-                Notifications = notifications
+                EmailNotifications = entity.EmailNotifications.Select(en => en.AsDocument()).ToList()
             };
         }
 
-        public static IEnumerable<NotificationDto> AsDto(this StudentNotificationsDocument document)
+        public static StudentEmails AsEntity(this StudentEmailsDocument document)
         {
-            return document.Notifications.Select(nd => nd.AsDto()); 
+            var studentEmails = new StudentEmails(document.StudentId);
+            foreach (var notificationDocument in document.EmailNotifications)
+            {
+                studentEmails.AddEmailNotification(notificationDocument.AsEntity());
+            }
+            return studentEmails;
         }
 
-        public static List<NotificationDocument> AsDocumentList(this IEnumerable<Notification> notifications)
+         public static EmailNotificationDto AsDto(this EmailNotification entity)
         {
-            return notifications.Select(n => n.AsDocument()).ToList();
+            return new EmailNotificationDto
+            {
+                EmailNotificationId = entity.EmailNotificationId,
+                UserId = entity.UserId,
+                EmailAddress = entity.EmailAddress,
+                Subject = entity.Subject,
+                Body = entity.Body,
+                Status = entity.Status.ToString(),
+                CreatedAt = entity.CreatedAt,
+                SentAt = entity.SentAt
+            };
         }
-    }    
+
+        public static EmailNotification AsEntity(this EmailNotificationDto dto)
+        {
+            return new EmailNotification(
+                dto.EmailNotificationId,
+                dto.UserId,
+                dto.EmailAddress,
+                dto.Subject,
+                dto.Body,
+                Enum.Parse<EmailNotificationStatus>(dto.Status, true)
+            )
+            {
+                CreatedAt = dto.CreatedAt,
+                SentAt = dto.SentAt
+            };
+        }
+        
+
+        // public static StudentEmailsDto AsDto(this StudentEmails entity)
+        // {
+        //     var dto = new StudentEmailsDto(entity.StudentId);
+        //     foreach (var notification in entity.EmailNotifications)
+        //     {
+        //         dto.AddNotification(notification.AsDto());
+        //     }
+        //     return dto;
+        // }
+
+        // public static StudentEmails AsEntity(this StudentEmailsDto dto)
+        // {
+        //     var studentEmails = new StudentEmails(dto.StudentId);
+        //     foreach (var notificationDto in dto.Notifications)
+        //     {
+        //         studentEmails.AddEmailNotification(notificationDto.AsEntity());
+        //     }
+        //     return studentEmails;
+        // }
+    }
 }

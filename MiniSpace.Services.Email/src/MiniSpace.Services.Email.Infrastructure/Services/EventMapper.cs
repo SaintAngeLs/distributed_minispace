@@ -1,7 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
 using Convey.CQRS.Events;
-using MiniSpace.Services.Email.Application.Services;
-using MiniSpace.Services.Email.Core;
 using MiniSpace.Services.Email.Core.Events;
+using MiniSpace.Services.Email.Application.Events.External;
+using MiniSpace.Services.Email.Application.Events;
+using MiniSpace.Services.Email.Application.Services;
+
+using EmailSentCore = MiniSpace.Services.Email.Core.Events.EmailSent;
 
 namespace MiniSpace.Services.Email.Infrastructure.Services
 {
@@ -14,18 +19,15 @@ namespace MiniSpace.Services.Email.Infrastructure.Services
         {
             switch (@event)
             {
-                case NotificationCreated e:
-                    return new MiniSpace.Services.Notifications.Application.Events.External.NotificationCreated(
-                        e.NotificationId, e.UserId, e.Message, e.CreatedAt);
-                case NotificationUpdated e:
-                    return new MiniSpace.Services.Notifications.Application.Events.External.NotificationUpdated(
-                        e.NotificationId, e.UserId, e.NewStatus);
-                case NotificationDeleted e:
-                    return new MiniSpace.Services.Notifications.Application.Events.External.NotificationDeleted(
-                         e.UserId, e.NotificationId);
+                case EmailCreated e:
+                    return new EmailCreated(e.EmailNotificationId, e.UserId);
+                case EmailDeleted e:
+                    return new UserStatusChanged(e.UserId, "Deleted"); 
+                case EmailSentCore e:
+                    return new Application.Events.EmailSent(e.EmailNotificationId, e.UserId, e.SentAt);
+                default:
+                    return null;
             }
-
-            return null;
         }
     }
 }

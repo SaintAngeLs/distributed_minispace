@@ -42,6 +42,8 @@ using MiniSpace.Services.Email.Infrastructure.Services;
 using MiniSpace.Services.Email.Infrastructure;
 using MiniSpace.Services.Email.Application.Services.Clients;
 using MiniSpace.Services.Email.Infrastructure.Services.Clients;
+using Elasticsearch.Net;
+
 
 namespace MiniSpace.Services.Email.Infrastructure
 {
@@ -50,21 +52,16 @@ namespace MiniSpace.Services.Email.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
-            builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
-            builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
-            builder.Services.AddTransient<IStudentNotificationsRepository, StudentNotificationsMongoRepository>();
-            builder.Services.AddTransient<IExtendedStudentNotificationsRepository, StudentNotificationsMongoRepository>();
-            builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            builder.Services.AddTransient<IStudentEmailsRepository, StudentEmailsMongoRepository>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
-            builder.Services.AddTransient<IFriendsServiceClient, FriendsServiceClient>();
+            builder.Services.AddSingleton<Application.Services.IDateTimeProvider, Services.DateTimeProvider>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-            builder.Services.AddHostedService<NotificationCleanupService>();  
+            // builder.Services.AddHostedService<NotificationCleanupService>();  
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -81,10 +78,8 @@ namespace MiniSpace.Services.Email.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<NotificationDocument, Guid>("notifications")
-                .AddMongoRepository<FriendEventDocument, Guid>("friend-service")
+                .AddMongoRepository<StudentEmailsDocument, Guid>("student-emails")
                 .AddMongoRepository<StudentDocument, Guid>("students")
-                .AddMongoRepository<StudentNotificationsDocument, Guid>("students-notifications")
                 // .AddMongoRepository<FriendEventDocument, Guid>("events-service")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()

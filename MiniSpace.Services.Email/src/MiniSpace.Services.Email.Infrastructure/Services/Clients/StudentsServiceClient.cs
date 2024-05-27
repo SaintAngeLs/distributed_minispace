@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Convey.HTTP;
-using MiniSpace.Services.Notifications.Application.Dto;
-using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Email.Application.Dto;
+using MiniSpace.Services.Email.Application.Services.Clients;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
+namespace MiniSpace.Services.Email.Infrastructure.Services.Clients
 {
     public class StudentsServiceClient : IStudentsServiceClient
     {

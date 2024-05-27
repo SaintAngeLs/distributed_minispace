@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Email.Infrastructure.Logging
     {
         public static IConveyBuilder AddHandlersLogging(this IConveyBuilder builder)
         {
-            var assembly = typeof(UpdateNotificationStatus).Assembly;
+            var assembly = typeof(CreateEmailNotification).Assembly;
             
             builder.Services.AddSingleton<IMessageToLogTemplateMapper>(new MessageToLogTemplateMapper());
             

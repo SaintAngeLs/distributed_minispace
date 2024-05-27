@@ -1,5 +1,6 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Email.Application.Commands;
+using MiniSpace.Services.Email.Application.Events;
 using MiniSpace.Services.Email.Application.Events.External;
 
 namespace MiniSpace.Services.Email.Infrastructure.Logging
@@ -10,43 +11,17 @@ namespace MiniSpace.Services.Email.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(CreateNotification), new HandlerLogTemplate
+                    typeof(CreateEmailNotification), new HandlerLogTemplate
                     {
-                        After = "Created notification with id: {NotificationId} for user: {UserId}."
+                        After = "Sent email with ID: {EmailId} to user: {UserId}."
                     }
                 },
                 {
-                    typeof(DeleteNotification), new HandlerLogTemplate
+                    typeof(EmailSent), new HandlerLogTemplate
                     {
-                        After = "Deleted notification with id: {NotificationId}."
+                        After = "Email successfully sent with ID: {EmailId} at {SentAt}."
                     }
-                },
-                {
-                    typeof(UpdateNotificationStatus), new HandlerLogTemplate
-                    {
-                        After = "Updated the status of notification with id: {NotificationId} to: {NewStatus}."
-                    }
-                },
-                {typeof(FriendRequestCreated), new HandlerLogTemplate
-                    {
-                        After = "Processed creation of friend request from {RequesterId} to {FriendId}."
-                    }
-                },
-                {typeof(FriendRequestSent), new HandlerLogTemplate
-                    {
-                        After = "Processed friend request sent from {InviterId} to {InviteeId}."
-                    }
-                },
-                {typeof(FriendInvited), new HandlerLogTemplate
-                    {
-                        After = "Handled invitation sent by {InviterId} to {InviteeId}."
-                    }
-                },
-                {typeof(NotificationCreated), new HandlerLogTemplate
-                    {
-                        After = "Notification created with ID: {NotificationId} for user: {UserId}, message: '{Message}' at {CreatedAt}."
-                    }
-                },
+                }
             };
         
          public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class
