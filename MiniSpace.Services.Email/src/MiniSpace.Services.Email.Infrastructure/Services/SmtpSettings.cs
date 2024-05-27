@@ -12,5 +12,6 @@ namespace MiniSpace.Services.Email.Infrastructure.Services
         public string FromEmail { get; set; }
         public string Password { get; set; }
         public bool EnableSSL { get; set; }
+        public string DisplaySenderEmail { get; set; }
     }
 }

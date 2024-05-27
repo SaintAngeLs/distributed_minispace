@@ -61,7 +61,8 @@ namespace MiniSpace.Services.Email.Infrastructure
                 smtpConfig.Port,
                 smtpConfig.FromEmail,
                 smtpConfig.Password,
-                smtpConfig.EnableSSL
+                smtpConfig.EnableSSL,
+                smtpConfig.DisplaySenderEmail 
             ));
 
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
