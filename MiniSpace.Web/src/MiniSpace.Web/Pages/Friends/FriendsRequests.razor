@@ -45,10 +45,7 @@
                 @foreach (var request in filteredIncomingRequests)
                 {
                     <div class="friend-card" @onclick="@(() => RedirectToDetails(request.InviterId))">
-                        @if (images.ContainsKey(request.InviterId))
-                        {
-                            <img src="@GetImage(request.InviterId)" alt="Inviter Image" class="friend-img">
-                        }
+                        <img src="@GetImage(request.InviterId)" alt="Inviter Image" class="friend-img">
                         <div class="friend-info">
                             <h5>@request.InviterName</h5>
                             <p>Email: @request.InviterEmail</p>
@@ -231,7 +228,10 @@
     private async Task FetchImageAsync(Guid inviterId, Guid profileImage)
     {
         var result = await MediaFilesService.GetFileAsync(profileImage);
-        images[inviterId] = result.Base64Content;
+        if (result != null)
+        {
+            images[inviterId] = result.Base64Content;
+        }
     }
 
     private string GetImage(Guid studentId)
