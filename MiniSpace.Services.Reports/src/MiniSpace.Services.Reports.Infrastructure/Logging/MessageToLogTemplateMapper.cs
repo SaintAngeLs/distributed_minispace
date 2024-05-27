@@ -22,6 +22,12 @@ namespace MiniSpace.Services.Reports.Infrastructure.Logging
                     }
                 },
                 {
+                    typeof(DeleteReport), new HandlerLogTemplate
+                    {
+                        After = "Deleted a report with ID: {ReportId}."
+                    }
+                },
+                {
                     typeof(StartReportReview),  new HandlerLogTemplate
                     {
                         After = "Started a review for a report with ID: {ReportId}."
