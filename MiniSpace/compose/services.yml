@@ -101,6 +101,15 @@ services:
       - 5006:80
     networks:
       - minispace
+
+  reports-service:
+    image: adrianvsaint/minispace.services.reports:latest
+    container_name: reports-service
+    restart: unless-stopped
+    ports:
+      - 5005:80
+    networks:
+      - minispace
   
   web:
     image: adrianvsaint/minispace.web:latest
