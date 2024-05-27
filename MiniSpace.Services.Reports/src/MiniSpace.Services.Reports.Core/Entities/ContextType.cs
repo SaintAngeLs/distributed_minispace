@@ -5,7 +5,6 @@
         Event,
         Post,
         Comment,
-        StudentProfile,
-        MediaFile
+        StudentProfile
     }
 }
