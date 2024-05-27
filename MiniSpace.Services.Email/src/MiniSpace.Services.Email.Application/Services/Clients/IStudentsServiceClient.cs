@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Email.Application.Dto;
 
 namespace MiniSpace.Services.Email.Application.Services.Clients
 {

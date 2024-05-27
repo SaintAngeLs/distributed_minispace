@@ -5,7 +5,7 @@ using System;
 
 namespace MiniSpace.Services.Email.Application.Queries
 {
-    public class GetNotificationsByUser : IQuery<PagedResult<NotificationDto>>, IPagedNotificationsQuery
+    public class GetEmailNotificationsByUser : IQuery<PagedResult<EmailNotificationDto>>
     {
         public Guid UserId { get; set; }
         public DateTime? StartDate { get; set; }

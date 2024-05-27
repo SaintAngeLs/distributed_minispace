@@ -1,9 +1,9 @@
 using Convey.CQRS.Commands;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Core.Entities;
-using MiniSpace.Services.Notifications.Application.Services;
+using MiniSpace.Services.Email.Core.Repositories;
+using MiniSpace.Services.Email.Core.Entities;
+using MiniSpace.Services.Email.Application.Services;
 
-namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
+namespace MiniSpace.Services.Email.Application.Commands.Handlers
 {
     public class CreateNotificationHandler : ICommandHandler<CreateNotification>
     {
