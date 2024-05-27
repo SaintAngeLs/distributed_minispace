@@ -44,6 +44,7 @@ namespace MiniSpace.Services.Reports.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Post<CreateReport>("reports", afterDispatch: (cmd, ctx) 
                             => ctx.Response.Created($"reports/{cmd.ReportId}"))
+                        .Delete<DeleteReport>("reports/{reportId}")
                         .Post<CancelReport>("reports/{reportId}/cancel")
                         .Post<StartReportReview>("reports/{reportId}/start-review")
                         .Post<ResolveReport>("reports/{reportId}/resolve")

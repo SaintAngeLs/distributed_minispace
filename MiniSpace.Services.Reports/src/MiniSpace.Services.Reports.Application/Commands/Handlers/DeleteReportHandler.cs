@@ -6,23 +6,21 @@ using MiniSpace.Services.Reports.Core.Repositories;
 
 namespace MiniSpace.Services.Reports.Application.Commands.Handlers
 {
-    public class CancelReportHandler : ICommandHandler<CancelReport>
+    public class DeleteReportHandler : ICommandHandler<DeleteReport>
     {
         private readonly IReportRepository _reportRepository;
         private readonly IAppContext _appContext;
-        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
 
-        public CancelReportHandler(IReportRepository reportRepository, IAppContext appContext,
-            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker)
+        public DeleteReportHandler(IReportRepository reportRepository, IAppContext appContext,
+            IMessageBroker messageBroker)
         {
             _reportRepository = reportRepository;
             _appContext = appContext;
-            _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(CancelReport command, CancellationToken cancellationToken)
+        public async Task HandleAsync(DeleteReport command, CancellationToken cancellationToken)
         {
             var report = await _reportRepository.GetAsync(command.ReportId);
             if (report is null)
@@ -31,14 +29,13 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
             }
             
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != report.IssuerId)
+            if (identity.IsAuthenticated && !identity.IsAdmin)
             {
                 throw new UnauthorizedReportAccessAttemptException(report.Id, identity.Id);
             }
 
-            report.Cancel(_dateTimeProvider.Now);
-            await _reportRepository.UpdateAsync(report);
-            await _messageBroker.PublishAsync(new ReportCancelled(report.Id));
+            await _reportRepository.DeleteAsync(report.Id);
+            await _messageBroker.PublishAsync(new ReportDeleted(report.Id));
         }
     }
 }
