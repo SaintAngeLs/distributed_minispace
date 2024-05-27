@@ -10,22 +10,24 @@ namespace MiniSpace.Services.Email.Application.Commands.Handlers
     public class CreateEmailNotificationHandler : ICommandHandler<CreateEmailNotification>
     {
         private readonly IStudentEmailsRepository _studentEmailsRepository;
+        private readonly IEmailService _emailService;
         private readonly IMessageBroker _messageBroker;
 
-        public CreateEmailNotificationHandler(IStudentEmailsRepository studentEmailsRepository, IMessageBroker messageBroker)
+        public CreateEmailNotificationHandler(IStudentEmailsRepository studentEmailsRepository, IMessageBroker messageBroker, IEmailService emailService) 
         {
             _studentEmailsRepository = studentEmailsRepository;
             _messageBroker = messageBroker;
+            _emailService = emailService; 
         }
+
 
         public async Task HandleAsync(CreateEmailNotification command, CancellationToken cancellationToken = default)
         {
             var studentEmails = await _studentEmailsRepository.GetByStudentIdAsync(command.UserId);
             if (studentEmails == null)
             {
-                // Assume you handle the case where the student doesn't exist yet.
-                // Depending on the domain rules, you might want to create a new record.
-                return;
+                // Handle the case where the student doesn't exist yet.
+                // return;
             }
 
             var emailNotification = new EmailNotification(
@@ -37,11 +39,11 @@ namespace MiniSpace.Services.Email.Application.Commands.Handlers
                 EmailNotificationStatus.Pending
             );
 
-            studentEmails.AddEmailNotification(emailNotification);
-            await _studentEmailsRepository.UpdateAsync(studentEmails);
+            // studentEmails.AddEmailNotification(emailNotification);
+            // await _studentEmailsRepository.UpdateAsync(studentEmails);
 
-            // Optionally, notify other parts of the system an email has been created
-            // This could be a separate event such as EmailNotificationCreated if needed.
+            // Send the email using the email service
+            await _emailService.SendEmailAsync(command.EmailAddress, command.Subject, command.Body);
         }
     }
 }

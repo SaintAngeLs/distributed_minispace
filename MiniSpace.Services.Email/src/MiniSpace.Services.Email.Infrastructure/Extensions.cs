@@ -59,7 +59,7 @@ namespace MiniSpace.Services.Email.Infrastructure
             new SmtpEmailService(
                 smtpConfig.Host,
                 smtpConfig.Port,
-                smtpConfig.Username,
+                smtpConfig.FromEmail,
                 smtpConfig.Password,
                 smtpConfig.EnableSSL
             ));

@@ -25,9 +25,23 @@ namespace MiniSpace.Services.Email.Infrastructure.Services
             _enableSSL = enableSSL;
         }
 
-        public async Task SendEmailAsync(string to, string subject, string body)
+        public async Task SendEmailAsync(string to, string subject, string htmlContent)
         {
-            var mailMessage = new MailMessage(_fromEmail, to, subject, body);
+            Console.WriteLine($"Sending HTML email from: {_fromEmail} to: {to}"); 
+            if (string.IsNullOrEmpty(_fromEmail))
+            {
+                throw new InvalidOperationException("Sender email address ('fromEmail') is not configured.");
+            }
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(_fromEmail),
+                Subject = subject,
+                Body = htmlContent,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(to);
+
             using (var client = new SmtpClient(_smtpHost, _smtpPort))
             {
                 client.EnableSsl = _enableSSL;
@@ -35,5 +49,6 @@ namespace MiniSpace.Services.Email.Infrastructure.Services
                 await client.SendMailAsync(mailMessage);
             }
         }
+
     }
 }
