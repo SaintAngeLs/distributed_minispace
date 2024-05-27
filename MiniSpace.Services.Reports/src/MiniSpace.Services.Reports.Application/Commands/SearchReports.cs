@@ -7,7 +7,7 @@ namespace MiniSpace.Services.Reports.Application.Commands
     {
         public IEnumerable<string> ContextTypes { get; set; }
         public IEnumerable<string> States { get; set; }
-        public Guid RevieverId { get; set; }
+        public Guid ReviewerId { get; set; }
         public PageableDto Pageable { get; set; }
     }
 }
