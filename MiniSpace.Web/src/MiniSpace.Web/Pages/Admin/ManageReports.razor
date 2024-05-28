@@ -21,6 +21,10 @@
 {
     <h4 class="rz-p-8">To see details and manage a report, open details dialog by clicking "Show" button.</h4>
     
+    <div class="rz-p-4 rz-text-align-center">
+        <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
+    </div>
+    
     <RadzenStack Gap="1rem" Style="height: 100%">
         @if (totalElements == 0)
         {
@@ -54,15 +58,15 @@
     
     private SearchReportsModel searchReportsModel = new()
     {
-        ContextTypes = [],
-        States = [],
+        ContextTypes = ["Event", "Post", "Comment", "StudentProfile"],
+        States = ["Submitted", "UnderReview", "Resolved", "Rejected", "Cancelled"],
         Pageable = new PageableDto()
         {
             Page = 1,
             Size = 5,
             Sort = new SortDto()
             {
-                SortBy = new List<string>() { "createdAt" },
+                SortBy = new List<string>() { "updatedAt", "createdAt" },
                 Direction = "des"
             }
         }  
@@ -83,9 +87,15 @@
         if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
             adminId = IdentityService.GetCurrentUserId();
+
+            foreach (var contextType in searchReportsModel.ContextTypes)
+            {
+                Console.WriteLine(contextType);
+            }
             
             var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
-                searchReportsModel.States, searchReportsModel.ReviewerId, searchReportsModel.Pageable);
+                searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
+                searchReportsModel.Pageable);
             if (response.Content != null)
             {
                 totalPages = response.Content.TotalPages;
@@ -101,5 +111,17 @@
             
             pageInitialized = true;
         }
+    }
+    
+    private async Task OpenSearchDialog()
+    {
+        await DialogService.OpenAsync<SearchReportsDialog>("Filter all reports by criteria:",
+            new Dictionary<string, object>() { { "SearchReportsModel", searchReportsModel } },
+            new DialogOptions()
+            {
+                Width = "800px", Height = "550px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+        await OnInitializedAsync();
     }
 }
