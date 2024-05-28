@@ -4,7 +4,9 @@
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Models.Reports
 @using MiniSpace.Web.Pages.Admin.Dialogs
+@using MudBlazor
 @using Radzen
+@using Orientation = Radzen.Orientation
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @inject DialogService DialogService
@@ -30,6 +32,15 @@
         {
             <h3>There are not any reports created.</h3>
         }
+
+        @if (pageInitialized && totalElements != 0)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                               Selected="@searchReportsModel.Pageable.Page"
+                               Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
+            </RadzenStack>
+        }
         
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false"
                         PageSize="@pageSize" PagerHorizontalAlign="HorizontalAlign.Center"
@@ -49,13 +60,19 @@
                 <RadzenDataGridColumn Property="Reason" Title="Reason" Width="110px" TextAlign="TextAlign.Center" />
             </Columns>
         </RadzenDataGrid>
+
+        @if (pageInitialized && totalElements != 0)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                               Selected="@searchReportsModel.Pageable.Page"
+                               Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
+            </RadzenStack>
+        }
     </RadzenStack>
 }
 
 @code {
-    private const string dateFormat = "dd/MM/yyyy HH:mm";
-    private const string shortDateFormat = "dd/MM/yyyy";
-    
     private SearchReportsModel searchReportsModel = new()
     {
         ContextTypes = ["Event", "Post", "Comment", "StudentProfile"],
@@ -87,11 +104,6 @@
         if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
             adminId = IdentityService.GetCurrentUserId();
-
-            foreach (var contextType in searchReportsModel.ContextTypes)
-            {
-                Console.WriteLine(contextType);
-            }
             
             var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
                 searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
@@ -113,13 +125,24 @@
         }
     }
     
+    private async void SelectedPageChanged(int pageNumber)
+    {
+        searchReportsModel.Pageable.Page = pageNumber;
+        
+        var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
+            searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
+            searchReportsModel.Pageable);
+        reports = response.Content.Content;
+        StateHasChanged();
+    }
+    
     private async Task OpenSearchDialog()
     {
         await DialogService.OpenAsync<SearchReportsDialog>("Filter all reports by criteria:",
             new Dictionary<string, object>() { { "SearchReportsModel", searchReportsModel } },
             new DialogOptions()
             {
-                Width = "800px", Height = "550px", Resizable = true, Draggable = true,
+                Width = "800px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
         await OnInitializedAsync();

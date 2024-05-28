@@ -21,14 +21,12 @@
                             </Items>
                         </RadzenCheckBoxList>
                     </RadzenFormField>
-                    <RadzenFormField Text="Take care of reports" Variant="Variant.Outlined">
-                        <Start>
-                            <RadzenCheckBox @bind-Value="@TempSearchReportsModel.OnlyReviewedByYou" Class="rz-my-3"
-                                            Name="onlyReviewedByYou"/>
-                        </Start>
-                        <ChildContent>
-                            <RadzenLabel Text="Show only reviewed by You" Component="onlyReviewedByYou" Class="rz-mx-3" />
-                        </ChildContent>
+                    <RadzenFormField Text="Results on page" Variant="Variant.Outlined">
+                        <RadzenNumeric @bind-Value="@TempSearchReportsModel.Pageable.Size" />
+                    </RadzenFormField>
+                    <RadzenFormField Text="Sort direction" Variant="Variant.Outlined">
+                        <RadzenDropDown Data=@directions @bind-Value="@TempSearchReportsModel.Pageable.Sort.Direction"
+                                        TextProperty="Key" ValueProperty="Value" />
                     </RadzenFormField>
                 </RadzenStack>
             </RadzenColumn>
@@ -46,9 +44,15 @@
                             </Items>
                         </RadzenCheckBoxList>
                     </RadzenFormField>
-                    <RadzenFormField Text="Sort direction" Variant="Variant.Outlined">
-                        <RadzenDropDown Data=@directions @bind-Value="@TempSearchReportsModel.Pageable.Sort.Direction"
-                                        TextProperty="Key" ValueProperty="Value" />
+                    <RadzenFormField Text="Take care of reports" Variant="Variant.Outlined">
+                        <Start>
+                            <RadzenCheckBox @bind-Value="@TempSearchReportsModel.OnlyReviewedByYou" Class="rz-my-5"
+                                            Name="onlyReviewedByYou"/>
+                        </Start>
+                        <ChildContent>
+                            <RadzenLabel Text="Show only reports under your review"
+                                         Component="onlyReviewedByYou" Class="rz-mx-5" />
+                        </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>
             </RadzenColumn>
