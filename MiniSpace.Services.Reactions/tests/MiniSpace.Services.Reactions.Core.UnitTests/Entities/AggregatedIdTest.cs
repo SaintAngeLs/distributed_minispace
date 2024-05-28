@@ -48,5 +48,11 @@ namespace MiniSpace.Services.Reactions.Core.UnitTests.Entities
             // Assert
             Assert.Equal(id1.Value, id2.Value);
         }
+
+        [Fact]
+        public void Equals_WithNullOther_ShouldBeFalse() {
+            var id = new AggregateId(Guid.NewGuid());
+            Assert.False(id.Equals(null));
+        }
     }
 }
