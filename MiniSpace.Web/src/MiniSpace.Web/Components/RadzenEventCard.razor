@@ -3,7 +3,8 @@
 @using System.Globalization
 @inject NavigationManager NavigationManager
 
-<RadzenCard Class="@(Event.Status == "Archived" ? "archived-event rz-mx-auto" : "rz-mx-auto")" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);">
+<RadzenCard Class="@(Event.Status == "Archived" ? "archived-event rz-mx-auto" : "rz-mx-auto")" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer"
+            @onclick="@(() => NavigationManager.NavigateTo($"/events/{Event.Id}"))">
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
         <RadzenStack Gap="0">
             <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
@@ -30,7 +31,7 @@
     </RadzenCard>
     <RadzenRow RowGap="0">
         <RadzenColumn SizeSM="9">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-4 rz-border-top">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
                 <RadzenIcon Icon="grade" Style="color: #30445f;"/>
                 <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@Event.InterestedStudents</RadzenText>
                 <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
