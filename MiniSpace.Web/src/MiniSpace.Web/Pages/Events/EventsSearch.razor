@@ -57,7 +57,7 @@
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
                     </RadzenStack>
                 </RadzenStack>
-                <RadzenCard Class="rz-background-color-secondary-light rz-shadow-0 rz-border-radius-5 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
+                <RadzenCard Class="gradient-background rz-shadow-0 rz-border-radius-5 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
                     <RadzenRow RowGap="0">
                         <RadzenColumn SizeSM="6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
@@ -115,6 +115,10 @@
     
     .large-font {
         font-size: 2.5em;
+    }
+
+    .gradient-background {
+        background: linear-gradient(90deg, rgba(48,68,95,1) 0%, rgba(16,35,56,1) 100%);
     }
 
 </style>
