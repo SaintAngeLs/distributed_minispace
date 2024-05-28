@@ -73,17 +73,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId) ?? new StudentNotifications(@event.InviteeId);
             studentNotifications.AddNotification(notification);
             await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-
-          
-            // var externalEvent = _eventMapper.Map(notificationCreatedEvent);
-            // if (externalEvent != null)
-            // {
-            //     await _messageBroker.PublishAsync(externalEvent);
-            // }
-            // else
-            // {
-            //     Console.WriteLine("5555555555555555555555555555555555Failed to map the domain event to an external event.");
-            // }
         }
 
     }
