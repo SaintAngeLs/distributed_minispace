@@ -3,14 +3,15 @@ namespace MiniSpace.Services.Notifications.Core.Entities
     public enum NotificationEventType
     {
         NewFriendRequest,
-        NewPost,
+        FriendRequestAccepted,
         NewEvent,
         EventDeleted,
         EventNewSignUp,
         EventNewSignUpFriend,
         StudentCancelledSignedUpToEvent,
         StudentShowedInterestInEvent,
-        FriendRequestAccepted,
+        EventParticipantAdded,
+        NewPost,
         MentionedInPost,
         EventReminder,
         Other
