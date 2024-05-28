@@ -52,8 +52,11 @@
                                 <RadzenDatePicker @bind-Value="@_createEventModel.StartDate" Name="start-date"
                                                   ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
                                 <RadzenCustomValidator Component="start-date" Style="position: relative"
-                                                       Validator="@(() => ValidateDate(_createEventModel.StartDate))"
+                                                       Validator="@(() => ValidateDateDivisibility(_createEventModel.StartDate))"
                                                        Text="Minute number has to be divisible by 5"/>
+                                <RadzenCustomValidator Component="start-date" Style="position: relative"
+                                                       Validator="@(() => ValidateDates(_createEventModel.StartDate, DateTime.Now))"
+                                                       Text="Start date should be in the future"/>
                             </RadzenFormField>
                             <RadzenFormField Text="Building name" Variant="Variant.Outlined">
                                 <RadzenTextBox @bind-Value="@_createEventModel.BuildingName" Name="building-name" />
@@ -90,8 +93,11 @@
                                 <RadzenDatePicker @bind-Value="@_createEventModel.EndDate" Name="end-date"
                                                   ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
                                 <RadzenCustomValidator Component="end-date" Style="position: relative"
-                                                       Validator="@(() => ValidateDate(_createEventModel.EndDate))"
+                                                       Validator="@(() => ValidateDateDivisibility(_createEventModel.EndDate))"
                                                        Text="Minute number has to be divisible by 5"/>
+                                <RadzenCustomValidator Component="end-date" Style="position: relative"
+                                                       Validator="@(() => ValidateDates(_createEventModel.EndDate, _createEventModel.StartDate))"
+                                                       Text="End date should be later than start date"/>
                             </RadzenFormField>
                             <RadzenFormField Text="Street" Variant="Variant.Outlined">
                                 <RadzenTextBox @bind-Value="@_createEventModel.Street" Name="street" />
@@ -125,8 +131,14 @@
                                             <RadzenDatePicker @bind-Value="@_createEventModel.PublishDate" Name="publish-date"
                                                               ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
                                             <RadzenCustomValidator Component="publish-date" Style="position: relative"
-                                                                   Validator="@(() => ValidateDate(_createEventModel.PublishDate))"
+                                                                   Validator="@(() => ValidateDateDivisibility(_createEventModel.PublishDate))"
                                                                    Text="Minute number has to be divisible by 5"/>
+                                            <RadzenCustomValidator Component="publish-date" Style="position: relative"
+                                                                   Validator="@(() => ValidateDates(_createEventModel.StartDate, _createEventModel.PublishDate))"
+                                                                   Text="Publish date should be earlier than start date"/>
+                                            <RadzenCustomValidator Component="publish-date" Style="position: relative"
+                                                                   Validator="@(() => ValidateDates(_createEventModel.PublishDate, DateTime.Now))"
+                                                                   Text="Publish date should be in the future"/>
                                         </RadzenFormField>
                                     }
                                 </RadzenStack>
@@ -193,8 +205,8 @@
     {
         Name = "One of first events!",
         Category = "Art",
-        StartDate = DateTime.Now,
-        EndDate = DateTime.Now,
+        StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0,0,0),
+        EndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0,0,0),
         BuildingName = "Gmach Główny",
         Street = "Plac Politechniki",
         BuildingNumber = "1",
@@ -225,9 +237,14 @@
     
     private IEnumerable<OrganizationDto> organizations;
     
-    private static bool ValidateDate(DateTime dateTime)
+    private static bool ValidateDateDivisibility(DateTime dateTime)
     {
         return dateTime.Minute % 5 == 0;
+    }
+    
+    private static bool ValidateDates(DateTime laterDate, DateTime earlierDate)
+    {
+        return laterDate > earlierDate;
     }
     
     protected override async Task OnInitializedAsync()
