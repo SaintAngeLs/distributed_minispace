@@ -115,8 +115,13 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<PendingFriendDeclined>()
                 .SubscribeEvent<EventCreated>()
                 .SubscribeEvent<EventDeleted>()
+                .SubscribeEvent<StudentShowedInterestInEvent>()
+                .SubscribeEvent<StudentCancelledInterestInEvent>()
+                .SubscribeEvent<EventParticipantAdded>()
+                .SubscribeEvent<EventParticipantRemoved>()
                 // .SubscribeEvent<NotificationCreated>()
-                .SubscribeEvent<StudentSignedUpToEvent>();
+                .SubscribeEvent<StudentSignedUpToEvent>()
+                .SubscribeEvent<StudentCancelledSignUpToEvent>();
                 // .SubscribeEvent<NotificationCreated>()
                 // .SubscribeEvent<NotificationDeleted>()
                 // .SubscribeEvent<NotificationUpdated>();

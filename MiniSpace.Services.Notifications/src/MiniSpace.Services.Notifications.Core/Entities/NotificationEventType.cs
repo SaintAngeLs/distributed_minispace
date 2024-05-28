@@ -10,6 +10,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         EventNewSignUpFriend,
         StudentCancelledSignedUpToEvent,
         StudentShowedInterestInEvent,
+        StudentCancelledInterestInEvent,
         EventParticipantAdded,
         EventParticipantRemoved,
         NewPost,
