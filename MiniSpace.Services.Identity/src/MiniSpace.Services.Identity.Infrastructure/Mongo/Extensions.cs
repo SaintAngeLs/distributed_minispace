@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IApplicationBuilder UseMongo(this IApplicationBuilder builder)

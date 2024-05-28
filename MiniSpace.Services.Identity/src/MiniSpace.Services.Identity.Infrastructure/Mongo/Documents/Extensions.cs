@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MiniSpace.Services.Identity.Application.DTO;
 using MiniSpace.Services.Identity.Core.Entities;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     internal static class Extensions
     {
         public static User AsEntity(this UserDocument document)
