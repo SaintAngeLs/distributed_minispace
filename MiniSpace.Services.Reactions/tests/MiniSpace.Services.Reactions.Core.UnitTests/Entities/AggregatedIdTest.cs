@@ -54,5 +54,10 @@ namespace MiniSpace.Services.Reactions.Core.UnitTests.Entities
             var id = new AggregateId(Guid.NewGuid());
             Assert.False(id.Equals(null));
         }
+
+        [Fact]
+        public void AggregateId_CreateFromEmpty_ShouldThrowInvalidAggregateIdException() {
+            Assert.Throws<InvalidAggregateIdException>(() => new AggregateId(Guid.Empty));
+        }
     }
 }
