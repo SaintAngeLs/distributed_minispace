@@ -13,6 +13,8 @@
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
+@using System.Globalization
+@using Variant = Radzen.Variant
 @inject DialogService DialogService
 @inject IEventsService EventsService
 @inject IStudentsService StudentsService
@@ -43,11 +45,42 @@
     </RadzenStack>   
 }
 
-<RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
-    <Template Context="ev">
-        <RadzenEventCard Event="ev" />
-    </Template>
-</RadzenDataList>
+<div>
+    <RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
+        <Template Context="ev">
+            <RadzenCard Class="rz-mx-auto" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);">
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+                    <RadzenStack Gap="0">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H4" Class="rz-font-weight-bold rz-mb-4">@ev.Name</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold">@ev.Organizer.OrganizationName</RadzenText>
+                    </RadzenStack>
+                </RadzenStack>
+                <RadzenCard Class="rz-background-color-secondary-light rz-shadow-0 rz-border-radius-0 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
+                    <RadzenRow RowGap="0">
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@ev.StartDate.ToString("g", CultureInfo.InvariantCulture)</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Location</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@ev.Location?.BuildingName</RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn SizeSM="6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">End date</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@ev.EndDate.ToString("g", CultureInfo.InvariantCulture)</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Fee</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@String.Format(new System.Globalization.CultureInfo("pl-PL"), "{0:C}", ev?.Fee)</RadzenText>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color" Text="Cancel" />
+                    <RadzenButton Variant="Variant.Text" Text="Send" Class="rz-text-primary-color" />
+                </RadzenStack>
+            </RadzenCard>
+        </Template>
+    </RadzenDataList>
+</div>
 
 @if (pageInitialized && totalElements != 0)
 {
@@ -57,6 +90,21 @@
                        Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
     </RadzenStack>   
 }
+
+<style>
+    :root {
+        --rz-card-padding: 10px;
+    }
+
+    .rz-datalist-data {
+      border-radius: 15px;
+    }
+    
+    .rz-g > div, .rz-datalist-data > li {
+      padding: 0rem !important;
+      border-radius: 15px;
+    }
+</style>
 
 @code {
     private SearchEventsModel searchEventsModel = new()
