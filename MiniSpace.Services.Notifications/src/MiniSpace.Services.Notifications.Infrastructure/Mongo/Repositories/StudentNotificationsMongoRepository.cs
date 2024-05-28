@@ -53,7 +53,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             }
 
             var update = Builders<StudentNotificationsDocument>.Update
-                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId)  // Ensures the ID is set on insert
+                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId) 
                 .AddToSetEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument()));  // Use AddToSetEach to avoid duplicates
 
             var options = new UpdateOptions { IsUpsert = true };

@@ -63,25 +63,26 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
                 relatedEntityId: friendEvent.RequesterId, 
-                eventType: NotificationEventType.NewFriendRequest
+                eventType: NotificationEventType.NewFriendRequest,
+                details: detailsHtml
             );
 
             await _friendEventRepository.AddAsync(newFriendEvent);
             await _messageBroker.PublishAsync(friendEvent);
 
-            _logger.LogInformation($"Stored new friend event for UserId={friendEvent.RequesterId} with details: {eventDetails}");
-            var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt,
-                eventType: "FriendRequest",
-                relatedEntityId: friendEvent.RequesterId,
-                details: detailsHtml
-            );
+            // _logger.LogInformation($"Stored new friend event for UserId={friendEvent.RequesterId} with details: {eventDetails}");
+            // var notificationCreatedEvent = new NotificationCreated(
+            //     notificationId:  Guid.NewGuid(),
+            //     userId:  friendEvent.FriendId,
+            //     message: notificationMessage,
+            //     createdAt: DateTime.UtcNow,
+            //     eventType: NotificationEventType.NewFriendRequest.ToString(),
+            //     relatedEntityId:  friendEvent.FriendId,
+            //     details: detailsHtml
+            // );
 
-            await _messageBroker.PublishAsync(notificationCreatedEvent);
-            _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
+            // await _messageBroker.PublishAsync(notificationCreatedEvent);
+            // _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
         }
     }
 }

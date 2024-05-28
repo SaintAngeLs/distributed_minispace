@@ -56,7 +56,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var participant in participants)
             {
-                 var notificationMessage = $"The event you were signed up for has been cancelled.";
+                var notificationMessage = $"The event you were signed up for has been cancelled.";
                 var detailsHtml = $"<p>Event <strong>{eventDetails.Name}</strong> scheduled on <strong>{eventDetails.StartDate:yyyy-MM-dd}</strong> has been cancelled. We apologize for any inconvenience.</p>";
 
                 var notification = new Notification(

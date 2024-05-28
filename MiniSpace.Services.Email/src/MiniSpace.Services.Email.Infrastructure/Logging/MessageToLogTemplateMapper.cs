@@ -21,6 +21,12 @@ namespace MiniSpace.Services.Email.Infrastructure.Logging
                     {
                         After = "Email successfully sent with ID: {EmailNotificationId} at {SentAt}."
                     }
+                },
+                {
+                    typeof(NotificationCreated), new HandlerLogTemplate
+                    {
+                        After = "Notification created with ID: {NotificationId} for user: {UserId}. Event type: {EventType} created at {CreatedAt}."
+                    }
                 }
             };
         

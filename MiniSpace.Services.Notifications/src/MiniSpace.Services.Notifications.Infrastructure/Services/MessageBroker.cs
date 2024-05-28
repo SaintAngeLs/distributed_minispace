@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using OpenTracing;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Infrastructure;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Services
 {
@@ -70,6 +71,14 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services
 
                 var messageId = Guid.NewGuid().ToString("N");
                 _logger.LogTrace($"Publishing integration event: {@event.GetType().Name} [id: '{messageId}'].");
+                  var serializedEvent = JsonSerializer.Serialize(@event, new JsonSerializerOptions
+                {
+                    WriteIndented = true, // To make it easier to read in logs
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+             
+                _logger.LogTrace($"Publishing integration event: {@event.GetType().Name} [id: '{messageId}'], Content: {serializedEvent}");
+                Console.WriteLine($"Publishing Event: {@event.GetType().Name} with ID: {messageId}, Content: {serializedEvent}");
                 if (_outbox.Enabled)
                 {
                     await _outbox.SendAsync(@event, originatedMessageId, messageId, correlationId, spanContext,

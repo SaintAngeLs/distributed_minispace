@@ -25,6 +25,15 @@ namespace MiniSpace.Services.Email.Infrastructure.Services
                     return new UserStatusChanged(e.UserId, "Deleted"); 
                 case EmailSentCore e:
                     return new Application.Events.EmailSent(e.EmailNotificationId, e.UserId, e.SentAt);
+                case Core.Events.NotificationCreated n:
+                    return new MiniSpace.Services.Email.Application.Events.External.NotificationCreated(
+                        n.NotificationId, 
+                        n.UserId, 
+                        n.Message, 
+                        n.CreatedAt, 
+                        n.EventType, 
+                        n.RelatedEntityId, 
+                        n.Details);
                 default:
                     return null;
             }

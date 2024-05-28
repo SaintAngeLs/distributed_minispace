@@ -36,6 +36,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 studentNotifications = new StudentNotifications(eventArgs.StudentId);
             }
 
+            var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);
+            var detailsHtml = eventDetails != null ? 
+                $"<p>You have signed up for the event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>" :
+                "<p>Event details could not be retrieved.</p>";
+
+
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: eventArgs.StudentId,
@@ -44,7 +50,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
                 relatedEntityId: eventArgs.EventId,
-                eventType: NotificationEventType.EventNewSignUp
+                eventType: NotificationEventType.EventNewSignUp,
+                details: detailsHtml
             );
 
             studentNotifications.AddNotification(notification);
@@ -54,14 +61,17 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
-                createdAt: notification.CreatedAt
+                createdAt: notification.CreatedAt,
+                eventType: notification.EventType.ToString(),
+                relatedEntityId: notification.RelatedEntityId,
+                details: detailsHtml
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
 
-            var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);
             if (eventDetails != null && eventDetails.Organizer != null)
             {
+                var detailsHtmlForOrganizer = $"<p>A new student has signed up for your event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>";
                 var organizerNotification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: eventDetails.Organizer.Id,
@@ -70,7 +80,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,
                     relatedEntityId: eventArgs.EventId,
-                    eventType: NotificationEventType.EventNewSignUp
+                    eventType: NotificationEventType.EventNewSignUp,
+                    details: detailsHtmlForOrganizer
                 );
 
                 var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventDetails.Organizer.Id);
@@ -82,13 +93,15 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 organizerNotifications.AddNotification(organizerNotification);
                 await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
 
-                var organizerNotificationCreatedEvent = new NotificationCreated(
+                  var organizerNotificationCreatedEvent = new NotificationCreated(
                     notificationId: organizerNotification.NotificationId,
                     userId: organizerNotification.UserId,
                     message: organizerNotification.Message,
-                    createdAt: organizerNotification.CreatedAt
+                    createdAt: organizerNotification.CreatedAt,
+                    eventType: organizerNotification.EventType.ToString(),
+                    relatedEntityId: organizerNotification.RelatedEntityId,
+                    details: detailsHtmlForOrganizer
                 );
-
                 await _messageBroker.PublishAsync(organizerNotificationCreatedEvent);
             }
         }

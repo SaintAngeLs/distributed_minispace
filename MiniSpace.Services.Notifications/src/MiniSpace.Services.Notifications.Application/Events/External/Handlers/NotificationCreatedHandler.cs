@@ -4,16 +4,20 @@ using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
 using System.Collections.Generic;
 using MiniSpace.Services.Notifications.Application.Exceptions;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class NotificationCreatedHandler : IEventHandler<NotificationCreated>
     {
-        private readonly INotificationRepository _notificationRepository;
+        private readonly IStudentNotificationsRepository _notificationRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public NotificationCreatedHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public NotificationCreatedHandler(
+            IStudentNotificationsRepository notificationRepository, 
+            IEventMapper eventMapper, 
+            IMessageBroker messageBroker)
         {
             _notificationRepository = notificationRepository;
             _eventMapper = eventMapper;
@@ -22,16 +26,19 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
         {
-            var notification = await _notificationRepository.GetAsync(@event.NotificationId);
-            if (notification == null)
-            {
-                throw new NotificationNotFoundException(@event.NotificationId);
-            }
+            // var notification = await _notificationRepository.GetByStudentIdAsync(@event.UserId); 
+            // // GetAsync(@event.NotificationId);
+            // if (notification == null)
+            // {
+            //     throw new NotificationNotFoundException(@event.NotificationId);
+            // }
 
-            await _notificationRepository.AddAsync(notification);
+            // await _notificationRepository.AddAsync(notification);
 
-            var events = _eventMapper.MapAll(notification.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
+            // var events = _eventMapper.Map(notification);
+            Console.WriteLine($"Event Published in NOTIFICATION CREATED HANDLER: {JsonSerializer.Serialize(@event)}");
+
+            // await _messageBroker.PublishAsync(@event);
         }
     }
 }

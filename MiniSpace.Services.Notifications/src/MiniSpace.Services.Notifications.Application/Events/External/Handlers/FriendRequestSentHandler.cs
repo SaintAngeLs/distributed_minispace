@@ -41,18 +41,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             await _notificationRepository.AddAsync(notification);
 
-             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt,
-                details: detailsHtml,
-                eventType: notification.EventType.ToString(),
-                relatedEntityId: notification.RelatedEntityId
-            );
+            //  var notificationCreatedEvent = new NotificationCreated(
+            //     notificationId: Guid.NewGuid(),
+            //     userId: @event.InviteeId, 
+            //     message: notificationMessage,
+            //     createdAt: DateTime.UtcNow,
+            //     details: detailsHtml,
+            //     eventType: NotificationEventType.NewFriendRequest.ToString(),
+            //     relatedEntityId: @event.InviterId
+            // );
 
 
-            await _messageBroker.PublishAsync(notificationCreatedEvent);
+            // await _messageBroker.PublishAsync(notificationCreatedEvent);
         }
     }
 }

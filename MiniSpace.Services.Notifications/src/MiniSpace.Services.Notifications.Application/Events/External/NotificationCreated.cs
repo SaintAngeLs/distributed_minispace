@@ -1,21 +1,18 @@
 using Convey.CQRS.Events;
-using Convey.MessageBrokers;
-using System;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
-    [Message("notifications")]
     public class NotificationCreated : IEvent
     {
-        public Guid NotificationId { get; private set; }
-        public Guid UserId { get; private set; }
-        public string Message { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public string EventType { get; private set; }  
-        public Guid? RelatedEntityId { get; private set; }  
-        public string Details { get; private set; } 
+        public Guid NotificationId { get; set; }
+        public Guid UserId { get; set; }
+        public string Message { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string EventType { get; set; }  
+        public Guid RelatedEntityId { get; set; }  
+        public string Details { get; set; } 
 
-        public NotificationCreated(Guid notificationId, Guid userId, string message, DateTime createdAt, string eventType, Guid? relatedEntityId, string details)
+        public NotificationCreated(Guid notificationId, Guid userId, string message, DateTime createdAt, string eventType, Guid relatedEntityId, string details)
         {
             NotificationId = notificationId;
             UserId = userId;
