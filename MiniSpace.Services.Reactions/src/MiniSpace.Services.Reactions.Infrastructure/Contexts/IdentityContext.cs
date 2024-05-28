@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using MiniSpace.Services.Reactions.Application;
 
+[assembly: InternalsVisibleTo("MiniSpace.Services.Reactions.Application.UnitTests")]
 namespace MiniSpace.Services.Reactions.Infrastructure.Contexts
 {
     [ExcludeFromCodeCoverage]
