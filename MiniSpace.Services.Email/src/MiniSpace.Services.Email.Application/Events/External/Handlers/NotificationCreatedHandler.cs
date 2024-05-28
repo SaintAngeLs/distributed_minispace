@@ -1,72 +1,89 @@
-    using System;
-    using System.Threading.Tasks;
-    using Convey.CQRS.Events;
-    using Convey.MessageBrokers;
-    using MiniSpace.Services.Email.Core.Repositories;
-    using MiniSpace.Services.Email.Core.Entities;
-    using MiniSpace.Services.Email.Application.Services;
-    using System.Text.Json.Serialization;
-    using System.Text.Json;
+using System;
+using System.Threading.Tasks;
+using Convey.CQRS.Events;
+using Convey.MessageBrokers;
+using MiniSpace.Services.Email.Core.Entities;
+using MiniSpace.Services.Email.Application.Services;
+using MiniSpace.Services.Email.Application.Services.Clients;
+using System.Text.Json;
+using MiniSpace.Services.Email.Application.Exceptions;
+using MiniSpace.Services.Email.Core.Repositories;
 
-
-    namespace MiniSpace.Services.Email.Application.Events.External.Handlers
+namespace MiniSpace.Services.Email.Application.Events.External.Handlers
+{
+    public class NotificationCreatedHandler : IEventHandler<NotificationCreated>
     {
-        public class NotificationCreatedHandler : IEventHandler<NotificationCreated>
+        private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IEmailService _emailService;
+        private readonly IMessageBroker _messageBroker;
+        private readonly IStudentEmailsRepository _studentEmailsRepository;
+
+        public NotificationCreatedHandler(
+            IStudentsServiceClient studentsServiceClient, 
+            IMessageBroker messageBroker,
+            IEmailService emailService,
+            IStudentEmailsRepository studentEmailsRepository) 
         {
-            private readonly IStudentEmailsRepository _studentEmailsRepository;
-            private readonly IEmailService _emailService;
-            private readonly IMessageBroker _messageBroker;
-
-            public NotificationCreatedHandler(
-                IStudentEmailsRepository studentEmailsRepository, 
-                IMessageBroker messageBroker,
-                IEmailService emailService) 
-            {
-                _studentEmailsRepository = studentEmailsRepository;
-                _messageBroker = messageBroker;
-                _emailService = emailService;
-            }
-            public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
-            {
-                Console.WriteLine("*********************************************************************");
-                    string jsonEvent = JsonSerializer.Serialize(@event); // Correct use of JsonSerializer
-                Console.WriteLine($"Received Event: {jsonEvent}");
-
-                var studentEmails = await _studentEmailsRepository.GetByStudentIdAsync(@event.UserId);
-                if (studentEmails == null)
-                {
-                    // return;
-                }
-
-                // var userPrefersEmails = studentEmails.ShouldReceiveEmailNotifications();
-                // if (!userPrefersEmails)
-                // {
-                //     return;
-                // }
-
-                var emailNotification = new EmailNotification(
-                    Guid.NewGuid(),
-                    @event.UserId,
-                    // studentEmails.EmailAddress,
-                    "voznesenskijandrej5@gmail.com", 
-                    "Notification: " + @event.Message,
-                    "You have a new notification created at: " + @event.CreatedAt.ToString("g"),
-                    EmailNotificationStatus.Pending
-                );
-                
-                var emailAddress = "voznesenskijandrej5@gmail.com"; // or a default for testing
-
-                var subject = "Notification: " + @event.Message;
-                var body = "You have a new notification created at: " + @event.CreatedAt.ToString("g");
-
-                // Send the email
-                await _emailService.SendEmailAsync(emailAddress, subject, body);
-                Console.WriteLine($"Email sent to {emailAddress}");
-
-                // studentEmails.AddEmailNotification(emailNotification);
-                // await _studentEmailsRepository.UpdateAsync(studentEmails);
-
-                await _messageBroker.PublishAsync(new EmailQueued(emailNotification.EmailNotificationId, @event.UserId));
-            }
+            _studentsServiceClient = studentsServiceClient;
+            _messageBroker = messageBroker;
+            _emailService = emailService;
+            _studentEmailsRepository = studentEmailsRepository;
         }
+
+        public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
+        {
+            Console.WriteLine("*********************************************************************");
+            string jsonEvent = JsonSerializer.Serialize(@event);
+            Console.WriteLine($"Received Event: {jsonEvent}");
+
+            var student = await _studentsServiceClient.GetAsync(@event.UserId);
+            if (student == null)
+            {
+                throw new EmailNotFoundException(@event.UserId);
+            }
+
+            if (!student.EmailNotifications)
+            {
+                throw new EmailNotificationDisabledException(@event.UserId);
+            }
+
+            string htmlContent = await LoadHtmlTemplate("email_template1.html", @event);
+        
+            var subject = EmailSubjectFactory.CreateSubject((NotificationEventType)Enum.Parse(typeof(NotificationEventType), @event.EventType), @event.Details);
+
+            var emailNotification = new EmailNotification(
+                Guid.NewGuid(),
+                @event.UserId,
+                student.Email, 
+                subject,
+                htmlContent, 
+                EmailNotificationStatus.Pending
+            );
+
+            // Send the email
+            await _emailService.SendEmailAsync(student.Email, subject, htmlContent);
+            Console.WriteLine($"Email sent to {student.Email}");
+
+            // Add or update the student emails document with the new notification
+            var studentEmails = await _studentEmailsRepository.GetByStudentIdAsync(@event.UserId) ?? new StudentEmails(@event.UserId);
+            studentEmails.AddEmailNotification(emailNotification);
+            await _studentEmailsRepository.UpdateAsync(studentEmails);
+
+            // Publish that the email has been queued
+            await _messageBroker.PublishAsync(new EmailQueued(emailNotification.EmailNotificationId, @event.UserId));
+        }
+
+        private async Task<string> LoadHtmlTemplate(string filePath, NotificationCreated eventDetails)
+        {
+            string htmlContent = await System.IO.File.ReadAllTextAsync(filePath);
+            htmlContent = htmlContent.Replace("{Message}", eventDetails.Message);
+            htmlContent = htmlContent.Replace("{Details}", eventDetails.Details ?? "No details provided");
+            htmlContent = htmlContent.Replace("{CreatedAt}", eventDetails.CreatedAt.ToString("dddd, dd MMMM yyyy"));
+            htmlContent = htmlContent.Replace("{EventType}", eventDetails.EventType);
+            htmlContent = htmlContent.Replace("{UserName}", "User"); 
+
+            return htmlContent;
+        }
+
     }
+}
