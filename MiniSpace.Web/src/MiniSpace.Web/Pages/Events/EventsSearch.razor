@@ -52,7 +52,7 @@
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
                     <RadzenStack Gap="0">
                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left {GetFontSizeClass(ev.Name)}")">@ev.Name</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left event-name {GetFontSizeClass(ev.Name)}")">@ev.Name</RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
                     </RadzenStack>
@@ -73,10 +73,22 @@
                         </RadzenColumn>
                     </RadzenRow>
                 </RadzenCard>
-                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color" Text="Cancel" />
-                    <RadzenButton Variant="Variant.Text" Text="Send" Class="rz-text-primary-color" />
-                </RadzenStack>
+                <RadzenRow RowGap="0">
+                    <RadzenColumn SizeSM="9">
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-4 rz-border-top">
+                            <RadzenIcon Icon="grade" Style="color: #30445f;"/>
+                            <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@ev.InterestedStudents</RadzenText>
+                            <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
+                            <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.SignedUpStudents/@ev.Capacity</RadzenText>
+                        </RadzenStack>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="3">
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                            <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color" Text="Cancel"/>
+                            <RadzenButton Variant="Variant.Text" Text="Send" Class="rz-text-primary-color"/>
+                        </RadzenStack>
+                    </RadzenColumn>
+                </RadzenRow>
             </RadzenCard>
         </Template>
     </RadzenDataList>
@@ -103,6 +115,10 @@
     .rz-g > div, .rz-datalist-data > li {
       padding: 0rem !important;
       border-radius: 15px;
+    }
+    
+    .event-name {
+        word-break: break-word;
     }
     
     .small-font {
