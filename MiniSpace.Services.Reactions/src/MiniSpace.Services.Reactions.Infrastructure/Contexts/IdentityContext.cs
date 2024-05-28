@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Reactions.Application;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class IdentityContext : IIdentityContext
     {
         public Guid Id { get; }

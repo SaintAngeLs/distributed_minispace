@@ -1,8 +1,10 @@
 
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Reactions.Core.Entities;
 
 namespace MiniSpace.Services.Reactions.Application.Dto
 {
+    [ExcludeFromCodeCoverage]
     public class ReactionsSummaryDto(int nrReactions, ReactionType? dominant,
             Guid? authUserReactionId, ReactionType? authUserReactionType)
     {
