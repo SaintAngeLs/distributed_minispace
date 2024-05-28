@@ -54,7 +54,7 @@
                     <Template Context="report">
                         <RadzenButton Size="ButtonSize.Medium" Text="Show"
                                       ButtonStyle="ButtonStyle.Secondary"
-                        />
+                                      Click="@(() => OpenManageReportDialog(report))" />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn Property="Reason" Title="Reason" Width="110px" TextAlign="TextAlign.Center" />
@@ -146,5 +146,16 @@
                 AutoFocusFirstElement = false
             });
         await OnInitializedAsync();
+    }
+    
+    private async Task OpenManageReportDialog(ReportDto reportDto)
+    {
+        await DialogService.OpenAsync<ManageReportDialog>("Manage the report:",
+            new Dictionary<string, object>() { { "ReportDto", reportDto }, { "AdminId", adminId }},
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
 }
