@@ -11,6 +11,5 @@ namespace MiniSpace.Web.Models.Reports
         public string ContextType { get; set; }
         public string Category { get; set; }
         public string Reason { get; set; }
-        public bool CreatingSubmitted { get; set; }
     }
 }

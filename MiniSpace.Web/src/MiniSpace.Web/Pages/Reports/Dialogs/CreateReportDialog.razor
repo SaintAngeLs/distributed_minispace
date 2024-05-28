@@ -12,12 +12,14 @@
                 <RadzenStack>
                     <RadzenFormField Text="Category" Variant="Variant.Outlined">
                         <RadzenDropDown Data="@categories" @bind-Value="@CreateReportModel.Category"
-                                        TextProperty="Key" ValueProperty="Value" />
+                                        TextProperty="Key" ValueProperty="Value" Name="category" />
+                        <RadzenRequiredValidator Component="category" Style="position: relative"
+                                                 Text="Category is required"/>
                     </RadzenFormField>
                     <RadzenFormField Text="Reason" Variant="Variant.Outlined">
                         <RadzenTextArea Style="height: 150px" @bind-Value="@CreateReportModel.Reason" Name="reason"/>
                         <RadzenRequiredValidator Component="reason" Style="position: relative"
-                                                 Text="reason is required"/>
+                                                 Text="Reason is required"/>
                         <RadzenLengthValidator Component="reason" Max="1000" Style="position: relative"
                                                Text="Reason should have at most 1000 characters"/>
                     </RadzenFormField>
@@ -59,9 +61,6 @@
         await ReportsService.CreateReportAsync(Guid.Empty, createReportModel.IssuerId,
             createReportModel.TargetId, createReportModel.TargetOwnerId, createReportModel.ContextType,
             createReportModel.Category, CreateReportModel.Reason);
-        createReportModel.Category = string.Empty;
-        createReportModel.Reason = string.Empty;
-        createReportModel.CreatingSubmitted = true;
         DialogService.Close(true);
     }
 }
