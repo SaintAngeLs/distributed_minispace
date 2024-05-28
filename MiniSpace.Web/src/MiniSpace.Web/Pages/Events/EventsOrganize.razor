@@ -47,11 +47,13 @@
     </RadzenStack>   
 }
 
-<RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
-    <Template Context="ev">
-        <RadzenEventCard Event="ev" />
-    </Template>
-</RadzenDataList>
+<div>
+    <RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
+        <Template Context="ev">
+            <RadzenEventCard Event="ev" />
+        </Template>
+    </RadzenDataList>
+</div>
 
 @if (pageInitialized && totalElements != 0)
 {

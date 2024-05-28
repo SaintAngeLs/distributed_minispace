@@ -39,11 +39,13 @@
                                            ShowLastButton="true"/>
                         </RadzenStack>
                         
-                        <RadzenDataList AllowPaging="false" Data="@signedUpEvents" TItem="EventDto">
-                            <Template Context="ev">
-                                <RadzenEventCard Event="ev" />
-                            </Template>
-                        </RadzenDataList>
+                        <div>
+                            <RadzenDataList AllowPaging="false" Data="@signedUpEvents" TItem="EventDto">
+                                <Template Context="ev">
+                                    <RadzenEventCard Event="ev" />
+                                </Template>
+                            </RadzenDataList>
+                        </div>
 
                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
                             <MudPagination Count="@signedUpTotalPages" SelectedChanged="@SignedUpSelectedPageChanged"
