@@ -60,11 +60,11 @@
                 var body = "You have a new notification created at: " + @event.CreatedAt.ToString("g");
 
                 // Send the email
-                // await _emailService.SendEmailAsync(emailAddress, subject, body);
+                await _emailService.SendEmailAsync(emailAddress, subject, body);
                 Console.WriteLine($"Email sent to {emailAddress}");
 
-                studentEmails.AddEmailNotification(emailNotification);
-                await _studentEmailsRepository.UpdateAsync(studentEmails);
+                // studentEmails.AddEmailNotification(emailNotification);
+                // await _studentEmailsRepository.UpdateAsync(studentEmails);
 
                 await _messageBroker.PublishAsync(new EmailQueued(emailNotification.EmailNotificationId, @event.UserId));
             }
