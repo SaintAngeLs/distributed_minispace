@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Events;
 using MiniSpace.Services.Reactions.Application.Services;
 using MiniSpace.Services.Reactions.Core;
@@ -5,6 +6,7 @@ using MiniSpace.Services.Reactions.Core.Events;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Services
 {
+    [ExcludeFromCodeCoverage]
     public class EventMapper : IEventMapper
     {
         public IEnumerable<IEvent> MapAll(IEnumerable<IDomainEvent> events)
