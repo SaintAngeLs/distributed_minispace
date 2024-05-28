@@ -52,12 +52,12 @@
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
                     <RadzenStack Gap="0">
                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H4" Class="rz-font-weight-bold rz-mb-4">@ev.Name</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left {GetFontSizeClass(ev.Name)}")">@ev.Name</RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold">@ev.Organizer.OrganizationName</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
                     </RadzenStack>
                 </RadzenStack>
-                <RadzenCard Class="rz-background-color-secondary-light rz-shadow-0 rz-border-radius-0 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
+                <RadzenCard Class="rz-background-color-secondary-light rz-shadow-0 rz-border-radius-5 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
                     <RadzenRow RowGap="0">
                         <RadzenColumn SizeSM="6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
@@ -104,6 +104,19 @@
       padding: 0rem !important;
       border-radius: 15px;
     }
+    
+    .small-font {
+        font-size: 1.35em;
+    }
+    
+    .medium-font {
+        font-size: 1.85em;
+    }
+    
+    .large-font {
+        font-size: 2.5em;
+    }
+
 </style>
 
 @code {
@@ -184,5 +197,21 @@
                 AutoFocusFirstElement = false
             });
         await OnInitializedAsync();
+    }
+    
+    private string GetFontSizeClass(string eventName)
+    {
+        if (eventName.Length <= 50)
+        {
+            return "large-font";
+        }
+        else if (eventName.Length <= 100)
+        {
+            return "medium-font";
+        }
+        else
+        {
+            return "small-font";
+        }
     }
 }
