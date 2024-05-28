@@ -16,15 +16,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
 
         public EventCreatedHandler(
             IMessageBroker messageBroker,
             IStudentsServiceClient studentsServiceClient,
+            IEventsServiceClient eventsServiceClient,
             IStudentNotificationsRepository studentNotificationsRepository)
         {
             _messageBroker = messageBroker;
             _studentsServiceClient = studentsServiceClient;
+            _eventsServiceClient = eventsServiceClient;
             _studentNotificationsRepository = studentNotificationsRepository;
         }
 
@@ -42,6 +45,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 throw;
             }
 
+            EventDto eventDetails;
+            try
+            {
+                // Fetch event details using the service client
+                eventDetails = await _eventsServiceClient.GetEventAsync(eventCreated.EventId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to retrieve event details: {ex.Message}");
+                throw;
+            }
+
             if (users == null)
             {
                 //  Console.WriteLine("No users found.");
@@ -50,14 +65,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var user in users)
             {
-                var notificationMessage = $"A new event has been created by Organizer {eventCreated.OrganizerId}";
+                var notificationMessage = $"A new event '{eventDetails.Name}' has been created by Organizer  {eventDetails.Organizer.Name}";
                 var detailsHtml = $"<p>Check out the new event details <a href='https://minispace.itsharppro.com/event-details/{eventCreated.EventId}'>here</a>.</p>";
 
 
                 var notification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: user.Id,
-                    message: $"A new event has been created by Organizer {eventCreated.OrganizerId}",
+                    message: notificationMessage,
                     status: NotificationStatus.Unread,
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,
@@ -73,10 +88,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     studentNotifications = new StudentNotifications(user.Id);
                 }
 
-                studentNotifications.AddNotification(notification);
-                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-
-                 var notificationCreatedEvent = new NotificationCreated(
+                var notificationCreatedEvent = new NotificationCreated(
                     notificationId: notification.NotificationId,
                     userId: notification.UserId,
                     message: notification.Message,
@@ -87,6 +99,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 );
 
                 await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+                studentNotifications.AddNotification(notification);
+                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+
+                 
             }
         }
     }

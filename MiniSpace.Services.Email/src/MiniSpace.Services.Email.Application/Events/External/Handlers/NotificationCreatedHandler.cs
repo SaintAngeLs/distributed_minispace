@@ -60,20 +60,15 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
                 htmlContent, 
                 EmailNotificationStatus.Pending
             );
-
-            // Attempt to send the email
             await _emailService.SendEmailAsync(student.Email, subject, htmlContent);
             Console.WriteLine($"Email sent to {student.Email}");
 
-            // Mark the email as sent in the EmailNotification object
             emailNotification.MarkAsSent();
 
-            // Add or update the email notification record in the database
             var studentEmails = await _studentEmailsRepository.GetByStudentIdAsync(@event.UserId) ?? new StudentEmails(@event.UserId);
             studentEmails.AddEmailNotification(emailNotification);
             await _studentEmailsRepository.UpdateAsync(studentEmails);
-
-            // Publish that the email has been sent
+            
             await _messageBroker.PublishAsync(new EmailQueued(emailNotification.EmailNotificationId, @event.UserId));
         }
 

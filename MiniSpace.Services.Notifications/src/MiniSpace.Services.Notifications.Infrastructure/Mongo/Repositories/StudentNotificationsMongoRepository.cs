@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
 
             var update = Builders<StudentNotificationsDocument>.Update
                 .SetOnInsert(doc => doc.Id, studentNotifications.StudentId) 
-                .AddToSetEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument()));  // Use AddToSetEach to avoid duplicates
+                .AddToSetEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument())); 
 
             var options = new UpdateOptions { IsUpsert = true };
             await _repository.Collection.UpdateOneAsync(filter, update, options);
