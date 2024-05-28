@@ -48,7 +48,7 @@
 <div>
     <RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
         <Template Context="ev">
-            <RadzenCard Class="rz-mx-auto" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);">
+            <RadzenCard Class="@(ev.Status == "Archived" ? "archived-event rz-mx-auto" : "rz-mx-auto")" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);">
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
                     <RadzenStack Gap="0">
                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
@@ -119,6 +119,11 @@
 
     .gradient-background {
         background: linear-gradient(90deg, rgba(48,68,95,1) 0%, rgba(16,35,56,1) 100%);
+    }
+    
+    .archived-event {
+        border: 2px solid grey;
+        opacity: 0.65;
     }
 
 </style>
