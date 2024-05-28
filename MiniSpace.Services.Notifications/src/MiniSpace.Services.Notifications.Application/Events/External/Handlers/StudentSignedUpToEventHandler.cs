@@ -14,15 +14,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
 
         public StudentSignedUpToEventHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
+            IStudentsServiceClient studentsServiceClient,
             IEventsServiceClient eventsServiceClient)  
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
+            _studentsServiceClient = studentsServiceClient;
             _eventsServiceClient = eventsServiceClient;
         }
 
@@ -31,6 +34,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         {
             Console.WriteLine("**************************************************************");
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.StudentId);
+            var student = await _studentsServiceClient.GetAsync(eventArgs.StudentId);
             if (studentNotifications == null)
             {
                 studentNotifications = new StudentNotifications(eventArgs.StudentId);
@@ -38,14 +42,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);
             var detailsHtml = eventDetails != null ? 
-                $"<p>You have signed up for the event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>" :
+                $"<p>{student.FirstName} {student.LastName}, you have signed up for the event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>" :
                 "<p>Event details could not be retrieved.</p>";
 
 
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: eventArgs.StudentId,
-                message: $"You have successfully signed up for the event {eventArgs.EventId}.",
+                message: $"You have successfully signed up for the event '{eventDetails.Name}'.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
@@ -71,11 +75,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             if (eventDetails != null && eventDetails.Organizer != null)
             {
-                var detailsHtmlForOrganizer = $"<p>A new student has signed up for your event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>";
+                var detailsHtmlForOrganizer = $"<p>{student.FirstName} {student.LastName} has signed up for your event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>";
                 var organizerNotification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: eventDetails.Organizer.Id,
-                    message: $"A new student has signed up for your event '{eventDetails.Name}'.",
+                    message: $"{student.FirstName} {student.LastName} has signed up for your event '{eventDetails.Name}'.",
                     status: NotificationStatus.Unread,
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,

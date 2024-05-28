@@ -98,9 +98,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 await _messageBroker.PublishAsync(notificationCreatedEvent);
 
                 studentNotifications.AddNotification(notification);
-                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-
-                 
+                await _studentNotificationsRepository.UpdateAsync(studentNotifications);   
             }
         }
     }
