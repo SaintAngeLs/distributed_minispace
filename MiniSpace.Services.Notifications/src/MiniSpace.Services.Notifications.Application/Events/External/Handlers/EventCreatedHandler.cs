@@ -48,7 +48,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             EventDto eventDetails;
             try
             {
-                // Fetch event details using the service client
                 eventDetails = await _eventsServiceClient.GetEventAsync(eventCreated.EventId);
             }
             catch (Exception ex)
@@ -65,7 +64,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var user in users)
             {
-                var notificationMessage = $"A new event '{eventDetails.Name}' has been created by Organizer  {eventDetails.Organizer.Name}";
+                var notificationMessage = $"A new event '{eventDetails.Name}' organized by {eventDetails.Organizer.Name} is scheduled from {eventDetails.StartDate:yyyy-MM-dd} to {eventDetails.EndDate:yyyy-MM-dd} with organization {eventDetails.Organizer.OrganizationName}. This event offers a capacity of {eventDetails.Capacity} with a registration fee of ${eventDetails.Fee}. {eventDetails.Description}";
                 var detailsHtml = $"<p>Check out the new event details <a href='https://minispace.itsharppro.com/event-details/{eventCreated.EventId}'>here</a>.</p>";
 
 
@@ -79,8 +78,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     relatedEntityId: eventCreated.EventId,
                     eventType: NotificationEventType.NewEvent
                 );
-
-                // Console.WriteLine($"Creating notification for user: {user.Id}");
 
                 var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(user.Id);
                 if (studentNotifications == null)

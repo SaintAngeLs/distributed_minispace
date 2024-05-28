@@ -17,7 +17,7 @@
     "MiniSpace.Services.Email": {
       "commandName": "Project",
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:5010",
+      "applicationUrl": "http://localhost:5016",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "local"
       }
