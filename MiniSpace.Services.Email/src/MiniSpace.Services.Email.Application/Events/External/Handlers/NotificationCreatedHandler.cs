@@ -8,6 +8,7 @@ using MiniSpace.Services.Email.Application.Services.Clients;
 using System.Text.Json;
 using MiniSpace.Services.Email.Application.Exceptions;
 using MiniSpace.Services.Email.Core.Repositories;
+using MiniSpace.Services.Email.Application.Dto;
 
 namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 {
@@ -47,7 +48,7 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
                 throw new EmailNotificationDisabledException(@event.UserId);
             }
 
-            string htmlContent = await LoadHtmlTemplate("email_template1.html", @event);
+            string htmlContent = await LoadHtmlTemplate("email_template1.html", @event, student);
         
             var subject = EmailSubjectFactory.CreateSubject((NotificationEventType)Enum.Parse(typeof(NotificationEventType), @event.EventType), @event.Details);
 
@@ -60,27 +61,41 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
                 EmailNotificationStatus.Pending
             );
 
-            // Send the email
             await _emailService.SendEmailAsync(student.Email, subject, htmlContent);
             Console.WriteLine($"Email sent to {student.Email}");
 
-            // Add or update the student emails document with the new notification
             var studentEmails = await _studentEmailsRepository.GetByStudentIdAsync(@event.UserId) ?? new StudentEmails(@event.UserId);
             studentEmails.AddEmailNotification(emailNotification);
             await _studentEmailsRepository.UpdateAsync(studentEmails);
 
-            // Publish that the email has been queued
             await _messageBroker.PublishAsync(new EmailQueued(emailNotification.EmailNotificationId, @event.UserId));
         }
 
-        private async Task<string> LoadHtmlTemplate(string filePath, NotificationCreated eventDetails)
+        private async Task<string> LoadHtmlTemplate(string filePath, NotificationCreated eventDetails, StudentDto student)
         {
             string htmlContent = await System.IO.File.ReadAllTextAsync(filePath);
             htmlContent = htmlContent.Replace("{Message}", eventDetails.Message);
             htmlContent = htmlContent.Replace("{Details}", eventDetails.Details ?? "No details provided");
             htmlContent = htmlContent.Replace("{CreatedAt}", eventDetails.CreatedAt.ToString("dddd, dd MMMM yyyy"));
-            htmlContent = htmlContent.Replace("{EventType}", eventDetails.EventType);
-            htmlContent = htmlContent.Replace("{UserName}", "User"); 
+
+            var eventTypeDescription = EmailSubjectFactory.CreateSubject(
+                (NotificationEventType)Enum.Parse(typeof(NotificationEventType), eventDetails.EventType), 
+                eventDetails.Details);
+
+            htmlContent = htmlContent.Replace("{EventType}", eventTypeDescription);
+
+            string fullName = string.IsNullOrEmpty(student.FirstName) && string.IsNullOrEmpty(student.LastName) 
+                ? "User" 
+                : $"{student.FirstName} {student.LastName}".Trim();
+
+            htmlContent = htmlContent.Replace("{UserName}", fullName);
+
+            string userEmailConsentMessage = student.EmailNotifications 
+                ? "You are receiving this message because you provided consent in MiniSpace Services user settings to receive notifications." 
+                : "You are receiving this message due to a system requirement, as you have not provided consent in MiniSpace Services user settings.";
+
+            htmlContent = htmlContent.Replace("{UserEmailConsent}", userEmailConsentMessage);
+
 
             return htmlContent;
         }
