@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
                 throw new EmailNotificationDisabledException(@event.UserId);
             }
 
-            string htmlContent = await LoadHtmlTemplate("email_template1.html", @event, student);
+            string htmlContent = await LoadHtmlTemplate("new_message.html", @event, student);
         
             var subject = EmailSubjectFactory.CreateSubject((NotificationEventType)Enum.Parse(typeof(NotificationEventType), @event.EventType), @event.Details);
 
