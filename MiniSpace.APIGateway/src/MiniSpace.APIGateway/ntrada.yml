@@ -359,6 +359,12 @@ modules:
         use: downstream
         downstream: events-service/events/{eventId}/rate
         auth: true
+
+      - upstream: /{eventId}/rate
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/rate
+        auth: true
       
       - upstream: /{eventId}/rating
         method: GET
