@@ -2,19 +2,35 @@ namespace MiniSpace.Services.Email.Core.Entities
 {
     public class EmailSubjectFactory
     {
+        private static readonly Dictionary<NotificationEventType, IEmailSubjectStrategy> Strategies =
+            new Dictionary<NotificationEventType, IEmailSubjectStrategy>
+            {
+                { NotificationEventType.NewFriendRequest, new NewFriendRequestSubject() },
+                { NotificationEventType.FriendRequestAccepted, new FriendRequestAcceptedSubject() },
+                { NotificationEventType.NewEvent, new NewEventSubject() },
+                { NotificationEventType.EventDeleted, new EventDeletedSubject() },
+                { NotificationEventType.PostUpdated, new PostUpdatedSubject() },
+                { NotificationEventType.EventNewSignUp, new EventNewSignUpSubject() },
+                { NotificationEventType.EventNewSignUpFriend, new EventNewSignUpFriendSubject() },
+                { NotificationEventType.StudentCancelledSignedUpToEvent, new StudentCancelledSignedUpToEventSubject() },
+                { NotificationEventType.StudentShowedInterestInEvent, new StudentShowedInterestInEventSubject() },
+                { NotificationEventType.StudentCancelledInterestInEvent, new StudentCancelledInterestInEventSubject() },
+                { NotificationEventType.EventParticipantAdded, new EventParticipantAddedSubject() },
+                { NotificationEventType.EventParticipantRemoved, new EventParticipantRemovedSubject() },
+                { NotificationEventType.PostCreated, new PostCreatedSubject() },
+                { NotificationEventType.MentionedInPost, new MentionedInPostSubject() },
+                { NotificationEventType.EventReminder, new EventReminderSubject() },
+                { NotificationEventType.Other, new OtherSubject() }
+            };
+
         public static string CreateSubject(NotificationEventType eventType, string details)
         {
-            return eventType switch
+            if (Strategies.TryGetValue(eventType, out var strategy))
             {
-                NotificationEventType.NewFriendRequest => "You have a new friend request!",
-                NotificationEventType.NewPost => "Check out new posts in your feed!",
-                NotificationEventType.NewEvent => "New event alert: " + details,
-                NotificationEventType.FriendRequestAccepted => "Your friend request has been accepted!",
-                NotificationEventType.MentionedInPost => "You've been mentioned in a post!",
-                NotificationEventType.EventReminder => "Reminder for your upcoming event!",
-                NotificationEventType.Other => "Notification: " + details,
-                _ => "You have a new notification!"
-            };
+                return strategy.GenerateSubject(details);
+            }
+
+            return "You have a new notification!"; 
         }
     }
 }
