@@ -5,6 +5,7 @@
 @using Radzen
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.States
+@using MiniSpace.Web.DTO.Types
 @inject DialogService DialogService
 @inject IReportsService ReportsService
 @inject NavigationManager NavigationManager
@@ -37,7 +38,7 @@
                     <RadzenColumn Size="6">
                         <RadzenButton Size="ButtonSize.Medium" Text="Go to reported target" Style="width: 250px"
                                       ButtonStyle="ButtonStyle.Primary"
-                                      Click="@(() => ResolveReport(ReportDto))"/>
+                                      Click="@(() => GoToReportedTargetPage(ReportDto))"/>
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">
@@ -106,29 +107,29 @@
                     @switch (ReportDto.State)
                     {
                     case ReportState.Submitted:
-                    <RadzenButton Size="ButtonSize.Medium" Text="Start review" Style="width: 200px"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Click="@(() => StartReportReview(ReportDto))"/>
+                        <RadzenButton Size="ButtonSize.Medium" Text="Start review" Style="width: 200px"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@(() => StartReportReview(ReportDto))"/>
                     break;
                     case ReportState.UnderReview when ReportDto.ReviewerId == AdminId:
-                    <RadzenButton Size="ButtonSize.Medium" Text="Resolve" Style="width: 200px"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Click="@(() => ResolveReport(ReportDto))"/>
-                    <RadzenButton Size="ButtonSize.Medium" Text="Reject" Style="width: 200px"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Click="@(() => RejectReport(ReportDto))"/>
+                        <RadzenButton Size="ButtonSize.Medium" Text="Resolve" Style="width: 200px"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@(() => ResolveReport(ReportDto))"/>
+                        <RadzenButton Size="ButtonSize.Medium" Text="Reject" Style="width: 200px"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@(() => RejectReport(ReportDto))"/>
                     break;
                     case ReportState.Resolved:
-                    <RadzenText TextStyle="TextStyle.H6"><b>The report has been resolved yet!</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>The report has been resolved yet!</b></RadzenText>
                     break;
                     case ReportState.Rejected:
-                    <RadzenText TextStyle="TextStyle.H6"><b>The report has been rejected yet!</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>The report has been rejected yet!</b></RadzenText>
                     break;
                     case ReportState.Cancelled:
-                    <RadzenText TextStyle="TextStyle.H6"><b>The report has been cancelled!</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>The report has been cancelled!</b></RadzenText>
                     break;
                     default:
-                    throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException();
                     }
                 </RadzenStack>
             </RadzenStack>
@@ -204,6 +205,26 @@
         await base.OnInitializedAsync();
     }
 
+    private async void GoToReportedTargetPage(ReportDto reportDto)
+    {
+        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        switch (ReportDto.ContextType)
+        {
+            case ReportContextType.Event:
+                NavigationManager.NavigateTo($"/events/{ReportDto.TargetId}");
+                break;
+            case ReportContextType.Post:
+                break;
+            case ReportContextType.Comment:
+                break;
+            case ReportContextType.StudentProfile:
+                NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetId}");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    
     private async void GoToReporterProfile(ReportDto reportDto)
     {
         await LocalStorage.SetItemAsync("reportDto", reportDto);
