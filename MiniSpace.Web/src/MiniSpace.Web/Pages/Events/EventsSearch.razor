@@ -14,21 +14,34 @@
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
 @using System.Globalization
+@using AlignItems = Radzen.AlignItems
 @using Variant = Radzen.Variant
 @inject DialogService DialogService
 @inject IEventsService EventsService
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 
-<h1>Search events</h1>
+<h1 class="rz-p-8">Search events</h1>
 
-<div class="rz-p-8 rz-text-align-center">
+<RadzenStack Gap="1rem" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
     <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
-</div>
+    <RadzenRadioButtonList Value=@value TValue="int" Change=@(args => value = args) class="mb-5">
+            <Items>
+                <RadzenRadioButtonListItem Text="All events" Value="1" />
+                <RadzenRadioButtonListItem Text="My events" Value="2" />
+                <RadzenRadioButtonListItem Text="Friends events" Value="3" />
+            </Items>
+        </RadzenRadioButtonList>
+</RadzenStack>
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 
 @if (pageInitialized && totalElements == 0)
@@ -88,7 +101,7 @@
     };
     
     private bool pageInitialized = false;
-    
+    private int value = 1;
     int totalPages = 0;
     int totalElements = 0;
     IEnumerable<EventDto> events;
