@@ -25,7 +25,7 @@
 
 <h1 class="rz-p-8 search-font">Search events</h1>
 
-<RadzenStack Gap="1rem" class="rz-py-5" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+<RadzenStack Gap="1rem" class="rz-py-5 rz-mx-auto" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Style="max-width: 1080px">
     @if (IdentityService.IsAuthenticated)
     {
         <RadzenButton Text="Friends events" Click="@(() => OpenFriendsDialog())" Icon="search" class="separate-button search-button rz-ml-5"/>
