@@ -51,17 +51,31 @@
             <Columns>
                 <RadzenDataGridColumn Property="ContextType" Title="Context Type" Frozen="true" Width="60px" TextAlign="TextAlign.Center">
                     <Template Context="report">
-                        @(ReportContextTypeExtensions.GetReportContextTypeText(report.ContextType))
+                        <RadzenText>@(ReportContextTypeExtensions.GetReportContextTypeText(report.ContextType))</RadzenText>
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn Property="Category" Title="Category" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
                     <Template Context="report">
-                        @(ReportCategoryExtensions.GetReportCategoryText(report.Category))
+                        <RadzenText>@(ReportCategoryExtensions.GetReportCategoryText(report.Category))</RadzenText>
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn Property="State" Title="State" Frozen="true" Width="60px" TextAlign="TextAlign.Center">
                     <Template Context="report">
-                        @(ReportStateExtensions.GetReportStateText(report.State))
+                        @switch (report.State)
+                        {
+                            case ReportState.Submitted or ReportState.UnderReview:
+                                <RadzenText Style="color: blue">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                            case ReportState.Cancelled:
+                                <RadzenText Style="color: darkorange">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                            case ReportState.Resolved:
+                                <RadzenText Style="color: green">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                            case ReportState.Rejected:
+                                <RadzenText Style="color: darkred">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                        }
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn Context="report" Title="Details" Width="60px" TextAlign="TextAlign.Center"
