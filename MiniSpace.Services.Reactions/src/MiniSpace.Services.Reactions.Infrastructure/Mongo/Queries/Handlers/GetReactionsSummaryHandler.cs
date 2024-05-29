@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Reactions.Application;
@@ -10,6 +11,7 @@ using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetReactionsSummaryHandler : IQueryHandler<GetReactionsSummary, ReactionsSummaryDto>
     {
         private readonly IMongoRepository<ReactionDocument, Guid> _reactionRepository;

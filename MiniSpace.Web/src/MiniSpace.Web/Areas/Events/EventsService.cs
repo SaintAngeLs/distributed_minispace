@@ -118,19 +118,19 @@ namespace MiniSpace.Web.Areas.Events
                 new (name, organizerId, dateFrom, dateTo, state, pageable));
         }
 
-        public Task<EventParticipantsDto> GetEventParticipants(Guid eventId)
+        public Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<EventParticipantsDto>($"events/{eventId}/participants");
         }
 
-        public Task AddEventParticipant(Guid eventId, Guid studentId, string studentName)
+        public Task AddEventParticipantAsync(Guid eventId, Guid studentId, string studentName)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync($"events/{eventId}/participants", new {eventId, studentId, studentName});
         }
 
-        public Task RemoveEventParticipant(Guid eventId, Guid participantId)
+        public Task RemoveEventParticipantAsync(Guid eventId, Guid participantId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.DeleteAsync($"events/{eventId}/participants?participantId={participantId}");

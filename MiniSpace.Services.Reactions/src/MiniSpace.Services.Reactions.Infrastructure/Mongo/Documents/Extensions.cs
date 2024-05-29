@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Core.Entities;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static Reaction AsEntity(this ReactionDocument document)

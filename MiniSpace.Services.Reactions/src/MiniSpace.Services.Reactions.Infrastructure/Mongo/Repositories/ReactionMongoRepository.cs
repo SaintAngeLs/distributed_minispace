@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Convey.Persistence.MongoDB;
 using Jaeger.Propagation;
 using Microsoft.AspNetCore.Components.Forms;
@@ -9,6 +10,7 @@ using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class ReactionMongoRepository(IMongoRepository<ReactionDocument, Guid> repository) : IReactionRepository
     {
         private readonly IMongoRepository<ReactionDocument, Guid> _repository = repository;

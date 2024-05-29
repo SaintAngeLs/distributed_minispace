@@ -24,47 +24,44 @@ namespace MiniSpace.Services.Identity.Core.UnitTests.Entities
 {
     public class RefreshTokenTest
     {
-
-
-
-
-
-
-
-
-
-
-
-
-        
         [Fact]
-        public void AggregateId_CreatedTwice_ShouldBeDifferent()
-        {
-            // Arrange & Act
-            var id1 = new AggregateId();
-            var id2 = new AggregateId();
-
-            // Assert
-            Assert.NotEqual(id1.Value, id2.Value);
+        public void RefreshToken_WithNullToken_ShouldThrowEmptyRefreshTokenException() {
+            Assert.Throws<EmptyRefreshTokenException>(() => new RefreshToken(Guid.NewGuid(),
+                Guid.NewGuid(), null, DateTime.Now));
         }
 
         [Fact]
-        public void AggregateId_CreatedTwiceSameGuid_ShouldBeSame()
-        {
-            // Arrange
-            var id = Guid.NewGuid();
-
-            // Act
-            var id1 = new AggregateId(id);
-            var id2 = new AggregateId(id);
-
-            // Assert
-            Assert.True(id1.Equals(id2));
+        public void RefreshToken_WithTokenSpacesOnly_ShouldThrowEmptyRefreshTokenException() {
+            Assert.Throws<EmptyRefreshTokenException>(() => new RefreshToken(Guid.NewGuid(),
+                Guid.NewGuid(), "    \t   \t   ", DateTime.Now));
         }
 
         [Fact]
-        public void AggregateId_CreateWithEmptyGuid_ShouldThrowInvalidAggregateIdException() {
-            Assert.Throws<InvalidAggregateIdException>(() => { var id = new AggregateId(Guid.Empty); });
+        public void RefreshToken_WithValidParameters_ShouldNotThrowException() {
+            var act = () => new RefreshToken(Guid.NewGuid(),
+                Guid.NewGuid(), "valid token", DateTime.Now);
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Revoke_WithRevoked_ShouldThrowRevokedRefreshTokenException() {
+            var revokedAt = DateTime.Now;
+            var token = new RefreshToken(Guid.NewGuid(), Guid.NewGuid(),
+                "token", DateTime.Now, revokedAt);
+            Assert.Throws<RevokedRefreshTokenException>(() => {
+                token.Revoke(DateTime.Now);
+            });
+        }
+
+        [Fact]
+        public void Revoke_WithNotRevoked_ShouldNotThrowException() {
+            DateTime? revokedAt = null;
+            var token = new RefreshToken(Guid.NewGuid(), Guid.NewGuid(),
+                "token", DateTime.Now, revokedAt);
+            var act = (() => {
+                token.Revoke(DateTime.Now);
+            });
+            act.Should().NotThrow();
         }
     }
 }

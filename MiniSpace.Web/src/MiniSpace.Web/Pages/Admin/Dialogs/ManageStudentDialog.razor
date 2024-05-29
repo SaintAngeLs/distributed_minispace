@@ -181,28 +181,28 @@
     
     private async void Ban(StudentDto studentDto)
     {
-        await IdentityService.BanUser(studentDto.Id);
+        await IdentityService.BanUserAsync(studentDto.Id);
         StudentDto.IsBanned = true;
         StateHasChanged();
     }
     
     private async void Unban(StudentDto studentDto)
     {
-        await IdentityService.UnbanUser(studentDto.Id);
+        await IdentityService.UnbanUserAsync(studentDto.Id);
         studentDto.IsBanned = false;
         StateHasChanged();
     }
     
     private async void GrantOrganizerRights(StudentDto studentDto)
     {
-        await IdentityService.GrantOrganizerRights(studentDto.Id);
+        await IdentityService.GrantOrganizerRightsAsync(studentDto.Id);
         studentDto.IsOrganizer = true;
         StateHasChanged();
     }
     
     private async void RevokeOrganizerRights(StudentDto studentDto)
     {
-        await IdentityService.RevokeOrganizerRights(studentDto.Id);
+        await IdentityService.RevokeOrganizerRightsAsync(studentDto.Id);
         studentDto.IsOrganizer = false;
         StateHasChanged();
     }

@@ -1,10 +1,13 @@
 @page "/events/{EventId}"
 @using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.Areas.Events
-@using MiniSpace.Web.Pages.Events.Dialogs
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Areas.Reactions
+@using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Pages.Comments
+@using MiniSpace.Web.Pages.Events.Dialogs
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -16,6 +19,7 @@
 @inject IEventsService EventsService
 @inject IPostsService PostsService
 @inject IReactionsService ReactionsService
+@inject ICommentsService CommentsService
 @inject NavigationManager NavigationManager
 
 @if (!pageInitialized)
@@ -94,18 +98,18 @@
                                 <RadzenRow Gap="0.5rem">
                                     <RadzenColumn Size="12" class="rz-text-truncate">
                                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
+                                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
                                                         Text=@($"{GetAuthorName(post.OrganizerId)}")/>
                                             @if (post.UpdatedAt != null)
                                             {
                                                 <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
+                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
                                                 </RadzenText>   
                                             }
                                             else
                                             {
                                                 <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                                    Published at @(post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
+                                                    Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
                                                 </RadzenText>   
                                             }
                                         </RadzenStack>
@@ -124,10 +128,11 @@
                         </Template>
                     </RadzenDataList>
                 </RadzenTabsItem>
-        
+
                 <RadzenTabsItem Text="Comments">
+                    <CommentsTab CommentContext="Event" ContextId="@EventId" StudentId="studentId" />
                 </RadzenTabsItem>
-        
+
                 <RadzenTabsItem Text="Reactions">
                     @if (pageInitialized && !reactions.Any())
                     {
@@ -150,7 +155,7 @@
                         </Template>
                     </RadzenDataList>
                 </RadzenTabsItem>
-        
+
                 @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                 {
                     <RadzenTabsItem Text="Signed up friends">
@@ -191,7 +196,7 @@
                         </RadzenDataGrid>
                     </RadzenTabsItem>
                 }
-        
+
                 @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
                 {
                     <RadzenTabsItem Text="Signed up students">
@@ -291,12 +296,12 @@
     public string EventId { get; set; }
     
     private Guid studentId;
-    public EventDto ev = new();
+    private EventDto ev = new();
     private bool pageInitialized = false;
     private EventRatingDto eventRating = null;
 
     IEnumerable<PostDto> posts;
-    IEnumerable<ReactionDto> reactions;
+    IEnumerable<ReactionDto> reactions = [];
     
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
@@ -312,20 +317,20 @@
         if (IdentityService.IsAuthenticated)
         {
             studentId = IdentityService.GetCurrentUserId();
-        }
-        ev = await EventsService.GetEventAsync(new Guid(EventId));
-        reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
-        posts = await PostsService.GetPostsAsync(ev.Id);
-        reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
-        if (ev.Status == "Archived")
-        {
-            var response = await EventsService.GetEventRatingAsync(ev.Id);
-            if (response != null)
+            ev = await EventsService.GetEventAsync(new Guid(EventId));
+            reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
+            posts = await PostsService.GetPostsAsync(ev.Id);
+            if (ev.Status == "Archived")
             {
-                eventRating = response;
-                StateHasChanged();
+                var response = await EventsService.GetEventRatingAsync(ev.Id);
+                if (response != null)
+                {
+                    eventRating = response;
+                    StateHasChanged();
+                }
             }
         }
+        
         pageInitialized = true;
     }
 
@@ -356,30 +361,32 @@
             case 0:
                 posts = await PostsService.GetPostsAsync(ev.Id);
                 break;
+            case 1:
+                break;
             case 2:
-                reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
+                reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
                 break;
             case 3:
                 if (IsUserEventOrganizer(ev))
                 {
-                    var eventParticipantsDto = await EventsService.GetEventParticipants(ev.Id);
+                    var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
                     signedUpStudents = eventParticipantsDto.SignedUpStudents.ToList();
                 }
                 break;
             case 4:
                 if (IsUserEventOrganizer(ev))
                 {
-                    var eventParticipantsDto = await EventsService.GetEventParticipants(ev.Id);
+                    var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
                     interestedStudents = eventParticipantsDto.InterestedStudents.ToList();
                 }
                 break;
         }
         StateHasChanged();
     }
-    
+
     private async Task OpenEventDetailsDialog(EventDto eventDto)
     {
-        await DialogService.OpenAsync<EventDetailsDialog>($"Details of the event:",
+        await DialogService.OpenAsync<EventDetailsDialog>("Details of the event:",
             new Dictionary<string, object>() { { "EventDto", eventDto } },
             new DialogOptions()
             {
@@ -387,8 +394,8 @@
                 AutoFocusFirstElement = false
             });
     }
-    
-    private async Task OpenDeleteEventDialog(Guid postId)
+
+    private async Task OpenDeleteEventDialog()
     {
         await DialogService.OpenAsync<DeleteEventDialog>("Are you sure? This action cannot be undone!",
             new Dictionary<string, object>() { {"EventId", new Guid(EventId) } },
@@ -444,7 +451,7 @@
     
     private async void RemoveEventParticipant(EventDto eventDto, ParticipantDto participant)
     {
-        await EventsService.RemoveEventParticipant(eventDto.Id, participant.StudentId);
+        await EventsService.RemoveEventParticipantAsync(eventDto.Id, participant.StudentId);
         signedUpStudents.Remove(participant);
         await signedUpDataGrid.Reload();
     }
@@ -453,16 +460,16 @@
     {
         if (reactionsSummary.AuthUserReactionId != null)
         {
-            await ReactionsService.DeleteReaction((Guid)reactionsSummary.AuthUserReactionId);
+            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
         }
         
         if (reactionType != null)
         {
-            await ReactionsService.CreateReaction(Guid.Empty, studentId, reactionType.ToString(),
+            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
                 ev.Id, ReactionContentType.Event.ToString());
         }
 
-        reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
         StateHasChanged();
     }
     
@@ -481,4 +488,58 @@
             return "small-font";
         }
     }
+    
+    // private async Task SearchComments()
+    // {
+    //     comments = [];
+    //     searchCommentsModel.Pageable.Page = 1;
+    //     
+    //     var response = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
+    //         searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
+    //     if (response.Content != null)
+    //     {
+    //         comments = response.Content.Content.ToHashSet();
+    //         commentsEmpty = response.Content.Empty;
+    //         
+    //         if (response.Content.Number < response.Content.TotalPages)
+    //         {
+    //             comments.Last().IsLast = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         commentsEmpty = true;
+    //     }
+    //     
+    //     foreach (var comment in comments)
+    //     {
+    //         if (comment.RepliesCount > 0)
+    //         {
+    //             comment.CanExpand = true;
+    //         }
+    //         
+    //         var searchSubCommentsModel = searchCommentsModel.DeepClone();
+    //         searchSubCommentsModel.Pageable.Page = 1;
+    //         
+    //         var subResponse = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
+    //             searchCommentsModel.CommentContext, comment.Id, searchCommentsModel.Pageable);
+    //         if (subResponse.Content is { Empty: false })
+    //         {
+    //             comment.SubComments = subResponse.Content.Content.ToHashSet();
+    //             var moreSubCommentsAvailable = subResponse.Content.Number < subResponse.Content.TotalPages;
+    //
+    //             foreach (var subComment in comment.SubComments)
+    //             {
+    //                 subComment.Parent = comment;
+    //             }
+    //
+    //             if (moreSubCommentsAvailable)
+    //             {
+    //                 comment.SubComments.Last().IsLast = true;   
+    //             }
+    //         }
+    //     }
+    //     
+    //     StateHasChanged();
+    // }
 }
