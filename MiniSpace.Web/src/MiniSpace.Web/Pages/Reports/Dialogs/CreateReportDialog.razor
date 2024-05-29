@@ -1,10 +1,15 @@
 @page "/reports/create/dialog"
+@using MiniSpace.Web.Areas.Http
 @using MiniSpace.Web.Areas.Reports
 @using MiniSpace.Web.Models.Reports
 @using Radzen
 @inject DialogService DialogService
 @inject IReportsService ReportsService
 
+<RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
+             Shade="Shade.Lighter" class="rz-my-3">
+    @errorMessage
+</RadzenAlert>
 <RadzenTemplateForm Data="@CreateReportModel" Submit="@(async (CreateReportModel args) => { await CreateReport(args); })">
     <RadzenStack Gap="1rem">
         <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
@@ -39,6 +44,9 @@
     [Parameter]
     public CreateReportModel CreateReportModel { get; set; }
     
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    
     private readonly List<KeyValuePair<string, string>> categories =
     [
         new KeyValuePair<string, string>("Spam", "Spam"),
@@ -58,9 +66,18 @@
     
     private async Task CreateReport(CreateReportModel createReportModel)
     {
-        await ReportsService.CreateReportAsync(Guid.Empty, createReportModel.IssuerId,
+        var response = await ReportsService.CreateReportAsync(Guid.Empty, createReportModel.IssuerId,
             createReportModel.TargetId, createReportModel.TargetOwnerId, createReportModel.ContextType,
             createReportModel.Category, CreateReportModel.Reason);
-        DialogService.Close(true);
+        
+        if (response.ErrorMessage != null)
+        {
+            showError = true;
+            errorMessage = $"Error during reporting: {response.ErrorMessage.Reason}";
+        }
+        else
+        {
+            DialogService.Close(true);   
+        }
     }
 }
