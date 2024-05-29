@@ -20,14 +20,18 @@
 @inject DialogService DialogService
 @inject IEventsService EventsService
 @inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 
 <h1 class="rz-p-8 search-font">Search events</h1>
 
 <RadzenStack Gap="1rem" class="rz-py-5" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-    <RadzenButton Text="Filter by criteria" Click="@OpenSearchDialog" Icon="pageview" class="separate-button search-button rz-ml-5"/>
-    <RadzenButton Text="Friends events" Click="@(() => OpenFriendsDialog())" Icon="pageview" class="separate-button search-button"/>
-    <RadzenButton Text="My events" Click="@(() => RedirectToFollowedEvents())" class="separate-button standard-button"/>
+    @if (IdentityService.IsAuthenticated)
+    {
+        <RadzenButton Text="Friends events" Click="@(() => OpenFriendsDialog())" Icon="search" class="separate-button search-button rz-ml-5"/>
+        <RadzenButton Text="My events" Click="@(() => RedirectToFollowedEvents())" Icon="event" class="separate-button standard-button"/>
+    }
+    <RadzenButton Text="Advanced search" Click="@OpenSearchDialog" Icon="pageview" class="separate-button standard-button "/>
     <RadzenButton Text="Clear filters" Click="@(() => ClearFilters())" Icon="close" class="separate-button clear-button"/>
 </RadzenStack>
 

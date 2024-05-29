@@ -201,7 +201,7 @@
                     </RadzenDataList>
                 </RadzenTabsItem>
 
-                @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
+                @if (IdentityService.IsAuthenticated)
                 {
                     <RadzenTabsItem Text="Signed up friends">
                         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" 
