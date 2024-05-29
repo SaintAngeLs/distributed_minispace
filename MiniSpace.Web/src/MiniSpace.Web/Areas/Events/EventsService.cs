@@ -90,6 +90,17 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.PostAsync($"events/{eventId}/rate", new {eventId, rating, studentId});
         }
         
+        public Task CancelRateEventAsync(Guid eventId, Guid studentId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"events/{eventId}/rate?studentId={studentId}");
+        }
+        
+        public Task<HttpResponse<EventRatingDto>> GetEventRatingAsync(Guid eventId)
+        {
+            return _httpClient.GetAsync<HttpResponse<EventRatingDto>>($"events/{eventId}/rating");
+        }
+        
         public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer,
             Guid organizationId, Guid rootOrganizationId, string category, string state, IEnumerable<Guid> friends,
             string friendsEngagementType, string dateFrom, string dateTo, PageableDto pageable)

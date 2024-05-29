@@ -23,7 +23,7 @@ namespace MiniSpace.Web.DTO
         public DateTime UpdatedAt { get; set; }
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
-        public bool HasRated { get; set; }
+        public int? StudentRating { get; set; }
         public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
         public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
     }
