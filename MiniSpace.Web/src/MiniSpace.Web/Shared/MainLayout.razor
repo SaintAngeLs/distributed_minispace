@@ -112,6 +112,8 @@
                         <RadzenPanelMenuItem Text="New" Icon="send" Click="@(() => NavigationManager.NavigateTo("notifications/new"))" />
                         <RadzenPanelMenuItem Text="History" Icon="history" Click="@(() => NavigationManager.NavigateTo("notifications/history"))" />
                     </RadzenPanelMenuItem>
+
+                    <RadzenPanelMenuItem Text="Reports" Icon="assignment_late" Click="@(() => NavigationManager.NavigateTo("reports"))" />
                     
                     @if (IdentityService.GetCurrentUserRole() == "admin")
                     {
