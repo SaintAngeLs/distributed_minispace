@@ -43,7 +43,7 @@
                     <RadzenColumn Size="6">
                         <RadzenButton Size="ButtonSize.Medium" Text="Go to profile of target owner" Style="width: 250px"
                                       ButtonStyle="ButtonStyle.Secondary"
-                                      Click="@(() => GoToReporterProfile(ReportDto))" />
+                                      Click="@(() => GoToTargetOwnerProfile(ReportDto))" />
                     </RadzenColumn>
                 </RadzenRow>
                 
@@ -208,6 +208,12 @@
     {
         await LocalStorage.SetItemAsync("reportDto", reportDto);
         NavigationManager.NavigateTo($"/student-details/{ReportDto.IssuerId}");
+    }
+    
+    private async void GoToTargetOwnerProfile(ReportDto reportDto)
+    {
+        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetOwnerId}");
     }
     
     private async void StartReportReview(ReportDto reportDto)
