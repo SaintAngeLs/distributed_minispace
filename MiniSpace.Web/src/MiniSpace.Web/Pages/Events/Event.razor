@@ -10,6 +10,7 @@
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
+@using System.Globalization
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
@@ -24,112 +25,61 @@
 
 @if (pageInitialized)
 {
-    <h1>@ev.Name</h1>
-
-    <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
-        <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-p-4">
-                <RadzenStack Gap="0">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Description</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Description)</b></RadzenText>
-                    @if (ev.Organizer != null)
-                    {
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.OrganizationName)</b></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Organizer</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@(ev.Organizer.Name)</b></RadzenText>
-                    }
-                </RadzenStack>
-            </RadzenStack>
-            <RadzenCard class="rz-background-color-secondary rz-shadow-0 rz-border-radius-0 rz-p-8">
-                <RadzenRow RowGap="0">
-                    <RadzenColumn SizeSM="6">
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.StartDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Category</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.Category)</b></RadzenText>                    
-                    </RadzenColumn>
-                    <RadzenColumn SizeSM="6">
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">End date</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.EndDate.ToLocalTime().ToString(dateFormat))</b></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Fee</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(ev.Fee)</b></RadzenText>                    
-                    </RadzenColumn>
-                </RadzenRow>
-            </RadzenCard>
+    <RadzenStack>
+        <RadzenCard class="rz-mx-auto" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
+             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+                 <RadzenStack Gap="0">
+                     <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
+                     <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left event-name {GetFontSizeClass(ev.Name)}")">@ev.Name</RadzenText>
+                     <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
+                     <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
+                 </RadzenStack>
+             </RadzenStack>
+             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+                 <RadzenStack Gap="0">
+                     <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Description</RadzenText>
+                     <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left")">@Event.Description</RadzenText>
+                 </RadzenStack>
+             </RadzenStack>
+             <RadzenCard Class="gradient-background rz-shadow-0 rz-border-radius-5 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
+                 <RadzenRow RowGap="0">
+                     <RadzenColumn SizeSM="6">
+                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
+                         <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@ev.StartDate.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)</RadzenText>
+                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">End date</RadzenText>
+                         <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@ev.EndDate.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)</RadzenText>
+                     </RadzenColumn>
+                     <RadzenColumn SizeSM="6">
+                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Location</RadzenText>
+                         <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@ev.Location?.BuildingName</RadzenText>
+                         <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Fee</RadzenText>
+                         <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@String.Format(new System.Globalization.CultureInfo("pl-PL"), "{0:C}", ev?.Fee)</RadzenText>
+                     </RadzenColumn>
+                 </RadzenRow>
+             </RadzenCard>
+             <RadzenRow RowGap="0">
+                 <RadzenColumn SizeSM="9">
+                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
+                         <RadzenIcon Icon="grade" Style="color: #30445f;"/>
+                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@ev.InterestedStudents</RadzenText>
+                         <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
+                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.SignedUpStudents/@ev.Capacity</RadzenText>
+                     </RadzenStack>
+                 </RadzenColumn>
+                 <RadzenColumn SizeSM="3">
+                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                         @if (ev.Status == "Archived" && eventRating != null)
+                         {
+                             <RadzenIcon Icon="rating" Style="color: #30445f;"/>
+                             <RadzenText TextStyle="TextStyle.Body1" Class="rz-font-weight-bold rz-pt-2">
+                                 @(eventRating.TotalRatings > 0 ? $"{@eventRating.AverageRating} out of 5 ({@eventRating.TotalRatings} reviews)" :
+                                     "No ratings yet")
+                             </RadzenText>
+                         }
+                     </RadzenStack>
+                 </RadzenColumn>
+             </RadzenRow>
         </RadzenCard>
-        
-        <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                <RadzenButton Size="ButtonSize.Medium" Text="Show full details" ButtonStyle="ButtonStyle.Primary"
-                              Click="@(() => OpenEventDetailsDialog(ev))" />
-                <RadzenButton Size="ButtonSize.Medium" Text="Report event" ButtonStyle="ButtonStyle.Primary"
-                />
-            </RadzenStack>
-            
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev)
-                     && (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
-                {
-                    @if (!ev.IsSignedUp)
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" ButtonStyle="ButtonStyle.Secondary"
-                                      Click="@(() => SignUpToEvent(ev))"/>
-                    }
-                    else
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" ButtonStyle="ButtonStyle.Warning"
-                                      Click="@(() => CancelSignUpToEvent(ev))"/>
-                    }
-                    
-                    @if (!ev.IsInterested)
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Interest in event" ButtonStyle="ButtonStyle.Secondary"
-                                      Click="@(() => ShowInterestInEvent(ev))"/>
-                    }
-                    else
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" ButtonStyle="ButtonStyle.Warning"
-                                      Click="@(() => CancelInterestInEvent(ev))"/>
-                    }
-                }
-            </RadzenStack>
-
-            @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
-            {
-                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                    <RadzenButton Size="ButtonSize.Medium" Text="Update event" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/update"))" />
-                    <RadzenButton Size="ButtonSize.Medium" Text="Delete event" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => OpenDeleteEventDialog(ev.Id))" />
-                </RadzenStack>
-
-                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                    <RadzenButton Size="ButtonSize.Medium" Text="Create new post" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" />
-                </RadzenStack>   
-            }
-
-            <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
-                <RadzenCard class="rz-background-color-success rz-shadow-0 rz-border-radius-0 rz-p-8">
-                    <RadzenRow RowGap="0">
-                        <RadzenColumn SizeSM="6">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Number of reactions</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(reactionsSummary.NumberOfReactions)</b></RadzenText>
-                            <RadzenText Text="Your reaction" TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0" />
-                            <RadzenDropDown Name="your-reaction" Data="reactionTypes" Value="@(reactionsSummary.AuthUserReactionType)"
-                                            ValueChanged="@((ReactionType? reactionType) => ReactionChanged(reactionType))"
-                                            TextProperty="Key" ValueProperty="Value" />
-                        </RadzenColumn>
-                        <RadzenColumn SizeSM="6">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Dominant reaction</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(ReactionTypeExtensions.GetReactionText(reactionsSummary.DominantReaction))</b></RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenCard>
-            </RadzenCard>
-        </RadzenStack>
-        
         <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
             <Tabs>
                 <RadzenTabsItem Text="Posts">
@@ -149,13 +99,13 @@
                                             @if (post.UpdatedAt != null)
                                             {
                                                 <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                                                 </RadzenText>   
                                             }
                                             else
                                             {
                                                 <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                                    Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                                                    Published at @(post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                                                 </RadzenText>   
                                             }
                                         </RadzenStack>
@@ -174,10 +124,10 @@
                         </Template>
                     </RadzenDataList>
                 </RadzenTabsItem>
-
+        
                 <RadzenTabsItem Text="Comments">
                 </RadzenTabsItem>
-
+        
                 <RadzenTabsItem Text="Reactions">
                     @if (pageInitialized && !reactions.Any())
                     {
@@ -200,8 +150,8 @@
                         </Template>
                     </RadzenDataList>
                 </RadzenTabsItem>
-
-                @if (IdentityService.IsAuthenticated)
+        
+                @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                 {
                     <RadzenTabsItem Text="Signed up friends">
                         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" 
@@ -241,7 +191,7 @@
                         </RadzenDataGrid>
                     </RadzenTabsItem>
                 }
-
+        
                 @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
                 {
                     <RadzenTabsItem Text="Signed up students">
@@ -295,8 +245,6 @@
     [Parameter]
     public string EventId { get; set; }
     
-    private const string dateFormat = "dd/MM/yyyy HH:mm";
-
     private Guid studentId;
     public EventDto ev = new();
     private bool pageInitialized = false;
