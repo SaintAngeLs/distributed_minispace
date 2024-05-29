@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Students.Application.Dto;
@@ -22,15 +23,44 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
         public async Task<Application.Queries.PagedResult<StudentDto>> HandleAsync(GetStudents query, CancellationToken cancellationToken)
         {
             var filter = Builders<StudentDocument>.Filter.Empty;
-            if (!string.IsNullOrWhiteSpace(query.FirstName))
+            
+            if (!string.IsNullOrWhiteSpace(query.Name))
             {
-                var regexFirstName = new BsonRegularExpression(query.FirstName, "i");
-                filter &= Builders<StudentDocument>.Filter.Regex(x => x.FirstName, regexFirstName);
-            }
-            if(!string.IsNullOrWhiteSpace(query.LastName))
-            {
-                var regexLastName = new BsonRegularExpression(query.LastName, "i");
-                filter &= Builders<StudentDocument>.Filter.Regex(x => x.LastName, regexLastName);
+                string searchTerm = query.Name.Trim();
+
+                var parts = searchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                // Create regex filters
+                var filters = new List<FilterDefinition<StudentDocument>>();
+
+                if (parts.Length == 1)
+                {
+                    var regex = new BsonRegularExpression(new Regex(parts[0], RegexOptions.IgnoreCase));
+                    filters.Add(Builders<StudentDocument>.Filter.Regex(x => x.FirstName, regex));
+                    filters.Add(Builders<StudentDocument>.Filter.Regex(x => x.LastName, regex));
+                }
+                else if (parts.Length >= 2)
+                {
+                    var firstNameRegex = new BsonRegularExpression(new Regex(parts[0], RegexOptions.IgnoreCase));
+                    var lastNameRegex = new BsonRegularExpression(new Regex(parts[1], RegexOptions.IgnoreCase));
+
+                    filters.Add(Builders<StudentDocument>.Filter.And(
+                        Builders<StudentDocument>.Filter.Regex(x => x.FirstName, firstNameRegex),
+                        Builders<StudentDocument>.Filter.Regex(x => x.LastName, lastNameRegex)
+                    ));
+        
+                    filters.Add(Builders<StudentDocument>.Filter.And(
+                        Builders<StudentDocument>.Filter.Regex(x => x.FirstName, lastNameRegex),
+                        Builders<StudentDocument>.Filter.Regex(x => x.LastName, firstNameRegex)
+                    ));
+
+                    filters.Add(Builders<StudentDocument>.Filter.Regex(x => x.FirstName, firstNameRegex));
+                    filters.Add(Builders<StudentDocument>.Filter.Regex(x => x.LastName, firstNameRegex));
+                    filters.Add(Builders<StudentDocument>.Filter.Regex(x => x.FirstName, lastNameRegex));
+                    filters.Add(Builders<StudentDocument>.Filter.Regex(x => x.LastName, lastNameRegex));
+                }
+
+                filter &= Builders<StudentDocument>.Filter.Or(filters);
             }
             var options = new FindOptions<StudentDocument, StudentDocument>
             {

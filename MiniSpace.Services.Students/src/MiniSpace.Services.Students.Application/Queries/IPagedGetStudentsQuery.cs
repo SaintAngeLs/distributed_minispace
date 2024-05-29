@@ -6,8 +6,7 @@ namespace MiniSpace.Services.Students.Application.Queries
     {
         new int Page { get; set; }
         new int ResultsPerPage { get; set; }
-        new string FirstName { get; set; }
-        new string LastName { get; set; }
+        new string Name { get; set; }
         new string OrderBy { get; set; }
         new string SortOrder { get; set; }
         int Results { get; set; }
