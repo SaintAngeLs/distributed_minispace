@@ -48,7 +48,7 @@
 
     private void SelectFriends()
     {
-        var selectedFriends = friends.Where(f => f.Selected).ToList();
+        var selectedFriends = friends.Where(f => f.Selected).Select(f => f.Id).ToList();
         DialogService.Close(selectedFriends);
     }
 }

@@ -197,7 +197,8 @@
     {
         var result = await DialogService.OpenAsync<FriendsDialog>($"Filter events by friends",
             null, new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
-        
+        searchEventsModel.Friends = result;
+        await OnInitializedAsync();
     }
     
     private Task RedirectToFollowedEvents()
