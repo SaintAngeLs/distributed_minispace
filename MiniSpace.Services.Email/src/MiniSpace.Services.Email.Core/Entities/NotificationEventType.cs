@@ -13,7 +13,8 @@ namespace MiniSpace.Services.Email.Core.Entities
         StudentCancelledInterestInEvent,
         EventParticipantAdded,
         EventParticipantRemoved,
-        NewPost,
+        PostCreated,
+        PostUpdated,
         MentionedInPost,
         EventReminder,
         Other
