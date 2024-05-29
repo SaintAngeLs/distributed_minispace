@@ -114,5 +114,11 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
 
             await _repository.Collection.UpdateOneAsync(filter, update);
         }
+
+        public async Task<int> GetNotificationCount(Guid studentId)
+        {
+            var studentNotifications = await _repository.GetAsync(x => x.StudentId == studentId);
+            return studentNotifications?.Notifications.Count ?? 0;
+        }
     }
 }
