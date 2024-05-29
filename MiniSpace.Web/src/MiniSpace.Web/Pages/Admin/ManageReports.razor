@@ -102,6 +102,12 @@
         {
             adminId = IdentityService.GetCurrentUserId();
             
+            var searchReportsCriteria = await LocalStorage.GetItemAsync<SearchReportsModel>("searchReportsCriteria");
+            if (searchReportsCriteria != null)
+            {
+                searchReportsModel = searchReportsCriteria;
+            }
+            
             var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
                 searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
                 searchReportsModel.Pageable);
@@ -149,6 +155,7 @@
                 Width = "800px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+        await LocalStorage.SetItemAsync("searchReportsCriteria", searchReportsModel);
         await OnInitializedAsync();
     }
     
