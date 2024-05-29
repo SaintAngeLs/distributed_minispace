@@ -20,6 +20,7 @@ namespace MiniSpace.Web.Models.Reports
         {
             ContextTypes = ["Event", "Post", "Comment", "StudentProfile"];
             States = ["Submitted", "UnderReview", "Resolved", "Rejected", "Cancelled"];
+            OnlyReviewedByYou = false;
             Pageable = new PageableDto()
             {
                 Page = 1,
