@@ -4,6 +4,7 @@
 @using MiniSpace.Web.Areas.Reports
 @using Radzen
 @using MiniSpace.Web.DTO
+@using MiniSpace.Web.DTO.Enums
 @using MiniSpace.Web.DTO.States
 @using MiniSpace.Web.DTO.Types
 @inject DialogService DialogService
@@ -71,12 +72,16 @@
                 <RadzenRow Size="12" AlignItems="AlignItems.Center">
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Context type</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.ContextType)</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportContextTypeExtensions.GetReportContextTypeText(ReportDto.ContextType))</b>
+                        </RadzenText>
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Category</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.Category)</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportCategoryExtensions.GetReportCategoryText(ReportDto.Category))</b>
+                        </RadzenText>
                     </RadzenColumn>
                 </RadzenRow>
 
@@ -150,7 +155,9 @@
                 <RadzenRow Size="12" AlignItems="AlignItems.Center">
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">State</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.State)</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportStateExtensions.GetReportStateText(ReportDto.State))</b>
+                        </RadzenText>
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">

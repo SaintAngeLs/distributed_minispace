@@ -1,7 +1,9 @@
 @page "/admin/reports"
 @using MiniSpace.Web.Areas.Reports
 @using MiniSpace.Web.DTO
-@using MiniSpace.Web.DTO.Wrappers
+@using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.DTO.States
+@using MiniSpace.Web.DTO.Types
 @using MiniSpace.Web.Models.Reports
 @using MiniSpace.Web.Pages.Admin.Dialogs
 @using MudBlazor
@@ -47,9 +49,21 @@
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" Data="@reports" ColumnWidth="300px"
                         PagerHorizontalAlign="HorizontalAlign.Center">
             <Columns>
-                <RadzenDataGridColumn Property="ContextType" Title="Context Type" Frozen="true" Width="60px" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn Property="Category" Title="Category" Frozen="true" Width="100px" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn Property="State" Title="State" Frozen="true" Width="60px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="ContextType" Title="Context Type" Frozen="true" Width="60px" TextAlign="TextAlign.Center">
+                    <Template Context="report">
+                        @(ReportContextTypeExtensions.GetReportContextTypeText(report.ContextType))
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="Category" Title="Category" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
+                    <Template Context="report">
+                        @(ReportCategoryExtensions.GetReportCategoryText(report.Category))
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="State" Title="State" Frozen="true" Width="60px" TextAlign="TextAlign.Center">
+                    <Template Context="report">
+                        @(ReportStateExtensions.GetReportStateText(report.State))
+                    </Template>
+                </RadzenDataGridColumn>
                 <RadzenDataGridColumn Context="report" Title="Details" Width="60px" TextAlign="TextAlign.Center"
                                       Filterable="false" Sortable="false" Frozen="true">
                     <Template Context="report">
