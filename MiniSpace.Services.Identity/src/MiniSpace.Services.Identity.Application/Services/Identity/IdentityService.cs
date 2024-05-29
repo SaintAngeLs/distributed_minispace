@@ -201,7 +201,9 @@
             public async Task ResetPasswordAsync(ResetPassword command)
             {
                 var userResetToken = await _userResetTokenRepository.GetByUserIdAsync(command.UserId);
-                if (userResetToken == null || !userResetToken.ResetTokenIsValid(command.Token))
+                if (userResetToken == null 
+                || !userResetToken.ResetTokenIsValid(command.Token)
+                )
                 {
                     _logger.LogError("Invalid or expired reset token");
                     throw new InvalidTokenException();

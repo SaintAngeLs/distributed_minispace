@@ -301,6 +301,11 @@ namespace MiniSpace.Web.Areas.Identity
 
         public async Task<HttpResponse<object>> ResetPasswordAsync(string token, string email, string newPassword)
         {
+             Console.WriteLine($"Attempting to reset password with the following parameters:");
+    Console.WriteLine($"Token: {token}");
+    Console.WriteLine($"Email: {email}");
+    Console.WriteLine($"NewPassword: {newPassword}");
+
             var response = await _httpClient.PostAsync<object, object>("identity/password/reset", new { Token = token, Email = email, NewPassword = newPassword });
             return response;
         }
