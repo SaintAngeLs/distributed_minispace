@@ -12,12 +12,13 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
     internal sealed  class UserRepository : IUserRepository
     {
         private readonly IMongoRepository<UserDocument, Guid> _repository;
+        private readonly UserResetTokenRepository _userResetTokenRepository;
 
-        public UserRepository(IMongoRepository<UserDocument, Guid> repository)
+         public UserRepository(IMongoRepository<UserDocument, Guid> repository, UserResetTokenRepository userResetTokenRepository)
         {
             _repository = repository;
+            _userResetTokenRepository = userResetTokenRepository;
         }
-
         public async Task<User> GetAsync(Guid id)
         {
             var user = await _repository.GetAsync(id);
@@ -34,5 +35,17 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
 
         public Task AddAsync(User user) => _repository.AddAsync(user.AsDocument());
         public Task UpdateAsync(User user) => _repository.UpdateAsync(user.AsDocument());
+
+        public async Task<User> GetByResetTokenAsync(string resetToken)
+        {
+            var tokenDocument = await _userResetTokenRepository.GetByResetTokenAsync(resetToken);
+            if (tokenDocument == null || tokenDocument.ResetTokenExpires <= DateTime.UtcNow)
+            {
+                return null;
+            }
+            var userDocument = await _repository.GetAsync(tokenDocument.UserId);
+            return userDocument?.AsEntity();
+        }
+
     }
 }

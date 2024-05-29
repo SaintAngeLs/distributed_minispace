@@ -89,6 +89,17 @@ namespace MiniSpace.Services.Identity.Api
                             await ctx.RequestServices.GetService<IIdentityService>().UnbanUserAsync(cmd);
                             ctx.Response.StatusCode = 204;
                         })
+                        .Post<ForgotPassword>("password/forgot", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().ForgotPasswordAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
+                        .Post<ResetPassword>("password/reset", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().ResetPasswordAsync(cmd.Token, cmd.NewPassword);
+                            ctx.Response.StatusCode = 204;
+                        })
+
                     ))
                 .UseLogging()
                 .Build()
