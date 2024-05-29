@@ -236,7 +236,7 @@
             IssuerId = StudentId,
             TargetId = commentDto.Id,
             TargetOwnerId = commentDto.StudentId,
-            ContextType = "Post"
+            ContextType = "Comment"
         };
 
         await OpenReportCommentDialog(createReportModel);
