@@ -24,10 +24,10 @@
 <h1 class="rz-p-8 search-font">Search events</h1>
 
 <RadzenStack Gap="2rem" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-    <RadzenButton Text="Filter by criteria" Click="@OpenSearchDialog" Icon="pageview" class="separate-button rz-ml-5"/>
-    <RadzenButton Text="All events" Click="@(() => value = 1)" class="@(value == 1 ? "separate-button hovered-button" : "separate-button")"/>
-    <RadzenButton Text="My events" Click="@(() => value = 2)" class="@(value == 2 ? "separate-button hovered-button" : "separate-button")"/>
-    <RadzenButton Text="Friends events" Click="@(() => value = 3)" class="@(value == 3 ? "separate-button hovered-button" : "separate-button")"/>
+    <RadzenButton Text="Filter by criteria" Click="@OpenSearchDialog" Icon="pageview" class="separate-button search-button rz-ml-5"/>
+    <RadzenButton Text="My events" Click="@(() => RedirectToFollowedEvents())" class="separate-button standard-button"/>
+    <RadzenButton Text="Friends events" Click="@(() => value = 2)" class="separate-button standard-button"/>
+    <RadzenButton Text="Clear filters" Click="@(() => ClearFilters())" Icon="close" class="separate-button clear-button"/>
 </RadzenStack>
 
 @if (!pageInitialized)
@@ -78,9 +78,20 @@
         font-weight: bold; /* Change this to your preferred font weight */
     }
     
+    .search-button{
+        background-color: darkgreen !important;
+    }
+    
+    .clear-button{
+        background-color: darkred !important;
+    }
+    
+    .standard-button {
+         background-color: #14304f !important;
+    }
+    
     .separate-button {
         margin: 10px; 
-        background-color: #30445f !important; 
         border: 1px solid #ccc; 
         border-radius: 5px; 
         padding: 12px;
@@ -93,43 +104,16 @@
         color: #000; 
     }
     
-    .hovered-button {
-        background-color: #ccc; /* Change this to your preferred hover color */
-        color: #000; /* Change this to your preferred hover text color */
-    }
-    
 </style>
 
 
 @code {
-    private SearchEventsModel searchEventsModel = new()
-    {
-        Name = "",
-        Organizer = "",
-        Organization = new OrganizationModel(),
-        Category = "",
-        State = "",
-        Friends = [],
-        FriendsEngagementType = "",
-        DateFrom = DateTime.Now.AddDays(-7),
-        DateTo = DateTime.Now.AddDays(30),
-        Pageable = new PageableDto()
-        {
-            Page = 1,
-            Size = 5,
-            Sort = new SortDto()
-            {
-                SortBy = new List<string>(),
-                Direction = "des"
-            }
-        }
-    };
-    
     private bool pageInitialized = false;
     private int value = 1;
     int totalPages = 0;
     int totalElements = 0;
     IEnumerable<EventDto> events;
+    private SearchEventsModel searchEventsModel = InitializeSearchModel();
     
     protected override async Task OnInitializedAsync()
     {
@@ -153,6 +137,32 @@
         }
 
         pageInitialized = true;
+    }
+
+    private static SearchEventsModel InitializeSearchModel()
+    {
+        return new()
+        {
+            Name = "",
+            Organizer = "",
+            Organization = new OrganizationModel(),
+            Category = "",
+            State = "",
+            Friends = [],
+            FriendsEngagementType = "",
+            DateFrom = DateTime.Now.AddDays(-7),
+            DateTo = DateTime.Now.AddDays(30),
+            Pageable = new PageableDto()
+            {
+                Page = 1,
+                Size = 5,
+                Sort = new SortDto()
+                {
+                    SortBy = new List<string>(),
+                    Direction = "des"
+                }
+            }
+        };
     }
     
     private async void SelectedPageChanged(int pageNumber)
@@ -181,5 +191,16 @@
         await OnInitializedAsync();
     }
     
+    private Task RedirectToFollowedEvents()
+    {
+        NavigationManager.NavigateTo("/events/follow");
+        return Task.CompletedTask;
+    }
+    
+    private async Task ClearFilters()
+    {
+        searchEventsModel = InitializeSearchModel();
+        await OnInitializedAsync();
+    }
     
 }
