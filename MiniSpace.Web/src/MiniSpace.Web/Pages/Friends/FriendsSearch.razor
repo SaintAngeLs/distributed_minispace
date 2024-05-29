@@ -321,8 +321,6 @@
 
         await LoadStudents();
         StateHasChanged();
-
-        
         
         var tasks = new List<Task>();
         foreach (var student in students)
@@ -348,21 +346,13 @@
             }
         }
     }
-
-
-    @* private async Task LoadStudents() {
-        var result = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
-        totalStudents = result.Count();
-        if (result != null) {
-            students = result.ToList();
-        }
-    } *@
-   private async Task LoadStudents() {
+    
+   private async Task LoadStudents(string searchArgument = null) {
         int maxPage = (int)Math.Ceiling((double)totalStudents / pageSize);
         if (currentPage > maxPage) currentPage = maxPage;
         if (currentPage < 1) currentPage = 1;
 
-        var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize);
+        var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize, searchArgument);
         if (response != null) {
             students = response.Results;
             totalStudents = response.Total; 
@@ -397,13 +387,8 @@
         StateHasChanged();
     }
 
-    private void SearchFriends() {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-        {
-            return;
-        }
-        students = students.Where(s => s.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                                       s.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+    private async Task SearchFriends() {
+        await LoadStudents(searchTerm);
     }
 
     @* private async Task ConnectWithStudent(Guid studentId)
