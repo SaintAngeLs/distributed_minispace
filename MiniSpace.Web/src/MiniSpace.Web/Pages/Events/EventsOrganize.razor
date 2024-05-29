@@ -8,6 +8,7 @@
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using MudBlazor
 @using Radzen
+@using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
@@ -16,15 +17,13 @@
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 
-<h1>Organize events</h1>
+<h1 class="rz-p-8 organize-font">Organize events</h1>
 
 <div class="rz-p-8">
-    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Size="ButtonSize.Medium" Text="Create new event" ButtonStyle="ButtonStyle.Secondary"
-                          Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
-            <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
-        </RadzenStack>
+    <RadzenStack class="rz-py-5 rz-mx-auto" Orientation="Orientation.Horizontal"  AlignItems="AlignItems.Center" Gap="1rem">
+        <RadzenButton class="separate-button" Icon="create" Style="background-color: darkgreen" Size="ButtonSize.Medium" Text="Create new event" ButtonStyle="ButtonStyle.Secondary"
+                      Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
+        <RadzenButton class="separate-button" Icon="pageview" Style="background-color: #14304f" Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
     </RadzenStack>
 </div>
 
@@ -69,6 +68,23 @@
     </RadzenStack>   
 }
 
+<style>
+    .organize-font {
+            font-family: Arial, sans-serif; /* Change this to your preferred font */
+            font-size: 40px; /* Change this to your preferred font size */
+            font-weight: bold; /* Change this to your preferred font weight */
+    }
+       
+    .separate-button {
+            margin: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            padding: 12px;
+            color: #333; 
+            transition: background-color 0.3s ease; 
+        }
+</style>
+
 @code {
     private SearchOrganizerEventsModel searchOrganizerEventsModel = new()
     {
@@ -82,7 +98,7 @@
             Size = 5,
             Sort = new SortDto()
             {
-                SortBy = new List<string>() { "name" },
+                SortBy = new List<string>() { "createdAt" },
                 Direction = "des"
             }
         }
