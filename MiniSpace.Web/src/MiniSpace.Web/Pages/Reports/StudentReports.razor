@@ -27,6 +27,9 @@
     <h4 class="rz-p-8">To see details of a report, open details dialog by clicking "Show" button.</h4>
     
     <div class="rz-p-4 rz-text-align-center">
+        <RadzenText>Results at page:</RadzenText>
+        <RadzenDropDown Data="@pageSizeOptions" @bind-Value="@getStudentReportsModel.Results"
+                        Change="@GetStudentReports" />
     </div>
     
     <RadzenStack Gap="1rem" Style="height: 100%">
@@ -121,6 +124,8 @@
     private Guid studentId;
     private bool pageInitialized = false;
 
+    IEnumerable<int> pageSizeOptions = new int[] { 5, 10, 20, 40 };
+    
     int totalPages = 0;
     int totalElements = 0;
     IEnumerable<ReportDto> reports; 
