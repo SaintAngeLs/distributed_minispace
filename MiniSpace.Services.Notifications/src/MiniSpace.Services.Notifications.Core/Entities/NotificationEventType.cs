@@ -14,6 +14,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         EventParticipantAdded,
         EventParticipantRemoved,
         PostCreated,
+        PostUpdated,
         MentionedInPost,
         EventReminder,
         Other
