@@ -14,11 +14,16 @@
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
-<h1>Follow events</h1>
+<h1 class="rz-p-8 search-font">Follow events</h1>
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 
 @if (pageInitialized && studentId != Guid.Empty)
@@ -85,6 +90,14 @@
         </RadzenTabs>
     </RadzenStack>
 }
+
+<style>
+    .search-font {
+            font-family: Arial, sans-serif; /* Change this to your preferred font */
+            font-size: 40px; /* Change this to your preferred font size */
+            font-weight: bold; /* Change this to your preferred font weight */
+        }
+</style>
 
 @code {
     private Guid studentId;

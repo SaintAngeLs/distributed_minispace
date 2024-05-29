@@ -21,17 +21,13 @@
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 
-<h1 class="rz-p-8">Search events</h1>
+<h1 class="rz-p-8 search-font">Search events</h1>
 
-<RadzenStack Gap="1rem" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
-    <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
-    <RadzenRadioButtonList Value=@value TValue="int" Change=@(args => value = args) class="mb-5">
-            <Items>
-                <RadzenRadioButtonListItem Text="All events" Value="1" />
-                <RadzenRadioButtonListItem Text="My events" Value="2" />
-                <RadzenRadioButtonListItem Text="Friends events" Value="3" />
-            </Items>
-        </RadzenRadioButtonList>
+<RadzenStack Gap="2rem" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+    <RadzenButton Text="Filter by criteria" Click="@OpenSearchDialog" Icon="pageview" class="separate-button rz-ml-5"/>
+    <RadzenButton Text="All events" Click="@(() => value = 1)" class="@(value == 1 ? "separate-button hovered-button" : "separate-button")"/>
+    <RadzenButton Text="My events" Click="@(() => value = 2)" class="@(value == 2 ? "separate-button hovered-button" : "separate-button")"/>
+    <RadzenButton Text="Friends events" Click="@(() => value = 3)" class="@(value == 3 ? "separate-button hovered-button" : "separate-button")"/>
 </RadzenStack>
 
 @if (!pageInitialized)
@@ -75,6 +71,35 @@
     </RadzenStack>   
 }
 
+<style>
+    .search-font {
+        font-family: Arial, sans-serif; /* Change this to your preferred font */
+        font-size: 40px; /* Change this to your preferred font size */
+        font-weight: bold; /* Change this to your preferred font weight */
+    }
+    
+    .separate-button {
+        margin: 10px; 
+        background-color: #30445f !important; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+    
+    .separate-button:hover {
+        background-color: #30445f; 
+        color: #000; 
+    }
+    
+    .hovered-button {
+        background-color: #ccc; /* Change this to your preferred hover color */
+        color: #000; /* Change this to your preferred hover text color */
+    }
+    
+</style>
+
 
 @code {
     private SearchEventsModel searchEventsModel = new()
@@ -94,7 +119,7 @@
             Size = 5,
             Sort = new SortDto()
             {
-                SortBy = new List<string>() { "name" },
+                SortBy = new List<string>(),
                 Direction = "des"
             }
         }

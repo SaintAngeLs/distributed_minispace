@@ -17,13 +17,13 @@
         <RadzenRow RowGap="0">
             <RadzenColumn SizeSM="6">
                 <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Start date</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@Event.StartDate.ToString("g", CultureInfo.InvariantCulture)</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@Event.StartDate.ToString("f", CultureInfo.CurrentUICulture)</RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Location</RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@Event.Location?.BuildingName</RadzenText>
             </RadzenColumn>
             <RadzenColumn SizeSM="6">
                 <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">End date</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@Event.EndDate.ToString("g", CultureInfo.InvariantCulture)</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@Event.EndDate.ToString("f", CultureInfo.CurrentUICulture)</RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-on-secondary-light rz-display-flex rz-mt-4 rz-mb-0">Fee</RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1" Class="rz-color-on-secondary-light rz-font-weight-bold">@String.Format(new System.Globalization.CultureInfo("pl-PL"), "{0:C}", Event?.Fee)</RadzenText>
             </RadzenColumn>
