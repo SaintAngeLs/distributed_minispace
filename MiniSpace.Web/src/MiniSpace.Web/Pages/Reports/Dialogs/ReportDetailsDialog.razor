@@ -1,0 +1,188 @@
+@page "/reports/{ReportDto.Id}/details"
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.Areas.Reports
+@using Radzen
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.DTO.States
+@using MiniSpace.Web.DTO.Types
+@inject DialogService DialogService
+@inject IEventsService EventsService
+@inject IPostsService PostsService
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<RadzenStack Gap="1rem">
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="account_box" class="me-1"/>
+                <b>Identification of target</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack Gap="2rem">
+                <RadzenRow Size="12" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenButton Size="ButtonSize.Medium" Text="Go to reported target" Style="width: 250px"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Click="@(() => GoToReportedTargetPage(ReportDto))"/>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenButton Size="ButtonSize.Medium" Text="Go to profile of target owner" Style="width: 250px"
+                                      ButtonStyle="ButtonStyle.Secondary"
+                                      Click="@(() => GoToTargetOwnerProfile(ReportDto))" />
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+    
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+    
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="assignment" class="me-1"/>
+                <b>Data info</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack>
+                <RadzenRow Size="12" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Context type</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportContextTypeExtensions.GetReportContextTypeText(ReportDto.ContextType))</b>
+                        </RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Category</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportCategoryExtensions.GetReportCategoryText(ReportDto.Category))</b>
+                        </RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow Size="12">
+                    <RadzenColumn Size="12">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Reason</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6" Style="word-wrap: anywhere"><b>@(ReportDto.Reason)</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+    
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="event" class="me-1"/>
+                <b>Status info</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack>
+                <RadzenRow Size="12" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">State</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportStateExtensions.GetReportStateText(ReportDto.State))</b>
+                        </RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Reviewer Id</RadzenText>
+                        @if (ReportDto.ReviewerId != null)
+                        {
+                            <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.ReviewerId)</b></RadzenText>   
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.H6"><b>Report not reviewed yet.</b></RadzenText>
+                        }
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow Size="12">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Created at</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.CreatedAt.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Updated at</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.UpdatedAt.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public ReportDto ReportDto { get; set; }
+
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async void GoToReportedTargetPage(ReportDto reportDto)
+    {
+        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        switch (ReportDto.ContextType)
+        {
+            case ReportContextType.Event:
+                NavigationManager.NavigateTo($"/events/{ReportDto.TargetId}");
+                break;
+            case ReportContextType.Post:
+                var post = await PostsService.GetPostAsync(ReportDto.TargetId);
+                var ev = await EventsService.GetEventAsync(post.EventId);
+                var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+                NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
+                break;
+            case ReportContextType.Comment:
+                break;
+            case ReportContextType.StudentProfile:
+                NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetId}");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    
+    private async void GoToTargetOwnerProfile(ReportDto reportDto)
+    {
+        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetOwnerId}");
+    }
+}

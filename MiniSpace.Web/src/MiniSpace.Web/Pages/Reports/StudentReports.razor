@@ -5,7 +5,7 @@
 @using MiniSpace.Web.DTO.States
 @using MiniSpace.Web.DTO.Types
 @using MiniSpace.Web.Models.Reports
-@using MiniSpace.Web.Pages.Admin.Dialogs
+@using MiniSpace.Web.Pages.Reports.Dialogs
 @using MudBlazor
 @using Radzen
 @using Orientation = Radzen.Orientation
@@ -90,17 +90,17 @@
                 <RadzenDataGridColumn Context="report" Title="Options" Width="60px" TextAlign="TextAlign.Center"
                                       Filterable="false" Sortable="false" Frozen="true">
                     <Template Context="report">
-                        @if (report.State is ReportState.Submitted or ReportState.UnderReview)
+                        @if (report.State is ReportState.Submitted)
                         {
                             <RadzenButton Size="ButtonSize.Medium" Text="Cancel"
                                           ButtonStyle="ButtonStyle.Primary" Disabled="false"
-                                          Click="@(() => OpenReportDetailsDialog(report))"/>
+                                          Click="@(() => CancelReport(report))"/>
                         }
                         else
                         {
                             <RadzenButton Size="ButtonSize.Medium" Text="Cancel"
                                           ButtonStyle="ButtonStyle.Primary" Disabled="true"
-                                          Click="@(() => OpenReportDetailsDialog(report))"/>   
+                                          Click="@(() => CancelReport(report))"/>
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -189,12 +189,20 @@
     
     private async Task OpenReportDetailsDialog(ReportDto reportDto)
     {
-        await DialogService.OpenAsync<ManageReportDialog>("Details of the report:",
+        await DialogService.OpenAsync<ReportDetailsDialog>("Details of the report:",
             new Dictionary<string, object>() { { "ReportDto", reportDto } },
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+    
+    private async void CancelReport(ReportDto reportDto)
+    {
+        var response = await ReportsService.CancelReportAsync(reportDto.Id);
+        if (response.ErrorMessage is { Code: "400" }) return;
+        reportDto.State = ReportState.Cancelled;
+        StateHasChanged();
     }
 }
