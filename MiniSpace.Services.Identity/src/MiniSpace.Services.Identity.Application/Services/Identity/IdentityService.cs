@@ -190,8 +190,10 @@
                 var userResetToken = new UserResetToken(user.Id, resetToken, DateTime.UtcNow.AddDays(1));
                 await _userResetTokenRepository.SaveAsync(userResetToken);
 
+
+                await _messageBroker.PublishAsync(new PasswordResetTokenGenerated(user.Id, command.Email, resetToken));
+
                 _logger.LogInformation($"Reset token generated for user id: {user.Id}");
-                // Assume _emailService sends the reset token by email.
             }
 
             public async Task ResetPasswordAsync(ResetPassword command)
@@ -208,10 +210,9 @@
                 await _userRepository.UpdateAsync(user);
                 await _userResetTokenRepository.InvalidateTokenAsync(user.Id);
 
+                await _messageBroker.PublishAsync(new PasswordReset(user.Id));
+
                 _logger.LogInformation($"Password updated for user id: {user.Id}");
-                // Trigger an event if needed
             }
-
-
         }
     }

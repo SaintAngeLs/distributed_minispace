@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Identity.Application.DTO
     {
         public Guid UserId { get; set; }
         public string ResetToken { get; set; }
-        public DateTime? ResetTokenExpiration { get; set; }
+        public DateTime? ResetTokenExpires { get; set; }
 
         public UserResetTokenDto()
         {
@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Identity.Application.DTO
         {
             UserId = userResetToken.UserId;
             ResetToken = userResetToken.ResetToken;
-            ResetTokenExpiration = userResetToken.ResetTokenExpiration;
+            ResetTokenExpires = userResetToken.ResetTokenExpires;
         }
     }
 }

@@ -46,6 +46,5 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
             var userDocument = await _repository.GetAsync(tokenDocument.UserId);
             return userDocument?.AsEntity();
         }
-
     }
 }

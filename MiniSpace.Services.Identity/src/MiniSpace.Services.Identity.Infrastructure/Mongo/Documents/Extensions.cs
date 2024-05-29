@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
             {
                 UserId = userResetToken.UserId,
                 ResetToken = userResetToken.ResetToken,
-                ResetTokenExpiration = userResetToken.ResetTokenExpiration
+                ResetTokenExpires = userResetToken.ResetTokenExpires
             };
 
        public static UserResetToken AsEntity(this UserResetTokenDocument document)
@@ -70,7 +70,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 Id = userResetToken.Id,
                 UserId = userResetToken.UserId,
                 ResetToken = userResetToken.ResetToken,
-                ResetTokenExpires = userResetToken.ResetTokenExpiration ?? DateTime.UtcNow 
+                ResetTokenExpires = userResetToken.ResetTokenExpires ?? DateTime.UtcNow 
             };
     }
 }

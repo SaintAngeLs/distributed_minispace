@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+
 using System.Threading.Tasks;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Identity.Core.Entities;
@@ -22,24 +24,27 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
             await _repository.AddAsync(userResetToken.AsDocument());
         }
 
-        public async Task<UserResetToken> GetByUserIdAsync(Guid userId)
+         public async Task<UserResetToken> GetByUserIdAsync(Guid userId)
         {
-            var document = await _repository.FindAsync(x => x.UserId == userId && x.ResetTokenExpires > DateTime.UtcNow);
+            var documents = await _repository.FindAsync(x => x.UserId == userId);
+            var document = documents.FirstOrDefault(x => x.ResetTokenExpires > DateTime.UtcNow);
             return document?.AsEntity();
         }
 
         public async Task InvalidateTokenAsync(Guid userId)
         {
             var document = await GetByUserIdAsync(userId);
-            if (document != null)
+            if (document != null && document.ResetTokenExpires > DateTime.UtcNow)
             {
-                document.ResetTokenExpires = DateTime.UtcNow;
+                document.ResetTokenExpires = DateTime.UtcNow; // Adjust logic as needed
                 await _repository.UpdateAsync(document.AsDocument());
             }
         }
+
         public async Task<UserResetTokenDocument> GetByResetTokenAsync(string resetToken)
         {
-            return await _repository.FindAsync(x => x.ResetToken == resetToken && x.ResetTokenExpires > DateTime.UtcNow);
+            var documents = await _repository.FindAsync(x => x.ResetToken == resetToken);
+            return documents.FirstOrDefault(x => x.ResetTokenExpires > DateTime.UtcNow);
         }
     }
 }

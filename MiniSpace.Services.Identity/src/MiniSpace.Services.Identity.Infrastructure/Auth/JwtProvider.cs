@@ -29,5 +29,17 @@ namespace MiniSpace.Services.Identity.Infrastructure.Auth
                 Expires = jwt.Expires
             };
         }
+
+        public string GenerateResetToken(Guid userId)
+        {
+            // Generating a token that might be used specifically as a reset token
+            // The implementation specifics would depend on your application's security requirements
+            var claims = new Dictionary<string, IEnumerable<string>> {
+                // Additional claims can be added here if needed
+            };
+            var jwt = _jwtHandler.CreateToken(userId.ToString("N"), "ResetToken", null, claims);
+
+            return jwt.AccessToken;
+        }
     }
 }
