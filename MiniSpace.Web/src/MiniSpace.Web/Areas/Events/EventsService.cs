@@ -96,9 +96,9 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.DeleteAsync($"events/{eventId}/rate?studentId={studentId}");
         }
         
-        public Task<HttpResponse<EventRatingDto>> GetEventRatingAsync(Guid eventId)
+        public Task<EventRatingDto> GetEventRatingAsync(Guid eventId)
         {
-            return _httpClient.GetAsync<HttpResponse<EventRatingDto>>($"events/{eventId}/rating");
+            return _httpClient.GetAsync<EventRatingDto>($"events/{eventId}/rating");
         }
         
         public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer,

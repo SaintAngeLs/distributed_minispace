@@ -1,6 +1,8 @@
 @using MiniSpace.Web.DTO
 @using Radzen
 @using System.Globalization
+@using MiniSpace.Web.Areas.Events
+@inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
 <RadzenCard Class="@(Event.Status == "Archived" ? "archived-event rz-mx-auto" : "rz-mx-auto")" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer"
@@ -39,9 +41,15 @@
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn SizeSM="3">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
-                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color" Text="Cancel"/>
-                <RadzenButton Variant="Variant.Text" Text="Send" Class="rz-text-primary-color"/>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                @if (Event.Status == "Archived" && eventRating != null)
+                {
+                    <RadzenIcon Icon="rating" Style="color: #30445f;"/>
+                    <RadzenText TextStyle="TextStyle.Body1" Class="rz-font-weight-bold rz-pt-2">
+                        @(eventRating.TotalRatings > 0 ? $"{@eventRating.AverageRating} out of 5 ({@eventRating.TotalRatings} reviews)" :
+                        "No ratings yet")
+                    </RadzenText>
+                }
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
@@ -94,6 +102,20 @@
     public EventDto Event { get; set; }
     
     private const string dateFormat = "dd/MM/yyyy HH:mm";
+    private EventRatingDto eventRating = null;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (Event.Status == "Archived")
+        {
+            var response = await EventsService.GetEventRatingAsync(Event.Id);
+            if (response != null)
+            {
+                eventRating = response;
+                StateHasChanged();
+            }
+        }
+    }
     
     private string GetFontSizeClass(string eventName)
     {
