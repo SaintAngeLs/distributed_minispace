@@ -31,7 +31,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
         {
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Error fetching data from Posts Service. Status Code: {response.StatusCode}");
+                // Console.WriteLine($"Error fetching data from Posts Service. Status Code: {response.StatusCode}");
                 return null;
             }
 
@@ -45,7 +45,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"Error deserializing the response from Posts Service: {ex.Message}");
+                // Console.WriteLine($"Error deserializing the response from Posts Service: {ex.Message}");
                 return null;
             }
         }

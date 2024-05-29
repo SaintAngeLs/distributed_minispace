@@ -78,7 +78,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services
                 });
              
                 _logger.LogTrace($"Publishing integration event: {@event.GetType().Name} [id: '{messageId}'], Content: {serializedEvent}");
-                Console.WriteLine($"Publishing Event: {@event.GetType().Name} with ID: {messageId}, Content: {serializedEvent}");
+                // Console.WriteLine($"Publishing Event: {@event.GetType().Name} with ID: {messageId}, Content: {serializedEvent}");
                 if (_outbox.Enabled)
                 {
                     await _outbox.SendAsync(@event, originatedMessageId, messageId, correlationId, spanContext,

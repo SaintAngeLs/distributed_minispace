@@ -39,7 +39,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
         {
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Error fetching data from Events Service. Status Code: {response.StatusCode}");
+                // Console.WriteLine($"Error fetching data from Events Service. Status Code: {response.StatusCode}");
                 return null;
             }
 
@@ -53,7 +53,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}");
+                // Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}");
                 return null;
             }
         }  
