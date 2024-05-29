@@ -1,58 +1,64 @@
+using System;
 using Convey.CQRS.Events;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
-using MiniSpace.Services.Notifications.Application.Exceptions;
+using System.Threading;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class FriendRequestSentHandler : IEventHandler<FriendRequestSent>
     {
-        private readonly INotificationRepository _notificationRepository;
-        private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
+        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
 
-        public FriendRequestSentHandler(INotificationRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public FriendRequestSentHandler(
+            IMessageBroker messageBroker,
+            IStudentNotificationsRepository studentNotificationsRepository,
+            IStudentsServiceClient studentsServiceClient)
         {
-            _notificationRepository = notificationRepository;
-            _eventMapper = eventMapper;
             _messageBroker = messageBroker;
+            _studentNotificationsRepository = studentNotificationsRepository;
+            _studentsServiceClient = studentsServiceClient;
         }
 
         public async Task HandleAsync(FriendRequestSent @event, CancellationToken cancellationToken)
         {
-            var notificationMessage = $"You have received a friend request.";
-            var detailsHtml = $"<p>Click <a href='https://minispace.itsharppro.com/friend-requests'>here</a> to view the request.</p>";
+            var inviter = await _studentsServiceClient.GetAsync(@event.InviterId);
+            var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
+            var detailsHtml = $"<p>View <a href='https://minispace.itsharppro.com/user-details/{@event.InviterId}'>{inviter.FirstName} {inviter.LastName}</a>'s profile to respond to the friend invitation.</p>";
 
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
-                userId: @event.InviteeId, 
+                userId: @event.InviteeId,
                 message: notificationMessage,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
                 relatedEntityId: @event.InviterId,
-                eventType: NotificationEventType.NewFriendRequest
+                eventType: NotificationEventType.NewFriendRequest,
+                details: detailsHtml
             );
 
-            await _notificationRepository.AddAsync(notification);
+            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId) ?? new StudentNotifications(@event.InviteeId);
+            studentNotifications.AddNotification(notification);
+            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
 
-            //  var notificationCreatedEvent = new NotificationCreated(
-            //     notificationId: Guid.NewGuid(),
-            //     userId: @event.InviteeId, 
-            //     message: notificationMessage,
-            //     createdAt: DateTime.UtcNow,
-            //     details: detailsHtml,
-            //     eventType: NotificationEventType.NewFriendRequest.ToString(),
-            //     relatedEntityId: @event.InviterId
-            // );
+            var notificationCreatedEvent = new NotificationCreated(
+                notification.NotificationId,
+                @event.InviteeId,
+                notificationMessage,
+                DateTime.UtcNow,
+                NotificationEventType.NewFriendRequest.ToString(),
+                @event.InviterId,
+                detailsHtml
+            );
 
-
-            // await _messageBroker.PublishAsync(notificationCreatedEvent);
+            await _messageBroker.PublishAsync(notificationCreatedEvent);
         }
     }
 }

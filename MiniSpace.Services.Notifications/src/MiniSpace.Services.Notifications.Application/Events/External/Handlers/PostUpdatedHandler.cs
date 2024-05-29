@@ -97,10 +97,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             {
                 studentNotifications = new StudentNotifications(student.Id);
             }
-
-            studentNotifications.AddNotification(notification);
-            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-
+            
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
@@ -112,6 +109,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+
+            studentNotifications.AddNotification(notification);
+            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+
+            
         }
 
         private async Task NotifyOrganizer(OrganizerDto organizer, EventDto eventDetails, PostDto post)
@@ -139,10 +142,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 organizerNotifications = new StudentNotifications(organizer.Id);
             }
 
-            organizerNotifications.AddNotification(notification);
-            await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
-
-            var notificationCreatedEvent = new NotificationCreated(
+             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
@@ -153,6 +153,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            organizerNotifications.AddNotification(notification);
+            await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
+
+           
         }
     }
 }

@@ -66,23 +66,23 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 eventType: NotificationEventType.NewFriendRequest,
                 details: detailsHtml
             );
-
-            await _friendEventRepository.AddAsync(newFriendEvent);
             await _messageBroker.PublishAsync(friendEvent);
+            await _friendEventRepository.AddAsync(newFriendEvent);
+            
 
-            // _logger.LogInformation($"Stored new friend event for UserId={friendEvent.RequesterId} with details: {eventDetails}");
-            // var notificationCreatedEvent = new NotificationCreated(
-            //     notificationId:  Guid.NewGuid(),
-            //     userId:  friendEvent.FriendId,
-            //     message: notificationMessage,
-            //     createdAt: DateTime.UtcNow,
-            //     eventType: NotificationEventType.NewFriendRequest.ToString(),
-            //     relatedEntityId:  friendEvent.FriendId,
-            //     details: detailsHtml
-            // );
+            _logger.LogInformation($"Stored new friend event for UserId={friendEvent.RequesterId} with details: {eventDetails}");
+            var notificationCreatedEvent = new NotificationCreated(
+                notificationId:  Guid.NewGuid(),
+                userId:  friendEvent.FriendId,
+                message: notificationMessage,
+                createdAt: DateTime.UtcNow,
+                eventType: NotificationEventType.NewFriendRequest.ToString(),
+                relatedEntityId:  friendEvent.FriendId,
+                details: detailsHtml
+            );
 
-            // await _messageBroker.PublishAsync(notificationCreatedEvent);
-            // _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
+            await _messageBroker.PublishAsync(notificationCreatedEvent);
+            _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
         }
     }
 }

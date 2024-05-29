@@ -120,15 +120,10 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<StudentCancelledInterestInEvent>()
                 .SubscribeEvent<EventParticipantAdded>()
                 .SubscribeEvent<EventParticipantRemoved>()
-                // .SubscribeEvent<NotificationCreated>()
                 .SubscribeEvent<StudentSignedUpToEvent>()
                 .SubscribeEvent<StudentCancelledSignUpToEvent>()
                 .SubscribeEvent<PostCreated>()
                 .SubscribeEvent<PostUpdated>();
-                // .SubscribeEvent<NotificationCreated>()
-                // .SubscribeEvent<NotificationDeleted>()
-                // .SubscribeEvent<NotificationUpdated>();
-
             return app;
         }
 

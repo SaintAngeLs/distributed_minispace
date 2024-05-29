@@ -3,7 +3,7 @@ using Convey.MessageBrokers;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
-    [Contract]
+    [Message("friends")]
     public class PendingFriendAccepted : IEvent
     {
         public Guid RequesterId { get; }

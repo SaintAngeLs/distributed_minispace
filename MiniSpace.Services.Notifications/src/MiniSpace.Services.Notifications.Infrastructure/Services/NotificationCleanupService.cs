@@ -31,7 +31,7 @@ public class NotificationCleanupService : BackgroundService
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Daily cleanup of read notifications is running.");
-                await RemoveReadNotifications();
+                // await RemoveReadNotifications();
                 await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
             }
         });
