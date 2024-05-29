@@ -1,5 +1,29 @@
 namespace MiniSpace.Services.Email.Core.Entities
 {
+    public class NewFriendRequestSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "You have a new friend request!";
+    }
+
+    public class FriendRequestAcceptedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Your friend request has been accepted!";
+    }
+
+    public class NewEventSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "New event alert: " + details;
+    }
+
+    public class EventDeletedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "An event has been cancelled.";
+    }
+
+    public class PostUpdatedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "A post in your feed has been updated.";
+    }
     public class EventNewSignUpSubject : IEmailSubjectStrategy
     {
         public string GenerateSubject(string details) => "New sign-up for your event!";
