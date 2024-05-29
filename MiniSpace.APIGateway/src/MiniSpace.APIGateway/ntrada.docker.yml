@@ -353,6 +353,11 @@ modules:
         downstream: events-service/events/{eventId}/rate
         auth: true
 
+      - upstream: /{eventId}/rating
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}/rating
+
       - upstream: /organizer/{organizerId}
         method: GET
         use: downstream
