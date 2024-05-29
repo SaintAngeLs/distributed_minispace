@@ -1,0 +1,50 @@
+﻿@using MiniSpace.Web.Areas.Identity
+@using MiniSpace.Web.Areas.Friends
+@using MiniSpace.Web.DTO
+@using Radzen
+@using System.Globalization
+@inject Radzen.DialogService DialogService
+@inject IIdentityService IdentityService
+@inject IFriendsService FriendsService
+
+<RadzenFieldset>
+    <RadzenDataGrid TItem="FriendDto" Data="@friends" AllowPaging="true" PageSize="5">
+        <Columns>
+            <RadzenGridColumn TItem="FriendDto" Property="Name" Title="Name"/>
+            <RadzenGridColumn TItem="FriendDto" Property="Email" Title="Email"/>
+            <RadzenGridColumn TItem="FriendDto" Context="friend">
+                <Template Context="friend">
+                    <RadzenCheckBox @bind-Value="friend.Selected"/>
+                </Template>
+            </RadzenGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+    
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Click="@(() => SelectFriends())" Variant="Variant.Flat" Text="Submit" Style="width: 120px"/>
+            <RadzenButton Click="@(() => Close())" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenFieldset>
+@code {
+    private IEnumerable<FriendDto> friends;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        friends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
+        StateHasChanged();
+    }
+
+    private void Close()
+    {
+        DialogService.Close();
+    }
+
+    private void SelectFriends()
+    {
+        var selectedFriends = friends.Where(f => f.Selected).ToList();
+        DialogService.Close(selectedFriends);
+    }
+}

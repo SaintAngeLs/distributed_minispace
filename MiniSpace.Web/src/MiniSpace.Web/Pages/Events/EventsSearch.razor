@@ -14,6 +14,7 @@
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
 @using System.Globalization
+@using MiniSpace.Web.Pages.Friends.Dialogs
 @using AlignItems = Radzen.AlignItems
 @using Variant = Radzen.Variant
 @inject DialogService DialogService
@@ -26,7 +27,7 @@
 <RadzenStack Gap="2rem" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
     <RadzenButton Text="Filter by criteria" Click="@OpenSearchDialog" Icon="pageview" class="separate-button search-button rz-ml-5"/>
     <RadzenButton Text="My events" Click="@(() => RedirectToFollowedEvents())" class="separate-button standard-button"/>
-    <RadzenButton Text="Friends events" Click="@(() => value = 2)" class="separate-button standard-button"/>
+    <RadzenButton Text="Friends events" Click="@(() => OpenFriendsDialog())" class="separate-button standard-button"/>
     <RadzenButton Text="Clear filters" Click="@(() => ClearFilters())" Icon="close" class="separate-button clear-button"/>
 </RadzenStack>
 
@@ -189,6 +190,13 @@
                 AutoFocusFirstElement = false
             });
         await OnInitializedAsync();
+    }
+    
+    private async Task OpenFriendsDialog()
+    {
+        var result = await DialogService.OpenAsync<FriendsDialog>($"Filter events by friends",
+            null, new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
+        
     }
     
     private Task RedirectToFollowedEvents()

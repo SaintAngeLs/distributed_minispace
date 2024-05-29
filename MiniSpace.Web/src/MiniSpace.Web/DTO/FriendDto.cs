@@ -17,5 +17,6 @@ namespace MiniSpace.Web.DTO
         public FriendState State { get; set; }
         public string ProfileImage { get; set; }
         public StudentDto StudentDetails { get; set; }
+        public bool Selected { get; set; }
     }
 }
