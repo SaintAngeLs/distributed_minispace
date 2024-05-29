@@ -12,6 +12,7 @@
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IReportsService ReportsService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h1>Manage reports</h1>
 
@@ -118,6 +119,13 @@
             }
             
             pageInitialized = true;
+            
+            var reportDto = await LocalStorage.GetItemAsync<ReportDto>("reportDto");
+            if (reportDto != null)
+            {
+                await LocalStorage.RemoveItemAsync("reportDto");
+                await OpenManageReportDialog(reportDto);
+            }
         }
     }
     

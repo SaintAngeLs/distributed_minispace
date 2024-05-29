@@ -1,10 +1,14 @@
 @page "/admin/reports/{ReportDto.Id}/details"
+@using System.Threading
+@using Blazored.LocalStorage.StorageOptions
 @using MiniSpace.Web.Areas.Reports
 @using Radzen
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.States
 @inject DialogService DialogService
 @inject IReportsService ReportsService
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <RadzenStack Gap="1rem">
     <RadzenFieldset>
@@ -23,9 +27,9 @@
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">
-                        <RadzenButton Size="ButtonSize.Medium" Text="Go to issuer profile" Style="width: 250px"
+                        <RadzenButton Size="ButtonSize.Medium" Text="Go to profile of reporter" Style="width: 250px"
                                       ButtonStyle="ButtonStyle.Secondary"
-                                      Click="@(() => ResolveReport(ReportDto))"/>
+                                      Click="@(() => GoToReporterProfile(ReportDto))" />
                     </RadzenColumn>
                 </RadzenRow>
 
@@ -37,9 +41,9 @@
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">
-                        <RadzenButton Size="ButtonSize.Medium" Text="Go to target owner profile" Style="width: 250px"
+                        <RadzenButton Size="ButtonSize.Medium" Text="Go to profile of target owner" Style="width: 250px"
                                       ButtonStyle="ButtonStyle.Secondary"
-                                      Click="@(() => ResolveReport(ReportDto))"/>
+                                      Click="@(() => GoToReporterProfile(ReportDto))" />
                     </RadzenColumn>
                 </RadzenRow>
                 
@@ -198,6 +202,12 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+    }
+
+    private async void GoToReporterProfile(ReportDto reportDto)
+    {
+        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        NavigationManager.NavigateTo($"/student-details/{ReportDto.IssuerId}");
     }
     
     private async void StartReportReview(ReportDto reportDto)
