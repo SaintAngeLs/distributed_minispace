@@ -3,6 +3,7 @@ using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 
@@ -21,6 +22,16 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
         public async Task<Application.Queries.PagedResult<StudentDto>> HandleAsync(GetStudents query, CancellationToken cancellationToken)
         {
             var filter = Builders<StudentDocument>.Filter.Empty;
+            if (!string.IsNullOrWhiteSpace(query.FirstName))
+            {
+                var regexFirstName = new BsonRegularExpression(query.FirstName, "i");
+                filter &= Builders<StudentDocument>.Filter.Regex(x => x.FirstName, regexFirstName);
+            }
+            if(!string.IsNullOrWhiteSpace(query.LastName))
+            {
+                var regexLastName = new BsonRegularExpression(query.LastName, "i");
+                filter &= Builders<StudentDocument>.Filter.Regex(x => x.LastName, regexLastName);
+            }
             var options = new FindOptions<StudentDocument, StudentDocument>
             {
                 Limit = query.ResultsPerPage,
