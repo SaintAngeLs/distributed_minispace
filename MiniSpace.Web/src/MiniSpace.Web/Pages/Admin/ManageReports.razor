@@ -42,9 +42,8 @@
             </RadzenStack>
         }
         
-        <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false"
-                        PageSize="@pageSize" PagerHorizontalAlign="HorizontalAlign.Center"
-                        Data="@reports" ColumnWidth="300px">
+        <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" Data="@reports" ColumnWidth="300px"
+                        PagerHorizontalAlign="HorizontalAlign.Center">
             <Columns>
                 <RadzenDataGridColumn Property="ContextType" Title="Context Type" Frozen="true" Width="60px" TextAlign="TextAlign.Center" />
                 <RadzenDataGridColumn Property="Category" Title="Category" Frozen="true" Width="100px" TextAlign="TextAlign.Center" />
@@ -88,9 +87,6 @@
             }
         }  
     };
-    
-    private int pageSize = 5;
-    IEnumerable<int> pageSizeOptions = new int[] { 5, 10, 20, 40};
     
     private Guid adminId;
     private bool pageInitialized = false;
