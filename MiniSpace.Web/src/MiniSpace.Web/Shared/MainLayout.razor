@@ -200,6 +200,9 @@
     async Task SignOut()
     {
         @* Console.WriteLine("Signing out..."); *@
+        await localStorage.RemoveItemAsync("reportDto");
+        await localStorage.RemoveItemAsync("searchReportsCriteria");
+        
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
         NavigationManager.NavigateTo("signin", forceLoad: true);
