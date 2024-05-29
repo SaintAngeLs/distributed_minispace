@@ -38,7 +38,7 @@
              <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
                  <RadzenStack Gap="0">
                      <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Description</RadzenText>
-                     <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left")">@Event.Description</RadzenText>
+                     <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left")">@ev.Description</RadzenText>
                  </RadzenStack>
              </RadzenStack>
              <RadzenCard Class="gradient-background rz-shadow-0 rz-border-radius-5 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
@@ -241,6 +241,51 @@
     </RadzenStack>
 }
 
+<style>
+    :root {
+        --rz-card-padding: 10px;
+        overflow: auto;
+    }
+
+    .rz-datalist-data {
+      border-radius: 15px;
+      overflow: auto;
+    }
+    
+    .rz-g > div, .rz-datalist-data > li {
+      padding: 0rem !important;
+      border-radius: 15px;
+      background-color: transparent;
+      border-color: transparent;
+    }
+    
+    .event-name {
+        word-break: break-word;
+    }
+    
+    .small-font {
+        font-size: 1.35em;
+    }
+    
+    .medium-font {
+        font-size: 1.85em;
+    }
+    
+    .large-font {
+        font-size: 2.5em;
+    }
+
+    .gradient-background {
+        background: linear-gradient(90deg, rgba(48,68,95,1) 0%, rgba(16,35,56,1) 100%);
+    }
+    
+    .archived-event {
+        border: 2px solid grey;
+        opacity: 0.65;
+    }
+
+</style>
+
 @code {
     [Parameter]
     public string EventId { get; set; }
@@ -248,6 +293,7 @@
     private Guid studentId;
     public EventDto ev = new();
     private bool pageInitialized = false;
+    private EventRatingDto eventRating = null;
 
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions;
@@ -271,7 +317,15 @@
         reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
         posts = await PostsService.GetPostsAsync(ev.Id);
         reactions = await ReactionsService.GetReactions(ev.Id, ReactionContentType.Event);
-        
+        if (ev.Status == "Archived")
+        {
+            var response = await EventsService.GetEventRatingAsync(ev.Id);
+            if (response != null)
+            {
+                eventRating = response;
+                StateHasChanged();
+            }
+        }
         pageInitialized = true;
     }
 
@@ -410,5 +464,21 @@
 
         reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
         StateHasChanged();
+    }
+    
+    private string GetFontSizeClass(string eventName)
+    {
+        if (eventName.Length <= 50)
+        {
+            return "large-font";
+        }
+        else if (eventName.Length <= 100)
+        {
+            return "medium-font";
+        }
+        else
+        {
+            return "small-font";
+        }
     }
 }
