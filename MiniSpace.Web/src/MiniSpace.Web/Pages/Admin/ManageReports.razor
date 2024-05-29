@@ -25,6 +25,7 @@
     <h4 class="rz-p-8">To see details and manage a report, open details dialog by clicking "Show" button.</h4>
     
     <div class="rz-p-4 rz-text-align-center">
+        <RadzenButton Size="ButtonSize.Medium" Text="Reset criteria" Click="@ResetSearchingCriteria"/>
         <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
     </div>
     
@@ -73,21 +74,7 @@
 }
 
 @code {
-    private SearchReportsModel searchReportsModel = new()
-    {
-        ContextTypes = ["Event", "Post", "Comment", "StudentProfile"],
-        States = ["Submitted", "UnderReview", "Resolved", "Rejected", "Cancelled"],
-        Pageable = new PageableDto()
-        {
-            Page = 1,
-            Size = 5,
-            Sort = new SortDto()
-            {
-                SortBy = new List<string>() { "updatedAt", "createdAt" },
-                Direction = "des"
-            }
-        }  
-    };
+    private SearchReportsModel searchReportsModel = new();
     
     private Guid adminId;
     private bool pageInitialized = false;
@@ -107,23 +94,8 @@
             {
                 searchReportsModel = searchReportsCriteria;
             }
-            
-            var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
-                searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
-                searchReportsModel.Pageable);
-            if (response.Content != null)
-            {
-                totalPages = response.Content.TotalPages;
-                totalElements = response.Content.TotalElements;
-                reports = response.Content.Content;
-            }
-            else
-            {
-                totalPages = 0;
-                totalElements = 0;
-                reports = new List<ReportDto>();
-            }
-            
+
+            await SearchReports();
             pageInitialized = true;
             
             var reportDto = await LocalStorage.GetItemAsync<ReportDto>("reportDto");
@@ -134,6 +106,35 @@
             }
         }
     }
+
+    private async Task SearchReports()
+    {
+        var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
+            searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
+            searchReportsModel.Pageable);
+        
+        if (response.Content != null)
+        {
+            totalPages = response.Content.TotalPages;
+            totalElements = response.Content.TotalElements;
+            reports = response.Content.Content;
+        }
+        else
+        {
+            totalPages = 0;
+            totalElements = 0;
+            reports = new List<ReportDto>();
+        }
+        
+        await LocalStorage.SetItemAsync("searchReportsCriteria", searchReportsModel);
+    }
+    
+    private async void ResetSearchingCriteria()
+    {
+        searchReportsModel.SetDefaultValues();
+        await SearchReports();
+        StateHasChanged();
+    }
     
     private async void SelectedPageChanged(int pageNumber)
     {
@@ -143,6 +144,8 @@
             searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
             searchReportsModel.Pageable);
         reports = response.Content.Content;
+        
+        await LocalStorage.SetItemAsync("searchReportsCriteria", searchReportsModel);
         StateHasChanged();
     }
     
@@ -155,8 +158,8 @@
                 Width = "800px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        await LocalStorage.SetItemAsync("searchReportsCriteria", searchReportsModel);
-        await OnInitializedAsync();
+        await SearchReports();
+        StateHasChanged();
     }
     
     private async Task OpenManageReportDialog(ReportDto reportDto)

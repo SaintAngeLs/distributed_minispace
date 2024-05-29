@@ -10,5 +10,26 @@ namespace MiniSpace.Web.Models.Reports
         public IEnumerable<string> States { get; set; }
         public bool OnlyReviewedByYou { get; set; }
         public PageableDto Pageable { get; set; }
+
+        public SearchReportsModel()
+        {
+            SetDefaultValues();
+        }
+        
+        public void SetDefaultValues()
+        {
+            ContextTypes = ["Event", "Post", "Comment", "StudentProfile"];
+            States = ["Submitted", "UnderReview", "Resolved", "Rejected", "Cancelled"];
+            Pageable = new PageableDto()
+            {
+                Page = 1,
+                Size = 5,
+                Sort = new SortDto()
+                {
+                    SortBy = new List<string>() { "updatedAt", "createdAt" },
+                    Direction = "des"
+                }
+            };
+        }
     }
 }
