@@ -96,7 +96,7 @@ namespace MiniSpace.Services.Identity.Api
                         })
                         .Post<ResetPassword>("password/reset", async (cmd, ctx) =>
                         {
-                            await ctx.RequestServices.GetService<IIdentityService>().ResetPasswordAsync(cmd.Token, cmd.NewPassword);
+                            await ctx.RequestServices.GetService<IIdentityService>().ResetPasswordAsync(cmd);
                             ctx.Response.StatusCode = 204;
                         })
 
