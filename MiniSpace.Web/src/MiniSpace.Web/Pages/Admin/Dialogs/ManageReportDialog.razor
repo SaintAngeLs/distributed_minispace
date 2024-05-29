@@ -1,12 +1,14 @@
 @page "/admin/reports/{ReportDto.Id}/details"
-@using System.Threading
-@using Blazored.LocalStorage.StorageOptions
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Areas.Reports
 @using Radzen
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.States
 @using MiniSpace.Web.DTO.Types
 @inject DialogService DialogService
+@inject IEventsService EventsService
+@inject IPostsService PostsService
 @inject IReportsService ReportsService
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
@@ -214,6 +216,10 @@
                 NavigationManager.NavigateTo($"/events/{ReportDto.TargetId}");
                 break;
             case ReportContextType.Post:
+                var post = await PostsService.GetPostAsync(ReportDto.TargetId);
+                var ev = await EventsService.GetEventAsync(post.EventId);
+                var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+                NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
                 break;
             case ReportContextType.Comment:
                 break;
