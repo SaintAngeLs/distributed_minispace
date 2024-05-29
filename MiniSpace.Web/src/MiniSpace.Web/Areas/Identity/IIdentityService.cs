@@ -26,5 +26,8 @@ namespace MiniSpace.Web.Areas.Identity
         Task RevokeOrganizerRights(Guid userId);
         Task BanUser(Guid userId);
         Task UnbanUser(Guid userId);
+
+        Task ForgotPasswordAsync(string email);
+        Task<HttpResponse<object>> ResetPasswordAsync(string token, string email, string newPassword);
     }
 }

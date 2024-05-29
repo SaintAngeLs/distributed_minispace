@@ -31,15 +31,17 @@
 
             public IdentityService(IUserRepository userRepository, IPasswordService passwordService,
                 IJwtProvider jwtProvider, IRefreshTokenService refreshTokenService,
-                IMessageBroker messageBroker, ILogger<IdentityService> logger)
+                IMessageBroker messageBroker, IUserResetTokenRepository userResetTokenRepository, ILogger<IdentityService> logger)
             {
-                _userRepository = userRepository;
-                _passwordService = passwordService;
-                _jwtProvider = jwtProvider;
-                _refreshTokenService = refreshTokenService;
-                _messageBroker = messageBroker;
-                _logger = logger;
+                _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+                _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
+                _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
+                _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService));
+                _messageBroker = messageBroker ?? throw new ArgumentNullException(nameof(messageBroker));
+                _userResetTokenRepository = userResetTokenRepository ?? throw new ArgumentNullException(nameof(userResetTokenRepository));
+                _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             }
+
 
             public async Task<UserDto> GetAsync(Guid id)
             {
@@ -188,12 +190,12 @@
 
                 var resetToken = _jwtProvider.GenerateResetToken(user.Id);
                 var userResetToken = new UserResetToken(user.Id, resetToken, DateTime.UtcNow.AddDays(1));
-                await _userResetTokenRepository.SaveAsync(userResetToken);
-
-
                 await _messageBroker.PublishAsync(new PasswordResetTokenGenerated(user.Id, command.Email, resetToken));
 
                 _logger.LogInformation($"Reset token generated for user id: {user.Id}");
+
+                await _userResetTokenRepository.SaveAsync(userResetToken);
+
             }
 
             public async Task ResetPasswordAsync(ResetPassword command)

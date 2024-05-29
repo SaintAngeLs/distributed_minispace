@@ -10,6 +10,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
 
         public UserResetToken(Guid userId, string resetToken, DateTime resetTokenExpiration)
         {
+            Id = new AggregateId();
             UserId = userId;
             ResetToken = resetToken;
             ResetTokenExpires = resetTokenExpiration;

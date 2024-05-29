@@ -64,13 +64,20 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 document.ResetTokenExpires ?? DateTime.MinValue
             );
 
-        public static UserResetTokenDocument AsDocument(this UserResetToken userResetToken)
-            => new UserResetTokenDocument
+       public static UserResetTokenDocument AsDocument(this UserResetToken userResetToken)
+        {
+            if (userResetToken == null)
+            {
+                throw new ArgumentNullException(nameof(userResetToken));
+            }
+
+            return new UserResetTokenDocument
             {
                 Id = userResetToken.Id,
                 UserId = userResetToken.UserId,
                 ResetToken = userResetToken.ResetToken,
-                ResetTokenExpires = userResetToken.ResetTokenExpires ?? DateTime.UtcNow 
+                ResetTokenExpires = userResetToken.ResetTokenExpires
             };
+        }
     }
 }

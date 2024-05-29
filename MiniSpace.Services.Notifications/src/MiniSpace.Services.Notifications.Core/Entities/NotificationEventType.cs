@@ -17,6 +17,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         PostUpdated,
         MentionedInPost,
         EventReminder,
+        PasswordResetRequest,
         Other
     }
 }

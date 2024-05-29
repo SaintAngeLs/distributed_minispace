@@ -79,4 +79,9 @@ namespace MiniSpace.Services.Email.Core.Entities
         public string GenerateSubject(string details) => "Notification: " + details;
     }
 
+    public class PasswordResetRequestSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Password Reset Request";
+    }
+
 }

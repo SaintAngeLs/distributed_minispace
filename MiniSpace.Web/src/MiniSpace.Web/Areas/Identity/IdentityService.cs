@@ -293,5 +293,16 @@ namespace MiniSpace.Web.Areas.Identity
             _httpClient.SetAccessToken(JwtDto.AccessToken);
             return _httpClient.DeleteAsync($"identity/users/{userId}/ban");
         }
+
+        public async Task ForgotPasswordAsync(string email)
+        {
+            await _httpClient.PostAsync<object>("identity/password/forgot", new { Email = email });
+        }
+
+        public async Task<HttpResponse<object>> ResetPasswordAsync(string token, string email, string newPassword)
+        {
+            var response = await _httpClient.PostAsync<object, object>("identity/password/reset", new { Token = token, Email = email, NewPassword = newPassword });
+            return response;
+        }
     }
 }

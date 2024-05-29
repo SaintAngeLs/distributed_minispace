@@ -9,5 +9,6 @@ namespace MiniSpace.Services.Identity.Core.Repositories
         Task SaveAsync(UserResetToken userResetToken);
         Task<UserResetToken> GetByUserIdAsync(Guid userId);
         Task InvalidateTokenAsync(Guid userId);
+        Task<UserResetToken> GetByResetTokenAsync(string resetToken); 
     }
 }
