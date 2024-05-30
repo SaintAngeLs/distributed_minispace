@@ -36,12 +36,12 @@
         @if (pageInitialized && totalElements != 0)
         {
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenButton Size="ButtonSize.Medium" Text="Reset paging criteria" class="rz-border-radius-1"/>
                 <RadzenStack Orientation="Orientation.Horizontal">
                     <RadzenText class="rz-p-1">Results at page:</RadzenText>
                     <RadzenDropDown Data="@pageSizeOptions" @bind-Value="@getStudentReportsModel.Results"
                                     Change="@GetStudentReports" Style="width: 5em"/>
                 </RadzenStack>
-                <RadzenButton Size="ButtonSize.Medium" Text="Reset paging criteria" class="rz-border-radius-1"/>
                 <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
                                Selected="@getStudentReportsModel.Page"
                                Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>

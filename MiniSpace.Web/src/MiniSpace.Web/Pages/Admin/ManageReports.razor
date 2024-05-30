@@ -26,11 +26,6 @@
 {
     <h4 class="rz-p-8">To see details and manage a report, open details dialog by clicking "Show" button.</h4>
     
-    <div class="rz-p-4 rz-text-align-center">
-        <RadzenButton Size="ButtonSize.Medium" Text="Reset criteria" Click="@ResetSearchingCriteria"/>
-        <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
-    </div>
-    
     <RadzenStack Gap="1rem" Style="height: 100%">
         @if (totalElements == 0)
         {
@@ -39,7 +34,13 @@
 
         @if (pageInitialized && totalElements != 0)
         {
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenButton Size="ButtonSize.Medium" Text="Reset criteria" Click="@ResetSearchingCriteria"
+                                  class="rz-border-radius-1"/>
+                    <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"
+                                  class="rz-border-radius-1"/>
+                </RadzenStack>
                 <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
                                Selected="@searchReportsModel.Pageable.Page"
                                Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
@@ -64,7 +65,7 @@
                         @switch (report.State)
                         {
                             case ReportState.Submitted or ReportState.UnderReview:
-                                <RadzenText Style="color: blue">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                <RadzenText Style="color: dodgerblue">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
                                 break;
                             case ReportState.Cancelled:
                                 <RadzenText Style="color: darkorange">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
@@ -81,7 +82,7 @@
                 <RadzenDataGridColumn Context="report" Title="Details" Width="60px" TextAlign="TextAlign.Center"
                                       Filterable="false" Sortable="false" Frozen="true">
                     <Template Context="report">
-                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
+                        <RadzenButton Size="ButtonSize.Medium" Text="Show" class="rz-border-radius-1"
                                       ButtonStyle="ButtonStyle.Secondary"
                                       Click="@(() => OpenManageReportDialog(report))" />
                     </Template>
