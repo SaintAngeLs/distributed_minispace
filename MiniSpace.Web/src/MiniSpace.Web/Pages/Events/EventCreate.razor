@@ -290,14 +290,12 @@
     
     async void OnClientChange(UploadChangeEventArgs args)
     {
-        @* Console.WriteLine("Client-side upload changed"); *@
         clientChangeCompletionSource = new TaskCompletionSource<bool>();
         var uploadedImages = new Dictionary<string, Guid>();
         isUploading = true;
 
         foreach (var file in args.Files)
         {
-            StateHasChanged();
             if (images.TryGetValue(file.Name, out var imageId))
             {
                 uploadedImages.Add(file.Name, imageId);
