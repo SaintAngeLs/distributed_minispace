@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Reactions.Api", "MiniSpace.Services.Reactions.Api.csproj", "{A05DE623-85DC-4078-8B72-2F5882B4DF75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A05DE623-85DC-4078-8B72-2F5882B4DF75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A05DE623-85DC-4078-8B72-2F5882B4DF75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A05DE623-85DC-4078-8B72-2F5882B4DF75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A05DE623-85DC-4078-8B72-2F5882B4DF75}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {653A33C7-83EF-4DED-AF61-6AEDD6DF712A}
+	EndGlobalSection
+EndGlobal

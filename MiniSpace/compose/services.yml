@@ -110,6 +110,15 @@ services:
       - 5005:80
     networks:
       - minispace
+
+  email-service:
+    image: adrianvsaint/minispace.services.email:latest
+    container_name: email-service
+    restart: unless-stopped
+    ports:
+      - 5016:80
+    networks:
+      - minispace
   
   web:
     image: adrianvsaint/minispace.web:latest

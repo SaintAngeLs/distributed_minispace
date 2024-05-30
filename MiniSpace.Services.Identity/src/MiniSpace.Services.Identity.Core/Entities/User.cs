@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public string Name { get; private set; }
         public string Email { get; private set; }
         public string Role { get; private set; }
-        public string Password { get; private set; }
+        public string Password { get; set; }
         public DateTime CreatedAt { get; private set; }
         public IEnumerable<string> Permissions { get; private set; }
 

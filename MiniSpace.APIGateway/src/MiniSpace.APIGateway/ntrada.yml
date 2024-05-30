@@ -131,6 +131,18 @@ modules:
         downstream: identity-service/users/{userId}/ban
         auth: true
 
+      - upstream: /password/forgot
+        method: POST
+        use: downstream
+        downstream: identity-service/password/forgot
+        auth: false
+
+      - upstream: /password/reset
+        method: POST
+        use: downstream
+        downstream: identity-service/password/reset
+        auth: false
+
     services:
       identity-service:
         localUrl: localhost:5004

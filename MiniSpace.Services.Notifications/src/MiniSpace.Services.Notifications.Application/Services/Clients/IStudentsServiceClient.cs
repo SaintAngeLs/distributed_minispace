@@ -8,5 +8,6 @@ namespace MiniSpace.Services.Notifications.Application.Services.Clients
     {
         Task<StudentDto> GetAsync(Guid id);
         public Task<IEnumerable<StudentDto>> GetAllAsync();
+        
     }
 }

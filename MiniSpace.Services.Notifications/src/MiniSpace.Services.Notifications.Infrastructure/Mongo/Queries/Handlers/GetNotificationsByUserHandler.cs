@@ -34,7 +34,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Queries.Handlers
 
                 filter = Builders<StudentNotificationsDocument>.Filter.And(filter, statusFilter);
 
-                Console.WriteLine($"Applying status filter with regex: {regex}");
+                // Console.WriteLine($"Applying status filter with regex: {regex}");
             }
 
             var sortBy = Builders<StudentNotificationsDocument>.Sort.Descending(doc => doc.Notifications[-1].CreatedAt);
