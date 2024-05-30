@@ -202,23 +202,27 @@
             {
                 if (command.UserId == Guid.Empty)
                 {
+                    _logger.LogError("Reset password attempt failed: User ID is empty.");
                     throw new UserNotFoundException(command.UserId);
-                    
                 }
 
+                _logger.LogInformation("Fetching user reset token from repository...");
                 var userResetToken = await _userResetTokenRepository.GetByUserIdAsync(command.UserId);
 
                 if (userResetToken == null || !userResetToken.ResetTokenIsValid(command.Token))
                 {
+                    _logger.LogError($"Invalid or expired reset token for user ID: {command.UserId}");
                     throw new InvalidTokenException();
                 }
 
                 var user = await _userRepository.GetAsync(userResetToken.UserId);
                 if (user == null)
                 {
+                    _logger.LogError($"User not found for ID: {command.UserId}");
                     throw new UserNotFoundException(command.UserId);
                 }
 
+                _logger.LogInformation("Updating user's password...");
                 user.Password = _passwordService.Hash(command.NewPassword);
                 await _userRepository.UpdateAsync(user);
                 await _userResetTokenRepository.InvalidateTokenAsync(user.Id);
