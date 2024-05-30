@@ -30,13 +30,15 @@
 @code {
     [Parameter]
     public ReportDto ReportDto { get; set; }
+    [Parameter]
+    public string ReportStorageKey { get; set; }
     
     private string errorMessage = string.Empty;
     public bool showError;
     
     private async void GoToReportedTargetPage(ReportDto reportDto)
     {
-        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        await LocalStorage.SetItemAsync(ReportStorageKey, reportDto);
         switch (ReportDto.ContextType)
         {
             case ReportContextType.Event:
@@ -75,7 +77,7 @@
 
     private async void GoToTargetOwnerProfile(ReportDto reportDto)
     {
-        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        await LocalStorage.SetItemAsync(ReportStorageKey, reportDto);
         NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetOwnerId}");
     }
 
