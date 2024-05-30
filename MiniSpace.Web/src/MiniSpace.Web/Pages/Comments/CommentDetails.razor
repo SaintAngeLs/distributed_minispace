@@ -52,6 +52,12 @@
                 </RadzenText>
             </RadzenColumn>
         </RadzenRow>
+        
+        <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="@showError" ShowIcon="false"
+                     Variant="Variant.Flat" Shade="Shade.Lighter" class="rz-my-3">
+            @errorMessage
+        </RadzenAlert>
+        
         @if (comment.CommentContext == "event")
         {
             <RadzenButton Size="ButtonSize.Medium" Text="Go to context event page"
@@ -76,6 +82,9 @@
     private CommentDto comment;
     private bool pageInitialized;
     
+    private string errorMessage = string.Empty;
+    public bool showError;
+    
     protected override async Task OnInitializedAsync()
     {
         comment = await CommentsService.GetCommentAsync(CommentId);
@@ -85,7 +94,21 @@
     private async void GoToContextPost(CommentDto commentDto)
     {
         var post = await PostsService.GetPostAsync(commentDto.ContextId);
+        if (post == null)
+        {
+            errorMessage = "Post above reported comment not found! Probably has been deleted!";
+            showError = true;
+            StateHasChanged();
+            return;
+        }
         var ev = await EventsService.GetEventAsync(post.EventId);
+        if (ev == null)
+        {
+            errorMessage = "Event above reported comment not found! Probably has been deleted!";
+            showError = true;
+            StateHasChanged();
+            return;
+        }
         var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
         NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
     }
