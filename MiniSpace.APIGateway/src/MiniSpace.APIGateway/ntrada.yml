@@ -459,6 +459,11 @@ modules:
           use: downstream
           downstream: comments-service/comments/search
 
+        - upstream: /{commentId}
+          method: GET
+          use: downstream
+          downstream: comments-service/comments/{commentId}
+
       services:
         comments-service:
           localUrl: localhost:5009
