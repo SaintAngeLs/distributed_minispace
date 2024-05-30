@@ -36,7 +36,8 @@
         @if (pageInitialized && totalElements != 0)
         {
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                <RadzenButton Size="ButtonSize.Medium" Text="Reset paging criteria" class="rz-border-radius-1"/>
+                <RadzenButton Size="ButtonSize.Medium" Text="Reset paging criteria" Click="@ResetPagingCriteria"
+                              class="rz-border-radius-1"/>
                 <RadzenStack Orientation="Orientation.Horizontal">
                     <RadzenText class="rz-p-1">Results at page:</RadzenText>
                     <RadzenDropDown Data="@pageSizeOptions" @bind-Value="@getStudentReportsModel.Results"
@@ -174,6 +175,13 @@
         }
         
         await LocalStorage.SetItemAsync("getReportsCriteria", getStudentReportsModel);
+    }
+    
+    private async void ResetPagingCriteria()
+    {
+        getStudentReportsModel.SetDefaultValues();
+        await GetStudentReports();
+        StateHasChanged();
     }
     
     private async void SelectedPageChanged(int pageNumber)
