@@ -26,13 +26,13 @@
                 <RadzenRow Size="12" AlignItems="AlignItems.Center">
                     <RadzenColumn Size="6">
                         <RadzenButton Size="ButtonSize.Medium" Text="Go to reported target" Style="width: 250px"
-                                      ButtonStyle="ButtonStyle.Primary"
+                                      ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                       Click="@(() => GoToReportedTargetPage(ReportDto))"/>
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">
                         <RadzenButton Size="ButtonSize.Medium" Text="Go to profile of target owner" Style="width: 250px"
-                                      ButtonStyle="ButtonStyle.Secondary"
+                                      ButtonStyle="ButtonStyle.Secondary" class="rz-border-radius-1"
                                       Click="@(() => GoToTargetOwnerProfile(ReportDto))" />
                     </RadzenColumn>
                 </RadzenRow>
@@ -140,7 +140,8 @@
 
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
+            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close"
+                          class="rz-border-radius-1" Style="width: 120px"/>
         </RadzenStack>
     </RadzenStack>
 </RadzenStack>

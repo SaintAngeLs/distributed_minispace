@@ -24,15 +24,10 @@
 }
 @if (pageInitialized && studentId != Guid.Empty)
 {
-    <h4 class="rz-p-8">To see details of a report, open details dialog by clicking "Show" button.</h4>
+    <h4 class="rz-p-6">To see details of a report, open details dialog by clicking "Show" button.</h4>
+    <h4 Style="color: dodgerblue">You can have max 3 active reports (Submitted or Under review).</h4>
     
-    <div class="rz-p-4 rz-text-align-center">
-        <RadzenText>Results at page:</RadzenText>
-        <RadzenDropDown Data="@pageSizeOptions" @bind-Value="@getStudentReportsModel.Results"
-                        Change="@GetStudentReports" />
-    </div>
-    
-    <RadzenStack Gap="1rem" Style="height: 100%">
+    <RadzenStack class="rz-p-6" Gap="1rem" Style="height: 100%">
         @if (totalElements == 0)
         {
             <h3>You haven't created any reports yet.</h3>
@@ -40,7 +35,13 @@
 
         @if (pageInitialized && totalElements != 0)
         {
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenText class="rz-p-1">Results at page:</RadzenText>
+                    <RadzenDropDown Data="@pageSizeOptions" @bind-Value="@getStudentReportsModel.Results"
+                                    Change="@GetStudentReports" Style="width: 5em"/>
+                </RadzenStack>
+                <RadzenButton Size="ButtonSize.Medium" Text="Reset paging criteria" class="rz-border-radius-1"/>
                 <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
                                Selected="@getStudentReportsModel.Page"
                                Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
@@ -65,7 +66,7 @@
                         @switch (report.State)
                         {
                             case ReportState.Submitted or ReportState.UnderReview:
-                                <RadzenText Style="color: blue">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                <RadzenText Style="color: dodgerblue">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
                                 break;
                             case ReportState.Cancelled:
                                 <RadzenText Style="color: darkorange">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
@@ -82,7 +83,7 @@
                 <RadzenDataGridColumn Context="report" Title="Details" Width="60px" TextAlign="TextAlign.Center"
                                       Filterable="false" Sortable="false" Frozen="true">
                     <Template Context="report">
-                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
+                        <RadzenButton Size="ButtonSize.Medium" Text="Show" class="rz-border-radius-1"
                                       ButtonStyle="ButtonStyle.Secondary"
                                       Click="@(() => OpenReportDetailsDialog(report))" />
                     </Template>
@@ -92,13 +93,13 @@
                     <Template Context="report">
                         @if (report.State is ReportState.Submitted)
                         {
-                            <RadzenButton Size="ButtonSize.Medium" Text="Cancel"
+                            <RadzenButton Size="ButtonSize.Medium" Text="Cancel" class="rz-border-radius-1"
                                           ButtonStyle="ButtonStyle.Primary" Disabled="false"
                                           Click="@(() => CancelReport(report))"/>
                         }
                         else
                         {
-                            <RadzenButton Size="ButtonSize.Medium" Text="Cancel"
+                            <RadzenButton Size="ButtonSize.Medium" Text="Cancel" class="rz-border-radius-1"
                                           ButtonStyle="ButtonStyle.Primary" Disabled="true"
                                           Click="@(() => CancelReport(report))"/>
                         }
