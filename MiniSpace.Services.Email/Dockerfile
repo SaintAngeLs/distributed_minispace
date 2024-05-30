@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
 COPY --from=build /app/out .
+COPY src/MiniSpace.Services.Email.Api/*.html . 
 
 ENV ASPNETCORE_URLS=http://*:80
 ENV ASPNETCORE_ENVIRONMENT=docker
