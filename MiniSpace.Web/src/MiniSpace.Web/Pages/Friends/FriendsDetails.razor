@@ -25,6 +25,13 @@
 }
 
 <h3>Student Profile</h3>
+
+@if (studentNotFound)
+{
+    <h3 class="rz-p-12">Student profile not found!</h3>
+    <h3>Probably has been deleted!</h3>
+}
+
 @if (student == null)
 {
     <RadzenProgress Label="Loading profile..." Mode="ProgressMode.Indeterminate" />
@@ -56,17 +63,20 @@ else
     [Parameter] public Guid Id { get; set; }
     private StudentDto student;
     private string profileImage; // Store the Base64 image string
+    private bool studentNotFound;
 
     protected override async Task OnInitializedAsync()
     {
         student = await FriendsService.GetStudentAsync(Id);
-        if (student != null)
+        if (student == null)
         {
-            var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
-            if (imageResult != null)
-            {
-                profileImage = $"data:image/jpeg;base64,{imageResult.Base64Content}";
-            }
+            studentNotFound = true;
+            return;
+        }
+        var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
+        if (imageResult != null)
+        {
+            profileImage = $"data:image/jpeg;base64,{imageResult.Base64Content}";
         }
     }
     
