@@ -158,7 +158,7 @@
 
     private async void GoToReportedTargetPage(ReportDto reportDto)
     {
-        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        await LocalStorage.SetItemAsync("studentReportDto", reportDto);
         switch (ReportDto.ContextType)
         {
             case ReportContextType.Event:
@@ -183,7 +183,7 @@
     
     private async void GoToTargetOwnerProfile(ReportDto reportDto)
     {
-        await LocalStorage.SetItemAsync("reportDto", reportDto);
+        await LocalStorage.SetItemAsync("studentReportDto", reportDto);
         NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetOwnerId}");
     }
 }

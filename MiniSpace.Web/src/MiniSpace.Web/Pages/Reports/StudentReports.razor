@@ -145,10 +145,10 @@
             await GetStudentReports();
             pageInitialized = true;
             
-            var reportDto = await LocalStorage.GetItemAsync<ReportDto>("reportDto");
+            var reportDto = await LocalStorage.GetItemAsync<ReportDto>("studentReportDto");
             if (reportDto != null)
             {
-                await LocalStorage.RemoveItemAsync("reportDto");
+                await LocalStorage.RemoveItemAsync("studentReportDto");
                 await OpenReportDetailsDialog(reportDto);
             }
         }
