@@ -229,6 +229,5 @@
 
                 await _messageBroker.PublishAsync(new PasswordReset(user.Id));
             }
-
         }
     }
