@@ -37,7 +37,7 @@
         {
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenButton Size="ButtonSize.Medium" Text="Reset paging criteria" Click="@ResetPagingCriteria"
-                              class="rz-border-radius-1"/>
+                              class="rz-border-radius-1" Icon="autorenew"/>
                 <RadzenStack Orientation="Orientation.Horizontal">
                     <RadzenText class="rz-p-1">Results at page:</RadzenText>
                     <RadzenDropDown Data="@pageSizeOptions" @bind-Value="@getStudentReportsModel.Results"
@@ -85,7 +85,7 @@
                                       Filterable="false" Sortable="false" Frozen="true">
                     <Template Context="report">
                         <RadzenButton Size="ButtonSize.Medium" Text="Show" class="rz-border-radius-1"
-                                      ButtonStyle="ButtonStyle.Secondary"
+                                      ButtonStyle="ButtonStyle.Secondary" Icon="search"
                                       Click="@(() => OpenReportDetailsDialog(report))" />
                     </Template>
                 </RadzenDataGridColumn>
@@ -95,13 +95,13 @@
                         @if (report.State is ReportState.Submitted)
                         {
                             <RadzenButton Size="ButtonSize.Medium" Text="Cancel" class="rz-border-radius-1"
-                                          ButtonStyle="ButtonStyle.Primary" Disabled="false"
+                                          ButtonStyle="ButtonStyle.Primary" Disabled="false" Icon="close"
                                           Click="@(() => CancelReport(report))"/>
                         }
                         else
                         {
                             <RadzenButton Size="ButtonSize.Medium" Text="Cancel" class="rz-border-radius-1"
-                                          ButtonStyle="ButtonStyle.Primary" Disabled="true"
+                                          ButtonStyle="ButtonStyle.Primary" Disabled="true" Icon="close"
                                           Click="@(() => CancelReport(report))"/>
                         }
                     </Template>

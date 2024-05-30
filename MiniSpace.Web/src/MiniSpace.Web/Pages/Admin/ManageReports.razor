@@ -37,9 +37,9 @@
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenStack Orientation="Orientation.Horizontal">
                     <RadzenButton Size="ButtonSize.Medium" Text="Reset criteria" Click="@ResetSearchingCriteria"
-                                  class="rz-border-radius-1"/>
+                                  class="rz-border-radius-1" Icon="autorenew"/>
                     <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"
-                                  class="rz-border-radius-1"/>
+                                  class="rz-border-radius-1" Icon="pageview"/>
                 </RadzenStack>
                 <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
                                Selected="@searchReportsModel.Pageable.Page"
@@ -83,7 +83,7 @@
                                       Filterable="false" Sortable="false" Frozen="true">
                     <Template Context="report">
                         <RadzenButton Size="ButtonSize.Medium" Text="Show" class="rz-border-radius-1"
-                                      ButtonStyle="ButtonStyle.Secondary"
+                                      ButtonStyle="ButtonStyle.Secondary" Icon="search"
                                       Click="@(() => OpenManageReportDialog(report))" />
                     </Template>
                 </RadzenDataGridColumn>
