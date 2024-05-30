@@ -26,6 +26,7 @@
 {
     <div>
         <p><strong>Message:</strong> @RenderMessage(notification)</p>
+        <p><strong>Message:</strong> @notification.Details </p>
         <p><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</p>
         <p><strong>Status:</strong> @notification.Status</p>
         <input type="hidden" value="@notification.NotificationId" />

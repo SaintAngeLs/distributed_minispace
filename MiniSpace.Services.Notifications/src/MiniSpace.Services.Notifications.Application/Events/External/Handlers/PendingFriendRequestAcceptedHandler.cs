@@ -65,11 +65,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             studentNotifications.AddNotification(notification);
             _logger.LogInformation($"Adding notification to StudentNotifications for UserId={@event.RequesterId}");
 
-            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
-            _logger.LogInformation($"Updated StudentNotifications for UserId={@event.RequesterId}");
-
-         
-
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
@@ -82,6 +77,13 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
             _logger.LogInformation($"Published enhanced NotificationCreated event for UserId={notification.UserId}");
+
+            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
+            _logger.LogInformation($"Updated StudentNotifications for UserId={@event.RequesterId}");
+
+         
+
+            
 
         }
     }
