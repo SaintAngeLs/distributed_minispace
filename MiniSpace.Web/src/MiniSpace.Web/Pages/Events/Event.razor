@@ -104,13 +104,13 @@
              <RadzenRow RowGap="0">
                  <RadzenColumn SizeSM="4">
                      <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
-                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions: @reactionsSummary.NumberOfReactions</RadzenText>
+                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions:  @reactionsSummary.NumberOfReactions</RadzenText>
                      </RadzenStack>
                      <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-border-top">
                          @if (reactionsSummary.NumberOfReactions > 0)
                          {
                              <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
-                             <MudIcon Icon="@($"fas {reactionsSummary.DominantReaction.GetReactionIcon()}")" Color="Color.Dark" />
+                             <MudIcon Icon="@($"fas {reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
                          }
                      </RadzenStack>
                  </RadzenColumn>
