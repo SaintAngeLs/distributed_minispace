@@ -42,12 +42,14 @@
         <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-pt-2 rz-px-4 rz-border-top">
-                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => OpenSignedUpFriendsDialog())" class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
+                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => OpenInterestedFriendsDialog())" class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
                         <RadzenIcon Icon="grade" Style="color: #30445f;"/>
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@ev.InterestedStudents</RadzenText>
                     </RadzenButton>
-                    <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
-                    <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.SignedUpStudents/@ev.Capacity</RadzenText>
+                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => OpenSignedUpFriendsDialog())" class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
+                        <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
+                        <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.SignedUpStudents/@ev.Capacity</RadzenText>
+                    </RadzenButton>
                 </RadzenStack>
                 <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-px-4 rz-pt-2 {GetStateColor()}")">@StateToText()</RadzenText>
             </RadzenStack>
@@ -603,6 +605,17 @@
     { 
         await DialogService.OpenAsync<EventFriendsDialog>("Signed up friends:",
             new Dictionary<string, object>() { { "Friends", ev.FriendsSignedUp } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+        
+    private async Task OpenInterestedFriendsDialog()
+    { 
+        await DialogService.OpenAsync<EventFriendsDialog>("Interested friends:",
+            new Dictionary<string, object>() { { "Friends", ev.FriendsInterestedIn } },
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
