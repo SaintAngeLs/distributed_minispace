@@ -38,12 +38,12 @@
                  <RadzenStack Gap="0">
                      <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
                      <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left event-name {GetFontSizeClass(ev.Name)}")">@ev.Name</RadzenText>
-                     <RadzenRow>
-                         <RadzenColumn Size="6">
+                     <RadzenRow Gap="0.5rem">
+                         <RadzenColumn SizeSM="6">
                              <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
                              <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
                          </RadzenColumn>
-                         <RadzenColumn Size="6">
+                         <RadzenColumn SizeSM="6">
                              <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organizer</RadzenText> 
                              <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.Name</RadzenText>
                          </RadzenColumn>
@@ -51,7 +51,7 @@
                  </RadzenStack>
              </RadzenStack>
              <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
-                 <RadzenStack Gap="0">
+                 <RadzenStack RowGap="0">
                      <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Description</RadzenText>
                      <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left")">@ev.Description</RadzenText>
                  </RadzenStack>
