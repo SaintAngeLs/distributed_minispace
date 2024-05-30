@@ -201,6 +201,7 @@
             public async Task ResetPasswordAsync(ResetPassword command)
             {
                 var userResetToken = await _userResetTokenRepository.GetByUserIdAsync(command.UserId);
+                Console.WriteLine($"Idenitty service {userResetToken}");
                 if (userResetToken == null 
                 || !userResetToken.ResetTokenIsValid(command.Token)
                 )
