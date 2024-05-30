@@ -130,8 +130,14 @@
                      @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                      {
                          <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
-                             <RadzenButton Size="ButtonSize.Medium" Text="React" class="separate-button"
-                                           Click="@(() => OpenReactionsDialog())" />                        
+                             <RadzenButton Size="ButtonSize.Medium" class="separate-button"
+                                           Click="@(() => OpenReactionsDialog())">
+                                 React
+                                 @if (reactionsSummary.AuthUserReactionType != null)
+                                 {
+                                     <MudIcon Icon="@($"{reactionsSummary.AuthUserReactionType.GetReactionIcon()}")"/>
+                                 }
+                             </RadzenButton>
                         </RadzenStack>
                      }
                  </RadzenColumn>
@@ -596,11 +602,11 @@
             new Dictionary<string, object>() { { "SelectedReaction", reactionsSummary.AuthUserReactionType } },
             new DialogOptions()
             {
-                Width = "800px", Height = "600px", Resizable = true, Draggable = true,
+                Width = "800px", Height = "600px", Resizable = false, Draggable = true,
                 AutoFocusFirstElement = false
             });
         
-        await ReactionChanged((ReactionType)result);
+        await ReactionChanged((ReactionType?)result);
         StateHasChanged(); 
     }
 
