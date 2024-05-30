@@ -9,6 +9,7 @@
 @using MiniSpace.Web.Pages.Comments
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using Radzen
+@using MudBlazor
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
@@ -32,7 +33,7 @@
 @if (pageInitialized)
 {
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
-        <RadzenCard class="rz-mx-auto" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
+        <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
              <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
                  <RadzenStack Gap="0">
                      <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
@@ -55,6 +56,20 @@
                      <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left")">@ev.Description</RadzenText>
                  </RadzenStack>
              </RadzenStack>
+             @if (images.Any())
+             {
+                 <RadzenStack class="rz-pb-5">
+                     <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 50vh;" ShowArrows="@arrows"
+                                  ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+                         @foreach (var img in images)
+                         {
+                             <MudCarouselItem>
+                                <div style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
+                             </MudCarouselItem>
+                         }
+                     </MudCarousel>
+                 </RadzenStack>
+             }
              <RadzenCard Class="gradient-background rz-shadow-0 rz-border-radius-5 rz-p-8" Style="margin: 1rem calc(-1 * var(--rz-card-padding)); border-radius: 0;">
                  <RadzenRow RowGap="0">
                      <RadzenColumn SizeSM="6">
@@ -309,9 +324,17 @@
     private EventDto ev = new();
     private bool pageInitialized = false;
     private EventRatingDto eventRating = null;
+    
+    private int activeIndex = 0;
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    private bool autocycle = true;
+    private MudBlazor.Transition transition = MudBlazor.Transition.Slide; 
 
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions = [];
+    IEnumerable<string> images = [];
     
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
@@ -327,13 +350,18 @@
         ev = await EventsService.GetEventAsync(new Guid(EventId));
         posts = await PostsService.GetPostsAsync(ev.Id);
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
+        var tasks = new List<Task<FileDto>>();
+        foreach (var mediaFile in ev.MediaFiles)
+        {
+            tasks.Add(MediaFilesService.GetFileAsync(mediaFile));
+        }
+        
         if (ev.Status == "Archived")
         {
             var response = await EventsService.GetEventRatingAsync(ev.Id);
             if (response != null)
             {
                 eventRating = response;
-                StateHasChanged();
             }
         }
         if (IdentityService.IsAuthenticated)
@@ -341,6 +369,8 @@
             studentId = IdentityService.GetCurrentUserId();
         }
         
+        StateHasChanged();
+        images = (await Task.WhenAll(tasks)).Select(f => f.Base64Content).ToList();
         pageInitialized = true;
     }
 
