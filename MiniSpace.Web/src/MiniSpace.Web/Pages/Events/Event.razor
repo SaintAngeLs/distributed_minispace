@@ -27,7 +27,12 @@
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 
 @if (pageInitialized)
@@ -35,19 +40,25 @@
     
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
         <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-                <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-px-4 rz-pt-4 {GetStateColor()}")">@StateToText()</RadzenText>
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-pt-2 rz-px-4 rz-border-top">
+                    <RadzenIcon Icon="grade" Style="color: #30445f;"/>
+                    <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@ev.InterestedStudents</RadzenText>
+                    <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
+                    <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.SignedUpStudents/@ev.Capacity</RadzenText>
+                </RadzenStack>
+                <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-px-4 rz-pt-2 {GetStateColor()}")">@StateToText()</RadzenText>
             </RadzenStack>
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Stretch" Gap="1rem" Class="rz-p-4">
                 <RadzenStack Gap="0">
                     <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
                     <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left event-name {GetFontSizeClass(ev.Name)}")">@ev.Name</RadzenText>
                     <RadzenRow Gap="0.5rem">
-                        <RadzenColumn SizeSM="6">
+                        <RadzenColumn SizeSM="6" class="rz-mx-auto">
                             <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
                             <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
                         </RadzenColumn>
-                        <RadzenColumn SizeSM="6">
+                        <RadzenColumn SizeSM="6" class="rz-mx-auto">
                             <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organizer</RadzenText>
                             <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.Name</RadzenText>
                         </RadzenColumn>
@@ -62,8 +73,8 @@
              </RadzenStack>
              @if (images.Any())
              {
-                 <RadzenStack class="rz-pb-5">
-                     <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 50vh;" ShowArrows="@arrows"
+                 <RadzenStack class="rz-pb-5" Orientation="Orientation.Horizontal">
+                     <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 70vh;" ShowArrows="@arrows"
                                   ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
                          @foreach (var img in images)
                          {
@@ -91,15 +102,17 @@
                  </RadzenRow>
              </RadzenCard>
              <RadzenRow RowGap="0">
-                 <RadzenColumn SizeSM="9">
+                 <RadzenColumn SizeSM="4">
                      <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
-                         <RadzenIcon Icon="grade" Style="color: #30445f;"/>
-                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@ev.InterestedStudents</RadzenText>
-                         <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
-                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.SignedUpStudents/@ev.Capacity</RadzenText>
+                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions: @reactionsSummary.NumberOfReactions</RadzenText>
+                         @if (reactionsSummary.NumberOfReactions > 0)
+                         {
+                             <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
+                             <RadzenIcon Icon="@reactionsSummary.DominantReaction.GetReactionIcon()" Style="color: #30445f;"/>
+                         }
                      </RadzenStack>
                  </RadzenColumn>
-                 <RadzenColumn SizeSM="3">
+                 <RadzenColumn SizeSM="8">
                      <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
                          @if (ev.Status == "Archived" && eventRating != null)
                          {
@@ -523,58 +536,34 @@
     
     private string GetFontSizeClass(string eventName)
     {
-        if (eventName.Length <= 50)
+        return eventName.Length switch
         {
-            return "large-font";
-        }
-        else if (eventName.Length <= 100)
-        {
-            return "medium-font";
-        }
-        else
-        {
-            return "small-font";
-        }
+            <= 50 => "large-font",
+            <= 100 => "medium-font",
+            _ => "small-font"
+        };
     }
     
     private string StateToText()
     {
-        if (ev.Status == "Archived")
+        return ev.Status switch
         {
-            return "Archived event";
-        }
-        else if (ev.Status == "Cancelled")
-        {
-            return "Cancelled event";
-        }
-        else if (ev.Status == "ToBePublished")
-        {
-            return "To be published event";
-        }
-        else
-        {
-            return "Published";
-        }
+            "Archived" => "Archived event",
+            "Cancelled" => "Cancelled event",
+            "ToBePublished" => "To be published event",
+            _ => "Published"
+        };
     }
 
     private string GetStateColor()
     {
-        if (ev.Status == "Archived")
+        return ev.Status switch
         {
-            return "archived-event";
-        }
-        else if (ev.Status == "Cancelled")
-        {
-            return "cancelled-event";
-        }
-        else if (ev.Status == "ToBePublished")
-        {
-            return "to-be-published-event";
-        }
-        else
-        {
-            return String.Empty;
-        }
+            "Archived" => "archived-event",
+            "Cancelled" => "cancelled-event",
+            "ToBePublished" => "to-be-published-event",
+            _ => String.Empty
+        };
     }
     
     // private async Task SearchComments()

@@ -25,6 +25,19 @@ namespace MiniSpace.Web.DTO.Enums
                 _ => "No reactions!"
             };
         }
+        
+        public static string GetReactionIcon(this ReactionType? reactionType)
+        {
+            return reactionType switch
+            {
+                ReactionType.LoveIt => "heart",
+                ReactionType.LikeIt => "like",
+                ReactionType.Wow => "wow",
+                ReactionType.ItWasOkay => "smile",
+                ReactionType.HateIt => "angry",
+                _ => "no-reactions"
+            };
+        }
 
         public static List<KeyValuePair<string, ReactionType?>> GenerateReactionPairs()
         => [
