@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiniSpace.Services.Email.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c7fda56c05c556b5321061633085c040caa14df9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fcd8a903d616c7e8e25ba8140003205db8b4b885")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiniSpace.Services.Email.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniSpace.Services.Email.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
