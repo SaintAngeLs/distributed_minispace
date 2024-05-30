@@ -30,24 +30,26 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
         {
             Console.WriteLine($"Starting to fetch UserResetToken by UserId: {userId}");
 
-            // Log the attempt to find documents in the repository
-            var documents = await _repository.FindAsync(x => x.UserId == userId);
-            Console.WriteLine($"Fetched {documents.Count} documents for UserId: {userId}");
+            // Fetch all valid tokens for the user that have not expired.
+            var documents = await _repository.FindAsync(x => x.UserId == userId && x.ResetTokenExpires > DateTime.UtcNow);
 
-            // Find the valid token that has not expired
-            var document = documents.FirstOrDefault(x => x.ResetTokenExpires > DateTime.UtcNow);
+            if (!documents.Any())
+            {
+                Console.WriteLine("No valid reset tokens found.");
+                return null;
+            }
 
-            if (document == null)
+            // Order the tokens by expiration date to get the most recent one.
+            var mostRecentValidToken = documents.OrderByDescending(x => x.ResetTokenExpires).FirstOrDefault();
+
+            if (mostRecentValidToken == null)
             {
                 Console.WriteLine("No valid reset token found or all tokens are expired.");
-            }
-            else
-            {
-                Console.WriteLine($"Found valid reset token for UserId: {userId}");
+                return null;
             }
 
-            // Log the conversion from document to entity if needed
-            return document?.AsEntity();
+            Console.WriteLine($"Found valid reset token for UserId: {userId}, Token: {mostRecentValidToken.ResetToken}");
+            return mostRecentValidToken.AsEntity();
         }
 
 
