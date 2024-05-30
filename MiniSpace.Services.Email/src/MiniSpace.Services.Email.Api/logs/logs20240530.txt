@@ -1,0 +1,816 @@
+2024-05-30 00:13:12.068 +02:00 [INF] Received a message with ID: 'cf3c7381dde84fa79d58192b71d3ea90', Correlation ID: 'd8d710cb53324e26b9bd3657a7726ec5', timestamp: 1717020792, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 00:13:12.070 +02:00 [INF] Handling a message: notification_created with ID: cf3c7381dde84fa79d58192b71d3ea90, Correlation ID: d8d710cb53324e26b9bd3657a7726ec5, retry: 0
+2024-05-30 00:13:12.070 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 00:13:12.070 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:13:12.070 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:13:12.100 +02:00 [INF] Received HTTP response headers after 29.4333ms - 200
+2024-05-30 00:13:12.100 +02:00 [INF] End processing HTTP request after 29.8236ms - 200
+2024-05-30 00:13:12.100 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 00:13:15.567 +02:00 [INF] Notification created with ID: 74b26479-9516-433e-9fcc-a1cb91cfe985 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/29/2024 10:13:12 PM.
+2024-05-30 00:13:15.568 +02:00 [INF] Handled a message: notification_created with ID: cf3c7381dde84fa79d58192b71d3ea90, Correlation ID: d8d710cb53324e26b9bd3657a7726ec5, retry: 0
+2024-05-30 00:18:10.088 +02:00 [INF] Received a message with ID: '6bf6976620a646d2b3cd06da7f38cad0', Correlation ID: 'f766832fa4684ae696804500af952056', timestamp: 1717021090, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 00:18:10.089 +02:00 [INF] Handling a message: notification_created with ID: 6bf6976620a646d2b3cd06da7f38cad0, Correlation ID: f766832fa4684ae696804500af952056, retry: 0
+2024-05-30 00:18:10.089 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 00:18:10.089 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:18:10.089 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:18:10.118 +02:00 [INF] Received HTTP response headers after 28.0859ms - 200
+2024-05-30 00:18:10.118 +02:00 [INF] End processing HTTP request after 28.977ms - 200
+2024-05-30 00:18:10.118 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 00:18:15.142 +02:00 [INF] Notification created with ID: 58eb0253-d3cd-410f-bc29-60ed5d8f9e4e for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/29/2024 10:18:10 PM.
+2024-05-30 00:18:15.142 +02:00 [INF] Handled a message: notification_created with ID: 6bf6976620a646d2b3cd06da7f38cad0, Correlation ID: f766832fa4684ae696804500af952056, retry: 0
+2024-05-30 00:20:31.884 +02:00 [INF] Received a message with ID: 'ba49623010814355b986893a1bd4acbb', Correlation ID: 'af35f9b1764240d39f1f5c1c125c7015', timestamp: 1717021231, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 00:20:31.885 +02:00 [INF] Handling a message: notification_created with ID: ba49623010814355b986893a1bd4acbb, Correlation ID: af35f9b1764240d39f1f5c1c125c7015, retry: 0
+2024-05-30 00:20:31.885 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 00:20:31.885 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:20:31.886 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:20:31.914 +02:00 [INF] Received HTTP response headers after 28.795ms - 200
+2024-05-30 00:20:31.915 +02:00 [INF] End processing HTTP request after 29.1044ms - 200
+2024-05-30 00:20:31.915 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 00:20:35.235 +02:00 [INF] Notification created with ID: 0a6d3289-5cb3-4f5c-8d25-42908cc2e4f3 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/29/2024 10:20:31 PM.
+2024-05-30 00:20:35.236 +02:00 [INF] Handled a message: notification_created with ID: ba49623010814355b986893a1bd4acbb, Correlation ID: af35f9b1764240d39f1f5c1c125c7015, retry: 0
+2024-05-30 00:22:02.913 +02:00 [INF] Received a message with ID: '5df533f9afb24b75a6375c9ad8b0e533', Correlation ID: '10098725fe2f4a34893ccf08c2ea47c9', timestamp: 1717021322, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 00:22:02.914 +02:00 [INF] Handling a message: notification_created with ID: 5df533f9afb24b75a6375c9ad8b0e533, Correlation ID: 10098725fe2f4a34893ccf08c2ea47c9, retry: 0
+2024-05-30 00:22:02.914 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 00:22:02.915 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:22:02.915 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:22:02.950 +02:00 [INF] Received HTTP response headers after 34.639ms - 200
+2024-05-30 00:22:02.950 +02:00 [INF] End processing HTTP request after 35.2622ms - 200
+2024-05-30 00:22:02.950 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 00:22:06.879 +02:00 [INF] Notification created with ID: 2dbc3ed0-a307-4dbd-b353-54ecf24a54f3 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/29/2024 10:22:02 PM.
+2024-05-30 00:22:06.880 +02:00 [INF] Handled a message: notification_created with ID: 5df533f9afb24b75a6375c9ad8b0e533, Correlation ID: 10098725fe2f4a34893ccf08c2ea47c9, retry: 0
+2024-05-30 00:23:13.419 +02:00 [INF] Received a message with ID: 'dc5c08b449b04d20900235d701bf5e6f', Correlation ID: 'ffe5bd461404489288d206455e170c80', timestamp: 1717021393, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 00:23:13.419 +02:00 [INF] Handling a message: notification_created with ID: dc5c08b449b04d20900235d701bf5e6f, Correlation ID: ffe5bd461404489288d206455e170c80, retry: 0
+2024-05-30 00:23:13.420 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 00:23:13.420 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:23:13.420 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 00:23:13.449 +02:00 [INF] Received HTTP response headers after 28.0602ms - 200
+2024-05-30 00:23:13.449 +02:00 [INF] End processing HTTP request after 28.5232ms - 200
+2024-05-30 00:23:13.449 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 00:23:16.839 +02:00 [INF] Notification created with ID: efc984ba-ceec-470e-881a-f8c30afbe826 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/29/2024 10:23:13 PM.
+2024-05-30 00:23:16.839 +02:00 [INF] Handled a message: notification_created with ID: dc5c08b449b04d20900235d701bf5e6f, Correlation ID: ffe5bd461404489288d206455e170c80, retry: 0
+2024-05-30 09:01:32.561 +02:00 [INF] Received a message with ID: '896877975e4045979c9b9ad33f6953ce', Correlation ID: '38824831f6224201800bb412a3b8bc8a', timestamp: 1717052492, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 09:01:32.565 +02:00 [INF] Handling a message: notification_created with ID: 896877975e4045979c9b9ad33f6953ce, Correlation ID: 38824831f6224201800bb412a3b8bc8a, retry: 0
+2024-05-30 09:01:32.567 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 09:01:32.568 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 09:01:32.568 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 09:01:32.599 +02:00 [INF] Received HTTP response headers after 30.9846ms - 200
+2024-05-30 09:01:32.599 +02:00 [INF] End processing HTTP request after 31.8311ms - 200
+2024-05-30 09:01:32.600 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 09:01:38.460 +02:00 [INF] Notification created with ID: b6c97762-7d20-4698-ad45-baf3b7c88bf7 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/30/2024 7:01:32 AM.
+2024-05-30 09:01:38.461 +02:00 [INF] Handled a message: notification_created with ID: 896877975e4045979c9b9ad33f6953ce, Correlation ID: 38824831f6224201800bb412a3b8bc8a, retry: 0
+2024-05-30 12:18:06.891 +02:00 [INF] Received a message with ID: '4180d2882ce746f0aae7c1529a2310b6', Correlation ID: '7d73dbaf1c5f4d7a8ae4417c0d31f6c8', timestamp: 1717064286, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 12:18:06.897 +02:00 [INF] Handling a message: notification_created with ID: 4180d2882ce746f0aae7c1529a2310b6, Correlation ID: 7d73dbaf1c5f4d7a8ae4417c0d31f6c8, retry: 0
+2024-05-30 12:18:06.900 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 12:18:06.900 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:18:06.900 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:18:06.929 +02:00 [INF] Received HTTP response headers after 28.8757ms - 200
+2024-05-30 12:18:06.930 +02:00 [INF] End processing HTTP request after 29.5904ms - 200
+2024-05-30 12:18:06.930 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 12:18:12.588 +02:00 [INF] Notification created with ID: 4dcb89ed-fe77-4898-ac10-f1625cacef37 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/30/2024 10:18:06 AM.
+2024-05-30 12:18:12.589 +02:00 [INF] Handled a message: notification_created with ID: 4180d2882ce746f0aae7c1529a2310b6, Correlation ID: 7d73dbaf1c5f4d7a8ae4417c0d31f6c8, retry: 0
+2024-05-30 12:23:53.295 +02:00 [INF] Received a message with ID: 'fa2defcb138045efbdbb119ebf06d5a4', Correlation ID: '5d99162db07c450c8878b2b0bb885b90', timestamp: 1717064633, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 12:23:53.296 +02:00 [INF] Handling a message: notification_created with ID: fa2defcb138045efbdbb119ebf06d5a4, Correlation ID: 5d99162db07c450c8878b2b0bb885b90, retry: 0
+2024-05-30 12:23:53.297 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 12:23:53.297 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:23:53.297 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:23:53.330 +02:00 [INF] Received HTTP response headers after 32.6046ms - 200
+2024-05-30 12:23:53.331 +02:00 [INF] End processing HTTP request after 33.7956ms - 200
+2024-05-30 12:23:53.332 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 12:23:58.562 +02:00 [INF] Notification created with ID: 1602de64-d53b-43ef-8c66-4dab450c0400 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/30/2024 10:23:53 AM.
+2024-05-30 12:23:58.562 +02:00 [INF] Handled a message: notification_created with ID: fa2defcb138045efbdbb119ebf06d5a4, Correlation ID: 5d99162db07c450c8878b2b0bb885b90, retry: 0
+2024-05-30 12:30:15.724 +02:00 [INF] Received a message with ID: '31ea79f9986a424d8d8ccfa49453b7ac', Correlation ID: 'f3cd6135807344578f150bd99fbe6bf7', timestamp: 1717065015, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 12:30:15.724 +02:00 [INF] Handling a message: notification_created with ID: 31ea79f9986a424d8d8ccfa49453b7ac, Correlation ID: f3cd6135807344578f150bd99fbe6bf7, retry: 0
+2024-05-30 12:30:15.725 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 12:30:15.725 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:30:15.725 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:30:15.755 +02:00 [INF] Received HTTP response headers after 29.7672ms - 200
+2024-05-30 12:30:15.755 +02:00 [INF] End processing HTTP request after 30.1858ms - 200
+2024-05-30 12:30:15.755 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 12:30:20.589 +02:00 [INF] Notification created with ID: d8a7ce3d-b1d4-4980-a67c-db2b21302cda for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/30/2024 10:30:15 AM.
+2024-05-30 12:30:20.590 +02:00 [INF] Handled a message: notification_created with ID: 31ea79f9986a424d8d8ccfa49453b7ac, Correlation ID: f3cd6135807344578f150bd99fbe6bf7, retry: 0
+2024-05-30 12:35:20.685 +02:00 [INF] Received a message with ID: '7c95c07ac3894177ae9915cbb1ff0b04', Correlation ID: '8665afd7357f40b0907b5ab887c83d9a', timestamp: 1717065320, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 12:35:20.686 +02:00 [INF] Handling a message: notification_created with ID: 7c95c07ac3894177ae9915cbb1ff0b04, Correlation ID: 8665afd7357f40b0907b5ab887c83d9a, retry: 0
+2024-05-30 12:35:20.687 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 12:35:20.687 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:35:20.687 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:35:20.719 +02:00 [INF] Received HTTP response headers after 31.9723ms - 200
+2024-05-30 12:35:20.721 +02:00 [INF] End processing HTTP request after 34.0324ms - 200
+2024-05-30 12:35:20.722 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 12:35:29.931 +02:00 [INF] Notification created with ID: d48a5eb2-e517-4a3c-8e53-d0181e801ab6 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/30/2024 10:35:20 AM.
+2024-05-30 12:35:29.931 +02:00 [INF] Handled a message: notification_created with ID: 7c95c07ac3894177ae9915cbb1ff0b04, Correlation ID: 8665afd7357f40b0907b5ab887c83d9a, retry: 0
+2024-05-30 12:37:27.726 +02:00 [INF] Received a message with ID: '319ccf45d7604631a8f195c626bd9725', Correlation ID: 'c20f21c56ab3480eb276758192f3dfa9', timestamp: 1717065447, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 12:37:27.727 +02:00 [INF] Handling a message: notification_created with ID: 319ccf45d7604631a8f195c626bd9725, Correlation ID: c20f21c56ab3480eb276758192f3dfa9, retry: 0
+2024-05-30 12:37:27.728 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 12:37:27.728 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:37:27.728 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:37:27.759 +02:00 [INF] Received HTTP response headers after 30.9511ms - 200
+2024-05-30 12:37:27.761 +02:00 [INF] End processing HTTP request after 33.097ms - 200
+2024-05-30 12:37:27.762 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 12:37:31.303 +02:00 [INF] Notification created with ID: ff4222a8-e590-4f15-b271-0f6de93ef7ec for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/30/2024 10:37:27 AM.
+2024-05-30 12:37:31.303 +02:00 [INF] Handled a message: notification_created with ID: 319ccf45d7604631a8f195c626bd9725, Correlation ID: c20f21c56ab3480eb276758192f3dfa9, retry: 0
+2024-05-30 12:38:10.971 +02:00 [INF] Received a message with ID: '4a8828657e1a499493d281f1fe0e4e13', Correlation ID: '823dd6c06ec84ce3b0259ca404229ef3', timestamp: 1717065490, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 12:38:10.972 +02:00 [INF] Handling a message: notification_created with ID: 4a8828657e1a499493d281f1fe0e4e13, Correlation ID: 823dd6c06ec84ce3b0259ca404229ef3, retry: 0
+2024-05-30 12:38:10.972 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96"
+2024-05-30 12:38:10.972 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:38:10.972 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2c9d3a3f-08fe-4126-8505-a86712c10a96
+2024-05-30 12:38:11.002 +02:00 [INF] Received HTTP response headers after 29.9962ms - 200
+2024-05-30 12:38:11.003 +02:00 [INF] End processing HTTP request after 31.3077ms - 200
+2024-05-30 12:38:11.004 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 12:38:14.590 +02:00 [INF] Notification created with ID: a625656c-107c-45a9-bfa2-b68cb7129384 for user: 2c9d3a3f-08fe-4126-8505-a86712c10a96. Event type: PasswordResetRequest created at 5/30/2024 10:38:10 AM.
+2024-05-30 12:38:14.590 +02:00 [INF] Handled a message: notification_created with ID: 4a8828657e1a499493d281f1fe0e4e13, Correlation ID: 823dd6c06ec84ce3b0259ca404229ef3, retry: 0
+2024-05-30 13:11:58.533 +02:00 [INF] Deregistering a service [id: email-service:00dfc747a9af4e70bc066814c32d82c4] from Consul...
+2024-05-30 13:11:58.536 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/email-service:00dfc747a9af4e70bc066814c32d82c4"
+2024-05-30 13:11:58.537 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:00dfc747a9af4e70bc066814c32d82c4
+2024-05-30 13:11:58.537 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:00dfc747a9af4e70bc066814c32d82c4
+2024-05-30 13:11:58.544 +02:00 [INF] Received HTTP response headers after 6.7236ms - 200
+2024-05-30 13:11:58.544 +02:00 [INF] End processing HTTP request after 7.7399ms - 200
+2024-05-30 13:11:58.545 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:11:58.546 +02:00 [INF] Deregistered a service [id: email-service:00dfc747a9af4e70bc066814c32d82c4] from Consul.
+2024-05-30 13:15:36.460 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/wwwroot. Static files may be unavailable.
+2024-05-30 13:15:36.597 +02:00 [INF] Registering a service [id: email-service:3f3c20f0183f413392dedc1087a83548] in Consul...
+2024-05-30 13:15:36.627 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-30 13:15:36.633 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 13:15:36.636 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 13:15:36.683 +02:00 [INF] Received HTTP response headers after 41.7249ms - 200
+2024-05-30 13:15:36.687 +02:00 [INF] End processing HTTP request after 55.309ms - 200
+2024-05-30 13:15:36.693 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:15:36.695 +02:00 [INF] Registered a service [id: email-service:3f3c20f0183f413392dedc1087a83548] in Consul.
+2024-05-30 13:15:36.704 +02:00 [INF] Declaring a queue: 'email-service/email.create_email_notification' with routing key: 'create_email_notification' for an exchange: 'email'.
+2024-05-30 13:15:36.728 +02:00 [INF] Declaring a queue: 'email-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-30 13:17:07.616 +02:00 [INF] Received a message with ID: '6558a88d9012436d9e25734801cfc615', Correlation ID: 'cc931d58a00946bcb215bc188e5defc7', timestamp: 1717067827, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 13:17:07.637 +02:00 [INF] Handling a message: notification_created with ID: 6558a88d9012436d9e25734801cfc615, Correlation ID: cc931d58a00946bcb215bc188e5defc7, retry: 0
+2024-05-30 13:17:07.703 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6"
+2024-05-30 13:17:07.703 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:07.703 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:07.737 +02:00 [INF] Received HTTP response headers after 33.439ms - 200
+2024-05-30 13:17:07.737 +02:00 [INF] End processing HTTP request after 34.3538ms - 200
+2024-05-30 13:17:07.738 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:17:07.759 +02:00 [ERR] The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+System.Text.Json.JsonException: The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+ ---> System.InvalidOperationException: Cannot get the value of a token type 'Null' as a string.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_ExpectedString(JsonTokenType tokenType)
+   at System.Text.Json.Utf8JsonReader.TryGetDateTime(DateTime& value)
+   at System.Text.Json.Utf8JsonReader.GetDateTime()
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, Utf8JsonReader& reader, Exception ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize(ReadBufferState& bufferState, JsonReaderState& jsonReaderState, ReadStack& readStack)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsync(Stream utf8Json, CancellationToken cancellationToken)
+   at Convey.HTTP.ConveyHttpClient.DeserializeJsonFromStream[T](Stream stream, IHttpClientSerializer serializer)
+   at Convey.HTTP.ConveyHttpClient.SendAsync[T](String uri, Method method, HttpContent content, IHttpClientSerializer serializer)
+   at MiniSpace.Services.Email.Application.Events.External.Handlers.NotificationCreatedHandler.HandleAsync(NotificationCreated event, CancellationToken cancellationToken) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Application/Events/External/Handlers/NotificationCreatedHandler.cs:line 40
+   at Convey.Logging.CQRS.Decorators.EventHandlerLoggingDecorator`1.HandleAsync(TEvent event, CancellationToken cancellationToken)
+   at Convey.MessageBrokers.CQRS.Extensions.<>c__3`1.<<SubscribeEvent>b__3_0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Convey.MessageBrokers.RabbitMQ.Internals.RabbitMqBackgroundService.<>c__DisplayClass27_0.<<TryHandleAsync>b__1>d.MoveNext()
+2024-05-30 13:17:07.779 +02:00 [ERR] Unable to handle a message: 'notification_created' with ID: '6558a88d9012436d9e25734801cfc615', Correlation ID: 'cc931d58a00946bcb215bc188e5defc7', retry 1/3...
+2024-05-30 13:17:09.782 +02:00 [INF] Handling a message: notification_created with ID: 6558a88d9012436d9e25734801cfc615, Correlation ID: cc931d58a00946bcb215bc188e5defc7, retry: 1
+2024-05-30 13:17:09.787 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6"
+2024-05-30 13:17:09.788 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:09.788 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:09.823 +02:00 [INF] Received HTTP response headers after 33.5643ms - 200
+2024-05-30 13:17:09.824 +02:00 [INF] End processing HTTP request after 35.7211ms - 200
+2024-05-30 13:17:09.824 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:17:09.827 +02:00 [ERR] The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+System.Text.Json.JsonException: The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+ ---> System.InvalidOperationException: Cannot get the value of a token type 'Null' as a string.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_ExpectedString(JsonTokenType tokenType)
+   at System.Text.Json.Utf8JsonReader.TryGetDateTime(DateTime& value)
+   at System.Text.Json.Utf8JsonReader.GetDateTime()
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, Utf8JsonReader& reader, Exception ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize(ReadBufferState& bufferState, JsonReaderState& jsonReaderState, ReadStack& readStack)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsync(Stream utf8Json, CancellationToken cancellationToken)
+   at Convey.HTTP.ConveyHttpClient.DeserializeJsonFromStream[T](Stream stream, IHttpClientSerializer serializer)
+   at Convey.HTTP.ConveyHttpClient.SendAsync[T](String uri, Method method, HttpContent content, IHttpClientSerializer serializer)
+   at MiniSpace.Services.Email.Application.Events.External.Handlers.NotificationCreatedHandler.HandleAsync(NotificationCreated event, CancellationToken cancellationToken) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Application/Events/External/Handlers/NotificationCreatedHandler.cs:line 40
+   at Convey.Logging.CQRS.Decorators.EventHandlerLoggingDecorator`1.HandleAsync(TEvent event, CancellationToken cancellationToken)
+   at Convey.MessageBrokers.CQRS.Extensions.<>c__3`1.<<SubscribeEvent>b__3_0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Convey.MessageBrokers.RabbitMQ.Internals.RabbitMqBackgroundService.<>c__DisplayClass27_0.<<TryHandleAsync>b__1>d.MoveNext()
+2024-05-30 13:17:09.830 +02:00 [ERR] Unable to handle a message: 'notification_created' with ID: '6558a88d9012436d9e25734801cfc615', Correlation ID: 'cc931d58a00946bcb215bc188e5defc7', retry 2/3...
+2024-05-30 13:17:11.834 +02:00 [INF] Handling a message: notification_created with ID: 6558a88d9012436d9e25734801cfc615, Correlation ID: cc931d58a00946bcb215bc188e5defc7, retry: 2
+2024-05-30 13:17:11.836 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6"
+2024-05-30 13:17:11.837 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:11.837 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:11.870 +02:00 [INF] Received HTTP response headers after 32.4307ms - 200
+2024-05-30 13:17:11.870 +02:00 [INF] End processing HTTP request after 33.0265ms - 200
+2024-05-30 13:17:11.870 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:17:11.873 +02:00 [ERR] The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+System.Text.Json.JsonException: The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+ ---> System.InvalidOperationException: Cannot get the value of a token type 'Null' as a string.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_ExpectedString(JsonTokenType tokenType)
+   at System.Text.Json.Utf8JsonReader.TryGetDateTime(DateTime& value)
+   at System.Text.Json.Utf8JsonReader.GetDateTime()
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, Utf8JsonReader& reader, Exception ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize(ReadBufferState& bufferState, JsonReaderState& jsonReaderState, ReadStack& readStack)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsync(Stream utf8Json, CancellationToken cancellationToken)
+   at Convey.HTTP.ConveyHttpClient.DeserializeJsonFromStream[T](Stream stream, IHttpClientSerializer serializer)
+   at Convey.HTTP.ConveyHttpClient.SendAsync[T](String uri, Method method, HttpContent content, IHttpClientSerializer serializer)
+   at MiniSpace.Services.Email.Application.Events.External.Handlers.NotificationCreatedHandler.HandleAsync(NotificationCreated event, CancellationToken cancellationToken) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Application/Events/External/Handlers/NotificationCreatedHandler.cs:line 40
+   at Convey.Logging.CQRS.Decorators.EventHandlerLoggingDecorator`1.HandleAsync(TEvent event, CancellationToken cancellationToken)
+   at Convey.MessageBrokers.CQRS.Extensions.<>c__3`1.<<SubscribeEvent>b__3_0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Convey.MessageBrokers.RabbitMQ.Internals.RabbitMqBackgroundService.<>c__DisplayClass27_0.<<TryHandleAsync>b__1>d.MoveNext()
+2024-05-30 13:17:11.874 +02:00 [ERR] Unable to handle a message: 'notification_created' with ID: '6558a88d9012436d9e25734801cfc615', Correlation ID: 'cc931d58a00946bcb215bc188e5defc7', retry 3/3...
+2024-05-30 13:17:13.874 +02:00 [INF] Handling a message: notification_created with ID: 6558a88d9012436d9e25734801cfc615, Correlation ID: cc931d58a00946bcb215bc188e5defc7, retry: 3
+2024-05-30 13:17:13.875 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6"
+2024-05-30 13:17:13.875 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:13.875 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/1715bd94-6dca-4288-a673-6c1c750568b6
+2024-05-30 13:17:13.903 +02:00 [INF] Received HTTP response headers after 27.8076ms - 200
+2024-05-30 13:17:13.904 +02:00 [INF] End processing HTTP request after 28.4669ms - 200
+2024-05-30 13:17:13.904 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:17:13.905 +02:00 [ERR] The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+System.Text.Json.JsonException: The JSON value could not be converted to System.DateTime. Path: $.dateOfBirth | LineNumber: 0 | BytePositionInLine: 241.
+ ---> System.InvalidOperationException: Cannot get the value of a token type 'Null' as a string.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_ExpectedString(JsonTokenType tokenType)
+   at System.Text.Json.Utf8JsonReader.TryGetDateTime(DateTime& value)
+   at System.Text.Json.Utf8JsonReader.GetDateTime()
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, Utf8JsonReader& reader, Exception ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize(ReadBufferState& bufferState, JsonReaderState& jsonReaderState, ReadStack& readStack)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsync(Stream utf8Json, CancellationToken cancellationToken)
+   at Convey.HTTP.ConveyHttpClient.DeserializeJsonFromStream[T](Stream stream, IHttpClientSerializer serializer)
+   at Convey.HTTP.ConveyHttpClient.SendAsync[T](String uri, Method method, HttpContent content, IHttpClientSerializer serializer)
+   at MiniSpace.Services.Email.Application.Events.External.Handlers.NotificationCreatedHandler.HandleAsync(NotificationCreated event, CancellationToken cancellationToken) in /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Application/Events/External/Handlers/NotificationCreatedHandler.cs:line 40
+   at Convey.Logging.CQRS.Decorators.EventHandlerLoggingDecorator`1.HandleAsync(TEvent event, CancellationToken cancellationToken)
+   at Convey.MessageBrokers.CQRS.Extensions.<>c__3`1.<<SubscribeEvent>b__3_0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Convey.MessageBrokers.RabbitMQ.Internals.RabbitMqBackgroundService.<>c__DisplayClass27_0.<<TryHandleAsync>b__1>d.MoveNext()
+2024-05-30 13:17:13.906 +02:00 [ERR] Unable to handle a message: 'notification_created' with ID: '6558a88d9012436d9e25734801cfc615', Correlation ID: 'cc931d58a00946bcb215bc188e5defc7', retry 4/3...
+2024-05-30 13:17:13.906 +02:00 [ERR] Handling a message: notification_created with ID: 6558a88d9012436d9e25734801cfc615, Correlation ID: cc931d58a00946bcb215bc188e5defc7 failed
+2024-05-30 13:18:15.453 +02:00 [INF] Deregistering a service [id: email-service:3f3c20f0183f413392dedc1087a83548] from Consul...
+2024-05-30 13:18:15.454 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/email-service:3f3c20f0183f413392dedc1087a83548"
+2024-05-30 13:18:15.454 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:3f3c20f0183f413392dedc1087a83548
+2024-05-30 13:18:15.454 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:3f3c20f0183f413392dedc1087a83548
+2024-05-30 13:18:15.456 +02:00 [INF] Received HTTP response headers after 2.2941ms - 200
+2024-05-30 13:18:15.457 +02:00 [INF] End processing HTTP request after 2.7156ms - 200
+2024-05-30 13:18:15.457 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:18:15.457 +02:00 [INF] Deregistered a service [id: email-service:3f3c20f0183f413392dedc1087a83548] from Consul.
+2024-05-30 13:41:47.302 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/wwwroot. Static files may be unavailable.
+2024-05-30 13:41:47.428 +02:00 [INF] Registering a service [id: email-service:f9022479da8e4148a0fd94be0eb33793] in Consul...
+2024-05-30 13:41:47.447 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-30 13:41:47.450 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 13:41:47.450 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 13:41:47.458 +02:00 [INF] Received HTTP response headers after 5.0271ms - 200
+2024-05-30 13:41:47.462 +02:00 [INF] End processing HTTP request after 13.2791ms - 200
+2024-05-30 13:41:47.466 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:41:47.467 +02:00 [INF] Registered a service [id: email-service:f9022479da8e4148a0fd94be0eb33793] in Consul.
+2024-05-30 13:41:47.476 +02:00 [INF] Declaring a queue: 'email-service/email.create_email_notification' with routing key: 'create_email_notification' for an exchange: 'email'.
+2024-05-30 13:41:47.487 +02:00 [INF] Declaring a queue: 'email-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-30 13:42:31.412 +02:00 [INF] Received a message with ID: '531594f8ecbf4e5185eebafabde9ab3e', Correlation ID: '119ec4054db749cab73ce577ff648375', timestamp: 1717069351, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 13:42:31.433 +02:00 [INF] Handling a message: notification_created with ID: 531594f8ecbf4e5185eebafabde9ab3e, Correlation ID: 119ec4054db749cab73ce577ff648375, retry: 0
+2024-05-30 13:42:31.467 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 13:42:31.468 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 13:42:31.468 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 13:42:31.513 +02:00 [INF] Received HTTP response headers after 45.4444ms - 200
+2024-05-30 13:42:31.514 +02:00 [INF] End processing HTTP request after 46.1216ms - 200
+2024-05-30 13:42:31.514 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 13:42:35.258 +02:00 [INF] Notification created with ID: 698eeef9-56a0-45a1-8092-f680ac5734a6 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: UserSignUp created at 5/30/2024 11:42:31 AM.
+2024-05-30 13:42:35.260 +02:00 [INF] Handled a message: notification_created with ID: 531594f8ecbf4e5185eebafabde9ab3e, Correlation ID: 119ec4054db749cab73ce577ff648375, retry: 0
+2024-05-30 14:28:59.737 +02:00 [INF] Received a message with ID: '2e85b9c5ed6745f1a1d26c6d4697777c', Correlation ID: '07f078500cb9408b80a09eb001e1f5a8', timestamp: 1717072139, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:28:59.738 +02:00 [INF] Handling a message: notification_created with ID: 2e85b9c5ed6745f1a1d26c6d4697777c, Correlation ID: 07f078500cb9408b80a09eb001e1f5a8, retry: 0
+2024-05-30 14:28:59.741 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882"
+2024-05-30 14:28:59.742 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 14:28:59.742 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 14:28:59.771 +02:00 [INF] Received HTTP response headers after 29.369ms - 200
+2024-05-30 14:28:59.772 +02:00 [INF] End processing HTTP request after 30.0713ms - 200
+2024-05-30 14:28:59.772 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:29:09.868 +02:00 [INF] Notification created with ID: 9aba81c7-4522-4289-8fa3-58022cd43a5f for user: bf759205-b6b2-4f41-ad79-9ab58ccff882. Event type: NewFriendRequest created at 5/30/2024 12:28:59 PM.
+2024-05-30 14:29:09.868 +02:00 [INF] Handled a message: notification_created with ID: 2e85b9c5ed6745f1a1d26c6d4697777c, Correlation ID: 07f078500cb9408b80a09eb001e1f5a8, retry: 0
+2024-05-30 14:42:17.272 +02:00 [INF] Received a message with ID: '052b5e4353c04d008d38b68c6ac2ce76', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:17.273 +02:00 [INF] Handling a message: notification_created with ID: 052b5e4353c04d008d38b68c6ac2ce76, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:17.275 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda"
+2024-05-30 14:42:17.275 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda
+2024-05-30 14:42:17.276 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda
+2024-05-30 14:42:17.309 +02:00 [INF] Received HTTP response headers after 33.2327ms - 200
+2024-05-30 14:42:17.309 +02:00 [INF] End processing HTTP request after 33.8046ms - 200
+2024-05-30 14:42:17.309 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:21.327 +02:00 [INF] Notification created with ID: af1e34c6-10e3-4e50-9212-f7f19f1c1d05 for user: c4819385-2bdf-41c3-a21c-5a9e0f195fda. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:21.327 +02:00 [INF] Handled a message: notification_created with ID: 052b5e4353c04d008d38b68c6ac2ce76, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:21.328 +02:00 [INF] Received a message with ID: '64223ec21619467596ca75512eaa5f37', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:21.329 +02:00 [INF] Handling a message: notification_created with ID: 64223ec21619467596ca75512eaa5f37, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:21.329 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/7e9fd928-fbde-4468-89b1-6e712345ecc7"
+2024-05-30 14:42:21.329 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/7e9fd928-fbde-4468-89b1-6e712345ecc7
+2024-05-30 14:42:21.330 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/7e9fd928-fbde-4468-89b1-6e712345ecc7
+2024-05-30 14:42:21.360 +02:00 [INF] Received HTTP response headers after 29.885ms - 200
+2024-05-30 14:42:21.360 +02:00 [INF] End processing HTTP request after 30.8461ms - 200
+2024-05-30 14:42:21.361 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:25.093 +02:00 [INF] Notification created with ID: 9efca821-2eb0-4c88-aa82-9d413e69bf24 for user: 7e9fd928-fbde-4468-89b1-6e712345ecc7. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:25.094 +02:00 [INF] Handled a message: notification_created with ID: 64223ec21619467596ca75512eaa5f37, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:25.095 +02:00 [INF] Received a message with ID: '363e93ad214543a28d3ab90f3ccc5f83', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:25.096 +02:00 [INF] Handling a message: notification_created with ID: 363e93ad214543a28d3ab90f3ccc5f83, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:25.098 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/0081b30c-ed71-4cb0-be03-e573bd46f820"
+2024-05-30 14:42:25.098 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/0081b30c-ed71-4cb0-be03-e573bd46f820
+2024-05-30 14:42:25.099 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/0081b30c-ed71-4cb0-be03-e573bd46f820
+2024-05-30 14:42:25.130 +02:00 [INF] Received HTTP response headers after 30.9652ms - 200
+2024-05-30 14:42:25.130 +02:00 [INF] End processing HTTP request after 32.1852ms - 200
+2024-05-30 14:42:25.131 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:29.831 +02:00 [INF] Notification created with ID: a0961e12-6e3a-4768-8241-866083cd86ff for user: 0081b30c-ed71-4cb0-be03-e573bd46f820. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:29.831 +02:00 [INF] Handled a message: notification_created with ID: 363e93ad214543a28d3ab90f3ccc5f83, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:29.838 +02:00 [INF] Received a message with ID: 'd75db611719e4a2bb3c21764da70e61b', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:29.839 +02:00 [INF] Handling a message: notification_created with ID: d75db611719e4a2bb3c21764da70e61b, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:29.839 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 14:42:29.839 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 14:42:29.839 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 14:42:29.869 +02:00 [INF] Received HTTP response headers after 29.4739ms - 200
+2024-05-30 14:42:29.869 +02:00 [INF] End processing HTTP request after 29.8729ms - 200
+2024-05-30 14:42:29.869 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:33.035 +02:00 [INF] Notification created with ID: 2b1c19aa-7833-44dc-bd84-76fb9e086245 for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:33.035 +02:00 [INF] Handled a message: notification_created with ID: d75db611719e4a2bb3c21764da70e61b, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:33.036 +02:00 [INF] Received a message with ID: 'a1b000d7168a41a8ad3bc9f307f41e58', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:33.036 +02:00 [INF] Handling a message: notification_created with ID: a1b000d7168a41a8ad3bc9f307f41e58, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:33.036 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882"
+2024-05-30 14:42:33.036 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 14:42:33.037 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 14:42:33.076 +02:00 [INF] Received HTTP response headers after 39.3519ms - 200
+2024-05-30 14:42:33.076 +02:00 [INF] End processing HTTP request after 39.7464ms - 200
+2024-05-30 14:42:33.076 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:36.580 +02:00 [INF] Notification created with ID: 48799a30-9ede-4147-8b62-7597186f8791 for user: bf759205-b6b2-4f41-ad79-9ab58ccff882. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:36.580 +02:00 [INF] Handled a message: notification_created with ID: a1b000d7168a41a8ad3bc9f307f41e58, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:36.583 +02:00 [INF] Received a message with ID: '6af3c4127f794339bd6dcb900dee39a2', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:36.584 +02:00 [INF] Handling a message: notification_created with ID: 6af3c4127f794339bd6dcb900dee39a2, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:36.585 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/af98ceda-1483-4c51-a602-89e5537ec89e"
+2024-05-30 14:42:36.586 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/af98ceda-1483-4c51-a602-89e5537ec89e
+2024-05-30 14:42:36.586 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/af98ceda-1483-4c51-a602-89e5537ec89e
+2024-05-30 14:42:36.618 +02:00 [INF] Received HTTP response headers after 31.6065ms - 200
+2024-05-30 14:42:36.619 +02:00 [INF] End processing HTTP request after 32.8503ms - 200
+2024-05-30 14:42:36.619 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:39.619 +02:00 [INF] Notification created with ID: 46cf22f1-4e66-42a6-acde-e29030764301 for user: af98ceda-1483-4c51-a602-89e5537ec89e. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:39.619 +02:00 [INF] Handled a message: notification_created with ID: 6af3c4127f794339bd6dcb900dee39a2, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:39.621 +02:00 [INF] Received a message with ID: 'd30ee967a8dc48a3b087f007574cf587', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:39.622 +02:00 [INF] Handling a message: notification_created with ID: d30ee967a8dc48a3b087f007574cf587, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:39.623 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/2e69d276-3373-472a-9889-9582d4d93582"
+2024-05-30 14:42:39.624 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/2e69d276-3373-472a-9889-9582d4d93582
+2024-05-30 14:42:39.624 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/2e69d276-3373-472a-9889-9582d4d93582
+2024-05-30 14:42:39.657 +02:00 [INF] Received HTTP response headers after 32.5946ms - 200
+2024-05-30 14:42:39.657 +02:00 [INF] End processing HTTP request after 33.4974ms - 200
+2024-05-30 14:42:39.657 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:42.845 +02:00 [INF] Notification created with ID: b9799997-8e7d-4c08-af95-51d828e3bf4b for user: 2e69d276-3373-472a-9889-9582d4d93582. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:42.845 +02:00 [INF] Handled a message: notification_created with ID: d30ee967a8dc48a3b087f007574cf587, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:42.845 +02:00 [INF] Received a message with ID: '896a1724bb4a4357a94600ae038089b3', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:42.846 +02:00 [INF] Handling a message: notification_created with ID: 896a1724bb4a4357a94600ae038089b3, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:42.846 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/f8d48ed0-acdf-42fc-ac12-6ddfb9135b0f"
+2024-05-30 14:42:42.847 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/f8d48ed0-acdf-42fc-ac12-6ddfb9135b0f
+2024-05-30 14:42:42.847 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/f8d48ed0-acdf-42fc-ac12-6ddfb9135b0f
+2024-05-30 14:42:42.877 +02:00 [INF] Received HTTP response headers after 29.6904ms - 200
+2024-05-30 14:42:42.877 +02:00 [INF] End processing HTTP request after 30.0485ms - 200
+2024-05-30 14:42:42.877 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:46.071 +02:00 [INF] Notification created with ID: 897ffe28-7e1a-4ef7-aba4-de811ef2f747 for user: f8d48ed0-acdf-42fc-ac12-6ddfb9135b0f. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:46.071 +02:00 [INF] Handled a message: notification_created with ID: 896a1724bb4a4357a94600ae038089b3, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:46.073 +02:00 [INF] Received a message with ID: 'e37b1644ab5b4d6aa5322e4de7783363', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:46.073 +02:00 [INF] Handling a message: notification_created with ID: e37b1644ab5b4d6aa5322e4de7783363, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:46.075 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/a3c0bb8f-4e14-4b0c-aa6e-11adda4d1ea8"
+2024-05-30 14:42:46.075 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/a3c0bb8f-4e14-4b0c-aa6e-11adda4d1ea8
+2024-05-30 14:42:46.076 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/a3c0bb8f-4e14-4b0c-aa6e-11adda4d1ea8
+2024-05-30 14:42:46.105 +02:00 [INF] Received HTTP response headers after 29.136ms - 200
+2024-05-30 14:42:46.105 +02:00 [INF] End processing HTTP request after 30.2458ms - 200
+2024-05-30 14:42:46.106 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:49.136 +02:00 [INF] Notification created with ID: c543913f-c4ee-4c88-a0ad-450e5d0a58f5 for user: a3c0bb8f-4e14-4b0c-aa6e-11adda4d1ea8. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:49.136 +02:00 [INF] Handled a message: notification_created with ID: e37b1644ab5b4d6aa5322e4de7783363, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:49.138 +02:00 [INF] Received a message with ID: 'ba86663597034afab2328618c244d07f', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:49.139 +02:00 [INF] Handling a message: notification_created with ID: ba86663597034afab2328618c244d07f, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:49.140 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/f0f9b005-5965-42e3-b719-ce3b39869295"
+2024-05-30 14:42:49.140 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/f0f9b005-5965-42e3-b719-ce3b39869295
+2024-05-30 14:42:49.141 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/f0f9b005-5965-42e3-b719-ce3b39869295
+2024-05-30 14:42:49.170 +02:00 [INF] Received HTTP response headers after 28.4487ms - 200
+2024-05-30 14:42:49.170 +02:00 [INF] End processing HTTP request after 29.4664ms - 200
+2024-05-30 14:42:49.170 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:52.474 +02:00 [INF] Notification created with ID: e22f9f74-1766-4134-816d-5b1ab02e813b for user: f0f9b005-5965-42e3-b719-ce3b39869295. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:52.474 +02:00 [INF] Handled a message: notification_created with ID: ba86663597034afab2328618c244d07f, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:52.474 +02:00 [INF] Received a message with ID: 'be5b350804ab46bdbd21486831e82e96', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072937, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:52.474 +02:00 [INF] Handling a message: notification_created with ID: be5b350804ab46bdbd21486831e82e96, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:52.475 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/266aa552-af23-4e37-90a6-84528857decf"
+2024-05-30 14:42:52.475 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/266aa552-af23-4e37-90a6-84528857decf
+2024-05-30 14:42:52.475 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/266aa552-af23-4e37-90a6-84528857decf
+2024-05-30 14:42:52.503 +02:00 [INF] Received HTTP response headers after 27.9505ms - 200
+2024-05-30 14:42:52.503 +02:00 [INF] End processing HTTP request after 28.2911ms - 200
+2024-05-30 14:42:52.503 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:55.773 +02:00 [INF] Notification created with ID: e77d5b3b-4c07-445a-8370-12da389bbce9 for user: 266aa552-af23-4e37-90a6-84528857decf. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:55.773 +02:00 [INF] Handled a message: notification_created with ID: be5b350804ab46bdbd21486831e82e96, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:55.774 +02:00 [INF] Received a message with ID: 'dd5cec94246c49de9a8edf710f245b3d', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072938, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:55.774 +02:00 [INF] Handling a message: notification_created with ID: dd5cec94246c49de9a8edf710f245b3d, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:55.774 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/ee84f76b-7dfb-4dd4-aad5-5ccc05710e64"
+2024-05-30 14:42:55.774 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/ee84f76b-7dfb-4dd4-aad5-5ccc05710e64
+2024-05-30 14:42:55.774 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/ee84f76b-7dfb-4dd4-aad5-5ccc05710e64
+2024-05-30 14:42:55.812 +02:00 [INF] Received HTTP response headers after 37.7199ms - 200
+2024-05-30 14:42:55.813 +02:00 [INF] End processing HTTP request after 38.9822ms - 200
+2024-05-30 14:42:55.814 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:42:59.147 +02:00 [INF] Notification created with ID: 110a9678-3b8f-4dd0-a980-b7e4b946e2f5 for user: ee84f76b-7dfb-4dd4-aad5-5ccc05710e64. Event type: NewEvent created at 5/30/2024 12:42:17 PM.
+2024-05-30 14:42:59.147 +02:00 [INF] Handled a message: notification_created with ID: dd5cec94246c49de9a8edf710f245b3d, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:59.150 +02:00 [INF] Received a message with ID: '284ca21ae810458ead8d26ed34f13e9e', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072938, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:42:59.151 +02:00 [INF] Handling a message: notification_created with ID: 284ca21ae810458ead8d26ed34f13e9e, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:42:59.152 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/eb23093e-6ce2-4c04-a486-82cf12cd5da4"
+2024-05-30 14:42:59.153 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/eb23093e-6ce2-4c04-a486-82cf12cd5da4
+2024-05-30 14:42:59.153 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/eb23093e-6ce2-4c04-a486-82cf12cd5da4
+2024-05-30 14:42:59.215 +02:00 [INF] Received HTTP response headers after 61.7013ms - 200
+2024-05-30 14:42:59.216 +02:00 [INF] End processing HTTP request after 62.879ms - 200
+2024-05-30 14:42:59.216 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:43:02.495 +02:00 [INF] Notification created with ID: dac5b1f5-dc7f-467d-93c8-1b140a98d8b7 for user: eb23093e-6ce2-4c04-a486-82cf12cd5da4. Event type: NewEvent created at 5/30/2024 12:42:18 PM.
+2024-05-30 14:43:02.495 +02:00 [INF] Handled a message: notification_created with ID: 284ca21ae810458ead8d26ed34f13e9e, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:43:02.496 +02:00 [INF] Received a message with ID: '5413ecc536134e3894a8dfd4bead7848', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072938, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:43:02.497 +02:00 [INF] Handling a message: notification_created with ID: 5413ecc536134e3894a8dfd4bead7848, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:43:02.499 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/7af33ef0-e9b2-4b8c-afd9-24c8c256600b"
+2024-05-30 14:43:02.499 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/7af33ef0-e9b2-4b8c-afd9-24c8c256600b
+2024-05-30 14:43:02.499 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/7af33ef0-e9b2-4b8c-afd9-24c8c256600b
+2024-05-30 14:43:02.530 +02:00 [INF] Received HTTP response headers after 30.2796ms - 200
+2024-05-30 14:43:02.530 +02:00 [INF] End processing HTTP request after 31.1632ms - 200
+2024-05-30 14:43:02.530 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:43:05.626 +02:00 [INF] Notification created with ID: c0e98872-920d-4eeb-aa6e-7e4bcda4d402 for user: 7af33ef0-e9b2-4b8c-afd9-24c8c256600b. Event type: NewEvent created at 5/30/2024 12:42:18 PM.
+2024-05-30 14:43:05.626 +02:00 [INF] Handled a message: notification_created with ID: 5413ecc536134e3894a8dfd4bead7848, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:43:05.626 +02:00 [INF] Received a message with ID: '560702625cb74191a6091754af56765c', Correlation ID: '83d4879006bb4c27b1a48d40030e17db', timestamp: 1717072938, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:43:05.627 +02:00 [INF] Handling a message: notification_created with ID: 560702625cb74191a6091754af56765c, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:43:05.627 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 14:43:05.627 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 14:43:05.627 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 14:43:05.653 +02:00 [INF] Received HTTP response headers after 26.0645ms - 200
+2024-05-30 14:43:05.654 +02:00 [INF] End processing HTTP request after 26.4072ms - 200
+2024-05-30 14:43:05.654 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:43:08.787 +02:00 [INF] Notification created with ID: 27827c85-89f0-438f-a8db-89217b2f025c for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: NewEvent created at 5/30/2024 12:42:18 PM.
+2024-05-30 14:43:08.787 +02:00 [INF] Handled a message: notification_created with ID: 560702625cb74191a6091754af56765c, Correlation ID: 83d4879006bb4c27b1a48d40030e17db, retry: 0
+2024-05-30 14:52:59.161 +02:00 [INF] Deregistering a service [id: email-service:f9022479da8e4148a0fd94be0eb33793] from Consul...
+2024-05-30 14:52:59.163 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/email-service:f9022479da8e4148a0fd94be0eb33793"
+2024-05-30 14:52:59.163 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:f9022479da8e4148a0fd94be0eb33793
+2024-05-30 14:52:59.164 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:f9022479da8e4148a0fd94be0eb33793
+2024-05-30 14:52:59.172 +02:00 [INF] Received HTTP response headers after 8.5811ms - 200
+2024-05-30 14:52:59.173 +02:00 [INF] End processing HTTP request after 9.6875ms - 200
+2024-05-30 14:52:59.173 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:52:59.174 +02:00 [INF] Deregistered a service [id: email-service:f9022479da8e4148a0fd94be0eb33793] from Consul.
+2024-05-30 14:53:08.588 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/wwwroot. Static files may be unavailable.
+2024-05-30 14:53:08.693 +02:00 [INF] Registering a service [id: email-service:338b6afc8c754d34bee8bed44b500966] in Consul...
+2024-05-30 14:53:08.722 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-30 14:53:08.726 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 14:53:08.727 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 14:53:08.739 +02:00 [INF] Received HTTP response headers after 7.4394ms - 200
+2024-05-30 14:53:08.743 +02:00 [INF] End processing HTTP request after 18.0303ms - 200
+2024-05-30 14:53:08.747 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:53:08.748 +02:00 [INF] Registered a service [id: email-service:338b6afc8c754d34bee8bed44b500966] in Consul.
+2024-05-30 14:53:08.758 +02:00 [INF] Declaring a queue: 'email-service/email.create_email_notification' with routing key: 'create_email_notification' for an exchange: 'email'.
+2024-05-30 14:53:08.772 +02:00 [INF] Declaring a queue: 'email-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-30 14:58:59.006 +02:00 [INF] Received a message with ID: 'a6f6d64dd1574b808738c68eaf1ab711', Correlation ID: '67e67db359f14e91b291789d3bc7a120', timestamp: 1717073938, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:58:59.024 +02:00 [INF] Handling a message: notification_created with ID: a6f6d64dd1574b808738c68eaf1ab711, Correlation ID: 67e67db359f14e91b291789d3bc7a120, retry: 0
+2024-05-30 14:59:09.858 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 14:59:09.859 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 14:59:09.859 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 14:59:09.898 +02:00 [INF] Received HTTP response headers after 39.0625ms - 200
+2024-05-30 14:59:09.898 +02:00 [INF] End processing HTTP request after 39.7617ms - 200
+2024-05-30 14:59:09.899 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:59:25.319 +02:00 [INF] Notification created with ID: 56e8333e-4ec5-40e6-b52d-dffc50162ec5 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: StudentShowedInterestInEvent created at 5/30/2024 12:58:58 PM.
+2024-05-30 14:59:25.321 +02:00 [INF] Handled a message: notification_created with ID: a6f6d64dd1574b808738c68eaf1ab711, Correlation ID: 67e67db359f14e91b291789d3bc7a120, retry: 0
+2024-05-30 14:59:25.324 +02:00 [INF] Received a message with ID: 'b0ab65367aac471a837a707554713a24', Correlation ID: '67e67db359f14e91b291789d3bc7a120', timestamp: 1717073939, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:59:25.324 +02:00 [INF] Handling a message: notification_created with ID: b0ab65367aac471a837a707554713a24, Correlation ID: 67e67db359f14e91b291789d3bc7a120, retry: 0
+2024-05-30 14:59:25.326 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 14:59:25.326 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 14:59:25.326 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 14:59:25.354 +02:00 [INF] Received HTTP response headers after 27.4207ms - 200
+2024-05-30 14:59:25.354 +02:00 [INF] End processing HTTP request after 27.9541ms - 200
+2024-05-30 14:59:25.354 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:59:28.497 +02:00 [INF] Notification created with ID: cd99d187-0e05-4eaa-9912-5ebbc1f3b265 for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: StudentShowedInterestInEvent created at 5/30/2024 12:58:59 PM.
+2024-05-30 14:59:28.497 +02:00 [INF] Handled a message: notification_created with ID: b0ab65367aac471a837a707554713a24, Correlation ID: 67e67db359f14e91b291789d3bc7a120, retry: 0
+2024-05-30 14:59:29.316 +02:00 [INF] Received a message with ID: '6af662dfefa744088d92ceed34748041', Correlation ID: '74289f4f4b804355b4524b32630af013', timestamp: 1717073969, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:59:29.318 +02:00 [INF] Handling a message: notification_created with ID: 6af662dfefa744088d92ceed34748041, Correlation ID: 74289f4f4b804355b4524b32630af013, retry: 0
+2024-05-30 14:59:29.323 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 14:59:29.323 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 14:59:29.324 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 14:59:29.352 +02:00 [INF] Received HTTP response headers after 27.7307ms - 200
+2024-05-30 14:59:29.352 +02:00 [INF] End processing HTTP request after 28.7721ms - 200
+2024-05-30 14:59:29.352 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:59:32.660 +02:00 [INF] Notification created with ID: 233856f0-e972-4dbb-97df-f3e4bf24305a for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: EventNewSignUp created at 5/30/2024 12:59:29 PM.
+2024-05-30 14:59:32.660 +02:00 [INF] Handled a message: notification_created with ID: 6af662dfefa744088d92ceed34748041, Correlation ID: 74289f4f4b804355b4524b32630af013, retry: 0
+2024-05-30 14:59:32.662 +02:00 [INF] Received a message with ID: '87b5641874a14df3801fbf0b60c0ea33', Correlation ID: '74289f4f4b804355b4524b32630af013', timestamp: 1717073969, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 14:59:32.663 +02:00 [INF] Handling a message: notification_created with ID: 87b5641874a14df3801fbf0b60c0ea33, Correlation ID: 74289f4f4b804355b4524b32630af013, retry: 0
+2024-05-30 14:59:32.665 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 14:59:32.665 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 14:59:32.665 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 14:59:32.696 +02:00 [INF] Received HTTP response headers after 30.3262ms - 200
+2024-05-30 14:59:32.696 +02:00 [INF] End processing HTTP request after 31.4764ms - 200
+2024-05-30 14:59:32.697 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 14:59:35.839 +02:00 [INF] Notification created with ID: dd8e6331-d600-46b7-9c69-e4718fafa923 for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: EventNewSignUp created at 5/30/2024 12:59:29 PM.
+2024-05-30 14:59:35.840 +02:00 [INF] Handled a message: notification_created with ID: 87b5641874a14df3801fbf0b60c0ea33, Correlation ID: 74289f4f4b804355b4524b32630af013, retry: 0
+2024-05-30 15:07:43.284 +02:00 [INF] Received a message with ID: '1c719321668241bb9c42988c1cf33471', Correlation ID: 'b6dfd56217be4022b8451bcfefd6de00', timestamp: 1717074463, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:07:43.285 +02:00 [INF] Handling a message: notification_created with ID: 1c719321668241bb9c42988c1cf33471, Correlation ID: b6dfd56217be4022b8451bcfefd6de00, retry: 0
+2024-05-30 15:07:43.287 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 15:07:43.287 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:07:43.287 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:07:43.317 +02:00 [INF] Received HTTP response headers after 29.2975ms - 200
+2024-05-30 15:07:43.317 +02:00 [INF] End processing HTTP request after 29.9885ms - 200
+2024-05-30 15:07:43.317 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:07:46.686 +02:00 [INF] Notification created with ID: 990632df-1181-47ff-a157-c8f61f0a4c53 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: StudentShowedInterestInEvent created at 5/30/2024 1:07:43 PM.
+2024-05-30 15:07:46.687 +02:00 [INF] Handled a message: notification_created with ID: 1c719321668241bb9c42988c1cf33471, Correlation ID: b6dfd56217be4022b8451bcfefd6de00, retry: 0
+2024-05-30 15:07:46.690 +02:00 [INF] Received a message with ID: '207c2bc534f34b30836614747eeb4b94', Correlation ID: 'b6dfd56217be4022b8451bcfefd6de00', timestamp: 1717074463, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:07:46.691 +02:00 [INF] Handling a message: notification_created with ID: 207c2bc534f34b30836614747eeb4b94, Correlation ID: b6dfd56217be4022b8451bcfefd6de00, retry: 0
+2024-05-30 15:07:46.692 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda"
+2024-05-30 15:07:46.694 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda
+2024-05-30 15:07:46.694 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda
+2024-05-30 15:07:46.726 +02:00 [INF] Received HTTP response headers after 30.4534ms - 200
+2024-05-30 15:07:46.726 +02:00 [INF] End processing HTTP request after 32.24ms - 200
+2024-05-30 15:07:46.726 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:07:49.992 +02:00 [INF] Notification created with ID: cb811669-351b-40bd-9d15-cd39fd29ad99 for user: c4819385-2bdf-41c3-a21c-5a9e0f195fda. Event type: StudentShowedInterestInEvent created at 5/30/2024 1:07:43 PM.
+2024-05-30 15:07:49.992 +02:00 [INF] Handled a message: notification_created with ID: 207c2bc534f34b30836614747eeb4b94, Correlation ID: b6dfd56217be4022b8451bcfefd6de00, retry: 0
+2024-05-30 15:08:31.551 +02:00 [INF] Received a message with ID: 'e3857f2eb9e0404d9401d29ab3dfd132', Correlation ID: 'ba67021d978040fdbc2ad3f45a4b7406', timestamp: 1717074511, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:08:31.552 +02:00 [INF] Handling a message: notification_created with ID: e3857f2eb9e0404d9401d29ab3dfd132, Correlation ID: ba67021d978040fdbc2ad3f45a4b7406, retry: 0
+2024-05-30 15:08:31.553 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 15:08:31.554 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:08:31.554 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:08:31.583 +02:00 [INF] Received HTTP response headers after 28.1543ms - 200
+2024-05-30 15:08:31.583 +02:00 [INF] End processing HTTP request after 29.6653ms - 200
+2024-05-30 15:08:31.583 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:08:34.762 +02:00 [INF] Notification created with ID: 4be9078f-aa93-4eeb-8126-137be33e0595 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: StudentCancelledSignedUpToEvent created at 5/30/2024 1:08:31 PM.
+2024-05-30 15:08:34.763 +02:00 [INF] Handled a message: notification_created with ID: e3857f2eb9e0404d9401d29ab3dfd132, Correlation ID: ba67021d978040fdbc2ad3f45a4b7406, retry: 0
+2024-05-30 15:08:34.763 +02:00 [INF] Received a message with ID: 'e2f38537f7fb4bd3887778f5a4e5cd2a', Correlation ID: 'ba67021d978040fdbc2ad3f45a4b7406', timestamp: 1717074511, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:08:34.764 +02:00 [INF] Handling a message: notification_created with ID: e2f38537f7fb4bd3887778f5a4e5cd2a, Correlation ID: ba67021d978040fdbc2ad3f45a4b7406, retry: 0
+2024-05-30 15:08:34.764 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 15:08:34.764 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 15:08:34.765 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 15:08:34.792 +02:00 [INF] Received HTTP response headers after 27.8488ms - 200
+2024-05-30 15:08:34.793 +02:00 [INF] End processing HTTP request after 28.1728ms - 200
+2024-05-30 15:08:34.793 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:08:37.989 +02:00 [INF] Notification created with ID: e46360cb-33f5-41d1-b188-352685756200 for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: StudentCancelledSignedUpToEvent created at 5/30/2024 1:08:31 PM.
+2024-05-30 15:08:37.989 +02:00 [INF] Handled a message: notification_created with ID: e2f38537f7fb4bd3887778f5a4e5cd2a, Correlation ID: ba67021d978040fdbc2ad3f45a4b7406, retry: 0
+2024-05-30 15:08:43.691 +02:00 [INF] Received a message with ID: 'c24c494381614da2b0e06e4ca62e4fb9', Correlation ID: '20ca840dfad34eae8d12b32592f65b5a', timestamp: 1717074523, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:08:43.692 +02:00 [INF] Handling a message: notification_created with ID: c24c494381614da2b0e06e4ca62e4fb9, Correlation ID: 20ca840dfad34eae8d12b32592f65b5a, retry: 0
+2024-05-30 15:08:43.692 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 15:08:43.692 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:08:43.692 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:08:43.722 +02:00 [INF] Received HTTP response headers after 29.8408ms - 200
+2024-05-30 15:08:43.722 +02:00 [INF] End processing HTTP request after 30.2211ms - 200
+2024-05-30 15:08:43.723 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:08:47.040 +02:00 [INF] Notification created with ID: 10c658a3-2f8f-43a3-a064-e52d25303ad1 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: EventNewSignUp created at 5/30/2024 1:08:43 PM.
+2024-05-30 15:08:47.041 +02:00 [INF] Handled a message: notification_created with ID: c24c494381614da2b0e06e4ca62e4fb9, Correlation ID: 20ca840dfad34eae8d12b32592f65b5a, retry: 0
+2024-05-30 15:08:47.043 +02:00 [INF] Received a message with ID: 'e687ecd076df45d6afd5d68476783335', Correlation ID: '20ca840dfad34eae8d12b32592f65b5a', timestamp: 1717074523, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:08:47.044 +02:00 [INF] Handling a message: notification_created with ID: e687ecd076df45d6afd5d68476783335, Correlation ID: 20ca840dfad34eae8d12b32592f65b5a, retry: 0
+2024-05-30 15:08:47.045 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 15:08:47.045 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 15:08:47.045 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 15:08:47.075 +02:00 [INF] Received HTTP response headers after 29.0165ms - 200
+2024-05-30 15:08:47.075 +02:00 [INF] End processing HTTP request after 30.1049ms - 200
+2024-05-30 15:08:47.075 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:08:50.192 +02:00 [INF] Notification created with ID: 7b612347-b7a0-44c8-ba6b-69c5f37d7077 for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: EventNewSignUp created at 5/30/2024 1:08:43 PM.
+2024-05-30 15:08:50.192 +02:00 [INF] Handled a message: notification_created with ID: e687ecd076df45d6afd5d68476783335, Correlation ID: 20ca840dfad34eae8d12b32592f65b5a, retry: 0
+2024-05-30 15:09:11.312 +02:00 [INF] Received a message with ID: '3788c87b2f0a41dba26f2a3825d9427f', Correlation ID: '2edbe586e6b74289979e3df1eaa5b7b3', timestamp: 1717074551, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:09:11.312 +02:00 [INF] Handling a message: notification_created with ID: 3788c87b2f0a41dba26f2a3825d9427f, Correlation ID: 2edbe586e6b74289979e3df1eaa5b7b3, retry: 0
+2024-05-30 15:09:11.313 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 15:09:11.313 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:09:11.313 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:09:11.352 +02:00 [INF] Received HTTP response headers after 38.8701ms - 200
+2024-05-30 15:09:11.352 +02:00 [INF] End processing HTTP request after 39.2151ms - 200
+2024-05-30 15:09:11.352 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:09:14.720 +02:00 [INF] Notification created with ID: 73752902-cc38-4c7a-988e-884db1e48c15 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: StudentCancelledInterestInEvent created at 5/30/2024 1:09:11 PM.
+2024-05-30 15:09:14.720 +02:00 [INF] Handled a message: notification_created with ID: 3788c87b2f0a41dba26f2a3825d9427f, Correlation ID: 2edbe586e6b74289979e3df1eaa5b7b3, retry: 0
+2024-05-30 15:10:04.234 +02:00 [INF] Received a message with ID: 'bdac93ffce21441da4a3a93241ca139f', Correlation ID: '87163f85a9e7465aa4c9032073358180', timestamp: 1717074604, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:10:04.235 +02:00 [INF] Handling a message: notification_created with ID: bdac93ffce21441da4a3a93241ca139f, Correlation ID: 87163f85a9e7465aa4c9032073358180, retry: 0
+2024-05-30 15:10:04.236 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 15:10:04.237 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:10:04.237 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 15:10:04.272 +02:00 [INF] Received HTTP response headers after 35.3653ms - 200
+2024-05-30 15:10:04.273 +02:00 [INF] End processing HTTP request after 36.446ms - 200
+2024-05-30 15:10:04.273 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:10:07.681 +02:00 [INF] Notification created with ID: 218872d5-e7a2-452e-8183-cf3143510a7c for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: EventNewSignUp created at 5/30/2024 1:10:04 PM.
+2024-05-30 15:10:07.682 +02:00 [INF] Handled a message: notification_created with ID: bdac93ffce21441da4a3a93241ca139f, Correlation ID: 87163f85a9e7465aa4c9032073358180, retry: 0
+2024-05-30 15:10:07.683 +02:00 [INF] Received a message with ID: 'd4d5b75e05114c4e85d0a1bd4143fa8c', Correlation ID: '87163f85a9e7465aa4c9032073358180', timestamp: 1717074604, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 15:10:07.684 +02:00 [INF] Handling a message: notification_created with ID: d4d5b75e05114c4e85d0a1bd4143fa8c, Correlation ID: 87163f85a9e7465aa4c9032073358180, retry: 0
+2024-05-30 15:10:07.686 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda"
+2024-05-30 15:10:07.686 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda
+2024-05-30 15:10:07.686 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/c4819385-2bdf-41c3-a21c-5a9e0f195fda
+2024-05-30 15:10:07.719 +02:00 [INF] Received HTTP response headers after 31.9069ms - 200
+2024-05-30 15:10:07.719 +02:00 [INF] End processing HTTP request after 32.8513ms - 200
+2024-05-30 15:10:07.719 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 15:10:11.281 +02:00 [INF] Notification created with ID: 653c9ac3-a639-4af7-a3c5-a7558d7e41ef for user: c4819385-2bdf-41c3-a21c-5a9e0f195fda. Event type: EventNewSignUp created at 5/30/2024 1:10:04 PM.
+2024-05-30 15:10:11.281 +02:00 [INF] Handled a message: notification_created with ID: d4d5b75e05114c4e85d0a1bd4143fa8c, Correlation ID: 87163f85a9e7465aa4c9032073358180, retry: 0
+2024-05-30 16:07:38.699 +02:00 [INF] Received a message with ID: '854d1da4543a499490313bc91fc276ea', Correlation ID: 'be7a35f16c8e46e1b07a746acc68e6e1', timestamp: 1717078058, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:07:38.700 +02:00 [INF] Handling a message: notification_created with ID: 854d1da4543a499490313bc91fc276ea, Correlation ID: be7a35f16c8e46e1b07a746acc68e6e1, retry: 0
+2024-05-30 16:07:38.702 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 16:07:38.702 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:38.703 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:38.734 +02:00 [INF] Received HTTP response headers after 30.87ms - 200
+2024-05-30 16:07:38.735 +02:00 [INF] End processing HTTP request after 32.7649ms - 200
+2024-05-30 16:07:38.735 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:07:44.876 +02:00 [INF] Notification created with ID: b1ca45ad-56aa-490c-a065-385d7aec1c40 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: PostCreated created at 5/30/2024 2:07:36 PM.
+2024-05-30 16:07:44.876 +02:00 [INF] Handled a message: notification_created with ID: 854d1da4543a499490313bc91fc276ea, Correlation ID: be7a35f16c8e46e1b07a746acc68e6e1, retry: 0
+2024-05-30 16:07:44.877 +02:00 [INF] Received a message with ID: '31c774e696b040ea916648a0aa6b9b40', Correlation ID: 'be7a35f16c8e46e1b07a746acc68e6e1', timestamp: 1717078059, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:07:44.877 +02:00 [INF] Handling a message: notification_created with ID: 31c774e696b040ea916648a0aa6b9b40, Correlation ID: be7a35f16c8e46e1b07a746acc68e6e1, retry: 0
+2024-05-30 16:07:44.877 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 16:07:44.878 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:44.878 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:44.905 +02:00 [INF] Received HTTP response headers after 27.6269ms - 200
+2024-05-30 16:07:44.906 +02:00 [INF] End processing HTTP request after 27.9734ms - 200
+2024-05-30 16:07:44.906 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:07:49.301 +02:00 [INF] Notification created with ID: 0febc224-b52e-478c-9dc0-d0e45d7cc8dd for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: PostCreated created at 5/30/2024 2:07:38 PM.
+2024-05-30 16:07:49.301 +02:00 [INF] Handled a message: notification_created with ID: 31c774e696b040ea916648a0aa6b9b40, Correlation ID: be7a35f16c8e46e1b07a746acc68e6e1, retry: 0
+2024-05-30 16:07:49.306 +02:00 [INF] Received a message with ID: 'dac69fe8d77d46c4b8de600c61d14a24', Correlation ID: 'be7a35f16c8e46e1b07a746acc68e6e1', timestamp: 1717078059, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:07:49.307 +02:00 [INF] Handling a message: notification_created with ID: dac69fe8d77d46c4b8de600c61d14a24, Correlation ID: be7a35f16c8e46e1b07a746acc68e6e1, retry: 0
+2024-05-30 16:07:49.307 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 16:07:49.307 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 16:07:49.307 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 16:07:49.336 +02:00 [INF] Received HTTP response headers after 28.1966ms - 200
+2024-05-30 16:07:49.336 +02:00 [INF] End processing HTTP request after 28.813ms - 200
+2024-05-30 16:07:49.336 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:07:52.587 +02:00 [INF] Notification created with ID: 5b4711cb-d665-4621-a2c6-a7d723f9aa9f for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: PostCreated created at 5/30/2024 2:07:39 PM.
+2024-05-30 16:07:52.588 +02:00 [INF] Handled a message: notification_created with ID: dac69fe8d77d46c4b8de600c61d14a24, Correlation ID: be7a35f16c8e46e1b07a746acc68e6e1, retry: 0
+2024-05-30 16:07:52.590 +02:00 [INF] Received a message with ID: 'b643684c2a304f6ba5e23f89348f7f55', Correlation ID: '396535e0d01e42e8b7cbe7df0aef033c', timestamp: 1717078071, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:07:52.591 +02:00 [INF] Handling a message: notification_created with ID: b643684c2a304f6ba5e23f89348f7f55, Correlation ID: 396535e0d01e42e8b7cbe7df0aef033c, retry: 0
+2024-05-30 16:07:52.592 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 16:07:52.592 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:52.592 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:52.625 +02:00 [INF] Received HTTP response headers after 32.9594ms - 200
+2024-05-30 16:07:52.625 +02:00 [INF] End processing HTTP request after 33.2416ms - 200
+2024-05-30 16:07:52.625 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:07:57.745 +02:00 [INF] Notification created with ID: 1f680a68-f966-4331-8084-5531bb911fcc for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: PostCreated created at 5/30/2024 2:07:50 PM.
+2024-05-30 16:07:57.745 +02:00 [INF] Handled a message: notification_created with ID: b643684c2a304f6ba5e23f89348f7f55, Correlation ID: 396535e0d01e42e8b7cbe7df0aef033c, retry: 0
+2024-05-30 16:07:57.747 +02:00 [INF] Received a message with ID: 'd9354fc6a13145ba8b9b793c8ee3a140', Correlation ID: '396535e0d01e42e8b7cbe7df0aef033c', timestamp: 1717078074, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:07:57.748 +02:00 [INF] Handling a message: notification_created with ID: d9354fc6a13145ba8b9b793c8ee3a140, Correlation ID: 396535e0d01e42e8b7cbe7df0aef033c, retry: 0
+2024-05-30 16:07:57.749 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 16:07:57.749 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:57.750 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:07:57.781 +02:00 [INF] Received HTTP response headers after 30.4296ms - 200
+2024-05-30 16:07:57.781 +02:00 [INF] End processing HTTP request after 31.4833ms - 200
+2024-05-30 16:07:57.781 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:08:01.199 +02:00 [INF] Notification created with ID: 2c9280f6-a03b-4c6f-a286-9737a7669c39 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: PostCreated created at 5/30/2024 2:07:52 PM.
+2024-05-30 16:08:01.199 +02:00 [INF] Handled a message: notification_created with ID: d9354fc6a13145ba8b9b793c8ee3a140, Correlation ID: 396535e0d01e42e8b7cbe7df0aef033c, retry: 0
+2024-05-30 16:08:01.199 +02:00 [INF] Received a message with ID: 'ab9d445b8b3c476199ee9908a509dc0d', Correlation ID: '396535e0d01e42e8b7cbe7df0aef033c', timestamp: 1717078075, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:08:01.200 +02:00 [INF] Handling a message: notification_created with ID: ab9d445b8b3c476199ee9908a509dc0d, Correlation ID: 396535e0d01e42e8b7cbe7df0aef033c, retry: 0
+2024-05-30 16:08:01.200 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 16:08:01.200 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 16:08:01.200 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 16:08:01.233 +02:00 [INF] Received HTTP response headers after 32.7521ms - 200
+2024-05-30 16:08:01.233 +02:00 [INF] End processing HTTP request after 33.0911ms - 200
+2024-05-30 16:08:01.233 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:08:04.479 +02:00 [INF] Notification created with ID: 4cd85f77-be40-4a08-b727-fd0af9bf0bab for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: PostCreated created at 5/30/2024 2:07:55 PM.
+2024-05-30 16:08:04.479 +02:00 [INF] Handled a message: notification_created with ID: ab9d445b8b3c476199ee9908a509dc0d, Correlation ID: 396535e0d01e42e8b7cbe7df0aef033c, retry: 0
+2024-05-30 16:45:49.374 +02:00 [INF] Received a message with ID: 'f2320ed869554969a40f0e6833c06c6e', Correlation ID: '4f39e85fb59045b38e7ce35e645f6c67', timestamp: 1717080349, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:45:49.376 +02:00 [INF] Handling a message: notification_created with ID: f2320ed869554969a40f0e6833c06c6e, Correlation ID: 4f39e85fb59045b38e7ce35e645f6c67, retry: 0
+2024-05-30 16:45:49.377 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 16:45:49.377 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:45:49.377 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:45:49.404 +02:00 [INF] Received HTTP response headers after 27.4126ms - 200
+2024-05-30 16:45:49.405 +02:00 [INF] End processing HTTP request after 27.7861ms - 200
+2024-05-30 16:45:49.405 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:45:53.194 +02:00 [INF] Notification created with ID: f0955caf-0585-426b-ae72-4e645b772099 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: NewFriendRequest created at 5/30/2024 2:45:49 PM.
+2024-05-30 16:45:53.194 +02:00 [INF] Handled a message: notification_created with ID: f2320ed869554969a40f0e6833c06c6e, Correlation ID: 4f39e85fb59045b38e7ce35e645f6c67, retry: 0
+2024-05-30 16:46:20.647 +02:00 [INF] Received a message with ID: 'b76061f1f4ee40ee932c38c1dfd9b225', Correlation ID: '36be1ae34a924e2f96e426fe7b49b532', timestamp: 1717080380, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:46:20.648 +02:00 [INF] Handling a message: notification_created with ID: b76061f1f4ee40ee932c38c1dfd9b225, Correlation ID: 36be1ae34a924e2f96e426fe7b49b532, retry: 0
+2024-05-30 16:46:20.649 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 16:46:20.649 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:46:20.649 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:46:20.680 +02:00 [INF] Received HTTP response headers after 30.869ms - 200
+2024-05-30 16:46:20.680 +02:00 [INF] End processing HTTP request after 31.2432ms - 200
+2024-05-30 16:46:20.680 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:46:24.145 +02:00 [INF] Notification created with ID: c73da667-d833-49c2-ac4f-cea957145cba for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: PasswordResetRequest created at 5/30/2024 2:46:20 PM.
+2024-05-30 16:46:24.145 +02:00 [INF] Handled a message: notification_created with ID: b76061f1f4ee40ee932c38c1dfd9b225, Correlation ID: 36be1ae34a924e2f96e426fe7b49b532, retry: 0
+2024-05-30 16:53:30.039 +02:00 [INF] Received a message with ID: '851955e4e50345db89922fd1f99cbe15', Correlation ID: '70e16d1555354621be0573fe492c7ad4', timestamp: 1717080810, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:53:30.040 +02:00 [INF] Handling a message: notification_created with ID: 851955e4e50345db89922fd1f99cbe15, Correlation ID: 70e16d1555354621be0573fe492c7ad4, retry: 0
+2024-05-30 16:53:30.041 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882"
+2024-05-30 16:53:30.041 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 16:53:30.041 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 16:53:30.072 +02:00 [INF] Received HTTP response headers after 30.6701ms - 200
+2024-05-30 16:53:30.072 +02:00 [INF] End processing HTTP request after 31.0434ms - 200
+2024-05-30 16:53:30.072 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:53:38.675 +02:00 [INF] Notification created with ID: 7a485901-2344-4cb2-bc2b-4a97da4b82d1 for user: bf759205-b6b2-4f41-ad79-9ab58ccff882. Event type: NewFriendRequest created at 5/30/2024 2:53:30 PM.
+2024-05-30 16:53:38.675 +02:00 [INF] Handled a message: notification_created with ID: 851955e4e50345db89922fd1f99cbe15, Correlation ID: 70e16d1555354621be0573fe492c7ad4, retry: 0
+2024-05-30 16:58:57.962 +02:00 [INF] Received a message with ID: '1a4ffbebcf3e440dbc6c7974805c5c97', Correlation ID: '3d22f9d1855a42f99859aa6baec826e1', timestamp: 1717081137, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 16:58:57.964 +02:00 [INF] Handling a message: notification_created with ID: 1a4ffbebcf3e440dbc6c7974805c5c97, Correlation ID: 3d22f9d1855a42f99859aa6baec826e1, retry: 0
+2024-05-30 16:58:57.964 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 16:58:57.964 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:58:57.964 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 16:58:57.993 +02:00 [INF] Received HTTP response headers after 28.5941ms - 200
+2024-05-30 16:58:57.993 +02:00 [INF] End processing HTTP request after 28.9197ms - 200
+2024-05-30 16:58:57.993 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 16:59:01.889 +02:00 [INF] Notification created with ID: ea01f4a9-9b26-45ba-b94a-956c63056741 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: NewFriendRequest created at 5/30/2024 2:58:57 PM.
+2024-05-30 16:59:01.889 +02:00 [INF] Handled a message: notification_created with ID: 1a4ffbebcf3e440dbc6c7974805c5c97, Correlation ID: 3d22f9d1855a42f99859aa6baec826e1, retry: 0
+2024-05-30 17:07:30.007 +02:00 [INF] Received a message with ID: 'a734de94881640a39fb8ae1edf56f773', Correlation ID: 'caed69a23d9b4ca08c11a6e916774c9b', timestamp: 1717081650, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:07:30.007 +02:00 [INF] Handling a message: notification_created with ID: a734de94881640a39fb8ae1edf56f773, Correlation ID: caed69a23d9b4ca08c11a6e916774c9b, retry: 0
+2024-05-30 17:07:30.008 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 17:07:30.008 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 17:07:30.008 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 17:07:30.091 +02:00 [INF] Received HTTP response headers after 82.1099ms - 200
+2024-05-30 17:07:30.091 +02:00 [INF] End processing HTTP request after 82.5255ms - 200
+2024-05-30 17:07:30.091 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:07:34.752 +02:00 [INF] Notification created with ID: 245c0c1c-7b60-4576-8478-59c3be8a5aaa for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: NewFriendRequest created at 5/30/2024 3:07:29 PM.
+2024-05-30 17:07:34.752 +02:00 [INF] Handled a message: notification_created with ID: a734de94881640a39fb8ae1edf56f773, Correlation ID: caed69a23d9b4ca08c11a6e916774c9b, retry: 0
+2024-05-30 17:09:45.722 +02:00 [INF] Received a message with ID: '137330f861bc49a69f2f3fe41ce90ab4', Correlation ID: '5a45e7a8d26144b69273ef23e7052fba', timestamp: 1717081785, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:09:45.722 +02:00 [INF] Handling a message: notification_created with ID: 137330f861bc49a69f2f3fe41ce90ab4, Correlation ID: 5a45e7a8d26144b69273ef23e7052fba, retry: 0
+2024-05-30 17:09:45.726 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 17:09:45.726 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:09:45.726 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:09:45.756 +02:00 [INF] Received HTTP response headers after 29.2432ms - 200
+2024-05-30 17:09:45.756 +02:00 [INF] End processing HTTP request after 29.6595ms - 200
+2024-05-30 17:09:45.756 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:09:50.067 +02:00 [INF] Notification created with ID: cad1098e-7c7e-418d-9bf8-51fef0a4b14e for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: FriendRequestAccepted created at 5/30/2024 3:09:42 PM.
+2024-05-30 17:09:50.067 +02:00 [INF] Handled a message: notification_created with ID: 137330f861bc49a69f2f3fe41ce90ab4, Correlation ID: 5a45e7a8d26144b69273ef23e7052fba, retry: 0
+2024-05-30 17:09:50.068 +02:00 [INF] Received a message with ID: '23813f1c71cd43feb4d645f5172cdda9', Correlation ID: '07234d22ddbe42d5a7c305b5ca39c44a', timestamp: 1717081786, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:09:50.068 +02:00 [INF] Handling a message: notification_created with ID: 23813f1c71cd43feb4d645f5172cdda9, Correlation ID: 07234d22ddbe42d5a7c305b5ca39c44a, retry: 0
+2024-05-30 17:09:50.069 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882"
+2024-05-30 17:09:50.069 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 17:09:50.069 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/bf759205-b6b2-4f41-ad79-9ab58ccff882
+2024-05-30 17:09:50.505 +02:00 [INF] Received HTTP response headers after 435.7241ms - 200
+2024-05-30 17:09:50.505 +02:00 [INF] End processing HTTP request after 436.4356ms - 200
+2024-05-30 17:09:50.506 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:09:54.420 +02:00 [INF] Notification created with ID: b00d32d8-807e-4fa6-ac9b-3ee0153dde91 for user: bf759205-b6b2-4f41-ad79-9ab58ccff882. Event type: FriendRequestAccepted created at 5/30/2024 3:09:45 PM.
+2024-05-30 17:09:54.421 +02:00 [INF] Handled a message: notification_created with ID: 23813f1c71cd43feb4d645f5172cdda9, Correlation ID: 07234d22ddbe42d5a7c305b5ca39c44a, retry: 0
+2024-05-30 17:09:54.421 +02:00 [INF] Received a message with ID: '5670a8916a0a40c59abf9fb566176db3', Correlation ID: '3744c38462ff4bb8931acb09742b75cf', timestamp: 1717081788, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:09:54.421 +02:00 [INF] Handling a message: notification_created with ID: 5670a8916a0a40c59abf9fb566176db3, Correlation ID: 3744c38462ff4bb8931acb09742b75cf, retry: 0
+2024-05-30 17:09:54.421 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 17:09:54.421 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:09:54.422 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:09:54.543 +02:00 [INF] Received HTTP response headers after 121.3353ms - 200
+2024-05-30 17:09:54.543 +02:00 [INF] End processing HTTP request after 121.9783ms - 200
+2024-05-30 17:09:54.544 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:09:58.437 +02:00 [INF] Notification created with ID: 310acf3b-85bd-41b7-b7ed-993d4584ff13 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: FriendRequestAccepted created at 5/30/2024 3:09:47 PM.
+2024-05-30 17:09:58.437 +02:00 [INF] Handled a message: notification_created with ID: 5670a8916a0a40c59abf9fb566176db3, Correlation ID: 3744c38462ff4bb8931acb09742b75cf, retry: 0
+2024-05-30 17:09:58.438 +02:00 [INF] Received a message with ID: 'ab012c3cd35145a2b2358e99b3602435', Correlation ID: '45eafe3b067d424b9e4ee9eec6981bde', timestamp: 1717081789, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:09:58.438 +02:00 [INF] Handling a message: notification_created with ID: ab012c3cd35145a2b2358e99b3602435, Correlation ID: 45eafe3b067d424b9e4ee9eec6981bde, retry: 0
+2024-05-30 17:09:58.438 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 17:09:58.438 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 17:09:58.439 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 17:09:58.534 +02:00 [INF] Received HTTP response headers after 94.8789ms - 200
+2024-05-30 17:09:58.534 +02:00 [INF] End processing HTTP request after 95.2014ms - 200
+2024-05-30 17:09:58.534 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:10:03.167 +02:00 [INF] Notification created with ID: fa1fbc7a-f670-4346-8ea7-05201bd35ac4 for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: FriendRequestAccepted created at 5/30/2024 3:09:48 PM.
+2024-05-30 17:10:03.167 +02:00 [INF] Handled a message: notification_created with ID: ab012c3cd35145a2b2358e99b3602435, Correlation ID: 45eafe3b067d424b9e4ee9eec6981bde, retry: 0
+2024-05-30 17:10:03.169 +02:00 [INF] Received a message with ID: '9784d0b2f3b64ed9b55ce58c5b7d9cad', Correlation ID: '0389b928de984d0cb57abb2e72009ac4', timestamp: 1717081791, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:10:03.169 +02:00 [INF] Handling a message: notification_created with ID: 9784d0b2f3b64ed9b55ce58c5b7d9cad, Correlation ID: 0389b928de984d0cb57abb2e72009ac4, retry: 0
+2024-05-30 17:10:03.170 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 17:10:03.170 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:10:03.171 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:10:03.295 +02:00 [INF] Received HTTP response headers after 123.7885ms - 200
+2024-05-30 17:10:03.295 +02:00 [INF] End processing HTTP request after 124.5077ms - 200
+2024-05-30 17:10:03.295 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:10:06.954 +02:00 [INF] Notification created with ID: 2cd8302a-9bf1-4174-94b2-2e484724bdf1 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: FriendRequestAccepted created at 5/30/2024 3:09:50 PM.
+2024-05-30 17:10:06.954 +02:00 [INF] Handled a message: notification_created with ID: 9784d0b2f3b64ed9b55ce58c5b7d9cad, Correlation ID: 0389b928de984d0cb57abb2e72009ac4, retry: 0
+2024-05-30 17:20:37.571 +02:00 [INF] Received a message with ID: '6252c9d424c14a76a85b793038bcf8f5', Correlation ID: '5d228022dcd4456eb9044cc92d503072', timestamp: 1717082437, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:20:37.575 +02:00 [INF] Handling a message: notification_created with ID: 6252c9d424c14a76a85b793038bcf8f5, Correlation ID: 5d228022dcd4456eb9044cc92d503072, retry: 0
+2024-05-30 17:20:37.576 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 17:20:37.576 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:20:37.576 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 17:20:37.605 +02:00 [INF] Received HTTP response headers after 28.7192ms - 200
+2024-05-30 17:20:37.605 +02:00 [INF] End processing HTTP request after 29.1537ms - 200
+2024-05-30 17:20:37.605 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:20:46.429 +02:00 [INF] Notification created with ID: 5ec6561c-16ce-4cb6-887f-1da995b9b7da for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: NewFriendRequest created at 5/30/2024 3:20:37 PM.
+2024-05-30 17:20:46.430 +02:00 [INF] Handled a message: notification_created with ID: 6252c9d424c14a76a85b793038bcf8f5, Correlation ID: 5d228022dcd4456eb9044cc92d503072, retry: 0
+2024-05-30 17:21:02.019 +02:00 [INF] Received a message with ID: 'cfec23c52f2b4e4e8910c3118376ae30', Correlation ID: 'c43f77e8f4394c729c2669a31011d2d9', timestamp: 1717082462, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 17:21:02.019 +02:00 [INF] Handling a message: notification_created with ID: cfec23c52f2b4e4e8910c3118376ae30, Correlation ID: c43f77e8f4394c729c2669a31011d2d9, retry: 0
+2024-05-30 17:21:02.020 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7"
+2024-05-30 17:21:02.020 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 17:21:02.020 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/4ee4d85f-4d77-4f3b-98c6-0a5c884289a7
+2024-05-30 17:21:02.048 +02:00 [INF] Received HTTP response headers after 28.4055ms - 200
+2024-05-30 17:21:02.048 +02:00 [INF] End processing HTTP request after 28.7415ms - 200
+2024-05-30 17:21:02.049 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:21:05.486 +02:00 [INF] Notification created with ID: f5f06c2c-5c93-4445-868c-b438e39c9c88 for user: 4ee4d85f-4d77-4f3b-98c6-0a5c884289a7. Event type: FriendRequestAccepted created at 5/30/2024 3:21:01 PM.
+2024-05-30 17:21:05.486 +02:00 [INF] Handled a message: notification_created with ID: cfec23c52f2b4e4e8910c3118376ae30, Correlation ID: c43f77e8f4394c729c2669a31011d2d9, retry: 0
+2024-05-30 17:32:59.685 +02:00 [INF] Deregistering a service [id: email-service:338b6afc8c754d34bee8bed44b500966] from Consul...
+2024-05-30 17:32:59.686 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/email-service:338b6afc8c754d34bee8bed44b500966"
+2024-05-30 17:32:59.686 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:338b6afc8c754d34bee8bed44b500966
+2024-05-30 17:32:59.686 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:338b6afc8c754d34bee8bed44b500966
+2024-05-30 17:32:59.689 +02:00 [INF] Received HTTP response headers after 2.8746ms - 200
+2024-05-30 17:32:59.690 +02:00 [INF] End processing HTTP request after 3.3167ms - 200
+2024-05-30 17:32:59.690 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 17:32:59.690 +02:00 [INF] Deregistered a service [id: email-service:338b6afc8c754d34bee8bed44b500966] from Consul.
+2024-05-30 18:11:22.291 +02:00 [WRN] The WebRootPath was not found: /home/kaliuser/Documents/portfolio/commercial_apps/p_software_engineering_2/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/wwwroot. Static files may be unavailable.
+2024-05-30 18:11:22.443 +02:00 [INF] Registering a service [id: email-service:5c24b3357a03486499eb2da0b129db63] in Consul...
+2024-05-30 18:11:22.471 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/register"
+2024-05-30 18:11:22.477 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 18:11:22.477 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/register
+2024-05-30 18:11:22.494 +02:00 [INF] Received HTTP response headers after 14.4109ms - 200
+2024-05-30 18:11:22.498 +02:00 [INF] End processing HTTP request after 22.077ms - 200
+2024-05-30 18:11:22.501 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 18:11:22.502 +02:00 [INF] Registered a service [id: email-service:5c24b3357a03486499eb2da0b129db63] in Consul.
+2024-05-30 18:11:22.513 +02:00 [INF] Declaring a queue: 'email-service/email.create_email_notification' with routing key: 'create_email_notification' for an exchange: 'email'.
+2024-05-30 18:11:22.539 +02:00 [INF] Declaring a queue: 'email-service/notifications.notification_created' with routing key: 'notification_created' for an exchange: 'notifications'.
+2024-05-30 18:11:35.313 +02:00 [INF] Received a message with ID: '08f02226c2d54f86b6f4a2c6e192e82f', Correlation ID: 'ba9a58e8c2694685bd83bab91a23e63d', timestamp: 1717085495, queue: email-service/notifications.notification_created, routing key: notification_created, exchange: notifications, payload: 
+2024-05-30 18:11:35.335 +02:00 [INF] Handling a message: notification_created with ID: 08f02226c2d54f86b6f4a2c6e192e82f, Correlation ID: ba9a58e8c2694685bd83bab91a23e63d, retry: 0
+2024-05-30 18:11:35.377 +02:00 [INF] Start processing HTTP request GET "http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b"
+2024-05-30 18:11:35.378 +02:00 [INF] Start processing HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 18:11:35.378 +02:00 [INF] Sending HTTP request GET http://localhost:5007/students/8eab401a-e22f-48cc-bcf9-557cbaff777b
+2024-05-30 18:11:35.415 +02:00 [INF] Received HTTP response headers after 36.8101ms - 200
+2024-05-30 18:11:35.415 +02:00 [INF] End processing HTTP request after 37.5721ms - 200
+2024-05-30 18:11:35.416 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 18:11:39.511 +02:00 [INF] Notification created with ID: 16ae385f-502c-4a65-95ab-3968651511e9 for user: 8eab401a-e22f-48cc-bcf9-557cbaff777b. Event type: PasswordResetRequest created at 5/30/2024 4:11:35 PM.
+2024-05-30 18:11:39.513 +02:00 [INF] Handled a message: notification_created with ID: 08f02226c2d54f86b6f4a2c6e192e82f, Correlation ID: ba9a58e8c2694685bd83bab91a23e63d, retry: 0
+2024-05-30 18:21:25.093 +02:00 [INF] Deregistering a service [id: email-service:5c24b3357a03486499eb2da0b129db63] from Consul...
+2024-05-30 18:21:25.094 +02:00 [INF] Start processing HTTP request PUT "http://localhost:8500/v1/agent/service/deregister/email-service:5c24b3357a03486499eb2da0b129db63"
+2024-05-30 18:21:25.094 +02:00 [INF] Start processing HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:5c24b3357a03486499eb2da0b129db63
+2024-05-30 18:21:25.094 +02:00 [INF] Sending HTTP request PUT http://localhost:8500/v1/agent/service/deregister/email-service:5c24b3357a03486499eb2da0b129db63
+2024-05-30 18:21:25.098 +02:00 [INF] Received HTTP response headers after 3.192ms - 200
+2024-05-30 18:21:25.098 +02:00 [INF] End processing HTTP request after 3.8282ms - 200
+2024-05-30 18:21:25.098 +02:00 [INF] End processing HTTP request - "OK"
+2024-05-30 18:21:25.099 +02:00 [INF] Deregistered a service [id: email-service:5c24b3357a03486499eb2da0b129db63] from Consul.

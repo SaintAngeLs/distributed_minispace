@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../buildMultiTargeting/MiniSpace.Services.Email.Api.props" />
+</Project>
