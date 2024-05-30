@@ -2,9 +2,11 @@
 @using MiniSpace.Web.Areas.Students
 @using Radzen
 @using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.MediaFiles
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject IMediaFilesService MediaFilesService
 
 @if (dialogInitialized)
 {
@@ -21,9 +23,8 @@
                     <RadzenRow Size="12" AlignItems="AlignItems.Center">
                         <RadzenColumn Size="12">
                             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
-                                <RadzenImage Path="@($"data:image/webp;base64,{studentDto.ProfileImage}")"
-                                             AlternateText="Not set"
-                                             Style="width: 8em" class="rz-border-radius-5"/>
+                                <RadzenImage Path="@GetImage(profileImage)"
+                                             AlternateText="Not set" class="profile-image"/>
                             </RadzenStack>
                         </RadzenColumn>
                     </RadzenRow>
@@ -129,6 +130,16 @@
     </RadzenStack>
 }
 
+<style>
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #007BFF; 
+    }
+</style>
+
 @code {
     [Parameter]
     public string EventId { get; set; }
@@ -137,6 +148,7 @@
 
     private StudentDto studentDto = new();
     private bool dialogInitialized = false;
+    private FileDto profileImage;
     
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     private const string shortDateFormat = "dd/MM/yyyy";
@@ -146,5 +158,17 @@
         studentDto = await StudentsService.GetStudentAsync(ParticipantDto.StudentId);
         await base.OnInitializedAsync();
         dialogInitialized = true;
+        StateHasChanged();
+        profileImage = await MediaFilesService.GetFileAsync(studentDto.ProfileImage);
+    }
+    
+    private string GetImage(FileDto file)
+    {
+        if (file != null)
+        {
+            return $"data:image/webp;base64,{file.Base64Content}";
+        }
+
+        return "images/default_profile_image.webp";
     }
 }
