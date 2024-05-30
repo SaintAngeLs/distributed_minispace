@@ -106,7 +106,7 @@
                      <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
                          <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions:  @reactionsSummary.NumberOfReactions</RadzenText>
                      </RadzenStack>
-                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-border-top">
+                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-pb-4 rz-border-top">
                          @if (reactionsSummary.NumberOfReactions > 0)
                          {
                              <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
@@ -114,7 +114,7 @@
                          }
                      </RadzenStack>
                  </RadzenColumn>
-                 <RadzenColumn SizeSM="8">
+                 <RadzenColumn SizeSM="4">
                      <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
                          @if (ev.Status == "Archived" && eventRating != null)
                          {
@@ -125,6 +125,15 @@
                              </RadzenText>
                          }
                      </RadzenStack>
+                 </RadzenColumn>
+                 <RadzenColumn SizeSM="4">
+                     @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
+                     {
+                         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                             <RadzenButton Size="ButtonSize.Medium" Text="React"
+                                           Click="@(() => OpenReactionDialog())" />                        
+                        </RadzenStack>
+                     }
                  </RadzenColumn>
              </RadzenRow>
         </RadzenCard>
@@ -346,6 +355,7 @@
     private EventDto ev = new();
     private bool pageInitialized = false;
     private EventRatingDto eventRating = null;
+    private bool isReactionDialogOpen = false;
 
     private int activeIndex = 0;
     private bool arrows = true;
@@ -569,6 +579,30 @@
             "ToBePublished" => "to-be-published-event",
             _ => String.Empty
         };
+    }
+    
+    private void OpenReactionDialog()
+    {
+        isReactionDialogOpen = true;
+    }
+
+    private async Task OnReactionSelected(ReactionType reaction)
+    {
+        reactionsSummary.AuthUserReactionType = reaction;
+        await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reaction.ToString(), ev.Id, ReactionContentType.Event.ToString());
+    }
+
+    private async Task OpenReactionsDialog()
+    {
+        var result = await DialogService.OpenAsync<ReactionDialog>(null,
+            new Dictionary<string, object>() { { "SelectedReaction", reactionsSummary.AuthUserReactionType } },
+            new DialogOptions()
+            {
+                Width = "800px", Height = "600px", Resizable = false, Draggable = false,
+                AutoFocusFirstElement = false
+            });
+        reactionsSummary.AuthUserReactionType = (ReactionType)result;
+        await OnInitializedAsync();
     }
 
     // private async Task SearchComments()

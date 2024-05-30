@@ -1,0 +1,42 @@
+﻿@using MiniSpace.Web.DTO.Enums
+@using Radzen
+@inject DialogService DialogService
+
+<RadzenStack Orientation="Orientation.Horizontal">
+    @foreach (var reaction in Enum.GetValues<ReactionType>())
+    {
+        <div class="reaction-option" @onclick="() => SelectReaction(reaction)">
+            <MudIcon Icon="@($"fas {reaction.GetReactionIcon()}")" Style="color: #30445f;"/>
+        </div>
+    }
+</RadzenStack>
+
+<style>
+    .reaction-option{
+    
+    }
+</style>
+
+@code {
+    [Parameter] public ReactionType? SelectedReaction { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    private void SelectReaction(ReactionType reaction)
+    {
+        if(reaction == SelectedReaction)
+        {
+            SelectedReaction = null;
+        }
+        DialogService.Close(SelectedReaction);
+    }
+    
+    private void Close()
+    {
+        DialogService.Close();
+    }
+}
