@@ -45,7 +45,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 var result = await _friendsServiceClient.GetAsync(identity.Id);
                 if (result != null) 
                 {
-                    friends = result.Friends;
+                    friends = result.First().Friends;
                 }
             }
 

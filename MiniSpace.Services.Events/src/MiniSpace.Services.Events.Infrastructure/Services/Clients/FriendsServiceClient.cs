@@ -18,8 +18,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
             _url = options.Services["friends"];
         }
 
-        public Task<StudentFriendsDto> GetAsync(Guid studentId)
-            => _httpClient.GetAsync<StudentFriendsDto>($"{_url}/friends/{studentId}");
+        public Task<IEnumerable<StudentFriendsDto>> GetAsync(Guid studentId)
+            => _httpClient.GetAsync<IEnumerable<StudentFriendsDto>>($"{_url}/friends/{studentId}");
 
     }
 }
