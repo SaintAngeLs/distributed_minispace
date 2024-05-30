@@ -1,4 +1,5 @@
 using Convey.Logging.CQRS;
+using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Commands;
 using MiniSpace.Services.Notifications.Application.Events.External;
 
@@ -6,6 +7,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
 {
     internal sealed class MessageToLogTemplateMapper : IMessageToLogTemplateMapper
     {
+       private readonly ILogger<MessageToLogTemplateMapper> _logger;
        private static IReadOnlyDictionary<Type, HandlerLogTemplate> MessageTemplates 
             => new Dictionary<Type, HandlerLogTemplate>
             {
@@ -27,39 +29,47 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
                         After = "Updated the status of notification with id: {NotificationId} to: {NewStatus}."
                     }
                 },
-                {typeof(FriendRequestCreated), new HandlerLogTemplate
+                {
+                    typeof(FriendRequestCreated), new HandlerLogTemplate
                     {
                         After = "Processed creation of friend request from {RequesterId} to {FriendId}."
                     }
                 },
-                {typeof(FriendRequestSent), new HandlerLogTemplate
+                {
+                    typeof(FriendRequestSent), new HandlerLogTemplate
                     {
                         After = "Processed friend request sent from {InviterId} to {InviteeId}."
                     }
                 },
-                {typeof(FriendInvited), new HandlerLogTemplate
+                {
+                    typeof(FriendInvited), new HandlerLogTemplate
                     {
                         After = "Handled invitation sent by {InviterId} to {InviteeId}."
                     }
                 },
-                {typeof(NotificationCreated), new HandlerLogTemplate
+                {
+                    typeof(NotificationCreated), new HandlerLogTemplate
                     {
                         After = "Notification created with ID: {NotificationId} for user: {UserId}, message: '{Message}' at {CreatedAt}."
                     }
                 },
             };
         
-         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class
+        public MessageToLogTemplateMapper(ILogger<MessageToLogTemplateMapper> logger)
         {
-            var key = message.GetType();
-            if (MessageTemplates.TryGetValue(key, out var template))
+            _logger = logger;
+        }
+
+        public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class
+        {
+            var messageType = message.GetType();
+            _logger.LogInformation($"Attempting to map message type: {messageType.Name}");
+            if (MessageTemplates.TryGetValue(messageType, out var template))
             {
-                if (template.After.Contains("{NewStatus}"))
-                {
-                    template.After = template.After.Replace("{NewStatus}", "{Status}");
-                }
+                _logger.LogInformation($"Mapping found. Template: {template.After}");
                 return template;
             }
+            _logger.LogWarning($"No mapping found for message type: {messageType.Name}");
             return null;
         }
     }

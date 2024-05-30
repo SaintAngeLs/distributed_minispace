@@ -6,36 +6,72 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Text.Json;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Application.Dto;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class EventCreatedHandler : IEventHandler<EventCreated>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentRepository _userRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
 
         public EventCreatedHandler(
             IMessageBroker messageBroker,
-            IStudentRepository userRepository,
+            IStudentsServiceClient studentsServiceClient,
+            IEventsServiceClient eventsServiceClient,
             IStudentNotificationsRepository studentNotificationsRepository)
         {
             _messageBroker = messageBroker;
-            _userRepository = userRepository;
+            _studentsServiceClient = studentsServiceClient;
+            _eventsServiceClient = eventsServiceClient;
             _studentNotificationsRepository = studentNotificationsRepository;
         }
 
         public async Task HandleAsync(EventCreated eventCreated, CancellationToken cancellationToken)
         {
+            IEnumerable<StudentDto> users;
 
-            var users = await _userRepository.GetAllAsync();
+            try
+            {
+                users = await _studentsServiceClient.GetAllAsync();
+            }
+            catch (Exception ex)
+            {
+                //  Console.WriteLine($"Failed to get users: {ex.Message}");
+                throw;
+            }
+
+            EventDto eventDetails;
+            try
+            {
+                eventDetails = await _eventsServiceClient.GetEventAsync(eventCreated.EventId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to retrieve event details: {ex.Message}");
+                throw;
+            }
+
+            if (users == null)
+            {
+                //  Console.WriteLine("No users found.");
+                return;
+            }
 
             foreach (var user in users)
             {
-                 var notification = new Notification(
+                var notificationMessage = $"A new event '{eventDetails.Name}' organized by {eventDetails.Organizer.Name} is scheduled from {eventDetails.StartDate:yyyy-MM-dd} to {eventDetails.EndDate:yyyy-MM-dd} with organization {eventDetails.Organizer.OrganizationName} at {eventDetails.Location.Street}, {eventDetails.Location.City} . This event offers a capacity of {eventDetails.Capacity} with a registration fee of ${eventDetails.Fee}. {eventDetails.Description}";
+                var detailsHtml = $"<p>Check out the new event details <a href='https://minispace.itsharppro.com/event-details/{eventCreated.EventId}'>here</a>.</p>";
+
+
+                var notification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: user.Id,
-                    message: $"A new event has been created by Organizer {eventCreated.OrganizerId}",
+                    message: notificationMessage,
                     status: NotificationStatus.Unread,
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,
@@ -43,26 +79,28 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     eventType: NotificationEventType.NewEvent
                 );
 
-
                 var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(user.Id);
                 if (studentNotifications == null)
                 {
                     studentNotifications = new StudentNotifications(user.Id);
                 }
 
-                studentNotifications.AddNotification(notification);
-                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-
-                // Publish the notification event
                 var notificationCreatedEvent = new NotificationCreated(
                     notificationId: notification.NotificationId,
                     userId: notification.UserId,
                     message: notification.Message,
-                    createdAt: notification.CreatedAt
+                    createdAt: notification.CreatedAt,
+                    eventType: "NewEvent",
+                    relatedEntityId: notification.RelatedEntityId,
+                    details: detailsHtml
                 );
 
                 await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+                studentNotifications.AddNotification(notification);
+                await _studentNotificationsRepository.UpdateAsync(studentNotifications);   
             }
         }
     }
 }
+

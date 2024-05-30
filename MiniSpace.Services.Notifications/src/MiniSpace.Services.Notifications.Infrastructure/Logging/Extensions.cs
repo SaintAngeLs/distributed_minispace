@@ -11,7 +11,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
         {
             var assembly = typeof(UpdateNotificationStatus).Assembly;
             
-            builder.Services.AddSingleton<IMessageToLogTemplateMapper>(new MessageToLogTemplateMapper());
+            // Modify this line to let the DI container handle the instantiation and provide the necessary logger
+            builder.Services.AddSingleton<IMessageToLogTemplateMapper, MessageToLogTemplateMapper>();
             
             return builder
                 .AddCommandHandlersLogging(assembly)

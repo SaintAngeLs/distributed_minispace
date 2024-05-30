@@ -10,18 +10,19 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         public NotificationStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public Guid? RelatedEntityId { get; set; }
+        public Guid RelatedEntityId { get; set; }
         public NotificationEventType EventType { get; set; } 
+        public string Details { get; set; }
 
-        public Notification(Guid notificationId, 
+          public Notification(Guid notificationId, 
                             Guid userId, 
                             string message, 
                             NotificationStatus status, 
                             DateTime createdAt, 
                             DateTime? updatedAt, 
                             NotificationEventType eventType,
-                            Guid? relatedEntityId = null
-                            )
+                            Guid relatedEntityId,
+                            string details = null)  
         {
             NotificationId = notificationId;
             UserId = userId;
@@ -31,6 +32,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
             UpdatedAt = updatedAt;
             EventType = eventType; 
             RelatedEntityId = relatedEntityId;
+            Details = details;  
         }
 
         public void MarkAsRead()

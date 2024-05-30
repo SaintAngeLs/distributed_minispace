@@ -14,6 +14,7 @@ directories=(
     "MiniSpace.Services.Organizations"
     "MiniSpace.Services.Notifications"
     "MiniSpace.Services.Reports"
+    "MiniSpace.Services.Email"
 )
 
 for dir in "${directories[@]}"; do

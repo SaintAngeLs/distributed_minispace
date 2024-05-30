@@ -8,5 +8,7 @@ namespace MiniSpace.Services.Identity.Application.Services
     {
         AuthDto Create(Guid userId, string role, string audience = null,
             IDictionary<string, IEnumerable<string>> claims = null);
+
+        string GenerateResetToken(Guid userId);
     }
 }
