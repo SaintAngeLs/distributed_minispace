@@ -171,7 +171,7 @@
                 NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
                 break;
             case ReportContextType.Comment:
-                NavigationManager.NavigateTo($"/comments/{ReportDto.TargetId}");
+                NavigationManager.NavigateTo($"/comments/{ReportDto.TargetId}/details");
                 break;
             case ReportContextType.StudentProfile:
                 NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetId}");

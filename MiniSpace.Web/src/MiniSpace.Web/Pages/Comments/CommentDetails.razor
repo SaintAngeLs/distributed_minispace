@@ -1,43 +1,69 @@
-@page "/comments/{CommentId:guid}"
+@page "/comments/{CommentId:guid}/details"
 @using MiniSpace.Web.Areas.Comments
-@using MiniSpace.Web.Models.Reports
-@using MiniSpace.Web.Pages.Reports.Dialogs
-@using DialogOptions = Radzen.DialogOptions
-@using DialogService = Radzen.DialogService
-@inject DialogService DialogService
-@inject IIdentityService IdentityService
-@inject ICommentsService CommentsService
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.DTO
 @using Radzen
-@using MudBlazor
+@inject ICommentsService CommentsService
+@inject IEventsService EventsService
+@inject IPostsService PostsService
+@inject NavigationManager NavigationManager
 
 @if (pageInitialized)
 {
-    <RadzenCard Class="rz-border-radius-3" Style="width: 95%">
+    <h3 class="rz-p-6">Comment Details</h3>
+    <RadzenCard Class="rz-border-radius-3">
         <RadzenRow Gap="0.5rem">
-            <RadzenColumn Size="3">
-                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+            <RadzenColumn Size="5">
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-6" Style="color: darkred"
                             Text=@(comment.StudentName)/>
-                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                    @(comment.LastUpdatedAt.ToLocalTime().ToString(dateFormat))
-                </RadzenText>
             </RadzenColumn>
-            <RadzenColumn Size="6">
+            <RadzenColumn Size="7">
                 @if (comment.IsDeleted)
                 {
-                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0"
-                            Text="(Reply Deleted)"/>
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-6"
+                                Text="(Content Deleted)"/>
                 }
                 else
                 {
-                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0"
-                            Style="word-wrap: anywhere" Text=@(comment.TextContent)/>
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-6"
+                                Style="word-wrap: anywhere" Text=@(comment.TextContent)/>
                 }
             </RadzenColumn>
-            <RadzenColumn Size="3">
-                
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn Size="5">
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                    Created at: @(comment.CreatedAt.ToLocalTime().ToString(dateFormat))
+                </RadzenText>
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                    Last updated at: @(comment.LastUpdatedAt.ToLocalTime().ToString(dateFormat))
+                </RadzenText>
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-4" Style="color: dodgerblue">
+                    Last reply at: @(comment.LastReplyAt.ToLocalTime().ToString(dateFormat))
+                </RadzenText>
+            </RadzenColumn>
+            <RadzenColumn Size="7">
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                    Likes count: @(comment.Likes.Count)
+                </RadzenText>
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                    Replies count: @(comment.RepliesCount)
+                </RadzenText>
             </RadzenColumn>
         </RadzenRow>
+        @if (comment.CommentContext == "event")
+        {
+            <RadzenButton Size="ButtonSize.Medium" Text="Go to context event page"
+                          ButtonStyle="ButtonStyle.Secondary" class="rz-border-radius-1"
+                          Click="@(() => NavigationManager.NavigateTo($"/events/{comment.ContextId}"))" />
+        }
+        else if (comment.CommentContext == "post")
+        {
+            <RadzenButton Size="ButtonSize.Medium" Text="Go to context post page"
+                          ButtonStyle="ButtonStyle.Secondary" class="rz-border-radius-1"
+                          Click="@(() => GoToContextPost(comment))" />
+        }
     </RadzenCard>   
 }
 
@@ -56,27 +82,11 @@
         pageInitialized = true;
     }
     
-    private async Task OpenReportCommentDialog(CreateReportModel createReportModel)
+    private async void GoToContextPost(CommentDto commentDto)
     {
-        await DialogService.OpenAsync<CreateReportDialog>("Report the comment:",
-            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
-            new DialogOptions()
-            {
-                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
-                AutoFocusFirstElement = false
-            });
-    }
-    
-    private async Task ReportCommentAsync(CommentDto commentDto)
-    {
-        var createReportModel = new CreateReportModel
-        {
-            IssuerId = IdentityService.GetCurrentUserId(),
-            TargetId = commentDto.Id,
-            TargetOwnerId = commentDto.StudentId,
-            ContextType = "Comment"
-        };
-
-        await OpenReportCommentDialog(createReportModel);
+        var post = await PostsService.GetPostAsync(commentDto.ContextId);
+        var ev = await EventsService.GetEventAsync(post.EventId);
+        var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+        NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
     }
 }
