@@ -300,14 +300,39 @@ namespace MiniSpace.Web.Areas.Identity
         }
 
         public async Task<HttpResponse<object>> ResetPasswordAsync(string token, string email, string newPassword)
-        {
-             Console.WriteLine($"Attempting to reset password with the following parameters:");
+{
+    Console.WriteLine($"Attempting to reset password with the following parameters:");
     Console.WriteLine($"Token: {token}");
     Console.WriteLine($"Email: {email}");
     Console.WriteLine($"NewPassword: {newPassword}");
 
-            var response = await _httpClient.PostAsync<object, object>("identity/password/reset", new { Token = token, Email = email, NewPassword = newPassword });
-            return response;
-        }
+    try
+    {
+        // Decode token to extract user ID (pseudo-code, replace with your actual token decoding logic)
+        var userId = DecodeToken(token);
+        Console.WriteLine($"Decoded UserId: {userId}");
+
+        // Proceed with password reset
+        var response = await _httpClient.PostAsync<object, object>("identity/password/reset", new { UserId = userId, Token = token, Email = email, NewPassword = newPassword });
+        
+        return response;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error during password reset: {ex.Message}");
+        throw; // Rethrow the exception after logging
+    }
+}
+
+private Guid DecodeToken(string token)
+{
+    // Implement token decoding to extract the UserID
+    // This is pseudo-code. You need to implement according to your JWT structure and validation method
+    var handler = new JwtSecurityTokenHandler();
+    var jwtToken = handler.ReadJwtToken(token);
+    var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "sub"); // Assuming 'sub' holds UserId
+    return Guid.Parse(userIdClaim.Value);
+}
+
     }
 }

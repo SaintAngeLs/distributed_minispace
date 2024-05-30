@@ -28,10 +28,28 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
         }
         public async Task<UserResetToken> GetByUserIdAsync(Guid userId)
         {
+            Console.WriteLine($"Starting to fetch UserResetToken by UserId: {userId}");
+
+            // Log the attempt to find documents in the repository
             var documents = await _repository.FindAsync(x => x.UserId == userId);
+            Console.WriteLine($"Fetched {documents.Count} documents for UserId: {userId}");
+
+            // Find the valid token that has not expired
             var document = documents.FirstOrDefault(x => x.ResetTokenExpires > DateTime.UtcNow);
+
+            if (document == null)
+            {
+                Console.WriteLine("No valid reset token found or all tokens are expired.");
+            }
+            else
+            {
+                Console.WriteLine($"Found valid reset token for UserId: {userId}");
+            }
+
+            // Log the conversion from document to entity if needed
             return document?.AsEntity();
         }
+
 
         public async Task InvalidateTokenAsync(Guid userId)
         {
