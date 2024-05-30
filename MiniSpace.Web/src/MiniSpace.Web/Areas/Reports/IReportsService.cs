@@ -25,7 +25,7 @@ namespace MiniSpace.Web.Areas.Reports
         
         Task<HttpResponse<object>> RejectReportAsync(Guid reportId);
 
-        Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> GetStudentReports(Guid studentId, int page,
-            int results);
+        Task<PagedResponseDto<IEnumerable<ReportDto>>> GetStudentReportsAsync(Guid studentId,
+            int page, int results);
     }
 }

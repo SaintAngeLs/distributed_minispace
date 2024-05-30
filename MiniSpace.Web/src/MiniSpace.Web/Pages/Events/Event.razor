@@ -5,8 +5,10 @@
 @using MiniSpace.Web.Areas.Reactions
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Models.Reports
 @using MiniSpace.Web.Pages.Comments
 @using MiniSpace.Web.Pages.Events.Dialogs
+@using MiniSpace.Web.Pages.Reports.Dialogs
 @using Radzen
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
@@ -20,9 +22,15 @@
 @inject ICommentsService CommentsService
 @inject NavigationManager NavigationManager
 
-@if (!pageInitialized)
+@if (!pageInitialized && !eventNotFound)
 {
     <h3 class="rz-p-12">Loading...</h3>
+}
+
+@if (eventNotFound)
+{
+    <h3 class="rz-p-12">Event not found!</h3>
+    <h3>Probably has been deleted!</h3>
 }
 
 @if (pageInitialized)
@@ -67,7 +75,7 @@
                 <RadzenButton Size="ButtonSize.Medium" Text="Show full details" ButtonStyle="ButtonStyle.Primary"
                               Click="@(() => OpenEventDetailsDialog(ev))" />
                 <RadzenButton Size="ButtonSize.Medium" Text="Report event" ButtonStyle="ButtonStyle.Primary"
-                />
+                              Click="@(() => ReportEvent(ev))" />
             </RadzenStack>
             
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
@@ -304,7 +312,8 @@
     private Guid studentId;
     private EventDto ev = new();
     private bool pageInitialized = false;
-
+    private bool eventNotFound = false;
+    
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions = [];
     
@@ -323,11 +332,15 @@
         {
             studentId = IdentityService.GetCurrentUserId();
             ev = await EventsService.GetEventAsync(new Guid(EventId));
+            if (ev == null)
+            {
+                eventNotFound = true;
+                return;
+            }
             reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
             posts = await PostsService.GetPostsAsync(ev.Id);
+            pageInitialized = true;
         }
-        
-        pageInitialized = true;
     }
 
     private string GetAuthorName(Guid authorId)
@@ -417,6 +430,17 @@
             });
     }
     
+    private async Task OpenReportEventDialog(CreateReportModel createReportModel)
+    {
+        await DialogService.OpenAsync<CreateReportDialog>("Report the event:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
     private async void SignUpToEvent(EventDto eventDto)
     {
         await EventsService.SignUpToEventAsync(eventDto.Id, studentId);
@@ -469,57 +493,16 @@
         StateHasChanged();
     }
     
-    // private async Task SearchComments()
-    // {
-    //     comments = [];
-    //     searchCommentsModel.Pageable.Page = 1;
-    //     
-    //     var response = await CommentsService.SearchRootCommentsAsync(searchCommentsModel.ContextId,
-    //         searchCommentsModel.CommentContext, searchCommentsModel.Pageable);
-    //     if (response.Content != null)
-    //     {
-    //         comments = response.Content.Content.ToHashSet();
-    //         commentsEmpty = response.Content.Empty;
-    //         
-    //         if (response.Content.Number < response.Content.TotalPages)
-    //         {
-    //             comments.Last().IsLast = true;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         commentsEmpty = true;
-    //     }
-    //     
-    //     foreach (var comment in comments)
-    //     {
-    //         if (comment.RepliesCount > 0)
-    //         {
-    //             comment.CanExpand = true;
-    //         }
-    //         
-    //         var searchSubCommentsModel = searchCommentsModel.DeepClone();
-    //         searchSubCommentsModel.Pageable.Page = 1;
-    //         
-    //         var subResponse = await CommentsService.SearchSubCommentsAsync(searchCommentsModel.ContextId,
-    //             searchCommentsModel.CommentContext, comment.Id, searchCommentsModel.Pageable);
-    //         if (subResponse.Content is { Empty: false })
-    //         {
-    //             comment.SubComments = subResponse.Content.Content.ToHashSet();
-    //             var moreSubCommentsAvailable = subResponse.Content.Number < subResponse.Content.TotalPages;
-    //
-    //             foreach (var subComment in comment.SubComments)
-    //             {
-    //                 subComment.Parent = comment;
-    //             }
-    //
-    //             if (moreSubCommentsAvailable)
-    //             {
-    //                 comment.SubComments.Last().IsLast = true;   
-    //             }
-    //         }
-    //     }
-    //     
-    //     StateHasChanged();
-    // }
+    private async Task ReportEvent(EventDto eventDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = studentId,
+            TargetId = eventDto.Id,
+            TargetOwnerId = eventDto.Organizer.Id,
+            ContextType = "Event"
+        };
+
+        await OpenReportEventDialog(createReportModel);
+    }
 }

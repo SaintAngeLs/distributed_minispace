@@ -3,7 +3,9 @@
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Posts.Dialogs
 @using MiniSpace.Web.Areas.Reactions
+@using MiniSpace.Web.Pages.Reports.Dialogs
 @using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Models.Reports
 @using MiniSpace.Web.Pages.Comments
 @using Radzen
 @using AlignItems = Radzen.AlignItems
@@ -61,7 +63,7 @@
                 <RadzenButton Size="ButtonSize.Medium" Text="Go back to event" ButtonStyle="ButtonStyle.Primary"
                               Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
                 <RadzenButton Size="ButtonSize.Medium" Text="Report post" ButtonStyle="ButtonStyle.Primary"
-                />
+                              Click="@(() => ReportPost(post))" />
             </RadzenStack>
 
             @if (IdentityService.IsAuthenticated && IsUserPostCreator(post))
@@ -196,6 +198,17 @@
             });
     }
     
+    private async Task OpenReportPostDialog(CreateReportModel createReportModel)
+    {
+        await DialogService.OpenAsync<CreateReportDialog>("Report the post:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
     private async void ReactionChanged(ReactionType? reactionType)
     {
         if (reactionsSummary.AuthUserReactionId != null)
@@ -211,5 +224,18 @@
 
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
         StateHasChanged();
+    }
+    
+    private async Task ReportPost(PostDto postDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = studentId,
+            TargetId = postDto.Id,
+            TargetOwnerId = postDto.OrganizerId,
+            ContextType = "Post"
+        };
+
+        await OpenReportPostDialog(createReportModel);
     }
 }
