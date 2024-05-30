@@ -1,15 +1,12 @@
 @page "/admin/reports/{ReportDto.Id}/details"
-@using MiniSpace.Web.Areas.Events
-@using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Areas.Reports
 @using Radzen
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Enums
 @using MiniSpace.Web.DTO.States
 @using MiniSpace.Web.DTO.Types
+@using MiniSpace.Web.Pages.Reports
 @inject DialogService DialogService
-@inject IEventsService EventsService
-@inject IPostsService PostsService
 @inject IReportsService ReportsService
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
@@ -41,19 +38,7 @@
                     </RadzenColumn>
                 </RadzenRow>
 
-                <RadzenRow Size="12" AlignItems="AlignItems.Center">
-                    <RadzenColumn Size="6">
-                        <RadzenButton Size="ButtonSize.Medium" Text="Go to reported target" Style="width: 250px"
-                                      ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
-                                      Click="@(() => GoToReportedTargetPage(ReportDto))"/>
-                    </RadzenColumn>
-
-                    <RadzenColumn Size="6">
-                        <RadzenButton Size="ButtonSize.Medium" Text="Go to profile of target owner" Style="width: 250px"
-                                      ButtonStyle="ButtonStyle.Secondary" class="rz-border-radius-1"
-                                      Click="@(() => GoToTargetOwnerProfile(ReportDto))" />
-                    </RadzenColumn>
-                </RadzenRow>
+                <ReportTargetSection ReportDto="@ReportDto" ErrorMessage="@errorMessage" ShowError="@showError" />
                 
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
@@ -221,49 +206,11 @@
     {
         await base.OnInitializedAsync();
     }
-
-    private async void GoToReportedTargetPage(ReportDto reportDto)
-    {
-        await LocalStorage.SetItemAsync("reportDto", reportDto);
-        switch (ReportDto.ContextType)
-        {
-            case ReportContextType.Event:
-                NavigationManager.NavigateTo($"/events/{ReportDto.TargetId}");
-                break;
-            case ReportContextType.Post:
-                var post = await PostsService.GetPostAsync(ReportDto.TargetId);
-                if (post == null)
-                {
-                    errorMessage = "Reported post not found! Probably has been deleted!";
-                    showError = true;
-                    StateHasChanged();
-                    return;
-                }
-                var ev = await EventsService.GetEventAsync(post.EventId);
-                var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
-                NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
-                break;
-            case ReportContextType.Comment:
-                NavigationManager.NavigateTo($"/comments/{ReportDto.TargetId}/details");
-                break;
-            case ReportContextType.StudentProfile:
-                NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetId}");
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
     
     private async void GoToReporterProfile(ReportDto reportDto)
     {
         await LocalStorage.SetItemAsync("reportDto", reportDto);
         NavigationManager.NavigateTo($"/student-details/{ReportDto.IssuerId}");
-    }
-    
-    private async void GoToTargetOwnerProfile(ReportDto reportDto)
-    {
-        await LocalStorage.SetItemAsync("reportDto", reportDto);
-        NavigationManager.NavigateTo($"/student-details/{ReportDto.TargetOwnerId}");
     }
     
     private async void StartReportReview(ReportDto reportDto)
