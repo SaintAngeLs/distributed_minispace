@@ -37,13 +37,14 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
             string jsonEvent = JsonSerializer.Serialize(@event);
             Console.WriteLine($"Received Event: {jsonEvent}");
 
+
             var student = await _studentsServiceClient.GetAsync(@event.UserId);
             if (student == null)
             {
                 throw new EmailNotFoundException(@event.UserId);
             }
 
-            if (!student.EmailNotifications)
+            if (!student.EmailNotifications && student.State == "Valid")
             {
                 throw new EmailNotificationDisabledException(@event.UserId);
             }
