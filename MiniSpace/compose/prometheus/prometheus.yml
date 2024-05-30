@@ -1,56 +1,131 @@
 global:
-  scrape_interval:     5s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 5s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  scrape_interval: 5s
+  evaluation_interval: 5s
 
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['prometheus:9090']
+      - targets: ['localhost:9090']
 
   - job_name: 'api-gateway'
     static_configs:
       - targets: ['api-gateway']
 
-  - job_name: 'availability-service'
-    static_configs:
-      - targets: ['availability-service']
-
-  - job_name: 'customers-service'
-    static_configs:
-      - targets: ['customers-service']
-
-  - job_name: 'deliveries-service'
-    static_configs:
-      - targets: ['deliveries-service']
-
   - job_name: 'identity-service'
     static_configs:
       - targets: ['identity-service']
 
-  - job_name: 'operations-service'
+  - job_name: 'students-service'
     static_configs:
-      - targets: ['operations-service']
+      - targets: ['students-service']
 
-  - job_name: 'orders-service'
+  - job_name: 'events-service'
     static_configs:
-      - targets: ['orders-service']
+      - targets: ['events-service']
 
-  - job_name: 'ordermaker-service'
+  - job_name: 'comments-service'
     static_configs:
-      - targets: ['ordermaker-service']
+      - targets: ['comments-service']
 
-  - job_name: 'parcels-service'
+  - job_name: 'reactions-service'
     static_configs:
-      - targets: ['parcels-service']
-      
-  - job_name: 'pricing-service'
-    static_configs:
-      - targets: ['pricing-service']
+      - targets: ['reactions-service']
 
-  - job_name: 'vehicles-service'
+  - job_name: 'friends-service'
     static_configs:
-      - targets: ['vehicles-service']
+      - targets: ['friends-service']
 
-  - job_name: 'rabbitmq'
+  - job_name: 'posts-service'
     static_configs:
-      - targets: ['rabbitmq:15692']
+      - targets: ['posts-service']
+
+  - job_name: 'mediafiles-service'
+    static_configs:
+      - targets: ['mediafiles-service']
+
+  - job_name: 'organizations-service'
+    static_configs:
+      - targets: ['organizations-service']
+
+  - job_name: 'notifications-service'
+    static_configs:
+      - targets: ['notifications-service']
+
+  - job_name: 'reports-service'
+    static_configs:
+      - targets: ['reports-service']
+
+  - job_name: 'email-service'
+    static_configs:
+      - targets: ['email-service']  
+
+  - job_name: 'web'
+    static_configs:
+      - targets: ['web']
+
+
+# # Konfiguration with ports for hosted
+# global:
+#   scrape_interval: 5s
+#   evaluation_interval: 5s
+
+# scrape_configs:
+#   - job_name: 'prometheus'
+#     static_configs:
+#       - targets: ['localhost:9090']
+
+#   - job_name: 'api-gateway'
+#     static_configs:
+#       - targets: ['api-gateway:5000']
+
+#   - job_name: 'identity-service'
+#     static_configs:
+#       - targets: ['identity-service:5004']
+
+#   - job_name: 'students-service'
+#     static_configs:
+#       - targets: ['students-service:5007']
+
+#   - job_name: 'events-service'
+#     static_configs:
+#       - targets: ['events-service:5008']
+
+#   - job_name: 'comments-service'
+#     static_configs:
+#       - targets: ['comments-service:5009']
+
+#   - job_name: 'reactions-service'
+#     static_configs:
+#       - targets: ['reactions-service:5010']
+
+#   - job_name: 'friends-service'
+#     static_configs:
+#       - targets: ['friends-service:5012']
+
+#   - job_name: 'posts-service'
+#     static_configs:
+#       - targets: ['posts-service:5013']
+
+#   - job_name: 'mediafiles-service'
+#     static_configs:
+#       - targets: ['mediafiles-service:5014']
+
+#   - job_name: 'organizations-service'
+#     static_configs:
+#       - targets: ['organizations-service:5015']
+
+#   - job_name: 'notifications-service'
+#     static_configs:
+#       - targets: ['notifications-service:5006']
+
+#   - job_name: 'reports-service'
+#     static_configs:
+#       - targets: ['reports-service:5005']
+
+#   - job_name: 'email-service'
+#     static_configs:
+#       - targets: ['email-service:5016']  
+
+#   - job_name: 'web'
+#     static_configs:
+#       - targets: ['web:5606']
