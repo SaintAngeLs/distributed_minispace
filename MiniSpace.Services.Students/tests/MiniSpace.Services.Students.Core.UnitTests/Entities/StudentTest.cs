@@ -97,7 +97,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
         }
 
         [Fact]
-        public async void Update_DescriptionNullorWhite_ShouldThrowInvalidStudentDescriptionException()
+        public void Update_DescriptionNullorWhite_ShouldThrowInvalidStudentDescriptionException()
         {
             // Arrange
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
@@ -112,7 +112,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
         }
 
         [Fact]
-        public async void AddInterestedInEvent_AlreadyAdded_ShouldThrowEventAlreadyAddedExeption()
+        public void AddInterestedInEvent_AlreadyAdded_ShouldThrowEventAlreadyAddedExeption()
         {
             // Arrange
             var eventId = Guid.NewGuid();
@@ -127,7 +127,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
         }
 
         [Fact]
-        public async void RemoveInterestedInEvent_AlreadyRemoved_ShouldThrowEventAlreadyRemovedExeption()
+        public void RemoveInterestedInEvent_AlreadyRemoved_ShouldThrowEventAlreadyRemovedExeption()
         {
             // Arrange
             var eventId = Guid.NewGuid();
@@ -141,7 +141,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
         }
 
         [Fact]
-        public async void AddISignedUpEvent_AlreadyAdded_ShouldThrowEventAlreadyAddedExeption()
+        public void AddISignedUpEvent_AlreadyAdded_ShouldThrowEventAlreadyAddedExeption()
         {
             // Arrange
             var eventId = Guid.NewGuid();
@@ -156,7 +156,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
         }
 
         [Fact]
-        public async void RemoveSignedUpEvent_AlreadyRemoved_ShouldThrowEventAlreadyRemovedExeption()
+        public void RemoveSignedUpEvent_AlreadyRemoved_ShouldThrowEventAlreadyRemovedExeption()
         {
             // Arrange
             var eventId = Guid.NewGuid();
