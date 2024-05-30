@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 
 namespace MiniSpace.Services.Students.Infrastructure.Contexts
 {
-    [ExcludeFromCodeCoverage]
     internal class IdentityContext : IIdentityContext
     {
         public Guid Id { get; }
