@@ -110,7 +110,7 @@
                          @if (reactionsSummary.NumberOfReactions > 0)
                          {
                              <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
-                             <MudIcon Icon="@($"fas {reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
+                             <MudIcon Icon="@($"{reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
                          }
                      </RadzenStack>
                  </RadzenColumn>
@@ -130,8 +130,8 @@
                      @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                      {
                          <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
-                             <RadzenButton Size="ButtonSize.Medium" Text="React"
-                                           Click="@(() => OpenReactionDialog())" />                        
+                             <RadzenButton Size="ButtonSize.Medium" Text="React" class="separate-button"
+                                           Click="@(() => OpenReactionsDialog())" />                        
                         </RadzenStack>
                      }
                  </RadzenColumn>
@@ -314,6 +314,16 @@
       border-color: transparent;
     }
     
+    .separate-button {
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        background-color: #30445f !important;
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+    
     .event-name {
         word-break: break-word;
     }
@@ -355,7 +365,6 @@
     private EventDto ev = new();
     private bool pageInitialized = false;
     private EventRatingDto eventRating = null;
-    private bool isReactionDialogOpen = false;
 
     private int activeIndex = 0;
     private bool arrows = true;
@@ -580,29 +589,18 @@
             _ => String.Empty
         };
     }
-    
-    private void OpenReactionDialog()
-    {
-        isReactionDialogOpen = true;
-    }
-
-    private async Task OnReactionSelected(ReactionType reaction)
-    {
-        reactionsSummary.AuthUserReactionType = reaction;
-        await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reaction.ToString(), ev.Id, ReactionContentType.Event.ToString());
-    }
 
     private async Task OpenReactionsDialog()
     {
-        var result = await DialogService.OpenAsync<ReactionDialog>(null,
+        var result = await DialogService.OpenAsync<ReactionDialog>("",
             new Dictionary<string, object>() { { "SelectedReaction", reactionsSummary.AuthUserReactionType } },
             new DialogOptions()
             {
-                Width = "800px", Height = "600px", Resizable = false, Draggable = false,
+                Width = "800px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        reactionsSummary.AuthUserReactionType = (ReactionType)result;
-        await OnInitializedAsync();
+        
+        //ReactionChanged((ReactionType)result);
     }
 
     // private async Task SearchComments()

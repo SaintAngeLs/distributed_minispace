@@ -1,20 +1,29 @@
 ﻿@using MiniSpace.Web.DTO.Enums
 @using Radzen
-@inject DialogService DialogService
+@using MudBlazor
+@using Orientation = Radzen.Orientation
+@using AlignItems = Radzen.AlignItems
+@inject Radzen.DialogService DialogService
 
-<RadzenStack Orientation="Orientation.Horizontal">
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
     @foreach (var reaction in Enum.GetValues<ReactionType>())
     {
-        <div class="reaction-option" @onclick="() => SelectReaction(reaction)">
-            <MudIcon Icon="@($"fas {reaction.GetReactionIcon()}")" Style="color: #30445f;"/>
-        </div>
+        <RadzenButton @onclick="() => SelectReaction(reaction)" Size="ButtonSize.Medium" class="separate-button">
+            <MudIcon Icon="@($"{reaction.GetReactionIcon()}")" />
+        </RadzenButton>
     }
+    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Click="@Close" />
 </RadzenStack>
 
 <style>
-    .reaction-option{
-    
-    }
+    .separate-button {
+            margin: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            padding: 12px;
+            color: #333; 
+            transition: background-color 0.3s ease; 
+        }
 </style>
 
 @code {
