@@ -365,7 +365,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ev = await EventsService.GetEventAsync(new Guid(EventId));
+        ev = await EventsService.GetEventAsync(new Guid(EventId), IdentityService.IsAuthenticated);
         posts = await PostsService.GetPostsAsync(ev.Id);
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
         var tasks = new List<Task<FileDto>>();

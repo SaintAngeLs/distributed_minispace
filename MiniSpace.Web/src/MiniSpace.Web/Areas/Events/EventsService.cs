@@ -20,8 +20,12 @@ namespace MiniSpace.Web.Areas.Events
             _identityService = identityService;
         }
         
-        public Task<EventDto> GetEventAsync(Guid eventId)
+        public Task<EventDto> GetEventAsync(Guid eventId, bool isAuthenticated)
         {
+            if (isAuthenticated)
+            {
+                _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            }
             return _httpClient.GetAsync<EventDto>($"events/{eventId}");
         }
 

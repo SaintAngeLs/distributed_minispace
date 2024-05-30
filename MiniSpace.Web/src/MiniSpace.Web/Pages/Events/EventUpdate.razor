@@ -198,7 +198,7 @@
         {
             organizerId = IdentityService.GetCurrentUserId();
             
-            eventDto = await EventsService.GetEventAsync(new Guid(EventId));
+            eventDto = await EventsService.GetEventAsync(new Guid(EventId), false);
             updateEventModel.EventId = eventDto.Id;
             updateEventModel.Name = eventDto.Name;
             updateEventModel.OrganizerId = eventDto.Organizer.Id;

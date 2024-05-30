@@ -10,7 +10,7 @@ namespace MiniSpace.Web.Areas.Events
 {
     public interface IEventsService
     {
-        Task<EventDto> GetEventAsync(Guid eventId);
+        Task<EventDto> GetEventAsync(Guid eventId, bool isAuthenticated);
         Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
             string engagementType, int page, int numberOfResults);
         Task<HttpResponse<object>> CreateEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
