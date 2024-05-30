@@ -22,9 +22,15 @@
 @inject ICommentsService CommentsService
 @inject NavigationManager NavigationManager
 
-@if (!pageInitialized)
+@if (!pageInitialized && !eventNotFound)
 {
     <h3 class="rz-p-12">Loading...</h3>
+}
+
+@if (eventNotFound)
+{
+    <h3 class="rz-p-12">Event not found!</h3>
+    <h3>Probably has been deleted!</h3>
 }
 
 @if (pageInitialized)
@@ -306,7 +312,8 @@
     private Guid studentId;
     private EventDto ev = new();
     private bool pageInitialized = false;
-
+    private bool eventNotFound = false;
+    
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions = [];
     
@@ -325,6 +332,11 @@
         {
             studentId = IdentityService.GetCurrentUserId();
             ev = await EventsService.GetEventAsync(new Guid(EventId));
+            if (ev == null)
+            {
+                eventNotFound = true;
+                return;
+            }
             reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
             posts = await PostsService.GetPostsAsync(ev.Id);
             pageInitialized = true;

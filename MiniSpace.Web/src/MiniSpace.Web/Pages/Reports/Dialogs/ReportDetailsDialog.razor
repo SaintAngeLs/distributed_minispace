@@ -176,7 +176,7 @@
                 var post = await PostsService.GetPostAsync(ReportDto.TargetId);
                 if (post == null)
                 {
-                    errorMessage = "Reported post has been deleted!";
+                    errorMessage = "Reported post not found! Probably has been deleted!";
                     showError = true;
                     StateHasChanged();
                     return;
