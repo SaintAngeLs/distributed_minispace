@@ -124,7 +124,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<StudentCancelledSignUpToEvent>()
                 .SubscribeEvent<PostCreated>()
                 .SubscribeEvent<PostUpdated>()
-                .SubscribeEvent<PasswordResetTokenGenerated>();
+                .SubscribeEvent<PasswordResetTokenGenerated>()
+                .SubscribeEvent<SignedUp>();
             return app;
         }
 
