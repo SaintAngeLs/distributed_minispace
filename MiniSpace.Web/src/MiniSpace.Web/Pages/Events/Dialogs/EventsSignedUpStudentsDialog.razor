@@ -14,7 +14,7 @@
                     FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
                     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
                     Data="@Students" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
         <RadzenDataGridColumn Context="participant" Title="Options" TextAlign="TextAlign.Center"
                               Filterable="false" Sortable="false" Frozen="true">
             <Template Context="participant">
@@ -36,7 +36,7 @@
 </RadzenFieldset>
 @code {
     [Parameter] public IEnumerable<ParticipantDto> Students { get; set; }
-    [Parameter] public EventDto Event { get; set; }
+    [Parameter] public Guid EventId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,6 +51,6 @@
     
     private async void RemoveEventParticipant(ParticipantDto participant)
     {
-        await EventsService.RemoveEventParticipantAsync(Event.Id, participant.StudentId);
+        await EventsService.RemoveEventParticipantAsync(EventId, participant.StudentId);
     }
 }

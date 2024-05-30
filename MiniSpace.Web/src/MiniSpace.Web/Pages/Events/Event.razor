@@ -607,7 +607,11 @@
     { 
         var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
         await DialogService.OpenAsync<EventsSignedUpStudentsDialog>("Signed up students:",
-            new Dictionary<string, object>() { { "Students", eventParticipantsDto.SignedUpStudents } },
+            new Dictionary<string, object>()
+            {
+                { "Students", eventParticipantsDto.SignedUpStudents },
+                { "EventId", ev.Id }
+            },
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
