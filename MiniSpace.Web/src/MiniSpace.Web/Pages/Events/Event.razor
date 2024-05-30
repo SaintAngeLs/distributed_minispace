@@ -105,10 +105,12 @@
                  <RadzenColumn SizeSM="4">
                      <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
                          <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions: @reactionsSummary.NumberOfReactions</RadzenText>
+                     </RadzenStack>
+                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-border-top">
                          @if (reactionsSummary.NumberOfReactions > 0)
                          {
                              <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
-                             <RadzenIcon Icon="@reactionsSummary.DominantReaction.GetReactionIcon()" Style="color: #30445f;"/>
+                             <MudIcon Icon="@($"fas {reactionsSummary.DominantReaction.GetReactionIcon()}")" Color="Color.Dark" />
                          }
                      </RadzenStack>
                  </RadzenColumn>
@@ -338,34 +340,33 @@
 </style>
 
 @code {
-    [Parameter]
-    public string EventId { get; set; }
-    
+    [Parameter] public string EventId { get; set; }
+
     private Guid studentId;
     private EventDto ev = new();
     private bool pageInitialized = false;
     private EventRatingDto eventRating = null;
-    
+
     private int activeIndex = 0;
     private bool arrows = true;
     private bool bullets = true;
     private bool enableSwipeGesture = true;
     private bool autocycle = true;
-    private MudBlazor.Transition transition = MudBlazor.Transition.Slide; 
+    private MudBlazor.Transition transition = MudBlazor.Transition.Slide;
 
     IEnumerable<PostDto> posts;
     IEnumerable<ReactionDto> reactions = [];
     IEnumerable<string> images = [];
-    
+
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
-    
+
     private int participantPageSize = 10;
-    IEnumerable<int> participantPageSizeOptions = new int[] { 10, 20, 40};
+    IEnumerable<int> participantPageSizeOptions = new int[] { 10, 20, 40 };
     RadzenDataGrid<ParticipantDto> signedUpDataGrid;
     List<ParticipantDto> signedUpStudents;
     List<ParticipantDto> interestedStudents;
-     
+
     protected override async Task OnInitializedAsync()
     {
         ev = await EventsService.GetEventAsync(new Guid(EventId));
@@ -376,7 +377,7 @@
         {
             tasks.Add(MediaFilesService.GetFileAsync(mediaFile));
         }
-        
+
         if (ev.Status == "Archived")
         {
             var response = await EventsService.GetEventRatingAsync(ev.Id);
@@ -385,11 +386,12 @@
                 eventRating = response;
             }
         }
+
         if (IdentityService.IsAuthenticated)
         {
             studentId = IdentityService.GetCurrentUserId();
         }
-        
+
         StateHasChanged();
         images = (await Task.WhenAll(tasks)).Select(f => f.Base64Content).ToList();
         pageInitialized = true;
@@ -409,14 +411,14 @@
 
         return eventDto.Organizer != null && studentId == eventDto.Organizer.Id;
     }
-    
+
     private async void OnChange(int index)
     {
         if (!IdentityService.IsAuthenticated)
         {
             return;
         }
-        
+
         switch (index)
         {
             case 0:
@@ -433,6 +435,7 @@
                     var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
                     signedUpStudents = eventParticipantsDto.SignedUpStudents.ToList();
                 }
+
                 break;
             case 4:
                 if (IsUserEventOrganizer(ev))
@@ -440,8 +443,10 @@
                     var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
                     interestedStudents = eventParticipantsDto.InterestedStudents.ToList();
                 }
+
                 break;
         }
+
         StateHasChanged();
     }
 
@@ -459,14 +464,14 @@
     private async Task OpenDeleteEventDialog()
     {
         await DialogService.OpenAsync<DeleteEventDialog>("Are you sure? This action cannot be undone!",
-            new Dictionary<string, object>() { {"EventId", new Guid(EventId) } },
+            new Dictionary<string, object>() { { "EventId", new Guid(EventId) } },
             new DialogOptions()
             {
                 Width = "500px", Height = "100px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }
-    
+
     private async Task OpenParticipantDetailsDialog(ParticipantDto participantDto, string term)
     {
         await DialogService.OpenAsync<ParticipantDetailsDialog>($"Details of the {term}:",
@@ -481,35 +486,35 @@
                 AutoFocusFirstElement = false
             });
     }
-    
+
     private async void SignUpToEvent(EventDto eventDto)
     {
         await EventsService.SignUpToEventAsync(eventDto.Id, studentId);
         eventDto.IsSignedUp = true;
         StateHasChanged();
     }
-    
+
     private async void CancelSignUpToEvent(EventDto eventDto)
     {
         await EventsService.CancelSignUpToEventAsync(eventDto.Id, studentId);
         eventDto.IsSignedUp = false;
         StateHasChanged();
     }
-    
+
     private async void ShowInterestInEvent(EventDto eventDto)
     {
         await EventsService.ShowInterestInEventAsync(eventDto.Id, studentId);
         eventDto.IsInterested = true;
         StateHasChanged();
     }
-    
+
     private async void CancelInterestInEvent(EventDto eventDto)
     {
         await EventsService.CancelInterestInEventAsync(eventDto.Id, studentId);
         eventDto.IsInterested = false;
         StateHasChanged();
     }
-    
+
     private async void RemoveEventParticipant(EventDto eventDto, ParticipantDto participant)
     {
         await EventsService.RemoveEventParticipantAsync(eventDto.Id, participant.StudentId);
@@ -523,7 +528,7 @@
         {
             await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
         }
-        
+
         if (reactionType != null)
         {
             await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
@@ -533,7 +538,7 @@
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
         StateHasChanged();
     }
-    
+
     private string GetFontSizeClass(string eventName)
     {
         return eventName.Length switch
@@ -543,7 +548,7 @@
             _ => "small-font"
         };
     }
-    
+
     private string StateToText()
     {
         return ev.Status switch
@@ -565,7 +570,7 @@
             _ => String.Empty
         };
     }
-    
+
     // private async Task SearchComments()
     // {
     //     comments = [];

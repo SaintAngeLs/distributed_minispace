@@ -31,10 +31,10 @@ namespace MiniSpace.Web.DTO.Enums
             return reactionType switch
             {
                 ReactionType.LoveIt => "heart",
-                ReactionType.LikeIt => "like",
-                ReactionType.Wow => "wow",
-                ReactionType.ItWasOkay => "smile",
-                ReactionType.HateIt => "angry",
+                ReactionType.LikeIt => "thumb-up",
+                ReactionType.Wow => "face-surprise",
+                ReactionType.ItWasOkay => "fa-face-meh",
+                ReactionType.HateIt => "face-tired",
                 _ => "no-reactions"
             };
         }
