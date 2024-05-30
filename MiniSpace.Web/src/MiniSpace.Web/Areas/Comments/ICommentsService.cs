@@ -14,6 +14,7 @@ namespace MiniSpace.Web.Areas.Comments
             string commentContext, PageableDto pageable);
         Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchSubCommentsAsync(Guid contextId,
             string commentContext, Guid parentId, PageableDto pageable);
+        Task<CommentDto> GetCommentAsync(Guid commentId);
         Task<HttpResponse<object>> CreateCommentAsync(Guid commentId, Guid contextId, string commentContext,
             Guid studentId, Guid parentId, string comment);
         Task<HttpResponse<object>> UpdateCommentAsync(Guid commentId, string textContext);

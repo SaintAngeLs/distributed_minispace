@@ -1,0 +1,82 @@
+@page "/comments/{CommentId:guid}"
+@using MiniSpace.Web.Areas.Comments
+@using MiniSpace.Web.Models.Reports
+@using MiniSpace.Web.Pages.Reports.Dialogs
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@inject ICommentsService CommentsService
+@using MiniSpace.Web.DTO
+@using Radzen
+@using MudBlazor
+
+@if (pageInitialized)
+{
+    <RadzenCard Class="rz-border-radius-3" Style="width: 95%">
+        <RadzenRow Gap="0.5rem">
+            <RadzenColumn Size="3">
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
+                            Text=@(comment.StudentName)/>
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                    @(comment.LastUpdatedAt.ToLocalTime().ToString(dateFormat))
+                </RadzenText>
+            </RadzenColumn>
+            <RadzenColumn Size="6">
+                @if (comment.IsDeleted)
+                {
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0"
+                            Text="(Reply Deleted)"/>
+                }
+                else
+                {
+                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0"
+                            Style="word-wrap: anywhere" Text=@(comment.TextContent)/>
+                }
+            </RadzenColumn>
+            <RadzenColumn Size="3">
+                
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>   
+}
+
+@code {
+    [Parameter]
+    public Guid CommentId { get; set; }
+    
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    
+    private CommentDto comment;
+    private bool pageInitialized;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        comment = await CommentsService.GetCommentAsync(CommentId);
+        pageInitialized = true;
+    }
+    
+    private async Task OpenReportCommentDialog(CreateReportModel createReportModel)
+    {
+        await DialogService.OpenAsync<CreateReportDialog>("Report the comment:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task ReportCommentAsync(CommentDto commentDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = IdentityService.GetCurrentUserId(),
+            TargetId = commentDto.Id,
+            TargetOwnerId = commentDto.StudentId,
+            ContextType = "Comment"
+        };
+
+        await OpenReportCommentDialog(createReportModel);
+    }
+}

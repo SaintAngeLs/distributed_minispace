@@ -34,6 +34,11 @@ namespace MiniSpace.Web.Areas.Comments
                 new (contextId, commentContext, parentId, pageable));
         }
         
+        public Task<CommentDto> GetCommentAsync(Guid commentId)
+        {
+            return _httpClient.GetAsync<CommentDto>($"comments/{commentId}");
+        }
+        
         public Task<HttpResponse<object>> CreateCommentAsync(Guid commentId, Guid contextId, string commentContext,
             Guid studentId, Guid parentId, string comment)
         {
