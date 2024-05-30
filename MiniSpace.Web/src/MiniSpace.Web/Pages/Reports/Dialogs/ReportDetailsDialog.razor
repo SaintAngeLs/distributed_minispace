@@ -13,6 +13,10 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+<RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
+             Shade="Shade.Lighter" class="rz-my-3">
+    @errorMessage
+</RadzenAlert>
 <RadzenStack Gap="1rem">
     <RadzenFieldset>
         <HeaderTemplate>
@@ -152,6 +156,9 @@
 
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -167,6 +174,13 @@
                 break;
             case ReportContextType.Post:
                 var post = await PostsService.GetPostAsync(ReportDto.TargetId);
+                if (post == null)
+                {
+                    errorMessage = "Reported post has been deleted!";
+                    showError = true;
+                    StateHasChanged();
+                    return;
+                }
                 var ev = await EventsService.GetEventAsync(post.EventId);
                 var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
                 NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
