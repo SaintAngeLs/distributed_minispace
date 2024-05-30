@@ -42,11 +42,13 @@
         <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-pt-2 rz-px-4 rz-border-top">
-                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => OpenInterestedFriendsDialog())" class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
+                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => { if (IsUserEventOrganizer(ev)) OpenInterestedFriendsDialog(); else OpenInterestedFriendsDialog(); })" 
+                                  class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
                         <RadzenIcon Icon="grade" Style="color: #30445f;"/>
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@ev.InterestedStudents</RadzenText>
                     </RadzenButton>
-                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => OpenSignedUpFriendsDialog())" class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
+                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => { if (IsUserEventOrganizer(ev)) OpenSignedUpStudentsDialog(); else OpenSignedUpFriendsDialog(); })" 
+                                  class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
                         <RadzenIcon Icon="account_circle" Style="color: #30445f;" />
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.SignedUpStudents/@ev.Capacity</RadzenText>
                     </RadzenButton>
@@ -215,28 +217,6 @@
                     @*     </Template> *@
                     @* </RadzenDataList> *@
                 </RadzenTabsItem>
-
-                @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
-                {
-                    <RadzenTabsItem Text="Interested friends">
-                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
-                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
-                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
-                                        Data="@ev.FriendsInterestedIn" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                            <Columns>
-                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
-                                <RadzenDataGridColumn Context="friend" Title="Options" TextAlign="TextAlign.Center"
-                                                      Filterable="false" Sortable="false" Frozen="true">
-                                    <Template Context="friend">
-                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
-                                                      ButtonStyle="ButtonStyle.Secondary"
-                                                      Click="@(() => OpenParticipantDetailsDialog(friend, "friend"))" />
-                                    </Template>
-                                </RadzenDataGridColumn>
-                            </Columns>
-                        </RadzenDataGrid>
-                    </RadzenTabsItem>
-                }
 
                 @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
                 {
@@ -616,6 +596,18 @@
     { 
         await DialogService.OpenAsync<EventFriendsDialog>("Interested friends:",
             new Dictionary<string, object>() { { "Friends", ev.FriendsInterestedIn } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenSignedUpStudentsDialog()
+    { 
+        var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
+        await DialogService.OpenAsync<EventsSignedUpStudentsDialog>("Signed up students:",
+            new Dictionary<string, object>() { { "Students", eventParticipantsDto.SignedUpStudents } },
             new DialogOptions()
             {
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
