@@ -7,6 +7,6 @@ namespace MiniSpace.Services.Events.Application.Services.Clients
 {
     public interface IFriendsServiceClient
     {
-        Task<IEnumerable<FriendDto>> GetAsync(Guid studentId);
+        Task<StudentFriendsDto> GetAsync(Guid studentId);
     }
 }
