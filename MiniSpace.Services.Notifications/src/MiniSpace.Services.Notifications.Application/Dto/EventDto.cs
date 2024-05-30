@@ -15,7 +15,7 @@ namespace MiniSpace.Services.Notifications.Application.Dto
         public OrganizerDto Organizer { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        // public AddressDto Location { get; set; }
+        public AddressDto Location { get; set; }
         public IEnumerable<Guid> MediaFiles { get; set; }
         public int InterestedStudents { get; set; }
         public int SignedUpStudents { get; set; }

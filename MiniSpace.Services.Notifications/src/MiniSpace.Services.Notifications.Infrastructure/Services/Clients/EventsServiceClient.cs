@@ -20,11 +20,11 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             _eventsServiceUrl = options.Services["events"];
         }
 
-        public async Task<IEnumerable<StudentDto>> GetParticipantsAsync(Guid eventId)
+        public async Task<EventParticipantsDto> GetParticipantsAsync(Guid eventId)
         {
             var url = $"{_eventsServiceUrl}/events/{eventId}/participants";
             var response = await _httpClient.GetAsync(url);
-            return await HandleResponseAsync<IEnumerable<StudentDto>>(response);
+            return await HandleResponseAsync<EventParticipantsDto>(response);
         }
 
         public async Task<EventDto> GetEventAsync(Guid eventId)
@@ -34,7 +34,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             return await HandleResponseAsync<EventDto>(response);  
         }
   
-
         private async Task<T> HandleResponseAsync<T>(HttpResponseMessage response) where T : class
         {
             if (!response.IsSuccessStatusCode)
@@ -44,18 +43,31 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             }
 
             var json = await response.Content.ReadAsStringAsync();
+            // Console.WriteLine("JSON Response: " + json); 
+
             try
             {
-                return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+                var responseObject = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
+
+                if (responseObject == null)
+                {
+                    // Console.WriteLine("Deserialized object is null. Possibly empty JSON.");
+                    return null;
+                }
+
+                var jsonString = JsonSerializer.Serialize(responseObject, new JsonSerializerOptions { WriteIndented = true });
+                // Console.WriteLine("Deserialized JSON Object: " + jsonString);
+
+                return responseObject;
             }
             catch (JsonException ex)
             {
-                // Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}");
+                Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}\nJSON: {json}");
                 return null;
             }
-        }  
+        }
     }
 }

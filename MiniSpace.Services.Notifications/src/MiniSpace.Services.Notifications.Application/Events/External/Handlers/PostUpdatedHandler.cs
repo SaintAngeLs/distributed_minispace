@@ -17,17 +17,20 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IPostsServiceClient _postsServiceClient;
+        private readonly IStudentsServiceClient _studentsServiceClient;
 
         public PostUpdatedHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
             IEventsServiceClient eventsServiceClient,
-            IPostsServiceClient postsServiceClient)
+            IPostsServiceClient postsServiceClient,
+            IStudentsServiceClient studentsServiceClient)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _eventsServiceClient = eventsServiceClient;
             _postsServiceClient = postsServiceClient;
+            _studentsServiceClient = studentsServiceClient;
         }
 
         public async Task HandleAsync(PostUpdated eventArgs, CancellationToken cancellationToken)
@@ -46,28 +49,31 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 return;
             }
 
-            // Notify all students interested in the event
-            IEnumerable<StudentDto> interestedStudents;
-            try
+            var eventParticipants = await _eventsServiceClient.GetParticipantsAsync(post.EventId);
+            if (eventParticipants == null)
             {
-                interestedStudents = await _eventsServiceClient.GetParticipantsAsync(post.EventId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to get interested students: {ex.Message}");
-                throw;
-            }
-
-            if (interestedStudents == null)
-            {
-                Console.WriteLine("No interested students found for the event.");
+                Console.WriteLine("No participants found for the event.");
                 return;
             }
 
-            foreach (var student in interestedStudents)
+            foreach (var studentParticipant in eventParticipants.InterestedStudents)
             {
-                await NotifyStudent(student, eventDetails, post);
+                var student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);
+                if (student != null)
+                {
+                    await NotifyStudent(student, eventDetails, post);
+                }
             }
+
+            foreach (var studentParticipant in eventParticipants.SignedUpStudents)
+            {
+                var student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);
+                if (student != null)
+                {
+                    await NotifyStudent(student, eventDetails, post);
+                }
+            }
+            
 
             // Notify the organizer
             await NotifyOrganizer(eventDetails.Organizer, eventDetails, post);

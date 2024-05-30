@@ -83,7 +83,7 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 
             var eventTypeDescription = EmailSubjectFactory.CreateSubject(
                 (NotificationEventType)Enum.Parse(typeof(NotificationEventType), eventDetails.EventType), 
-                eventDetails.Details);
+                eventDetails.Message);
 
             htmlContent = htmlContent.Replace("{EventType}", eventTypeDescription);
 

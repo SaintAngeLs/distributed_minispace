@@ -27,9 +27,10 @@
     using MiniSpace.Web.Areas.MediaFiles;
     using MiniSpace.Web.Areas.Reactions;
     using MiniSpace.Web.Areas.Reports;
+using MiniSpace.Web.Areas.Comments;
 
 
-    namespace MiniSpace.Web
+namespace MiniSpace.Web
     {
         public class Startup
         {
@@ -76,6 +77,7 @@
                 services.AddScoped<IFriendsService, FriendsService>();
                 services.AddScoped<INotificationsService, NotificationsService>();
                 services.AddScoped<IReactionsService, ReactionsService>();
+                services.AddScoped<ICommentsService, CommentsService>();
                 services.AddScoped<IReportsService, ReportsService>();
 
             }
