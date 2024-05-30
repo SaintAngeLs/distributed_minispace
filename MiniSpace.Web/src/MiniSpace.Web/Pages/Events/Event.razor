@@ -113,6 +113,7 @@
                  </RadzenColumn>
              </RadzenRow>
         </RadzenCard>
+        <CommentsTab CommentContext="Event" ContextId="@EventId" StudentId="studentId" />
         <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
             <Tabs>
                 <RadzenTabsItem Text="Posts">
@@ -156,10 +157,6 @@
                             </RadzenCard>
                         </Template>
                     </RadzenDataList>
-                </RadzenTabsItem>
-
-                <RadzenTabsItem Text="Comments">
-                    <CommentsTab CommentContext="Event" ContextId="@EventId" StudentId="studentId" />
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Reactions">
