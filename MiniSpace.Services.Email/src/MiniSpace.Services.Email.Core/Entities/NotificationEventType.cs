@@ -18,6 +18,7 @@ namespace MiniSpace.Services.Email.Core.Entities
         MentionedInPost,
         EventReminder,
         PasswordResetRequest,
+        UserSignUp,
         Other
     }
 }

@@ -21,6 +21,7 @@ namespace MiniSpace.Services.Email.Core.Entities
                 { NotificationEventType.MentionedInPost, new MentionedInPostSubject() },
                 { NotificationEventType.EventReminder, new EventReminderSubject() },
                 { NotificationEventType.PasswordResetRequest, new PasswordResetRequestSubject() },
+                { NotificationEventType.UserSignUp, new UserSignUpSubject() },
                 { NotificationEventType.Other, new OtherSubject() }
             };
 
