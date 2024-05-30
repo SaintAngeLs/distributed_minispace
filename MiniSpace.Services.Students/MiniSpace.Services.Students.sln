@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{528C500A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Students.Application.UnitTests", "tests\MiniSpace.Services.Students.Application.UnitTests\MiniSpace.Services.Students.Application.UnitTests.csproj", "{31558772-9EB8-4828-B980-FCAA80915207}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Students.Core.UnitTests", "tests\MiniSpace.Services.Students.Core.UnitTests\MiniSpace.Services.Students.Core.UnitTests.csproj", "{D4F0BFD9-EAB6-4496-A82F-992EEDFD51E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{31558772-9EB8-4828-B980-FCAA80915207}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31558772-9EB8-4828-B980-FCAA80915207}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31558772-9EB8-4828-B980-FCAA80915207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4F0BFD9-EAB6-4496-A82F-992EEDFD51E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4F0BFD9-EAB6-4496-A82F-992EEDFD51E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4F0BFD9-EAB6-4496-A82F-992EEDFD51E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4F0BFD9-EAB6-4496-A82F-992EEDFD51E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{C4EFD7FD-9D95-444B-86A4-E4D60E62CD16} = {0E976732-0CD9-4D2E-B989-998B124073BA}
 		{B2997BE8-0CE3-45DD-98E9-80599B070C25} = {0E976732-0CD9-4D2E-B989-998B124073BA}
 		{31558772-9EB8-4828-B980-FCAA80915207} = {528C500A-C485-4D95-AEF7-1F529EF17D1C}
+		{D4F0BFD9-EAB6-4496-A82F-992EEDFD51E0} = {528C500A-C485-4D95-AEF7-1F529EF17D1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8EC57175-70D6-4358-8087-CD0FE7A7A265}
