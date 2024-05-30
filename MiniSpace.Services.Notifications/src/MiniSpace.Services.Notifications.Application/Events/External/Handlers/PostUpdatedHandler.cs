@@ -55,7 +55,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 Console.WriteLine("No participants found for the event.");
                 return;
             }
-
+    
             foreach (var studentParticipant in eventParticipants.InterestedStudents)
             {
                 var student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);
