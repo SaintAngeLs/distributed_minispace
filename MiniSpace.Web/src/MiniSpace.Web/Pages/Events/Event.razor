@@ -14,12 +14,14 @@
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
 @using System.Globalization
+@using MiniSpace.Web.Areas.MediaFiles
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
 @inject IPostsService PostsService
 @inject IReactionsService ReactionsService
 @inject ICommentsService CommentsService
+@inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
 @if (!pageInitialized)
@@ -29,14 +31,22 @@
 
 @if (pageInitialized)
 {
-    <RadzenStack>
+    <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
         <RadzenCard class="rz-mx-auto" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
              <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
                  <RadzenStack Gap="0">
                      <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
                      <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left event-name {GetFontSizeClass(ev.Name)}")">@ev.Name</RadzenText>
-                     <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
-                     <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
+                     <RadzenRow>
+                         <RadzenColumn Size="6">
+                             <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organization</RadzenText>
+                             <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.OrganizationName</RadzenText>
+                         </RadzenColumn>
+                         <RadzenColumn Size="6">
+                             <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Organizer</RadzenText> 
+                             <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">@ev.Organizer.Name</RadzenText>
+                         </RadzenColumn>
+                     </RadzenRow>
                  </RadzenStack>
              </RadzenStack>
              <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
@@ -103,13 +113,13 @@
                                             @if (post.UpdatedAt != null)
                                             {
                                                 <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                                                    Updated at @(post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                                                 </RadzenText>   
                                             }
                                             else
                                             {
                                                 <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                                    Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                                                    Published at @(post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                                                 </RadzenText>   
                                             }
                                         </RadzenStack>
@@ -138,22 +148,22 @@
                     {
                         <h3>No reactions have been added by students yet.</h3>
                     }
-                    <RadzenDataList PageSize="10" AllowPaging="true" Data="@reactions" TItem="ReactionDto">
-                        <Template Context="reaction">
-                            <RadzenCard Class="rz-border-radius-3">
-                                <RadzenRow Gap="0.5rem">
-                                    <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
-                                                    Text=@(reaction.StudentFullName)/>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                                    Text=@(ReactionTypeExtensions.GetReactionText(reaction.Type))/>
-                                    </RadzenColumn>
-                                </RadzenRow>
-                            </RadzenCard>
-                        </Template>
-                    </RadzenDataList>
+                    @* <RadzenDataList PageSize="10" AllowPaging="true" Data="@reactions" TItem="ReactionDto"> *@
+                    @*     <Template Context="reaction"> *@
+                    @*         <RadzenCard Class="rz-border-radius-3"> *@
+                    @*             <RadzenRow Gap="0.5rem"> *@
+                    @*                 <RadzenColumn Size="6"> *@
+                    @*                     <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred" *@
+                    @*                                 Text=@(reaction.StudentFullName)/> *@
+                    @*                 </RadzenColumn> *@
+                    @*                 <RadzenColumn Size="6"> *@
+                    @*                     <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue" *@
+                    @*                                 Text=@(ReactionTypeExtensions.GetReactionText(reaction.Type))/> *@
+                    @*                 </RadzenColumn> *@
+                    @*             </RadzenRow> *@
+                    @*         </RadzenCard> *@
+                    @*     </Template> *@
+                    @* </RadzenDataList> *@
                 </RadzenTabsItem>
 
                 @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
@@ -314,21 +324,21 @@
      
     protected override async Task OnInitializedAsync()
     {
+        ev = await EventsService.GetEventAsync(new Guid(EventId));
+        posts = await PostsService.GetPostsAsync(ev.Id);
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
+        if (ev.Status == "Archived")
+        {
+            var response = await EventsService.GetEventRatingAsync(ev.Id);
+            if (response != null)
+            {
+                eventRating = response;
+                StateHasChanged();
+            }
+        }
         if (IdentityService.IsAuthenticated)
         {
             studentId = IdentityService.GetCurrentUserId();
-            ev = await EventsService.GetEventAsync(new Guid(EventId));
-            reactionsSummary = await ReactionsService.GetReactionsSummary(ev.Id, ReactionContentType.Event);
-            posts = await PostsService.GetPostsAsync(ev.Id);
-            if (ev.Status == "Archived")
-            {
-                var response = await EventsService.GetEventRatingAsync(ev.Id);
-                if (response != null)
-                {
-                    eventRating = response;
-                    StateHasChanged();
-                }
-            }
         }
         
         pageInitialized = true;
