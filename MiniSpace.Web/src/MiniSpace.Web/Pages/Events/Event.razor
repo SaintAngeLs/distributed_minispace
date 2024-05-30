@@ -217,51 +217,6 @@
                     @*     </Template> *@
                     @* </RadzenDataList> *@
                 </RadzenTabsItem>
-
-                @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
-                {
-                    <RadzenTabsItem Text="Signed up students">
-                        <RadzenDataGrid @ref="signedUpDataGrid"
-                                        AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
-                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
-                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
-                                        Data="@signedUpStudents" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                            <Columns>
-                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
-                                <RadzenDataGridColumn Context="participant" Title="Options" TextAlign="TextAlign.Center"
-                                                      Filterable="false" Sortable="false" Frozen="true">
-                                    <Template Context="participant">
-                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
-                                                      ButtonStyle="ButtonStyle.Secondary"
-                                                      Click="@(() => OpenParticipantDetailsDialog(participant, "participant"))" />
-                                        <RadzenButton Size="ButtonSize.Medium" Text="Remove"
-                                                      ButtonStyle="ButtonStyle.Warning"
-                                                      Click="@(() => RemoveEventParticipant(ev, participant))"/>
-                                    </Template>
-                                </RadzenDataGridColumn>
-                            </Columns>
-                        </RadzenDataGrid>
-                    </RadzenTabsItem>
-                    
-                    <RadzenTabsItem Text="Interested students">
-                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
-                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
-                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
-                                        Data="@interestedStudents" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                            <Columns>
-                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
-                                <RadzenDataGridColumn Context="participant" Title="Options" TextAlign="TextAlign.Center"
-                                                      Filterable="false" Sortable="false" Frozen="true">
-                                    <Template Context="participant">
-                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
-                                                      ButtonStyle="ButtonStyle.Secondary"
-                                                      Click="@(() => OpenParticipantDetailsDialog(participant, "participant"))" />
-                                    </Template>
-                                </RadzenDataGridColumn>
-                            </Columns>
-                        </RadzenDataGrid>
-                    </RadzenTabsItem>
-                }
             </Tabs>
         </RadzenTabs>
     </RadzenStack>
@@ -464,21 +419,6 @@
             new DialogOptions()
             {
                 Width = "500px", Height = "100px", Resizable = true, Draggable = true,
-                AutoFocusFirstElement = false
-            });
-    }
-
-    private async Task OpenParticipantDetailsDialog(ParticipantDto participantDto, string term)
-    {
-        await DialogService.OpenAsync<ParticipantDetailsDialog>($"Details of the {term}:",
-            new Dictionary<string, object>()
-            {
-                { "EventId", EventId },
-                { "ParticipantDto", participantDto }
-            },
-            new DialogOptions()
-            {
-                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }

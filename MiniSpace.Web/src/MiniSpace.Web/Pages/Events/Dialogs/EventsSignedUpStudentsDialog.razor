@@ -14,18 +14,17 @@
                     FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
                     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
                     Data="@Students" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
-        <RadzenDataGridColumn Context="participant" Title="Options" TextAlign="TextAlign.Center"
-                              Filterable="false" Sortable="false" Frozen="true">
-            <Template Context="participant">
-                <RadzenButton Size="ButtonSize.Medium" Text="Show"
-                              ButtonStyle="ButtonStyle.Secondary"
-                              Click="@(() => NavigationManager.NavigateTo($"/student-details/{participant.StudentId}"))" />
-                <RadzenButton Size="ButtonSize.Medium" Text="Remove"
-                              ButtonStyle="ButtonStyle.Warning"
-                              Click="@(() => RemoveEventParticipant(participant))"/>
-            </Template>
-        </RadzenDataGridColumn>
+        <Columns>
+            <RadzenDataGridColumn Property="Name" Title="Full Name" Frozen="true" Width="150px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn Frozen="true" TItem="ParticipantDto" Context="friend" Width="100px" TextAlign="TextAlign.Center">
+                <Template Context="friend">
+                    <RadzenButton Size="ButtonSize.Medium" Text="Show" ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => OpenParticipantDetailsDialog(friend, "participant"))" />
+                    <RadzenButton Size="ButtonSize.Medium" Text="Remove" ButtonStyle="ButtonStyle.Warning"
+                                  Click="@(() => RemoveEventParticipant(friend))"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
     </RadzenDataGrid>
     
     <RadzenStack Gap="1rem" class="rz-pt-5" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
@@ -52,5 +51,20 @@
     private async void RemoveEventParticipant(ParticipantDto participant)
     {
         await EventsService.RemoveEventParticipantAsync(EventId, participant.StudentId);
+    }
+    
+    private async Task OpenParticipantDetailsDialog(ParticipantDto participantDto, string term)
+    {
+        await DialogService.OpenAsync<ParticipantDetailsDialog>($"Details of the {term}:",
+            new Dictionary<string, object>()
+            {
+                { "EventId", EventId.ToString() },
+                { "ParticipantDto", participantDto }
+            },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
 }
