@@ -29,7 +29,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         {
             var student = await _studentsServiceClient.GetAsync(@event.UserId);
             var encodedToken =  System.Net.WebUtility.UrlEncode(@event.ResetToken); // Encode the token
-            var resetLink = $"http://localhost:5606/reset-password/{encodedToken}/page"; // Use the encoded token
+            var resetLink = $"https://minispace.itsharppro.com/reset-password/{encodedToken}/page"; // Use the encoded token
             var notificationMessage = $"You have requested to reset your password. Please use the following link to proceed: {resetLink}";
             var detailsHtml = $"<p>Click the following link to reset your password: <a href=\"{resetLink}\">Reset Password</a></p>";
 
