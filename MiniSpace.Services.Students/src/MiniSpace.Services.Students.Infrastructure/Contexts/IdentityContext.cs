@@ -1,4 +1,5 @@
 using MiniSpace.Services.Students.Application;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("MiniSpace.Services.Students.Application.UnitTests")]
@@ -6,6 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace MiniSpace.Services.Students.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class IdentityContext : IIdentityContext
     {
         public Guid Id { get; }

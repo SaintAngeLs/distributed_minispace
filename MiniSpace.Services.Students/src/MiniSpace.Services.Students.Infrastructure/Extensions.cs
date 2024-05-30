@@ -39,9 +39,11 @@ using MiniSpace.Services.Students.Infrastructure.Logging;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
