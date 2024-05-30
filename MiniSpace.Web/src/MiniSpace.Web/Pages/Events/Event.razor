@@ -214,25 +214,6 @@
 
                 @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                 {
-                    <RadzenTabsItem Text="Signed up friends">
-                        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" 
-                                        AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
-                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true"
-                                        Data="@ev.FriendsSignedUp" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                            <Columns>
-                                <RadzenDataGridColumn Property="Name" Title="Name" Frozen="true" TextAlign="TextAlign.Center" />
-                                <RadzenDataGridColumn Context="friend" Title="Options" TextAlign="TextAlign.Center"
-                                                      Filterable="false" Sortable="false" Frozen="true">
-                                    <Template Context="friend">
-                                        <RadzenButton Size="ButtonSize.Medium" Text="Show"
-                                                      ButtonStyle="ButtonStyle.Secondary"
-                                                      Click="@(() => OpenParticipantDetailsDialog(friend, "friend"))" />
-                                    </Template>
-                                </RadzenDataGridColumn>
-                            </Columns>
-                        </RadzenDataGrid>
-                    </RadzenTabsItem>
-                    
                     <RadzenTabsItem Text="Interested friends">
                         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false"
                                         AllowSorting="true" PageSize="@participantPageSize" PageSizeOptions="@participantPageSizeOptions"
