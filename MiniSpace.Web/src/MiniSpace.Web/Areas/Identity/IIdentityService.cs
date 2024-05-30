@@ -22,10 +22,10 @@ namespace MiniSpace.Web.Areas.Identity
         public Guid GetCurrentUserId();
         public string GetCurrentUserRole();
         
-        Task GrantOrganizerRights(Guid userId);
-        Task RevokeOrganizerRights(Guid userId);
-        Task BanUser(Guid userId);
-        Task UnbanUser(Guid userId);
+        Task GrantOrganizerRightsAsync(Guid userId);
+        Task RevokeOrganizerRightsAsync(Guid userId);
+        Task BanUserAsync(Guid userId);
+        Task UnbanUserAsync(Guid userId);
 
         Task ForgotPasswordAsync(string email);
         Task<HttpResponse<object>> ResetPasswordAsync(string token, string email, string newPassword);
