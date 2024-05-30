@@ -7,10 +7,6 @@
 @using MiniSpace.Web.Pages.Reports
 @inject DialogService DialogService
 
-<RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
-             Shade="Shade.Lighter" class="rz-my-3">
-    @errorMessage
-</RadzenAlert>
 <RadzenStack Gap="1rem">
     <RadzenFieldset>
         <HeaderTemplate>
@@ -21,7 +17,7 @@
         </HeaderTemplate>
         <ChildContent>
             <RadzenStack Gap="2rem">
-                <ReportTargetSection ReportDto="@ReportDto" ErrorMessage="@errorMessage" ShowError="@showError" />
+                <ReportTargetSection ReportDto="@ReportDto" />
                 
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
@@ -137,9 +133,6 @@
     public ReportDto ReportDto { get; set; }
 
     private const string dateFormat = "dd/MM/yyyy HH:mm";
-    
-    private bool showError = false;
-    private string errorMessage = string.Empty;
     
     protected override async Task OnInitializedAsync()
     {

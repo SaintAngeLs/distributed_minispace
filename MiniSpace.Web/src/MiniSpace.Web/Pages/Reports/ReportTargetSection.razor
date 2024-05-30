@@ -9,6 +9,11 @@
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <RadzenRow Size="12" AlignItems="AlignItems.Center">
+    <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="@showError" ShowIcon="false"
+                 Variant="Variant.Flat" Shade="Shade.Lighter" class="rz-my-3">
+        @errorMessage
+    </RadzenAlert>
+    
     <RadzenColumn Size="6">
         <RadzenButton Size="ButtonSize.Medium" Text="Go to reported target" Style="width: 250px"
                       ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
@@ -18,17 +23,16 @@
     <RadzenColumn Size="6">
         <RadzenButton Size="ButtonSize.Medium" Text="Go to profile of target owner" Style="width: 250px"
                       ButtonStyle="ButtonStyle.Secondary" class="rz-border-radius-1"
-                      Click="@(() => GoToTargetOwnerProfile(ReportDto))" />
+                      Click="@(() => GoToTargetOwnerProfile(ReportDto))"/>
     </RadzenColumn>
 </RadzenRow>
 
 @code {
     [Parameter]
     public ReportDto ReportDto { get; set; }
-    [Parameter]
-    public string ErrorMessage { get; set; }
-    [Parameter]
-    public bool ShowError { get; set; }
+    
+    private string errorMessage = string.Empty;
+    public bool showError;
     
     private async void GoToReportedTargetPage(ReportDto reportDto)
     {
@@ -42,8 +46,8 @@
                 var post = await PostsService.GetPostAsync(ReportDto.TargetId);
                 if (post == null)
                 {
-                    ErrorMessage = "Reported post not found! Probably has been deleted!";
-                    ShowError = true;
+                    errorMessage = "Reported post not found! Probably has been deleted!";
+                    showError = true;
                     StateHasChanged();
                     return;
                 }
