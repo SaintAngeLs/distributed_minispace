@@ -24,42 +24,20 @@ namespace MiniSpace.Services.Identity.Core.UnitTests.Entities
 {
     public class RoleTest
     {
-
-
-
-
-
-
-
-        
         [Fact]
-        public void AggregateId_CreatedTwice_ShouldBeDifferent()
-        {
-            // Arrange & Act
-            var id1 = new AggregateId();
-            var id2 = new AggregateId();
-
-            // Assert
-            Assert.NotEqual(id1.Value, id2.Value);
+        public void IsValid_WithValidArguments_ShouldReturnTrue() {
+            Assert.True(Role.IsValid("aDmIn"));
+            Assert.True(Role.IsValid("ADMIN"));
+            Assert.True(Role.IsValid("USER"));
+            Assert.True(Role.IsValid("Banned"));
+            Assert.True(Role.IsValid("BANNED"));
+            Assert.True(Role.IsValid("organizer"));
+            Assert.True(Role.IsValid("Organizer"));
         }
 
         [Fact]
-        public void AggregateId_CreatedTwiceSameGuid_ShouldBeSame()
-        {
-            // Arrange
-            var id = Guid.NewGuid();
-
-            // Act
-            var id1 = new AggregateId(id);
-            var id2 = new AggregateId(id);
-
-            // Assert
-            Assert.True(id1.Equals(id2));
-        }
-
-        [Fact]
-        public void AggregateId_CreateWithEmptyGuid_ShouldThrowInvalidAggregateIdException() {
-            Assert.Throws<InvalidAggregateIdException>(() => { var id = new AggregateId(Guid.Empty); });
+        public void IsValid_WithInvalidArguments_ShouldReturnFalse() {
+            Assert.False(Role.IsValid("jgvmldslm"));
         }
     }
 }

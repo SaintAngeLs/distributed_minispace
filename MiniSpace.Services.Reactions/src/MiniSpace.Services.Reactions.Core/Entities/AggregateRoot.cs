@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Reactions.Core.Events;
 
 namespace MiniSpace.Services.Reactions.Core.Entities
 {
+    [ExcludeFromCodeCoverage]
     public abstract class AggregateRoot
     {
         private readonly List<IDomainEvent> _events = new List<IDomainEvent>();

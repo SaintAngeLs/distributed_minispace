@@ -41,9 +41,11 @@ using MiniSpace.Services.Reactions.Application.Queries;
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Reactions.Application.Events;
 using MiniSpace.Services.Reactions.Application.Events.External;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Reactions.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
