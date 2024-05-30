@@ -541,7 +541,7 @@
         await signedUpDataGrid.Reload();
     }
 
-    private async void ReactionChanged(ReactionType? reactionType)
+    private async Task ReactionChanged(ReactionType? reactionType)
     {
         if (reactionsSummary.AuthUserReactionId != null)
         {
@@ -600,7 +600,8 @@
                 AutoFocusFirstElement = false
             });
         
-        //ReactionChanged((ReactionType)result);
+        await ReactionChanged((ReactionType)result);
+        StateHasChanged(); 
     }
 
     // private async Task SearchComments()

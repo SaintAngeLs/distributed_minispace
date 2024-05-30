@@ -8,7 +8,7 @@
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
     @foreach (var reaction in Enum.GetValues<ReactionType>())
     {
-        <RadzenButton @onclick="() => SelectReaction(reaction)" Size="ButtonSize.Medium" class="separate-button">
+        <RadzenButton Click="@(() => SelectReaction(reaction))" Size="ButtonSize.Medium" class="separate-button">
             <MudIcon Icon="@($"{reaction.GetReactionIcon()}")" />
         </RadzenButton>
     }
@@ -35,13 +35,13 @@
         StateHasChanged();
     }
 
-    private void SelectReaction(ReactionType reaction)
+    private void SelectReaction(ReactionType? reaction)
     {
         if(reaction == SelectedReaction)
         {
-            SelectedReaction = null;
+            reaction = null;
         }
-        DialogService.Close(SelectedReaction);
+        DialogService.Close(reaction);
     }
     
     private void Close()
