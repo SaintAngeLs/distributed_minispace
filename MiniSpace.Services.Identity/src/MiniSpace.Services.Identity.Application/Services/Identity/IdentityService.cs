@@ -200,30 +200,22 @@
 
             public async Task ResetPasswordAsync(ResetPassword command)
             {
-                Console.WriteLine($"Handling reset password for Token: {command.Token}");
-
-                // Attempt to extract user ID from the token if not provided
                 if (command.UserId == Guid.Empty)
                 {
-                    Console.WriteLine("No UserId provided with the command, attempting to extract from token...");
+                    throw new UserNotFoundException(command.UserId);
                     
                 }
 
-                // Proceed with fetching the reset token and validating it
                 var userResetToken = await _userResetTokenRepository.GetByUserIdAsync(command.UserId);
-                Console.WriteLine($"Identity service retrieved UserResetToken: {userResetToken}");
 
                 if (userResetToken == null || !userResetToken.ResetTokenIsValid(command.Token))
                 {
-                    Console.WriteLine("Invalid or expired reset token");
                     throw new InvalidTokenException();
                 }
 
-                // If valid, proceed with password reset
                 var user = await _userRepository.GetAsync(userResetToken.UserId);
                 if (user == null)
                 {
-                    Console.WriteLine($"No user found with id: {command.UserId}");
                     throw new UserNotFoundException(command.UserId);
                 }
 
@@ -231,7 +223,6 @@
                 await _userRepository.UpdateAsync(user);
                 await _userResetTokenRepository.InvalidateTokenAsync(user.Id);
 
-                Console.WriteLine($"Password updated for user id: {user.Id}");
                 await _messageBroker.PublishAsync(new PasswordReset(user.Id));
             }
 

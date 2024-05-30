@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Identity.Core.Entities;
 using MiniSpace.Services.Identity.Core.Repositories;
+using MiniSpace.Services.Identity.Application.Exceptions;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
@@ -28,27 +29,20 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
         }
         public async Task<UserResetToken> GetByUserIdAsync(Guid userId)
         {
-            Console.WriteLine($"Starting to fetch UserResetToken by UserId: {userId}");
-
-            // Fetch all valid tokens for the user that have not expired.
             var documents = await _repository.FindAsync(x => x.UserId == userId && x.ResetTokenExpires > DateTime.UtcNow);
 
             if (!documents.Any())
             {
-                Console.WriteLine("No valid reset tokens found.");
-                return null;
+                throw new TokenNotFoundException(userId); 
             }
 
-            // Order the tokens by expiration date to get the most recent one.
             var mostRecentValidToken = documents.OrderByDescending(x => x.ResetTokenExpires).FirstOrDefault();
 
             if (mostRecentValidToken == null)
             {
-                Console.WriteLine("No valid reset token found or all tokens are expired.");
-                return null;
+                throw new TokenNotFoundException(userId); 
             }
 
-            Console.WriteLine($"Found valid reset token for UserId: {userId}, Token: {mostRecentValidToken.ResetToken}");
             return mostRecentValidToken.AsEntity();
         }
 
