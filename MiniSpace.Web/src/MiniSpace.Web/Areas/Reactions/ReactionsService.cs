@@ -27,7 +27,6 @@ namespace MiniSpace.Web.Areas.Reactions
 
         public Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<ReactionsSummaryDto>($"reactions/summary?contentId={contentId}&contentType={contentType}");
         }
 
