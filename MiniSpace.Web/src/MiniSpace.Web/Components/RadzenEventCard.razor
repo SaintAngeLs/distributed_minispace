@@ -5,7 +5,7 @@
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
-<RadzenCard Class="@(Event.Status == "Archived" ? "archived-event rz-mx-auto" : "rz-mx-auto")" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer"
+<RadzenCard Class="@GetCardClass(Event.Status)" Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer"
             @onclick="@(() => NavigationManager.NavigateTo($"/events/{Event.Id}"))">
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
         <RadzenStack Gap="0">
@@ -49,6 +49,14 @@
                         @(eventRating.TotalRatings > 0 ? $"{@eventRating.AverageRating} out of 5 ({@eventRating.TotalRatings} reviews)" :
                         "No ratings yet")
                     </RadzenText>
+                }
+                else if(Event.Status == "Cancelled" )
+                {
+                    <RadzenText TextStyle="TextStyle.Body1" Class="rz-font-weight-bold rz-pt-2">Cancelled</RadzenText>
+                }
+                else if(Event.Status == "ToBePublished")
+                {
+                    <RadzenText TextStyle="TextStyle.Body1" Class="rz-font-weight-bold rz-pt-2">Planned to publish</RadzenText>
                 }
             </RadzenStack>
         </RadzenColumn>
@@ -97,6 +105,16 @@
         border: 2px solid grey;
         opacity: 0.65;
     }
+    
+    .cancelled-event {
+        border: 2px solid red;
+        opacity: 0.65;
+    }
+    
+    .to-be-published-event {
+        border: 2px solid orange;
+        opacity: 0.85;
+    }
 
 </style>
 
@@ -134,6 +152,21 @@
         else
         {
             return "small-font";
+        }
+    }
+    
+    private string GetCardClass(string status)
+    {
+        switch (status)
+        {
+            case "Archived":
+                return "archived-event rz-mx-auto";
+            case "Cancelled":
+                return "cancelled-event rz-mx-auto";
+            case "ToBePublished":
+                return "to-be-published-event rz-mx-auto";
+            default:
+                return "rz-mx-auto";
         }
     }
 }
