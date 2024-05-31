@@ -42,7 +42,7 @@
         <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-pt-2 rz-px-4 rz-border-top">
-                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => { if (IsUserEventOrganizer(ev)) OpenInterestedFriendsDialog(); else OpenInterestedFriendsDialog(); })" 
+                    <RadzenButton Size="ButtonSize.Medium" Click="@(() => { if (IsUserEventOrganizer(ev)) OpenInterestedStudentsDialog(); else OpenInterestedFriendsDialog(); })" 
                                   class="friends-button" Disabled=@(!IdentityService.IsAuthenticated)>
                         <RadzenIcon Icon="grade" Style="color: #30445f;"/>
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left rz-pr-8">@ev.InterestedStudents</RadzenText>
@@ -554,7 +554,23 @@
             },
             new DialogOptions()
             {
-                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                Width = "800px", Height = "650px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenInterestedStudentsDialog()
+    { 
+        var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
+        await DialogService.OpenAsync<EventInterestedStudentsDialog>("Interested students:",
+            new Dictionary<string, object>()
+            {
+                { "Students", eventParticipantsDto.InterestedStudents },
+                { "EventId", ev.Id }
+            },
+            new DialogOptions()
+            {
+                Width = "800px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }
