@@ -74,8 +74,20 @@
                         }
                     </RadzenStack>
                 }
-                <RadzenButton Size="ButtonSize.Medium" Text="Event details" Icon="info" Style="background-color: darkgreen !important;"
-                                                  Click="@(() => OpenEventDetailsDialog(ev))" class="separate-button rz-ml-auto"/>
+                @if (IdentityService.GetCurrentUserRole() == "user")
+                {
+                    @if (ev.IsSignedUp || ev.IsInterested)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Invite friends"
+                                    Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))" class="separate-button-cancelled"/>
+                    }
+                
+                }
+                @if (IdentityService.GetCurrentUserRole() == "organizer")
+                {
+                    <RadzenButton Size="ButtonSize.Medium" Text="Invite friends"
+                                    Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))" class="separate-button-cancelled"/>
+                }
             </RadzenStack>
         </div>
     }
@@ -467,6 +479,24 @@
                 Width = "700px", Height = "350px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+
+    private async Task OpenInviteFriendsToEventDialog(Guid eventId)
+    {
+        var parameters = new Dictionary<string, object>()
+        {
+            {"EventId", eventId}
+        };
+
+        var options = new DialogOptions()
+        {
+            Width = "700px",
+            Height = "530px",
+            Resizable = true,
+            Draggable = true
+        };
+
+        await DialogService.OpenAsync<InviteFriendsToEventDialog>("Invite Friends", parameters, options);
     }
     
     private async void SignUpToEvent(EventDto eventDto)
