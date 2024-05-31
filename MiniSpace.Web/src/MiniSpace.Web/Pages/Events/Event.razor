@@ -45,35 +45,37 @@
 
 @if (pageInitialized)
 {
-    @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev) && 
-         (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
+    @if (IdentityService.IsAuthenticated && (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
     {
         <div>
             <RadzenStack class="rz-pt-5 rz-mx-auto" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="1rem">
-                <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
-                    @if (!ev.IsInterested)
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Show interest in event"
-                                      Click="@(() => ShowInterestInEvent(ev))" class="separate-button"/>
-                    }
-                    else
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" 
-                                      Click="@(() => CancelInterestInEvent(ev))" class="separate-button-cancelled"/>
-                    }
-                    @if (!ev.IsSignedUp)
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" 
-                                      Click="@(() => SignUpToEvent(ev))" class="separate-button" Disabled=@(ev.SignedUpStudents>=ev.Capacity)/>
-                    }
-                    else
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" 
-                                      Click="@(() => CancelSignUpToEvent(ev))" class="separate-button-cancelled"/>
-                    }
-                </RadzenStack>
+                @if (!IsUserEventOrganizer(ev))
+                {
+                    <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                        @if (!ev.IsInterested)
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" Text="Show interest in event"
+                                          Click="@(() => ShowInterestInEvent(ev))" class="separate-button"/>
+                        }
+                        else
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" 
+                                          Click="@(() => CancelInterestInEvent(ev))" class="separate-button-cancelled"/>
+                        }
+                        @if (!ev.IsSignedUp)
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" 
+                                          Click="@(() => SignUpToEvent(ev))" class="separate-button" Disabled=@(ev.SignedUpStudents>=ev.Capacity)/>
+                        }
+                        else
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" 
+                                          Click="@(() => CancelSignUpToEvent(ev))" class="separate-button-cancelled"/>
+                        }
+                    </RadzenStack>
+                }
                 <RadzenButton Size="ButtonSize.Medium" Text="Event details" Icon="info" Style="background-color: darkgreen !important;"
-                                                  Click="@(() => OpenEventDetailsDialog(ev))" class="separate-button"/>
+                                                  Click="@(() => OpenEventDetailsDialog(ev))" class="separate-button rz-ml-auto"/>
             </RadzenStack>
         </div>
     }
@@ -189,6 +191,11 @@
                 </RadzenColumn>
                 <RadzenColumn SizeSM="4">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                        @if (IdentityService.IsAuthenticated && ev.IsSignedUp)
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" class="separate-button"
+                                          Click="@(() => OpenRatingDialog())" Text="@(ev.StudentRating != null ? $"Your rating {ev.StudentRating}/5" : "Rate")"/>
+                        }
                         @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                         {
                             <RadzenButton Size="ButtonSize.Medium" class="separate-button"
@@ -557,6 +564,20 @@
         StateHasChanged(); 
     }
     
+    private async Task OpenRatingDialog()
+    {
+        var result = await DialogService.OpenAsync<RatingDialog>("",
+            new Dictionary<string, object>() { { "StudentRating", reactionsSummary.AuthUserReactionType } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "50px", Resizable = false, Draggable = false, ShowClose = false,
+                AutoFocusFirstElement = false
+            });
+        
+        await RatingChanged((int?)result);
+        StateHasChanged(); 
+    }
+    
     private async Task OpenReactionsListingDialog()
     {
         var reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
@@ -624,11 +645,6 @@
                 Width = "800px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-    }
-
-    private async Task OpenReportDialog()
-    {
-        
     }
     
     private async Task ReportEvent(EventDto eventDto)
