@@ -71,26 +71,25 @@
                         <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" 
                                       Click="@(() => CancelSignUpToEvent(ev))" class="separate-button-cancelled"/>
                     }
+
+                    @if (IdentityService.GetCurrentUserRole() == "user")
+                    {
+                        @if (ev.IsSignedUp || ev.IsInterested)
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" Text="Invite friends"
+                                        Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))" class="separate-button-cancelled"/>
+                        }
+    
+                    }
+                    @if (IdentityService.GetCurrentUserRole() == "organizer")
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Invite friends"
+                                        Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))" class="separate-button-cancelled"/>
+                    }
                 </RadzenStack>
+
                 <RadzenButton Size="ButtonSize.Medium" Text="Event details" Icon="info" Style="background-color: darkgreen !important;"
                                                   Click="@(() => OpenEventDetailsDialog(ev))" class="separate-button"/>
-            </RadzenStack>
-
-             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                @if (IdentityService.IsAuthenticated  && IdentityService.GetCurrentUserRole() == "user")
-                {
-                    @if (ev.IsSignedUp || ev.IsInterested)
-                    {
-                        <RadzenButton Size="ButtonSize.Medium" Text="Invite friends" ButtonStyle="ButtonStyle.Secondary"
-                                      Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))"/>
-                    }
-   
-                }
-                @if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Invite friends" ButtonStyle="ButtonStyle.Secondary"
-                                      Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))"/>
-                }
             </RadzenStack>
         </div>
     }
