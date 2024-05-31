@@ -48,13 +48,14 @@
                         <img src="@GetImage(request.InviterId)" alt="Inviter Image" class="friend-img">
                         <div class="friend-info">
                             <h5>@request.InviterName</h5>
-                            <p>Email: @request.InviterEmail</p>
-                            <p>Requested On: @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
-                            <p>Status: @request.State</p>
+                            <p><RadzenIcon Icon="email" Style="color: #30445f;"/> @request.InviterEmail</p>
+                            <p><RadzenIcon Icon="event" Style="color: #30445f;"/> @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                            <p><RadzenIcon Icon="info" Style="color: #30445f;"/> @request.State</p>
                         </div>
+                        <RadzenButton Text="Decline" Click="@(() => DeclineRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
+                        <RadzenButton Text="Accept" Click="@(() => AcceptRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Success" Icon="check" Style="margin-right: 10px;" />
                     </div>
-                    <RadzenButton Text="Accept" Click="@(() => AcceptRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Success" Icon="check" Style="margin-right: 10px;" />
-                    <RadzenButton Text="Decline" Click="@(() => DeclineRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
+                  
                 }
             }
             else
@@ -140,6 +141,20 @@
 
     .friend-info {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .friend-info h5, .friend-info p {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        margin-left: 20px !important;
+        padding: 2px 0; 
+    }
+
+    .friend-info h5 RadzenIcon, .friend-info p RadzenIcon {
+        margin-right: 15px; 
     }
 
     .search-bar input:focus {
@@ -179,7 +194,7 @@
 
     .details-list li {
         margin-bottom: 8px;
-        font-size: 16px; /* Larger font for readability */
+        font-size: 16px; 
     }
 </style>
 

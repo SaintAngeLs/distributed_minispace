@@ -51,10 +51,10 @@
                             <img src="@GetImage(request.InviteeId)" alt="Invitee Image" class="friend-img">
                         }
                         <div class="friend-info">
-                            <h5><RadzenIcon Icon="user" /> @request.InviteeName</h5>
-                            <p><RadzenIcon Icon="email" /> @request.InviteeEmail</p>
-                            <p><RadzenIcon Icon="event" /> @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
-                            <p><RadzenIcon Icon="info" /> @request.State</p>
+                            <h5><RadzenIcon Icon="user" Style="color: #30445f;"/> @request.InviteeName</h5>
+                            <p><RadzenIcon Icon="email" Style="color: #30445f;"/> @request.InviteeEmail</p>
+                            <p><RadzenIcon Icon="event" Style="color: #30445f;"/> @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                            <p><RadzenIcon Icon="info" Style="color: #30445f;"/> @request.State</p>
 
                         </div>
                          <RadzenButton Text="Withdraw" Click="@(() => WithdrawRequest(request.InviteeId))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
@@ -144,22 +144,22 @@
     }
 
     .friend-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column; /* Aligns content vertically */
-}
+        flex: 1;
+        display: flex;
+        flex-direction: column; /* Aligns content vertically */
+    }
 
-.friend-info h5, .friend-info p {
-    display: flex;
-    align-items: center; /* Aligns items horizontally in a line */
-    margin: 0; /* Removes default margin */
-    margin-left: 20px !important;
-    padding: 2px 0; /* Adds slight padding */
-}
+    .friend-info h5, .friend-info p {
+        display: flex;
+        align-items: center; /* Aligns items horizontally in a line */
+        margin: 0; /* Removes default margin */
+        margin-left: 20px !important;
+        padding: 2px 0; /* Adds slight padding */
+    }
 
-.friend-info h5 RadzenIcon, .friend-info p RadzenIcon {
-    margin-right: 15px; /* Right margin for spacing between icon and text */
-}
+    .friend-info h5 RadzenIcon, .friend-info p RadzenIcon {
+        margin-right: 15px; /* Right margin for spacing between icon and text */
+    }
 
 
     .search-bar input:focus {

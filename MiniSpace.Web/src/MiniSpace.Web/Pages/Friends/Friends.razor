@@ -25,11 +25,12 @@
     };
 }
 
-<div style="padding: 20px;">
+
+    <div class="left-panel">
     <div class="search-bar">
-            <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
-            <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
-        </div>
+        <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 100%;" />
+        <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="width: 100%; margin-top: 10px;" />
+    </div>
     <div class="friends-container">
         @if (friends != null && friends.Any())
         {
@@ -39,9 +40,9 @@
                     <img src="@GetImage(friend.StudentDetails.Id)" alt="Friend Image" class="friend-img">
                     <div class="friend-info">
                         <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
-                        <p>@friend.StudentDetails.Email</p>
+                        <p><RadzenIcon Icon="email" Style="color: #30445f;"/>@friend.StudentDetails.Email</p>
                         <div class="buttons">
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.FriendId))" Style="margin-right: 10px;" />
+                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.FriendId))"/>
                             <RadzenButton Text="Remove" Click="@(() => ConfirmRemoveFriend(friend.StudentDetails.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
                         </div>
                     </div>
@@ -54,6 +55,8 @@
         }
     </div>
 </div>
+
+
 <style>
     .main-container { 
         display: flex; 
@@ -105,13 +108,22 @@
         padding-left: 20px;
     }
 
+     .left-panel, .right-panel {
+        background-color: #f7f7f7;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+
     h5, p {
         margin-bottom: 5px;
         color: #333;
     }
 
     .buttons {
-        display: flex;
+        
         align-items: center;
     }
 </style>
