@@ -50,7 +50,7 @@
         <div>
             <RadzenStack class="rz-pt-5 rz-mx-auto" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="1rem">
                 <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
-                    @if (!IsUserEventOrganizer(ev))
+                    @if (!IsUserEventOrganizer(ev) && ev.Status != "Archived")
                     {
                         @if (!ev.IsInterested)
                         {
@@ -73,7 +73,7 @@
                                           Click="@(() => CancelSignUpToEvent(ev))" class="separate-button-cancelled"/>
                         }    
                     }
-                    @if (IdentityService.GetCurrentUserRole() == "user")
+                    @if (IdentityService.GetCurrentUserRole() == "user" && ev.Status != "Archived")
                     {
                         @if (ev.IsSignedUp || ev.IsInterested)
                         {
@@ -82,7 +82,7 @@
                         }
                     
                     }
-                    @if (IdentityService.GetCurrentUserRole() == "organizer")
+                    @if (IdentityService.GetCurrentUserRole() == "organizer" && ev.Status != "Archived")
                     {
                         <RadzenButton Size="ButtonSize.Medium" Text="Invite friends"
                                         Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))" class="separate-button-cancelled"/>
@@ -560,7 +560,7 @@
         {
             await EventsService.CancelRateEventAsync(ev.Id, studentId);
         }
-
+        eventRating = await EventsService.GetEventRatingAsync(ev.Id);
         ev.StudentRating = rating;
         StateHasChanged();
     }
