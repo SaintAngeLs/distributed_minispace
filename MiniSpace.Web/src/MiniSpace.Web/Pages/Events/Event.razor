@@ -37,7 +37,34 @@
 
 @if (pageInitialized)
 {
-    
+    @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev) && 
+         (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
+    {
+        <div class="rz-p-4">
+            <RadzenStack class="rz-pt-5 rz-mx-auto" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                @if (!ev.IsInterested)
+                {
+                    <RadzenButton Size="ButtonSize.Medium" Text="Interest in event" ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => ShowInterestInEvent(ev))" class="separate-button"/>
+                }
+                else
+                {
+                    <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" ButtonStyle="ButtonStyle.Warning"
+                                  Click="@(() => CancelInterestInEvent(ev))" class="separate-button"/>
+                }
+                @if (!ev.IsSignedUp)
+                {
+                    <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" ButtonStyle="ButtonStyle.Secondary"
+                                  Click="@(() => SignUpToEvent(ev))" class="separate-button"/>
+                }
+                else
+                {
+                    <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" ButtonStyle="ButtonStyle.Warning"
+                                  Click="@(() => CancelSignUpToEvent(ev))" class="separate-button"/>
+                }
+            </RadzenStack>
+        </div>
+    }
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
         <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
@@ -72,6 +99,13 @@
                         <RadzenButton Size="ButtonSize.Medium" Text="Delete event" class="delete-button"
                                                           Click="@(() => OpenDeleteEventDialog())" >
                             <RadzenIcon Icon="close" Style="color: white; font-weight: 800;"/>
+                        </RadzenButton>
+                    }
+                    else
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Report event" class="delete-button"
+                                      Click="@(() => OpenReportDialog())" >
+                            <RadzenIcon Icon="warning" Style="color: white; font-weight: 800;"/>
                         </RadzenButton>
                     }
                 </RadzenStack>
@@ -431,6 +465,7 @@
     {
         await EventsService.SignUpToEventAsync(eventDto.Id, studentId);
         eventDto.IsSignedUp = true;
+        ev.SignedUpStudents++;
         StateHasChanged();
     }
 
@@ -438,6 +473,7 @@
     {
         await EventsService.CancelSignUpToEventAsync(eventDto.Id, studentId);
         eventDto.IsSignedUp = false;
+        ev.SignedUpStudents--;
         StateHasChanged();
     }
 
@@ -445,6 +481,7 @@
     {
         await EventsService.ShowInterestInEventAsync(eventDto.Id, studentId);
         eventDto.IsInterested = true;
+        ev.InterestedStudents++;
         StateHasChanged();
     }
 
@@ -452,6 +489,7 @@
     {
         await EventsService.CancelInterestInEventAsync(eventDto.Id, studentId);
         eventDto.IsInterested = false;
+        ev.InterestedStudents--;
         StateHasChanged();
     }
 
@@ -571,6 +609,11 @@
                 Width = "800px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+
+    private async Task OpenReportDialog()
+    {
+        
     }
 
     // private async Task SearchComments()
