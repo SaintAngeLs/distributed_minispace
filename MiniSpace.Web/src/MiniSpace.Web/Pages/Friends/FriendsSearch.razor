@@ -315,20 +315,29 @@
     private IEnumerable<FriendRequestDto> incomingRequests;
 
     protected override async Task OnInitializedAsync() {
-        sentRequests = await FriendsService.GetSentFriendRequestsAsync();
-        incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
-        allFriends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
+        await IdentityService.InitializeAuthenticationState(); 
 
-        await LoadStudents();
-        StateHasChanged();
-        
-        var tasks = new List<Task>();
-        foreach (var student in students)
+        if (IdentityService.IsAuthenticated)
         {
-            tasks.Add(FetchImageAsync(student));
-        }
+            sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+            incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
+            allFriends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
 
-        await Task.WhenAll(tasks);
+            await LoadStudents();
+            StateHasChanged();
+            
+            var tasks = new List<Task>();
+            foreach (var student in students)
+            {
+                tasks.Add(FetchImageAsync(student));
+            }
+
+            await Task.WhenAll(tasks);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
     }
     
    private async Task FetchImageAsync(StudentDto student)

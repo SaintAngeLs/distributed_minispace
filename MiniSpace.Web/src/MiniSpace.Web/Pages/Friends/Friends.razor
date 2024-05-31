@@ -125,19 +125,32 @@
 
     protected override async Task OnInitializedAsync()
     {
-         try {
-            studentId = IdentityService.GetCurrentUserId();
-            var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
-            if (friendsResult != null) {
-                friends = friendsResult.ToList();
-                await LoadImages();
-            } else {
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        { 
+
+            try 
+            {
+                studentId = IdentityService.GetCurrentUserId();
+                var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
+                if (friendsResult != null) 
+                {
+                    friends = friendsResult.ToList();
+                    await LoadImages();
+                } 
+                else 
+                {
+                    friends = new List<FriendDto>();  
+                }
+            }
+            catch (Exception ex) {
+                NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
                 friends = new List<FriendDto>();  
             }
         }
-        catch (Exception ex) {
-            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
-            friends = new List<FriendDto>();  
+        else
+        {
+            NavigationManager.NavigateTo("/login");
         }
     }
 

@@ -32,7 +32,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(StudentSignedUpToEvent eventArgs, CancellationToken cancellationToken)
         {
-            Console.WriteLine("**************************************************************");
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.StudentId);
             var student = await _studentsServiceClient.GetAsync(eventArgs.StudentId);
             if (studentNotifications == null)
