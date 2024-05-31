@@ -9,41 +9,41 @@ using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
 {
-    public class EventsServiceClient : IEventsServiceClient
+    public class ReactionsServiceClient : IReactionsServiceClient
     {
         private readonly IHttpClient _httpClient;
-        private readonly string _eventsServiceUrl;
+        private readonly string _reactionsServiceUrl;
 
-        public EventsServiceClient(IHttpClient httpClient, HttpClientOptions options)
+        public ReactionsServiceClient(IHttpClient httpClient, HttpClientOptions options)
         {
             _httpClient = httpClient;
-            _eventsServiceUrl = options.Services["events"];
+            _reactionsServiceUrl = options.Services["reactions"];
         }
 
-        public async Task<EventParticipantsDto> GetParticipantsAsync(Guid eventId)
+        public async Task<IEnumerable<ReactionDto>> GetReactionsAsync()
         {
-            var url = $"{_eventsServiceUrl}/events/{eventId}/participants";
+            var url = $"{_reactionsServiceUrl}/reactions";
             var response = await _httpClient.GetAsync(url);
-            return await HandleResponseAsync<EventParticipantsDto>(response);
+            return await HandleResponseAsync<IEnumerable<ReactionDto>>(response);
         }
 
-        public async Task<EventDto> GetEventAsync(Guid eventId)
+        public async Task<ReactionsSummaryDto> GetReactionsSummaryAsync()
         {
-            var url = $"{_eventsServiceUrl}/events/{eventId}";
+            var url = $"{_reactionsServiceUrl}/reactions/summary";
             var response = await _httpClient.GetAsync(url);
-            return await HandleResponseAsync<EventDto>(response);  
+            return await HandleResponseAsync<ReactionsSummaryDto>(response);
         }
-  
+
         private async Task<T> HandleResponseAsync<T>(HttpResponseMessage response) where T : class
         {
             if (!response.IsSuccessStatusCode)
             {
-                // Console.WriteLine($"Error fetching data from Events Service. Status Code: {response.StatusCode}");
+                Console.WriteLine($"Error fetching data from Reactions Service. Status Code: {response.StatusCode}");
                 return null;
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            // Console.WriteLine("JSON Response: " + json); 
+            Console.WriteLine("JSON Response: " + json);
 
             try
             {
@@ -54,18 +54,18 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
 
                 if (responseObject == null)
                 {
-                    // Console.WriteLine("Deserialized object is null. Possibly empty JSON.");
+                    Console.WriteLine("Deserialized object is null. Possibly empty JSON.");
                     return null;
                 }
 
                 var jsonString = JsonSerializer.Serialize(responseObject, new JsonSerializerOptions { WriteIndented = true });
-                // Console.WriteLine("Deserialized JSON Object: " + jsonString);
+                Console.WriteLine("Deserialized JSON Object: " + jsonString);
 
                 return responseObject;
             }
             catch (JsonException ex)
             {
-                // Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}\nJSON: {json}");
+                Console.WriteLine($"Error deserializing the response from Reactions Service: {ex.Message}\nJSON: {json}");
                 return null;
             }
         }

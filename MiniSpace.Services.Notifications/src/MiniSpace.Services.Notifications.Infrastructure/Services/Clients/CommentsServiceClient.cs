@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,41 +8,34 @@ using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
 {
-    public class EventsServiceClient : IEventsServiceClient
+    public class CommentsServiceClient : ICommentsServiceClient
     {
         private readonly IHttpClient _httpClient;
-        private readonly string _eventsServiceUrl;
+        private readonly string _commentsServiceUrl;
 
-        public EventsServiceClient(IHttpClient httpClient, HttpClientOptions options)
+        public CommentsServiceClient(IHttpClient httpClient, HttpClientOptions options)
         {
             _httpClient = httpClient;
-            _eventsServiceUrl = options.Services["events"];
+            _commentsServiceUrl = options.Services["comments"];
         }
 
-        public async Task<EventParticipantsDto> GetParticipantsAsync(Guid eventId)
+        public async Task<CommentDto> GetCommentAsync(Guid commentId)
         {
-            var url = $"{_eventsServiceUrl}/events/{eventId}/participants";
+            var url = $"{_commentsServiceUrl}/comments/{commentId}";
             var response = await _httpClient.GetAsync(url);
-            return await HandleResponseAsync<EventParticipantsDto>(response);
+            return await HandleResponseAsync<CommentDto>(response);
         }
 
-        public async Task<EventDto> GetEventAsync(Guid eventId)
-        {
-            var url = $"{_eventsServiceUrl}/events/{eventId}";
-            var response = await _httpClient.GetAsync(url);
-            return await HandleResponseAsync<EventDto>(response);  
-        }
-  
         private async Task<T> HandleResponseAsync<T>(HttpResponseMessage response) where T : class
         {
             if (!response.IsSuccessStatusCode)
             {
-                // Console.WriteLine($"Error fetching data from Events Service. Status Code: {response.StatusCode}");
+                Console.WriteLine($"Error fetching data from Comments Service. Status Code: {response.StatusCode}");
                 return null;
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            // Console.WriteLine("JSON Response: " + json); 
+            Console.WriteLine("JSON Response: " + json);
 
             try
             {
@@ -54,18 +46,18 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
 
                 if (responseObject == null)
                 {
-                    // Console.WriteLine("Deserialized object is null. Possibly empty JSON.");
+                    Console.WriteLine("Deserialized object is null. Possibly empty JSON.");
                     return null;
                 }
 
                 var jsonString = JsonSerializer.Serialize(responseObject, new JsonSerializerOptions { WriteIndented = true });
-                // Console.WriteLine("Deserialized JSON Object: " + jsonString);
+                Console.WriteLine("Deserialized JSON Object: " + jsonString);
 
                 return responseObject;
             }
             catch (JsonException ex)
             {
-                // Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}\nJSON: {json}");
+                Console.WriteLine($"Error deserializing the response from Comments Service: {ex.Message}\nJSON: {json}");
                 return null;
             }
         }

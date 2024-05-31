@@ -64,6 +64,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient<IEventsServiceClient, EventsServiceClient>();
             builder.Services.AddTransient<IPostsServiceClient, PostsServiceClient>();
+            builder.Services.AddTransient<ICommentsServiceClient, CommentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
@@ -125,7 +126,10 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<PostCreated>()
                 .SubscribeEvent<PostUpdated>()
                 .SubscribeEvent<PasswordResetTokenGenerated>()
-                .SubscribeEvent<SignedUp>();
+                .SubscribeEvent<SignedUp>()
+                .SubscribeEvent<CommentCreated>()
+                .SubscribeEvent<CommentUpdated>();
+                
             return app;
         }
 
