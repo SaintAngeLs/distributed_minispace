@@ -3,6 +3,8 @@ using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Events.External;
 
 namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 {
@@ -17,7 +19,7 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
         public CreateNotificationHandler(
             IStudentNotificationsRepository studentNotificationsRepository,
             IFriendsServiceClient friendsServiceClient,
-             IEventsServiceClient eventsServiceClient,
+            IEventsServiceClient eventsServiceClient,
             IEventMapper eventMapper, 
             IMessageBroker messageBroker
             )
@@ -31,21 +33,47 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
         public async Task HandleAsync(CreateNotification command, CancellationToken cancellationToken = default)
         {
-            var notification = new Notification(
-                command.NotificationId, 
-                command.UserId, 
-                command.Message, 
-                NotificationStatus.Unread,
-                DateTime.UtcNow, 
-                null,
-                NotificationEventType.Other,
-                command.UserId
-                
-            );
-            await _notificationRepository.AddAsync(notification);
+            
+            var eventDetails = await _eventsServiceClient.GetEventAsync(command.EventId);
+           
+            foreach (var userId in command.StudentIds)
+            {
+                var notification = new Notification(
+                    command.NotificationId,
+                    userId,
+                    command.Message,
+                    NotificationStatus.Unread,
+                    DateTime.UtcNow,
+                    null,
+                    NotificationEventType.NewEventInvitaion,
+                    eventDetails.Id,
+                    eventDetails?.Name
+                );
 
-            var events = _eventMapper.MapAll(notification.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
+                var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(userId);
+                if (studentNotifications == null)
+                {
+                    studentNotifications = new StudentNotifications(userId);
+                }
+
+                studentNotifications.AddNotification(notification);
+
+                 var notificationCreatedEvent = new NotificationCreated(
+                    notificationId: notification.NotificationId,
+                    userId: userId,
+                    message: notification.Message,
+                    createdAt: notification.CreatedAt,
+                    eventType: notification.EventType.ToString(),
+                    relatedEntityId: eventDetails.Id,
+                    details: notification.Message 
+                );
+
+                await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+
+                var events = _eventMapper.MapAll(notification.Events);
+                await _messageBroker.PublishAsync(events.ToArray());
+            }
         }
     }
 }

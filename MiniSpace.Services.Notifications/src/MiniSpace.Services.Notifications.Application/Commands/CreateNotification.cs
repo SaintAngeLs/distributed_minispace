@@ -8,8 +8,8 @@ namespace MiniSpace.Services.Notifications.Application.Commands
         public Guid UserId { get; }
         public string Message { get; }
         public IEnumerable<Guid> StudentIds { get; }
-        public Guid? EventId { get; }
-        public CreateNotification(Guid notificationId, Guid userId, string message, IEnumerable<Guid> studentIds, Guid? eventId = null)
+        public Guid EventId { get; }
+        public CreateNotification(Guid notificationId, Guid userId, string message, IEnumerable<Guid> studentIds, Guid eventId)
         {
             NotificationId = notificationId;
             UserId = userId;
