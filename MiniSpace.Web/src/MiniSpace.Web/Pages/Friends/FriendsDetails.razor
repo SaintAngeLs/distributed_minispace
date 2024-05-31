@@ -74,10 +74,7 @@ else
             return;
         }
         var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
-        if (imageResult != null)
-        {
-            profileImage = $"data:image/jpeg;base64,{imageResult.Base64Content}";
-        }
+        profileImage = imageResult != null ? $"data:image/webp;base64,{imageResult.Base64Content}" : "images/default_profile_image.webp";
     }
     
     private async Task OpenReportStudentProfileDialog(CreateReportModel createReportModel)

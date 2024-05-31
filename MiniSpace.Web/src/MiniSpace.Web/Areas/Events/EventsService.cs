@@ -20,8 +20,12 @@ namespace MiniSpace.Web.Areas.Events
             _identityService = identityService;
         }
         
-        public Task<EventDto> GetEventAsync(Guid eventId)
+        public Task<EventDto> GetEventAsync(Guid eventId, bool isAuthenticated)
         {
+            if (isAuthenticated)
+            {
+                _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            }
             return _httpClient.GetAsync<EventDto>($"events/{eventId}");
         }
 
@@ -88,6 +92,17 @@ namespace MiniSpace.Web.Areas.Events
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync($"events/{eventId}/rate", new {eventId, rating, studentId});
+        }
+        
+        public Task CancelRateEventAsync(Guid eventId, Guid studentId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"events/{eventId}/rate?studentId={studentId}");
+        }
+        
+        public Task<EventRatingDto> GetEventRatingAsync(Guid eventId)
+        {
+            return _httpClient.GetAsync<EventRatingDto>($"events/{eventId}/rating");
         }
         
         public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer,

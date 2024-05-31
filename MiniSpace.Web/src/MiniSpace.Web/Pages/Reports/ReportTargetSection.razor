@@ -5,6 +5,7 @@
 @using MiniSpace.Web.DTO.Types
 @inject IEventsService EventsService
 @inject IPostsService PostsService
+@inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
@@ -53,7 +54,7 @@
                     StateHasChanged();
                     return;
                 }
-                var ev = await EventsService.GetEventAsync(post.EventId);
+                var ev = await EventsService.GetEventAsync(post.EventId, IdentityService.IsAuthenticated);
                 if (ev == null)
                 {
                     errorMessage = "Event above reported post not found! Probably has been deleted!";

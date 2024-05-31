@@ -9,6 +9,7 @@ using System.Text.Json;
 using MiniSpace.Services.Email.Application.Exceptions;
 using MiniSpace.Services.Email.Core.Repositories;
 using MiniSpace.Services.Email.Application.Dto;
+using Microsoft.Extensions.Logging;
 
 namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 {
@@ -18,24 +19,26 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
         private readonly IEmailService _emailService;
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentEmailsRepository _studentEmailsRepository;
+        private readonly ILogger<NotificationCreatedHandler> _logger; 
 
         public NotificationCreatedHandler(
             IStudentsServiceClient studentsServiceClient, 
             IMessageBroker messageBroker,
             IEmailService emailService,
-            IStudentEmailsRepository studentEmailsRepository) 
+            IStudentEmailsRepository studentEmailsRepository,
+            ILogger<NotificationCreatedHandler> logger) 
         {
             _studentsServiceClient = studentsServiceClient;
             _messageBroker = messageBroker;
             _emailService = emailService;
             _studentEmailsRepository = studentEmailsRepository;
+            _logger = logger;
         }
 
         public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
         {
-            Console.WriteLine("*********************************************************************");
             string jsonEvent = JsonSerializer.Serialize(@event);
-            Console.WriteLine($"Received Event: {jsonEvent}");
+            _logger.LogInformation($"Received Event: {jsonEvent}");
 
 
             var student = await _studentsServiceClient.GetAsync(@event.UserId);
@@ -62,7 +65,7 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
                 EmailNotificationStatus.Pending
             );
             await _emailService.SendEmailAsync(student.Email, subject, htmlContent);
-            Console.WriteLine($"Email sent to {student.Email}");
+            _logger.LogInformation($"Email sent to {student.Email}");
 
             emailNotification.MarkAsSent();
 

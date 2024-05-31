@@ -5,6 +5,7 @@
 @using MiniSpace.Web.DTO
 @using Radzen
 @inject ICommentsService CommentsService
+@inject IIdentityService IdentityService
 @inject IEventsService EventsService
 @inject IPostsService PostsService
 @inject NavigationManager NavigationManager
@@ -101,7 +102,7 @@
             StateHasChanged();
             return;
         }
-        var ev = await EventsService.GetEventAsync(post.EventId);
+        var ev = await EventsService.GetEventAsync(post.EventId, IdentityService.IsAuthenticated);
         if (ev == null)
         {
             errorMessage = "Event above reported comment not found! Probably has been deleted!";

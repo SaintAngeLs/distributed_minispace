@@ -40,8 +40,8 @@
                                 <RadzenDatePicker @bind-Value="@updateEventModel.StartDate" Name="start-date"
                                                   ShowTime="true" MinutesStep="5" DateFormat="@dateFormat" />
                                 <RadzenCustomValidator Component="start-date" Style="position: relative"
-                                                       Validator="@(() => ValidateDate(updateEventModel.StartDate))"
-                                                       Text="Minute number has to be divisible by 5"/>
+                                                       Validator="@(() => ValidateDates(updateEventModel.StartDate, DateTime.Now))"
+                                                       Text="Start date should be in the future"/>
                             </RadzenFormField>
                             <RadzenFormField Text="Building name" Variant="Variant.Outlined">
                                 <RadzenTextBox @bind-Value="@updateEventModel.BuildingName" Name="building-name" />
@@ -74,8 +74,11 @@
                                  <RadzenDatePicker @bind-Value="@updateEventModel.EndDate" Name="end-date"
                                                    ShowTime="true" MinutesStep="5" DateFormat="@dateFormat" />
                                  <RadzenCustomValidator Component="end-date" Style="position: relative"
-                                                        Validator="@(() => ValidateDate(updateEventModel.EndDate))"
+                                                        Validator="@(() => ValidateDateDivisibility(updateEventModel.EndDate))"
                                                         Text="Minute number has to be divisible by 5"/>
+                                 <RadzenCustomValidator Component="end-date" Style="position: relative"
+                                                        Validator="@(() => ValidateDates(updateEventModel.EndDate, updateEventModel.StartDate))"
+                                                        Text="End date should be later than start date"/>
                              </RadzenFormField>
                             <RadzenFormField Text="Street" Variant="Variant.Outlined">
                                 <RadzenTextBox @bind-Value="@updateEventModel.Street" Name="street" />
@@ -109,8 +112,14 @@
                                             <RadzenDatePicker @bind-Value="@updateEventModel.PublishDate" Name="publish-date"
                                                               ShowTime="true" MinutesStep="5" DateFormat="@dateFormat" />
                                             <RadzenCustomValidator Component="publish-date" Style="position: relative"
-                                                                   Validator="@(() => ValidateDate(updateEventModel.PublishDate))"
+                                                                   Validator="@(() => ValidateDateDivisibility(updateEventModel.PublishDate))"
                                                                    Text="Minute number has to be divisible by 5"/>
+                                            <RadzenCustomValidator Component="publish-date" Style="position: relative"
+                                                                    Validator="@(() => ValidateDates(updateEventModel.StartDate, updateEventModel.PublishDate))"
+                                                                    Text="Publish date should be earlier than start date"/>
+                                             <RadzenCustomValidator Component="publish-date" Style="position: relative"
+                                                                    Validator="@(() => ValidateDates(updateEventModel.PublishDate, DateTime.Now))"
+                                                                    Text="Publish date should be in the future"/>
                                         </RadzenFormField>
                                     }
                                 </RadzenStack>
@@ -172,10 +181,16 @@
         "Other"
     ];
     
-    private static bool ValidateDate(DateTime dateTime)
+    private static bool ValidateDateDivisibility(DateTime dateTime)
     {
         return dateTime.Minute % 5 == 0;
     }
+    
+    private static bool ValidateDates(DateTime laterDate, DateTime earlierDate)
+    {
+        return laterDate > earlierDate;
+    }
+
     
     protected override async Task OnInitializedAsync()
     {
@@ -183,7 +198,7 @@
         {
             organizerId = IdentityService.GetCurrentUserId();
             
-            eventDto = await EventsService.GetEventAsync(new Guid(EventId));
+            eventDto = await EventsService.GetEventAsync(new Guid(EventId), false);
             updateEventModel.EventId = eventDto.Id;
             updateEventModel.Name = eventDto.Name;
             updateEventModel.OrganizerId = eventDto.Organizer.Id;

@@ -1,0 +1,117 @@
+@page "/invite-friends/{eventId}"
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Friends
+@using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Areas.Notifications
+@using MiniSpace.Web.DTO;
+@using MiniSpace.Web.DTO.Notifications;
+@using Radzen
+@inject IEventsService EventsService
+@inject IFriendsService FriendsService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@inject IMediaFilesService MediaFilesService
+@inject INotificationsService NotificationService
+
+<div class="rz-p-0 rz-p-md-12">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Class="rz-p-4 rz-mb-6 rz-border-radius-1" Style="border: var(--rz-grid-cell-border);">
+        <RadzenCheckBox @bind-Value="selectAll" Change="@((bool value) => ToggleSelectAll(value))" Text="Select All" />
+        <RadzenButton Text="Send Invitations" ButtonType="ButtonType.Submit" Click="@SendInvitations" Class="rz-ml-auto"/>
+    </RadzenStack>
+
+    @foreach (var friend in friends)
+    {
+        <RadzenCard Class="rz-my-3 rz-mx-auto" Style="max-width: 420px">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+                <RadzenImage Path=@GetImage(friend.FriendId) Style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;" />
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Friend</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@($"{friend.StudentDetails.FirstName} {friend.StudentDetails.LastName}")</b></RadzenText>
+                    <RadzenCheckBox Value="@IsFriendSelected(friend.FriendId)" 
+                        Change="@((bool value) => SetFriendSelected(friend.FriendId, value))" />
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenCard>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid EventId { get; set; }
+    private List<FriendDto> friends = new List<FriendDto>();
+    private Dictionary<Guid, string> images = new Dictionary<Guid, string>();
+    private List<Guid> selectedFriends = new List<Guid>();
+    private bool selectAll = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFriends();
+    }
+
+    private async Task LoadFriends()
+    {
+        Guid currentUserId = IdentityService.GetCurrentUserId();
+        var friendsResult = await FriendsService.GetAllFriendsAsync(currentUserId);
+        friends = friendsResult?.ToList() ?? new List<FriendDto>();
+        await LoadImages();
+    }
+
+    private async Task LoadImages()
+    {
+        foreach (var friend in friends)
+        {
+            var result = await MediaFilesService.GetFileAsync(friend.StudentDetails.ProfileImage);
+            images[friend.FriendId] = result?.Base64Content ?? "images/user_default.png";
+        }
+    }
+
+    private string GetImage(Guid friendId)
+    {
+        return images.TryGetValue(friendId, out var image) ? $"data:image/webp;base64,{image}" : "images/user_default.png";
+    }
+
+    private void ToggleSelectAll(bool isSelected)
+    {
+        selectAll = isSelected;
+        if (isSelected)
+        {
+            selectedFriends = friends.Select(f => f.FriendId).ToList();
+        }
+        else
+        {
+            selectedFriends.Clear();
+        }
+    }
+
+    private bool IsFriendSelected(Guid friendId)
+    {
+        return selectedFriends.Contains(friendId);
+    }
+
+    private void SetFriendSelected(Guid friendId, bool isSelected)
+    {
+        if (isSelected && !selectedFriends.Contains(friendId))
+        {
+            selectedFriends.Add(friendId);
+        }
+        else if (!isSelected && selectedFriends.Contains(friendId))
+        {
+            selectedFriends.Remove(friendId);
+        }
+    }
+
+    private async Task SendInvitations()
+    {
+        var notification = new NotificationToUsersDto
+        {
+            NotificationId = Guid.NewGuid(),
+            UserId = IdentityService.GetCurrentUserId(),
+            StudentIds = selectedFriends,
+            Message = "You have been invited to an event!",
+            EventId = EventId
+        };
+
+        await NotificationService.CreateNotificationAsync(notification);
+        NavigationManager.NavigateTo($"/events/{EventId}");
+    }
+}
