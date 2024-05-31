@@ -5,6 +5,7 @@ using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Events.External;
+using System;
 using System.Text.Json;
 
 namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
@@ -14,36 +15,39 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IFriendsServiceClient _friendsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
-        private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
         public CreateNotificationHandler(
             IStudentNotificationsRepository studentNotificationsRepository,
             IFriendsServiceClient friendsServiceClient,
             IEventsServiceClient eventsServiceClient,
-            IEventMapper eventMapper, 
             IMessageBroker messageBroker
             )
         {
             _studentNotificationsRepository = studentNotificationsRepository;
             _friendsServiceClient = friendsServiceClient;
-             _eventsServiceClient = eventsServiceClient;
-            _eventMapper = eventMapper;
+            _eventsServiceClient = eventsServiceClient;
             _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(CreateNotification command, CancellationToken cancellationToken = default)
         {
-            var commandJson = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
-    Console.WriteLine($"Received command: {commandJson}");
             var eventDetails = await _eventsServiceClient.GetEventAsync(command.EventId);
-           
+            var eventLink = $"https://minispace.itsharppro.com/events/{eventDetails.Id}";
+
             foreach (var userId in command.StudentIds)
             {
+                var notificationNotDetailed = $"<p>You have been invited to the event '{eventDetails.Name}' " +
+                    $"Learn more: <a href='{eventLink}'>Click here</a>.</p>";
+                var notificationMessage = $"<p>You have been invited to the event '{eventDetails.Name}' organized by {eventDetails.Organizer.Name}. " +
+                    $"This event will take place from {eventDetails.StartDate:yyyy-MM-dd} to {eventDetails.EndDate:yyyy-MM-dd} at {eventDetails.Location.Street}, {eventDetails.Location.City}. " +
+                    $"The event has a capacity of {eventDetails.Capacity} and a registration fee of ${eventDetails.Fee}. " +
+                    $"Learn more: <a href='{eventLink}'>Click here</a>.</p>";
+
                 var notification = new Notification(
                     command.NotificationId,
                     userId,
-                    command.Message,
+                    notificationMessage,
                     NotificationStatus.Unread,
                     DateTime.UtcNow,
                     null,
@@ -60,21 +64,19 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
                 studentNotifications.AddNotification(notification);
 
-                 var notificationCreatedEvent = new NotificationCreated(
+                var notificationCreatedEvent = new NotificationCreated(
                     notificationId: notification.NotificationId,
                     userId: userId,
-                    message: notification.Message,
+                    message: notificationNotDetailed,
                     createdAt: notification.CreatedAt,
                     eventType: notification.EventType.ToString(),
                     relatedEntityId: eventDetails.Id,
-                    details: notification.Message 
+                    details: notificationMessage 
                 );
 
                 await _messageBroker.PublishAsync(notificationCreatedEvent);
 
-
-                var events = _eventMapper.MapAll(notification.Events);
-                await _messageBroker.PublishAsync(events.ToArray());
+                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
             }
         }
     }

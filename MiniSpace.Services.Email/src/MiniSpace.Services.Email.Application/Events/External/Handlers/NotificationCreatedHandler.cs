@@ -25,12 +25,14 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
             IStudentsServiceClient studentsServiceClient, 
             IMessageBroker messageBroker,
             IEmailService emailService,
-            IStudentEmailsRepository studentEmailsRepository) 
+            IStudentEmailsRepository studentEmailsRepository,
+            ILogger<NotificationCreatedHandler> logger) 
         {
             _studentsServiceClient = studentsServiceClient;
             _messageBroker = messageBroker;
             _emailService = emailService;
             _studentEmailsRepository = studentEmailsRepository;
+            _logger = logger;
         }
 
         public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
