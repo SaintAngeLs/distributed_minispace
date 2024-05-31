@@ -27,13 +27,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             return await HandleResponseAsync<IEnumerable<ReactionDto>>(response);
         }
 
-        public async Task<ReactionsSummaryDto> GetReactionsSummaryAsync()
-        {
-            var url = $"{_reactionsServiceUrl}/reactions/summary";
-            var response = await _httpClient.GetAsync(url);
-            return await HandleResponseAsync<ReactionsSummaryDto>(response);
-        }
-
         private async Task<T> HandleResponseAsync<T>(HttpResponseMessage response) where T : class
         {
             if (!response.IsSuccessStatusCode)

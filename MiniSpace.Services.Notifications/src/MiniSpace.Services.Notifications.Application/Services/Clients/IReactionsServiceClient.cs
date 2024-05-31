@@ -6,6 +6,6 @@ namespace MiniSpace.Services.Notifications.Application.Services.Clients
 {
     public interface IReactionsServiceClient
     {
-        Task<CommentDto> GetCommentAsync(Guid commentId);
+        Task<IEnumerable<ReactionDto>> GetReactionsAsync();
     }
 }

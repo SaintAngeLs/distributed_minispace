@@ -20,6 +20,9 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         PasswordResetRequest,
         UserSignUp,
         NewEventInvitaion,
+        CommentCreated,
+        CommentUpdated,
+        ReactionAdded,
         Other
     }
 }

@@ -88,4 +88,20 @@ namespace MiniSpace.Services.Email.Core.Entities
     {
         public string GenerateSubject(string details) => "Welcome to MiniSpace!";
     }
+
+    public class CommentCreatedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "New Comment: " + details;
+    }
+
+    public class CommentUpdatedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Updated Comment: " + details;
+    }
+
+    public class ReactionAddedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "New Reaction: " + details;
+    }
+
 }
