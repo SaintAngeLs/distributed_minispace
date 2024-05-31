@@ -10,5 +10,6 @@ namespace MiniSpace.Web.Models.Organizations
         public Guid RootId { get; set; }
         public OrganizationModel Parent { get; set; }
         public List<OrganizationModel> Children { get; set; }
+        public bool Expanded { get; set; }
     }
 }

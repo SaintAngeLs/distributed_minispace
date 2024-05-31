@@ -52,10 +52,10 @@ else
         }
         
         <RadzenTree Data="@rootOrganizations" Expand="@OnExpand" @bind-Value=@selectedItem>
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
             <RadzenTreeLevel TextProperty="Name" HasChildren=@(org => false)/>
         </RadzenTree>
 
@@ -138,6 +138,7 @@ else
         {
             var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(selectedOrg.Id, selectedOrg.RootId);
             ConvertOrganizationDtoList(childOrganizations, selectedOrg.Children, selectedOrg.RootId, selectedOrg.Parent);
+            selectedOrg.Expanded = true;
             StateHasChanged();
         }
     }
