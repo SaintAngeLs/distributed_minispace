@@ -98,6 +98,23 @@
                 }
             </RadzenStack>
 
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                @if (IdentityService.IsAuthenticated  && IdentityService.GetCurrentUserRole() == "user")
+                {
+                    @if (ev.IsSignedUp || ev.IsInterested)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Invite friends" ButtonStyle="ButtonStyle.Secondary"
+                                      Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))"/>
+                    }
+   
+                }
+                @if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
+                {
+                    <RadzenButton Size="ButtonSize.Medium" Text="Invite friends" ButtonStyle="ButtonStyle.Secondary"
+                                      Click="@(() => OpenInviteFriendsToEventDialog(ev.Id))"/>
+                }
+            </RadzenStack>
+
             @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
             {
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
@@ -415,6 +432,24 @@
                 Width = "700px", Height = "600px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+
+    private async Task OpenInviteFriendsToEventDialog(Guid eventId)
+    {
+        var parameters = new Dictionary<string, object>()
+        {
+            {"EventId", eventId}
+        };
+
+        var options = new DialogOptions()
+        {
+            Width = "700px",
+            Height = "530px",
+            Resizable = true,
+            Draggable = true
+        };
+
+        await DialogService.OpenAsync<InviteFriendsToEventDialog>("Invite Friends", parameters, options);
     }
     
     private async void SignUpToEvent(EventDto eventDto)

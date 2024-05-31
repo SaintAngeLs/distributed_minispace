@@ -5,6 +5,7 @@ using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Events.External;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 {
@@ -33,7 +34,8 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 
         public async Task HandleAsync(CreateNotification command, CancellationToken cancellationToken = default)
         {
-            
+            var commandJson = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
+    Console.WriteLine($"Received command: {commandJson}");
             var eventDetails = await _eventsServiceClient.GetEventAsync(command.EventId);
            
             foreach (var userId in command.StudentIds)

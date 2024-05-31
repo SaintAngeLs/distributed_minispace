@@ -1,0 +1,85 @@
+@page "/invite-friends/{eventId}"
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Friends
+@using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Areas.Notifications
+@using MiniSpace.Web.DTO;
+@using MiniSpace.Web.DTO.Notifications;
+@using Radzen
+@inject IEventsService EventsService
+@inject IFriendsService FriendsService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@inject IMediaFilesService MediaFilesService
+@inject INotificationsService NotificationService
+
+<RadzenTemplateForm TItem="InvitationModel">
+    <RadzenFieldset>
+        <RadzenLabel Text="Select Friends" />
+        <RadzenListBox @bind-Value="selectedFriends" Data="@friends" TextProperty="FullName" ValueProperty="FriendId" Template=@((friend) => FriendTemplate(friend)) Style="width:100%; height:300px;" Multiple="true"/>
+    </RadzenFieldset>
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Send Invitations" Click="@SendInvitations"/>
+</RadzenTemplateForm>
+
+
+@code {
+    [Parameter]
+    public Guid EventId { get; set; }
+
+    private List<FriendDto> friends = new List<FriendDto>();
+    private Dictionary<Guid, string> images = new Dictionary<Guid, string>();
+    private List<Guid> selectedFriends = new List<Guid>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFriends();
+    }
+
+    private async Task LoadFriends()
+    {
+        Guid currentUserId = IdentityService.GetCurrentUserId();
+        var friendsResult = await FriendsService.GetAllFriendsAsync(currentUserId);
+        friends = friendsResult?.ToList() ?? new List<FriendDto>();
+        await LoadImages();
+    }
+
+    private async Task LoadImages()
+    {
+        foreach (var friend in friends)
+        {
+            var result = await MediaFilesService.GetFileAsync(friend.StudentDetails.ProfileImage);
+            images[friend.FriendId] = result?.Base64Content ?? "images/user_default.png";
+        }
+    }
+
+    private RenderFragment FriendTemplate(FriendDto friend) => builder =>
+    {
+        builder.OpenComponent<RadzenImage>(0);
+        builder.AddAttribute(1, "Src", GetImage(friend.FriendId));
+        builder.AddAttribute(2, "Style", "width:50px; height:50px; border-radius:50%; margin-right: 10px;");
+        builder.CloseComponent();
+
+        builder.AddContent(3, $"{friend.StudentDetails.FirstName} {friend.StudentDetails.LastName}");
+    };
+
+    private string GetImage(Guid friendId)
+    {
+        return images.TryGetValue(friendId, out var image) ? $"data:image/webp;base64,{image}" : "images/user_default.png";
+    }
+
+    private async Task SendInvitations()
+    {
+        var notification = new NotificationToUsersDto
+        {
+            NotificationId = Guid.NewGuid(),
+            UserId = IdentityService.GetCurrentUserId(),
+            StudentIds = selectedFriends,
+            Message = "You have been invited to an event!",
+            EventId = EventId
+        };
+
+        await NotificationService.CreateNotificationAsync(notification);
+        NavigationManager.NavigateTo($"/events/{EventId}");
+    }
+}
+
