@@ -9,6 +9,7 @@ using System.Text.Json;
 using MiniSpace.Services.Email.Application.Exceptions;
 using MiniSpace.Services.Email.Core.Repositories;
 using MiniSpace.Services.Email.Application.Dto;
+using Microsoft.Extensions.Logging;
 
 namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 {
@@ -18,6 +19,7 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
         private readonly IEmailService _emailService;
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentEmailsRepository _studentEmailsRepository;
+        private readonly ILogger<NotificationCreatedHandler> _logger; 
 
         public NotificationCreatedHandler(
             IStudentsServiceClient studentsServiceClient, 
@@ -33,9 +35,9 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 
         public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
         {
-            Console.WriteLine("*********************************************************************");
+           _logger.LogInformation("*********************************************************************");
             string jsonEvent = JsonSerializer.Serialize(@event);
-            Console.WriteLine($"Received Event: {jsonEvent}");
+            _logger.LogInformation($"Received Event: {jsonEvent}");
 
 
             var student = await _studentsServiceClient.GetAsync(@event.UserId);
@@ -62,7 +64,7 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
                 EmailNotificationStatus.Pending
             );
             await _emailService.SendEmailAsync(student.Email, subject, htmlContent);
-            Console.WriteLine($"Email sent to {student.Email}");
+            _logger.LogInformation($"Email sent to {student.Email}");
 
             emailNotification.MarkAsSent();
 
