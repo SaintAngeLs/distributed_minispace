@@ -46,7 +46,7 @@
                 {
                     <RadzenIcon Icon="rating" Style="color: #30445f;"/>
                     <RadzenText TextStyle="TextStyle.Body1" Class="rz-font-weight-bold rz-pt-2">
-                        @(eventRating.TotalRatings > 0 ? $"{@eventRating.AverageRating} out of 5 ({@eventRating.TotalRatings} reviews)" :
+                        @(eventRating.TotalRatings > 0 ? $"{@eventRating.AverageRating:F2} out of 5 ({@eventRating.TotalRatings} reviews)" :
                         "No ratings yet")
                     </RadzenText>
                 }
