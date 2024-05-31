@@ -35,7 +35,6 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 
         public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
         {
-           _logger.LogInformation("*********************************************************************");
             string jsonEvent = JsonSerializer.Serialize(@event);
             _logger.LogInformation($"Received Event: {jsonEvent}");
 
