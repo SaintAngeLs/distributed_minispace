@@ -180,9 +180,9 @@
                     </RadzenStack>
                 </RadzenColumn>
                 <RadzenColumn SizeSM="4">
-                    @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
-                    {
-                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                        @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
+                        {
                             <RadzenButton Size="ButtonSize.Medium" class="separate-button"
                                           Click="@(() => OpenReactionsDialog())">
                                 React
@@ -191,8 +191,15 @@
                                     <MudIcon Icon="@($"{reactionsSummary.AuthUserReactionType.GetReactionIcon()}")"/>
                                 }
                             </RadzenButton>
-                        </RadzenStack>
-                    }
+                        }
+                        else if (IdentityService.IsAuthenticated)
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" class="separate-button"
+                                          Click="@(() => OpenReactionsListingDialog())">
+                                Reactions
+                            </RadzenButton>
+                        }
+                    </RadzenStack>
                 </RadzenColumn>
             </RadzenRow>
         </RadzenCard>
@@ -358,7 +365,6 @@
     private MudBlazor.Transition transition = MudBlazor.Transition.Slide;
 
     IEnumerable<PostDto> posts;
-    IEnumerable<ReactionDto> reactions = [];
     IEnumerable<string> images = [];
 
     ReactionsSummaryDto reactionsSummary = new();
@@ -366,7 +372,6 @@
 
     private int participantPageSize = 10;
     IEnumerable<int> participantPageSizeOptions = new int[] { 10, 20, 40 };
-    RadzenDataGrid<ParticipantDto> signedUpDataGrid;
     List<ParticipantDto> signedUpStudents;
     List<ParticipantDto> interestedStudents;
 
@@ -529,6 +534,20 @@
             });
         
         await ReactionChanged((ReactionType?)result);
+        StateHasChanged(); 
+    }
+    
+    private async Task OpenReactionsListingDialog()
+    {
+        var reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
+        await DialogService.OpenAsync<ReactionListingDialog>("",
+            new Dictionary<string, object>() { { "Reactions", reactions } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+        
         StateHasChanged(); 
     }
     
