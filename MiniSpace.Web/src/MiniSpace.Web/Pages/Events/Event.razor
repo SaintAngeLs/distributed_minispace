@@ -191,7 +191,7 @@
                 </RadzenColumn>
                 <RadzenColumn SizeSM="4">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
-                        @if (IdentityService.IsAuthenticated && ev.IsSignedUp)
+                        @if (IdentityService.IsAuthenticated && ev.IsSignedUp && ev.Status == "Archived")
                         {
                             <RadzenButton Size="ButtonSize.Medium" class="separate-button"
                                           Click="@(() => OpenRatingDialog())" Text="@(ev.StudentRating != null ? $"Your rating {ev.StudentRating}/5" : "Rate")"/>
@@ -515,6 +515,21 @@
         }
 
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
+        StateHasChanged();
+    }
+    
+    private async Task RatingChanged(int? rating)
+    {
+        if (rating != null)
+        {
+            await EventsService.RateEventAsync(ev.Id, rating.Value, studentId);
+        }
+        else
+        {
+            await EventsService.CancelRateEventAsync(ev.Id, studentId);
+        }
+
+        ev.StudentRating = rating;
         StateHasChanged();
     }
 
