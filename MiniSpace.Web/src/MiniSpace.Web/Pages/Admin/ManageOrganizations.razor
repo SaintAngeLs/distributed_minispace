@@ -21,9 +21,8 @@
 }
 else
 {
-    <h4 class="rz-p-8">To manage organizers in an organization, select it and open details dialog.</h4>
-    
-    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+    <RadzenStack class="rz-p-8" Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween"
+                 Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Add root organization"
                           class="rz-border-radius-1" Icon="note_add"
@@ -39,8 +38,8 @@ else
             <RadzenButton Size="ButtonSize.Medium" Text="Clear selection" Disabled="@(selectedItem == null)"
                           class="rz-border-radius-1" Icon="close"
                           Click="@(() => selectedItem = null)" />
-            <RadzenButton Size="ButtonSize.Medium" Text="Show organization details" Disabled="@(selectedItem == null)"
-                          class="rz-border-radius-1" Icon="search" ButtonStyle="ButtonStyle.Secondary"
+            <RadzenButton Size="ButtonSize.Medium" Text="Manage organizers" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="build" ButtonStyle="ButtonStyle.Secondary"
                           Click="@(() => OpenOrganizationDetailsDialog(selectedItem as OrganizationModel, organizers))" />
         </RadzenStack>
     </RadzenStack>
@@ -153,7 +152,7 @@ else
             },
             new DialogOptions()
             {
-                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                Width = "700px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }
