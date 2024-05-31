@@ -30,7 +30,7 @@
             </RadzenColumn>
             <RadzenColumn Size="12" SizeSM="4">
                 <RadzenStack>
-                    <RadzenFormField Text="Organizer" Variant="Variant.Outlined">
+                    <RadzenFormField Text="Organization name" Variant="Variant.Outlined">
                         <RadzenTextBox @bind-Value="@TempSearchEventsModel.Organizer" />
                     </RadzenFormField>
                     <RadzenFormField Text="State" Variant="Variant.Outlined">
@@ -101,7 +101,7 @@
     
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Click="@HandleFiltering" Variant="Variant.Flat" Text="Submit" Style="width: 120px"/>
+            <RadzenButton Click="@HandleFiltering" Variant="Variant.Flat" Text="Submit" Style="width: 120px; background-color: #006400;"/>
             <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
         </RadzenStack>
     </RadzenStack>
@@ -147,6 +147,8 @@
         new KeyValuePair<string, string>("Capacity", "capacity"),
         new KeyValuePair<string, string>("Start date", "startDate"),
         new KeyValuePair<string, string>("End date", "endDate"),
+        new KeyValuePair<string, string>("Interested students", "interestedStudents"),
+        new KeyValuePair<string, string>("Signed up students", "signedUpStudents"),
     ];
     
     private IEnumerable<KeyValuePair<string, string>> notSelectedSortParams = [];

@@ -11,14 +11,13 @@
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
-<h1>Your account</h1>
+<h1 class="rz-p-8 account-font">Your account</h1>
 
 @if (studentDto.Id != Guid.Empty)
 {
     <RadzenStack Gap="1rem">
         <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
-            <RadzenImage Path="@($"data:image/webp;base64,{profileImage}")"
-                         AlternateText="base64 image"
+            <RadzenImage Path="@(GetImage())" AlternateText="base64 image"
                          Style="width: 20em" class="rz-border-radius-10"/>
         </RadzenStack>
         
@@ -61,7 +60,7 @@
             {
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenButton Size="ButtonSize.Large" Text="Update account"
+                        <RadzenButton Size="ButtonSize.Large" Text="Update account" class="separate-button"
                                       Click=@EnableEdition/>
                     </RadzenColumn> 
                 </RadzenRow>
@@ -84,7 +83,7 @@
                         }
                     </RadzenColumn>
                     <RadzenColumn Size="12" SizeMD="5">
-                        <RadzenButton Size="ButtonSize.Large" Text="Save account"
+                        <RadzenButton Size="ButtonSize.Large" Text="Save account" class="separate-button"
                                       Click=@HandleUpdateStudent/>
                     </RadzenColumn>
                 </RadzenRow>
@@ -94,8 +93,35 @@
 }
 else
 {
-    <p>Loading...</p>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
+
+<style>
+    .account-font {
+                font-family: Arial, sans-serif; /* Change this to your preferred font */
+                font-size: 40px; /* Change this to your preferred font size */
+                font-weight: bold; /* Change this to your preferred font weight */
+    }
+    
+    .separate-button {
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+    
+    .separate-button:hover {
+        background-color: #30445f; 
+        color: #000; 
+    }
+</style>
 
 @code {
     private StudentDto studentDto = new();
@@ -135,6 +161,16 @@ else
         await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImage,
             studentDto.Description, studentDto.EmailNotifications);
         StateHasChanged();
+    }
+    
+    private string GetImage()
+    {
+        if (profileImage != string.Empty)
+        {
+            return $"data:image/webp;base64,{profileImage}";
+        }
+
+        return "images/default_profile_image.webp";
     }
     
     async void OnClientChange(UploadChangeEventArgs args)

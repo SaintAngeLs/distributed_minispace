@@ -1,0 +1,141 @@
+@page "/reports/{ReportDto.Id}/details"
+@using Radzen
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.DTO.States
+@using MiniSpace.Web.DTO.Types
+@using MiniSpace.Web.Pages.Reports
+@inject DialogService DialogService
+
+<RadzenStack Gap="1rem">
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="account_box" class="me-1"/>
+                <b>Identification of target</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack Gap="2rem">
+                <ReportTargetSection ReportDto="@ReportDto" ReportStorageKey="@("studentReportDto")" />
+                
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+    
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+    
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="assignment" class="me-1"/>
+                <b>Data info</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack>
+                <RadzenRow Size="12" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Context type</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportContextTypeExtensions.GetReportContextTypeText(ReportDto.ContextType))</b>
+                        </RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Category</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportCategoryExtensions.GetReportCategoryText(ReportDto.Category))</b>
+                        </RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow Size="12">
+                    <RadzenColumn Size="12">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Reason</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6" Style="word-wrap: anywhere"><b>@(ReportDto.Reason)</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+    
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                <RadzenIcon Icon="event" class="me-1"/>
+                <b>Status info</b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack>
+                <RadzenRow Size="12" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">State</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6">
+                            <b>@(ReportStateExtensions.GetReportStateText(ReportDto.State))</b>
+                        </RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Reviewer Id</RadzenText>
+                        @if (ReportDto.ReviewerId != null)
+                        {
+                            <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.ReviewerId)</b></RadzenText>   
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.H6"><b>Report not reviewed yet.</b></RadzenText>
+                        }
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow Size="12">
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Created at</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.CreatedAt.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Updated at</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(ReportDto.UpdatedAt.ToLocalTime().ToString(dateFormat))</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close"
+                          class="rz-border-radius-1" Style="width: 120px"/>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public ReportDto ReportDto { get; set; }
+
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+}
