@@ -372,7 +372,7 @@ html, body {
 
 @media (max-width: 767.98px) {
     header {
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
     }
 
@@ -539,4 +539,27 @@ html, body {
 
 .notifications-page-title {
     margin: 2rem !important;
+}
+
+@media (max-width: 768px) {
+    .header-services {
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+        flex-direction: unset !important;
+    }
+    header {
+        flex-direction: row !important;
+    }
+
+    .rz-menu:not(.rz-profile-menu) .rz-navigation-item-link {
+        white-space: unset !important;
+    }
+
+    .rz-menu .rz-profile-menu .rz-navigation-item-link {
+        margin-top: -10px !important;
+    }
+
+    .rz-menu-item {
+        padding-top: 80px !important;
+    }
 }

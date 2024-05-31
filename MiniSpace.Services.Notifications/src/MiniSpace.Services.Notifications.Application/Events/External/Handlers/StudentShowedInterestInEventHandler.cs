@@ -56,7 +56,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 eventType: NotificationEventType.StudentShowedInterestInEvent,
                 details: detailsHtml
             );
-            var notificationCreatedEvent = new NotificationCreated(
+           
+            studentNotifications.AddNotification(notification);
+            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+
+             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
@@ -67,11 +71,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
-            
-
-            studentNotifications.AddNotification(notification);
-            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
-
             
 
             if (eventDetails != null && eventDetails.Organizer != null)
@@ -99,12 +98,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
 
                 var organizerNotificationCreatedEvent = new NotificationCreated(
-                    notificationId: organizerNotification.NotificationId,
-                    userId: organizerNotification.UserId,
-                    message: organizerNotification.Message,
-                    createdAt: organizerNotification.CreatedAt,
-                    eventType: organizerNotification.EventType.ToString(),
-                    relatedEntityId: organizerNotification.RelatedEntityId,
+                    notificationId: Guid.NewGuid(),
+                    userId: eventDetails.Organizer.Id,
+                    message: $"{student.FirstName} {student.LastName} has shown interest in your event '{eventDetails.Name}'.",
+                    createdAt: DateTime.UtcNow,
+                    eventType: NotificationEventType.StudentShowedInterestInEvent.ToString(),
+                    relatedEntityId: eventArgs.EventId,
                     details: detailsHtmlForOrganizer
                 );
                 await _messageBroker.PublishAsync(organizerNotificationCreatedEvent);

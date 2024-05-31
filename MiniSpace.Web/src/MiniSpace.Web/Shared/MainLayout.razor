@@ -42,8 +42,8 @@
                                 </Template>
                                  <ChildContent>
                                     <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications" Icon="notifications"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Sign out" Click="@(() => SignOut())" Icon="exit_to_app"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications/all" Icon="notifications"></RadzenProfileMenuItem>
+                                    @* <RadzenProfileMenuItem Text="Sign out" Click="@SignOut" Icon="exit_to_app"></RadzenProfileMenuItem> *@
                                 </ChildContent>
                             </RadzenProfileMenu>
                         </div>
@@ -209,6 +209,11 @@
         
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
+
+        await localStorage.ClearAsync();
+
+        StateHasChanged();
+
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
 

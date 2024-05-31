@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Logging
                 {
                     typeof(UpdateNotificationStatus), new HandlerLogTemplate
                     {
-                        After = "Updated the status of notification with id: {NotificationId} to: {NewStatus}."
+                        After = "Updated the status of notification with id: {NotificationId} to: {Status}."
                     }
                 },
                 {
