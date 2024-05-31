@@ -201,8 +201,8 @@
         @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
         {
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                <RadzenButton Size="ButtonSize.Medium" Text="Create new post" ButtonStyle="ButtonStyle.Secondary"
-                              Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" />
+                <RadzenButton Size="ButtonSize.Medium" Text="Create new post" ButtonStyle="ButtonStyle.Secondary" class="separate-button"
+                              Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" Style="background-color: #1b6ec2 !important;"/>
             </RadzenStack>   
         }
         @if (pageInitialized && !posts.Any())
