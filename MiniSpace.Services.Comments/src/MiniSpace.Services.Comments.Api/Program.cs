@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Convey;
 using Convey.Secrets.Vault;
@@ -13,11 +14,13 @@ using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Comments.Application;
 using MiniSpace.Services.Comments.Application.Commands;
 using MiniSpace.Services.Comments.Application.Dto;
+using MiniSpace.Services.Comments.Application.Queries;
 using MiniSpace.Services.Comments.Application.Services;
 using MiniSpace.Services.Comments.Infrastructure;
 
 namespace MiniSpace.Services.Identity.Api
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static async Task Main(string[] args)
@@ -38,6 +41,7 @@ namespace MiniSpace.Services.Identity.Api
                             await ctx.Response.WriteJsonAsync(pagedResult);
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
+                        .Get<GetComment, CommentDto>("comments/{commentID}")
                         .Post<CreateComment>("comments")
                         .Put<UpdateComment>("comments/{commentID}")
                         .Delete<DeleteComment>("comments/{commentID}")

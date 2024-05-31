@@ -23,6 +23,7 @@ namespace MiniSpace.Web.Areas.Reports
         public Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> SearchReportsAsync(
             IEnumerable<string> contextTypes, IEnumerable<string> states, Guid reviewerId, PageableDto pageable)
         {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<SearchReports, PagedResponseDto<IEnumerable<ReportDto>>>("reports/search", 
                 new (contextTypes, states, reviewerId, pageable));
         }
@@ -70,11 +71,11 @@ namespace MiniSpace.Web.Areas.Reports
             return _httpClient.PostAsync<object, object>($"reports/{reportId}/reject", new { reportId});
         }
         
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> GetStudentReports(Guid studentId, int page,
-            int results)
+        public Task<PagedResponseDto<IEnumerable<ReportDto>>> GetStudentReportsAsync(Guid studentId,
+            int page, int results)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>>(
+            return _httpClient.GetAsync<PagedResponseDto<IEnumerable<ReportDto>>>(
                 $"reports/students/{studentId}?page={page}&results={results}");
         }   
     }

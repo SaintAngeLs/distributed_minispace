@@ -10,7 +10,7 @@ namespace MiniSpace.Web.Areas.Events
 {
     public interface IEventsService
     {
-        Task<EventDto> GetEventAsync(Guid eventId);
+        Task<EventDto> GetEventAsync(Guid eventId, bool isAuthenticated);
         Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
             string engagementType, int page, int numberOfResults);
         Task<HttpResponse<object>> CreateEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
@@ -27,6 +27,8 @@ namespace MiniSpace.Web.Areas.Events
         Task ShowInterestInEventAsync(Guid eventId, Guid studentId);
         Task CancelInterestInEventAsync(Guid eventId, Guid studentId);
         Task RateEventAsync(Guid eventId, int rating, Guid studentId);
+        Task CancelRateEventAsync(Guid eventId, Guid studentId);
+        Task<EventRatingDto> GetEventRatingAsync(Guid eventId);
         Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer, 
             Guid organizationId, Guid rootOrganizationId, string category, string state, IEnumerable<Guid> friends,
             string friendsEngagementType, string dateFrom, string dateTo, PageableDto pageable);

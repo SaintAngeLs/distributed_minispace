@@ -42,7 +42,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             var friends = Enumerable.Empty<FriendDto>();
             if(identity.IsAuthenticated)
             {
-                friends = await _friendsServiceClient.GetAsync(identity.Id);
+                var result = await _friendsServiceClient.GetAsync(identity.Id);
+                if (result != null) 
+                {
+                    friends = result.First().Friends;
+                }
             }
 
             await _messageBroker.PublishAsync(new EventViewed(query.EventId));

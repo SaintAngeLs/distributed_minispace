@@ -112,6 +112,8 @@
                         <RadzenPanelMenuItem Text="New" Icon="send" Click="@(() => NavigationManager.NavigateTo("notifications/new"))" />
                         <RadzenPanelMenuItem Text="History" Icon="history" Click="@(() => NavigationManager.NavigateTo("notifications/history"))" />
                     </RadzenPanelMenuItem>
+
+                    <RadzenPanelMenuItem Text="Reports" Icon="assignment_late" Click="@(() => NavigationManager.NavigateTo("reports"))" />
                     
                     @if (IdentityService.GetCurrentUserRole() == "admin")
                     {
@@ -120,6 +122,8 @@
                                                  Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
                             <RadzenPanelMenuItem Text="Organizations" Icon="assignment"
                                                  Click="@(() => NavigationManager.NavigateTo("admin/organizations"))" />
+                            <RadzenPanelMenuItem Text="Reports" Icon="assignment_late"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/reports"))" />
                         </RadzenPanelMenuItem>
                     }
                 </RadzenPanelMenu>
@@ -198,6 +202,11 @@
     async Task SignOut()
     {
         @* Console.WriteLine("Signing out..."); *@
+        await localStorage.RemoveItemAsync("reportDto");
+        await localStorage.RemoveItemAsync("searchReportsCriteria");
+        await localStorage.RemoveItemAsync("studentReportDto");
+        await localStorage.RemoveItemAsync("getReportsCriteria");
+        
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
         NavigationManager.NavigateTo("signin", forceLoad: true);

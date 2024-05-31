@@ -1,6 +1,11 @@
 @using MiniSpace.Web.DTO
 @using MudBlazor
 @using Radzen
+@using MiniSpace.Web.Models.Reports
+@using MiniSpace.Web.Pages.Reports.Dialogs
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
 
 <MudTreeView Items="@Comments" Hover="true" Width="100%">
     <ItemTemplate Context="comment">
@@ -28,6 +33,12 @@
                                                            Color="Color.Inherit"
                                                            OnClick="async () => { await DeleteCommentAsync(comment); }"/>
                                         </MudStack>
+                                    }
+                                    else
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Report" Size="Size.Medium"
+                                                       Color="Color.Inherit"
+                                                       OnClick="async () => { await ReportCommentAsync(comment); }"/>
                                     }
                                 </RadzenColumn>
                                 <RadzenColumn Size="6">
@@ -90,6 +101,12 @@
                                                            Color="Color.Inherit"
                                                            OnClick="async () => { await DeleteCommentAsync(comment); }"/>
                                         </MudStack>
+                                    }
+                                    else
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Report" Size="Size.Medium"
+                                                       Color="Color.Inherit"
+                                                       OnClick="async () => { await ReportCommentAsync(comment); }"/>
                                     }
                                 </RadzenColumn>
                                 <RadzenColumn Size="6">
@@ -199,5 +216,29 @@
     {
         await DeleteLike(comment);
         await currentItem.ReloadAsync();
+    }
+    
+    private async Task OpenReportCommentDialog(CreateReportModel createReportModel)
+    {
+        await DialogService.OpenAsync<CreateReportDialog>("Report the comment:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task ReportCommentAsync(CommentDto commentDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = StudentId,
+            TargetId = commentDto.Id,
+            TargetOwnerId = commentDto.StudentId,
+            ContextType = "Comment"
+        };
+
+        await OpenReportCommentDialog(createReportModel);
     }
 }

@@ -10,14 +10,18 @@
 @using Orientation = Radzen.Orientation
 @inject DialogService DialogService
 @inject ICommentsService CommentsService
+@inject IIdentityService IdentityService
 
 <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-        <RadzenButton Size="ButtonSize.Medium" Text="Create comment" ButtonStyle="ButtonStyle.Secondary"
-                      Click="@(() => CreateRootComment())" />
-        <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria"
-                      Click="@OpenSearchCommentsDialog" />
-    </RadzenStack>
+    @if (IdentityService == null || IdentityService.IsAuthenticated)
+    {
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenButton Size="ButtonSize.Medium" Text="Add comment" ButtonStyle="ButtonStyle.Secondary"
+                          Click="@(() => CreateRootComment())" class="separate-button" Style="background-color: #1b6ec2 !important;"/>
+            <RadzenButton Size="ButtonSize.Medium" Text="Sort by criteria" class="separate-button" Style="background-color: red !important;"
+                          Click="@OpenSearchCommentsDialog" />
+        </RadzenStack>
+    }
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="12">
             @if (pageInitialized && commentsEmpty)
@@ -40,6 +44,18 @@
         </RadzenColumn>
     </RadzenRow>
 </RadzenStack>
+
+<style>
+    .separate-button {
+            margin: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            background-color: #30445f !important;
+            padding: 12px;
+            color: #333; 
+            transition: background-color 0.3s ease; 
+        }
+</style>
 
 @code {
     [Parameter]

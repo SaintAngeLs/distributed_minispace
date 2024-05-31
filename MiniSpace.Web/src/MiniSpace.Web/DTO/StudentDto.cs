@@ -22,5 +22,6 @@ namespace MiniSpace.Web.DTO
         public IEnumerable<Guid> SignedUpEvents { get; set; }
         public bool IsInvitationPending { get; set; } 
         public bool InvitationSent { get; set; }
+        public bool Selected { get; set; }
     }    
 }
