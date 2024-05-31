@@ -55,6 +55,7 @@
                             <p><RadzenIcon Icon="email" /> @request.InviteeEmail</p>
                             <p><RadzenIcon Icon="event" /> @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
                             <p><RadzenIcon Icon="info" /> @request.State</p>
+
                         </div>
                          <RadzenButton Text="Withdraw" Click="@(() => WithdrawRequest(request.InviteeId))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
                     </div>
@@ -143,8 +144,23 @@
     }
 
     .friend-info {
-        flex: 1;
-    }
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* Aligns content vertically */
+}
+
+.friend-info h5, .friend-info p {
+    display: flex;
+    align-items: center; /* Aligns items horizontally in a line */
+    margin: 0; /* Removes default margin */
+    margin-left: 20px !important;
+    padding: 2px 0; /* Adds slight padding */
+}
+
+.friend-info h5 RadzenIcon, .friend-info p RadzenIcon {
+    margin-right: 15px; /* Right margin for spacing between icon and text */
+}
+
 
     .search-bar input:focus {
         outline: none;
