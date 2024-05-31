@@ -48,7 +48,7 @@
     @if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev) && 
          (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
     {
-        <div class="rz-p-4">
+        <div>
             <RadzenStack class="rz-pt-5 rz-mx-auto" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="1rem">
                 <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
                     @if (!ev.IsInterested)
@@ -116,7 +116,7 @@
                     else if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                     {
                         <RadzenButton Size="ButtonSize.Medium" Text="Report event" class="delete-button"
-                                      Click="@(() => ReportEvent(ev)))" >
+                                      Click="@(() => ReportEvent(ev))" >
                             <RadzenIcon Icon="warning" Style="color: white; font-weight: 800;"/>
                         </RadzenButton>
                     }
