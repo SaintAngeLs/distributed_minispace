@@ -18,6 +18,7 @@ namespace MiniSpace.Web.Areas.Organizations
         Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId, Guid rootId);
         Task<HttpResponse<object>> CreateOrganizationAsync(Guid organizationId, string name, Guid rootId, Guid parentId);
         Task<HttpResponse<object>> CreateRootOrganizationAsync(Guid organizationId, string name);
+        Task DeleteOrganizationAsync(Guid organizationId);
         Task AddOrganizerToOrganizationAsync(Guid rootOrganizationId, Guid organizationId, Guid organizerId);
         Task RemoveOrganizerFromOrganizationAsync(Guid rootOrganizationId, Guid organizationId, Guid organizerId);
     }    
