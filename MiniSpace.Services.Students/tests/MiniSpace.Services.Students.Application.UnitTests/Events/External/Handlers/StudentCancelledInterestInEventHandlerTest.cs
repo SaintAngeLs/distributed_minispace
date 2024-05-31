@@ -36,12 +36,13 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
         }
 
         [Fact]
-        public async Task HandleAsync_ValidEvent_ShouldUpdateReposytory()
+        public async Task HandleAsync_ValidEvent_ShouldUpdateRepository()
         {
             // Arrange
             var eventId = Guid.NewGuid();
             var studentId = Guid.NewGuid();
             var student = new Student(studentId, "Adam", "Nowak", "an@email.com", DateTime.Now);
+            student.InterestedInEvents = new List<Guid> {eventId};
             var @event = new StudentCancelledInterestInEvent(eventId, studentId);
 
             _studentRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);

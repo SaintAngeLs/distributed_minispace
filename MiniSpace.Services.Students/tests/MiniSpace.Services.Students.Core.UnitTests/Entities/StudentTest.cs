@@ -149,7 +149,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             student.SignedUpEvents = new List<Guid> { eventId };
 
             // Act
-            Func<bool> fun = () => { student.AddInterestedInEvent(eventId); return true; };
+            Func<bool> fun = () => { student.AddSignedUpEvent(eventId); return true; };
 
             // Assert
             Assert.ThrowsAny<DomainException>(() => fun());

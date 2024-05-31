@@ -145,9 +145,14 @@ namespace MiniSpace.Services.Students.Core.Entities
                 throw new StudentAlreadyInterestedInException(Id, eventId);
             }
         }
-        
+
         public void RemoveInterestedInEvent(Guid eventId)
-            => _interestedInEvents.Remove(eventId);
+        {
+            if (!_interestedInEvents.Remove(eventId))
+            {
+                throw new StudentIsNotInterestedException(Id, eventId);
+            }   
+        }
 
         public void AddSignedUpEvent(Guid eventId)
         {
@@ -161,9 +166,14 @@ namespace MiniSpace.Services.Students.Core.Entities
                 throw new StudentAlreadySignedUpException(Id, eventId);
             }
         }
-        
+
         public void RemoveSignedUpEvent(Guid eventId)
-            => _signedUpEvents.Remove(eventId);
+        {
+            if(!_signedUpEvents.Remove(eventId))
+            {
+                throw new StudentIsNotSignedUpException(Id, eventId);
+            }
+        }
         
         public void RemoveProfileImage(Guid mediaFileId)
         {
