@@ -51,14 +51,14 @@
                             <img src="@GetImage(request.InviteeId)" alt="Invitee Image" class="friend-img">
                         }
                         <div class="friend-info">
-                            <h5>@request.InviteeName</h5>
-                            <p>Email: @request.InviteeEmail</p>
-                            <p>Requested On: @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
-                            <p>Status: @request.State</p>
-                             
+                            <h5><RadzenIcon Icon="user" /> @request.InviteeName</h5>
+                            <p><RadzenIcon Icon="email" /> @request.InviteeEmail</p>
+                            <p><RadzenIcon Icon="event" /> @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                            <p><RadzenIcon Icon="info" /> @request.State</p>
                         </div>
+                         <RadzenButton Text="Withdraw" Click="@(() => WithdrawRequest(request.InviteeId))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
                     </div>
-                    <RadzenButton Text="Withdraw" Click="@(() => WithdrawRequest(request.InviteeId))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
+                   
                 }
             }
             else
