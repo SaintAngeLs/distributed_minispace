@@ -192,37 +192,45 @@
 
     protected override async Task OnInitializedAsync()
     {
-        incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
+        await IdentityService.InitializeAuthenticationState();
 
-        if (incomingRequests == null || !incomingRequests.Any())
-        {
-            @* Console.WriteLine("No incoming friend requests found."); *@
-            return;
-        }
+        if (IdentityService.IsAuthenticated)
+        { 
+            incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
 
-        var inviterIds = incomingRequests.Select(r => r.InviterId).Distinct();
-        var studentTasks = inviterIds.Select(id => FriendsService.GetStudentAsync(id));
-
-        students = (await Task.WhenAll(studentTasks)).ToList();
-
-        var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
-        await Task.WhenAll(imageTasks);
-
-        foreach (var request in incomingRequests)
-        {
-            var student = students.FirstOrDefault(s => s.Id == request.InviterId);
-            if (student != null)
+            if (incomingRequests == null || !incomingRequests.Any())
             {
-                request.InviterName = $"{student.FirstName} {student.LastName}";
-                request.InviterEmail = student.Email;
-                if (images.ContainsKey(student.Id))
+                return;
+            }
+
+            var inviterIds = incomingRequests.Select(r => r.InviterId).Distinct();
+            var studentTasks = inviterIds.Select(id => FriendsService.GetStudentAsync(id));
+
+            students = (await Task.WhenAll(studentTasks)).ToList();
+
+            var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
+            await Task.WhenAll(imageTasks);
+
+            foreach (var request in incomingRequests)
+            {
+                var student = students.FirstOrDefault(s => s.Id == request.InviterId);
+                if (student != null)
                 {
-                    request.InviterImage = images[student.Id];
+                    request.InviterName = $"{student.FirstName} {student.LastName}";
+                    request.InviterEmail = student.Email;
+                    if (images.ContainsKey(student.Id))
+                    {
+                        request.InviterImage = images[student.Id];
+                    }
                 }
             }
-        }
 
-        filteredIncomingRequests = incomingRequests;
+            filteredIncomingRequests = incomingRequests;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
     }
 
     private async Task FetchImageAsync(Guid inviterId, Guid profileImage)

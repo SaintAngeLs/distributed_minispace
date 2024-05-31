@@ -1,5 +1,6 @@
 @page "/student-details/{Id:guid}"
 @using MiniSpace.Web.Areas.Friends
+@inject NavigationManager NavigationManager
 @inject IFriendsService FriendsService
 @using MiniSpace.Web.Areas.MediaFiles
 @inject IMediaFilesService MediaFilesService
@@ -59,49 +60,6 @@ else
     </div>
 }
 
-@code {
-    [Parameter] public Guid Id { get; set; }
-    private StudentDto student;
-    private string profileImage; // Store the Base64 image string
-    private bool studentNotFound;
-
-    protected override async Task OnInitializedAsync()
-    {
-        student = await FriendsService.GetStudentAsync(Id);
-        if (student == null)
-        {
-            studentNotFound = true;
-            return;
-        }
-        var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
-        profileImage = imageResult != null ? $"data:image/webp;base64,{imageResult.Base64Content}" : "images/default_profile_image.webp";
-    }
-    
-    private async Task OpenReportStudentProfileDialog(CreateReportModel createReportModel)
-    {
-        await DialogService.OpenAsync<CreateReportDialog>("Report profile of the student:",
-            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
-            new DialogOptions()
-            {
-                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
-                AutoFocusFirstElement = false
-            });
-    }
-    
-    private async Task ReportStudentProfile(StudentDto studentDto)
-    {
-        var createReportModel = new CreateReportModel
-        {
-            IssuerId = IdentityService.GetCurrentUserId(),
-            TargetId = studentDto.Id,
-            TargetOwnerId = studentDto.Id,
-            ContextType = "StudentProfile"
-        };
-
-        await OpenReportStudentProfileDialog(createReportModel);
-    }
-}
-
 <style>
     .card {
         border: 1px solid #ccc;
@@ -129,3 +87,54 @@ else
         margin-bottom: 10px;
     }
 </style>
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private StudentDto student;
+    private string profileImage; 
+    private bool studentNotFound;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        { 
+            student = await FriendsService.GetStudentAsync(Id);
+            if (student == null)
+            {
+                studentNotFound = true;
+                return;
+            }
+            var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
+            profileImage = imageResult != null ? $"data:image/webp;base64,{imageResult.Base64Content}" : "images/default_profile_image.webp";
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+    
+    private async Task OpenReportStudentProfileDialog(CreateReportModel createReportModel)
+    {
+        await DialogService.OpenAsync<CreateReportDialog>("Report profile of the student:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task ReportStudentProfile(StudentDto studentDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = IdentityService.GetCurrentUserId(),
+            TargetId = studentDto.Id,
+            TargetOwnerId = studentDto.Id,
+            ContextType = "StudentProfile"
+        };
+
+        await OpenReportStudentProfileDialog(createReportModel);
+    }
+}
+

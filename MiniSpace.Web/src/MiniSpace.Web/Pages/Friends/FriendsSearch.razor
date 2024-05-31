@@ -314,7 +314,8 @@
     private IEnumerable<FriendDto> allFriends;
     private IEnumerable<FriendRequestDto> incomingRequests;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() 
+    {
         await IdentityService.InitializeAuthenticationState(); 
 
         if (IdentityService.IsAuthenticated)
