@@ -38,7 +38,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             // var events = _eventMapper.Map(notification);
             // Console.WriteLine($"Event Published in NOTIFICATION CREATED HANDLER: {JsonSerializer.Serialize(@event)}");
 
-            await _messageBroker.PublishAsync(@event);
+            // await _messageBroker.PublishAsync(@event);
         }
     }
 }

@@ -40,8 +40,8 @@ public class NotificationCleanupService : BackgroundService
         {
             _logger.LogInformation("20-minute cleanup service is running.");
             await CleanupOldNotifications();
-            _logger.LogInformation("Waiting 20 minutes before next cleanup.");
-            await Task.Delay(TimeSpan.FromMinutes(20), stoppingToken); 
+            _logger.LogInformation("Waiting 10 minutes before next cleanup.");
+            await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken); 
         }
 
         await dailyCleanupTask;
@@ -49,7 +49,7 @@ public class NotificationCleanupService : BackgroundService
 
     private async Task CleanupOldNotifications()
     {
-        var cutoffDate = DateTime.UtcNow.AddDays(-28);
+        var cutoffDate = DateTime.UtcNow.AddDays(-1);
         var allStudents = await _studentsServiceClient.GetAllAsync();
 
         if (allStudents != null)
@@ -58,7 +58,7 @@ public class NotificationCleanupService : BackgroundService
             {
                 var studentId = student.Id;
                 var count = await _notificationsRepository.GetNotificationCount(studentId);
-                if (count > 300)
+                if (count > 500)
                 {
                     _logger.LogInformation($"Cleaning up old notifications for student {studentId}.");
                     var filter = Builders<StudentNotificationsDocument>.Filter.And(

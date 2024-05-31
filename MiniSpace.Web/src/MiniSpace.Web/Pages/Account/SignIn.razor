@@ -175,7 +175,7 @@
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
                 await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/account";
+                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signup/complete" : "/";
                 // Force a page reload when navigating
                 NavigationManager.NavigateTo(nextPage, true);
             }
