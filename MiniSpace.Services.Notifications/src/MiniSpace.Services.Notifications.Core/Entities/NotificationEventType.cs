@@ -19,6 +19,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         EventReminder,
         PasswordResetRequest,
         UserSignUp,
+        NewEventInvitaion,
         Other
     }
 }

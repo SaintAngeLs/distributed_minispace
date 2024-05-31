@@ -19,6 +19,7 @@ namespace MiniSpace.Web.DTO.Enums
         EventReminder,
         PasswordResetRequest,
         UserSignUp,
+        NewEventInvitaion,
         Other
     }
 }
