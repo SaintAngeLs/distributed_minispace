@@ -152,6 +152,18 @@ modules:
         downstream: identity-service/users/{userId}/ban
         auth: true
 
+      - upstream: /password/forgot
+        method: POST
+        use: downstream
+        downstream: identity-service/password/forgot
+        auth: false
+
+      - upstream: /password/reset
+        method: POST
+        use: downstream
+        downstream: identity-service/password/reset
+        auth: false
+
     services:
       identity-service:
         localUrl: localhost:5004
@@ -265,6 +277,11 @@ modules:
       notifications-service:
         localUrl: localhost:5006
         url: notifications-service
+  
+
+        
+        
+
 
 
 
@@ -486,6 +503,11 @@ modules:
           use: downstream
           downstream: comments-service/comments/search
 
+        - upstream: /{commentId}
+          method: GET
+          use: downstream
+          downstream: comments-service/comments/{commentId}
+
       services:
         comments-service:
           localUrl: localhost:5009
@@ -554,95 +576,95 @@ modules:
 
 
   friends:
-    path: /friends
-    routes:
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: friends-service/friends
-        auth: true
+      path: /friends
+      routes:
+        - upstream: /
+          method: GET
+          use: downstream
+          downstream: friends-service/friends
+          auth: true
 
-      - upstream: /{userId}
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/{userId}
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/{userId}
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /{userId}/invite
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/{userId}/invite
-        bind:
-          - userId: {userId}
-        auth: true
-        afterDispatch:
-          - use: publish
-            event: FriendInviteSent
-            target: notifications-service/events
-            routingKey: friend_request_created
+        - upstream: /{userId}/invite
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/{userId}/invite
+          bind:
+            - userId: {userId}
+          auth: true
+          afterDispatch:
+            - use: publish
+              event: FriendInviteSent
+              target: notifications-service/events
+              routingKey: friend_request_created
 
-      - upstream: /{requesterId}/{friendId}/remove
-        method: DELETE
-        use: downstream
-        downstream: friends-service/friends/{requesterId}/{friendId}/remove
-        bind:
-          - friendId: {friendId}
-          - requesterId: {requesterId}
-        auth: true
+        - upstream: /{requesterId}/{friendId}/remove
+          method: DELETE
+          use: downstream
+          downstream: friends-service/friends/{requesterId}/{friendId}/remove
+          bind:
+            - friendId: {friendId}
+            - requesterId: {requesterId}
+          auth: true
 
-      - upstream: /requests/{userId}
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/requests/{userId}
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /requests/{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /requests/{userId}/accept
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/requests/{userId}/accept
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /requests/{userId}/accept
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/accept
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /requests/{userId}/decline
-        method: POST
-        use: downstream
-        downstream: friends-service/friends/requests/{userId}/decline
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /requests/{userId}/decline
+          method: POST
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/decline
+          bind:
+            - userId: {userId}
+          auth: true
 
-      - upstream: /pending
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/pending
-        auth: true
+        - upstream: /pending
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/pending
+          auth: true
 
-      - upstream: /pending/all
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/pending/all
-        auth: true
+        - upstream: /pending/all
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/pending/all
+          auth: true
 
-      - upstream: /requests/sent/{userId}
-        method: GET
-        use: downstream
-        downstream: friends-service/friends/requests/sent/{userId}
-        auth: true
+        - upstream: /requests/sent/{userId}
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/requests/sent/{userId}
+          auth: true
 
-      - upstream: /requests/{userId}/withdraw
-        method: PUT
-        use: downstream
-        downstream: friends-service/friends/requests/{userId}/withdraw
-        bind:
-          - userId: {userId}
-        auth: true
+        - upstream: /requests/{userId}/withdraw
+          method: PUT
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/withdraw
+          bind:
+            - userId: {userId}
+          auth: true
 
-    services:
+      services:
         friends-service:
           localUrl: localhost:5012
           url: friends-service
@@ -657,7 +679,7 @@ modules:
         use: downstream
         downstream: posts-service/posts
         auth: true
-    
+
       - upstream: /search
         method: POST
         use: downstream
@@ -804,5 +826,3 @@ modules:
       organizations-service:
         localUrl: localhost:5015
         url: organizations-service
-        
-        

@@ -41,6 +41,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             }
 
             var notificationMessage = $"Your friend request to {friend.FirstName} {friend.LastName} has been accepted.";
+            var detailsHtml = $"<p>Your friend request with <a href='https://minispace.itsharppro.com/student-details/{@event.FriendId}'>{friend.FirstName} {friend.LastName}</a> has been accepted.</p>";
 
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
@@ -50,7 +51,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
                 relatedEntityId: @event.FriendId,
-                eventType: NotificationEventType.FriendRequestAccepted
+                eventType: NotificationEventType.FriendRequestAccepted,
+                details: detailsHtml
             );
 
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.RequesterId);
@@ -63,15 +65,26 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             studentNotifications.AddNotification(notification);
             _logger.LogInformation($"Adding notification to StudentNotifications for UserId={@event.RequesterId}");
 
-            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
-            _logger.LogInformation($"Updated StudentNotifications for UserId={@event.RequesterId}");
-
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
                 message: notification.Message,
-                createdAt: notification.CreatedAt
+                createdAt: notification.CreatedAt,
+                eventType: "FriendRequestAccepted",
+                relatedEntityId: notification.RelatedEntityId,
+                details: detailsHtml
             );
+
+            await _messageBroker.PublishAsync(notificationCreatedEvent);
+            _logger.LogInformation($"Published enhanced NotificationCreated event for UserId={notification.UserId}");
+
+            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
+            _logger.LogInformation($"Updated StudentNotifications for UserId={@event.RequesterId}");
+
+         
+
+            
+
         }
     }
 }

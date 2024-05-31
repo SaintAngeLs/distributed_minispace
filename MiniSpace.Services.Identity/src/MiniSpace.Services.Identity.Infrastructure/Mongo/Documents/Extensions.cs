@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MiniSpace.Services.Identity.Application.DTO;
@@ -47,5 +48,36 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 CreatedAt = entity.CreatedAt,
                 RevokedAt = entity.RevokedAt
             };
+
+        public static UserResetTokenDto AsDto(this UserResetToken userResetToken)
+            => new UserResetTokenDto
+            {
+                UserId = userResetToken.UserId,
+                ResetToken = userResetToken.ResetToken,
+                ResetTokenExpires = userResetToken.ResetTokenExpires
+            };
+
+       public static UserResetToken AsEntity(this UserResetTokenDocument document)
+            => new UserResetToken(
+                document.UserId,
+                document.ResetToken,
+                document.ResetTokenExpires ?? DateTime.MinValue
+            );
+
+       public static UserResetTokenDocument AsDocument(this UserResetToken userResetToken)
+        {
+            if (userResetToken == null)
+            {
+                throw new ArgumentNullException(nameof(userResetToken));
+            }
+
+            return new UserResetTokenDocument
+            {
+                Id = userResetToken.Id,
+                UserId = userResetToken.UserId,
+                ResetToken = userResetToken.ResetToken,
+                ResetTokenExpires = userResetToken.ResetTokenExpires
+            };
+        }
     }
 }

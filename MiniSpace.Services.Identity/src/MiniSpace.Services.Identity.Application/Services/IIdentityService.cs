@@ -14,5 +14,7 @@ namespace MiniSpace.Services.Identity.Application.Services
         Task RevokeOrganizerRightsAsync(RevokeOrganizerRights command);
         Task BanUserAsync(BanUser command);
         Task UnbanUserAsync(UnbanUser command);
+        Task ForgotPasswordAsync(ForgotPassword command);
+        Task ResetPasswordAsync(ResetPassword command);
     }
 }

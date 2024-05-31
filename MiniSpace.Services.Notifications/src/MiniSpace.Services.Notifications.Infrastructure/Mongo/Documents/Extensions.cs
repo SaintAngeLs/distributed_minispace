@@ -15,7 +15,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 document.CreatedAt,
                 document.UpdatedAt,
                 document.EventType,
-                document.RelatedEntityId);
+                document.RelatedEntityId,
+                document.Details);
 
         public static NotificationDocument AsDocument(this Notification entity)
             => new NotificationDocument
@@ -27,7 +28,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 RelatedEntityId = entity.RelatedEntityId,
-                EventType = entity.EventType
+                EventType = entity.EventType,
+                Details = entity.Details
             };
 
         public static NotificationDto AsDto(this Notification entity)
@@ -40,7 +42,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 RelatedEntityId = entity.RelatedEntityId,
-                EventType = entity.EventType
+                EventType = entity.EventType,
+                Details = entity.Details
             };
 
         public static NotificationDto AsDto(this NotificationDocument document)
@@ -53,7 +56,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 CreatedAt = document.CreatedAt,
                 UpdatedAt = document.UpdatedAt,
                 RelatedEntityId = document.RelatedEntityId,
-                EventType = document.EventType
+                EventType = document.EventType,
+                Details = document.Details
             };
 
 

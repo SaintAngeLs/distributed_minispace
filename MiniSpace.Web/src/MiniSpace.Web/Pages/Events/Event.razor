@@ -6,8 +6,10 @@
 @using MiniSpace.Web.Areas.Reactions
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Models.Reports
 @using MiniSpace.Web.Pages.Comments
 @using MiniSpace.Web.Pages.Events.Dialogs
+@using MiniSpace.Web.Pages.Reports.Dialogs
 @using Radzen
 @using MudBlazor
 @using AlignItems = Radzen.AlignItems
@@ -25,7 +27,7 @@
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
-@if (!pageInitialized)
+@if (!pageInitialized && !eventNotFound)
 {
     <div style="display: flex; justify-content: center; align-items: center;">
         <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
@@ -33,6 +35,12 @@
             <Template>Loading...</Template>
         </RadzenProgressBarCircular>
     </div>
+}
+
+@if (eventNotFound)
+{
+    <h3 class="rz-p-12">Event not found!</h3>
+    <h3>Probably has been deleted!</h3>
 }
 
 @if (pageInitialized)
@@ -108,7 +116,7 @@
                     else if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                     {
                         <RadzenButton Size="ButtonSize.Medium" Text="Report event" class="delete-button"
-                                      Click="@(() => OpenReportDialog())" >
+                                      Click="@(() => ReportEvent(ev)))" >
                             <RadzenIcon Icon="warning" Style="color: white; font-weight: 800;"/>
                         </RadzenButton>
                     }
@@ -355,6 +363,7 @@
     private Guid studentId;
     private EventDto ev = new();
     private bool pageInitialized = false;
+    private bool eventNotFound = false;
     private EventRatingDto eventRating = null;
 
     private int activeIndex = 0;
@@ -441,7 +450,18 @@
                 AutoFocusFirstElement = false
             });
     }
-
+    
+    private async Task OpenReportEventDialog(CreateReportModel createReportModel)
+    {
+        await DialogService.OpenAsync<CreateReportDialog>("Report the event:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
     private async void SignUpToEvent(EventDto eventDto)
     {
         await EventsService.SignUpToEventAsync(eventDto.Id, studentId);
@@ -609,6 +629,19 @@
     private async Task OpenReportDialog()
     {
         
+    }
+    
+    private async Task ReportEvent(EventDto eventDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = studentId,
+            TargetId = eventDto.Id,
+            TargetOwnerId = eventDto.Organizer.Id,
+            ContextType = "Event"
+        };
+
+        await OpenReportEventDialog(createReportModel);
     }
 
     // private async Task SearchComments()
