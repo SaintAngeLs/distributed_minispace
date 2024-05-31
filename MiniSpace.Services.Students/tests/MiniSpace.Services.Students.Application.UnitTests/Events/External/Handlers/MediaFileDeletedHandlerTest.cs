@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MiniSpace.Services.Students.Core.Exceptions;
 using Xunit;
 
 namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Handlers
@@ -45,7 +46,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
         }
 
         [Fact]
-        public async Task HandleAsync_InvalidSource_ShouldThrowInvalidSourceExeption()
+        public async Task HandleAsync_InvalidSource_ShouldReturn()
         {
             // Arrange
             var mediaFileId = Guid.NewGuid();
@@ -56,9 +57,13 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
 
             var cancelationToken = new CancellationToken();
 
-            // Act & Assert
+            // Act
             Func<Task> act = async () => await _mediaFileDeletedHandler.HandleAsync(@event, cancelationToken);
-            await Assert.ThrowsAnyAsync<AppException>(act);
+
+            // Assert
+            await act.Should().NotThrowAsync();
+            _studentRepositoryMock.Verify(x => x.GetAsync(It.IsAny<Guid>()), Times.Never);
+            _studentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Student>()), Times.Never);
         }
     }
 }
