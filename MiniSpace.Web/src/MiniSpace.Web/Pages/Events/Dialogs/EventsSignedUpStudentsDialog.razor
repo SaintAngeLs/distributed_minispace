@@ -51,6 +51,7 @@
     private async void RemoveEventParticipant(ParticipantDto participant)
     {
         await EventsService.RemoveEventParticipantAsync(EventId, participant.StudentId);
+        Students = Students.Where(s => s.StudentId != participant.StudentId).ToList();
     }
     
     private async Task OpenParticipantDetailsDialog(ParticipantDto participantDto, string term)
