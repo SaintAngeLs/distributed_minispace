@@ -26,16 +26,22 @@ else
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Add root organization"
+                          class="rz-border-radius-1" Icon="note_add"
                           Click="@(() => OpenAddOrganizationDialog(selectedItem as OrganizationModel, true))" />
             <RadzenButton Size="ButtonSize.Medium" Text="Add child organization" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="note_add"
                           Click="@(() => OpenAddOrganizationDialog(selectedItem as OrganizationModel, false))" />
+            <RadzenButton Size="ButtonSize.Medium" Text="Delete organization" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="delete_forever" ButtonStyle="ButtonStyle.Warning"
+                          />
         </RadzenStack>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Clear selection" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="close"
                           Click="@(() => selectedItem = null)" />
             <RadzenButton Size="ButtonSize.Medium" Text="Show organization details" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="search" ButtonStyle="ButtonStyle.Secondary"
                           Click="@(() => OpenOrganizationDetailsDialog(selectedItem as OrganizationModel, organizers))" />
-           
         </RadzenStack>
     </RadzenStack>
     
