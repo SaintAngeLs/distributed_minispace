@@ -26,7 +26,7 @@
     };
 }
 
-<div style="display: flex; padding: 50px;">
+<div style="display: flex;">
     <div class="left-panel">
         <div class="search-bar">
             <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
@@ -39,7 +39,7 @@
                     <img src="@GetImage(student.Id)" alt="Student Image" class="friend-img">
                     <div class="friend-info">
                         <h5>@student.FirstName @student.LastName</h5>
-                        <p>Email: @student.Email</p>
+                        <p>@student.Email</p>
                         <div class="buttons">
                             @* <RadzenButton Text="Connect" Disabled="@student.IsInvitationPending" 
                                 Click="@(e => ConnectWithStudent(student.Id, e))" 
@@ -238,24 +238,6 @@
         box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
     }
 
-    .pagination-controls {
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-    }
-
-    .pagination-controls button {
-        padding: 8px 16px;
-        margin-right: 5px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 5px;
-    }
-
-    .pagination-controls button:disabled {
-        background-color: #ccc;
-    }
 
     .profile-image {
         width: 400px; 
@@ -297,6 +279,49 @@
         gap: 8px;
         margin: 20px 0px 0px 10px !important;
     }
+
+    
+    .pagination-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 0;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+    }
+
+    .pagination-controls button {
+        padding: 5px 10px;
+        margin: 0 5px !important;
+        background-image: linear-gradient(to right, #007BFF, #0062cc); 
+        color: white;
+        font-size: 16px;
+        border: 1px solid #0056b3;
+        border-radius: 6px; 
+        cursor: pointer;
+        transition: all 0.3s ease; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .pagination-controls button:hover {
+        background-image: linear-gradient(to right, #0056b3, #004080); 
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+    }
+
+    .pagination-controls button:disabled {
+        background-color: #ccc;
+        color: #666;
+        border: 1px solid #aaa;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .pagination-controls span {
+        color: #333;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 0 15px;
+    }
+
 
 
 </style>

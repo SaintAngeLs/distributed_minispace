@@ -490,13 +490,17 @@ html, body {
 
 
 @media (max-width: 768px) {
-    .right-panel {
-        display: none;
-    }
 
     .notification-component {
         display: none;
     }
+}
+
+@media (max-width: 1220px) {
+    .right-panel {
+        display: none;
+    }
+
 }
 
 .header-services {
@@ -563,3 +567,24 @@ html, body {
         padding-top: 80px !important;
     }
 }
+
+
+
+
+.main-content-container {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    position: relative; 
+}
+
+@media (max-width: 768px) {
+    .mobile-sidebar {
+        transition: 0.5s;
+        position: absolute !important; 
+        top: 0; 
+      
+        z-index: 10010;
+    }
+}
+
