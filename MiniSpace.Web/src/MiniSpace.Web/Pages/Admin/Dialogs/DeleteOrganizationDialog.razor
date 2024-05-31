@@ -9,7 +9,7 @@
 <RadzenStack Gap="1rem">
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Click="@(() => DeleteOrganization(Organization.Id))" Variant="Variant.Flat" Text="Delete" Style="width: 100px"/>
+            <RadzenButton Click="@(() => DeleteOrganization())" Variant="Variant.Flat" Text="Delete" Style="width: 100px"/>
             <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Cancel" Style="width: 100px; background-color: #1b6ec2"/>
         </RadzenStack>
     </RadzenStack>
@@ -24,9 +24,9 @@
         await base.OnInitializedAsync();
     }
     
-    private async void DeleteOrganization(Guid organizationId)
+    private async void DeleteOrganization()
     {
-        await OrganizationsService.DeleteOrganizationAsync(organizationId);
+        await OrganizationsService.DeleteOrganizationAsync(Organization.Id, Organization.RootId);
         DialogService.Close(true);
     }
 }
