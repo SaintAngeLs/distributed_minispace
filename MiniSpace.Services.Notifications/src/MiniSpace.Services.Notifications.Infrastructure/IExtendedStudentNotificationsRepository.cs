@@ -9,5 +9,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
     {
         Task<UpdateResult> BulkUpdateAsync(FilterDefinition<StudentNotificationsDocument> filter, UpdateDefinition<StudentNotificationsDocument> update);
         Task<int> GetNotificationCount(Guid studentId);
+        Task<List<NotificationDocument>> GetRecentNotifications(Guid studentId, int count);
     }
 }
