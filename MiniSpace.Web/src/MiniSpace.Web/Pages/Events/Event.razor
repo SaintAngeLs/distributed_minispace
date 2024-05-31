@@ -41,27 +41,31 @@
          (IdentityService.GetCurrentUserRole() == "user" || IdentityService.GetCurrentUserRole() == "organizer"))
     {
         <div class="rz-p-4">
-            <RadzenStack class="rz-pt-5 rz-mx-auto" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
-                @if (!ev.IsInterested)
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Interest in event" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => ShowInterestInEvent(ev))" class="separate-button"/>
-                }
-                else
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => CancelInterestInEvent(ev))" class="separate-button"/>
-                }
-                @if (!ev.IsSignedUp)
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => SignUpToEvent(ev))" class="separate-button"/>
-                }
-                else
-                {
-                    <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => CancelSignUpToEvent(ev))" class="separate-button"/>
-                }
+            <RadzenStack class="rz-pt-5 rz-mx-auto" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="1rem">
+                <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                    @if (!ev.IsInterested)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Show interest in event"
+                                      Click="@(() => ShowInterestInEvent(ev))" class="separate-button"/>
+                    }
+                    else
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel interest in event" 
+                                      Click="@(() => CancelInterestInEvent(ev))" class="separate-button-cancelled"/>
+                    }
+                    @if (!ev.IsSignedUp)
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Sign up to event" 
+                                      Click="@(() => SignUpToEvent(ev))" class="separate-button" Disabled=@(ev.SignedUpStudents>=ev.Capacity)/>
+                    }
+                    else
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Cancel sign up to event" 
+                                      Click="@(() => CancelSignUpToEvent(ev))" class="separate-button-cancelled"/>
+                    }
+                </RadzenStack>
+                <RadzenButton Size="ButtonSize.Medium" Text="Event details" Icon="info" Style="background-color: darkgreen !important;"
+                                                  Click="@(() => OpenEventDetailsDialog(ev))" class="separate-button"/>
             </RadzenStack>
         </div>
     }
@@ -272,6 +276,16 @@
         transition: background-color 0.3s ease; 
     }
     
+    .separate-button-cancelled {
+            margin: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            background-color: #88a5c5 !important;
+            padding: 12px;
+            color: #333; 
+            transition: background-color 0.3s ease; 
+        }
+    
     .friends-button{
         border: 1px solid #30445f; 
         background-color: transparent !important;
@@ -399,44 +413,6 @@
         }
 
         return eventDto.Organizer != null && studentId == eventDto.Organizer.Id;
-    }
-
-    private async void OnChange(int index)
-    {
-        if (!IdentityService.IsAuthenticated)
-        {
-            return;
-        }
-
-        switch (index)
-        {
-            case 0:
-                posts = await PostsService.GetPostsAsync(ev.Id);
-                break;
-            case 1:
-                break;
-            case 2:
-                reactions = await ReactionsService.GetReactionsAsync(ev.Id, ReactionContentType.Event);
-                break;
-            case 3:
-                if (IsUserEventOrganizer(ev))
-                {
-                    var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
-                    signedUpStudents = eventParticipantsDto.SignedUpStudents.ToList();
-                }
-
-                break;
-            case 4:
-                if (IsUserEventOrganizer(ev))
-                {
-                    var eventParticipantsDto = await EventsService.GetEventParticipantsAsync(ev.Id);
-                    interestedStudents = eventParticipantsDto.InterestedStudents.ToList();
-                }
-
-                break;
-        }
-
-        StateHasChanged();
     }
 
     private async Task OpenEventDetailsDialog(EventDto eventDto)
