@@ -21,7 +21,10 @@
 }
 else
 {
-    <RadzenStack class="rz-p-8" Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween"
+    <h4 class="rz-p-8">Max depth of organization tree - 10 levels (with root included).
+        Please to note this fact during formation of new organizations. </h4>
+    
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween"
                  Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Add root organization"
@@ -51,6 +54,11 @@ else
         }
         
         <RadzenTree Data="@rootOrganizations" Expand="@OnExpand" @bind-Value=@selectedItem>
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
             <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
             <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
             <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
