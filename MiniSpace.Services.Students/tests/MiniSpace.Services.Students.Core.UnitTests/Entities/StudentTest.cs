@@ -117,7 +117,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             // Arrange
             var eventId = Guid.NewGuid();
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
-            student.InterestedInEvents.Append(eventId);
+            student.InterestedInEvents = new List<Guid> { eventId };
 
             // Act
             Func<bool> fun = () => { student.AddInterestedInEvent(eventId); return true; };
@@ -146,7 +146,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             // Arrange
             var eventId = Guid.NewGuid();
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
-            student.SignedUpEvents.Append(eventId);
+            student.SignedUpEvents = new List<Guid> { eventId };
 
             // Act
             Func<bool> fun = () => { student.AddInterestedInEvent(eventId); return true; };

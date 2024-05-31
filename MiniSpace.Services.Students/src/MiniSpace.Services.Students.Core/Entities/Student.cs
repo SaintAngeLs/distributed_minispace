@@ -139,8 +139,11 @@ namespace MiniSpace.Services.Students.Core.Entities
             {
                 return;
             }
-
-            _interestedInEvents.Add(eventId);
+            
+            if (!_interestedInEvents.Add(eventId))
+            {
+                throw new StudentAlreadyInterestedInException(Id, eventId);
+            }
         }
         
         public void RemoveInterestedInEvent(Guid eventId)
@@ -152,8 +155,11 @@ namespace MiniSpace.Services.Students.Core.Entities
             {
                 return;
             }
-
-            _signedUpEvents.Add(eventId);
+            
+            if (!_signedUpEvents.Add(eventId))
+            {
+                throw new StudentAlreadySignedUpException(Id, eventId);
+            }
         }
         
         public void RemoveSignedUpEvent(Guid eventId)
