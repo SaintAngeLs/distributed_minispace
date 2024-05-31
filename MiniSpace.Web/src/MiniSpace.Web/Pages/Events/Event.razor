@@ -61,7 +61,20 @@
                         </RadzenText>
                     }
                 </RadzenStack>
-                <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-px-4 rz-pt-2 {GetStateColor()}")">@StateToText()</RadzenText>
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem" Class="rz-pt-2 rz-px-4 rz-border-top">
+                    <RadzenText TextStyle="TextStyle.Body1" Class="@($"rz-font-weight-bold rz-px-4 rz-pt-2 {GetStateColor()}")">@StateToText()</RadzenText>
+                    @if (IdentityService.IsAuthenticated & IsUserEventOrganizer(ev))
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Update event" class="edit-button"
+                                      Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/update"))">
+                            <RadzenIcon Icon="edit" Style="color: white; font-weight: 800;"/>
+                        </RadzenButton>
+                        <RadzenButton Size="ButtonSize.Medium" Text="Delete event" class="delete-button"
+                                                          Click="@(() => OpenDeleteEventDialog())" >
+                            <RadzenIcon Icon="close" Style="color: white; font-weight: 800;"/>
+                        </RadzenButton>
+                    }
+                </RadzenStack>
             </RadzenStack>
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Stretch" Gap="1rem" Class="rz-p-4">
                 <RadzenStack Gap="0">
@@ -228,6 +241,16 @@
     .friends-button{
         border: 1px solid #30445f; 
         background-color: transparent !important;
+        border-radius: 5px;
+    }
+    
+    .edit-button {
+        background-color: darkgreen !important;
+        border-radius: 5px;
+    }
+    
+    .delete-button {
+        background-color: darkred !important;
         border-radius: 5px;
     }
     
@@ -399,7 +422,7 @@
             new Dictionary<string, object>() { { "EventId", new Guid(EventId) } },
             new DialogOptions()
             {
-                Width = "500px", Height = "100px", Resizable = true, Draggable = true,
+                Width = "500px", Height = "100px", Resizable = false, Draggable = false,
                 AutoFocusFirstElement = false
             });
     }
