@@ -13,7 +13,7 @@
 @inject IIdentityService IdentityService
 
 <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-    @if (IdentityService.IsAuthenticated)
+    @if (IdentityService == null || IdentityService.IsAuthenticated)
     {
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Add comment" ButtonStyle="ButtonStyle.Secondary"

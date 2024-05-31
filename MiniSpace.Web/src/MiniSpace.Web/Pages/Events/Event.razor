@@ -105,7 +105,7 @@
                             <RadzenIcon Icon="close" Style="color: white; font-weight: 800;"/>
                         </RadzenButton>
                     }
-                    else
+                    else if (IdentityService.IsAuthenticated && !IsUserEventOrganizer(ev))
                     {
                         <RadzenButton Size="ButtonSize.Medium" Text="Report event" class="delete-button"
                                       Click="@(() => OpenReportDialog())" >
