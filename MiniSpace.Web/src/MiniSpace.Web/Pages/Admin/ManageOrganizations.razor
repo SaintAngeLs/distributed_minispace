@@ -76,7 +76,7 @@ else
         if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
             var tmpOrganizations = await OrganizationsService.GetRootOrganizationsAsync();
-            ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations, null);
+            ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations, null, null);
             totalRootOrganizations = rootOrganizations.Count;
         }
         
@@ -95,11 +95,12 @@ else
     {
         var parent = (OrganizationModel)args.Value;
         var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(parent.Id, parent.RootId);
-        ConvertOrganizationDtoList(childOrganizations, parent.Children, parent.RootId);
+        ConvertOrganizationDtoList(childOrganizations, parent.Children, parent.RootId, parent);
         StateHasChanged();
     }
 
-    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result, Guid? rootId)
+    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result,
+        Guid? rootId, OrganizationModel parent)
     {
         result.Clear();
         foreach (var organization in input)
@@ -109,6 +110,7 @@ else
                 Id = organization.Id,
                 Name = organization.Name,
                 RootId = rootId ?? organization.Id,
+                Parent = parent,
                 Children = new List<OrganizationModel>()
             });
         }
@@ -135,7 +137,7 @@ else
         else if (selectedItem is OrganizationModel selectedOrg)
         {
             var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(selectedOrg.Id, selectedOrg.RootId);
-            ConvertOrganizationDtoList(childOrganizations, selectedOrg.Children, selectedOrg.RootId);
+            ConvertOrganizationDtoList(childOrganizations, selectedOrg.Children, selectedOrg.RootId, selectedOrg.Parent);
             StateHasChanged();
         }
     }
@@ -164,6 +166,17 @@ else
                 Width = "500px", Height = "100px", Resizable = false, Draggable = false,
                 AutoFocusFirstElement = false
             });
-        StateHasChanged();
+        if (organization.Parent == null)
+        {
+            await OnInitializedAsync();
+        }
+        else
+        {
+            var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(organization.Parent.Id,
+                organization.Parent.RootId);
+            ConvertOrganizationDtoList(childOrganizations, organization.Parent.Children, organization.Parent.RootId,
+                organization.Parent.Parent);
+            StateHasChanged();
+        }
     }
 }
