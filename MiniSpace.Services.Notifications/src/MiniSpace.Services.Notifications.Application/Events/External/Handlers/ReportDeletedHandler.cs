@@ -27,13 +27,22 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(ReportDeleted eventArgs, CancellationToken cancellationToken)
         {
-            // Notify the target owner
-            var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, "A report concerning your content has been deleted.");
-            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportDeleted");
+            // Fetch student details
+            var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
+            var targetOwner = await _studentsServiceClient.GetAsync(eventArgs.TargetOwnerId);
+
+            string issuerName = $"{issuer.FirstName} {issuer.LastName}";
+            string targetOwnerName = $"{targetOwner.FirstName} {targetOwner.LastName}";
+
+            // Detailed notification for issuer
+            string issuerMessage = $"Dear {issuerName}, the report you filed about '{eventArgs.Category}' concerning '{eventArgs.ContextType}' has been deleted.";
+            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, issuerMessage);
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportDeletionConfirmed", issuerName);
             
-            // Notify the issuer
-            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, "The report you filed has been deleted.");
-            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportDeletionConfirmed");
+            // Detailed notification for target owner
+            string targetOwnerMessage = $"Hello {targetOwnerName}, a report about '{eventArgs.Category}' concerning your content '{eventArgs.ContextType}' has been deleted.";
+            var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, targetOwnerMessage);
+            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportDeleted", targetOwnerName);
         }
 
         private async Task<Notification> CreateNotificationForUser(Guid userId, ReportDeleted eventArgs, string message)
@@ -54,16 +63,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             return notification;
         }
 
-        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType)
+        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType, string userName)
         {
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
-                message: notification.Message,
+                message: $"{userName}, {notification.Message}",
                 createdAt: notification.CreatedAt,
                 eventType: NotificationEventType.ReportDeleted.ToString(),
                 relatedEntityId: notification.RelatedEntityId,
-                details: $"Notification for user {userId}. Message: {notification.Message}"
+                details: $"Notification for user {userId} ({userName}). Message: {notification.Message}"
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
