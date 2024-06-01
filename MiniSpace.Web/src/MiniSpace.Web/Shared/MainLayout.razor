@@ -167,16 +167,15 @@
     bool _sidebarExpanded = true;
     bool isLoading = true;
     private bool firstRender = true;
+    
+    private bool _isUserAuthenticated;
     private string _userName;
     private string _userSurname;
-
+    private string _userEmail;
+    
     private Guid _studentId;
     private string _studentState;
-
-    private string _userEmail;
-
-    private bool _isUserAuthenticated;
-
+    
     private string currentRoute;
 
      protected override async Task OnAfterRenderAsync(bool firstRender) {

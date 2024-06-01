@@ -87,11 +87,11 @@
         else if (IdentityService.IsAuthenticated)
         {
             await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-            NavigationManager.NavigateTo("/account");
+            NavigationManager.NavigateTo("/", true);
         }
         else
         {
-            NavigationManager.NavigateTo("/signin");
+            NavigationManager.NavigateTo("/signin", true);
         }
     }
     
