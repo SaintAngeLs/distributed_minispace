@@ -26,7 +26,8 @@
     }
     else
     {
-        <h1 class="rz-p-8">Please join an event first</h1>
+        <h3 class="rz-p-8 ">No activity found</h3>
+        <RadzenButton class="join-button" Text="Please join an event first" Click="@(() => NavigationManager.NavigateTo("/events/search"))" />
     }
 }
 
@@ -36,6 +37,13 @@
         font-size: 40px; /* Change this to your preferred font size */
         font-weight: bold; /* Change this to your preferred font weight */
     }
+    
+    .join-button {
+        border: 1px solid #30445f; 
+        background-color: transparent !important;
+        border-radius: 5px;
+        color: #30445f !important;
+    }  
 </style>
 
 
