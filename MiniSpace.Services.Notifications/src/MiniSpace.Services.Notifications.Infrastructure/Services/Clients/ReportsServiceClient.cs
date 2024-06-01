@@ -19,16 +19,16 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             _reportsServiceUrl = options.Services["reports"];
         }
 
-        public async Task<ReportDto> GetReportAsync(Guid reportId)
+        public async Task<ReportDto> GetReportAsync(Guid studentId)
         {
-            var url = $"{_reportsServiceUrl}/reports/{reportId}";
+            var url = $"{_reportsServiceUrl}/reports/students/{studentId}";
             var response = await _httpClient.GetAsync(url);
             return await HandleResponseAsync<ReportDto>(response);
         }
 
         public async Task<IEnumerable<ReportDto>> GetReportsByUserIdAsync(Guid userId)
         {
-            var url = $"{_reportsServiceUrl}/reports/user/{userId}";
+            var url = $"{_reportsServiceUrl}/reports/students/{userId}";
             var response = await _httpClient.GetAsync(url);
             return await HandleResponseAsync<IEnumerable<ReportDto>>(response);
         }
