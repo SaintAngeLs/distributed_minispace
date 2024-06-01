@@ -1,8 +1,10 @@
 @using Radzen
 
-<RadzenRow AlignItems="AlignItems.Center" Style="height: 5em">
-    <RadzenColumn Size="12" SizeMD="5">
-        <RadzenLabel Text="@LabelText" Component="@Id" />
+<RadzenRow AlignItems="AlignItems.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenLabel Component="@Id">
+            <strong>@LabelText</strong>
+        </RadzenLabel>
     </RadzenColumn>
     <RadzenColumn Size="12" SizeMD="5">
         <RadzenDatePicker Style="width: 82%;" Disabled="@Disabled" Name="@Id"
