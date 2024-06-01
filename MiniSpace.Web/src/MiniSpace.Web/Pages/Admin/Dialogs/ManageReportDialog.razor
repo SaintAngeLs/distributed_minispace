@@ -100,15 +100,15 @@
                     {
                     case ReportState.Submitted:
                         <RadzenButton Size="ButtonSize.Medium" Text="Start review" Style="width: 200px"
-                                      ButtonStyle="ButtonStyle.Primary"
+                                      ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                       Click="@(() => StartReportReview(ReportDto))"/>
                     break;
                     case ReportState.UnderReview when ReportDto.ReviewerId == AdminId:
                         <RadzenButton Size="ButtonSize.Medium" Text="Resolve" Style="width: 200px"
-                                      ButtonStyle="ButtonStyle.Primary"
+                                      ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                       Click="@(() => ResolveReport(ReportDto))"/>
                         <RadzenButton Size="ButtonSize.Medium" Text="Reject" Style="width: 200px"
-                                      ButtonStyle="ButtonStyle.Primary"
+                                      ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                       Click="@(() => RejectReport(ReportDto))"/>
                     break;
                     case ReportState.Resolved:

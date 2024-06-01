@@ -1,7 +1,9 @@
 using Convey.CQRS.Events;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Events
 {
+    [ExcludeFromCodeCoverage]
     public class StudentUpdated : IEvent
     {
         public Guid StudentId { get; }

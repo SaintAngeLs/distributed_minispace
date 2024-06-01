@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace MiniSpace.Services.Students.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class CorrelationContext
     {
         public string CorrelationId { get; set; }

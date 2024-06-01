@@ -8,6 +8,7 @@ namespace MiniSpace.Web.Models.Organizations
         public Guid Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
+        public string Label { get; set; }
         public bool WasBelonging { get; set; }
 
         public OrganizerModel(Guid id, string email, string name)
