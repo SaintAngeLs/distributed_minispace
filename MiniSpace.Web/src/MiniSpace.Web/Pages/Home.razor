@@ -10,46 +10,33 @@
 @inject IIdentityService IdentityService
 @inject IPostsService PostsService
 
-    
+<h1 class="rz-p-8 search-font">Discover What's New</h1>
+
 @if (pageInitialized)
 {
-    <RadzenStack>
-        <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
-            <Template Context="Post">
-                <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer; max-width: 1080px;"
-                            @onclick="@(() => NavigationManager.NavigateTo($"/events/{Post.EventId}/posts/{Post.Id}"))">
-                    <RadzenRow Gap="0.5rem">
-                        <RadzenColumn Size="12" class="rz-text-truncate">
-                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                @if (Post.UpdatedAt != null)
-                                {
-                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                        Updated at @(Post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
-                                    </RadzenText>   
-                                }
-                                else
-                                {
-                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                        Published at @(Post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
-                                    </RadzenText>   
-                                }
-                            </RadzenStack>
-                        </RadzenColumn>
-                    </RadzenRow>
-                    <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
-                        <RadzenStack Gap="1em">
-                            <RadzenStack></RadzenStack>
-                            <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
-                                <strong>@(Post.TextContent)</strong>
-                            </RadzenText>
-                        </RadzenStack>
-                    </RadzenStack>
-                </RadzenCard>
-            </Template>
-        </RadzenDataList>
-    </RadzenStack>
+    @if (posts.Any())
+    {
+        <RadzenStack>
+            <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
+                <Template Context="post">
+                    <RadzenHomePostCard Post="post"></RadzenHomePostCard>
+                </Template>
+            </RadzenDataList>
+        </RadzenStack>
+    }
+    else
+    {
+        <h1 class="rz-p-8">Please join an event first</h1>
+    }
 }
+
+<style>
+    .search-font {
+        font-family: Arial, sans-serif; /* Change this to your preferred font */
+        font-size: 40px; /* Change this to your preferred font size */
+        font-weight: bold; /* Change this to your preferred font weight */
+    }
+</style>
 
 
 @code {
