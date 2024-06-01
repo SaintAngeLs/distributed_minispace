@@ -1,0 +1,60 @@
+﻿@page "/home"
+@using MudBlazor
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Posts
+@using MiniSpace.Web.Data.Posts
+@using MiniSpace.Web.DTO.Wrappers
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@inject IPostsService PostsService
+
+    
+@if (pageInitialized)
+{
+    <RadzenStack>
+        <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
+            <Template Context="post">
+                <RadzenPostCard Event="ev" Post="post"/>
+            </Template>
+        </RadzenDataList>
+    </RadzenStack>
+}
+
+
+@code {
+    private IEnumerable<PostDto> posts;
+    private Guid studentId;
+    private bool pageInitialized = false;
+    private SearchPosts searchModel;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService != null && IdentityService.IsAuthenticated)
+        {
+            studentId = IdentityService.GetCurrentUserId();
+            searchModel = InitializeSearchModel(studentId);
+            var result = await PostsService.SearchPostsAsync(searchModel);
+            posts = result.Content.Content;
+            pageInitialized = true;
+        }
+        NavigationManager.NavigateTo("");
+    }
+    
+    private static SearchPosts InitializeSearchModel(Guid studentId)
+    {
+        return new()
+        {
+            StudentId = studentId,
+            Pageable = new PageableDto()
+            {
+                Page = 1,
+                Size = 5,
+                Sort = new SortDto()
+                {
+                    SortBy = new List<string>() {"publishDate"},
+                    Direction = "des"
+                }
+            }
+        };
+    }
+}

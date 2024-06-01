@@ -7,11 +7,5 @@ namespace MiniSpace.Web.Data.Posts
     {
         public Guid StudentId { get; set; }
         public PageableDto Pageable { get; set; }
-        
-        public SearchPosts(Guid studentId, PageableDto pageable)
-        {
-            StudentId = studentId;
-            Pageable = pageable;
-        }
     }
 }

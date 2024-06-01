@@ -41,11 +41,10 @@ namespace MiniSpace.Web.Areas.Posts
                 mediaFiles, state, publishDate});
         }
         
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<PostDto>>>> SearchPostsAsync(Guid studentId,
-            PageableDto pageable)
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<PostDto>>>> SearchPostsAsync(SearchPosts searchPosts)
         {
-            return _httpClient.PostAsync<SearchPosts, PagedResponseDto<IEnumerable<PostDto>>>("posts/search", 
-                new (studentId, pageable));
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.PostAsync<SearchPosts, PagedResponseDto<IEnumerable<PostDto>>>("posts/search", searchPosts);
         }
 
         public Task DeletePostAsync(Guid postId)
