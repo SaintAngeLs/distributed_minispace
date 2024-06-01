@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Events.Application.Events.Rejected
 {
+    [ExcludeFromCodeCoverage]
     public class RemoveEventParticipantRejected: IRejectedEvent
     {
         public Guid EventId { get; }

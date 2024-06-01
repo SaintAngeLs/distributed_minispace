@@ -1,7 +1,9 @@
 ﻿using MiniSpace.Services.Events.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class AddressDto
     {
         public string BuildingName { get; set; }

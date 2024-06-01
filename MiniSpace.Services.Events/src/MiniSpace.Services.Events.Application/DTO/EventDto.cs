@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class EventDto
     {
         public Guid Id { get; set; }
