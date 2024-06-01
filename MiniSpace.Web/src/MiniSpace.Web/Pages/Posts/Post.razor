@@ -15,6 +15,7 @@
 @using Orientation = Radzen.Orientation
 @using System.Globalization
 @using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Pages.Events.Dialogs
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IPostsService PostsService
@@ -89,6 +90,35 @@
                     </MudCarousel>
                 </RadzenStack>
             }
+            <RadzenRow RowGap="0">
+                <RadzenColumn SizeSM="8">
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
+                        <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions:  @reactionsSummary.NumberOfReactions</RadzenText>
+                    </RadzenStack>
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-pb-4 rz-border-top">
+                        @if (reactionsSummary.NumberOfReactions > 0)
+                        {
+                            <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
+                            <MudIcon Icon="@($"{reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
+                        }
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn SizeSM="4">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                        @if (IdentityService.IsAuthenticated && !IsUserPostCreator(post))
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" class="separate-button"
+                                          Click="@(() => OpenReactionsDialog())">
+                                React
+                                @if (reactionsSummary.AuthUserReactionType != null)
+                                {
+                                    <MudIcon Icon="@($"{reactionsSummary.AuthUserReactionType.GetReactionIcon()}")"/>
+                                }
+                            </RadzenButton>
+                        }
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
         </RadzenCard>
         
         <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
@@ -103,54 +133,9 @@
                 </RadzenStack>
             }
 
-            <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
-                <RadzenCard class="rz-background-color-success rz-shadow-0 rz-border-radius-0 rz-p-8">
-                    <RadzenRow RowGap="0">
-                        <RadzenColumn SizeSM="6">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Number of reactions</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(reactionsSummary.NumberOfReactions)</b></RadzenText>
-                            <RadzenText Text="Your reaction" TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0" />
-                            <RadzenDropDown Name="your-reaction" Data="reactionTypes" Value="@(reactionsSummary.AuthUserReactionType)"
-                                            ValueChanged="@((ReactionType? reactionType) => ReactionChanged(reactionType))"
-                                            TextProperty="Key" ValueProperty="Value" />
-                        </RadzenColumn>
-                        <RadzenColumn SizeSM="6">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Dominant reaction</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(ReactionTypeExtensions.GetReactionText(reactionsSummary.DominantReaction))</b></RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenCard>
-            </RadzenCard>
         </RadzenStack>
         
         <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
-        
-        <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
-            <Tabs>
-                <RadzenTabsItem Text="Reactions">
-                    @if (pageInitialized && !reactions.Any())
-                    {
-                    <h3>No reactions have been added by students yet.</h3>
-                    }
-                    <RadzenDataList PageSize="10" AllowPaging="true" Data="@reactions" TItem="ReactionDto">
-                        <Template Context="reaction">
-                            <RadzenCard Class="rz-border-radius-3">
-                                <RadzenRow Gap="0.5rem">
-                                    <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
-                                                    Text=@(reaction.StudentFullName)/>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                                    Text=@(ReactionTypeExtensions.GetReactionText(reaction.Type))/>
-                                    </RadzenColumn>
-                                </RadzenRow>
-                            </RadzenCard>
-                        </Template>
-                    </RadzenDataList>
-                </RadzenTabsItem>
-            </Tabs>
-        </RadzenTabs>
     </RadzenStack>
 }
 
@@ -266,22 +251,6 @@
             });
     }
     
-    private async void ReactionChanged(ReactionType? reactionType)
-    {
-        if (reactionsSummary.AuthUserReactionId != null)
-        {
-            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
-        }
-        
-        if (reactionType != null)
-        {
-            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
-                post.Id, ReactionContentType.Post.ToString());
-        }
-
-        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
-        StateHasChanged();
-    }
     
     private async Task ReportPost(PostDto postDto)
     {
@@ -294,5 +263,36 @@
         };
 
         await OpenReportPostDialog(createReportModel);
+    }
+    
+    private async Task ReactionChanged(ReactionType? reactionType)
+    {
+        if (reactionsSummary.AuthUserReactionId != null)
+        {
+            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
+        }
+
+        if (reactionType != null)
+        {
+            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
+                post.Id, ReactionContentType.Post.ToString());
+        }
+
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
+        StateHasChanged();
+    }
+    
+    private async Task OpenReactionsDialog()
+    {
+        var result = await DialogService.OpenAsync<ReactionDialog>("",
+            new Dictionary<string, object>() { { "SelectedReaction", reactionsSummary.AuthUserReactionType } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "50px", Resizable = false, Draggable = false, ShowClose = false,
+                AutoFocusFirstElement = false
+            });
+        
+        await ReactionChanged((ReactionType?)result);
+        StateHasChanged(); 
     }
 }
