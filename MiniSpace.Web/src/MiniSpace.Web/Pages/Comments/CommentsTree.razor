@@ -6,6 +6,7 @@
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @inject DialogService DialogService
+@inject IIdentityService IdentityService
 
 <MudTreeView Items="@Comments" Hover="true" Width="100%">
     <ItemTemplate Context="comment">
@@ -23,7 +24,7 @@
                                     <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
                                         @(comment.LastUpdatedAt.ToLocalTime().ToString(dateFormat))
                                     </RadzenText>
-                                    @if (comment.StudentId == StudentId)
+                                    @if (comment.StudentId == StudentId && !comment.IsDeleted)
                                     {
                                         <MudStack Row="true" Justify="Justify.Center">
                                             <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium"
@@ -37,7 +38,7 @@
                                     else
                                     {
                                         <MudIconButton Icon="@Icons.Material.Filled.Report" Size="Size.Medium"
-                                                       Color="Color.Inherit"
+                                                       Color="Color.Inherit" Disabled=@(comment.IsDeleted || !IdentityService.IsAuthenticated)
                                                        OnClick="async () => { await ReportCommentAsync(comment); }"/>
                                     }
                                 </RadzenColumn>
@@ -59,18 +60,18 @@
                                         @if (!comment.Likes.Contains(StudentId))
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
-                                                           Color="Color.Inherit"
+                                                           Color="Color.Inherit" Disabled=@(!IdentityService.IsAuthenticated)
                                                            OnClick="async () => { await AddLikeAsync(comment); }"/>
                                         }
                                         else
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
-                                                           Color="Color.Success"
+                                                           Color="Color.Success" Disabled=@(!IdentityService.IsAuthenticated)
                                                            OnClick="async () => { await DeleteLikeAsync(comment); }"/>
                                         }
                                         <MudText>@(comment.RepliesCount)</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium"
-                                                       Color="Color.Inherit"
+                                                       Color="Color.Inherit" Disabled=@(!IdentityService.IsAuthenticated)
                                                        OnClick="async () => { await CreateSubCommentAsync(comment); }"/>
                                     </MudStack>
                                     @if (comment.Likes.Contains((StudentId)))
