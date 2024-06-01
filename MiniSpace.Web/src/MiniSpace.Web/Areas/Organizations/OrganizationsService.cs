@@ -69,6 +69,12 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.PostAsync<object, object>("organizations", new {organizationId, name});
         }
         
+        public Task DeleteOrganizationAsync(Guid organizationId, Guid rootId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.DeleteAsync($"organizations/{organizationId}?rootId={rootId}");
+        }
+        
         public Task AddOrganizerToOrganizationAsync(Guid rootOrganizationId, Guid organizationId, Guid organizerId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
