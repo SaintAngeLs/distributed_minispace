@@ -61,12 +61,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _studentNotificationsRepository.UpdateAsync(studentNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt,
-                eventType: notification.EventType.ToString(),
-                relatedEntityId: notification.RelatedEntityId,
+                notificationId: Guid.NewGuid(),
+                userId: eventArgs.StudentId,
+                message: $"You have successfully signed up for the event '{eventDetails.Name}'.",
+                createdAt: DateTime.UtcNow,
+                eventType: NotificationEventType.EventNewSignUp.ToString(),
+                relatedEntityId: eventArgs.EventId,
                 details: detailsHtml
             );
 
@@ -97,12 +97,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
 
                 var organizerNotificationCreatedEvent = new NotificationCreated(
-                    notificationId: organizerNotification.NotificationId,
-                    userId: organizerNotification.UserId,
-                    message: organizerNotification.Message,
-                    createdAt: organizerNotification.CreatedAt,
-                    eventType: organizerNotification.EventType.ToString(),
-                    relatedEntityId: organizerNotification.RelatedEntityId,
+                    notificationId: Guid.NewGuid(),
+                    userId: eventDetails.Organizer.Id,
+                    message: $"{student.FirstName} {student.LastName} has signed up for your event '{eventDetails.Name}'.",
+                    createdAt: DateTime.UtcNow,
+                    eventType: NotificationEventType.EventNewSignUp.ToString(),
+                    relatedEntityId:  eventArgs.EventId,
                     details: detailsHtmlForOrganizer
                 );
                 await _messageBroker.PublishAsync(organizerNotificationCreatedEvent);

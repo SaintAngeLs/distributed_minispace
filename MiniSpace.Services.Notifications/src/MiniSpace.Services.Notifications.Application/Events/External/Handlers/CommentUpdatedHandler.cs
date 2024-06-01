@@ -72,14 +72,13 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 studentNotifications = new StudentNotifications(commentDetails.StudentId);
             }
 
-            // Notification creation logic for the user who updated the comment
             var userNotification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: commentDetails.StudentId,
                 message: $"Your updated comment on the event '{eventDetails.Name}' has been processed.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
-                updatedAt: DateTime.UtcNow, // Note updated time
+                updatedAt: DateTime.UtcNow, 
                 relatedEntityId: eventArgs.CommentId,
                 eventType: NotificationEventType.CommentUpdated
             );
@@ -113,7 +112,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 message: $"{commentDetails.StudentName} has updated their comment on your event '{eventDetails.Name}'.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
-                updatedAt: DateTime.UtcNow, // Note updated time
+                updatedAt: DateTime.UtcNow, 
                 relatedEntityId: eventArgs.CommentId,
                 eventType: NotificationEventType.CommentUpdated
             );
@@ -124,12 +123,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             var organizerNotificationDetailsHtml = $"<p>{commentDetails.StudentName} updated their comment on your event '{eventDetails.Name}': {commentDetails.CommentContext}</p>";
 
             var organizerNotificationUpdatedEvent = new NotificationCreated(
-                notificationId: organizerNotification.NotificationId,
-                userId: organizerNotification.UserId,
-                message: organizerNotification.Message,
-                createdAt: organizerNotification.CreatedAt,
-                eventType: "CommentUpdated",
-                relatedEntityId: organizerNotification.RelatedEntityId,
+                notificationId: Guid.NewGuid(),
+                userId: eventDetails.Organizer.Id,
+                message: $"{commentDetails.StudentName} has updated their comment on your event '{eventDetails.Name}'.",
+                createdAt: DateTime.UtcNow,
+                eventType: NotificationEventType.CommentUpdated.ToString(),
+                relatedEntityId: eventArgs.CommentId,
                 details: organizerNotificationDetailsHtml
             );
 

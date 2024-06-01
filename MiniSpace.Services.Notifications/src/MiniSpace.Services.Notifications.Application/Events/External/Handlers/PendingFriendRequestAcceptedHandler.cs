@@ -66,12 +66,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             _logger.LogInformation($"Adding notification to StudentNotifications for UserId={@event.RequesterId}");
 
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt,
-                eventType: "FriendRequestAccepted",
-                relatedEntityId: notification.RelatedEntityId,
+                notificationId:  Guid.NewGuid(),
+                userId: @event.RequesterId, 
+                message: notificationMessage,
+                createdAt: DateTime.UtcNow,
+                eventType: NotificationEventType.FriendRequestAccepted.ToString(),
+                relatedEntityId: @event.FriendId,
                 details: detailsHtml
             );
 
@@ -80,11 +80,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
             _logger.LogInformation($"Updated StudentNotifications for UserId={@event.RequesterId}");
-
-         
-
-            
-
         }
     }
 }

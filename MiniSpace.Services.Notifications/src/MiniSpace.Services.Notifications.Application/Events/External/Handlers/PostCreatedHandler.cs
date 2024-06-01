@@ -107,12 +107,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _studentNotificationsRepository.UpdateAsync(studentNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt,
-                eventType: notification.EventType.ToString(),
-                relatedEntityId: notification.RelatedEntityId,
+                notificationId: Guid.NewGuid(),
+                userId: student.Id,
+                message: notificationMessage,
+                createdAt: DateTime.UtcNow,
+                eventType: NotificationEventType.PostCreated.ToString(),
+                relatedEntityId: post.EventId,
                 details: detailsHtml
             );
 
@@ -149,12 +149,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
 
              var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt,
-                eventType: notification.EventType.ToString(),
-                relatedEntityId: notification.RelatedEntityId,
+                notificationId: Guid.NewGuid(),
+                userId: organizer.Id,
+                message: notificationMessage,
+                createdAt: DateTime.UtcNow,
+                eventType: NotificationEventType.PostCreated.ToString(),
+                relatedEntityId: post.EventId,
                 details: detailsHtml
             );
 

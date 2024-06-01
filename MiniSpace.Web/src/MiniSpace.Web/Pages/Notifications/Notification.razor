@@ -19,24 +19,95 @@
     };
 }
 
-<div class="notifications-page-title">
-    <h3>Notification Details</h3>
-</div>
 
-@if (notification != null)
-{
-    <div>
-        <p><strong>Message:</strong> @RenderMessage(notification)</p>
-        <p><strong>Message:</strong> @notification.Details </p>
-        <p><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</p>
-        <p><strong>Status:</strong> @notification.Status</p>
-        <input type="hidden" value="@notification.NotificationId" />
-    </div>
+
+<MudContainer Class="pt-4">
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="10" sm="10" md="10" lg="10">
+            <MudCard Elevation="2">
+                <MudCardContent>
+                    <MudText Typo="Typo.h4" GutterBottom="true" Class="text-center">
+                        <div class="notifications-page-title">
+                            <h3>Notification Details</h3>
+                        </div>
+                    </MudText>
+                    @if (notification != null)
+                    {
+                        <MudList>
+                            <MudListItem>
+                                <MudText Typo="Typo.body1"><strong>Message:</strong> @RenderMessage(notification)</MudText>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudText Typo="Typo.body1"><strong>Details:</strong> @RenderHtml(notification.Details)</MudText>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudText Typo="Typo.body1"><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</MudText>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudText Typo="Typo.body1"><strong>Status:</strong> @notification.Status</MudText>
+                            </MudListItem>
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body1" Italic="true" Class="text-center">Loading notification details...</MudText>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<style>
+    /* Add this CSS to your site.css or appropriate stylesheet file */
+
+.notifications-page-title h3 {
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
 }
-else
-{
-    <p><em>Loading notification details...</em></p>
+
+.custom-breadcrumbs .mud-breadcrumbs-root {
+    padding-bottom: 10px;
 }
+
+.mud-card-content {
+    background-color: #fff; /* Ensures that the card has a white background */
+    border-radius: 8px; /* Adds rounded corners for a softer look */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.mud-text {
+    color: #424242; /* Slightly dark gray color for text for better readability */
+}
+
+.mud-list {
+    list-style: none; /* Removes default list styling */
+    padding: 0;
+    margin: 0;
+}
+
+.mud-list-item {
+    margin-bottom: 10px; /* Space between list items */
+    display: block;
+}
+
+
+/* Enhance link appearance */
+a {
+    color: #1a73e8; /* Google's blue link color for a familiar look */
+    text-decoration: none; /* No underline */
+}
+
+a:hover, a:focus {
+    text-decoration: underline; /* Adds underline on hover/focus for better user interaction */
+}
+
+</style>
 
 @code {
     [Parameter] public Guid NotificationId { get; set; }
@@ -69,13 +140,20 @@ else
 
     private MarkupString RenderMessage(NotificationDto notification)
     {
-        if (!string.IsNullOrEmpty(notification.RelatedEntityId.ToString()))
+        string link = NotificationLinkFactory.GetNotificationLink(notification);
+        if (!string.IsNullOrEmpty(link))
         {
-            return new MarkupString($"{notification.Message} <a href='/student-details/{notification.RelatedEntityId}'>View Profile</a>");
+            return new MarkupString($"{notification.Message} <a href='{link}'>View Details</a>");
         }
         else
         {
             return new MarkupString(notification.Message);
         }
     }
+
+    private MarkupString RenderHtml(string htmlContent)
+    {
+        return new MarkupString(htmlContent);
+    }
+
 }

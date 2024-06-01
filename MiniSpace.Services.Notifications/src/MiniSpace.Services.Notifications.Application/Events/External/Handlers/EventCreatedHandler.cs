@@ -86,12 +86,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 }
 
                 var notificationCreatedEvent = new NotificationCreated(
-                    notificationId: notification.NotificationId,
-                    userId: notification.UserId,
-                    message: notification.Message,
-                    createdAt: notification.CreatedAt,
-                    eventType: "NewEvent",
-                    relatedEntityId: notification.RelatedEntityId,
+                    notificationId: Guid.NewGuid(),
+                    userId: user.Id,
+                    message: notificationMessage,
+                    createdAt:  DateTime.UtcNow,
+                    eventType: NotificationStatus.Unread.ToString(),
+                    relatedEntityId: eventCreated.EventId,
                     details: detailsHtml
                 );
 

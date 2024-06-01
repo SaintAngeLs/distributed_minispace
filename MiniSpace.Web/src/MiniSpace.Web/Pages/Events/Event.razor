@@ -1,4 +1,4 @@
-@page "/events/{EventId}"
+@page "/events/{EventId:Guid}"
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Comments
 @using MiniSpace.Web.Areas.Events
@@ -408,6 +408,8 @@
     protected override async Task OnInitializedAsync()
     {
         ev = await EventsService.GetEventAsync(new Guid(EventId), IdentityService.IsAuthenticated);
+      
+        StateHasChanged();
         posts = await PostsService.GetPostsAsync(ev.Id);
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(ev.Id, ReactionContentType.Event);
         var tasks = new List<Task<FileDto>>();
@@ -433,6 +435,7 @@
         StateHasChanged();
         images = (await Task.WhenAll(tasks)).Select(f => f.Base64Content).ToList();
         pageInitialized = true;
+
     }
 
     private string GetAuthorName(Guid authorId)
