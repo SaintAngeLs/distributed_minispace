@@ -55,22 +55,22 @@
                                     }
                                 </RadzenColumn>
                                 <RadzenColumn Size="3">
-                                    <MudStack Row="true" Justify="Justify.Center">
-                                        <MudText>@(comment.Likes.Count.ToString())</MudText>
+                                    <MudStack Row="true" Justify="Justify.Center" Spacing="1">
+                                        <RadzenText class="rz-pt-4" Style="font-family: 'Arial Black'">@(comment.Likes.Count.ToString())</RadzenText>
                                         @if (!comment.Likes.Contains(StudentId))
                                         {
-                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium" Class="pr-4"
                                                            Color="Color.Inherit" Disabled=@(!IdentityService.IsAuthenticated)
                                                            OnClick="async () => { await AddLikeAsync(comment); }"/>
                                         }
                                         else
                                         {
-                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium"
+                                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Size="Size.Medium" Class="pr-4"
                                                            Color="Color.Success" Disabled=@(!IdentityService.IsAuthenticated)
                                                            OnClick="async () => { await DeleteLikeAsync(comment); }"/>
                                         }
-                                        <MudText>@(comment.RepliesCount)</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium"
+                                        <RadzenText class="rz-pt-4 rz-pl-2" Style="font-family: 'Arial Black'">@(comment.RepliesCount)</RadzenText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.AddComment" Size="Size.Medium" Class="pb-2"
                                                        Color="Color.Inherit" Disabled=@(!IdentityService.IsAuthenticated)
                                                        OnClick="async () => { await CreateSubCommentAsync(comment); }"/>
                                     </MudStack>
