@@ -75,7 +75,9 @@
 
                         <RadzenDataList AllowPaging="false" Data="@interestedInEvents" TItem="EventDto">
                             <Template Context="ev">
-                                <RadzenEventCard Event="ev" />
+                                <div @onclick="() => RedirectToEventDetails(ev.Id)">
+                                    <RadzenEventCard Event="ev" />
+                                </div>
                             </Template>
                         </RadzenDataList>
 
@@ -203,5 +205,10 @@
             interestedInPageNumber, interestedInPageSize);
         interestedInEvents = tmp.Content;
         StateHasChanged();
+    }
+
+     private void RedirectToEventDetails(Guid eventId)
+    {
+        NavigationManager.NavigateTo($"/events/{eventId}");
     }
 }
