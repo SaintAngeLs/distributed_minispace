@@ -27,8 +27,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(ReportReviewStarted eventArgs, CancellationToken cancellationToken)
         {
-            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, "The review of your report has started.");
-            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportReviewStarted");
+            // Fetch student details
+            var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
+            string issuerName = $"{issuer.FirstName} {issuer.LastName}";
+
+            // Detailed notification for issuer
+            string issuerMessage = $"Dear {issuerName}, the review of your report about '{eventArgs.Category}' concerning '{eventArgs.ContextType}' has started.";
+            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, issuerMessage);
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportReviewStarted", issuerName);
         }
 
         private async Task<Notification> CreateNotificationForUser(Guid userId, ReportReviewStarted eventArgs, string message)
@@ -49,16 +55,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             return notification;
         }
 
-        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType)
+        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType, string userName)
         {
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
-                message: notification.Message,
+                message: $"{userName}, {notification.Message}",
                 createdAt: notification.CreatedAt,
                 eventType: NotificationEventType.ReportReviewStarted.ToString(),
                 relatedEntityId: notification.RelatedEntityId,
-                details: $"Notification for user {userId}. Message: {notification.Message}"
+                details: $"Notification for user {userId} ({userName}). Message: {notification.Message}"
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
