@@ -63,7 +63,7 @@
         </RadzenStack>
     </header>
 
-    @if (_isUserAuthenticated )
+    @if (_isUserAuthenticated && _studentState == "valid")
     {
 
         <header class="header-services">
@@ -78,7 +78,7 @@
             TODO: do not forget about the code snippet chaned ❕❕❕
                     @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
         *@
-        @if (IsUserAuthenticated)
+        @if (_isUserAuthenticated && _studentState == "valid")
         {
             <RadzenSidebar Responsive="false" style="transition:  0.5s; width: max-content;" Class="mobile-sidebar">
                 <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition:  0.5s;">
@@ -147,7 +147,7 @@
                     </div>
                 </div>
 
-                @if(_isUserAuthenticated)
+                @if(_isUserAuthenticated && _studentState == "valid")
                 {
                     <div style="width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
                         <NotificationComponent />
@@ -170,6 +170,9 @@
     private string _userName;
     private string _userSurname;
 
+    private Guid _studentId;
+    private string _studentState;
+
     private string _userEmail;
 
     private bool _isUserAuthenticated;
@@ -185,6 +188,13 @@
                     _userName = userDto.Name;
                     _userEmail = userDto.Email; 
                     @* _userSurname = userDto.LastName; *@
+                    _studentId = userDto.Id;
+                    
+                    var studentDto = await StudentsService.GetStudentAsync(_studentId);
+                    if (studentDto != null)
+                    {
+                        _studentState = studentDto.State;
+                    }
                 }
             }
             StateHasChanged();

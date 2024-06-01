@@ -5,21 +5,25 @@
 @using System.IO
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.DTO.Types
+@using MiniSpace.Web.Shared
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
-<h1 class="rz-p-8 account-font">Your account</h1>
+<h2 class="rz-p-8 account-font">Your account</h2>
 
 @if (studentDto.Id != Guid.Empty)
 {
     <RadzenStack Gap="1rem">
-        <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
-            <RadzenImage Path="@(GetImage())" AlternateText="base64 image"
-                         Style="width: 20em" class="rz-border-radius-10"/>
-        </RadzenStack>
+        @if (studentDto.State == "valid")
+        {
+            <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
+                <RadzenImage Path="@(GetImage())" AlternateText="base64 image"
+                             Style="width: 20em" class="rz-border-radius-10"/>
+            </RadzenStack>
+        }
         
         <RadzenLabelWithTextBoxes Id="fullname" LabelText="Fullname:" Value1="@studentDto.FirstName"
                                   Value2="@studentDto.LastName" Disabled="true"/>
@@ -27,26 +31,33 @@
         <RadzenLabelWithTextBox Id="email" LabelText="Email:"
                                 Value="@studentDto.Email" Disabled="true"/>
 
-        <RadzenLabelWithTextBox Id="description" LabelText="Description:"
-                                @bind-Value="@studentDto.Description" Disabled=@editionDisabled/>
+        @if (studentDto.State == "valid")
+        {
+            <RadzenLabelWithTextBox Id="description" LabelText="Description:"
+                                    @bind-Value="@studentDto.Description" Disabled=@editionDisabled/>
 
-        <RadzenLabelWithTextBox Id="state" LabelText="State:"
-                                Value="@studentDto.State" Disabled="true"/>
+            <RadzenLabelWithTextBox Id="state" LabelText="State:"
+                                    Value="@studentDto.State" Disabled="true"/>
 
-        <RadzenLabelWithNumeric Id="number-of-friends" LabelText="Number of friends:"
-                                Value="@studentDto.NumberOfFriends" Disabled="true"/>
+            <RadzenLabelWithNumeric Id="number-of-friends" LabelText="Number of friends:"
+                                    Value="@studentDto.NumberOfFriends" Disabled="true"/>
 
-        <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:"
-                                   Value="@studentDto.DateOfBirth.ToLocalTime()" Disabled="true"/>
+            <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:"
+                                       Value="@studentDto.DateOfBirth.ToLocalTime()" Disabled="true"/>
 
-        <RadzenLabelWithDatePicker Id="created-at" LabelText="Created at:"
-                                   Value="@studentDto.CreatedAt.ToLocalTime()" Disabled="true"/>
+            <RadzenLabelWithDatePicker Id="created-at" LabelText="Created at:"
+                                       Value="@studentDto.CreatedAt.ToLocalTime()" Disabled="true"/>
 
-        <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
-                                 @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
-
+            <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
+                                     @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
+        }
+        
         @if (studentDto.State == "incomplete")
         {
+            <p class="rz-p-4">
+                <b>Completing registration is necessary, go ahead by clicking the button below.</b>
+            </p>
+
             <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="12">
                     <RadzenButton Size="ButtonSize.Large" Text="Complete registration"
@@ -160,7 +171,7 @@ else
         editionDisabled = true;
         await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImage,
             studentDto.Description, studentDto.EmailNotifications);
-        StateHasChanged();
+        await OnInitializedAsync();
     }
     
     private string GetImage()
