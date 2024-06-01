@@ -14,13 +14,17 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
+
 
         public ReportCreatedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository)
+            IStudentNotificationsRepository studentNotificationsRepository,
+            IStudentsServiceClient studentsServiceClient)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
+            _studentsServiceClient = studentsServiceClient;
         }
 
          public async Task HandleAsync(ReportCreated eventArgs, CancellationToken cancellationToken)

@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             IStudentNotificationsRepository studentNotificationsRepository,
             IEventsServiceClient eventsServiceClient,
             IPostsServiceClient postsServiceClient,
-             IStudentsServiceClient studentsServiceClient)
+            IStudentsServiceClient studentsServiceClient)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;

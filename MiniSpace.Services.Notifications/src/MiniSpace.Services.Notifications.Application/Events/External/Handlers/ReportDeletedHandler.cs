@@ -5,6 +5,7 @@ using System.Threading;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -12,13 +13,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
 
         public ReportDeletedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository)
+            IStudentNotificationsRepository studentNotificationsRepository,
+            IStudentsServiceClient studentsServiceClient)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
+            _studentsServiceClient = studentsServiceClient;
         }
 
         public async Task HandleAsync(ReportDeleted eventArgs, CancellationToken cancellationToken)
