@@ -43,6 +43,19 @@
                             <RadzenIcon Icon="warning" Style="color: white; font-weight: 800;" class="rz-px-0"/>
                         </RadzenButton>
                     }
+                    else if (IdentityService.IsAuthenticated && IsUserPostCreator(post))
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                            <RadzenButton Size="ButtonSize.Medium" Text="Update post" class="edit-button"
+                                          Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/author/{AuthorName}/update"))">
+                                <RadzenIcon Icon="edit" Style="color: white; font-weight: 800;"/>
+                            </RadzenButton>
+                            <RadzenButton Size="ButtonSize.Medium" Text="Delete post" class="delete-button"
+                                                              Click="@(() => OpenDeletePostDialog(post.Id))" >
+                                <RadzenIcon Icon="close" Style="color: white; font-weight: 800;"/>
+                            </RadzenButton>
+                        </RadzenStack>
+                    }
                 </RadzenStack>
             </RadzenStack>
         </div>
@@ -120,21 +133,6 @@
                 </RadzenColumn>
             </RadzenRow>
         </RadzenCard>
-        
-        <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-
-            @if (IdentityService.IsAuthenticated && IsUserPostCreator(post))
-            {
-                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                    <RadzenButton Size="ButtonSize.Medium" Text="Update post" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/author/{AuthorName}/update"))" />
-                    <RadzenButton Size="ButtonSize.Medium" Text="Delete post" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => OpenDeletePostDialog(post.Id))" />
-                </RadzenStack>
-            }
-
-        </RadzenStack>
-        
         <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
     </RadzenStack>
 }
@@ -148,6 +146,16 @@
         padding: 12px;
         color: #333; 
         transition: background-color 0.3s ease; 
+    }
+    
+    .edit-button {
+        background-color: darkgreen !important;
+        border-radius: 5px;
+    }
+    
+    .delete-button {
+        background-color: darkred !important;
+        border-radius: 5px;
     }
     
     .report-button {
