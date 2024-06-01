@@ -1,4 +1,4 @@
-@page "/events/{EventId}/posts/{PostId}/author/{AuthorName}"
+@page "/events/{EventId}/posts/{PostId}"
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Posts.Dialogs
@@ -25,7 +25,12 @@
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 
 @if (pageInitialized)
@@ -33,7 +38,7 @@
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
         <div>
             <RadzenStack class="rz-pt-5 rz-mx-md-12" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="1rem">
-                <RadzenButton Size="ButtonSize.Medium" Text="Go back to event" ButtonStyle="ButtonStyle.Primary" class="separate-button"
+                <RadzenButton Size="ButtonSize.Medium" Text="Go to the event" ButtonStyle="ButtonStyle.Primary" class="separate-button"
                               Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
                     @if(IdentityService.IsAuthenticated && !IsUserPostCreator(post))

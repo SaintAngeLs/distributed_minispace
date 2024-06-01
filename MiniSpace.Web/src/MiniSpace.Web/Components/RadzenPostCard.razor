@@ -8,7 +8,7 @@
 @inject NavigationManager NavigationManager
 
 <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer; max-width: 1080px;"
-            @onclick="@(() => NavigationManager.NavigateTo($"/events/{Event.Id}/posts/{Post.Id}/author/{GetAuthorName(Post.OrganizerId)}"))">
+            @onclick="@(() => NavigationManager.NavigateTo($"/events/{Event.Id}/posts/{Post.Id}"))">
     <RadzenRow Gap="0.5rem">
         <RadzenColumn Size="12" class="rz-text-truncate">
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
