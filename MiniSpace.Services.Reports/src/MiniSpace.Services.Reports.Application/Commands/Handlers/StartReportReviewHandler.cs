@@ -38,7 +38,18 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
 
             report.StartReview(command.ReviewerId, _dateTimeProvider.Now);
             await _reportRepository.UpdateAsync(report);
-            await _messageBroker.PublishAsync(new ReportReviewStarted(report.Id, command.ReviewerId));
+            await _messageBroker.PublishAsync(new ReportReviewStarted(report.Id,
+                report.IssuerId,
+                report.TargetId,
+                report.TargetOwnerId,
+                report.ContextType.ToString(),
+                report.Category.ToString(),
+                report.Reason,
+                report.State.ToString(),
+                report.CreatedAt,
+                report.UpdatedAt,
+                report.ReviewerId
+            ));
         }
     }
 }
