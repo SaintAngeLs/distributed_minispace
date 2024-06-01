@@ -72,7 +72,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 studentNotifications = new StudentNotifications(commentDetails.StudentId);
             }
 
-            // Notification creation logic for the user who posted the comment
             var userNotification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: commentDetails.StudentId,
@@ -87,17 +86,15 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             studentNotifications.AddNotification(userNotification);
             await _studentNotificationsRepository.UpdateAsync(studentNotifications);   
             
-            // Prepare detailed HTML message
             var userNotificationDetailsHtml = $"<p>Your comment on the event '{eventDetails.Name}' has been posted successfully.</p>";
 
-            // Publishing the event
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: userNotification.NotificationId,
-                userId: userNotification.UserId,
-                message: userNotification.Message,
-                createdAt: userNotification.CreatedAt,
-                eventType: "CommentCreated",
-                relatedEntityId: userNotification.RelatedEntityId,
+                notificationId: Guid.NewGuid(),
+                userId: commentDetails.StudentId,
+                message:  $"Thank you for your comment on the event '{eventDetails.Name}'.",
+                createdAt:  DateTime.UtcNow,
+                eventType: NotificationStatus.Unread.ToString(),
+                relatedEntityId: eventArgs.CommentId,
                 details: userNotificationDetailsHtml
             );
 
@@ -110,7 +107,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             }
 
 
-            // Repeat similar logic for the organizer or other relevant parties
             var organizerNotification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: eventDetails.Organizer.Id,
