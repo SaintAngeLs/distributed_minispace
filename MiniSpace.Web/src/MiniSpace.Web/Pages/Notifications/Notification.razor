@@ -69,13 +69,15 @@ else
 
     private MarkupString RenderMessage(NotificationDto notification)
     {
-        if (!string.IsNullOrEmpty(notification.RelatedEntityId.ToString()))
+        string link = NotificationLinkFactory.GetNotificationLink(notification);
+        if (!string.IsNullOrEmpty(link))
         {
-            return new MarkupString($"{notification.Message} <a href='/student-details/{notification.RelatedEntityId}'>View Profile</a>");
+            return new MarkupString($"{notification.Message} <a href='{link}'>View Details</a>");
         }
         else
         {
             return new MarkupString(notification.Message);
         }
     }
+
 }
