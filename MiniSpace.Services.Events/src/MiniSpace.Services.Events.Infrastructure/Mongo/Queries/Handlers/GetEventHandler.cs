@@ -45,7 +45,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             if(identity.IsAuthenticated)
             {
                 var result = await _friendsServiceClient.GetAsync(identity.Id);
-                if (result != null) 
+                if (result != null && result.Any()) 
                 {
                     friends = result.First().Friends;
                 }
