@@ -15,9 +15,11 @@
 @using Orientation = Radzen.Orientation
 @using System.Globalization
 @using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.Pages.Events.Dialogs
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
 @inject IPostsService PostsService
 @inject IReactionsService ReactionsService
 @inject IMediaFilesService MediaFilesService
@@ -52,7 +54,7 @@
                     {
                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
                             <RadzenButton Size="ButtonSize.Medium" Text="Update post" class="edit-button"
-                                          Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/author/{AuthorName}/update"))">
+                                          Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/update"))">
                                 <RadzenIcon Icon="edit" Style="color: white; font-weight: 800;"/>
                             </RadzenButton>
                             <RadzenButton Size="ButtonSize.Medium" Text="Delete post" class="delete-button"
@@ -69,7 +71,7 @@
                 <RadzenColumn Size="12" class="rz-text-truncate">
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                         <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                    Text=@($"{AuthorName}")/>
+                                    Text=@($"{GetAuthorName(author)}")/>
                         @if (post.UpdatedAt != null)
                         {
                             <RadzenText TextStyle="TextStyle.Subtitle1" Style="color: dodgerblue">
@@ -183,14 +185,13 @@
 @code {
     [Parameter]
     public string EventId { get; set; }
-    [Parameter]
-    public string PostId { get; set; }
-    [Parameter]
-    public string AuthorName { get; set; }
-    
+
+    [Parameter] public string PostId { get; set; }
+
     private Guid studentId;
     private PostDto post = new();
     private bool pageInitialized = false;
+    private StudentDto author;
     
     private int activeIndex = 0;
     private bool arrows = true;
@@ -212,6 +213,7 @@
         }
         post = await PostsService.GetPostAsync(new Guid(PostId));
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
+        author = await StudentsService.GetStudentAsync(post.OrganizerId);
         var tasks = new List<Task<FileDto>>();
         foreach (var mediaFile in post.MediaFiles)
         {
@@ -255,6 +257,14 @@
             });
     }
     
+    private string GetAuthorName(StudentDto author)
+    {
+        if (author == null)
+        {
+            return "Unknown author";
+        }
+        return $"{author.FirstName} {author.LastName}";
+    }
     
     private async Task ReportPost(PostDto postDto)
     {
