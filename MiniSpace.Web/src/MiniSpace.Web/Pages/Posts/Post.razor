@@ -30,7 +30,22 @@
 @if (pageInitialized)
 {
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
-        <RadzenCard Class="rz-my-12 rz-mx-md-12 rz-border-radius-3">
+        <div>
+            <RadzenStack class="rz-pt-5 rz-mx-md-12" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="1rem">
+                <RadzenButton Size="ButtonSize.Medium" Text="Go back to event" ButtonStyle="ButtonStyle.Primary" class="separate-button"
+                              Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                    @if(IdentityService.IsAuthenticated && !IsUserPostCreator(post))
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Report event" class="report-button rz-px-0 rz-pb-4"
+                                                              Click="@(() => ReportPost(post))" >
+                            <RadzenIcon Icon="warning" Style="color: white; font-weight: 800;" class="rz-px-0"/>
+                        </RadzenButton>
+                    }
+                </RadzenStack>
+            </RadzenStack>
+        </div>
+        <RadzenCard Class="rz-mb-12 rz-mx-md-12 rz-border-radius-3">
             <RadzenRow Gap="0.5rem">
                 <RadzenColumn Size="12" class="rz-text-truncate">
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
@@ -38,13 +53,13 @@
                                     Text=@($"{AuthorName}")/>
                         @if (post.UpdatedAt != null)
                         {
-                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Style="color: dodgerblue">
                                 Updated at @(post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                             </RadzenText>
                         }
                         else
                         {
-                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Style="color: dodgerblue">
                                 Published at @(post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                             </RadzenText>
                         }
@@ -52,7 +67,7 @@
                 </RadzenColumn>
             </RadzenRow>
             <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" class="rz-pb-4">
                 <RadzenStack Gap="1em">
                     <RadzenStack></RadzenStack>
                     <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
@@ -77,12 +92,6 @@
         </RadzenCard>
         
         <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                <RadzenButton Size="ButtonSize.Medium" Text="Go back to event" ButtonStyle="ButtonStyle.Primary"
-                              Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
-                <RadzenButton Size="ButtonSize.Medium" Text="Report post" ButtonStyle="ButtonStyle.Primary"
-                              Click="@(() => ReportPost(post))" />
-            </RadzenStack>
 
             @if (IdentityService.IsAuthenticated && IsUserPostCreator(post))
             {
@@ -144,6 +153,25 @@
         </RadzenTabs>
     </RadzenStack>
 }
+
+<style>
+    .separate-button {
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        background-color: #30445f !important;
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+    
+    .report-button {
+        background-color: darkred !important;
+        border-radius: 5px;
+        height: 25px;
+        width: 25px;
+    }
+</style>
 
 @code {
     [Parameter]
