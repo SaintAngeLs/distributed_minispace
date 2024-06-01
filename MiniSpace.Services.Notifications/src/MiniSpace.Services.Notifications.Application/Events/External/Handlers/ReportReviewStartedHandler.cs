@@ -52,7 +52,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 userId: notification.UserId,
                 message: notification.Message,
                 createdAt: notification.CreatedAt,
-                eventType: eventType,
+                eventType: NotificationEventType.ReportReviewStarted.ToString(),
                 relatedEntityId: notification.RelatedEntityId,
                 details: $"Notification for user {userId}. Message: {notification.Message}"
             );
