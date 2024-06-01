@@ -23,6 +23,12 @@ namespace MiniSpace.Services.Email.Core.Entities
         CommentCreated,
         CommentUpdated,
         ReactionAdded,
+        ReportCreated,
+        ReportDeleted,
+        ReportRejected,
+        ReportResolved,
+        ReportReviewStarted,
+        NewEventInvitation,
         Other
     }
 }
