@@ -1,7 +1,9 @@
-﻿using Convey.CQRS.Events;
+using Convey.CQRS.Events;
+using Convey.MessageBrokers;
 
-namespace MiniSpace.Services.Reports.Application.Events
+namespace MiniSpace.Services.Notifications.Application.Events.External
 {
+    [Message("reports")]
     public class ReportCancelled : IEvent
     {
         public Guid ReportId { get; }

@@ -101,12 +101,12 @@ namespace MiniSpace.Services.Email.Core.Entities
 
     public class ReactionAddedSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "New Reaction: " + details;
+        public string GenerateSubject(string details) => "New reaction was added!";
     }
 
-     public class ReportCreatedSubject : IEmailSubjectStrategy
+    public class ReportCreatedSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "A new report has been created: " + details;
+        public string GenerateSubject(string details) => "A new report has been created!";
     }
 
     public class ReportDeletedSubject : IEmailSubjectStrategy
@@ -134,4 +134,11 @@ namespace MiniSpace.Services.Email.Core.Entities
         public string GenerateSubject(string details) => "You're invited to a new event!";
     }
 
+    public class ReportCancelledSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details)
+        {
+            return $"A report has been cancelled!";
+        }
+    }
 }
