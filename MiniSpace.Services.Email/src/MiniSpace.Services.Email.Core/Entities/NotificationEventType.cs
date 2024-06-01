@@ -28,6 +28,7 @@ namespace MiniSpace.Services.Email.Core.Entities
         ReportRejected,
         ReportResolved,
         ReportReviewStarted,
+        ReportCancelled,
         NewEventInvitation,
         Other
     }

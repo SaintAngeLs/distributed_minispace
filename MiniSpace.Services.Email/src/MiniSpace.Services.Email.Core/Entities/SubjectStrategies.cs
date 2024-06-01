@@ -134,4 +134,11 @@ namespace MiniSpace.Services.Email.Core.Entities
         public string GenerateSubject(string details) => "You're invited to a new event!";
     }
 
+    public class ReportCancelledSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details)
+        {
+            return $"A report has been cancelled: {details}";
+        }
+    }
 }
