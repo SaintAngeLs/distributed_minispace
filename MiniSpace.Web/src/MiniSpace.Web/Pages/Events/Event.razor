@@ -232,11 +232,11 @@
                 </RadzenColumn>
             </RadzenRow>
         </RadzenCard>
-        <CommentsTab CommentContext="Event" ContextId="@EventId" StudentId="studentId" />
-        <h2 class="post-font rz-p-4">Posts</h2>
+        <CommentsTab CommentContext="Event" ContextId="@EventId" StudentId="studentId"/>
+        <h2 class="post-font rz-p-4" style="max-width: 1080px">Posts</h2>
         @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
         {
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem" style="max-width: 1080px">
                 <RadzenButton Size="ButtonSize.Medium" Text="Create new post" ButtonStyle="ButtonStyle.Secondary" class="separate-button"
                               Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" Style="background-color: #1b6ec2 !important;"/>
             </RadzenStack>   
@@ -247,7 +247,7 @@
         }
         <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
             <Template Context="post">
-                <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
+                <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer; max-width: 1080px;"
                             @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{GetAuthorName(post.OrganizerId)}"))">
                     <RadzenRow Gap="0.5rem">
                         <RadzenColumn Size="12" class="rz-text-truncate">
