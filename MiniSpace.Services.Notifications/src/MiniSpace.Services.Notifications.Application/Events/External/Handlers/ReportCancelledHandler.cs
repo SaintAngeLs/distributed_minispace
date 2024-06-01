@@ -27,16 +27,24 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(ReportCancelled eventArgs, CancellationToken cancellationToken)
         {
-            // Notify the target owner
-            var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, "A report concerning your content has been cancelled.");
-            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportCancelled");
+            var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
+            var targetOwner = await _studentsServiceClient.GetAsync(eventArgs.TargetOwnerId);
+
+            string issuerName = $"{issuer.FirstName} {issuer.LastName}";
+            string targetOwnerName = $"{targetOwner.FirstName} {targetOwner.LastName}";
+
+            // Notification message for issuer with more details
+            string issuerMessage = $"Your report about '{eventArgs.Category}' concerning '{eventArgs.ContextType}' has been successfully cancelled.";
+            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, issuerMessage);
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportCancellationConfirmed", issuerName);
             
-            // Notify the issuer
-            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, "Your report has been successfully cancelled.");
-            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportCancellationConfirmed");
+            // Notification message for target owner with more details
+            string targetOwnerMessage = $"A report about '{eventArgs.Category}' concerning your content '{eventArgs.ContextType}' has been cancelled.";
+            var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, targetOwnerMessage);
+            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportCancelled", targetOwnerName);
         }
 
-        private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCancelled eventArgs, string message)
+         private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCancelled eventArgs, string message)
         {
             var notifications = await _studentNotificationsRepository.GetByStudentIdAsync(userId) ?? new StudentNotifications(userId);
             var notification = new Notification(
@@ -54,16 +62,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             return notification;
         }
 
-        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType)
+        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType, string userName)
         {
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
-                message: notification.Message,
+                message: $"{userName}, {notification.Message}",
                 createdAt: notification.CreatedAt,
                 eventType: NotificationEventType.ReportCancelled.ToString(),
                 relatedEntityId: notification.RelatedEntityId,
-                details: $"Notification for user {userId}. Message: {notification.Message}"
+                details: $"Notification for user {userId} ({userName}). Message: {notification.Message}"
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
