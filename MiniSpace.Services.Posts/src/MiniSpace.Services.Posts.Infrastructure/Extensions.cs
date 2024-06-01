@@ -40,6 +40,8 @@ using MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Posts.Infrastructure.Services;
 using MiniSpace.Services.Posts.Infrastructure.Services.Workers;
 using System.Diagnostics.CodeAnalysis;
+using MiniSpace.Services.Events.Infrastructure.Services.Clients;
+using MiniSpace.Services.Posts.Application.Services.Clients;
 
 namespace MiniSpace.Services.Posts.Infrastructure
 {
@@ -54,6 +56,8 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
+            builder.Services.AddTransient<IPostsService, PostsService>();
+            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
