@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
@@ -11,6 +12,7 @@ using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Services.Workers
 {
+    [ExcludeFromCodeCoverage]
     public class EventStateUpdaterWorker: BackgroundService
     {
         private readonly IMessageBroker _messageBroker;

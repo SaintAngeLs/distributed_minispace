@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using MiniSpace.Services.Events.Application;
 
@@ -7,6 +8,7 @@ using MiniSpace.Services.Events.Application;
 
 namespace MiniSpace.Services.Events.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class IdentityContext : IIdentityContext
     {
         public Guid Id { get; }
