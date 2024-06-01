@@ -91,7 +91,7 @@
             </RadzenStack>
             @if (images.Any())
             {
-                <RadzenStack class="rz-pb-5" Orientation="Orientation.Horizontal">
+                <RadzenStack Orientation="Orientation.Horizontal">
                     <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 70vh;" ShowArrows="@arrows"
                                  ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
                         @foreach (var img in images)
@@ -103,7 +103,7 @@
                     </MudCarousel>
                 </RadzenStack>
             }
-            <RadzenRow RowGap="0">
+            <RadzenRow RowGap="0" >
                 <RadzenColumn SizeSM="8">
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-py-6 rz-px-7 rz-border-top">
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions:  @reactionsSummary.NumberOfReactions</RadzenText>
@@ -111,7 +111,7 @@
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-pb-4 rz-border-top">
                         @if (reactionsSummary.NumberOfReactions > 0)
                         {
-                            <RadzenButton Size="ButtonSize.Medium" class="friends-button"
+                            <RadzenButton Size="ButtonSize.Medium" class="reactions-button"
                                           Click="@(() => OpenReactionsListingDialog())">
                                 <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
                                                             <MudIcon Icon="@($"{reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
@@ -166,6 +166,12 @@
         border-radius: 5px;
         height: 25px;
         width: 25px;
+    }
+    
+    .reactions-button{
+        border: 1px solid #30445f; 
+        background-color: transparent !important;
+        border-radius: 5px;
     }
 </style>
 
