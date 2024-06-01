@@ -88,4 +88,50 @@ namespace MiniSpace.Services.Email.Core.Entities
     {
         public string GenerateSubject(string details) => "Welcome to MiniSpace!";
     }
+
+    public class CommentCreatedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "New Comment: " + details;
+    }
+
+    public class CommentUpdatedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Updated Comment: " + details;
+    }
+
+    public class ReactionAddedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "New Reaction: " + details;
+    }
+
+     public class ReportCreatedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "A new report has been created: " + details;
+    }
+
+    public class ReportDeletedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "A report has been deleted.";
+    }
+
+    public class ReportRejectedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "A report you filed has been rejected.";
+    }
+
+    public class ReportResolvedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "A report you filed has been resolved.";
+    }
+
+    public class ReportReviewStartedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Review has started on your report.";
+    }
+
+    public class NewEventInvitationSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "You're invited to a new event: " + details;
+    }
+
 }

@@ -70,13 +70,17 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     eventType: NotificationEventType.EventDeleted
                 );
 
-                Console.WriteLine($"Creating cancellation notification for user: {student.Id}");
 
                 var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(student.Id);
                 if (studentNotifications == null)
                 {
                     studentNotifications = new StudentNotifications(student.Id);
                 }
+                
+                
+                studentNotifications.AddNotification(notification);
+                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+
                 var notificationCreatedEvent = new NotificationCreated(
                     notificationId: notification.NotificationId,
                     userId: notification.UserId,
@@ -88,9 +92,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 );
 
                 await _messageBroker.PublishAsync(notificationCreatedEvent);
-                
-                studentNotifications.AddNotification(notification);
-                await _studentNotificationsRepository.UpdateAsync(studentNotifications);
             }  
         }
     }

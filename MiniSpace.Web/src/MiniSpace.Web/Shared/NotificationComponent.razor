@@ -18,7 +18,9 @@
                 <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)" 
                     class="notification-item"
                     style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;" >
-                    <span style="display: block; color: #333; margin-bottom: 4px;">@notification.Message</span>
+                    <span style="display: block; color: #333; margin-bottom: 4px;">
+                        @TruncateMessage(notification.Message)
+                    </span>
                     <span style="display: block; font-size: 0.8em; color: #666;">@notification.CreatedAt.ToString("g")</span>
                 </li>
             }
@@ -87,7 +89,12 @@
 
     private void NavigateToNotificationDetail(Guid notificationId)
     {
-        NavigationManager.NavigateTo($"/notification/{notificationId}");
+        NavigationManager.NavigateTo($"/notification/{notificationId}", true);
+    }
+
+    private string TruncateMessage(string message)
+    {
+        return message.Length > 80 ? message.Substring(0, 80) + "..." : message;
     }
 
     public void Dispose()

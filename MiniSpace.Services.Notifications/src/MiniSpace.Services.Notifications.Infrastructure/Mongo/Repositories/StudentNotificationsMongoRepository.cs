@@ -120,5 +120,30 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             var studentNotifications = await _repository.GetAsync(x => x.StudentId == studentId);
             return studentNotifications?.Notifications.Count ?? 0;
         }
+
+         public async Task<List<NotificationDocument>> GetRecentNotifications(Guid studentId, int count)
+        {
+            var filter = Builders<StudentNotificationsDocument>.Filter.Eq(d => d.StudentId, studentId);
+
+            var options = new FindOptions<StudentNotificationsDocument>
+            {
+                Sort = Builders<StudentNotificationsDocument>.Sort.Descending(d => d.Notifications[-1].CreatedAt),
+                Projection = Builders<StudentNotificationsDocument>.Projection.Slice(p => p.Notifications, -count)
+            };
+
+            var cursor = await _repository.Collection.FindAsync(filter, options);
+
+            var documents = await cursor.ToListAsync();
+            var notifications = new List<NotificationDocument>();
+            foreach (var document in documents) 
+            {
+                if (document.Notifications != null)
+                {
+                    notifications.AddRange(document.Notifications);
+                }
+            }
+
+            return notifications;
+        }
     }
 }

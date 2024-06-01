@@ -1,5 +1,6 @@
 @page "/notification/{NotificationId:guid}"
 @using MiniSpace.Web.Areas.Notifications
+@inject NavigationManager NavigationManager
 @inject INotificationsService NotificationsService
 @using MiniSpace.Web.DTO.Notifications
 @inject IIdentityService IdentityService
@@ -43,10 +44,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var userId = IdentityService.GetCurrentUserId();
-        notification = await NotificationsService.GetNotificationByIdAsync(userId, NotificationId);
-        if (notification.Status == "Unread") {
-            await UpdateNotificationStatus(userId, NotificationId, "Read");
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        { 
+            var userId = IdentityService.GetCurrentUserId();
+            notification = await NotificationsService.GetNotificationByIdAsync(userId, NotificationId);
+            if (notification.Status == "Unread") 
+            {
+                await UpdateNotificationStatus(userId, NotificationId, "Read");
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
         }
     }
 

@@ -45,9 +45,12 @@ else if (notifications.Any())
                 <RadzenToggleButton ButtonStyle="ButtonStyle.Light" ToggleButtonStyle="ButtonStyle.Dark"
                     Value=@(notification.Status == "Unread")
                     Text="@(notification.Status == "Unread" ? "Unread" : "Read")"
-                    Change="@(args => UpdateNotificationStatus(notification.UserId, notification.NotificationId, args ? "Unread" : "Read"))"
+                    Change="@(args => UpdateNotificationStatus(notification.UserId, notification.NotificationId, args))"
+
                     Shade="Shade.Lighter" ToggleShade="Shade.Darker"
                     Style="margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0" />
+
+
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
@@ -74,7 +77,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadNotifications(new LoadDataArgs { Skip = 0, Top = pageSize, OrderBy = "createdAt desc" });
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        { 
+            await LoadNotifications(new LoadDataArgs { Skip = 0, Top = pageSize, OrderBy = "createdAt desc" });
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
     }
 
    
@@ -99,17 +110,40 @@ else
     }
 
 
-     private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, string newStatus)
+   private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, bool isUnread)
     {
+        string newStatus = isUnread ? "Unread" : "Read";
         await NotificationsService.UpdateNotificationStatusAsync(userId, notificationId, newStatus);
-        notifications.Find(n => n.NotificationId == notificationId).Status = newStatus;
-        StateHasChanged();
+
+        // Refresh the notifications to reflect the change
+        var notification = notifications.FirstOrDefault(n => n.NotificationId == notificationId);
+        if (notification != null)
+        {
+            notification.Status = newStatus;
+            await LoadNotifications(new LoadDataArgs { Skip = (currentPage - 1) * pageSize, Top = pageSize, OrderBy = "createdAt desc" });
+            StateHasChanged(); //
+            await OnInitializedAsync();
+        }
+        else
+        {
+            StateHasChanged(); // This will force the UI to update if for some reason the notification is not found
+            await OnInitializedAsync();
+        }
     }
 
-    private async Task DeleteNotification(Guid userId, Guid notificationId)
+
+
+
+   private async Task DeleteNotification(Guid userId, Guid notificationId)
     {
         await NotificationsService.DeleteNotificationAsync(userId, notificationId);
-        notifications.RemoveAll(n => n.NotificationId == notificationId);
-        StateHasChanged();
+        // Use FindIndex to locate the specific notification and remove it if found
+        int index = notifications.FindIndex(n => n.NotificationId == notificationId);
+        if (index != -1)
+        {
+            notifications.RemoveAt(index);
+            StateHasChanged(); // Update UI to reflect the removal
+        }
     }
+
 }

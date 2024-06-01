@@ -5,13 +5,8 @@ namespace MiniSpace.Services.Notifications.Application.Commands
 {
     public class UpdateNotificationStatus : ICommand
     {
-        [FromRoute]
         public Guid UserId { get; set; }
-        
-        [FromRoute]
         public Guid NotificationId { get; set; }
-        
-        [FromQuery]
         public string Status { get; set; }
 
         public UpdateNotificationStatus(Guid userId, Guid notificationId, string status)

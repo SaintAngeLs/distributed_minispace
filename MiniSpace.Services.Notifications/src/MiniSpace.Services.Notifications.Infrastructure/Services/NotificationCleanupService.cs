@@ -40,8 +40,8 @@ public class NotificationCleanupService : BackgroundService
         {
             _logger.LogInformation("20-minute cleanup service is running.");
             await CleanupOldNotifications();
-            _logger.LogInformation("Waiting 20 minutes before next cleanup.");
-            await Task.Delay(TimeSpan.FromMinutes(20), stoppingToken); 
+            _logger.LogInformation("Waiting 10 minutes before next cleanup.");
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); 
         }
 
         await dailyCleanupTask;
@@ -49,7 +49,7 @@ public class NotificationCleanupService : BackgroundService
 
     private async Task CleanupOldNotifications()
     {
-        var cutoffDate = DateTime.UtcNow.AddDays(-28);
+        var cutoffDate = DateTime.UtcNow.AddDays(-1);
         var allStudents = await _studentsServiceClient.GetAllAsync();
 
         if (allStudents != null)
@@ -58,19 +58,32 @@ public class NotificationCleanupService : BackgroundService
             {
                 var studentId = student.Id;
                 var count = await _notificationsRepository.GetNotificationCount(studentId);
-                if (count > 300)
+
+                if (count >= 300)
                 {
-                    _logger.LogInformation($"Cleaning up old notifications for student {studentId}.");
+                    _logger.LogInformation($"Removing all notifications for student {studentId} due to excessive count: {count}.");
+                    
+                    var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentId);
+                    var update = Builders<StudentNotificationsDocument>.Update.Set(doc => doc.Notifications, new List<NotificationDocument>());
+                    var result = await _notificationsRepository.BulkUpdateAsync(filter, update);
+
+                    _logger.LogInformation($"All notifications for student {studentId} have been removed. Total removed: {result.ModifiedCount}");
+                }
+                else if (count > 200)
+                {
+                    _logger.LogInformation($"Cleaning up old notifications for student {studentId}. Total current count: {count}.");
+
                     var filter = Builders<StudentNotificationsDocument>.Filter.And(
                         Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentId),
-                        Builders<StudentNotificationsDocument>.Filter.ElemMatch(n => n.Notifications, n => n.CreatedAt < cutoffDate)
+                        Builders<StudentNotificationsDocument>.Filter.Lt("Notifications.CreatedAt", cutoffDate)
                     );
 
                     var update = Builders<StudentNotificationsDocument>.Update.PullFilter(
                         n => n.Notifications, n => n.CreatedAt < cutoffDate);
 
                     var result = await _notificationsRepository.BulkUpdateAsync(filter, update);
-                    _logger.LogInformation($"Removed {result.ModifiedCount} old notifications for student {studentId}.");
+
+                    _logger.LogInformation($"Removed old notifications for student {studentId}. Total old notifications removed: {result.ModifiedCount}.");
                 }
             }
         }
@@ -79,6 +92,7 @@ public class NotificationCleanupService : BackgroundService
             _logger.LogError("Failed to fetch student data from the students service.");
         }
     }
+
 
     private async Task RemoveReadNotifications()
     {

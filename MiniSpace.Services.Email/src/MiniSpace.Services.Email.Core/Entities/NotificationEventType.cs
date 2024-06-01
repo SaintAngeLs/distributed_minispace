@@ -20,6 +20,15 @@ namespace MiniSpace.Services.Email.Core.Entities
         PasswordResetRequest,
         UserSignUp,
         NewEventInvitaion,
+        CommentCreated,
+        CommentUpdated,
+        ReactionAdded,
+        ReportCreated,
+        ReportDeleted,
+        ReportRejected,
+        ReportResolved,
+        ReportReviewStarted,
+        NewEventInvitation,
         Other
     }
 }

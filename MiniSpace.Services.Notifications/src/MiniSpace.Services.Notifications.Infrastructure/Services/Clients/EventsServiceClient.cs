@@ -65,7 +65,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}\nJSON: {json}");
+                // Console.WriteLine($"Error deserializing the response from Events Service: {ex.Message}\nJSON: {json}");
                 return null;
             }
         }

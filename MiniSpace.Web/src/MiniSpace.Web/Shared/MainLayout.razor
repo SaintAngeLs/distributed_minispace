@@ -42,8 +42,8 @@
                                 </Template>
                                  <ChildContent>
                                     <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications" Icon="notifications"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Sign out" Click="@(() => SignOut())" Icon="exit_to_app"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications/all" Icon="notifications"></RadzenProfileMenuItem>
+                                    @* <RadzenProfileMenuItem Text="Sign out" Click="@SignOut" Icon="exit_to_app"></RadzenProfileMenuItem> *@
                                 </ChildContent>
                             </RadzenProfileMenu>
                         </div>
@@ -73,14 +73,14 @@
     }
 
 
-    <div style="display: flex; flex: 1; flex-direction: row;">
+    <div style="display: flex; flex: 1; flex-direction: row;" class="main-content-container">
         @*
             TODO: do not forget about the code snippet chaned ❕❕❕
                     @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
         *@
         @if (IsUserAuthenticated)
         {
-            <RadzenSidebar Responsive="false" style="transition:  0.5s; width: max-content">
+            <RadzenSidebar Responsive="false" style="transition:  0.5s; width: max-content;" Class="mobile-sidebar">
                 <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition:  0.5s;">
                     <RadzenPanelMenuItem Text="Home" Icon="home"
                                          Click="@(() => NavigationManager.NavigateTo(""))" />
@@ -209,6 +209,11 @@
         
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
+
+        await localStorage.ClearAsync();
+
+        StateHasChanged();
+
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
 
