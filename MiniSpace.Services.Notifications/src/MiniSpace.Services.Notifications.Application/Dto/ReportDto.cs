@@ -1,6 +1,6 @@
 using MiniSpace.Services.Notifications.Core.Entities;
 
-namespace MiniSpace.Services.Notifications.Application.DTO
+namespace MiniSpace.Services.Notifications.Application.Dto
 {
     public class ReportDto
     {

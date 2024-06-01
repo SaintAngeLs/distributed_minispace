@@ -23,6 +23,11 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         CommentCreated,
         CommentUpdated,
         ReactionAdded,
+        ReportCreated,
+        ReportDeleted,
+        ReportRejected,
+        ReportResolved,
+        ReportReviewStarted,
         Other
     }
 }
