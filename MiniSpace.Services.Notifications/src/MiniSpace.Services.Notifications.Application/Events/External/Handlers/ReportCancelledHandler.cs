@@ -2,20 +2,18 @@ using Convey.CQRS.Events;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
-using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Application.Dto;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
-    public class ReportCreatedHandler : IEventHandler<ReportCreated>
+    public class ReportCancelledHandler : IEventHandler<ReportCancelled>
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
 
-        public ReportCreatedHandler(
+        public ReportCancelledHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository)
         {
@@ -23,18 +21,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             _studentNotificationsRepository = studentNotificationsRepository;
         }
 
-         public async Task HandleAsync(ReportCreated eventArgs, CancellationToken cancellationToken)
+        public async Task HandleAsync(ReportCancelled eventArgs, CancellationToken cancellationToken)
         {
             // Notify the target owner
-            var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, "A report has been created about your content.");
-            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportCreated");
+            var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, "A report concerning your content has been cancelled.");
+            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportCancelled");
             
             // Notify the issuer
-            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, "Thank you for submitting your report. We will review it promptly.");
-            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ThankYouForReporting");
+            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, "Your report has been successfully cancelled.");
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportCancellationConfirmed");
         }
 
-        private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCreated eventArgs, string message)
+        private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCancelled eventArgs, string message)
         {
             var notifications = await _studentNotificationsRepository.GetByStudentIdAsync(userId) ?? new StudentNotifications(userId);
             var notification = new Notification(
@@ -45,7 +43,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
                 relatedEntityId: eventArgs.ReportId,
-                eventType: NotificationEventType.ReportCreated
+                eventType: NotificationEventType.ReportCancelled
             );
             notifications.AddNotification(notification);
             await _studentNotificationsRepository.UpdateAsync(notifications);

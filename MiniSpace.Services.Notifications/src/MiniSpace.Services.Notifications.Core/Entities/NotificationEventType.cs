@@ -28,6 +28,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         ReportRejected,
         ReportResolved,
         ReportReviewStarted,
+        ReportCancelled,
         Other
     }
 }

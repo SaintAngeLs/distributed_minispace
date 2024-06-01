@@ -4,7 +4,7 @@ using Convey.MessageBrokers;
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
     [Message("reports")]
-    public class ReportRejected: IEvent
+    public class ReportCancelled : IEvent
     {
         public Guid ReportId { get; }
         public Guid IssuerId { get; }
@@ -17,10 +17,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External
         public DateTime CreatedAt { get; }
         public DateTime UpdatedAt { get; }
         public Guid? ReviewerId { get; }
-        
-        public ReportRejected(Guid reportId, Guid issuerId, Guid targetId, Guid targetOwnerId, 
-            string contextType, string category, string reason, string state, 
-            DateTime createdAt, DateTime updatedAt, Guid? reviewerId)
+
+        public ReportCancelled(Guid reportId, Guid issuerId, Guid targetId, Guid targetOwnerId,
+                               string contextType, string category, string reason, string state,
+                               DateTime createdAt, DateTime updatedAt, Guid? reviewerId)
         {
             ReportId = reportId;
             IssuerId = issuerId;
