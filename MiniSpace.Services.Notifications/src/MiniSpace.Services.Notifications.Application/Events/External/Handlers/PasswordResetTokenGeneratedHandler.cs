@@ -41,7 +41,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
-                relatedEntityId: @event.UserId, // No related entity for password reset
+                relatedEntityId: @event.UserId, 
                 eventType: NotificationEventType.PasswordResetRequest,
                 details: detailsHtml
             );
@@ -56,7 +56,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 notificationMessage,
                 DateTime.UtcNow,
                 NotificationEventType.PasswordResetRequest.ToString(),
-                @event.UserId, // No related entity for password reset
+                @event.UserId, 
                 detailsHtml
             );
 
