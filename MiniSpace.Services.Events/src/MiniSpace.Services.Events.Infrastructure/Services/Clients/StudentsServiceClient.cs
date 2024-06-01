@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Convey.HTTP;
 using MiniSpace.Services.Events.Application.DTO;
@@ -6,6 +7,7 @@ using MiniSpace.Services.Events.Application.Services.Clients;
 
 namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
 {
+    [ExcludeFromCodeCoverage]
     public class StudentsServiceClient : IStudentsServiceClient
     {
         private readonly IHttpClient _httpClient;

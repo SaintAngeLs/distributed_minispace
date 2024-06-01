@@ -26,6 +26,8 @@ jobs:
             test_dir: 'MiniSpace.Services.Posts/tests'
           - project: 'MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api'
             test_dir: 'MiniSpace.Services.Reactions/tests'
+          - project: 'MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api'
+            test_dir: 'MiniSpace.Services.Events/tests'
           - project: 'MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api'
             test_dir: 'MiniSpace.Services.Students/tests'
           - project: 'MiniSpace.Web/src/MiniSpace.Web'

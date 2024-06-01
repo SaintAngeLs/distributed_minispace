@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Events;
@@ -10,6 +11,7 @@ using Convey.Types;
 namespace MiniSpace.Services.Events.Infrastructure.Decorators
 {
     [Decorator]
+    [ExcludeFromCodeCoverage]
     internal sealed class OutboxEventHandlerDecorator<TEvent> : IEventHandler<TEvent>
         where TEvent : class, IEvent
     {

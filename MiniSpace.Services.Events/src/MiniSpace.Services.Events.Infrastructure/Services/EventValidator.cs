@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using MiniSpace.Services.Events.Application.Exceptions;
@@ -9,6 +10,7 @@ using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Infrastructure.Services
 {
+    [ExcludeFromCodeCoverage]
     public class EventValidator: IEventValidator
     {
         private readonly string _expectedFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";

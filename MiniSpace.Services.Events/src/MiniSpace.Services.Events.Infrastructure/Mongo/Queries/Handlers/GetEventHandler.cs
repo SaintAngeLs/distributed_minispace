@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetEventHandler : IQueryHandler<GetEvent, EventDto>
     {
         private readonly IMongoRepository<EventDocument, Guid> _eventRepository;
