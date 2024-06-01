@@ -4,9 +4,11 @@ using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class StudentMongoRepository : IExtendedStudentRepository, IStudentRepository
     {
         private readonly IMongoRepository<StudentDocument, Guid> _repository;

@@ -1,9 +1,11 @@
 using Convey.CQRS.Events;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Events.Rejected
 {
     public class DeleteStudentRejected : IRejectedEvent
     {
+        [ExcludeFromCodeCoverage]
         public Guid StudentId { get; }
         public string Reason { get; }
         public string Code { get; }

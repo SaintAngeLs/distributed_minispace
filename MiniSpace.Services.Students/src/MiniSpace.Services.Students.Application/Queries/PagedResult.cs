@@ -1,7 +1,9 @@
 using Convey.CQRS.Queries;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Queries
 {
+    [ExcludeFromCodeCoverage]
     public class PagedResult<T>
     {
         public List<T> Results { get; set; }

@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
 using MiniSpace.Services.Students.Application.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure.Services
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class MessageBroker : IMessageBroker
     {
         private const string DefaultSpanContextHeader = "span_context";
