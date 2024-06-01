@@ -20,6 +20,14 @@ namespace MiniSpace.Web.DTO.Enums
         PasswordResetRequest,
         UserSignUp,
         NewEventInvitaion,
+        CommentCreated,
+        CommentUpdated,
+        ReactionAdded,
+        ReportCreated,
+        ReportDeleted,
+        ReportRejected,
+        ReportResolved,
+        ReportReviewStarted,
         Other
     }
 }
