@@ -3,9 +3,11 @@ using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetStudentHandler : IQueryHandler<GetStudent, StudentDto>
     {
         private readonly IMongoRepository<StudentDocument, Guid> _studentRepository;

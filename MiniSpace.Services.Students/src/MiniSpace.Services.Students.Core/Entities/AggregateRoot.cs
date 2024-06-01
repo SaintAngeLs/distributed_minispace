@@ -1,7 +1,9 @@
 using MiniSpace.Services.Students.Core.Events;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Core.Entities
 {
+    [ExcludeFromCodeCoverage]
     public abstract class AggregateRoot
     {
         private readonly List<IDomainEvent> _events = new List<IDomainEvent>();

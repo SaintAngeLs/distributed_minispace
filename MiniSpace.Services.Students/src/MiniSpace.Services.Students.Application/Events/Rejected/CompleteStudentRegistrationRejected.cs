@@ -1,8 +1,10 @@
 using Convey.CQRS.Events;
 using MiniSpace.Services.Students.Application.Commands;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Events.Rejected
 {
+    [ExcludeFromCodeCoverage]
     public class CompleteStudentRegistrationRejected : IRejectedEvent
     {
         public Guid StudentId { get; }
