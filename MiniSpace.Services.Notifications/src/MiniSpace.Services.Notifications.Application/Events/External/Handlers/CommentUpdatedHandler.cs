@@ -113,7 +113,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 message: $"{commentDetails.StudentName} has updated their comment on your event '{eventDetails.Name}'.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
-                updatedAt: DateTime.UtcNow, // Note updated time
+                updatedAt: DateTime.UtcNow, 
                 relatedEntityId: eventArgs.CommentId,
                 eventType: NotificationEventType.CommentUpdated
             );

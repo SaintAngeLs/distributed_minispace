@@ -128,12 +128,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             var organizerNotificationDetailsHtml = $"<p>{commentDetails.StudentName} commented on your event '{eventDetails.Name}': {commentDetails.CommentContext}</p>";
 
             var organizerNotificationCreatedEvent = new NotificationCreated(
-                notificationId: organizerNotification.NotificationId,
-                userId: organizerNotification.UserId,
-                message: organizerNotification.Message,
+                notificationId: Guid.NewGuid(),
+                userId: eventDetails.Organizer.Id,
+                message: $"A new comment has been posted by {commentDetails.StudentName} on your event '{eventDetails.Name}'.",
                 createdAt: organizerNotification.CreatedAt,
-                eventType: "CommentCreated",
-                relatedEntityId: organizerNotification.RelatedEntityId,
+                eventType: NotificationEventType.CommentCreated.ToString(),
+                relatedEntityId: eventArgs.CommentId,
                 details: organizerNotificationDetailsHtml
             );
 
