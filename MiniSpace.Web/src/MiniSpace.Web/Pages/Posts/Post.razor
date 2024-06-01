@@ -8,14 +8,18 @@
 @using MiniSpace.Web.Models.Reports
 @using MiniSpace.Web.Pages.Comments
 @using Radzen
+@using MudBlazor
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
+@using System.Globalization
+@using MiniSpace.Web.Areas.MediaFiles
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IPostsService PostsService
 @inject IReactionsService ReactionsService
+@inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
 @if (!pageInitialized)
@@ -35,13 +39,13 @@
                         @if (post.UpdatedAt != null)
                         {
                             <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                                Updated at @(post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                             </RadzenText>
                         }
                         else
                         {
                             <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                                Published at @(post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                             </RadzenText>
                         }
                     </RadzenStack>
@@ -56,6 +60,20 @@
                     </RadzenText>
                 </RadzenStack>
             </RadzenStack>
+            @if (images.Any())
+            {
+                <RadzenStack class="rz-pb-5" Orientation="Orientation.Horizontal">
+                    <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 70vh;" ShowArrows="@arrows"
+                                 ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+                        @foreach (var img in images)
+                        {
+                            <MudCarouselItem>
+                                <div style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
+                            </MudCarouselItem>
+                        }
+                    </MudCarousel>
+                </RadzenStack>
+            }
         </RadzenCard>
         
         <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
@@ -96,12 +114,10 @@
             </RadzenCard>
         </RadzenStack>
         
+        <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
+        
         <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
             <Tabs>
-                <RadzenTabsItem Text="Comments">
-                    <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
-                </RadzenTabsItem>
-
                 <RadzenTabsItem Text="Reactions">
                     @if (pageInitialized && !reactions.Any())
                     {
@@ -137,13 +153,19 @@
     [Parameter]
     public string AuthorName { get; set; }
     
-    private const string dateFormat = "dd/MM/yyyy HH:mm";
-
     private Guid studentId;
     private PostDto post = new();
     private bool pageInitialized = false;
     
+    private int activeIndex = 0;
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    private bool autocycle = true;
+    private MudBlazor.Transition transition = MudBlazor.Transition.Slide;
+    
     IEnumerable<ReactionDto> reactions;
+    IEnumerable<string> images = [];
     
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
@@ -157,7 +179,14 @@
         post = await PostsService.GetPostAsync(new Guid(PostId));
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
         reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
+        var tasks = new List<Task<FileDto>>();
+        foreach (var mediaFile in post.MediaFiles)
+        {
+            tasks.Add(MediaFilesService.GetFileAsync(mediaFile));
+        }
         
+        StateHasChanged();
+        images = (await Task.WhenAll(tasks)).Select(f => f.Base64Content).ToList();
         pageInitialized = true;
     }
 
