@@ -1,8 +1,10 @@
 using Convey.CQRS.Events;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Application.Events.Rejected
 {
+    [ExcludeFromCodeCoverage]
     public class DeleteCommentRejected : IRejectedEvent
     {
         public Guid CommentId { get; }
