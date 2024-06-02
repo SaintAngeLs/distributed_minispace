@@ -4,6 +4,7 @@
 @inject INotificationsService NotificationsService
 @using MiniSpace.Web.DTO.Notifications
 @inject IIdentityService IdentityService
+@using System.Globalization
 @using MudBlazor
 
 <div class="breadcrumbs-container">
@@ -41,7 +42,7 @@
                                 <MudText Typo="Typo.body1"><strong>Details:</strong> @RenderHtml(notification.Details)</MudText>
                             </MudListItem>
                             <MudListItem>
-                                <MudText Typo="Typo.body1"><strong>Date:</strong> @notification.CreatedAt.ToString("dd MMM yyyy")</MudText>
+                                <MudText Typo="Typo.body1"><strong>Date:</strong> @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)</MudText>
                             </MudListItem>
                             <MudListItem>
                                 <MudText Typo="Typo.body1"><strong>Status:</strong> @notification.Status</MudText>
