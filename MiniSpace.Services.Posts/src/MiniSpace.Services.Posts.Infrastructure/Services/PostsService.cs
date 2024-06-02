@@ -8,7 +8,6 @@ using MiniSpace.Services.Posts.Core.Wrappers;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Exceptions;
 using MiniSpace.Services.Posts.Core.Repositories;
-using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Services
 {
