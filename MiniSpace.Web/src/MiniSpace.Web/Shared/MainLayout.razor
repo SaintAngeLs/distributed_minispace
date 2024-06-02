@@ -83,7 +83,7 @@
             <RadzenSidebar Responsive="false" style="transition:  0.5s; width: max-content;" Class="mobile-sidebar">
                 <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition:  0.5s;">
                     <RadzenPanelMenuItem Text="Home" Icon="home"
-                                         Click="@(() => NavigationManager.NavigateTo(""))" />
+                                         Click="@(() => NavigationManager.NavigateTo("home"))" />
                     
                     <RadzenPanelMenuItem Text="Account" Icon="account_box"
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />

@@ -1,4 +1,4 @@
-@page "/events/{EventId}/posts/{PostId}/author/{AuthorName}"
+@page "/events/{EventId}/posts/{PostId}"
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Posts.Dialogs
@@ -8,47 +8,87 @@
 @using MiniSpace.Web.Models.Reports
 @using MiniSpace.Web.Pages.Comments
 @using Radzen
+@using MudBlazor
 @using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
+@using System.Globalization
+@using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.Pages.Events.Dialogs
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
 @inject IPostsService PostsService
 @inject IReactionsService ReactionsService
+@inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 
 @if (pageInitialized)
 {
     <RadzenStack class="rz-pt-6" Gap="1rem" Style="height: 100%">
-        <RadzenCard Class="rz-my-12 rz-mx-md-12 rz-border-radius-3">
+        <div>
+            <RadzenStack class="rz-pt-5 rz-mx-md-12" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Gap="1rem">
+                <RadzenButton Size="ButtonSize.Medium" Text="Go to the event" ButtonStyle="ButtonStyle.Primary" class="separate-button"
+                              Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                    @if(IdentityService.IsAuthenticated && !IsUserPostCreator(post))
+                    {
+                        <RadzenButton Size="ButtonSize.Medium" Text="Report event" class="report-button rz-px-0 rz-pb-4"
+                                                              Click="@(() => ReportPost(post))" >
+                            <RadzenIcon Icon="warning" Style="color: white; font-weight: 800;" class="rz-px-0"/>
+                        </RadzenButton>
+                    }
+                    else if (IdentityService.IsAuthenticated && IsUserPostCreator(post))
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                            <RadzenButton Size="ButtonSize.Medium" Text="Update post" class="edit-button"
+                                          Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/update"))">
+                                <RadzenIcon Icon="edit" Style="color: white; font-weight: 800;"/>
+                            </RadzenButton>
+                            <RadzenButton Size="ButtonSize.Medium" Text="Delete post" class="delete-button"
+                                                              Click="@(() => OpenDeletePostDialog(post.Id))" >
+                                <RadzenIcon Icon="close" Style="color: white; font-weight: 800;"/>
+                            </RadzenButton>
+                        </RadzenStack>
+                    }
+                </RadzenStack>
+            </RadzenStack>
+        </div>
+        <RadzenCard Class="rz-mb-12 rz-mx-md-12 rz-border-radius-3">
             <RadzenRow Gap="0.5rem">
                 <RadzenColumn Size="12" class="rz-text-truncate">
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
                         <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                    Text=@($"{AuthorName}")/>
+                                    Text=@($"{GetAuthorName(author)}")/>
                         @if (post.UpdatedAt != null)
                         {
-                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                Updated at @(post.UpdatedAt?.ToLocalTime().ToString(dateFormat))
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Style="color: dodgerblue">
+                                Updated at @(post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                             </RadzenText>
                         }
                         else
                         {
-                            <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                Published at @(post.CreatedAt.ToLocalTime().ToString(dateFormat))
+                            <RadzenText TextStyle="TextStyle.Subtitle1" Style="color: dodgerblue">
+                                Published at @(post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
                             </RadzenText>
                         }
                     </RadzenStack>
                 </RadzenColumn>
             </RadzenRow>
             <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" class="rz-pb-4">
                 <RadzenStack Gap="1em">
                     <RadzenStack></RadzenStack>
                     <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
@@ -56,94 +96,111 @@
                     </RadzenText>
                 </RadzenStack>
             </RadzenStack>
-        </RadzenCard>
-        
-        <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                <RadzenButton Size="ButtonSize.Medium" Text="Go back to event" ButtonStyle="ButtonStyle.Primary"
-                              Click="@(() => NavigationManager.NavigateTo($"events/{EventId}"))" />
-                <RadzenButton Size="ButtonSize.Medium" Text="Report post" ButtonStyle="ButtonStyle.Primary"
-                              Click="@(() => ReportPost(post))" />
-            </RadzenStack>
-
-            @if (IdentityService.IsAuthenticated && IsUserPostCreator(post))
+            @if (images.Any())
             {
-                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-                    <RadzenButton Size="ButtonSize.Medium" Text="Update post" ButtonStyle="ButtonStyle.Secondary"
-                                  Click="@(() => NavigationManager.NavigateTo($"events/{EventId}/posts/{PostId}/author/{AuthorName}/update"))" />
-                    <RadzenButton Size="ButtonSize.Medium" Text="Delete post" ButtonStyle="ButtonStyle.Warning"
-                                  Click="@(() => OpenDeletePostDialog(post.Id))" />
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 70vh;" ShowArrows="@arrows"
+                                 ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+                        @foreach (var img in images)
+                        {
+                            <MudCarouselItem>
+                                <div style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
+                            </MudCarouselItem>
+                        }
+                    </MudCarousel>
                 </RadzenStack>
             }
-
-            <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 500px">
-                <RadzenCard class="rz-background-color-success rz-shadow-0 rz-border-radius-0 rz-p-8">
-                    <RadzenRow RowGap="0">
-                        <RadzenColumn SizeSM="6">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Number of reactions</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(reactionsSummary.NumberOfReactions)</b></RadzenText>
-                            <RadzenText Text="Your reaction" TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0" />
-                            <RadzenDropDown Name="your-reaction" Data="reactionTypes" Value="@(reactionsSummary.AuthUserReactionType)"
-                                            ValueChanged="@((ReactionType? reactionType) => ReactionChanged(reactionType))"
-                                            TextProperty="Key" ValueProperty="Value" />
-                        </RadzenColumn>
-                        <RadzenColumn SizeSM="6">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Dominant reaction</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><b>@(ReactionTypeExtensions.GetReactionText(reactionsSummary.DominantReaction))</b></RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenCard>
-            </RadzenCard>
-        </RadzenStack>
-        
-        <RadzenTabs Change="@OnChange" TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
-            <Tabs>
-                <RadzenTabsItem Text="Comments">
-                    <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
-                </RadzenTabsItem>
-
-                <RadzenTabsItem Text="Reactions">
-                    @if (pageInitialized && !reactions.Any())
-                    {
-                    <h3>No reactions have been added by students yet.</h3>
-                    }
-                    <RadzenDataList PageSize="10" AllowPaging="true" Data="@reactions" TItem="ReactionDto">
-                        <Template Context="reaction">
-                            <RadzenCard Class="rz-border-radius-3">
-                                <RadzenRow Gap="0.5rem">
-                                    <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
-                                                    Text=@(reaction.StudentFullName)/>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="6">
-                                        <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue"
-                                                    Text=@(ReactionTypeExtensions.GetReactionText(reaction.Type))/>
-                                    </RadzenColumn>
-                                </RadzenRow>
-                            </RadzenCard>
-                        </Template>
-                    </RadzenDataList>
-                </RadzenTabsItem>
-            </Tabs>
-        </RadzenTabs>
+            <RadzenRow RowGap="0" >
+                <RadzenColumn SizeSM="8">
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-py-6 rz-px-7 rz-border-top">
+                        <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions:  @reactionsSummary.NumberOfReactions</RadzenText>
+                    </RadzenStack>
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-pb-4 rz-border-top">
+                        @if (reactionsSummary.NumberOfReactions > 0)
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" class="reactions-button"
+                                          Click="@(() => OpenReactionsListingDialog())">
+                                <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
+                                                            <MudIcon Icon="@($"{reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
+                            </RadzenButton>
+                        }
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn SizeSM="4">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-p-4 rz-border-top">
+                        @if (IdentityService.IsAuthenticated && !IsUserPostCreator(post))
+                        {
+                            <RadzenButton Size="ButtonSize.Medium" class="separate-button"
+                                          Click="@(() => OpenReactionsDialog())">
+                                React
+                                @if (reactionsSummary.AuthUserReactionType != null)
+                                {
+                                    <MudIcon Icon="@($"{reactionsSummary.AuthUserReactionType.GetReactionIcon()}")"/>
+                                }
+                            </RadzenButton>
+                        }
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
+        <CommentsTab CommentContext="Post" ContextId="@PostId" StudentId="studentId" />
     </RadzenStack>
 }
+
+<style>
+    .separate-button {
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        background-color: #30445f !important;
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+    
+    .edit-button {
+        background-color: darkgreen !important;
+        border-radius: 5px;
+    }
+    
+    .delete-button {
+        background-color: darkred !important;
+        border-radius: 5px;
+    }
+    
+    .report-button {
+        background-color: darkred !important;
+        border-radius: 5px;
+        height: 25px;
+        width: 25px;
+    }
+    
+    .reactions-button{
+        border: 1px solid #30445f; 
+        background-color: transparent !important;
+        border-radius: 5px;
+    }
+</style>
 
 @code {
     [Parameter]
     public string EventId { get; set; }
-    [Parameter]
-    public string PostId { get; set; }
-    [Parameter]
-    public string AuthorName { get; set; }
-    
-    private const string dateFormat = "dd/MM/yyyy HH:mm";
+
+    [Parameter] public string PostId { get; set; }
 
     private Guid studentId;
     private PostDto post = new();
     private bool pageInitialized = false;
+    private StudentDto author;
     
-    IEnumerable<ReactionDto> reactions;
+    private int activeIndex = 0;
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    private bool autocycle = true;
+    private MudBlazor.Transition transition = MudBlazor.Transition.Slide;
+    
+    IEnumerable<string> images = [];
     
     ReactionsSummaryDto reactionsSummary = new();
     List<KeyValuePair<string, ReactionType?>> reactionTypes = ReactionTypeExtensions.GenerateReactionPairs();
@@ -156,8 +213,15 @@
         }
         post = await PostsService.GetPostAsync(new Guid(PostId));
         reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
-        reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
+        author = await StudentsService.GetStudentAsync(post.OrganizerId);
+        var tasks = new List<Task<FileDto>>();
+        foreach (var mediaFile in post.MediaFiles)
+        {
+            tasks.Add(MediaFilesService.GetFileAsync(mediaFile));
+        }
         
+        StateHasChanged();
+        images = (await Task.WhenAll(tasks)).Select(f => f.Base64Content).ToList();
         pageInitialized = true;
     }
 
@@ -169,22 +233,6 @@
         }
 
         return studentId == postDto.OrganizerId;
-    }
-    
-    private async void OnChange(int index)
-    {
-        if (!IdentityService.IsAuthenticated)
-        {
-            return;
-        }
-        
-        switch (index)
-        {
-            case 1:
-                reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
-                break;
-        }
-        StateHasChanged();
     }
     
     private async Task OpenDeletePostDialog(Guid postId)
@@ -209,21 +257,13 @@
             });
     }
     
-    private async void ReactionChanged(ReactionType? reactionType)
+    private string GetAuthorName(StudentDto author)
     {
-        if (reactionsSummary.AuthUserReactionId != null)
+        if (author == null)
         {
-            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
+            return "Unknown author";
         }
-        
-        if (reactionType != null)
-        {
-            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
-                post.Id, ReactionContentType.Post.ToString());
-        }
-
-        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
-        StateHasChanged();
+        return $"{author.FirstName} {author.LastName}";
     }
     
     private async Task ReportPost(PostDto postDto)
@@ -237,5 +277,50 @@
         };
 
         await OpenReportPostDialog(createReportModel);
+    }
+    
+    private async Task ReactionChanged(ReactionType? reactionType)
+    {
+        if (reactionsSummary.AuthUserReactionId != null)
+        {
+            await ReactionsService.DeleteReactionAsync((Guid)reactionsSummary.AuthUserReactionId);
+        }
+
+        if (reactionType != null)
+        {
+            await ReactionsService.CreateReactionAsync(Guid.Empty, studentId, reactionType.ToString(),
+                post.Id, ReactionContentType.Post.ToString());
+        }
+
+        reactionsSummary = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
+        StateHasChanged();
+    }
+    
+    private async Task OpenReactionsDialog()
+    {
+        var result = await DialogService.OpenAsync<ReactionDialog>("",
+            new Dictionary<string, object>() { { "SelectedReaction", reactionsSummary.AuthUserReactionType } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "50px", Resizable = false, Draggable = false, ShowClose = false,
+                AutoFocusFirstElement = false
+            });
+        
+        await ReactionChanged((ReactionType?)result);
+        StateHasChanged(); 
+    }
+    
+    private async Task OpenReactionsListingDialog()
+    {
+        var reactions = await ReactionsService.GetReactionsAsync(post.Id, ReactionContentType.Post);
+        await DialogService.OpenAsync<ReactionListingDialog>("",
+            new Dictionary<string, object>() { { "Reactions", reactions } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+        
+        StateHasChanged(); 
     }
 }

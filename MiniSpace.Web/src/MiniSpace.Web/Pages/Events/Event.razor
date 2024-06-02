@@ -4,6 +4,7 @@
 @using MiniSpace.Web.Areas.Events
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Areas.Reactions
+@using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Enums
 @using MiniSpace.Web.Models.Reports
@@ -18,6 +19,7 @@
 @using Orientation = Radzen.Orientation
 @using System.Globalization
 @using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Pages.MediaFiles.Dialogs
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
@@ -168,7 +170,7 @@
                         @foreach (var img in images)
                         {
                             <MudCarouselItem>
-                                <div style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
+                                <div @onclick="@(() => OpenImageDialog(img))" style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
                             </MudCarouselItem>
                         }
                     </MudCarousel>
@@ -192,14 +194,17 @@
             </RadzenCard>
             <RadzenRow RowGap="0">
                 <RadzenColumn SizeSM="8">
-                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-p-6 rz-border-top">
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-py-6 rz-px-7 rz-border-top">
                         <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Number of reactions:  @reactionsSummary.NumberOfReactions</RadzenText>
                     </RadzenStack>
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.5rem" Class="rz-px-6 rz-pb-4 rz-border-top">
                         @if (reactionsSummary.NumberOfReactions > 0)
                         {
-                            <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
-                            <MudIcon Icon="@($"{reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
+                            <RadzenButton Size="ButtonSize.Medium" class="friends-button"
+                                          Click="@(() => OpenReactionsListingDialog())">
+                                <RadzenText TextStyle="TextStyle.H6" Class="rz-font-weight-bold rz-text-align-left">Dominant reaction: </RadzenText>
+                                                            <MudIcon Icon="@($"{reactionsSummary.DominantReaction.GetReactionIcon()}")" Style="color: #30445f;"/>
+                            </RadzenButton>
                         }
                     </RadzenStack>
                 </RadzenColumn>
@@ -221,64 +226,26 @@
                                 }
                             </RadzenButton>
                         }
-                        else if (IdentityService.IsAuthenticated)
-                        {
-                            <RadzenButton Size="ButtonSize.Medium" class="separate-button"
-                                          Click="@(() => OpenReactionsListingDialog())">
-                                Reactions
-                            </RadzenButton>
-                        }
                     </RadzenStack>
                 </RadzenColumn>
             </RadzenRow>
         </RadzenCard>
-        <CommentsTab CommentContext="Event" ContextId="@EventId" StudentId="studentId" />
-        <h2 class="post-font rz-p-4">Posts</h2>
+        <CommentsTab CommentContext="Event" ContextId="@EventId" StudentId="studentId"/>
+        <h2 class="post-font rz-p-4" style="max-width: 1080px">Posts</h2>
         @if (IdentityService.IsAuthenticated && IsUserEventOrganizer(ev))
         {
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem" style="max-width: 1080px">
                 <RadzenButton Size="ButtonSize.Medium" Text="Create new post" ButtonStyle="ButtonStyle.Secondary" class="separate-button"
                               Click="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/create"))" Style="background-color: #1b6ec2 !important;"/>
             </RadzenStack>   
         }
         @if (pageInitialized && !posts.Any())
         {
-            <h3>No posts have been added by organizers yet.</h3>
+            <h3 style="max-width: 1080px">No posts have been added by organizers yet.</h3>
         }
         <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
             <Template Context="post">
-                <RadzenCard Class="rz-border-radius-3" Style="cursor: pointer"
-                            @onclick="@(() => NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{GetAuthorName(post.OrganizerId)}"))">
-                    <RadzenRow Gap="0.5rem">
-                        <RadzenColumn Size="12" class="rz-text-truncate">
-                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: darkred"
-                                            Text=@($"{GetAuthorName(post.OrganizerId)}")/>
-                                @if (post.UpdatedAt != null)
-                                {
-                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                        Updated at @(post.UpdatedAt?.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
-                                    </RadzenText>   
-                                }
-                                else
-                                {
-                                    <RadzenText TextStyle="TextStyle.Subtitle1" Class="rz-mb-0" Style="color: dodgerblue">
-                                        Published at @(post.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture))
-                                    </RadzenText>   
-                                }
-                            </RadzenStack>
-                        </RadzenColumn>
-                    </RadzenRow>
-                    <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
-                        <RadzenStack Gap="1em">
-                            <RadzenStack></RadzenStack>
-                            <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0">
-                                <strong>@(post.TextContent)</strong>
-                            </RadzenText>
-                        </RadzenStack>
-                    </RadzenStack>
-                </RadzenCard>
+                <RadzenPostCard Event="ev" Post="post"/>
             </Template>
         </RadzenDataList>
     </RadzenStack>
@@ -438,11 +405,6 @@
 
     }
 
-    private string GetAuthorName(Guid authorId)
-    {
-        return authorId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
-    }
-
     private bool IsUserEventOrganizer(EventDto eventDto)
     {
         if (IdentityService.GetCurrentUserRole() != "organizer")
@@ -482,6 +444,17 @@
             new DialogOptions()
             {
                 Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenImageDialog(string base64Image)
+    {
+        await DialogService.OpenAsync<ImageDialog>("",
+            new Dictionary<string, object>() { { "Base64Image", base64Image } },
+            new DialogOptions()
+            {
+                Width = "900px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }
@@ -555,13 +528,14 @@
     
     private async Task RatingChanged(int? rating)
     {
-        if (rating != null)
-        {
-            await EventsService.RateEventAsync(ev.Id, rating.Value, studentId);
-        }
-        else
+        if (ev.StudentRating != null)
         {
             await EventsService.CancelRateEventAsync(ev.Id, studentId);
+        }
+        
+        if (rating != null)
+        {
+            await EventsService.RateEventAsync(ev.Id, (int)rating, studentId);
         }
         eventRating = await EventsService.GetEventRatingAsync(ev.Id);
         ev.StudentRating = rating;
@@ -617,7 +591,7 @@
     private async Task OpenRatingDialog()
     {
         var result = await DialogService.OpenAsync<RatingDialog>("",
-            new Dictionary<string, object>() { { "StudentRating", reactionsSummary.AuthUserReactionType } },
+            new Dictionary<string, object>() { { "StudentRating", ev.StudentRating } },
             new DialogOptions()
             {
                 Width = "500px", Height = "50px", Resizable = false, Draggable = false, ShowClose = false,
