@@ -525,7 +525,7 @@
         {
             await EventsService.RateEventAsync(ev.Id, (int)rating, studentId);
         }
-        
+        eventRating = await EventsService.GetEventRatingAsync(ev.Id);
         ev.StudentRating = rating;
         StateHasChanged();
     }
@@ -579,7 +579,7 @@
     private async Task OpenRatingDialog()
     {
         var result = await DialogService.OpenAsync<RatingDialog>("",
-            new Dictionary<string, object>() { { "StudentRating", reactionsSummary.AuthUserReactionType } },
+            new Dictionary<string, object>() { { "StudentRating", ev.StudentRating } },
             new DialogOptions()
             {
                 Width = "500px", Height = "50px", Resizable = false, Draggable = false, ShowClose = false,
