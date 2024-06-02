@@ -14,9 +14,10 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.VideoLibrary),
-        new BreadcrumbItem("New notification", href: "/notifications/all", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
-         new BreadcrumbItem("Notifications History", href: "/notifications/history", disabled: true, icon: Icons.Material.Filled.Notifications)
+        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications),
+        new BreadcrumbItem("New Notifications", href: "/notifications/new", icon: Icons.Material.Filled.NotificationsActive),
+        new BreadcrumbItem("Notifications History", href: "/notifications/history", icon: Icons.Material.Filled.NotificationsPaused),
+        new BreadcrumbItem("Notification", href: "/notification/{NotificationId:guid}", disabled: true, icon: @Icons.Material.Filled.NotificationAdd)
     };
 }
 
@@ -99,7 +100,7 @@
 
 
 /* Enhance link appearance */
-a {
+a .view-details-notification {
     color: #1a73e8; /* Google's blue link color for a familiar look */
     text-decoration: none; /* No underline */
 }
@@ -144,7 +145,7 @@ a:hover, a:focus {
         string link = NotificationLinkFactory.GetNotificationLink(notification);
         if (!string.IsNullOrEmpty(link))
         {
-            return new MarkupString($"{notification.Message} <a href='{link}'>View Details</a>");
+            return new MarkupString($"{notification.Message} <a href='{link}' class='view-details-notification'>View Details</a>");
         }
         else
         {
