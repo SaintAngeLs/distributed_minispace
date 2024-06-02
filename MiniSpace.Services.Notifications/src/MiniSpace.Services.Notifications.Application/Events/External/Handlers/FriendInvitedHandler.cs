@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         {
             var inviter = await _studentsServiceClient.GetAsync(@event.InviterId);
             var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
-            var detailsHtml = $"<p>View <a href='https://minispace.itsharppro.com/user-details/{@event.InviterId}'>{inviter.FirstName} {inviter.LastName}</a>'s profile to respond to the friend invitation.</p>";
+            var detailsHtml = $"<p>View <a href='https://minispace.itsharppro.com/student-details/{@event.InviterId}'>{inviter.FirstName} {inviter.LastName}</a>'s profile to respond to the friend invitation.</p>";
 
             var notificationId = Guid.NewGuid();
             var notification = new Notification(

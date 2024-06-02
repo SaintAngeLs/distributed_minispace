@@ -41,24 +41,61 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             await _repository.Collection.UpdateOneAsync(filter, update, options);
         }
 
-         public async Task AddOrUpdateAsync(StudentNotifications studentNotifications)
+        //  public async Task AddOrUpdateAsync(StudentNotifications studentNotifications)
+        // {
+        //     var document = studentNotifications.AsDocument();
+        //     var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentNotifications.StudentId);
+        //     var updates = new List<UpdateDefinition<StudentNotificationsDocument>>();
+
+        //     foreach (var notification in studentNotifications.Notifications)
+        //     {
+        //         updates.Add(Builders<StudentNotificationsDocument>.Update.Push(doc => doc.Notifications, notification.AsDocument()));
+        //     }
+
+        //     var update = Builders<StudentNotificationsDocument>.Update
+        //         .SetOnInsert(doc => doc.Id, studentNotifications.StudentId) 
+        //         .AddToSetEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument())); 
+
+        //     var options = new UpdateOptions { IsUpsert = true };
+        //     await _repository.Collection.UpdateOneAsync(filter, update, options);
+        // }
+
+        public async Task AddOrUpdateAsync(StudentNotifications studentNotifications)
         {
             var document = studentNotifications.AsDocument();
             var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentNotifications.StudentId);
-            var updates = new List<UpdateDefinition<StudentNotificationsDocument>>();
 
+            // Ensure the document is initialized with an empty list if not present
+            var initializationUpdate = Builders<StudentNotificationsDocument>.Update
+                .SetOnInsert(doc => doc.Notifications, new List<NotificationDocument>());
+
+            var addToSetUpdates = new List<UpdateDefinition<StudentNotificationsDocument>>();
             foreach (var notification in studentNotifications.Notifications)
             {
-                updates.Add(Builders<StudentNotificationsDocument>.Update.Push(doc => doc.Notifications, notification.AsDocument()));
+                var notificationDocument = notification.AsDocument();
+                var notificationFilter = Builders<StudentNotificationsDocument>.Filter.And(
+                    Builders<StudentNotificationsDocument>.Filter.Eq("Notifications.Message", notificationDocument.Message),
+                    Builders<StudentNotificationsDocument>.Filter.Eq("Notifications.CreatedAt", notificationDocument.CreatedAt),
+                    Builders<StudentNotificationsDocument>.Filter.Eq("Notifications.EventType", notificationDocument.EventType)
+                );
+
+                var combinedFilter = Builders<StudentNotificationsDocument>.Filter.And(filter, notificationFilter);
+                var update = Builders<StudentNotificationsDocument>.Update.AddToSet(doc => doc.Notifications, notificationDocument);
+
+                addToSetUpdates.Add(update);
             }
 
-            var update = Builders<StudentNotificationsDocument>.Update
-                .SetOnInsert(doc => doc.Id, studentNotifications.StudentId) 
-                .AddToSetEach(doc => doc.Notifications, studentNotifications.Notifications.Select(n => n.AsDocument())); 
-
             var options = new UpdateOptions { IsUpsert = true };
-            await _repository.Collection.UpdateOneAsync(filter, update, options);
+            // Initialize document if it doesn't exist
+            await _repository.Collection.UpdateOneAsync(filter, initializationUpdate, options);
+
+            // Apply each AddToSet operation
+            foreach (var update in addToSetUpdates)
+            {
+                await _repository.Collection.UpdateOneAsync(filter, update, options);
+            }
         }
+
 
 
        public async Task<List<StudentNotifications>> FindAsync(FilterDefinition<StudentNotificationsDocument> filter, FindOptions options)

@@ -60,9 +60,10 @@
             var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, status: "Unread");
             var latestNotifications = paginatedResponse.Results;
 
-            if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
+             if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
             {
                 PlayNotificationSound();
+                await JSRuntime.InvokeVoidAsync("updateTitle", "New Notification - MiniSpace | Social");
                 lastCheckedTime = DateTime.Now; 
             }
 
