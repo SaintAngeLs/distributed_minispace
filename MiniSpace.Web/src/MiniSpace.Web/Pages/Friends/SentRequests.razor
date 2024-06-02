@@ -22,9 +22,10 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.Create),
-        new BreadcrumbItem("Requests", href: "/friends/requests", icon: Icons.Material.Filled.VideoLibrary),
-        new BreadcrumbItem("Sent Requests", href: "/friends/sent-requests", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.PersonSearch),
+        new BreadcrumbItem("Friends", href: "/friends", disabled: true, icon: Icons.Material.Filled.LibraryAddCheck),
+        new BreadcrumbItem("Requests", href: "/friends/requests", icon: Icons.Material.Filled.GroupAdd),
+        new BreadcrumbItem("Sent Requests", href: "/friends/sent-requests", disabled: true, icon: Icons.Material.Filled.PersonAddAlt1),
     };
 }
 

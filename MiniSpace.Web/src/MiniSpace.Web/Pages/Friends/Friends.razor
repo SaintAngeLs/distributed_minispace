@@ -21,7 +21,8 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.PersonSearch),
+        new BreadcrumbItem("Friends", href: "/friends", disabled: true, icon: Icons.Material.Filled.LibraryAddCheck),
     };
 }
 
