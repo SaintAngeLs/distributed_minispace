@@ -49,7 +49,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var command = new DeletePost(postId);
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -93,7 +93,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var command = new DeletePost(postId);
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);
@@ -123,7 +123,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var command = new DeletePost(postId);
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
@@ -153,7 +153,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var command = new DeletePost(postId);
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
@@ -178,7 +178,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var command = new DeletePost(postId);
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);

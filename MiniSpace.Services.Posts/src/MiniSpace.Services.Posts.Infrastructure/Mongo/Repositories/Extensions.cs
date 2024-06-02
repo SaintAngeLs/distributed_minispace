@@ -1,10 +1,12 @@
 ﻿﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         private static readonly FilterDefinitionBuilder<PostDocument> FilterDefinitionBuilder = Builders<PostDocument>.Filter;

@@ -1,5 +1,8 @@
-﻿namespace MiniSpace.Services.Posts.Application.Dto
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MiniSpace.Services.Posts.Application.Dto
 {
+    [ExcludeFromCodeCoverage]
     public class StudentEventsDto
     {
         public Guid StudentId { get; set; }

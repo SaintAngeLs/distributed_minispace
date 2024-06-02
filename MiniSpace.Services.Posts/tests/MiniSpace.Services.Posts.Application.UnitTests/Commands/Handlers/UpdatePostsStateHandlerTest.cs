@@ -44,8 +44,8 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var command = new UpdatePostsState(DateTime.Today);
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", "Media content", DateTime.Today,
-                state, DateTime.Today);
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today,
+                state, DateTime.Today); // TODO: media files
 
             _postRepositoryMock.Setup(repo => repo.GetAsync(postId)).ReturnsAsync(post);
 
@@ -66,8 +66,8 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var command = new UpdatePostsState(new DateTime(2024, 1, 1, 0, 0, 0));
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", "Media content", new DateTime(2000, 1, 1, 0, 0, 0),
-                state, new DateTime(2000, 1, 1, 0, 0, 0));
+                "Text", Enumerable.Empty<Guid>(), new DateTime(2000, 1, 1, 0, 0, 0),
+                state, new DateTime(2000, 1, 1, 0, 0, 0)); // TODO: media files
 
             var postList = new List<Post>
             {
