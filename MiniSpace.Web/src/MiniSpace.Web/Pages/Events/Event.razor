@@ -516,15 +516,16 @@
     
     private async Task RatingChanged(int? rating)
     {
-        if (rating != null)
-        {
-            await EventsService.RateEventAsync(ev.Id, rating.Value, studentId);
-        }
-        else
+        if (ev.StudentRating != null)
         {
             await EventsService.CancelRateEventAsync(ev.Id, studentId);
         }
-        eventRating = await EventsService.GetEventRatingAsync(ev.Id);
+        
+        if (rating != null)
+        {
+            await EventsService.RateEventAsync(ev.Id, (int)rating, studentId);
+        }
+        
         ev.StudentRating = rating;
         StateHasChanged();
     }
