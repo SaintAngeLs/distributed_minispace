@@ -37,12 +37,6 @@ MiniSpace is a multifaceted application designed to enhance student life by prov
 - **Social Interactions**: Managing friends lists, sending invitations, and sharing experiences.
 - **Administration**: Handling user reports, system updates, and data analysis for continuous improvement.
 
-
-## General description
-- [ ] Multitier application built with [.NET](https://dotnet.microsoft.com/en-us)
-- [ ] Targets to create web interface for students to browse events and sign up for them, create own activities and interact with other students
-- [ ] Focuses on cultural, educational and social events available for academic community
-
 ## Frontend
 - [ ] Created with [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - single-page web application framework being a part of the .NET ecosystem
 - [ ] Written in C#, can run in the browser by using [Blazor Server](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
