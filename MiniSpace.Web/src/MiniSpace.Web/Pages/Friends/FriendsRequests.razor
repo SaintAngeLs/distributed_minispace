@@ -13,6 +13,7 @@
 @using MiniSpace.Web.Areas.MediaFiles
 @inject IMediaFilesService MediaFilesService
 @using MudBlazor
+@using Radzen
 
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -39,7 +40,12 @@
         <div class="card-container">
             @if (incomingRequests == null)
             {
-                <p>Loading...</p>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                               Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                        <Template>Loading...</Template>
+                    </RadzenProgressBarCircular>
+                </div>
             }
             else if (filteredIncomingRequests != null && filteredIncomingRequests.Any())
             {

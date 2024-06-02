@@ -16,6 +16,7 @@
 @inject IEventsService EventsService
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h1 class="rz-p-8 organize-font">Organize events</h1>
 
@@ -108,24 +109,14 @@
         {
             organizerId = IdentityService.GetCurrentUserId();
             searchOrganizerEventsModel.OrganizerId = organizerId;
-        
-            var tmp = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
-                searchOrganizerEventsModel.Name, searchOrganizerEventsModel.State,
-                searchOrganizerEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                searchOrganizerEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                searchOrganizerEventsModel.Pageable);
-            if (tmp.Content != null)
+
+            var searchOrganizerEventsCriteria = await LocalStorage.GetItemAsync<SearchOrganizerEventsModel>("searchOrganizerEventsCriteria");
+            if (searchOrganizerEventsCriteria != null)
             {
-                totalPages = tmp.Content.TotalPages;
-                totalElements = tmp.Content.TotalElements;
-                events = tmp.Content.Content;
+                searchOrganizerEventsModel = searchOrganizerEventsCriteria;
             }
-            else
-            {
-                totalPages = 0;
-                totalElements = 0;
-                events = new List<EventDto>();
-            }   
+            
+            await SearchOrganizerEvents();
         }
 
         pageInitialized = true;
@@ -152,6 +143,31 @@
         };
     }
 
+    private async Task SearchOrganizerEvents()
+    {
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
+        {
+            var response = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
+                searchOrganizerEventsModel.Name, searchOrganizerEventsModel.State,
+                searchOrganizerEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                searchOrganizerEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                searchOrganizerEventsModel.Pageable);
+            if (response.Content != null)
+            {
+                totalPages = response.Content.TotalPages;
+                totalElements = response.Content.TotalElements;
+                events = response.Content.Content;
+            }
+            else
+            {
+                totalPages = 0;
+                totalElements = 0;
+                events = new List<EventDto>();
+            }
+            
+            await LocalStorage.SetItemAsync("searchOrganizerEventsCriteria", searchOrganizerEventsModel);
+        }
+    }
     
     private async void SelectedPageChanged(int pageNumber)
     {
@@ -175,12 +191,13 @@
                 Width = "800px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        await OnInitializedAsync();
+        await SearchOrganizerEvents();
     }
     
     private async Task ClearFilters()
     {
         searchOrganizerEventsModel = InitializeOrganizerSearchModel();
-        await OnInitializedAsync();
+        searchOrganizerEventsModel.OrganizerId = organizerId;
+        await SearchOrganizerEvents();
     }
 }

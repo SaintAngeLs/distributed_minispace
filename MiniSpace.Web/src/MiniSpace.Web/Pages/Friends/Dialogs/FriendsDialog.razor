@@ -1,6 +1,7 @@
 ﻿@using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Friends
 @using MiniSpace.Web.DTO
+@using MiniSpace.Web.Models.Events
 @using Radzen
 @using System.Globalization
 @inject Radzen.DialogService DialogService
@@ -32,12 +33,22 @@
     </RadzenStack>
 </RadzenFieldset>
 @code {
+    [Parameter]
+    public SearchEventsModel SearchEventsModel { get; set; }
+    
     private IEnumerable<StudentDto> friends;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         friends = (await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId())).Select(f => f.StudentDetails);
+        foreach (var friend in friends)
+        {
+            if (SearchEventsModel.Friends.Contains(friend.Id))
+            {
+                friend.Selected = true;
+            }
+        }
         StateHasChanged();
     }
 
@@ -48,7 +59,7 @@
 
     private void SelectFriends()
     {
-        var selectedFriends = friends.Where(f => f.Selected).Select(f => f.Id).ToList();
-        DialogService.Close(selectedFriends);
+        SearchEventsModel.Friends = friends.Where(f => f.Selected).Select(f => f.Id).ToHashSet();
+        DialogService.Close();
     }
 }

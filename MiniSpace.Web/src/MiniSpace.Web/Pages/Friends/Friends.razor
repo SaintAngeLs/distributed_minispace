@@ -11,7 +11,7 @@
 @using MiniSpace.Web.Areas.MediaFiles
 @inject IMediaFilesService MediaFilesService
 @using MudBlazor
-
+@using Radzen
 
 
 <div class="breadcrumbs-container">
@@ -49,6 +49,15 @@
                     </div>
                 </div>
             }
+        }
+        else if (!pageInitialized)
+        {
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                           Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                    <Template>Loading...</Template>
+                </RadzenProgressBarCircular>
+            </div>
         }
         else
         {
@@ -135,6 +144,7 @@
     private Guid studentId;
     private string searchTerm;
     private Dictionary<Guid, string> images = new ();
+    private bool pageInitialized;
 
     protected override async Task OnInitializedAsync()
     {
@@ -160,6 +170,8 @@
                 NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
                 friends = new List<FriendDto>();  
             }
+
+            pageInitialized = true;
         }
         else
         {

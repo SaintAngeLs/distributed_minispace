@@ -22,7 +22,7 @@
 @inject IStudentsService StudentsService
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
-
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -137,25 +137,13 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var tmp = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
-            searchEventsModel.Organization.Id, searchEventsModel.Organization.RootId, searchEventsModel.Category,
-            searchEventsModel.State, searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
-            searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-            searchEventsModel.Pageable);
-        if (tmp.Content != null)
+        var searchEventsCriteria = await LocalStorage.GetItemAsync<SearchEventsModel>("searchEventsCriteria");
+        if (searchEventsCriteria != null)
         {
-            totalPages = tmp.Content.TotalPages;
-            totalElements = tmp.Content.TotalElements;
-            events = tmp.Content.Content;
-        }
-        else
-        {
-            totalPages = 0;
-            totalElements = 0;
-            events = new List<EventDto>();
+            searchEventsModel = searchEventsCriteria;
         }
 
+        await SearchEvents();
         pageInitialized = true;
     }
 
@@ -168,7 +156,7 @@
             Organization = new OrganizationModel(),
             Category = "",
             State = "",
-            Friends = [],
+            Friends = new HashSet<Guid>(),
             FriendsEngagementType = "",
             DateFrom = DateTime.Now.AddDays(-7),
             DateTo = DateTime.Now.AddDays(30),
@@ -183,6 +171,30 @@
                 }
             }
         };
+    }
+    
+    private async Task SearchEvents()
+    {
+        var response = await EventsService.SearchEventsAsync(searchEventsModel.Name, searchEventsModel.Organizer,
+            searchEventsModel.Organization.Id, searchEventsModel.Organization.RootId, searchEventsModel.Category,
+            searchEventsModel.State, searchEventsModel.Friends, searchEventsModel.FriendsEngagementType,
+            searchEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            searchEventsModel.Pageable);
+        if (response.Content != null)
+        {
+            totalPages = response.Content.TotalPages;
+            totalElements = response.Content.TotalElements;
+            events = response.Content.Content;
+        }
+        else
+        {
+            totalPages = 0;
+            totalElements = 0;
+            events = new List<EventDto>();
+        }
+        
+        await LocalStorage.SetItemAsync("searchEventsCriteria", searchEventsModel);
     }
     
     private async void SelectedPageChanged(int pageNumber)
@@ -208,15 +220,15 @@
                 Width = "800px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        await OnInitializedAsync();
+        await SearchEvents();
     }
     
     private async Task OpenFriendsDialog()
     {
-        var result = await DialogService.OpenAsync<FriendsDialog>($"Filter events by friends",
-            null, new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
-        searchEventsModel.Friends = result;
-        await OnInitializedAsync();
+        await DialogService.OpenAsync<FriendsDialog>($"Filter events by friends",
+            new Dictionary<string, object>() { { "SearchEventsModel", searchEventsModel } },
+            new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
+        await SearchEvents();
     }
     
     private Task RedirectToFollowedEvents()
@@ -228,7 +240,7 @@
     private async Task ClearFilters()
     {
         searchEventsModel = InitializeSearchModel();
-        await OnInitializedAsync();
+        await SearchEvents();
     }
     
 }
