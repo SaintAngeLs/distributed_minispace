@@ -22,7 +22,7 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Follow events", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
     };
 }
 
@@ -33,7 +33,7 @@
     <RadzenStack Gap="2rem">
         @if (studentDto.State == "valid")
         {
-            <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
+            <RadzenStack AlignItems="Radzen.AlignItems.Center" Class="rz-mx-auto rz-my-10">
                 <RadzenImage Path="@(GetImage())" AlternateText="base64 image"
                              Style="width: 20em" class="rz-border-radius-10"/>
             </RadzenStack>
@@ -73,7 +73,7 @@
                 <b>Completing registration is necessary, go ahead by clicking the button below.</b>
             </p>
 
-            <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenRow AlignItems="Radzen.AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="12">
                     <RadzenButton Size="ButtonSize.Large" Text="Complete registration"
                                   Click="@(() => NavigationManager.NavigateTo("/signup/complete"))"/>
@@ -84,7 +84,7 @@
         {
             if (editionDisabled)
             {
-                <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenRow AlignItems="Radzen.AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
                         <RadzenButton Size="ButtonSize.Large" Text="Update account" class="separate-button"
                                       Click=@EnableEdition/>
@@ -93,7 +93,7 @@
             }
             else
             {
-                <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenRow AlignItems="Radzen.AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="5">
                         <RadzenLabel Text="Update profile image:" Component="profile-image" />
                         <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100" Name="profile-image"
