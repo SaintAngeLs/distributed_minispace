@@ -225,18 +225,18 @@
     private CreateEventModel _createEventModel = new()
     {
         Name = "One of first events!",
-        Category = "Art",
+        Category = "Education",
         StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0,0,0),
-        EndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0,0,0),
+        EndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day + 1, 0,0,0),
         BuildingName = "Gmach Główny",
         Street = "Plac Politechniki",
         BuildingNumber = "1",
         ApartmentNumber = "1",
         City = "Warszawa",
-        ZipCode = "00-061",
+        ZipCode = "00-661",
         Description = "Great event!",
         Capacity = 30,
-        Fee = 34.44M
+        Fee = 15.00M
     };
     private bool showError = false;
     private string errorMessage = string.Empty;
