@@ -1,4 +1,70 @@
-## Student life activity app - Mini Space
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Space - Student Life Activity App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+        }
+        .header {
+            background-color: #102338;
+            color: #ffffff; 
+            padding: 20px 40px;
+            text-align: center;
+            border-bottom: 10px solid #30445F;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1> MiniSpace -- Event Organization Social App</h1>
+    </div>
+</body>
+</html>
+
+
+
+## MiniSpace - Student life activity app
+
+MiniSpace is a multifaceted application designed to enhance student life by providing a robust platform where students can explore, register, and participate in various events. These events range from cultural to educational and social, aiming to enrich the academic community's vibrant life. 
+
+![Home](images/minispace-home.png)
+![Events Dashboard View](images/minispace-events.png)
+
+
+## Features and Functionalities
+
+### For Students
+- **Event Interaction**: Students can browse through available events, register to participate, and receive updates and notifications about upcoming activities.
+- **Social Interaction**: The platform allows students to connect with friends, share event experiences, and interact through posts and discussions.
+- **Administration Interaction**: Students can report issues directly through the app, ensuring a seamless and user-friendly experience.
+
+### For Event Organizers
+- **Event Management**: Organizers can create and manage events, including setting details like location, time, and description.
+- **Participant Engagement**: Tools to communicate with participants, manage attendance, and gather feedback post-event to improve future events.
+- **Data Analysis**: Access to real-time data analytics to monitor event success and participant engagement.
+
+### For Friends and Social Connections
+- **Enhanced Event Filters**: Friends can see which events others are attending, making the event choice more social.
+- **Invitations**: Ability to send and receive invitations to events, enhancing the social experience.
+
+### For System Administrators
+- **User and System Oversight**: Admins have the tools to manage user issues and system functionality, ensuring smooth operation.
+- **Content Moderation**: Capabilities to monitor and manage the content to maintain a respectful and constructive community environment.
+
+## Use Cases
+- **Events**: From browsing to attending and reviewing events.
+- **Social Interactions**: Managing friends lists, sending invitations, and sharing experiences.
+- **Administration**: Handling user reports, system updates, and data analysis for continuous improvement.
+
 
 ## General description
 - [ ] Multitier application built with [.NET](https://dotnet.microsoft.com/en-us)
@@ -57,5 +123,15 @@ Distributed under the MIT License. See [LICENSE](./LICENSE) for more information
 ## Contact
 - Project Link: [https://github.com/SaintAngeLs/distributed_minispace](https://github.com/SaintAngeLs/distributed_minispace)
 - Live Demo: [minispace.itsharppro.com](http://minispace.itsharppro.com)
+
+## Contributors
+MiniSpace is made possible thanks to the contributions of several individuals. Here is a list of the remarkable people who have contributed to this project:
+
+- **@SaintAngeLs** 
+- **@eggwhat**
+- **@an2508374**
+- **@olegkiprik**
+- **@zniwiarzxxx**
+
 
 Thank you for considering Mini Space for your academic community engagement needs!
