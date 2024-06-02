@@ -178,6 +178,11 @@ namespace MiniSpace.Services.Events.Core.Entities
             {
                 throw new InvalidRatingValueException(rating);
             }
+            
+            if (_ratings.Any(r => r.StudentId == studentId))
+            {
+                throw new StudentAlreadyRatedException(studentId, Id);
+            }
 
             _ratings.Add(new Rating(studentId, rating));
         }
