@@ -37,7 +37,7 @@ namespace MiniSpace.Web.DTO.Notifications
                 case NotificationEventType.ReportRejected:
                 case NotificationEventType.ReportResolved:
                 case NotificationEventType.ReportReviewStarted:
-                    return $"/reports/{notification.RelatedEntityId}";
+                    // return $"/reports/{notification.RelatedEntityId}";
 
                 default:
                     return $"/student-details/{notification.RelatedEntityId}";
