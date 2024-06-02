@@ -146,7 +146,8 @@
                                     </RadzenRadioButtonList>
                                     @if (publishInfo == 2)
                                     {
-                                        <RadzenFormField Text="Publish date" Variant="Variant.Outlined">
+                                        <RadzenFormField Text="Publish date" Variant="Variant.Outlined"
+                                                         AllowFloatingLabel="false">
                                             <RadzenDatePicker @bind-Value="@_createEventModel.PublishDate" Name="publish-date"
                                                               ShowTime="true" MinutesStep="5" DateFormat="dd/MM/yyyy HH:mm" />
                                             <RadzenCustomValidator Component="publish-date" Style="position: relative"
