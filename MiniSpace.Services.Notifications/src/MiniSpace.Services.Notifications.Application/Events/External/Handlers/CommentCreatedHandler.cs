@@ -84,7 +84,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             studentNotifications.AddNotification(userNotification);
-            await _studentNotificationsRepository.UpdateAsync(studentNotifications);   
+            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);   
             
             var userNotificationDetailsHtml = $"<p>Your comment on the event '{eventDetails.Name}' has been posted successfully.</p>";
 
@@ -119,7 +119,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             organizerNotifications.AddNotification(organizerNotification);
-            await _studentNotificationsRepository.UpdateAsync(organizerNotifications); 
+            await _studentNotificationsRepository.AddOrUpdateAsync(organizerNotifications); 
             
             var organizerNotificationDetailsHtml = $"<p>{commentDetails.StudentName} commented on your event '{eventDetails.Name}': {commentDetails.CommentContext}</p>";
 

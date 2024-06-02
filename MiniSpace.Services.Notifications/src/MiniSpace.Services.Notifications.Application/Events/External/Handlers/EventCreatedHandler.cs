@@ -85,6 +85,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     studentNotifications = new StudentNotifications(user.Id);
                 }
 
+
+                studentNotifications.AddNotification(notification);
+                await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);   
+
                 var notificationCreatedEvent = new NotificationCreated(
                     notificationId: Guid.NewGuid(),
                     userId: user.Id,
@@ -96,9 +100,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 );
 
                 await _messageBroker.PublishAsync(notificationCreatedEvent);
-
-                studentNotifications.AddNotification(notification);
-                await _studentNotificationsRepository.UpdateAsync(studentNotifications);   
             }
         }
     }

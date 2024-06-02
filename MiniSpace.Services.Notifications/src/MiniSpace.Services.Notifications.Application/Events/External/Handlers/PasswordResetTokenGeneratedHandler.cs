@@ -28,8 +28,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         public async Task HandleAsync(PasswordResetTokenGenerated @event, CancellationToken cancellationToken)
         {
             var student = await _studentsServiceClient.GetAsync(@event.UserId);
-            var encodedToken =  System.Net.WebUtility.UrlEncode(@event.ResetToken); // Encode the token
-            var resetLink = $"https://minispace.itsharppro.com/reset-password/{encodedToken}/page"; // Use the encoded token
+            var encodedToken =  System.Net.WebUtility.UrlEncode(@event.ResetToken); 
+            var resetLink = $"https://minispace.itsharppro.com/reset-password/{encodedToken}/page"; 
             var notificationMessage = $"You have requested to reset your password. Please use the following link to proceed: {resetLink}";
             var detailsHtml = $"<p>Click the following link to reset your password: <a href=\"{resetLink}\">Reset Password</a></p>";
 
@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.UserId) ?? new StudentNotifications(@event.UserId);
             studentNotifications.AddNotification(notification);
-            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
                 notification.NotificationId,
