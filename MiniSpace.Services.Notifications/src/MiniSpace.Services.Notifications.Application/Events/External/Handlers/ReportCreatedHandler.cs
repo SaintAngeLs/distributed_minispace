@@ -13,36 +13,41 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class ReportCreatedHandler : IEventHandler<ReportCreated>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IReportsServiceClient _reportsServiceClient;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
+
 
         public ReportCreatedHandler(
             IMessageBroker messageBroker,
-            IReportsServiceClient reportsServiceClient,
-            IStudentNotificationsRepository studentNotificationsRepository)
+            IStudentNotificationsRepository studentNotificationsRepository,
+            IStudentsServiceClient studentsServiceClient)
         {
             _messageBroker = messageBroker;
-            _reportsServiceClient = reportsServiceClient;
             _studentNotificationsRepository = studentNotificationsRepository;
+            _studentsServiceClient = studentsServiceClient;
         }
 
         public async Task HandleAsync(ReportCreated eventArgs, CancellationToken cancellationToken)
         {
-            var report = await _reportsServiceClient.GetReportAsync(eventArgs.ReportId);
-            if (report == null)
-            {
-                Console.WriteLine("Report not found.");
-                return;
-            }
+            // Fetch student details
+            var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
+            var targetOwner = await _studentsServiceClient.GetAsync(eventArgs.TargetOwnerId);
 
-            var targetOwnerNotification = await CreateNotificationForUser(report.TargetOwnerId, report, "A report has been created about your content.");
-            await PublishAndSaveNotification(targetOwnerNotification, report.TargetOwnerId, "ReportCreated");
+            string issuerName = $"{issuer.FirstName} {issuer.LastName}";
+            string targetOwnerName = $"{targetOwner.FirstName} {targetOwner.LastName}";
+
+            // Notification message for issuer with more details
+            string issuerMessage = $"Thank you, {issuerName}, for submitting your report concerning '{eventArgs.Category}' about '{eventArgs.ContextType}'. We will review it promptly.";
+            var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, issuerMessage);
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ThankYouForReporting", issuerName);
             
-            var issuerNotification = await CreateNotificationForUser(report.IssuerId, report, "Thank you for submitting your report. We will review it promptly.");
-            await PublishAndSaveNotification(issuerNotification, report.IssuerId, "ThankYouForReporting");
+            // Notification message for target owner with more details
+            string targetOwnerMessage = $"A report concerning '{eventArgs.Category}' about your content '{eventArgs.ContextType}' has been created. It is under review.";
+            var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, targetOwnerMessage);
+            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportCreated", targetOwnerName);
         }
 
-        private async Task<Notification> CreateNotificationForUser(Guid userId, ReportDto report, string message)
+        private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCreated eventArgs, string message)
         {
             var notifications = await _studentNotificationsRepository.GetByStudentIdAsync(userId) ?? new StudentNotifications(userId);
             var notification = new Notification(
@@ -52,7 +57,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
-                relatedEntityId: report.Id,
+                relatedEntityId: eventArgs.ReportId,
                 eventType: NotificationEventType.ReportCreated
             );
             notifications.AddNotification(notification);
@@ -60,16 +65,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             return notification;
         }
 
-        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType)
+        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType, string userName)
         {
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: notification.NotificationId,
                 userId: notification.UserId,
-                message: notification.Message,
+                message: $"{userName}, {notification.Message}",
                 createdAt: notification.CreatedAt,
-                eventType: eventType,
+                eventType: NotificationEventType.ReportCreated.ToString(),
                 relatedEntityId: notification.RelatedEntityId,
-                details: $"Notification for user {userId}. Message: {notification.Message}"
+                details: $"Notification for user {userId} ({userName}). Message: {notification.Message}"
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);

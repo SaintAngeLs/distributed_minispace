@@ -42,7 +42,19 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
             var report = Report.Create(command.ReportId, command.IssuerId, command.TargetId, command.TargetOwnerId,
                 contextType, category, command.Reason, _dateTimeProvider.Now);
             await _reportRepository.AddAsync(report);
-            await _messageBroker.PublishAsync(new ReportCreated(report.Id));
+            await _messageBroker.PublishAsync(new ReportCreated(
+                report.Id,
+                report.IssuerId,
+                report.TargetId,
+                report.TargetOwnerId,
+                contextType.ToString(),
+                category.ToString(),
+                report.Reason,
+                report.State.ToString(),
+                report.CreatedAt,
+                report.UpdatedAt,
+                report.ReviewerId
+            ));
         }
     }
 }

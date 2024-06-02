@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Convey.Types;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     public class EventDocument : IIdentifiable<Guid>
     {
         public Guid Id { get; set; }

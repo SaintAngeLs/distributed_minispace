@@ -35,7 +35,18 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
             }
 
             await _reportRepository.DeleteAsync(report.Id);
-            await _messageBroker.PublishAsync(new ReportDeleted(report.Id));
+            await _messageBroker.PublishAsync(new ReportDeleted(report.Id,
+                report.IssuerId,
+                report.TargetId,
+                report.TargetOwnerId,
+                report.ContextType.ToString(),
+                report.Category.ToString(),
+                report.Reason,
+                report.State.ToString(),
+                report.CreatedAt,
+                report.UpdatedAt,
+                report.ReviewerId
+            ));
         }
     }
 }

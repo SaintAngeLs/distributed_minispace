@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Events;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.Events.Rejected
 {
+    [ExcludeFromCodeCoverage]
     public class CreateEventRejected(Guid organizerId, string reason, string code) : IRejectedEvent
     {
         public Guid OrganizerId { get; } = organizerId;

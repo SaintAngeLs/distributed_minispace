@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class OrganizerDto
     {
         public Guid Id { get; set; }

@@ -9,6 +9,6 @@ namespace MiniSpace.Services.Students.Application.Queries
         new string Name { get; set; }
         new string OrderBy { get; set; }
         new string SortOrder { get; set; }
-        int Results { get; set; }
+        new int Results { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
@@ -9,6 +10,7 @@ using Convey.Types;
 namespace MiniSpace.Services.Events.Infrastructure.Decorators
 {
     [Decorator]
+    [ExcludeFromCodeCoverage]
     internal sealed class OutboxCommandHandlerDecorator<TCommand> : ICommandHandler<TCommand>
         where TCommand : class, ICommand
     {

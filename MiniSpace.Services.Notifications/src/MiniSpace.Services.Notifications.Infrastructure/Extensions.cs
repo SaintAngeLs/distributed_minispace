@@ -70,7 +70,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-            builder.Services.AddHostedService<NotificationCleanupService>();  
+            builder.Services.AddHostedService<DailyNotificationCleanupService>();  
+            builder.Services.AddHostedService<PeriodicNotificationCleanupService>();  
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -136,7 +137,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<ReportReviewStarted>()
                 .SubscribeEvent<ReportResolved>()
                 .SubscribeEvent<ReportRejected>()
-                .SubscribeEvent<ReportCreated>();
+                .SubscribeEvent<ReportCancelled>();
                 
             return app;
         }

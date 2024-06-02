@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Email.Core.Entities
 
     public class NewEventSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "New event alert: " + details;
+        public string GenerateSubject(string details) => "New event alert!";
     }
 
     public class EventDeletedSubject : IEmailSubjectStrategy
@@ -91,22 +91,22 @@ namespace MiniSpace.Services.Email.Core.Entities
 
     public class CommentCreatedSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "New Comment: " + details;
+        public string GenerateSubject(string details) => "New Comment was added!";
     }
 
     public class CommentUpdatedSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "Updated Comment: " + details;
+        public string GenerateSubject(string details) => "Comment was udpated!";
     }
 
     public class ReactionAddedSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "New Reaction: " + details;
+        public string GenerateSubject(string details) => "New reaction was added!";
     }
 
-     public class ReportCreatedSubject : IEmailSubjectStrategy
+    public class ReportCreatedSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "A new report has been created: " + details;
+        public string GenerateSubject(string details) => "A new report has been created!";
     }
 
     public class ReportDeletedSubject : IEmailSubjectStrategy
@@ -131,7 +131,14 @@ namespace MiniSpace.Services.Email.Core.Entities
 
     public class NewEventInvitationSubject : IEmailSubjectStrategy
     {
-        public string GenerateSubject(string details) => "You're invited to a new event: " + details;
+        public string GenerateSubject(string details) => "You're invited to a new event!";
     }
 
+    public class ReportCancelledSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details)
+        {
+            return $"A report has been cancelled!";
+        }
+    }
 }

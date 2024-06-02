@@ -31,6 +31,7 @@ namespace MiniSpace.Services.Email.Core.Entities
                 { NotificationEventType.ReportResolved, new ReportResolvedSubject() },
                 { NotificationEventType.ReportReviewStarted, new ReportReviewStartedSubject() },
                 { NotificationEventType.NewEventInvitation, new NewEventInvitationSubject() },
+                { NotificationEventType.ReportCancelled, new ReportCancelledSubject() },
                 { NotificationEventType.Other, new OtherSubject() }
             };
 

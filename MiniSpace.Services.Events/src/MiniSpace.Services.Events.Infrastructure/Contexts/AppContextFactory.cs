@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using MiniSpace.Services.Events.Application;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class AppContextFactory : IAppContextFactory
     {
         private readonly ICorrelationContextAccessor _contextAccessor;

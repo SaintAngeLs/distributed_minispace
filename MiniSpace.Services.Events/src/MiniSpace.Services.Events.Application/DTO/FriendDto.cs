@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class FriendDto
     {
         public Guid Id { get; set; }

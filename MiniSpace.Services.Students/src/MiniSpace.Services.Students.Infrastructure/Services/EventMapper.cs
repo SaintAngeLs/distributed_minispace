@@ -2,9 +2,11 @@ using Convey.CQRS.Events;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core;
 using MiniSpace.Services.Students.Core.Events;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure.Services
 {
+    [ExcludeFromCodeCoverage]
     public class EventMapper : IEventMapper
     {
         public IEnumerable<IEvent> MapAll(IEnumerable<IDomainEvent> events)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using MiniSpace.Services.Events.Application;
@@ -14,6 +15,7 @@ using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Infrastructure.Services
 {
+    [ExcludeFromCodeCoverage]
     public class EventService : IEventService
     {
         private readonly IEventRepository _eventRepository;

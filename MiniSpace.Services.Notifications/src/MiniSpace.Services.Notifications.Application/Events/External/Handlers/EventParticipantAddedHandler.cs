@@ -102,12 +102,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
 
                 var organizerNotificationCreatedEvent = new NotificationCreated(
-                    notificationId: organizerNotification.NotificationId,
-                    userId: organizerNotification.UserId,
-                    message: organizerNotification.Message,
-                    createdAt: organizerNotification.CreatedAt,
-                    eventType: organizerNotification.EventType.ToString(),
-                    relatedEntityId: organizerNotification.RelatedEntityId,
+                    notificationId: Guid.NewGuid(),
+                    userId: eventDetails.Organizer.Id,
+                    message: $"{eventArgs.ParticipantName} has been added as a participant to your event '{eventDetails.Name}'.",
+                    createdAt: DateTime.UtcNow,
+                    eventType: NotificationEventType.EventParticipantAdded.ToString(),
+                    relatedEntityId: eventArgs.EventId,
                     details: detailsHtmlForOrganizer
                 );
                 await _messageBroker.PublishAsync(organizerNotificationCreatedEvent);

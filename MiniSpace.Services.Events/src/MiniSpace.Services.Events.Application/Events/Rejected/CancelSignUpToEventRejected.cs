@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Events.Application.Events.Rejected
 {
     public class CancelSignUpToEventRejected: IRejectedEvent
     {
+        [ExcludeFromCodeCoverage]
         public Guid EventId { get; }
         public string Reason { get; }
         public string Code { get; }

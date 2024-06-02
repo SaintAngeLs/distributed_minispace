@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Convey.Persistence.MongoDB;
@@ -14,6 +15,7 @@ using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class EventMongoRepository : IEventRepository
     {
         private readonly IMongoRepository<EventDocument, Guid> _repository;

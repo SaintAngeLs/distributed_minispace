@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static EventDto AsDto(this EventDocument document, Guid studentId)

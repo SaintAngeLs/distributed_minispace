@@ -5,21 +5,24 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9C2CAF5E-5553-4271-A630-B869E43317E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniSpace.Services.Events.Api", "src\MiniSpace.Services.Events.Api\MiniSpace.Services.Events.Api.csproj", "{36B1F678-92AA-447B-A0D3-D8FB8A88FAC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Events.Api", "src\MiniSpace.Services.Events.Api\MiniSpace.Services.Events.Api.csproj", "{36B1F678-92AA-447B-A0D3-D8FB8A88FAC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniSpace.Services.Events.Application", "src\MiniSpace.Services.Events.Application\MiniSpace.Services.Events.Application.csproj", "{870609C9-905C-4317-8CF6-EC12FF0A9419}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Events.Application", "src\MiniSpace.Services.Events.Application\MiniSpace.Services.Events.Application.csproj", "{870609C9-905C-4317-8CF6-EC12FF0A9419}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniSpace.Services.Events.Core", "src\MiniSpace.Services.Events.Core\MiniSpace.Services.Events.Core.csproj", "{39D9DFA6-70DC-4DCD-A993-E0F6A2E0D1CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Events.Core", "src\MiniSpace.Services.Events.Core\MiniSpace.Services.Events.Core.csproj", "{39D9DFA6-70DC-4DCD-A993-E0F6A2E0D1CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniSpace.Services.Events.Infrastructure", "src\MiniSpace.Services.Events.Infrastructure\MiniSpace.Services.Events.Infrastructure.csproj", "{0E950D6A-9565-4AC9-8DA0-49C97E70D3B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Events.Infrastructure", "src\MiniSpace.Services.Events.Infrastructure\MiniSpace.Services.Events.Infrastructure.csproj", "{0E950D6A-9565-4AC9-8DA0-49C97E70D3B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{832A25D0-8D76-4E4A-94EA-031BD98BBA5C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Events.Application.UnitTests", "tests\MiniSpace.Services.Events.Application.UnitTests\MiniSpace.Services.Events.Application.UnitTests.csproj", "{9B33E309-9127-4A2C-98BA-8AEE4D5CD819}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Events.Core.UnitTests", "tests\MiniSpace.Services.Events.Core.UnitTests\MiniSpace.Services.Events.Core.UnitTests.csproj", "{D7F60A17-2E8B-4B98-A487-64D3A9197E0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{36B1F678-92AA-447B-A0D3-D8FB8A88FAC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -38,11 +41,24 @@ Global
 		{0E950D6A-9565-4AC9-8DA0-49C97E70D3B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E950D6A-9565-4AC9-8DA0-49C97E70D3B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E950D6A-9565-4AC9-8DA0-49C97E70D3B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B33E309-9127-4A2C-98BA-8AEE4D5CD819}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B33E309-9127-4A2C-98BA-8AEE4D5CD819}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B33E309-9127-4A2C-98BA-8AEE4D5CD819}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B33E309-9127-4A2C-98BA-8AEE4D5CD819}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7F60A17-2E8B-4B98-A487-64D3A9197E0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F60A17-2E8B-4B98-A487-64D3A9197E0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F60A17-2E8B-4B98-A487-64D3A9197E0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F60A17-2E8B-4B98-A487-64D3A9197E0B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{36B1F678-92AA-447B-A0D3-D8FB8A88FAC2} = {9C2CAF5E-5553-4271-A630-B869E43317E3}
 		{870609C9-905C-4317-8CF6-EC12FF0A9419} = {9C2CAF5E-5553-4271-A630-B869E43317E3}
 		{39D9DFA6-70DC-4DCD-A993-E0F6A2E0D1CC} = {9C2CAF5E-5553-4271-A630-B869E43317E3}
 		{0E950D6A-9565-4AC9-8DA0-49C97E70D3B5} = {9C2CAF5E-5553-4271-A630-B869E43317E3}
+		{9B33E309-9127-4A2C-98BA-8AEE4D5CD819} = {832A25D0-8D76-4E4A-94EA-031BD98BBA5C}
+		{D7F60A17-2E8B-4B98-A487-64D3A9197E0B} = {832A25D0-8D76-4E4A-94EA-031BD98BBA5C}
 	EndGlobalSection
 EndGlobal

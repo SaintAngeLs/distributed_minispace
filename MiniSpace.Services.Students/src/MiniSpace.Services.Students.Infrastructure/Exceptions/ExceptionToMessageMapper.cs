@@ -4,9 +4,11 @@ using MiniSpace.Services.Students.Application.Events.Rejected;
 using MiniSpace.Services.Students.Application.Events.External;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Core.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class ExceptionToMessageMapper : IExceptionToMessageMapper
     {
         public object Map(Exception exception, object message)

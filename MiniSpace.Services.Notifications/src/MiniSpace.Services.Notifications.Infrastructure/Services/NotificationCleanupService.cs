@@ -41,7 +41,7 @@ public class NotificationCleanupService : BackgroundService
             _logger.LogInformation("20-minute cleanup service is running.");
             await CleanupOldNotifications();
             _logger.LogInformation("Waiting 10 minutes before next cleanup.");
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); 
+            await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken); 
         }
 
         await dailyCleanupTask;

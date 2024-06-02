@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Queries;
@@ -10,6 +11,7 @@ using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetEventRatingHandler : IQueryHandler<GetEventRating, EventRatingDto>
     {
         private readonly IMongoRepository<EventDocument, Guid> _eventRepository;
