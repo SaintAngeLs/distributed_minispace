@@ -13,6 +13,7 @@
 @inject Radzen.NotificationService NotificationService
 @inject IJSRuntime JSRuntime
 @using MudBlazor
+@using Radzen
 
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -31,6 +32,15 @@
             <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
             <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="margin-left: 10px; width: 23%;" />
         </div>
+        @if (!pageInitialized)
+        {
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                           Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                    <Template>Loading...</Template>
+                </RadzenProgressBarCircular>
+            </div>
+        }
         <div class="card-container">
             @foreach (var student in students)
             {
@@ -337,6 +347,7 @@
     private Dictionary<Guid, string> images = new ();
     private IEnumerable<FriendDto> allFriends;
     private IEnumerable<FriendRequestDto> incomingRequests;
+    private bool pageInitialized;
 
     protected override async Task OnInitializedAsync() 
     {
@@ -349,6 +360,7 @@
             allFriends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
 
             await LoadStudents();
+            pageInitialized = true;
             StateHasChanged();
             
             var tasks = new List<Task>();
