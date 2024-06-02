@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MiniSpace.Web</title>
+    <title>MiniSpace | Social</title>
     <base href="~/" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/humanistic-base.css">
     <link href="css/site.css" rel="stylesheet" />
@@ -54,6 +54,11 @@
 
         function getUserTimezoneOffset() {
             return new Date().getTimezoneOffset();
+        }
+
+        function updateTitle(message) {
+            document.title = message;
+            setTimeout(() => document.title = "MiniSpace | Social", 8000); 
         }
 
     </script>
