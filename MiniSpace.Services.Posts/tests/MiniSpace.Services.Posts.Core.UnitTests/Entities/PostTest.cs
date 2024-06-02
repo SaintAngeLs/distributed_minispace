@@ -71,5 +71,22 @@ namespace MiniSpace.Services.Posts.Core.UnitTests.Entities {
                     post.SetToBePublished(new DateTime(2000, 1, 1, 1, 1, 1), DateTime.Now);
                 });
         }
+
+        [Fact]
+        public void RemoveMediaFile_WithExisting_ShouldNotThrowException() {
+            // Arrange
+            var id = new AggregateId();
+
+            // Act
+
+
+            // Assert
+            
+        }
+
+        [Fact]
+        public void RemoveMediaFile_WithNotExisting_ShouldThrowMediaFileNotFoundException() {
+            
+        }
     }
 }

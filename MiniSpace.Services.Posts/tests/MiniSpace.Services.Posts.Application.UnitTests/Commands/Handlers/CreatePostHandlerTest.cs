@@ -52,7 +52,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.Published.GetDisplayName();
 
             var @event = new Event(eventId, contextId);
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+            var command = new CreatePost(postId, eventId, contextId, "Post", Enumerable.Empty<Guid>(), // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -76,7 +76,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.Published.GetDisplayName();
 
             var @event = new Event(eventId, contextId);
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+            var command = new CreatePost(postId, eventId, contextId, "Post", Enumerable.Empty<Guid>(), // TODO: media files
                 state, DateTime.Today);
 
             var isAuthenticated = false;
@@ -100,7 +100,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var studentId = Guid.NewGuid();
             var state = State.Published;
             var cancelationToken = new CancellationToken();
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+            var command = new CreatePost(postId, eventId, contextId, "Post", Enumerable.Empty<Guid>(), // TODO: media files
                 state.GetDisplayName(), DateTime.Today);
 
             _eventRepositoryMock.Setup(repo => repo.GetAsync(eventId)).ReturnsAsync((Event)null);
@@ -128,7 +128,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             } while (differentOrganizer == contextId);
 
             var @event = new Event(eventId, contextId);
-            var command = new CreatePost(postId, eventId, differentOrganizer, "Post", "Media Content",
+            var command = new CreatePost(postId, eventId, differentOrganizer, "Post", Enumerable.Empty<Guid>(), // TODO: media files
                 state.GetDisplayName(), DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -157,7 +157,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             } while (differentOrganizer == contextId);
 
             var @event = new Event(eventId, differentOrganizer);
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+            var command = new CreatePost(postId, eventId, contextId, "Post", Enumerable.Empty<Guid>(), // TODO: media files
                 state.GetDisplayName(), DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -181,7 +181,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = "a";
 
             var @event = new Event(eventId, contextId);
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+            var command = new CreatePost(postId, eventId, contextId, "Post", Enumerable.Empty<Guid>(), // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -205,7 +205,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.Reported.GetDisplayName();
 
             var @event = new Event(eventId, contextId);
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content",
+            var command = new CreatePost(postId, eventId, contextId, "Post", Enumerable.Empty<Guid>(), // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -230,7 +230,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             DateTime? publishDate = null;
 
             var @event = new Event(eventId, contextId);
-            var command = new CreatePost(postId, eventId, contextId, "Post", "Media Content", state,
+            var command = new CreatePost(postId, eventId, contextId, "Post", Enumerable.Empty<Guid>(), state, // TODO: media files
                 publishDate);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);

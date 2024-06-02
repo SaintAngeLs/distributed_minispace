@@ -48,13 +48,12 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var cancelationToken = new CancellationToken();
             var state = State.Published;
             var textContent = "a";
-            var mediaContent = "a";
 
             var @event = new Event(eventId, contextId);
-            var command = new UpdatePost(postId, textContent, mediaContent);
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -77,13 +76,12 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var cancelationToken = new CancellationToken();
             var state = State.Published;
             var textContent = "a";
-            var mediaContent = "a";
 
             var @event = new Event(eventId, contextId);
-            var command = new UpdatePost(postId, textContent, mediaContent);
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -103,8 +101,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var postId = Guid.NewGuid();
             var cancelationToken = new CancellationToken();
             var textContent = "a";
-            var mediaContent = "a";
-            var command = new UpdatePost(postId, textContent, mediaContent);
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
 
             _postRepositoryMock.Setup(repo => repo.GetAsync(postId)).ReturnsAsync((Post)null);
 
@@ -122,17 +119,16 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.ToBePublished;
             var eventId = Guid.NewGuid();
             var textContent = "a";
-            var mediaContent = "a";
 
             Guid differentOrganizer;
             do {
                 differentOrganizer = Guid.NewGuid();
             } while (differentOrganizer == contextId);
 
-            var command = new UpdatePost(postId, textContent, mediaContent);
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);
@@ -154,17 +150,16 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.ToBePublished;
             var eventId = Guid.NewGuid();
             var textContent = "a";
-            var mediaContent = "a";
 
             Guid differentOrganizer;
             do {
                 differentOrganizer = Guid.NewGuid();
             } while (differentOrganizer == contextId);
 
-            var command = new UpdatePost(postId, textContent, mediaContent);
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
@@ -186,17 +181,16 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.Reported;
             var eventId = Guid.NewGuid();
             var textContent = "a";
-            var mediaContent = "a";
 
             Guid differentOrganizer;
             do {
                 differentOrganizer = Guid.NewGuid();
             } while (differentOrganizer == contextId);
 
-            var command = new UpdatePost(postId, textContent, mediaContent);
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
@@ -218,12 +212,11 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.Reported;
             var eventId = Guid.NewGuid();
             var textContent = "a";
-            var mediaContent = "a";
 
-            var command = new UpdatePost(postId, textContent, mediaContent);
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", "Media content", DateTime.Today,
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);
