@@ -156,7 +156,7 @@
             Organization = new OrganizationModel(),
             Category = "",
             State = "",
-            Friends = [],
+            Friends = new HashSet<Guid>(),
             FriendsEngagementType = "",
             DateFrom = DateTime.Now.AddDays(-7),
             DateTo = DateTime.Now.AddDays(30),
@@ -225,9 +225,9 @@
     
     private async Task OpenFriendsDialog()
     {
-        var result = await DialogService.OpenAsync<FriendsDialog>($"Filter events by friends",
-            null, new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
-        searchEventsModel.Friends = result;
+        await DialogService.OpenAsync<FriendsDialog>($"Filter events by friends",
+            new Dictionary<string, object>() { { "SearchEventsModel", searchEventsModel } },
+            new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true });
         await SearchEvents();
     }
     

@@ -12,7 +12,7 @@ namespace MiniSpace.Web.Models.Events
         public OrganizationModel Organization { get; set; }
         public string Category { get; set; }
         public string State { get; set; }
-        public IEnumerable<Guid> Friends { get; set; }
+        public HashSet<Guid> Friends { get; set; }
         public string FriendsEngagementType { get; set; }
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
