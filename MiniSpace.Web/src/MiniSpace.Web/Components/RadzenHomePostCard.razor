@@ -8,6 +8,10 @@
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.Areas.Posts
 @using MiniSpace.Web.Pages.Events
+@using MiniSpace.Web.Pages.MediaFiles.Dialogs
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
 @inject IPostsService PostsService
 @inject IEventsService EventsService
 @inject IMediaFilesService MediaFilesService
@@ -15,9 +19,8 @@
 
 @if (pageInitialized)
 {
-    <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer"
-                @onclick="@(() => NavigationManager.NavigateTo($"/events/{Post.EventId}/posts/{Post.Id}"))">
-        <RadzenRow Gap="0.5rem">
+    <RadzenCard Style="max-width: 1080px; border-radius: 15px; overflow: hidden; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); cursor: pointer">
+        <RadzenRow Gap="0.5rem" @onclick="@(() => NavigationManager.NavigateTo($"/events/{Post.EventId}/posts/{Post.Id}"))">
             <RadzenColumn Size="12" class="rz-text-truncate">
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
                     @if (Post.UpdatedAt != null)
@@ -35,7 +38,7 @@
                 </RadzenStack>
             </RadzenColumn>
         </RadzenRow>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4" @onclick="@(() => NavigationManager.NavigateTo($"/events/{Post.EventId}/posts/{Post.Id}"))">
             <RadzenStack Gap="0">
                 <RadzenText TextStyle="TextStyle.Overline" Class="rz-display-flex rz-mt-2 rz-my-0">Event name</RadzenText>
                 <RadzenText TextStyle="TextStyle.H4" Class="@($"rz-font-weight-bold rz-mb-4 rz-text-align-left event-name {GetFontSizeClass(Event.Name)}")">@Event.Name</RadzenText>
@@ -44,7 +47,7 @@
             </RadzenStack>
         </RadzenStack>
         <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" @onclick="@(() => NavigationManager.NavigateTo($"/events/{Post.EventId}/posts/{Post.Id}"))">
             <RadzenStack Gap="1em">
                 <RadzenStack></RadzenStack>
                 <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Left" Class="rz-mb-0 rz-p-4">
@@ -61,7 +64,7 @@
                     @foreach (var img in images)
                     {
                         <MudCarouselItem>
-                            <div style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
+                            <div @onclick="@(() => OpenImageDialog(img))" style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
                         </MudCarouselItem>
                     }
                 </MudCarousel>
@@ -136,6 +139,17 @@
         {
             return "small-font";
         }
+    }
+    
+    private async Task OpenImageDialog(string base64Image)
+    {
+        await DialogService.OpenAsync<ImageDialog>("",
+            new Dictionary<string, object>() { { "Base64Image", base64Image } },
+            new DialogOptions()
+            {
+                Width = "900px", Height = "650px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
     }
     
 }
