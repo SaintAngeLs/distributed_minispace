@@ -6,9 +6,11 @@ using MiniSpace.Services.Identity.Core.Entities;
 using MiniSpace.Services.Identity.Core.Repositories;
 using MiniSpace.Services.Identity.Application.Exceptions;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class UserResetTokenRepository : IUserResetTokenRepository
     {
         private readonly IMongoRepository<UserResetTokenDocument, Guid> _repository;

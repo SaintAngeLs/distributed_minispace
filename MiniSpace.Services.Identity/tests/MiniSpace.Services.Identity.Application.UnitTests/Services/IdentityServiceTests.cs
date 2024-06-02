@@ -28,6 +28,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
         private readonly Mock<IMessageBroker> _mockMessageBroker;
         private readonly Mock<IRefreshTokenService> _mockRefreshTokenService;
         private readonly Mock<ILogger<IdentityService>> _mockLogger;
+        private readonly Mock<IUserResetTokenRepository> _mockUserResetTokenRepository;
         public IdentityServiceTests() 
         {
             _mockUserRepository = new Mock<IUserRepository>();
@@ -36,6 +37,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             _mockMessageBroker = new Mock<IMessageBroker>();
             _mockRefreshTokenService = new Mock<IRefreshTokenService>();
             _mockLogger = new Mock<ILogger<IdentityService>>();
+            _mockUserResetTokenRepository = new Mock<IUserResetTokenRepository>();
 
             _identityService = new IdentityService(
                 _mockUserRepository.Object,
@@ -43,6 +45,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
                 _mockJwtProvider.Object,
                 _mockRefreshTokenService.Object,
                 _mockMessageBroker.Object,
+                _mockUserResetTokenRepository.Object,
                 _mockLogger.Object);
         }
 
@@ -338,6 +341,114 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             Assert.True(user.Role == Role.User);
             _mockUserRepository.Verify(repo => repo.UpdateAsync(user), Times.Once);
             _mockMessageBroker.Verify(broker => broker.PublishAsync(It.IsAny<UserUnbanned>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordAsync_WhenUserNotInRepository_ShouldThrowUserNotFoundException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var email = "validEmail@gmail.com";
+            var command = new ForgotPassword(id, email);
+            _mockUserRepository.Setup(repo => repo.GetAsync(email)).ReturnsAsync((User)null);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(async () => 
+            { 
+                await _identityService.ForgotPasswordAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task ForgotPasswordAsync_WhenUserInRepository_ShouldUpdateRepositoryAndPublishAsync()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var email = "validEmail@gmail.com";
+            var command = new ForgotPassword(id, email);
+            var user = new User(id, "name", email, "password", "user", DateTime.Today);
+            _mockUserRepository.Setup(repo => repo.GetAsync(email)).ReturnsAsync(user);
+            
+            // Act & Arrange
+            var act = async () => await _identityService.ForgotPasswordAsync(command);
+            await act.Should().NotThrowAsync();
+            Assert.True(user.Role == Role.User);
+            _mockMessageBroker.Verify(broker => broker.PublishAsync(It.IsAny<PasswordResetTokenGenerated>()), Times.Once);
+            _mockUserResetTokenRepository.Verify(repo => repo.SaveAsync(It.IsAny<UserResetToken>()));
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_WhenUserNotInRepository_ShouldThrowUserNotFoundException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var token = "reset token";
+            var newPassword = "new secret"; 
+            var userResetToken = new UserResetToken(id, token, DateTime.UtcNow.AddDays(1));
+            var command = new ResetPassword(id, token, newPassword);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync((User)null);
+            _mockUserResetTokenRepository.Setup(repo => repo.GetByUserIdAsync(id)).ReturnsAsync(userResetToken);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(async () => 
+            { 
+                await _identityService.ResetPasswordAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_WhenResetTokenIsInvalid_ShouldThrowInvalidTokenException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var token = "garbage";
+            var newPassword = "new secret"; 
+            var command = new ResetPassword(id, token, newPassword);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync((User)null);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidTokenException>(async () => 
+            { 
+                await _identityService.ResetPasswordAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_WhenResetTokenIsNull_ShouldThrowInvalidTokenException()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            string token = null;
+            var newPassword = "new secret"; 
+            var command = new ResetPassword(id, token, newPassword);
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync((User)null);
+            
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidTokenException>(async () => 
+            { 
+                await _identityService.ResetPasswordAsync(command);
+            });
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_WhenUserInRepository_ShouldUpdateRepositoryAndPublishAsync()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var token = "reset token";
+            var newPassword = "new secret"; 
+            var command = new ResetPassword(id, token, newPassword);
+            var user = new User(id, "name", "email", "password", "user", DateTime.Today);
+            var userResetToken = new UserResetToken(id, token, DateTime.UtcNow.AddDays(1));
+            _mockUserRepository.Setup(repo => repo.GetAsync(id)).ReturnsAsync(user);
+            _mockUserResetTokenRepository.Setup(repo => repo.GetByUserIdAsync(id)).ReturnsAsync(userResetToken);
+            
+            // Act & Arrange
+            var act = async () => await _identityService.ResetPasswordAsync(command);
+            await act.Should().NotThrowAsync();
+            Assert.True(user.Role == Role.User);
+            _mockUserRepository.Verify(repo => repo.UpdateAsync(user), Times.Once);
+            _mockMessageBroker.Verify(broker => broker.PublishAsync(It.IsAny<PasswordReset>()), Times.Once);
         }
     }
 }
