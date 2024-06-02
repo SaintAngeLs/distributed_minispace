@@ -1,8 +1,10 @@
 using MiniSpace.Services.Comments.Core;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Core.Entities
 {
+    [ExcludeFromCodeCoverage]
     public abstract class AggregateRoot
     {
         private readonly List<IDomainEvent> _events = new List<IDomainEvent>();

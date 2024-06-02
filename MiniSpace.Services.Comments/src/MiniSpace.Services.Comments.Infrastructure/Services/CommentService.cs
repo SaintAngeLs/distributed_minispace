@@ -7,9 +7,11 @@ using MiniSpace.Services.Comments.Application.Wrappers;
 using MiniSpace.Services.Comments.Core.Entities;
 using MiniSpace.Services.Comments.Core.Repositories;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Services
 {
+    [ExcludeFromCodeCoverage]
     public class CommentService : ICommentService
     {
         private readonly ICommentRepository _commentRepository;

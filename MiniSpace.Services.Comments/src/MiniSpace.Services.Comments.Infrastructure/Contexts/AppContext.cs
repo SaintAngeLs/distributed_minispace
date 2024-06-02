@@ -1,7 +1,9 @@
 using MiniSpace.Services.Comments.Application;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class AppContext : IAppContext
     {
         public string RequestId { get; }

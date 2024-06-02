@@ -12,7 +12,7 @@
 @inject ICommentsService CommentsService
 @inject IIdentityService IdentityService
 
-<RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+<RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="max-width: 1080px; height: 100%;">
     @if (IdentityService == null || IdentityService.IsAuthenticated)
     {
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
