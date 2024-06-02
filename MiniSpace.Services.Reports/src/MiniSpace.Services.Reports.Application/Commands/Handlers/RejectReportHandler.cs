@@ -38,7 +38,18 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
 
             report.Reject(_dateTimeProvider.Now);
             await _reportRepository.UpdateAsync(report);
-            await _messageBroker.PublishAsync(new ReportResolved(report.Id));
+            await _messageBroker.PublishAsync(new ReportResolved(report.Id,
+                report.IssuerId,
+                report.TargetId,
+                report.TargetOwnerId,
+                report.ContextType.ToString(),
+                report.Category.ToString(),
+                report.Reason,
+                report.State.ToString(),
+                report.CreatedAt,
+                report.UpdatedAt,
+                report.ReviewerId
+            ));
         }
     }
 }

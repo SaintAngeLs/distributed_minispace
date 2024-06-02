@@ -16,6 +16,20 @@
 @inject IReportsService ReportsService
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Reports", href: "/reports",  disabled: true, icon: Icons.Material.Filled.ReportProblem),
+    };
+}
+
+
 <h1>Your reports</h1>
 
 @if (!pageInitialized)

@@ -160,17 +160,54 @@ namespace MiniSpace.Services.Organizations.Core.UnitTests.Entities
             var organizers = new List<Organizer>() { organizer };
             var ch2_1 = new Organization(Guid.NewGuid(), "ch2_1", organizers, new List<Organization> { });
             var ch1_1 = new Organization(Guid.NewGuid(), "ch1_1", organizers, new List<Organization> { });
-            var ch1_2 = new Organization(Guid.NewGuid(), "ch1_1", organizers, new List<Organization> { ch2_1 });
+            var ch1_2 = new Organization(Guid.NewGuid(), "ch1_2", organizers, new List<Organization> { ch2_1 });
             var root = new Organization(Guid.NewGuid(), "root", organizers, new List<Organization> { ch1_1, ch1_2 });
 
             //Act
-            var result = Organization.FindOrganizations(organizerId, root);
+            var result = Organization.FindAllChildrenOrganizations(root);
 
             // Assert
-            Assert.Contains(root, result);
-            Assert.Contains(ch1_1, result);
-            Assert.Contains(ch1_2, result);
-            Assert.Contains(ch1_2, result);
+            Assert.Contains(root.Id, result);
+            Assert.Contains(ch1_1.Id, result);
+            Assert.Contains(ch1_2.Id, result);
+            Assert.Contains(ch1_2.Id, result);
+        }
+
+        [Fact]
+        public void RemoveChildOrganization_WithChildLowInTheTree_ShouldRemoveOnlyFromItsParentInTheTree()
+        {
+            // Arrange
+            var organizerId = Guid.NewGuid();
+            var organizer = new Organizer(organizerId);
+            var organizers = new List<Organizer>() { organizer };
+            var ch2_1 = new Organization(Guid.NewGuid(), "ch2_1", organizers, new List<Organization> { });
+            var ch1_1 = new Organization(Guid.NewGuid(), "ch1_1", organizers, new List<Organization> { });
+            var ch1_2 = new Organization(Guid.NewGuid(), "ch1_2", organizers, new List<Organization> { ch2_1 });
+            var root = new Organization(Guid.NewGuid(), "root", organizers, new List<Organization> { ch1_1, ch1_2 });
+
+            //Act
+            root.RemoveChildOrganization(ch2_1);
+
+            // Assert
+            Assert.DoesNotContain(ch2_1, ch1_2.SubOrganizations);
+        }
+        [Fact]
+        public void RemoveChildOrganization_GivenNotAPArent_ShouldThrowParentOfOrganizationNotFoundException()
+        {
+            // Arrange
+            var organizerId = Guid.NewGuid();
+            var organizer = new Organizer(organizerId);
+            var organizers = new List<Organizer>() { organizer };
+            var ch2_1 = new Organization(Guid.NewGuid(), "ch2_1", organizers, new List<Organization> { });
+            var ch1_1 = new Organization(Guid.NewGuid(), "ch1_1", organizers, new List<Organization> { });
+            var ch1_2 = new Organization(Guid.NewGuid(), "ch1_2", organizers, new List<Organization> { ch2_1 });
+            var root = new Organization(Guid.NewGuid(), "root", organizers, new List<Organization> { ch1_1, ch1_2 });
+
+            //Act
+            var act = new Action(() => ch2_1.RemoveChildOrganization(root));
+
+            // Assert
+            Assert.Throws<ParentOfOrganizationNotFoundException>(act);
         }
     }
 }

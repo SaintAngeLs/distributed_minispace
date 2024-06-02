@@ -14,6 +14,19 @@
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Follow events", href: "/events/follow", disabled: true, icon: Icons.Material.Filled.EventAvailable),
+    };
+}
+
+
 <h1 class="rz-p-8 search-font">Follow events</h1>
 
 @if (!pageInitialized)

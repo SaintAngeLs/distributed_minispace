@@ -28,6 +28,7 @@ namespace MiniSpace.Web.DTO.Enums
         ReportRejected,
         ReportResolved,
         ReportReviewStarted,
+        ReportCancelled,
         Other
     }
 }

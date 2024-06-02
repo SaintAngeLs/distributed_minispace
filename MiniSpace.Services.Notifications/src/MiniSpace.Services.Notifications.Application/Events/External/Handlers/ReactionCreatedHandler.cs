@@ -61,7 +61,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             studentNotifications.AddNotification(notification);
-            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 
             var notificationDetailsHtml = $@"
                 <p>Thank you for your reaction! Your interaction helps us to better understand what content resonates with our community.</p>";
@@ -111,7 +111,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 );
 
                 organizerNotifications.AddNotification(organizerNotification);
-                await _studentNotificationsRepository.UpdateAsync(organizerNotifications);
+                await _studentNotificationsRepository.AddOrUpdateAsync(organizerNotifications);
 
                 await _messageBroker.PublishAsync(new NotificationCreated(
                     notificationId: Guid.NewGuid(),

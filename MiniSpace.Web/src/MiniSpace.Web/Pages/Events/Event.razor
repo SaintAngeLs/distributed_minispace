@@ -19,6 +19,7 @@
 @using Orientation = Radzen.Orientation
 @using System.Globalization
 @using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Pages.MediaFiles.Dialogs
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
@@ -169,7 +170,7 @@
                         @foreach (var img in images)
                         {
                             <MudCarouselItem>
-                                <div style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
+                                <div @onclick="@(() => OpenImageDialog(img))" style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
                             </MudCarouselItem>
                         }
                     </MudCarousel>
@@ -446,6 +447,17 @@
                 AutoFocusFirstElement = false
             });
     }
+    
+    private async Task OpenImageDialog(string base64Image)
+    {
+        await DialogService.OpenAsync<ImageDialog>("",
+            new Dictionary<string, object>() { { "Base64Image", base64Image } },
+            new DialogOptions()
+            {
+                Width = "900px", Height = "650px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
 
     private async Task OpenInviteFriendsToEventDialog(Guid eventId)
     {
@@ -516,13 +528,14 @@
     
     private async Task RatingChanged(int? rating)
     {
-        if (rating != null)
-        {
-            await EventsService.RateEventAsync(ev.Id, rating.Value, studentId);
-        }
-        else
+        if (ev.StudentRating != null)
         {
             await EventsService.CancelRateEventAsync(ev.Id, studentId);
+        }
+        
+        if (rating != null)
+        {
+            await EventsService.RateEventAsync(ev.Id, (int)rating, studentId);
         }
         eventRating = await EventsService.GetEventRatingAsync(ev.Id);
         ev.StudentRating = rating;
@@ -578,7 +591,7 @@
     private async Task OpenRatingDialog()
     {
         var result = await DialogService.OpenAsync<RatingDialog>("",
-            new Dictionary<string, object>() { { "StudentRating", reactionsSummary.AuthUserReactionType } },
+            new Dictionary<string, object>() { { "StudentRating", ev.StudentRating } },
             new DialogOptions()
             {
                 Width = "500px", Height = "50px", Resizable = false, Draggable = false, ShowClose = false,
