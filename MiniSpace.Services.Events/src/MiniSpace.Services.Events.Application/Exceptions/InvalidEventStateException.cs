@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class InvalidEventStateException : AppException
     {
         public override string Code { get; } = "invalid_event_state";

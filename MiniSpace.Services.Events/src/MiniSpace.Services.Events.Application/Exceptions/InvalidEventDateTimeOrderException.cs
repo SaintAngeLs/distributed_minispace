@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class InvalidEventDateTimeOrderException(DateTime earlierDate, DateTime laterDate, string earlierDateProperty, string laterDateProperty)
         : AppException($"Event DateTime property `{earlierDateProperty}`:`{earlierDate}` is later than `{laterDateProperty}`:`{laterDate}`.")
     {

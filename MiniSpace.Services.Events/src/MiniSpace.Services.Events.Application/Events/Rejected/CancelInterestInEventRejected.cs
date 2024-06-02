@@ -4,6 +4,7 @@ using Convey.CQRS.Events;
 
 namespace MiniSpace.Services.Events.Application.Events.Rejected
 {
+    [ExcludeFromCodeCoverage]
     public class CancelInterestInEventRejected: IRejectedEvent
     {
         [ExcludeFromCodeCoverage]

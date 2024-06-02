@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class UnauthorizedOrganizerEventsAccessException : AppException
     {
         public override string Code { get; } = "unauthorized_event_access";
