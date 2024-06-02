@@ -19,6 +19,7 @@
 @using Orientation = Radzen.Orientation
 @using System.Globalization
 @using MiniSpace.Web.Areas.MediaFiles
+@using MiniSpace.Web.Pages.MediaFiles.Dialogs
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
 @inject IEventsService EventsService
@@ -169,7 +170,7 @@
                         @foreach (var img in images)
                         {
                             <MudCarouselItem>
-                                <div style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
+                                <div @onclick="@(() => OpenImageDialog(img))" style="height: 100%; background-image: url('data:image/webp;base64,@img'); background-size: cover; background-position: center;"></div>
                             </MudCarouselItem>
                         }
                     </MudCarousel>
@@ -443,6 +444,17 @@
             new DialogOptions()
             {
                 Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task OpenImageDialog(string base64Image)
+    {
+        await DialogService.OpenAsync<ImageDialog>("",
+            new Dictionary<string, object>() { { "Base64Image", base64Image } },
+            new DialogOptions()
+            {
+                Width = "900px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
     }
