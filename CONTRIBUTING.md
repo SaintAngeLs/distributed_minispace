@@ -1,59 +1,46 @@
 # Contributing to MiniSpace
 
-We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
-
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
+Thank you for your interest in contributing to MiniSpace! We appreciate contributions that enhance the application's capabilities using .NET, Blazor, Radzen, and MudBlazor. Whether you are fixing a bug, adding a feature, or improving the documentation, your input is invaluable.
 
 ## We Develop with Github
 
-We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
+We use GitHub to host code, track issues and feature requests, and accept pull requests.
 
-## We Use [Github Flow](https://guides.github.com/introduction/flow/index.html), So All Code Changes Happen Through Pull Requests
+## Contribution Process
 
-Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://guides.github.com/introduction/flow/index.html)). We actively welcome your pull requests:
+We follow the [GitHub Flow](https://guides.github.com/introduction/flow/index.html), so all code changes happen through pull requests. Here’s how you can contribute:
 
-1. Fork the repo and create your branch from `master`.
-2. If you've added code that should be tested, add tests.
-3. Ensure the test suite passes.
-4. Make sure your code lints.
-5. Issue that pull request!
+1. Fork the repo and create your branch from `main`.
+2. If you've added code, please add tests. This is crucial for ensuring the integrity of the application.
+3. Ensure the test suite passes and your code adheres to the coding standards detailed below.
+4. Submit your pull request!
 
-## Any contributions you make will be under the Software License
+## Specific Technologies
 
-In short, when you submit code changes, your submissions are understood to be under the same [license](LICENSE) that covers the project. Feel free to contact the maintainers if that's a concern.
+Since our project is built with .NET and specifically utilizes Blazor, Radzen, and MudBlazor for the front-end:
 
-## Report bugs using Github's [issues](https://github.com/yourusername/yourprojectname/issues)
+- **Blazor**: Ensure your contributions are compatible with the latest stable version of Blazor.
+- **Radzen**: Contributions using Radzen components should follow the best practices recommended by Radzen documentation.
+- **MudBlazor**: Use MudBlazor for designing responsive elements and UI components. Adhere to MudBlazor's guidelines for consistency across the application.
 
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/SaintAngeLs/distributed_minispace/issues/new); it's that easy!
+## Coding Style
 
-## Write bug reports with detail, background, and sample code
+- **.NET and C#**: Follow the [C# Coding Conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).
+- **Blazor**: Code should be clean, well-commented, and organized within the appropriate structure.
+- **Radzen and MudBlazor**: Ensure components and services are properly configured and utilized according to the framework's standards.
 
-**Great Bug Reports** tend to have:
+## Bug Reporting and Pull Requests
 
-- A quick summary and/or background
-- Steps to reproduce
-  - Be specific!
-  - Give sample code if you can.
-- What you expected would happen
-- What actually happens
-- Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+- Report bugs through [GitHub issues](https://github.com/SaintAngeLs/distributed_minispace/issues).
+- Write detailed bug reports with a clear background and steps to reproduce.
+- Pull requests should be clear and concise, mentioning the intent of changes and any related issues.
 
-People *love* thorough bug reports.
+## Licensing
 
-## Use a Consistent Coding Style
+Any contributions you make will be under the same [MIT License](LICENSE) that covers the project, ensuring that MiniSpace remains open and free for the community.
 
-* You can use `clang-format` for C and C++.
-* Make sure to follow [PEP8](https://pep8.org/) for Python.
-* For other languages, provide a linting configuration.
+## Appreciation
 
-## License
+Your contributions are what make the open-source community an amazing place to learn, inspire, and create. Every contribution counts and is greatly appreciated.
 
-By contributing, you agree that your contributions will be licensed under its License.
-
-## References
-
-This document was adapted from the open-source contribution guidelines for [Facebook's Draft](https://github.com/facebook/draft-js).
+This document was adapted from open-source guidelines to align with MiniSpace’s specific focus on .NET technologies, especially Blazor, Radzen, and MudBlazor.

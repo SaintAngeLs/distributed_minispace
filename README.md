@@ -127,9 +127,9 @@ Distributed under the MIT License. See [LICENSE](./LICENSE) for more information
 ## Contributors
 MiniSpace is made possible thanks to the contributions of several individuals. Here is a list of the remarkable people who have contributed to this project:
 
-- **@SaintAngeLs** 
 - **@eggwhat**
 - **@an2508374**
+- **@SaintAngeLs** 
 - **@olegkiprik**
 - **@zniwiarzxxx**
 
