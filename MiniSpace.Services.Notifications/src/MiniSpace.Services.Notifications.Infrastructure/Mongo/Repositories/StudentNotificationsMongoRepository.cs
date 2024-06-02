@@ -65,9 +65,9 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             var document = studentNotifications.AsDocument();
             var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentNotifications.StudentId);
 
-            // Ensure the document is initialized with an empty list if not present
             var initializationUpdate = Builders<StudentNotificationsDocument>.Update
-                .SetOnInsert(doc => doc.Notifications, new List<NotificationDocument>());
+                .SetOnInsert(doc => doc.Notifications, new List<NotificationDocument>())
+                .SetOnInsert(doc => doc.Id, document.Id); 
 
             var addToSetUpdates = new List<UpdateDefinition<StudentNotificationsDocument>>();
             foreach (var notification in studentNotifications.Notifications)
@@ -86,15 +86,15 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
             }
 
             var options = new UpdateOptions { IsUpsert = true };
-            // Initialize document if it doesn't exist
+
             await _repository.Collection.UpdateOneAsync(filter, initializationUpdate, options);
 
-            // Apply each AddToSet operation
             foreach (var update in addToSetUpdates)
             {
                 await _repository.Collection.UpdateOneAsync(filter, update, options);
             }
         }
+
 
 
 
