@@ -80,6 +80,11 @@
                     <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
                     <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
                     <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
                     <RadzenTreeLevel TextProperty="Name" HasChildren=@(org => false)/>
                 </RadzenTree>
             </RadzenColumn>
@@ -188,18 +193,25 @@
         StateHasChanged();
     }
     
-    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result, Guid? rootId)
+    private void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result, Guid? rootId)
     {
         result.Clear();
         foreach (var organization in input)
         {
-            result.Add(new OrganizationModel()
+            var newNode = new OrganizationModel()
             {
                 Id = organization.Id,
                 Name = organization.Name,
                 RootId = rootId ?? organization.Id,
                 Children = new List<OrganizationModel>()
-            });
+            };
+            
+            if (SearchEventsModel.Organization.Id == organization.Id)
+            {
+                selectedItem = newNode;
+            }
+            
+            result.Add(newNode);
         }
     }
     
