@@ -25,6 +25,13 @@ namespace MiniSpace.Services.Comments.Core.UnitTests.Entities
     public class AggregatedIdTest
     {
         [Fact]
+        public void AggregateId_EmptyValue_ShouldThrowInvalidAggregateIdException()
+        {
+            // Assert & Arrange & Act
+            Func<AggregateId> func = () => { return new AggregateId(Guid.Empty); };
+            func.Should().Throw<InvalidAggregateIdException>();
+        }
+        [Fact]
         public void AggregateId_CreatedTwice_ShuldBeDiffrent()
         {
             // Arrange & Act
@@ -32,7 +39,7 @@ namespace MiniSpace.Services.Comments.Core.UnitTests.Entities
             var id2 = new AggregateId();
 
             // Assert
-            Assert.NotEqual(id1.Value, id2.Value);
+            Assert.False(id1.Equals(id2));
         }
 
         [Fact]
@@ -46,7 +53,7 @@ namespace MiniSpace.Services.Comments.Core.UnitTests.Entities
             var id2 = new AggregateId(id);
 
             // Assert
-            Assert.Equal(id1.Value, id2.Value);
+            Assert.True(id1.Equals(id2));
         }
     }
 }
