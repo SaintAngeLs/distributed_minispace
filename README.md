@@ -1,38 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Space - Student Life Activity App</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-        }
-        .header {
-            background-color: #102338;
-            color: #ffffff; 
-            padding: 20px 40px;
-            text-align: center;
-            border-bottom: 10px solid #30445F;
-        }
-        .header h1 {
-            font-size: 24px;
-            margin: 0;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1> MiniSpace -- Event Organization Social App</h1>
-    </div>
-</body>
-</html>
 
 
 
-## MiniSpace - Student life activity app
+
+# MiniSpace - Student life activity app
+[![codecov](https://codecov.io/gh/SaintAngeLs/distributed_minispace/graph/badge.svg?token=SW3T9CN2QS)](https://codecov.io/gh/SaintAngeLs/distributed_minispace)
+
 
 MiniSpace is a multifaceted application designed to enhance student life by providing a robust platform where students can explore, register, and participate in various events. These events range from cultural to educational and social, aiming to enrich the academic community's vibrant life. 
 
@@ -73,8 +45,8 @@ MiniSpace is a multifaceted application designed to enhance student life by prov
 
 ## Frontend
 - [ ] Created with [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - single-page web application framework being a part of the .NET ecosystem
-- [ ] Written in C#, can run in the browser by using [WebAssembly](https://webassembly.org)
-- [ ] Runs in the same security sandbox as JavaScript frameworks like Angular, React or Vue
+- [ ] Written in C#, can run in the browser by using [Blazor Server](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
+
 
 ## Backend
 - **Framework**: Backend services are built using [Convey](https://github.com/snatch-dev/Convey), a set of libraries optimized for building .NET microservices.
