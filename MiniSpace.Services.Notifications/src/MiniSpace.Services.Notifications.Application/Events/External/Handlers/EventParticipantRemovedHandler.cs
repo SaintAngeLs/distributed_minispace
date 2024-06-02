@@ -64,7 +64,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 userId: eventArgs.Participant,
                 message: notificationMessage,
                 createdAt: DateTime.UtcNow,
-                eventType: NotificationStatus.Unread.ToString(),
+                eventType: NotificationEventType.NewEvent.ToString(),
                 relatedEntityId: eventArgs.EventId,
                 details: detailsHtml
             );

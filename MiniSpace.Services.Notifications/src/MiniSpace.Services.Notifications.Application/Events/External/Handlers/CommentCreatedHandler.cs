@@ -93,7 +93,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 userId: commentDetails.StudentId,
                 message:  $"Thank you for your comment on the event '{eventDetails.Name}'.",
                 createdAt:  DateTime.UtcNow,
-                eventType: NotificationStatus.Unread.ToString(),
+                eventType: NotificationEventType.NewEvent.ToString(),
                 relatedEntityId: eventArgs.CommentId,
                 details: userNotificationDetailsHtml
             );
