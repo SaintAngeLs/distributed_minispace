@@ -11,20 +11,24 @@
 - [ ] Runs in the same security sandbox as JavaScript frameworks like Angular, React or Vue
 
 ## Backend
-- [ ] Written in C#, created with [Convey](https://github.com/snatch-dev/Convey) - lightweight set of libraries for building .NET microservices
-- [ ] Based on concept of microservice architecture
-- [ ] CQRS pattern - using a different model to update data than the model to read data
-- [ ] Will be composed of the following services:
-    - [ ] Identity Service
-    - [ ] User Service
-    - [ ] Event Service
-    - [ ] Events Service
-    - [ ] Reports Service
-    - [ ] Notifications Service
-    - [ ] Friend Service
-    - [ ] Post Service
-    - [ ] Organizer Service
-- [ ] API Gateway created with [Ntrada](https://github.com/snatch-dev/Ntrada) to clip endpoints from microservices to be accessible by one port
+- **Framework**: Backend services are built using [Convey](https://github.com/snatch-dev/Convey), a set of libraries optimized for building .NET microservices.
+- **Architecture**: Implements a microservice architecture with an emphasis on the CQRS pattern, separating read operations from update operations to enhance performance and scalability.
+- **Services**:
+  - Identity Service
+  - User Service
+  - Event Service
+  - Reports Service
+  - Notifications Service
+  - Friend Service
+  - Post Service
+  - Organizer Service
+  - Media Files Service
+  - Comments Service
+  - Reactions Service
+  - Students Service
+  - Organizations Service
+- **API Gateway**: Utilizes [Ntrada](https://github.com/snatch-dev/Ntrada) for routing and managing requests across multiple services through a single entry point.
+
 
 ## Infrastructure
 - [ ] [MongoDB](https://www.mongodb.com/products/platform/cloud) - document-oriented database
@@ -36,3 +40,22 @@
 - [ ] [Prometheus](https://prometheus.io) - metrics extension
 - [ ] [Seq](https://datalust.co/seq) - logging extension
 - [ ] [Vault](https://www.vaultproject.io) - secrets extension
+
+
+## Code Coverage
+Stay informed about the code quality with our integrated Codecov badge that displays the current code coverage percentage:
+[![codecov](https://codecov.io/gh/SaintAngeLs/distributed_minispace/graph/badge.svg?token=SW3T9CN2QS)](https://codecov.io/gh/SaintAngeLs/distributed_minispace)
+
+## Contributing
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
+
+## License
+Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
+
+## Contact
+- Project Link: [https://github.com/SaintAngeLs/distributed_minispace](https://github.com/SaintAngeLs/distributed_minispace)
+- Live Demo: [minispace.itsharppro.com](http://minispace.itsharppro.com)
+
+Thank you for considering Mini Space for your academic community engagement needs!
