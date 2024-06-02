@@ -37,7 +37,7 @@ Since our project is built with .NET and specifically utilizes Blazor, Radzen, a
 
 ## Licensing
 
-Any contributions you make will be under the same [MIT License](LICENSE) that covers the project, ensuring that MiniSpace remains open and free for the community.
+Any contributions you make will be under the same [Apache License](LICENSE) that covers the project, ensuring that MiniSpace remains open and free for the community.
 
 ## Appreciation
 
