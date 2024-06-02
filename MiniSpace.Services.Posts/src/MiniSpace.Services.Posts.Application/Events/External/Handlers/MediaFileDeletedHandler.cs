@@ -23,7 +23,7 @@ namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
             }
 
             var post = await _postRepository.GetAsync(@event.SourceId);
-            if(post != null)
+            if (post != null)
             {
                 post.RemoveMediaFile(@event.MediaFileId, _dateTimeProvider.Now);
                 await _postRepository.UpdateAsync(post);

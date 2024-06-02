@@ -39,7 +39,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidParametersAndStatePublished_ShouldNotThrowException() {
+        public async Task HandleAsync_WithValidParametersAndWithMediaFiles_ShouldUpdateRepository() {
             // Arrange
             var eventId = Guid.NewGuid();
             var contextId = Guid.NewGuid();
@@ -48,12 +48,14 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var cancelationToken = new CancellationToken();
             var state = State.Published;
             var textContent = "a";
+            List<Guid> oldMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            List<Guid> newMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
 
             var @event = new Event(eventId, contextId);
-            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
+            var command = new UpdatePost(postId, textContent, newMediaFiles);
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
+                "Text", oldMediaFiles, DateTime.Today,
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -64,10 +66,41 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             // Act & Assert
             Func<Task> act = async () => await _updatePostHandler.HandleAsync(command, cancelationToken);
             await act.Should().NotThrowAsync();
+            _postRepositoryMock.Verify(repo => repo.UpdateAsync(post), Times.Once());
         }
 
         [Fact]
-        public async Task HandleAsync_WithValidParametersAndStatePublished_ShouldUpdateRepository() {
+        public async Task HandleAsync_WithTooManyMediaFiles_ShouldThrowInvalidNumberOfPostMediaFilesException() {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var contextId = Guid.NewGuid();
+            var postId = Guid.NewGuid();
+            var studentId = Guid.NewGuid();
+            var cancelationToken = new CancellationToken();
+            var state = State.Published;
+            var textContent = "a";
+            List<Guid> oldMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            List<Guid> newMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+
+            var @event = new Event(eventId, contextId);
+            var command = new UpdatePost(postId, textContent, newMediaFiles);
+
+            var post = Post.Create(new AggregateId(postId), eventId, contextId,
+                "Text", oldMediaFiles, DateTime.Today,
+                state, DateTime.Today);
+
+            var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
+
+            _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
+            _postRepositoryMock.Setup(repo => repo.GetAsync(postId)).ReturnsAsync(post);
+
+            // Act & Assert
+            Func<Task> act = async () => await _updatePostHandler.HandleAsync(command, cancelationToken);
+            await Assert.ThrowsAsync<InvalidNumberOfPostMediaFilesException>(act);
+        }
+
+        [Fact]
+        public async Task HandleAsync_WithValidParametersAndWithoutMediaFiles_ShouldUpdateRepository() {
             // Arrange
             var eventId = Guid.NewGuid();
             var contextId = Guid.NewGuid();
@@ -78,10 +111,10 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var textContent = "a";
 
             var @event = new Event(eventId, contextId);
-            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
+            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>());
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
+                "Text", Enumerable.Empty<Guid>(), DateTime.Today,
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
@@ -91,7 +124,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
 
             // Act & Assert
             Func<Task> act = async () => await _updatePostHandler.HandleAsync(command, cancelationToken);
-            await act();
+            await act.Should().NotThrowAsync();
             _postRepositoryMock.Verify(repo => repo.UpdateAsync(post), Times.Once());
         }
 
@@ -101,7 +134,9 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var postId = Guid.NewGuid();
             var cancelationToken = new CancellationToken();
             var textContent = "a";
-            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
+            List<Guid> oldMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            List<Guid> newMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            var command = new UpdatePost(postId, textContent, newMediaFiles);
 
             _postRepositoryMock.Setup(repo => repo.GetAsync(postId)).ReturnsAsync((Post)null);
 
@@ -119,16 +154,18 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.ToBePublished;
             var eventId = Guid.NewGuid();
             var textContent = "a";
+            List<Guid> oldMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            List<Guid> newMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
 
             Guid differentOrganizer;
             do {
                 differentOrganizer = Guid.NewGuid();
             } while (differentOrganizer == contextId);
 
-            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
+            var command = new UpdatePost(postId, textContent, newMediaFiles); 
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
+                "Text", oldMediaFiles, DateTime.Today, 
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);
@@ -150,16 +187,18 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.ToBePublished;
             var eventId = Guid.NewGuid();
             var textContent = "a";
+            List<Guid> oldMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            List<Guid> newMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
 
             Guid differentOrganizer;
             do {
                 differentOrganizer = Guid.NewGuid();
             } while (differentOrganizer == contextId);
 
-            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
+            var command = new UpdatePost(postId, textContent, newMediaFiles); 
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
+                "Text", oldMediaFiles, DateTime.Today, 
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
@@ -181,16 +220,18 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.Reported;
             var eventId = Guid.NewGuid();
             var textContent = "a";
+            List<Guid> oldMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            List<Guid> newMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
 
             Guid differentOrganizer;
             do {
                 differentOrganizer = Guid.NewGuid();
             } while (differentOrganizer == contextId);
 
-            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
+            var command = new UpdatePost(postId, textContent, newMediaFiles); 
 
             var post = Post.Create(new AggregateId(postId), eventId, differentOrganizer,
-                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
+                "Text", oldMediaFiles, DateTime.Today, 
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "Admin", true, default);
@@ -212,11 +253,13 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Commands.Handlers {
             var state = State.Reported;
             var eventId = Guid.NewGuid();
             var textContent = "a";
+            List<Guid> oldMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+            List<Guid> newMediaFiles = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
 
-            var command = new UpdatePost(postId, textContent, Enumerable.Empty<Guid>()); // TODO: media files
+            var command = new UpdatePost(postId, textContent, newMediaFiles);
 
             var post = Post.Create(new AggregateId(postId), eventId, contextId,
-                "Text", Enumerable.Empty<Guid>(), DateTime.Today, // TODO: media files
+                "Text", oldMediaFiles, DateTime.Today,
                 state, DateTime.Today);
 
             var identityContext = new IdentityContext(contextId.ToString(), "not admin", true, default);
