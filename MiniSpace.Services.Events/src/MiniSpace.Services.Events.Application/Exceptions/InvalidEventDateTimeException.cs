@@ -1,5 +1,8 @@
-﻿namespace MiniSpace.Services.Events.Application.Exceptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MiniSpace.Services.Events.Application.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class InvalidEventDateTimeException(string element, string value)
         : AppException($"Event DateTime property `{element}` is invalid: {value}.")
     {

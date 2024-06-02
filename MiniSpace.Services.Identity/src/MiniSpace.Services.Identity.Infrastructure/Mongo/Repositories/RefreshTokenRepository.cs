@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Identity.Core.Entities;
@@ -7,6 +8,7 @@ using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     internal sealed class RefreshTokenRepository : IRefreshTokenRepository
     {
         private readonly IMongoRepository<RefreshTokenDocument, Guid> _repository;

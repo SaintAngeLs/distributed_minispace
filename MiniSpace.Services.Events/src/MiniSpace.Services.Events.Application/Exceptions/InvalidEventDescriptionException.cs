@@ -1,5 +1,8 @@
-﻿namespace MiniSpace.Services.Events.Application.Exceptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MiniSpace.Services.Events.Application.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class InvalidEventDescriptionException : AppException
     {
         public override string Code { get; } = "invalid_event_description";

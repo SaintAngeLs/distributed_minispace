@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Reactions.Application.Events.External.Handlers
         {
             if (await _postRepository.ExistsAsync(@event.PostId))
             {
-                throw new StudentAlreadyAddedException(@event.PostId);
+                throw new PostAlreadyAddedException(@event.PostId);
             }
             
             await _postRepository.AddAsync(new Post(@event.PostId));

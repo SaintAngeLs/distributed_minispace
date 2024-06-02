@@ -8,5 +8,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
     public interface IExtendedStudentNotificationsRepository : IStudentNotificationsRepository
     {
         Task<UpdateResult> BulkUpdateAsync(FilterDefinition<StudentNotificationsDocument> filter, UpdateDefinition<StudentNotificationsDocument> update);
+        Task<int> GetNotificationCount(Guid studentId);
+        Task<List<NotificationDocument>> GetRecentNotifications(Guid studentId, int count);
     }
 }

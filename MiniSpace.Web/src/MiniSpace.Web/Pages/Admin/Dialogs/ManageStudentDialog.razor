@@ -1,8 +1,10 @@
 @page "/admin/students/{StudentDto.Id}/details"
+@using MiniSpace.Web.Areas.Organizations
 @using Radzen
 @using MiniSpace.Web.DTO
 @inject DialogService DialogService
 @inject IIdentityService IdentityService
+@inject IOrganizationsService OrganizationsService
 
 <RadzenStack Gap="1rem">
     <RadzenFieldset>
@@ -48,24 +50,24 @@
                     @if (StudentDto.IsBanned)
                     {
                         <RadzenButton Size="ButtonSize.Medium" Text="Unban" Style="width: 200px"
-                                      ButtonStyle="ButtonStyle.Primary"
+                                      ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                       Click="@(() => Unban(StudentDto))"/>
                     }
                     else
                     {
                         <RadzenButton Size="ButtonSize.Medium" Text="Ban" Style="width: 200px"
-                                      ButtonStyle="ButtonStyle.Primary"
+                                      ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                       Click="@(() => Ban(StudentDto))"/>
                         @if (!StudentDto.IsOrganizer)
                         {
                             <RadzenButton Size="ButtonSize.Medium" Text="Grant organizer rights" Style="width: 200px"
-                                          ButtonStyle="ButtonStyle.Primary"
+                                          ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                           Click="@(() => GrantOrganizerRights(StudentDto))"/>
                         }
                         else
                         {
                             <RadzenButton Size="ButtonSize.Medium" Text="Revoke organizer rights" Style="width: 200px"
-                                          ButtonStyle="ButtonStyle.Primary"
+                                          ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                           Click="@(() => RevokeOrganizerRights(StudentDto))"/>
                         }
                     }
@@ -73,6 +75,25 @@
             </RadzenStack>
         </ChildContent>
     </RadzenFieldset>
+
+    @if (StudentDto.IsOrganizer)
+    {
+        <RadzenFieldset>
+            <HeaderTemplate>
+                <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
+                    <RadzenIcon Icon="assignment" class="me-1"/>
+                    <b>Organizer's organizations</b>
+                </RadzenStack>
+            </HeaderTemplate>
+            <ChildContent>
+                <RadzenStack Gap="2rem" AlignItems="AlignItems.Center">
+                    <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true"
+                                   Data="@organizations" TextProperty="Name" Style="width: 70%;"
+                                   @bind-Value="@selectedOrganization" />
+                </RadzenStack>
+            </ChildContent>
+        </RadzenFieldset>   
+    }
     
     <RadzenFieldset>
         <HeaderTemplate>
@@ -96,16 +117,9 @@
                 </RadzenRow>
 
                 <RadzenRow Size="12">
-                    <RadzenColumn Size="6">
+                    <RadzenColumn Size="12">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Description</RadzenText>
                         <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.Description)</b></RadzenText>
-                    </RadzenColumn>
-
-                    <RadzenColumn Size="6">
-                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Profile image</RadzenText>
-                        <RadzenImage Path="@($"data:image/jpeg;base64,{StudentDto.ProfileImage}")"
-                                     AlternateText="Not set"
-                                     Style="width: 5em" class="rz-border-radius-5"/>
                     </RadzenColumn>
                 </RadzenRow>
 
@@ -162,7 +176,8 @@
 
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
+            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close"
+                          Style="width: 120px" class="rz-border-radius-1" />
         </RadzenStack>
     </RadzenStack>
 </RadzenStack>
@@ -174,35 +189,42 @@
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     private const string shortDateFormat = "dd/MM/yyyy";
     
+    private IEnumerable<OrganizationDto> organizations;
+    private OrganizationDto selectedOrganization;
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
+        {
+            organizations = await OrganizationsService.GetOrganizerOrganizationsAsync(StudentDto.Id);
+        }
     }
     
     private async void Ban(StudentDto studentDto)
     {
-        await IdentityService.BanUser(studentDto.Id);
+        await IdentityService.BanUserAsync(studentDto.Id);
         StudentDto.IsBanned = true;
         StateHasChanged();
     }
     
     private async void Unban(StudentDto studentDto)
     {
-        await IdentityService.UnbanUser(studentDto.Id);
+        await IdentityService.UnbanUserAsync(studentDto.Id);
         studentDto.IsBanned = false;
         StateHasChanged();
     }
     
     private async void GrantOrganizerRights(StudentDto studentDto)
     {
-        await IdentityService.GrantOrganizerRights(studentDto.Id);
+        await IdentityService.GrantOrganizerRightsAsync(studentDto.Id);
         studentDto.IsOrganizer = true;
         StateHasChanged();
     }
     
     private async void RevokeOrganizerRights(StudentDto studentDto)
     {
-        await IdentityService.RevokeOrganizerRights(studentDto.Id);
+        await IdentityService.RevokeOrganizerRightsAsync(studentDto.Id);
         studentDto.IsOrganizer = false;
         StateHasChanged();
     }

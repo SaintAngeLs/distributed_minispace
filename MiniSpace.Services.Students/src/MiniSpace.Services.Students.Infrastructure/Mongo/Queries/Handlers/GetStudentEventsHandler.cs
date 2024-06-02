@@ -5,9 +5,11 @@ using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetStudentEventsHandler : IQueryHandler<GetStudentEvents, StudentEventsDto>
     {
         private readonly IMongoRepository<StudentDocument, Guid> _studentRepository;

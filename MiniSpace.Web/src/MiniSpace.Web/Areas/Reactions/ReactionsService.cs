@@ -19,19 +19,18 @@ namespace MiniSpace.Web.Areas.Reactions
             _identityService = identityService;
         }
         
-        public Task<IEnumerable<ReactionDto>> GetReactions(Guid contentId, ReactionContentType contentType)
+        public Task<IEnumerable<ReactionDto>> GetReactionsAsync(Guid contentId, ReactionContentType contentType)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<IEnumerable<ReactionDto>>($"reactions?contentId={contentId}&contentType={contentType}");
         }
 
-        public Task<ReactionsSummaryDto> GetReactionsSummary(Guid contentId, ReactionContentType contentType)
+        public Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<ReactionsSummaryDto>($"reactions/summary?contentId={contentId}&contentType={contentType}");
         }
 
-        public Task<HttpResponse<object>> CreateReaction(Guid reactionId, Guid studentId, string reactionType,
+        public Task<HttpResponse<object>> CreateReactionAsync(Guid reactionId, Guid studentId, string reactionType,
             Guid contentId, string contentType)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
@@ -39,7 +38,7 @@ namespace MiniSpace.Web.Areas.Reactions
                 new { reactionId, studentId, reactionType, contentId, contentType });
         }
 
-        public Task DeleteReaction(Guid reactionId)
+        public Task DeleteReactionAsync(Guid reactionId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.DeleteAsync($"reactions/{reactionId}");

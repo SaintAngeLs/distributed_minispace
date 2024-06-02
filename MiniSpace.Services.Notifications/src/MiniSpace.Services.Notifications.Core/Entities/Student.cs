@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int NumberOfFriends { get; set; }
-        public string ProfileImage { get; set; }
+        public Guid ProfileImage { get; set; }
         public string Description { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool EmailNotifications { get; set; }
@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         public List<Guid> InterestedInEvents { get; set; }
         public List<Guid> SignedUpEvents { get; set; }
 
-        public Student(Guid id, string email, string firstName, string lastName, int numberOfFriends, string profileImage, string description, DateTime dateOfBirth, bool emailNotifications, bool isBanned, bool isOrganizer, string state, DateTime createdAt)
+        public Student(Guid id, string email, string firstName, string lastName, int numberOfFriends, Guid profileImage, string description, DateTime dateOfBirth, bool emailNotifications, bool isBanned, bool isOrganizer, string state, DateTime createdAt)
         {
             Id = id;
             Email = email;

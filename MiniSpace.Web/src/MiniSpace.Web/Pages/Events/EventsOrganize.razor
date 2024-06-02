@@ -8,6 +8,7 @@
 @using MiniSpace.Web.Pages.Events.Dialogs
 @using MudBlazor
 @using Radzen
+@using AlignItems = Radzen.AlignItems
 @using DialogOptions = Radzen.DialogOptions
 @using DialogService = Radzen.DialogService
 @using Orientation = Radzen.Orientation
@@ -15,22 +16,27 @@
 @inject IEventsService EventsService
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
-<h1>Organize events</h1>
+<h1 class="rz-p-8 organize-font">Organize events</h1>
 
-<div class="rz-p-8">
-    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Size="ButtonSize.Medium" Text="Create new event" ButtonStyle="ButtonStyle.Secondary"
-                          Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
-            <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
-        </RadzenStack>
+<div class="rz-p-4">
+    <RadzenStack class="rz-py-5 rz-mx-auto" Orientation="Orientation.Horizontal"  AlignItems="AlignItems.Center" Gap="1rem">
+        <RadzenButton class="separate-button" Icon="create" Style="background-color: darkgreen" Size="ButtonSize.Medium" Text="Create new event" ButtonStyle="ButtonStyle.Secondary"
+                      Click="@(() => NavigationManager.NavigateTo("/events/create"))"/>
+        <RadzenButton class="separate-button" Icon="pageview" Style="background-color: #14304f" Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"/>
+        <RadzenButton Text="Clear filters" Click="@(() => ClearFilters())" Icon="close" class="separate-button clear-button"/>
     </RadzenStack>
 </div>
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 
 @if (pageInitialized && totalElements == 0)
@@ -47,11 +53,13 @@
     </RadzenStack>   
 }
 
-<RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
-    <Template Context="ev">
-        <RadzenEventCard Event="ev" />
-    </Template>
-</RadzenDataList>
+<div>
+    <RadzenDataList AllowPaging="false" Data="@events" TItem="EventDto">
+        <Template Context="ev">
+            <RadzenEventCard Event="ev" />
+        </Template>
+    </RadzenDataList>
+</div>
 
 @if (pageInitialized && totalElements != 0)
 {
@@ -62,24 +70,31 @@
     </RadzenStack>   
 }
 
+<style>
+    .organize-font {
+            font-family: Arial, sans-serif; /* Change this to your preferred font */
+            font-size: 40px; /* Change this to your preferred font size */
+            font-weight: bold; /* Change this to your preferred font weight */
+    }
+       
+    .separate-button {
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+        
+    .clear-button{
+        background-color: darkred !important;
+        margin-left: auto !important;
+    }
+    
+</style>
+
 @code {
-    private SearchOrganizerEventsModel searchOrganizerEventsModel = new()
-    {
-        Name = "",
-        State = "",
-        DateFrom = new DateTime(2024, 05, 14),
-        DateTo = new DateTime(2024, 05, 31),
-        Pageable = new PageableDto()
-        {
-            Page = 1,
-            Size = 5,
-            Sort = new SortDto()
-            {
-                SortBy = new List<string>() { "name" },
-                Direction = "des"
-            }
-        }
-    };
+    private SearchOrganizerEventsModel searchOrganizerEventsModel = InitializeOrganizerSearchModel();
     
     private Guid organizerId;
     private bool pageInitialized = false;
@@ -94,27 +109,64 @@
         {
             organizerId = IdentityService.GetCurrentUserId();
             searchOrganizerEventsModel.OrganizerId = organizerId;
-        
-            var tmp = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
+
+            var searchOrganizerEventsCriteria = await LocalStorage.GetItemAsync<SearchOrganizerEventsModel>("searchOrganizerEventsCriteria");
+            if (searchOrganizerEventsCriteria != null)
+            {
+                searchOrganizerEventsModel = searchOrganizerEventsCriteria;
+            }
+            
+            await SearchOrganizerEvents();
+        }
+
+        pageInitialized = true;
+    }
+
+    private static SearchOrganizerEventsModel InitializeOrganizerSearchModel()
+    {
+        return new()
+        {
+            Name = "",
+            State = "",
+            DateFrom = DateTime.Now.AddDays(-7),
+            DateTo = DateTime.Now.AddDays(30),
+            Pageable = new PageableDto()
+            {
+                Page = 1,
+                Size = 5,
+                Sort = new SortDto()
+                {
+                    SortBy = new List<string>() { "createdAt", "updatedAt", "name" },
+                    Direction = "des"
+                }
+            }
+        };
+    }
+
+    private async Task SearchOrganizerEvents()
+    {
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "organizer")
+        {
+            var response = await EventsService.SearchOrganizerEventsAsync(searchOrganizerEventsModel.OrganizerId,
                 searchOrganizerEventsModel.Name, searchOrganizerEventsModel.State,
                 searchOrganizerEventsModel.DateFrom.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                 searchOrganizerEventsModel.DateTo.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                 searchOrganizerEventsModel.Pageable);
-            if (tmp.Content != null)
+            if (response.Content != null)
             {
-                totalPages = tmp.Content.TotalPages;
-                totalElements = tmp.Content.TotalElements;
-                events = tmp.Content.Content;
+                totalPages = response.Content.TotalPages;
+                totalElements = response.Content.TotalElements;
+                events = response.Content.Content;
             }
             else
             {
                 totalPages = 0;
                 totalElements = 0;
                 events = new List<EventDto>();
-            }   
+            }
+            
+            await LocalStorage.SetItemAsync("searchOrganizerEventsCriteria", searchOrganizerEventsModel);
         }
-
-        pageInitialized = true;
     }
     
     private async void SelectedPageChanged(int pageNumber)
@@ -139,6 +191,13 @@
                 Width = "800px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
-        await OnInitializedAsync();
+        await SearchOrganizerEvents();
+    }
+    
+    private async Task ClearFilters()
+    {
+        searchOrganizerEventsModel = InitializeOrganizerSearchModel();
+        searchOrganizerEventsModel.OrganizerId = organizerId;
+        await SearchOrganizerEvents();
     }
 }

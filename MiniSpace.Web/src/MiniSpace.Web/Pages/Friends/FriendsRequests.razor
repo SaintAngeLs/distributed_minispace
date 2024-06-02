@@ -13,6 +13,7 @@
 @using MiniSpace.Web.Areas.MediaFiles
 @inject IMediaFilesService MediaFilesService
 @using MudBlazor
+@using Radzen
 
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -22,14 +23,15 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.Create),
-        new BreadcrumbItem("Requests", href: "/friends/requests", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.PersonSearch),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.LibraryAddCheck),
+        new BreadcrumbItem("Requests", href: "/friends/requests", disabled: true, icon: Icons.Material.Filled.GroupAdd),
     };
 }
 
 <h3>Incoming Friend Requests</h3>
 
-<div style="display: flex; padding: 50px;">
+<div style="display: flex;">
     <div class="left-panel">
         <div class="search-bar">
             <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search incoming requests..." Style="width: 75%;" />
@@ -38,26 +40,29 @@
         <div class="card-container">
             @if (incomingRequests == null)
             {
-                <p>Loading...</p>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                               Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                        <Template>Loading...</Template>
+                    </RadzenProgressBarCircular>
+                </div>
             }
             else if (filteredIncomingRequests != null && filteredIncomingRequests.Any())
             {
                 @foreach (var request in filteredIncomingRequests)
                 {
                     <div class="friend-card" @onclick="@(() => RedirectToDetails(request.InviterId))">
-                        @if (images.ContainsKey(request.InviterId))
-                        {
-                            <img src="@GetImage(images[request.InviterId])" alt="Inviter Image" class="friend-img">
-                        }
+                        <img src="@GetImage(request.InviterId)" alt="Inviter Image" class="friend-img">
                         <div class="friend-info">
                             <h5>@request.InviterName</h5>
-                            <p>Email: @request.InviterEmail</p>
-                            <p>Requested On: @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
-                            <p>Status: @request.State</p>
+                            <p><RadzenIcon Icon="email" Style="color: #30445f;"/> @request.InviterEmail</p>
+                            <p><RadzenIcon Icon="event" Style="color: #30445f;"/> @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                            <p><RadzenIcon Icon="info" Style="color: #30445f;"/> @request.State</p>
                         </div>
+                        <RadzenButton Text="Decline" Click="@(() => DeclineRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
+                        <RadzenButton Text="Accept" Click="@(() => AcceptRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Success" Icon="check" Style="margin-right: 10px;" />
                     </div>
-                    <RadzenButton Text="Accept" Click="@(() => AcceptRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Success" Icon="check" Style="margin-right: 10px;" />
-                    <RadzenButton Text="Decline" Click="@(() => DeclineRequest(request.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
+                  
                 }
             }
             else
@@ -143,6 +148,20 @@
 
     .friend-info {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .friend-info h5, .friend-info p {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        margin-left: 20px !important;
+        padding: 2px 0; 
+    }
+
+    .friend-info h5 RadzenIcon, .friend-info p RadzenIcon {
+        margin-right: 15px; 
     }
 
     .search-bar input:focus {
@@ -182,7 +201,7 @@
 
     .details-list li {
         margin-bottom: 8px;
-        font-size: 16px; /* Larger font for readability */
+        font-size: 16px; 
     }
 </style>
 
@@ -195,55 +214,64 @@
 
     protected override async Task OnInitializedAsync()
     {
-        incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
+        await IdentityService.InitializeAuthenticationState();
 
-        if (incomingRequests == null || !incomingRequests.Any())
-        {
-            @* Console.WriteLine("No incoming friend requests found."); *@
-            return;
-        }
+        if (IdentityService.IsAuthenticated)
+        { 
+            incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
 
-        var inviterIds = incomingRequests.Select(r => r.InviterId).Distinct();
-        var studentTasks = inviterIds.Select(id => FriendsService.GetStudentAsync(id));
-
-        students = (await Task.WhenAll(studentTasks)).ToList();
-
-        var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
-        await Task.WhenAll(imageTasks);
-
-        foreach (var request in incomingRequests)
-        {
-            var student = students.FirstOrDefault(s => s.Id == request.InviterId);
-            if (student != null)
+            if (incomingRequests == null || !incomingRequests.Any())
             {
-                request.InviterName = $"{student.FirstName} {student.LastName}";
-                request.InviterEmail = student.Email;
-                if (images.ContainsKey(student.Id))
+                return;
+            }
+
+            var inviterIds = incomingRequests.Select(r => r.InviterId).Distinct();
+            var studentTasks = inviterIds.Select(id => FriendsService.GetStudentAsync(id));
+
+            students = (await Task.WhenAll(studentTasks)).ToList();
+
+            var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
+            await Task.WhenAll(imageTasks);
+
+            foreach (var request in incomingRequests)
+            {
+                var student = students.FirstOrDefault(s => s.Id == request.InviterId);
+                if (student != null)
                 {
-                    request.InviterImage = images[student.Id];
+                    request.InviterName = $"{student.FirstName} {student.LastName}";
+                    request.InviterEmail = student.Email;
+                    if (images.ContainsKey(student.Id))
+                    {
+                        request.InviterImage = images[student.Id];
+                    }
                 }
             }
-        }
 
-        filteredIncomingRequests = incomingRequests;
+            filteredIncomingRequests = incomingRequests;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
     }
 
     private async Task FetchImageAsync(Guid inviterId, Guid profileImage)
     {
         var result = await MediaFilesService.GetFileAsync(profileImage);
-        images[inviterId] = result.Base64Content;
+        if (result != null)
+        {
+            images[inviterId] = result.Base64Content;
+        }
     }
 
-    private string GetImage(string base64Image)
+    private string GetImage(Guid studentId)
     {
-        if (string.IsNullOrWhiteSpace(base64Image))
+        if (images.TryGetValue(studentId, out var image))
         {
-            return "images/user_image.png";
+            return $"data:image/webp;base64,{image}";
         }
-        else
-        {
-            return $"data:image/jpeg;base64,{base64Image}";
-        }
+
+        return "images/default_profile_image.webp";
     }
 
     private void SearchIncomingRequests()

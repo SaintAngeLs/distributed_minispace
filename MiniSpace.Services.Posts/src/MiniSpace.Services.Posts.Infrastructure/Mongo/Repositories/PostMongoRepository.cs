@@ -48,5 +48,33 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 
         public Task DeleteAsync(Guid id)
             => _repository.DeleteAsync(id);
+        
+        public Task<bool> ExistsAsync(Guid id)
+            => _repository.ExistsAsync(p => p.Id == id);
+
+        private async Task<(int totalPages, int totalElements, IEnumerable<PostDocument> data)> BrowseAsync(
+            FilterDefinition<PostDocument> filterDefinition, SortDefinition<PostDocument> sortDefinition, 
+            int pageNumber, int pageSize)
+        {
+            var pagedEvents = await _repository.Collection.AggregateByPage(
+                filterDefinition,
+                sortDefinition,
+                pageNumber,
+                pageSize);
+
+            return pagedEvents;
+        }
+
+        public async Task<(IEnumerable<Post> posts, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseCommentsAsync(int pageNumber, int pageSize, 
+            IEnumerable<Guid> eventsIds, IEnumerable<string> sortBy, string direction)
+        {
+            var filterDefinition = Extensions.ToFilterDefinition(eventsIds);
+            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
+
+            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+
+            return (pagedEvents.data.Select(e => e.AsEntity()), pageNumber, pageSize,
+                pagedEvents.totalPages, pagedEvents.totalElements);
+        }
     }    
 }

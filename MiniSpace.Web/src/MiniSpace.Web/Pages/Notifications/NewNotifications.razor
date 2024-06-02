@@ -16,7 +16,7 @@
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
         new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications),
-        new BreadcrumbItem("New Notifications", href: "/notifications/new", disabled: true, icon: Icons.Material.Filled.Notifications)
+        new BreadcrumbItem("New Notifications", href: "/notifications/new", disabled: true, icon: Icons.Material.Filled.NotificationsActive)
     };
 }
 
@@ -26,7 +26,12 @@
 
 @if (notifications == null)
 {
-    <p><em>Loading...</em></p>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 else if (notifications.Any())
 {
@@ -73,13 +78,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadNotifications(new LoadDataArgs { Skip = 0, Top = pageSize, OrderBy = "createdAt desc" });
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        { 
+            await LoadNotifications(new LoadDataArgs { Skip = 0, Top = pageSize, OrderBy = "createdAt desc" });
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
     }
 
    
      private async Task LoadNotifications(LoadDataArgs args)
     {
-        
         var skip = args.Skip ?? 0;
         var top = args.Top ?? pageSize;
 

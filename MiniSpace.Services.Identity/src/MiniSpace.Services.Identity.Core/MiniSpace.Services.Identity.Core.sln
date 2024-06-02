@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.Identity.Core", "MiniSpace.Services.Identity.Core.csproj", "{CF188FB6-D007-4650-82F2-1466F15E1725}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF188FB6-D007-4650-82F2-1466F15E1725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF188FB6-D007-4650-82F2-1466F15E1725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF188FB6-D007-4650-82F2-1466F15E1725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF188FB6-D007-4650-82F2-1466F15E1725}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {816E5D3F-7512-40DB-ADBA-0D2856D0111E}
+	EndGlobalSection
+EndGlobal

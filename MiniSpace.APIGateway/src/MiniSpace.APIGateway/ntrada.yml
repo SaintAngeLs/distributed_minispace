@@ -131,6 +131,18 @@ modules:
         downstream: identity-service/users/{userId}/ban
         auth: true
 
+      - upstream: /password/forgot
+        method: POST
+        use: downstream
+        downstream: identity-service/password/forgot
+        auth: false
+
+      - upstream: /password/reset
+        method: POST
+        use: downstream
+        downstream: identity-service/password/reset
+        auth: false
+
     services:
       identity-service:
         localUrl: localhost:5004
@@ -147,22 +159,46 @@ modules:
         downstream: reports-service/reports
         auth: true
 
-      - upstream: /
-        method: GET
-        use: downstream
-        downstream: reports-service/reports
-        auth: true
-
-      - upstream: /
-        method: PUT
-        use: downstream
-        downstream: reports-service/reports
-        auth: true
-
       - upstream: /{reportId}
-        method: GET
+        method: DELETE
         use: downstream
         downstream: reports-service/reports/{reportId}
+        auth: true
+
+      - upstream: /search
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/search
+        auth: true
+
+      - upstream: /{reportId}/cancel
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/{reportId}/cancel
+        auth: true
+
+      - upstream: /{reportId}/start-review
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/{reportId}/start-review
+        auth: true
+
+      - upstream: /{reportId}/resolve
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/{reportId}/resolve
+        auth: true
+
+      - upstream: /{reportId}/reject
+        method: POST
+        use: downstream
+        downstream: reports-service/reports/{reportId}/reject
+        auth: true
+
+      - upstream: /students/{studentId}
+        method: GET
+        use: downstream
+        downstream: reports-service/reports/students/{studentId}
         auth: true
 
     services:
@@ -360,6 +396,17 @@ modules:
         downstream: events-service/events/{eventId}/rate
         auth: true
 
+      - upstream: /{eventId}/rate
+        method: DELETE
+        use: downstream
+        downstream: events-service/events/{eventId}/rate
+        auth: true
+      
+      - upstream: /{eventId}/rating
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}/rating
+
       - upstream: /organizer/{organizerId}
         method: GET
         use: downstream
@@ -434,6 +481,11 @@ modules:
           method: POST
           use: downstream
           downstream: comments-service/comments/search
+
+        - upstream: /{commentId}
+          method: GET
+          use: downstream
+          downstream: comments-service/comments/{commentId}
 
       services:
         comments-service:

@@ -85,5 +85,13 @@ namespace MiniSpace.Web.Areas.Notifications
 
             return response;
         }
+        public async Task CreateNotificationAsync(NotificationToUsersDto notification)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            var url = "notifications";
+            await _httpClient.PostAsync<NotificationToUsersDto, HttpResponse<NotificationToUsersDto>>(url, notification);
+        }
+
     }
 }

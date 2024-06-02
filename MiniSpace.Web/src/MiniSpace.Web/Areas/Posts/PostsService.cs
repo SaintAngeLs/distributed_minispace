@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.Data.Events;
+using MiniSpace.Web.Data.Posts;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Posts
@@ -36,6 +39,12 @@ namespace MiniSpace.Web.Areas.Posts
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object, object>("posts", new {postId, eventId, organizerId, textContent,
                 mediaFiles, state, publishDate});
+        }
+        
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<PostDto>>>> SearchPostsAsync(SearchPosts searchPosts)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.PostAsync<SearchPosts, PagedResponseDto<IEnumerable<PostDto>>>("posts/search", searchPosts);
         }
 
         public Task DeletePostAsync(Guid postId)

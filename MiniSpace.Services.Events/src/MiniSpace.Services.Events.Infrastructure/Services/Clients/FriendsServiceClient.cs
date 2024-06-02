@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Convey.HTTP;
 using MiniSpace.Services.Events.Application.DTO;
@@ -7,6 +8,7 @@ using MiniSpace.Services.Events.Application.Services.Clients;
 
 namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
 {
+    [ExcludeFromCodeCoverage]
     public class FriendsServiceClient : IFriendsServiceClient
     {
         private readonly IHttpClient _httpClient;
@@ -18,8 +20,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
             _url = options.Services["friends"];
         }
 
-        public Task<IEnumerable<FriendDto>> GetAsync(Guid studentId)
-            => _httpClient.GetAsync<IEnumerable<FriendDto>>($"{_url}/friends/{studentId}");
+        public Task<IEnumerable<StudentFriendsDto>> GetAsync(Guid studentId)
+            => _httpClient.GetAsync<IEnumerable<StudentFriendsDto>>($"{_url}/friends/{studentId}");
 
     }
 }

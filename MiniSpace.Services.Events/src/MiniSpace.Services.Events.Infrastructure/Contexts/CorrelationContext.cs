@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class CorrelationContext
     {
         public string CorrelationId { get; set; }

@@ -2,6 +2,7 @@
 @inject INotificationsService NotificationsService
 @inject IIdentityService IdentityService
 @using MiniSpace.Web.DTO.Notifications
+@using System.Globalization
 @using System.Threading
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
@@ -18,8 +19,13 @@
                 <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)" 
                     class="notification-item"
                     style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;" >
-                    <span style="display: block; color: #333; margin-bottom: 4px;">@notification.Message</span>
-                    <span style="display: block; font-size: 0.8em; color: #666;">@notification.CreatedAt.ToString("g")</span>
+                    <span style="display: block; color: #333; margin-bottom: 4px;">
+                         @RenderHtml(TruncateMessage(notification.Message))
+                    </span>
+                    <span style="display: block; font-size: 0.8em; color: #666;">
+                        @* @ToLocalTime(notification.CreatedAt, timezoneOffset).ToString("g") *@
+                        @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
+                    </span>
                 </li>
             }
         </ul>
@@ -36,10 +42,12 @@
     private List<NotificationDto> notifications;
     private Timer timer;
     private DateTime lastCheckedTime = DateTime.MinValue;
+    private int timezoneOffset;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadNotifications();
+        var timezoneOffset = await JSRuntime.InvokeAsync<int>("getUserTimezoneOffset");
         // Setup a timer to refresh notifications every 15 seconds
         timer = new Timer(new TimerCallback(_ => InvokeAsync(LoadNotifications)), null, 0, 15000);
     }
@@ -52,9 +60,10 @@
             var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, status: "Unread");
             var latestNotifications = paginatedResponse.Results;
 
-            if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
+             if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
             {
                 PlayNotificationSound();
+                await JSRuntime.InvokeVoidAsync("updateTitle", "New Notification - MiniSpace | Social");
                 lastCheckedTime = DateTime.Now; 
             }
 
@@ -87,11 +96,27 @@
 
     private void NavigateToNotificationDetail(Guid notificationId)
     {
-        NavigationManager.NavigateTo($"/notification/{notificationId}");
+        NavigationManager.NavigateTo($"/notification/{notificationId}", true);
+    }
+
+    private string TruncateMessage(string message)
+    {
+        return message.Length > 80 ? message.Substring(0, 80) + "..." : message;
     }
 
     public void Dispose()
     {
         timer?.Dispose();
     }
+
+    private MarkupString RenderHtml(string htmlContent)
+    {
+        return new MarkupString(htmlContent);
+    }
+
+    private DateTime ToLocalTime(DateTime utcDate, int offsetMinutes)
+    {
+        return utcDate.AddMinutes(-offsetMinutes);
+    }
+
 }

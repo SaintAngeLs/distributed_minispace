@@ -35,45 +35,47 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         public async Task HandleAsync(FriendInvited @event, CancellationToken cancellationToken)
         {
             var inviter = await _studentsServiceClient.GetAsync(@event.InviterId);
-            // var invitee = await _studentsServiceClient.GetAsync(@event.InviteeId);
-       
             var notificationMessage = $"You have been invited by {inviter.FirstName} {inviter.LastName} to be friends.";
+            var detailsHtml = $"<p>View <a href='https://minispace.itsharppro.com/student-details/{@event.InviterId}'>{inviter.FirstName} {inviter.LastName}</a>'s profile to respond to the friend invitation.</p>";
 
-             var notification = new Notification(
-                notificationId: Guid.NewGuid(),
-                userId: @event.InviteeId, 
+            var notificationId = Guid.NewGuid();
+            var notification = new Notification(
+                notificationId: notificationId,
+                userId: @event.InviteeId,
                 message: notificationMessage,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
                 relatedEntityId: @event.InviterId,
-                eventType: NotificationEventType.NewFriendRequest
+                eventType: NotificationEventType.NewFriendRequest,
+                details: detailsHtml
             );
 
             await _notificationRepository.AddAsync(notification);
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId);
-            if (studentNotifications == null)
-            {
-                studentNotifications = new StudentNotifications(@event.InviteeId);
-            }
-            else
-            {
-                // _logger.AddInformation($"Retrieved existing notifications for studentId {@event.InviterId}.");
-            }
+              
 
+            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId) ?? new StudentNotifications(@event.InviteeId);
             studentNotifications.AddNotification(notification);
-
-            await _studentNotificationsRepository.UpdateAsync(studentNotifications);
+            await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt
+                notificationId,
+                @event.InviteeId,
+                notificationMessage,
+                DateTime.UtcNow,
+                NotificationEventType.NewFriendRequest.ToString(),
+                @event.InviterId,
+                detailsHtml
             );
+
+            var serializedEvent = JsonSerializer.Serialize(notificationCreatedEvent, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
         }
+
     }
 }

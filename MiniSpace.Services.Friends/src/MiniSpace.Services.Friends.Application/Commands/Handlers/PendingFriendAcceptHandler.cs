@@ -46,7 +46,9 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             // Save the updated FriendRequest states
             await _studentRequestsRepository.UpdateAsync(command.RequesterId, inviterRequests.FriendRequests);
             await _studentRequestsRepository.UpdateAsync(command.FriendId, inviteeRequests.FriendRequests);
-
+            
+            var pendingFriendAcceptedEvent = new PendingFriendAccepted(command.RequesterId, command.FriendId);
+            await _messageBroker.PublishAsync(pendingFriendAcceptedEvent);
             // Create Friend relationships in both directions
             CreateAndAddFriends(command.RequesterId, command.FriendId, FriendState.Accepted);
 
@@ -54,8 +56,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             // var events = _eventMapper.MapAll(new Core.Events.PendingFriendAccepted(command.RequesterId, command.FriendId));
             // await _messageBroker.PublishAsync(events);
 
-            var pendingFriendAcceptedEvent = new PendingFriendAccepted(command.RequesterId, command.FriendId);
-            await _messageBroker.PublishAsync(pendingFriendAcceptedEvent);
+           
         }
 
         private FriendRequest FindFriendRequest(StudentRequests inviter, StudentRequests invitee, Guid inviterId, Guid inviteeId)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Events.Core.Entities;
@@ -7,6 +8,7 @@ using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class StudentMongoRepository : IStudentRepository
     {
         private readonly IMongoRepository<StudentDocument, Guid> _repository;

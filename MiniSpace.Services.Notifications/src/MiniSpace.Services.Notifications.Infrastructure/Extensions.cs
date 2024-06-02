@@ -54,6 +54,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
             builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
             builder.Services.AddTransient<IStudentNotificationsRepository, StudentNotificationsMongoRepository>();
+            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IExtendedStudentNotificationsRepository, StudentNotificationsMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
@@ -61,10 +62,16 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IFriendsServiceClient, FriendsServiceClient>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
+            builder.Services.AddTransient<IEventsServiceClient, EventsServiceClient>();
+            builder.Services.AddTransient<IPostsServiceClient, PostsServiceClient>();
+            builder.Services.AddTransient<ICommentsServiceClient, CommentsServiceClient>();
+            builder.Services.AddTransient<IReactionsServiceClient, ReactionsServiceClient>();
+            builder.Services.AddTransient<IReportsServiceClient, ReportsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-            builder.Services.AddHostedService<NotificationCleanupService>();  
+            builder.Services.AddHostedService<DailyNotificationCleanupService>();  
+            builder.Services.AddHostedService<PeriodicNotificationCleanupService>();  
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -111,11 +118,27 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<FriendAdded>()
                 .SubscribeEvent<PendingFriendAccepted>()
                 .SubscribeEvent<PendingFriendDeclined>()
-                .SubscribeEvent<EventCreated>();
-                // .SubscribeEvent<NotificationCreated>()
-                // .SubscribeEvent<NotificationDeleted>()
-                // .SubscribeEvent<NotificationUpdated>();
-
+                .SubscribeEvent<EventCreated>()
+                .SubscribeEvent<EventDeleted>()
+                .SubscribeEvent<StudentShowedInterestInEvent>()
+                .SubscribeEvent<StudentCancelledInterestInEvent>()
+                .SubscribeEvent<EventParticipantAdded>()
+                .SubscribeEvent<EventParticipantRemoved>()
+                .SubscribeEvent<StudentSignedUpToEvent>()
+                .SubscribeEvent<StudentCancelledSignUpToEvent>()
+                .SubscribeEvent<PostCreated>()
+                .SubscribeEvent<PostUpdated>()
+                .SubscribeEvent<PasswordResetTokenGenerated>()
+                .SubscribeEvent<SignedUp>()
+                .SubscribeEvent<CommentCreated>()
+                .SubscribeEvent<CommentUpdated>()
+                .SubscribeEvent<ReactionCreated>()
+                .SubscribeEvent<ReportCreated>()
+                .SubscribeEvent<ReportReviewStarted>()
+                .SubscribeEvent<ReportResolved>()
+                .SubscribeEvent<ReportRejected>()
+                .SubscribeEvent<ReportCancelled>();
+                
             return app;
         }
 

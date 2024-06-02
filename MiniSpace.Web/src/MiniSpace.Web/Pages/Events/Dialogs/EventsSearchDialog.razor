@@ -30,7 +30,7 @@
             </RadzenColumn>
             <RadzenColumn Size="12" SizeSM="4">
                 <RadzenStack>
-                    <RadzenFormField Text="Organizer" Variant="Variant.Outlined">
+                    <RadzenFormField Text="Organization name" Variant="Variant.Outlined">
                         <RadzenTextBox @bind-Value="@TempSearchEventsModel.Organizer" />
                     </RadzenFormField>
                     <RadzenFormField Text="State" Variant="Variant.Outlined">
@@ -80,6 +80,11 @@
                     <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
                     <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
                     <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
+                    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"/>
                     <RadzenTreeLevel TextProperty="Name" HasChildren=@(org => false)/>
                 </RadzenTree>
             </RadzenColumn>
@@ -101,7 +106,7 @@
     
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Click="@HandleFiltering" Variant="Variant.Flat" Text="Submit" Style="width: 120px"/>
+            <RadzenButton Click="@HandleFiltering" Variant="Variant.Flat" Text="Submit" Style="width: 120px; background-color: #006400;"/>
             <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
         </RadzenStack>
     </RadzenStack>
@@ -147,6 +152,8 @@
         new KeyValuePair<string, string>("Capacity", "capacity"),
         new KeyValuePair<string, string>("Start date", "startDate"),
         new KeyValuePair<string, string>("End date", "endDate"),
+        new KeyValuePair<string, string>("Interested students", "interestedStudents"),
+        new KeyValuePair<string, string>("Signed up students", "signedUpStudents"),
     ];
     
     private IEnumerable<KeyValuePair<string, string>> notSelectedSortParams = [];
@@ -186,18 +193,25 @@
         StateHasChanged();
     }
     
-    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result, Guid? rootId)
+    private void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result, Guid? rootId)
     {
         result.Clear();
         foreach (var organization in input)
         {
-            result.Add(new OrganizationModel()
+            var newNode = new OrganizationModel()
             {
                 Id = organization.Id,
                 Name = organization.Name,
                 RootId = rootId ?? organization.Id,
                 Children = new List<OrganizationModel>()
-            });
+            };
+            
+            if (SearchEventsModel.Organization.Id == organization.Id)
+            {
+                selectedItem = newNode;
+            }
+            
+            result.Add(newNode);
         }
     }
     

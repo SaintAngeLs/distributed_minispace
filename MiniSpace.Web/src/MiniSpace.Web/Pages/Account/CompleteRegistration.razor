@@ -14,8 +14,7 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
-<h3>Complete your registration</h3>
-<p>This step is necessary to go ahead, otherwise please to sign out.</p>
+<h3 class="rz-p-6">Complete your registration</h3>
 
 <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
              Shade="Shade.Lighter">
@@ -34,8 +33,10 @@
                                        @bind-Value="@completeRegistrationModel.DateOfBirth" />
             
             <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="5">
-                    <RadzenLabel Text="Profile image:" Component="profile-image" />
+                <RadzenColumn Size="12" SizeMD="6">
+                    <RadzenLabel Component="profile-image">
+                        <strong>Profile image:</strong>
+                    </RadzenLabel>
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="5">
                     <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100"
@@ -88,11 +89,11 @@
         else if (IdentityService.IsAuthenticated)
         {
             await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-            NavigationManager.NavigateTo("/account");
+            NavigationManager.NavigateTo("/", true);
         }
         else
         {
-            NavigationManager.NavigateTo("/signin");
+            NavigationManager.NavigateTo("/signin", true);
         }
     }
     

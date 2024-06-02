@@ -1,0 +1,210 @@
+@page "/admin/reports"
+@using MiniSpace.Web.Areas.Reports
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.DTO.States
+@using MiniSpace.Web.DTO.Types
+@using MiniSpace.Web.Models.Reports
+@using MiniSpace.Web.Pages.Admin.Dialogs
+@using MudBlazor
+@using Radzen
+@using Orientation = Radzen.Orientation
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@inject IReportsService ReportsService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h1>Manage reports</h1>
+
+@if (!pageInitialized)
+{
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
+}
+@if (pageInitialized && adminId != Guid.Empty)
+{
+    <h4 class="rz-p-8">To see details and manage a report, open details dialog by clicking "Show" button.</h4>
+    
+    <RadzenStack Gap="1rem" Style="height: 100%">
+        @if (totalElements == 0)
+        {
+            <h3>There are not any reports created.</h3>
+        }
+
+        @if (pageInitialized && totalElements != 0)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenButton Size="ButtonSize.Medium" Text="Reset criteria" Click="@ResetSearchingCriteria"
+                                  class="rz-border-radius-1" Icon="autorenew"/>
+                    <RadzenButton Size="ButtonSize.Medium" Text="Filter by criteria" Click="@OpenSearchDialog"
+                                  class="rz-border-radius-1" Icon="pageview"/>
+                </RadzenStack>
+                <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                               Selected="@searchReportsModel.Pageable.Page"
+                               Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
+            </RadzenStack>
+        }
+        
+        <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" Data="@reports" ColumnWidth="300px"
+                        PagerHorizontalAlign="HorizontalAlign.Center">
+            <Columns>
+                <RadzenDataGridColumn Property="ContextType" Title="Context Type" Frozen="true" Width="60px" TextAlign="TextAlign.Center">
+                    <Template Context="report">
+                        <RadzenText>@(ReportContextTypeExtensions.GetReportContextTypeText(report.ContextType))</RadzenText>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="Category" Title="Category" Frozen="true" Width="100px" TextAlign="TextAlign.Center">
+                    <Template Context="report">
+                        <RadzenText>@(ReportCategoryExtensions.GetReportCategoryText(report.Category))</RadzenText>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="State" Title="State" Frozen="true" Width="60px" TextAlign="TextAlign.Center">
+                    <Template Context="report">
+                        @switch (report.State)
+                        {
+                            case ReportState.Submitted or ReportState.UnderReview:
+                                <RadzenText Style="color: dodgerblue">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                            case ReportState.Cancelled:
+                                <RadzenText Style="color: darkorange">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                            case ReportState.Resolved:
+                                <RadzenText Style="color: green">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                            case ReportState.Rejected:
+                                <RadzenText Style="color: darkred">@ReportStateExtensions.GetReportStateText(report.State)</RadzenText>
+                                break;
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Context="report" Title="Details" Width="60px" TextAlign="TextAlign.Center"
+                                      Filterable="false" Sortable="false" Frozen="true">
+                    <Template Context="report">
+                        <RadzenButton Size="ButtonSize.Medium" Text="Show" class="rz-border-radius-1"
+                                      ButtonStyle="ButtonStyle.Secondary" Icon="search"
+                                      Click="@(() => OpenManageReportDialog(report))" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="Reason" Title="Reason" Width="110px" TextAlign="TextAlign.Center" />
+            </Columns>
+        </RadzenDataGrid>
+
+        @if (pageInitialized && totalElements != 0)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                <MudPagination Count="@totalPages" SelectedChanged="@SelectedPageChanged"
+                               Selected="@searchReportsModel.Pageable.Page"
+                               Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
+            </RadzenStack>
+        }
+    </RadzenStack>
+}
+
+@code {
+    private SearchReportsModel searchReportsModel = new();
+    
+    private Guid adminId;
+    private bool pageInitialized = false;
+
+    int totalPages = 0;
+    int totalElements = 0;
+    IEnumerable<ReportDto> reports; 
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
+        {
+            adminId = IdentityService.GetCurrentUserId();
+            
+            var searchReportsCriteria = await LocalStorage.GetItemAsync<SearchReportsModel>("searchReportsCriteria");
+            if (searchReportsCriteria != null)
+            {
+                searchReportsModel = searchReportsCriteria;
+            }
+
+            await SearchReports();
+            pageInitialized = true;
+            
+            var reportDto = await LocalStorage.GetItemAsync<ReportDto>("reportDto");
+            if (reportDto != null)
+            {
+                await LocalStorage.RemoveItemAsync("reportDto");
+                await OpenManageReportDialog(reportDto);
+            }
+        }
+    }
+
+    private async Task SearchReports()
+    {
+        var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
+            searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
+            searchReportsModel.Pageable);
+        
+        if (response.Content != null)
+        {
+            totalPages = response.Content.TotalPages;
+            totalElements = response.Content.TotalElements;
+            reports = response.Content.Content;
+        }
+        else
+        {
+            totalPages = 0;
+            totalElements = 0;
+            reports = new List<ReportDto>();
+        }
+        
+        await LocalStorage.SetItemAsync("searchReportsCriteria", searchReportsModel);
+    }
+    
+    private async void ResetSearchingCriteria()
+    {
+        searchReportsModel.SetDefaultValues();
+        await SearchReports();
+        StateHasChanged();
+    }
+    
+    private async void SelectedPageChanged(int pageNumber)
+    {
+        searchReportsModel.Pageable.Page = pageNumber;
+        
+        var response = await ReportsService.SearchReportsAsync(searchReportsModel.ContextTypes,
+            searchReportsModel.States, searchReportsModel.OnlyReviewedByYou ? adminId : Guid.Empty,
+            searchReportsModel.Pageable);
+        reports = response.Content.Content;
+        
+        await LocalStorage.SetItemAsync("searchReportsCriteria", searchReportsModel);
+        StateHasChanged();
+    }
+    
+    private async Task OpenSearchDialog()
+    {
+        await DialogService.OpenAsync<SearchReportsDialog>("Filter all reports by criteria:",
+            new Dictionary<string, object>() { { "SearchReportsModel", searchReportsModel } },
+            new DialogOptions()
+            {
+                Width = "800px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+        await SearchReports();
+        StateHasChanged();
+    }
+    
+    private async Task OpenManageReportDialog(ReportDto reportDto)
+    {
+        await DialogService.OpenAsync<ManageReportDialog>("Manage the report:",
+            new Dictionary<string, object>() { { "ReportDto", reportDto }, { "AdminId", adminId }},
+            new DialogOptions()
+            {
+                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+        StateHasChanged();
+    }
+}

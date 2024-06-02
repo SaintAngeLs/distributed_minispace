@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MiniSpace.Web</title>
+    <title>MiniSpace | Social</title>
     <base href="~/" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/humanistic-base.css">
     <link href="css/site.css" rel="stylesheet" />
@@ -17,7 +17,7 @@
 </head>
 <body>
     <app>
-        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+        @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
 
     <script src="_framework/blazor.server.js"></script>
@@ -50,6 +50,15 @@
         function playNotificationSoundNotificationsService() {
             var audio = new Audio('sounds/new-notification.wav');
             audio.play();
+        }
+
+        function getUserTimezoneOffset() {
+            return new Date().getTimezoneOffset();
+        }
+
+        function updateTitle(message) {
+            document.title = message;
+            setTimeout(() => document.title = "MiniSpace | Social", 8000); 
         }
 
     </script>

@@ -21,13 +21,13 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
 {
     public class EventCreatedHandlerTest
     {
-        private readonly EventCreatedHandler _eventDeletedHandler;
+        private readonly EventCreatedHandler _eventCreatedHandler;
         private readonly Mock<IEventRepository> _eventRepositoryMock;
 
         public EventCreatedHandlerTest()
         {
             _eventRepositoryMock = new();
-            _eventDeletedHandler = new EventCreatedHandler(_eventRepositoryMock.Object);
+            _eventCreatedHandler = new EventCreatedHandler(_eventRepositoryMock.Object);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
                 .ReturnsAsync(false);
 
             // Act & Assert
-            Func<Task> act = async () => await _eventDeletedHandler.HandleAsync(@event);
+            Func<Task> act = async () => await _eventCreatedHandler.HandleAsync(@event);
             await act.Should().NotThrowAsync();
         }
 
@@ -58,7 +58,7 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
                 .ReturnsAsync(true);
 
             // Act & Assert
-            Func<Task> act = async () => await _eventDeletedHandler.HandleAsync(@event);
+            Func<Task> act = async () => await _eventCreatedHandler.HandleAsync(@event);
             await act.Should().ThrowAsync<EventAlreadyAddedException>();
         }
     }

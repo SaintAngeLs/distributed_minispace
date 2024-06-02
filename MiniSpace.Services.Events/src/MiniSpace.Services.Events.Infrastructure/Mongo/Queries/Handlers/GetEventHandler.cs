@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 {
+    [ExcludeFromCodeCoverage]
     public class GetEventHandler : IQueryHandler<GetEvent, EventDto>
     {
         private readonly IMongoRepository<EventDocument, Guid> _eventRepository;
@@ -42,7 +44,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             var friends = Enumerable.Empty<FriendDto>();
             if(identity.IsAuthenticated)
             {
-                friends = await _friendsServiceClient.GetAsync(identity.Id);
+                var result = await _friendsServiceClient.GetAsync(identity.Id);
+                if (result != null && result.Any()) 
+                {
+                    friends = result.First().Friends;
+                }
             }
 
             await _messageBroker.PublishAsync(new EventViewed(query.EventId));

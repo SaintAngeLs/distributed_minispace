@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Identity.Core.Entities;
 
 namespace MiniSpace.Services.Identity.Application.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class UserDto
     {
         public Guid Id { get; set; }

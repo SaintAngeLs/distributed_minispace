@@ -1,10 +1,17 @@
 @page "/student-details/{Id:guid}"
 @using MiniSpace.Web.Areas.Friends
+@inject NavigationManager NavigationManager
 @inject IFriendsService FriendsService
 @using MiniSpace.Web.Areas.MediaFiles
-@inject IMediaFilesService MediaFilesService 
+@inject IMediaFilesService MediaFilesService
+@using MiniSpace.Web.Models.Reports
+@using MiniSpace.Web.Pages.Reports.Dialogs
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
 @using MiniSpace.Web.DTO
-@using Radzen.Blazor
+@using Radzen
 @using MudBlazor
 
 <div class="breadcrumbs-container">
@@ -14,11 +21,22 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.PersonSearch),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.LibraryAddCheck),
+        new BreadcrumbItem("Requests", href: "/friends/requests", icon: Icons.Material.Filled.GroupAdd),
+        new BreadcrumbItem("Sent Requests", href: "/friends/sent-requests", icon: Icons.Material.Filled.PersonAddAlt1),
+        new BreadcrumbItem("Student details", href: "/student-details/{Id:guid}",  disabled: true, icon: Icons.Material.Filled.Person),
     };
 }
 
 <h3>Student Profile</h3>
+
+@if (studentNotFound)
+{
+    <h3 class="rz-p-12">Student profile not found!</h3>
+    <h3>Probably has been deleted!</h3>
+}
+
 @if (student == null)
 {
     <RadzenProgress Label="Loading profile..." Mode="ProgressMode.Indeterminate" />
@@ -38,26 +56,12 @@ else
             <p><strong>State:</strong> @student.State</p>
             <p><strong>Joined:</strong> @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
         </div>
-    </div>
-}
-
-@code {
-    [Parameter] public Guid Id { get; set; }
-    private StudentDto student;
-    private string profileImage; // Store the Base64 image string
-
-    protected override async Task OnInitializedAsync()
-    {
-        student = await FriendsService.GetStudentAsync(Id);
-        if (student != null)
+        @if (IdentityService.IsAuthenticated)
         {
-            var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
-            if (imageResult != null)
-            {
-                profileImage = $"data:image/jpeg;base64,{imageResult.Base64Content}";
-            }
+            <RadzenButton Size="ButtonSize.Medium" Text="Report profile" ButtonStyle="ButtonStyle.Primary"
+                          Click="@(() => ReportStudentProfile(student))" />
         }
-    }
+    </div>
 }
 
 <style>
@@ -87,3 +91,54 @@ else
         margin-bottom: 10px;
     }
 </style>
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private StudentDto student;
+    private string profileImage; 
+    private bool studentNotFound;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        { 
+            student = await FriendsService.GetStudentAsync(Id);
+            if (student == null)
+            {
+                studentNotFound = true;
+                return;
+            }
+            var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
+            profileImage = imageResult != null ? $"data:image/webp;base64,{imageResult.Base64Content}" : "images/default_profile_image.webp";
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+    
+    private async Task OpenReportStudentProfileDialog(CreateReportModel createReportModel)
+    {
+        await DialogService.OpenAsync<CreateReportDialog>("Report profile of the student:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+    
+    private async Task ReportStudentProfile(StudentDto studentDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = IdentityService.GetCurrentUserId(),
+            TargetId = studentDto.Id,
+            TargetOwnerId = studentDto.Id,
+            ContextType = "StudentProfile"
+        };
+
+        await OpenReportStudentProfileDialog(createReportModel);
+    }
+}
+

@@ -46,9 +46,11 @@ using MiniSpace.Services.Identity.Infrastructure.Mongo;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Identity.Infrastructure.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Identity.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class Extensions
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
@@ -61,6 +63,7 @@ namespace MiniSpace.Services.Identity.Infrastructure
             builder.Services.AddSingleton<IRng, Rng>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+            builder.Services.AddTransient<IUserResetTokenRepository, UserResetTokenRepository>();
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
@@ -83,6 +86,7 @@ namespace MiniSpace.Services.Identity.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddMongoRepository<RefreshTokenDocument, Guid>("refreshTokens")
+                .AddMongoRepository<UserResetTokenDocument, Guid>("userResetTokens")
                 .AddMongoRepository<UserDocument, Guid>("users")
                 .AddWebApiSwaggerDocs()
                 .AddSecurity();

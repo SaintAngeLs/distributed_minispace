@@ -1,9 +1,10 @@
 using System;
 using Convey.CQRS.Events;
+using Convey.MessageBrokers;
 
-namespace MiniSpace.Services.Notifications.Application.Events
+namespace MiniSpace.Services.Notifications.Application.Events.External
 {
-    [Contract]
+    [Message("events")]
     public class StudentSignedUpToEvent: IEvent
     {
         public Guid EventId { get; }

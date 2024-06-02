@@ -7,7 +7,7 @@
 @inject NavigationManager NavigationManager
 @inject Radzen.DialogService DialogService
 
-<RadzenStack Gap="1rem">
+<RadzenStack>
     <RadzenFieldset>
         <HeaderTemplate>
             <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
@@ -16,22 +16,16 @@
             </RadzenStack>
         </HeaderTemplate>
         <ChildContent>
-            <RadzenStack Gap="2rem">
+            <RadzenStack>
                 <RadzenRow Size="12" AlignItems="AlignItems.Center">
                     <RadzenColumn Size="6">
-                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Id</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-my-0">Id</RadzenText>
                         <RadzenText TextStyle="TextStyle.H6"><b>@(OrganizationDetailsDto.Id)</b></RadzenText>
                     </RadzenColumn>
     
                     <RadzenColumn Size="6">
-                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Name</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-my-0">Name</RadzenText>
                         <RadzenText TextStyle="TextStyle.H6"><b>@(OrganizationDetailsDto.Name)</b></RadzenText>
-                    </RadzenColumn>
-                </RadzenRow>
-                
-                <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenColumn Size="12" SizeMD="12">
-    
                     </RadzenColumn>
                 </RadzenRow>
             </RadzenStack>
@@ -46,8 +40,8 @@
             </RadzenStack>
         </HeaderTemplate>
         <ChildContent>
-            <RadzenPickList @bind-Source="@notBelongingOrganizers" @bind-Target="@belongingOrganizers" Style="height: 180px; width: 100%;"
-                            Orientation="@Orientation.Horizontal" AllowFiltering="false" Multiple="false"
+            <RadzenPickList @bind-Source="@notBelongingOrganizers" @bind-Target="@belongingOrganizers" Style="height: 300px; width: 100%;"
+                            Orientation="@Orientation.Horizontal" AllowFiltering="true" Multiple="false" TextProperty="Label"
                             ShowHeader="true" ButtonGap="12px" ButtonJustifyContent="JustifyContent.Center"
                             ButtonStyle="@ButtonStyle.Secondary" ButtonSize="@ButtonSize.Medium" ButtonVariant="Variant.Outlined">
                 <SourceHeader>
@@ -57,7 +51,7 @@
                     Organizers belonging:
                 </TargetHeader>
                 <Template>
-                    @context.Name (@context.Email)
+                    @context.Label
                 </Template>
             </RadzenPickList>
         </ChildContent>
@@ -65,8 +59,10 @@
 
     <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-            <RadzenButton Click="@HandleSubmitting" Variant="Variant.Flat" Text="Submit" Style="width: 120px"/>
-            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px"/>
+            <RadzenButton Click="@HandleSubmitting" Variant="Variant.Flat" Text="Submit"
+                          Style="width: 120px" class="rz-border-radius-1" />
+            <RadzenButton Click="@(() => DialogService.Close(true))" Variant="Variant.Flat" Text="Close"
+                          Style="width: 120px" class="rz-border-radius-1" />
         </RadzenStack>
     </RadzenStack>
 </RadzenStack>
@@ -94,6 +90,7 @@
 
         foreach (var organizer in Organizers)
         {
+            organizer.Label = $"{organizer.Name} ({organizer.Email})";
             if (belongingGuids.Contains(organizer.Id))
             {
                 organizer.WasBelonging = true;
@@ -118,7 +115,7 @@
             {
                 if (!organizer.WasBelonging)
                 {
-                    await OrganizationsService.AddOrganizerToOrganization(Organization.RootId, Organization.Id, organizer.Id);
+                    await OrganizationsService.AddOrganizerToOrganizationAsync(Organization.RootId, Organization.Id, organizer.Id);
                 }
             }   
         }
@@ -129,7 +126,7 @@
             {
                 if (organizer.WasBelonging)
                 {
-                    await OrganizationsService.RemoveOrganizerFromOrganization(Organization.RootId, Organization.Id, organizer.Id);
+                    await OrganizationsService.RemoveOrganizerFromOrganizationAsync(Organization.RootId, Organization.Id, organizer.Id);
                 }
             }   
         }

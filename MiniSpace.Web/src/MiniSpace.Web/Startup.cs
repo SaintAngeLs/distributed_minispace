@@ -24,8 +24,10 @@ using MiniSpace.Web.Areas.Friends;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
 using MiniSpace.Web.Areas.Notifications;
+using MiniSpace.Web.Areas.Comments;
 using MiniSpace.Web.Areas.MediaFiles;
 using MiniSpace.Web.Areas.Reactions;
+using MiniSpace.Web.Areas.Reports;
 
 
 namespace MiniSpace.Web
@@ -75,6 +77,8 @@ namespace MiniSpace.Web
             services.AddScoped<IFriendsService, FriendsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
             services.AddScoped<IReactionsService, ReactionsService>();
+            services.AddScoped<ICommentsService, CommentsService>();
+            services.AddScoped<IReportsService, ReportsService>();
 
         }
 
@@ -93,11 +97,11 @@ namespace MiniSpace.Web
             }
 
             app.UseAuthentication();  
-            app.UseAuthorization();  
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthorization();  
 
             app.UseEndpoints(endpoints =>
             {

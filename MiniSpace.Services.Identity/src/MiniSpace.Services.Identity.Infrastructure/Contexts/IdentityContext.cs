@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Identity.Application;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Contexts
 {
+    [ExcludeFromCodeCoverage]
     internal class IdentityContext : IIdentityContext
     {
         public Guid Id { get; }

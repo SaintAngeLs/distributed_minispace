@@ -42,8 +42,8 @@
                                 </Template>
                                  <ChildContent>
                                     <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications" Icon="notifications"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Sign out" Click="@(() => SignOut())" Icon="exit_to_app"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications/all" Icon="notifications"></RadzenProfileMenuItem>
+                                    @* <RadzenProfileMenuItem Text="Sign out" Click="@SignOut" Icon="exit_to_app"></RadzenProfileMenuItem> *@
                                 </ChildContent>
                             </RadzenProfileMenu>
                         </div>
@@ -63,7 +63,7 @@
         </RadzenStack>
     </header>
 
-    @if (_isUserAuthenticated )
+    @if (_isUserAuthenticated && _studentState == "valid")
     {
 
         <header class="header-services">
@@ -73,17 +73,17 @@
     }
 
 
-    <div style="display: flex; flex: 1; flex-direction: row;">
+    <div style="display: flex; flex: 1; flex-direction: row;" class="main-content-container">
         @*
             TODO: do not forget about the code snippet chaned ❕❕❕
                     @if (IsUserAuthenticated && StudentsService.StudentDto.State == "valid")
         *@
-        @if (IsUserAuthenticated)
+        @if (_isUserAuthenticated && _studentState == "valid")
         {
-            <RadzenSidebar Responsive="false" style="transition:  0.5s; width: max-content">
+            <RadzenSidebar Responsive="false" style="transition:  0.5s; width: max-content;" Class="mobile-sidebar">
                 <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"  style="transition:  0.5s;">
                     <RadzenPanelMenuItem Text="Home" Icon="home"
-                                         Click="@(() => NavigationManager.NavigateTo(""))" />
+                                         Click="@(() => NavigationManager.NavigateTo("home"))" />
                     
                     <RadzenPanelMenuItem Text="Account" Icon="account_box"
                                          Click="@(() => NavigationManager.NavigateTo("account"))" />
@@ -112,6 +112,8 @@
                         <RadzenPanelMenuItem Text="New" Icon="send" Click="@(() => NavigationManager.NavigateTo("notifications/new"))" />
                         <RadzenPanelMenuItem Text="History" Icon="history" Click="@(() => NavigationManager.NavigateTo("notifications/history"))" />
                     </RadzenPanelMenuItem>
+
+                    <RadzenPanelMenuItem Text="Reports" Icon="assignment_late" Click="@(() => NavigationManager.NavigateTo("reports"))" />
                     
                     @if (IdentityService.GetCurrentUserRole() == "admin")
                     {
@@ -120,6 +122,8 @@
                                                  Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
                             <RadzenPanelMenuItem Text="Organizations" Icon="assignment"
                                                  Click="@(() => NavigationManager.NavigateTo("admin/organizations"))" />
+                            <RadzenPanelMenuItem Text="Reports" Icon="assignment_late"
+                                                 Click="@(() => NavigationManager.NavigateTo("admin/reports"))" />
                         </RadzenPanelMenuItem>
                     }
                 </RadzenPanelMenu>
@@ -136,14 +140,16 @@
                         </div>
 
                         @* <RadzenBody> *@
-                            <div>
+                            <div style="@(_isUserAuthenticated ? "background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.15); padding: 20px; border-radius: 5px; margin: 20px;" : " ")">
                                 @Body
                             </div>
+
+
                         @* </RadzenBody> *@
                     </div>
                 </div>
 
-                @if(_isUserAuthenticated)
+                @if(_isUserAuthenticated && _studentState == "valid")
                 {
                     <div style="width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
                         <NotificationComponent />
@@ -163,13 +169,15 @@
     bool _sidebarExpanded = true;
     bool isLoading = true;
     private bool firstRender = true;
+    
+    private bool _isUserAuthenticated;
     private string _userName;
     private string _userSurname;
-
     private string _userEmail;
-
-    private bool _isUserAuthenticated;
-
+    
+    private Guid _studentId;
+    private string _studentState;
+    
     private string currentRoute;
 
      protected override async Task OnAfterRenderAsync(bool firstRender) {
@@ -181,6 +189,13 @@
                     _userName = userDto.Name;
                     _userEmail = userDto.Email; 
                     @* _userSurname = userDto.LastName; *@
+                    _studentId = userDto.Id;
+                    
+                    var studentDto = await StudentsService.GetStudentAsync(_studentId);
+                    if (studentDto != null)
+                    {
+                        _studentState = studentDto.State;
+                    }
                 }
             }
             StateHasChanged();
@@ -198,8 +213,20 @@
     async Task SignOut()
     {
         @* Console.WriteLine("Signing out..."); *@
+        await localStorage.RemoveItemAsync("reportDto");
+        await localStorage.RemoveItemAsync("searchReportsCriteria");
+        await localStorage.RemoveItemAsync("studentReportDto");
+        await localStorage.RemoveItemAsync("getReportsCriteria");
+        await localStorage.RemoveItemAsync("searchEventsCriteria");
+        await localStorage.RemoveItemAsync("searchOrganizerEventsCriteria");
+        
         await localStorage.RemoveItemAsync("accessToken");
         await localStorage.RemoveItemAsync("jwtDto");
+
+        await localStorage.ClearAsync();
+
+        StateHasChanged();
+
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
 

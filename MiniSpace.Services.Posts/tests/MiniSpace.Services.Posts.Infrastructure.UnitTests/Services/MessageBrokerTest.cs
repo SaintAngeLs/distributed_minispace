@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.UnitTests.Services
             //Arrange
             var events = new List<IEvent>
             {
-                new PostCreated(Guid.NewGuid())
+                new PostCreated(Guid.NewGuid(), default) // TODO: media files
             };
             _mockMessageOutbox.Setup(x => x.Enabled).Returns(false);
 
@@ -73,7 +73,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.UnitTests.Services
             //Arrange
             var events = new List<IEvent>
             {
-                new PostCreated(Guid.NewGuid())
+                new PostCreated(Guid.NewGuid(), default) // TODO: media files
             };
             _mockMessageOutbox.Setup(x => x.Enabled).Returns(true);
 
@@ -119,7 +119,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.UnitTests.Services
             //Arrange
             var events = new List<IEvent>
             {
-                new PostCreated(Guid.NewGuid()),
+                new PostCreated(Guid.NewGuid(), default), // TODO: media files
                 null
             };
             _mockMessageOutbox.Setup(x => x.Enabled).Returns(false);

@@ -13,6 +13,7 @@
 @using MiniSpace.Web.Areas.MediaFiles
 @inject IMediaFilesService MediaFilesService
 @using MudBlazor
+@using Radzen
 
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -22,15 +23,16 @@
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.Create),
-        new BreadcrumbItem("Requests", href: "/friends/requests", icon: Icons.Material.Filled.VideoLibrary),
-        new BreadcrumbItem("Sent Requests", href: "/friends/sent-requests", disabled: true, icon: Icons.Material.Filled.VideoLibrary),
+        new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.PersonSearch),
+        new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.LibraryAddCheck),
+        new BreadcrumbItem("Requests", href: "/friends/requests", icon: Icons.Material.Filled.GroupAdd),
+        new BreadcrumbItem("Sent Requests", href: "/friends/sent-requests", disabled: true, icon: Icons.Material.Filled.PersonAddAlt1),
     };
 }
 
 <h3>Sent Friend Requests</h3>
 
-<div style="display: flex; padding: 50px;">
+<div style="display: flex;">
     <div class="left-panel">
         <div class="search-bar">
             <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search sent requests..." Style="width: 75%;" />
@@ -39,7 +41,12 @@
         <div class="card-container">
             @if (sentRequests == null)
             {
-                <p>Loading...</p>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                               Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                        <Template>Loading...</Template>
+                    </RadzenProgressBarCircular>
+                </div>
             }
             else if (filteredSentRequests.Any())
             {
@@ -48,17 +55,18 @@
                     <div class="friend-card" @onclick="@(() => RedirectToDetails(request.InviteeId))">
                         @if (images.ContainsKey(request.InviteeId))
                         {
-                            <img src="@GetImage(images[request.InviteeId])" alt="Invitee Image" class="friend-img">
+                            <img src="@GetImage(request.InviteeId)" alt="Invitee Image" class="friend-img">
                         }
                         <div class="friend-info">
-                            <h5>@request.InviteeName</h5>
-                            <p>Email: @request.InviteeEmail</p>
-                            <p>Requested On: @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
-                            <p>Status: @request.State</p>
-                             
+                            <h5><RadzenIcon Icon="user" Style="color: #30445f;"/> @request.InviteeName</h5>
+                            <p><RadzenIcon Icon="email" Style="color: #30445f;"/> @request.InviteeEmail</p>
+                            <p><RadzenIcon Icon="event" Style="color: #30445f;"/> @request.RequestedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                            <p><RadzenIcon Icon="info" Style="color: #30445f;"/> @request.State</p>
+
                         </div>
+                         <RadzenButton Text="Withdraw" Click="@(() => WithdrawRequest(request.InviteeId))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
                     </div>
-                    <RadzenButton Text="Withdraw" Click="@(() => WithdrawRequest(request.InviteeId))" ButtonStyle="Radzen.ButtonStyle.Danger" Icon="cancel" />
+                   
                 }
             }
             else
@@ -144,7 +152,22 @@
 
     .friend-info {
         flex: 1;
+        display: flex;
+        flex-direction: column; /* Aligns content vertically */
     }
+
+    .friend-info h5, .friend-info p {
+        display: flex;
+        align-items: center; /* Aligns items horizontally in a line */
+        margin: 0; /* Removes default margin */
+        margin-left: 20px !important;
+        padding: 2px 0; /* Adds slight padding */
+    }
+
+    .friend-info h5 RadzenIcon, .friend-info p RadzenIcon {
+        margin-right: 15px; /* Right margin for spacing between icon and text */
+    }
+
 
     .search-bar input:focus {
         outline: none;
@@ -196,31 +219,40 @@
 
     protected override async Task OnInitializedAsync()
     {
-        sentRequests = await FriendsService.GetSentFriendRequestsAsync();
-        
-        var inviteeIds = sentRequests.Select(r => r.InviteeId).Distinct();
-        var studentTasks = inviteeIds.Select(id => FriendsService.GetStudentAsync(id));
+        await IdentityService.InitializeAuthenticationState();
 
-        students = (await Task.WhenAll(studentTasks)).ToList();
+        if (IdentityService.IsAuthenticated)
+        { 
+            sentRequests = await FriendsService.GetSentFriendRequestsAsync();
+            
+            var inviteeIds = sentRequests.Select(r => r.InviteeId).Distinct();
+            var studentTasks = inviteeIds.Select(id => FriendsService.GetStudentAsync(id));
 
-        var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
-        await Task.WhenAll(imageTasks);
+            students = (await Task.WhenAll(studentTasks)).ToList();
 
-        foreach (var request in sentRequests)
-        {
-            var student = students.FirstOrDefault(s => s.Id == request.InviteeId);
-            if (student != null)
+            var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
+            await Task.WhenAll(imageTasks);
+
+            foreach (var request in sentRequests)
             {
-                request.InviteeName = $"{student.FirstName} {student.LastName}";
-                request.InviteeEmail = student.Email;
-                if (images.ContainsKey(student.Id))
+                var student = students.FirstOrDefault(s => s.Id == request.InviteeId);
+                if (student != null)
                 {
-                    request.InviteeImage = images[student.Id];
+                    request.InviteeName = $"{student.FirstName} {student.LastName}";
+                    request.InviteeEmail = student.Email;
+                    if (images.ContainsKey(student.Id))
+                    {
+                        request.InviteeImage = images[student.Id];
+                    }
                 }
             }
-        }
 
-        filteredSentRequests = sentRequests;
+            filteredSentRequests = sentRequests;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
     }
 
     private async Task FetchImageAsync(Guid inviteeId, Guid profileImage)
@@ -229,16 +261,14 @@
         images[inviteeId] = result.Base64Content;
     }
 
-    private string GetImage(string base64Image)
+    private string GetImage(Guid studentId)
     {
-        if (string.IsNullOrWhiteSpace(base64Image))
+        if (images.TryGetValue(studentId, out var image))
         {
-            return "images/user_image.png";
+            return $"data:image/webp;base64,{image}";
         }
-        else
-        {
-            return $"data:image/jpeg;base64,{base64Image}";
-        }
+
+        return "images/default_profile_image.webp";
     }
 
     private void SearchSentRequests()

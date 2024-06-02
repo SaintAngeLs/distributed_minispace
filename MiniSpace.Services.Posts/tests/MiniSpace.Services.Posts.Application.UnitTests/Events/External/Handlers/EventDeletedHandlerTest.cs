@@ -36,6 +36,23 @@ namespace MiniSpace.Services.Posts.Application.UnitTests.Events.External.Handler
         }
 
         [Fact]
+        public async Task HandleAsync_ValidData_ShouldNotThrowExeption()
+        {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var organizerId = Guid.NewGuid();
+            var @event = new EventDeleted(eventId);
+
+            _eventRepositoryMock.Setup(repo => repo.ExistsAsync(eventId))
+                .ReturnsAsync(true);
+
+            // Act & Assert
+            Func<Task> act = async () => await _eventDeletedHandler.HandleAsync(@event);
+            await act.Should().NotThrowAsync();
+            
+        }
+
+        [Fact]
         public async Task HandleAsync_NullEvent_ShouldThrowEventNotFoundException()
         {
             // Arrange

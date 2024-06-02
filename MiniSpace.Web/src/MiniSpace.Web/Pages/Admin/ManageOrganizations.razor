@@ -17,25 +17,38 @@
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light"
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 else
 {
-    <h4 class="rz-p-8">To manage organizers in an organization, select it and open details dialog.</h4>
+    <h4 class="rz-p-8">Max depth of organization tree - 10 levels (with root included).
+        Please to note this fact during formation of new organizations. </h4>
     
-    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween"
+                 Style="height: 100%;">
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Add root organization"
+                          class="rz-border-radius-1" Icon="note_add"
                           Click="@(() => OpenAddOrganizationDialog(selectedItem as OrganizationModel, true))" />
             <RadzenButton Size="ButtonSize.Medium" Text="Add child organization" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="note_add"
                           Click="@(() => OpenAddOrganizationDialog(selectedItem as OrganizationModel, false))" />
+            <RadzenButton Size="ButtonSize.Medium" Text="Delete organization" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="delete_forever" ButtonStyle="ButtonStyle.Warning"
+                          Click="@(() => OpenDeleteOrganizationDialog(selectedItem as OrganizationModel))" />
         </RadzenStack>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
             <RadzenButton Size="ButtonSize.Medium" Text="Clear selection" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="close"
                           Click="@(() => selectedItem = null)" />
-            <RadzenButton Size="ButtonSize.Medium" Text="Show organization details" Disabled="@(selectedItem == null)"
+            <RadzenButton Size="ButtonSize.Medium" Text="Manage organizers" Disabled="@(selectedItem == null)"
+                          class="rz-border-radius-1" Icon="build" ButtonStyle="ButtonStyle.Secondary"
                           Click="@(() => OpenOrganizationDetailsDialog(selectedItem as OrganizationModel, organizers))" />
-           
         </RadzenStack>
     </RadzenStack>
     
@@ -46,10 +59,15 @@ else
         }
         
         <RadzenTree Data="@rootOrganizations" Expand="@OnExpand" @bind-Value=@selectedItem>
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
-            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
+            <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children" Expanded="@(data => ((OrganizationModel)data).Expanded)" />
             <RadzenTreeLevel TextProperty="Name" HasChildren=@(org => false)/>
         </RadzenTree>
 
@@ -70,7 +88,7 @@ else
         if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
             var tmpOrganizations = await OrganizationsService.GetRootOrganizationsAsync();
-            ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations, null);
+            ConvertOrganizationDtoList(tmpOrganizations, rootOrganizations, null, null);
             totalRootOrganizations = rootOrganizations.Count;
         }
         
@@ -89,11 +107,12 @@ else
     {
         var parent = (OrganizationModel)args.Value;
         var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(parent.Id, parent.RootId);
-        ConvertOrganizationDtoList(childOrganizations, parent.Children, parent.RootId);
+        ConvertOrganizationDtoList(childOrganizations, parent.Children, parent.RootId, parent);
         StateHasChanged();
     }
 
-    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result, Guid? rootId)
+    private static void ConvertOrganizationDtoList(IEnumerable<OrganizationDto> input, IList<OrganizationModel> result,
+        Guid? rootId, OrganizationModel parent)
     {
         result.Clear();
         foreach (var organization in input)
@@ -103,6 +122,7 @@ else
                 Id = organization.Id,
                 Name = organization.Name,
                 RootId = rootId ?? organization.Id,
+                Parent = parent,
                 Children = new List<OrganizationModel>()
             });
         }
@@ -129,7 +149,8 @@ else
         else if (selectedItem is OrganizationModel selectedOrg)
         {
             var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(selectedOrg.Id, selectedOrg.RootId);
-            ConvertOrganizationDtoList(childOrganizations, selectedOrg.Children, selectedOrg.RootId);
+            ConvertOrganizationDtoList(childOrganizations, selectedOrg.Children, selectedOrg.RootId, selectedOrg.Parent);
+            selectedOrg.Expanded = true;
             StateHasChanged();
         }
     }
@@ -144,8 +165,31 @@ else
             },
             new DialogOptions()
             {
-                Width = "700px", Height = "600px", Resizable = true, Draggable = true,
+                Width = "700px", Height = "650px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+    
+    private async Task OpenDeleteOrganizationDialog(OrganizationModel organization)
+    {
+        await DialogService.OpenAsync<DeleteOrganizationDialog>("Are you sure? This action cannot be undone!",
+            new Dictionary<string, object>() { { "Organization", organization } },
+            new DialogOptions()
+            {
+                Width = "500px", Height = "100px", Resizable = false, Draggable = false,
+                AutoFocusFirstElement = false
+            });
+        if (organization.Parent == null)
+        {
+            await OnInitializedAsync();
+        }
+        else
+        {
+            var childOrganizations = await OrganizationsService.GetChildrenOrganizationsAsync(organization.Parent.Id,
+                organization.Parent.RootId);
+            ConvertOrganizationDtoList(childOrganizations, organization.Parent.Children, organization.Parent.RootId,
+                organization.Parent.Parent);
+            StateHasChanged();
+        }
     }
 }

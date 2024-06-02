@@ -14,11 +14,29 @@
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
-<h1>Follow events</h1>
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Follow events", href: "/events/follow", disabled: true, icon: Icons.Material.Filled.EventAvailable),
+    };
+}
+
+
+<h1 class="rz-p-8 search-font">Follow events</h1>
 
 @if (!pageInitialized)
 {
-    <h3 class="rz-p-12">Loading...</h3>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
 
 @if (pageInitialized && studentId != Guid.Empty)
@@ -39,11 +57,13 @@
                                            ShowLastButton="true"/>
                         </RadzenStack>
                         
-                        <RadzenDataList AllowPaging="false" Data="@signedUpEvents" TItem="EventDto">
-                            <Template Context="ev">
-                                <RadzenEventCard Event="ev" />
-                            </Template>
-                        </RadzenDataList>
+                        <div>
+                            <RadzenDataList AllowPaging="false" Data="@signedUpEvents" TItem="EventDto">
+                                <Template Context="ev">
+                                    <RadzenEventCard Event="ev" />
+                                </Template>
+                            </RadzenDataList>
+                        </div>
 
                         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
                             <MudPagination Count="@signedUpTotalPages" SelectedChanged="@SignedUpSelectedPageChanged"
@@ -68,7 +88,9 @@
 
                         <RadzenDataList AllowPaging="false" Data="@interestedInEvents" TItem="EventDto">
                             <Template Context="ev">
-                                <RadzenEventCard Event="ev" />
+                                <div @onclick="() => RedirectToEventDetails(ev.Id)">
+                                    <RadzenEventCard Event="ev" />
+                                </div>
                             </Template>
                         </RadzenDataList>
 
@@ -83,6 +105,14 @@
         </RadzenTabs>
     </RadzenStack>
 }
+
+<style>
+    .search-font {
+        font-family: Arial, sans-serif; /* Change this to your preferred font */
+        font-size: 40px; /* Change this to your preferred font size */
+        font-weight: bold; /* Change this to your preferred font weight */
+    }
+</style>
 
 @code {
     private Guid studentId;
@@ -188,5 +218,10 @@
             interestedInPageNumber, interestedInPageSize);
         interestedInEvents = tmp.Content;
         StateHasChanged();
+    }
+
+     private void RedirectToEventDetails(Guid eventId)
+    {
+        NavigationManager.NavigateTo($"/events/{eventId}");
     }
 }

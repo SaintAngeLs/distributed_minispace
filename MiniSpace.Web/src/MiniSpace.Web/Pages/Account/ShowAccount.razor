@@ -1,54 +1,79 @@
 @page "/account"
+@using System.Globalization
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
 @using System.IO
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.DTO.Types
+@using MiniSpace.Web.Shared
 @using Radzen
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
+@using MudBlazor
 
-<h1>Your account</h1>
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+    };
+}
+
+<h2 class="rz-p-8 account-font">Your account</h2>
 
 @if (studentDto.Id != Guid.Empty)
 {
-    <RadzenStack Gap="1rem">
-        <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-10">
-            <RadzenImage Path="@($"data:image/webp;base64,{profileImage}")"
-                         AlternateText="base64 image"
-                         Style="width: 20em" class="rz-border-radius-10"/>
-        </RadzenStack>
+    <RadzenStack Gap="2rem">
+        @if (studentDto.State == "valid")
+        {
+            <RadzenStack AlignItems="Radzen.AlignItems.Center" Class="rz-mx-auto rz-my-10">
+                <RadzenImage Path="@(GetImage())" AlternateText="base64 image"
+                             Style="width: 20em" class="rz-border-radius-10"/>
+            </RadzenStack>
+        }
         
-        <RadzenLabelWithTextBoxes Id="fullname" LabelText="Fullname:" Value1="@studentDto.FirstName"
-                                  Value2="@studentDto.LastName" Disabled="true"/>
+        <RadzenLabels Id="fullname" LabelText="Fullname:" Value="@studentDto.FullName"/>
+        <RadzenLabels Id="email" LabelText="Email:" Value="@studentDto.Email"/>
+        
+        @if (studentDto.State == "valid")
+        {
+            @if (editionDisabled)
+            {
+                <RadzenLabels Id="description" LabelText="Description:"
+                                        @bind-Value="@studentDto.Description"/>
+            }
+            else
+            {
+                <RadzenLabelWithTextBox Id="description" LabelText="Description:"
+                                        @bind-Value="@studentDto.Description" Disabled=@editionDisabled/>   
+            }
 
-        <RadzenLabelWithTextBox Id="email" LabelText="Email:"
-                                Value="@studentDto.Email" Disabled="true"/>
+            <RadzenLabels Id="state" LabelText="State:" Value="@studentDto.State"/>
 
-        <RadzenLabelWithTextBox Id="description" LabelText="Description:"
-                                @bind-Value="@studentDto.Description" Disabled=@editionDisabled/>
-
-        <RadzenLabelWithTextBox Id="state" LabelText="State:"
-                                Value="@studentDto.State" Disabled="true"/>
-
-        <RadzenLabelWithNumeric Id="number-of-friends" LabelText="Number of friends:"
-                                Value="@studentDto.NumberOfFriends" Disabled="true"/>
-
-        <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:"
-                                   Value="@studentDto.DateOfBirth.ToLocalTime()" Disabled="true"/>
-
-        <RadzenLabelWithDatePicker Id="created-at" LabelText="Created at:"
-                                   Value="@studentDto.CreatedAt.ToLocalTime()" Disabled="true"/>
-
-        <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
-                                 @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
-
+            <RadzenLabels Id="date-of-birth" LabelText="Date of birth:"
+                          Value="@studentDto.DateOfBirth.ToLocalTime().ToString(shortDateFormat)"/>
+            
+            <RadzenLabels Id="created-at" LabelText="Created:"
+                          Value="@studentDto.CreatedAt.ToLocalTime().ToString(dateFormat)"/>
+            
+            <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
+                                     @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
+        }
+        
         @if (studentDto.State == "incomplete")
         {
-            <RadzenRow AlignItems="AlignItems.Center">
+            <p class="rz-p-4" style="color: darkblue">
+                <b>Completing registration is necessary, go ahead by clicking the button below.</b>
+            </p>
+
+            <RadzenRow AlignItems="Radzen.AlignItems.Center">
                 <RadzenColumn Size="12" SizeMD="12">
                     <RadzenButton Size="ButtonSize.Large" Text="Complete registration"
                                   Click="@(() => NavigationManager.NavigateTo("/signup/complete"))"/>
@@ -59,16 +84,16 @@
         {
             if (editionDisabled)
             {
-                <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenRow AlignItems="Radzen.AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenButton Size="ButtonSize.Large" Text="Update account"
+                        <RadzenButton Size="ButtonSize.Large" Text="Update account" class="separate-button"
                                       Click=@EnableEdition/>
                     </RadzenColumn> 
                 </RadzenRow>
             }
             else
             {
-                <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenRow AlignItems="Radzen.AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="5">
                         <RadzenLabel Text="Update profile image:" Component="profile-image" />
                         <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100" Name="profile-image"
@@ -84,7 +109,7 @@
                         }
                     </RadzenColumn>
                     <RadzenColumn Size="12" SizeMD="5">
-                        <RadzenButton Size="ButtonSize.Large" Text="Save account"
+                        <RadzenButton Size="ButtonSize.Large" Text="Save account" class="separate-button"
                                       Click=@HandleUpdateStudent/>
                     </RadzenColumn>
                 </RadzenRow>
@@ -94,8 +119,35 @@
 }
 else
 {
-    <p>Loading...</p>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
 }
+
+<style>
+    .account-font {
+                font-family: Arial, sans-serif; /* Change this to your preferred font */
+                font-size: 40px; /* Change this to your preferred font size */
+                font-weight: bold; /* Change this to your preferred font weight */
+    }
+    
+    .separate-button {
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+    
+    .separate-button:hover {
+        background-color: #30445f; 
+        color: #000; 
+    }
+</style>
 
 @code {
     private StudentDto studentDto = new();
@@ -103,6 +155,9 @@ else
     private string profileImage = string.Empty;
     private TaskCompletionSource<bool> clientChangeCompletionSource;
     private bool isUploading = false;
+    
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    private const string shortDateFormat = "dd/MM/yyyy";
     
     protected override async Task OnInitializedAsync()
     {
@@ -134,7 +189,17 @@ else
         editionDisabled = true;
         await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImage,
             studentDto.Description, studentDto.EmailNotifications);
-        StateHasChanged();
+        await OnInitializedAsync();
+    }
+    
+    private string GetImage()
+    {
+        if (profileImage != string.Empty)
+        {
+            return $"data:image/webp;base64,{profileImage}";
+        }
+
+        return "images/default_profile_image.webp";
     }
     
     async void OnClientChange(UploadChangeEventArgs args)

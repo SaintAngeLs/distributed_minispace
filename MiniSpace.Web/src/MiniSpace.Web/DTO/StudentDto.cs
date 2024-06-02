@@ -9,6 +9,7 @@ namespace MiniSpace.Web.DTO
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string FullName => $"{FirstName} {LastName}";
         public int NumberOfFriends { get; set; }
         public Guid ProfileImage { get; set; }
         public string Description { get; set; }
@@ -22,5 +23,6 @@ namespace MiniSpace.Web.DTO
         public IEnumerable<Guid> SignedUpEvents { get; set; }
         public bool IsInvitationPending { get; set; } 
         public bool InvitationSent { get; set; }
+        public bool Selected { get; set; }
     }    
 }
