@@ -21,17 +21,20 @@
 
     @foreach (var friend in friends)
     {
-        <RadzenCard Class="rz-my-3 rz-mx-auto" Style="max-width: 420px">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
-                <RadzenImage Path=@GetImage(friend.FriendId) Style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;" />
-                <RadzenStack Gap="0">
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Friend</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@($"{friend.StudentDetails?.FirstName} {friend.StudentDetails?.LastName}")</b></RadzenText>
-                    <RadzenCheckBox Value="@IsFriendSelected(friend.FriendId)" 
-                        Change="@((bool value) => SetFriendSelected(friend.FriendId, value))" />
+        @if (friend.StudentDetails != null)
+        {
+            <RadzenCard Class="rz-my-3 rz-mx-auto" Style="max-width: 420px">
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+                    <RadzenImage Path=@GetImage(friend.FriendId) Style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;" />
+                    <RadzenStack Gap="0">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Friend</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@($"{friend.StudentDetails?.FirstName} {friend.StudentDetails?.LastName}")</b></RadzenText>
+                        <RadzenCheckBox Value="@IsFriendSelected(friend.FriendId)" 
+                                        Change="@((bool value) => SetFriendSelected(friend.FriendId, value))" />
+                    </RadzenStack>
                 </RadzenStack>
-            </RadzenStack>
-        </RadzenCard>
+            </RadzenCard>   
+        }
     }
 </div>
 
