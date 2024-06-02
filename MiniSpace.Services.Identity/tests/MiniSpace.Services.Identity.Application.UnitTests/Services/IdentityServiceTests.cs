@@ -28,6 +28,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
         private readonly Mock<IMessageBroker> _mockMessageBroker;
         private readonly Mock<IRefreshTokenService> _mockRefreshTokenService;
         private readonly Mock<ILogger<IdentityService>> _mockLogger;
+        private readonly Mock<IUserResetTokenRepository> _mockUserResetTokenRepository;
         public IdentityServiceTests() 
         {
             _mockUserRepository = new Mock<IUserRepository>();
@@ -36,6 +37,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
             _mockMessageBroker = new Mock<IMessageBroker>();
             _mockRefreshTokenService = new Mock<IRefreshTokenService>();
             _mockLogger = new Mock<ILogger<IdentityService>>();
+            _mockUserResetTokenRepository = new Mock<IUserResetTokenRepository>();
 
             _identityService = new IdentityService(
                 _mockUserRepository.Object,
@@ -43,6 +45,7 @@ namespace MiniSpace.Services.Identity.Application.UnitTests.Services
                 _mockJwtProvider.Object,
                 _mockRefreshTokenService.Object,
                 _mockMessageBroker.Object,
+                _mockUserResetTokenRepository.Object,
                 _mockLogger.Object);
         }
 
