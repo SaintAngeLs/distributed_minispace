@@ -59,7 +59,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 eventType: NotificationEventType.ReportDeleted
             );
             notifications.AddNotification(notification);
-            await _studentNotificationsRepository.UpdateAsync(notifications);
+            await _studentNotificationsRepository.AddOrUpdateAsync(notifications);
             return notification;
         }
 

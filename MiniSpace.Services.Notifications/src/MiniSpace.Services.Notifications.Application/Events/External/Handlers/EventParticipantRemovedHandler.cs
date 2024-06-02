@@ -57,7 +57,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             participantNotifications.AddNotification(notification);
-            await _studentNotificationsRepository.UpdateAsync(participantNotifications);
+            await _studentNotificationsRepository.AddOrUpdateAsync(participantNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
                 notificationId: Guid.NewGuid(),
