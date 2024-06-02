@@ -84,7 +84,7 @@ Contributions are what make the open-source community such an amazing place to l
 Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
 
 ## License
-Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE](./LICENCE) for more information.
 
 ## Contact
 - Project Link: [https://github.com/SaintAngeLs/distributed_minispace](https://github.com/SaintAngeLs/distributed_minispace)
