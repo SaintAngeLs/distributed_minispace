@@ -23,6 +23,20 @@
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Search events", href: "/events/search", disabled: true, icon: Icons.Material.Filled.Event),
+    };
+}
+
+
 <h1 class="rz-p-8 search-font">Search events</h1>
 
 <RadzenStack Gap="1rem" class="rz-py-5 rz-mx-auto" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Style="max-width: 1080px">

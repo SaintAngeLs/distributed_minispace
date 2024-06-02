@@ -12,6 +12,19 @@
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
+@using MudBlazor
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Follow events", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+    };
+}
 
 <h2 class="rz-p-8 account-font">Your account</h2>
 
