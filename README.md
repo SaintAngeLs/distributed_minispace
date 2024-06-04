@@ -39,7 +39,7 @@ MiniSpace is a multifaceted application designed to enhance student life by prov
 
 ## Frontend
 - **Framework**: [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - single-page web application framework being a part of the .NET ecosystem
-- **Components**: [Radzen](https://blazor.radzen.com/) and [MudBlazor](https://mudblazor.com/) - used to enhance aesthetics and reponsiveness at pages of our application
+- **Components**: [Radzen](https://blazor.radzen.com/) and [MudBlazor](https://mudblazor.com/) - used to enhance aesthetics and reponsiveness of web application
 
 ## Backend
 - **Framework**: Backend services are built using [Convey](https://github.com/snatch-dev/Convey), a set of libraries optimized for building .NET microservices.
