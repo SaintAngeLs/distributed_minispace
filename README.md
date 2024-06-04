@@ -38,40 +38,38 @@ MiniSpace is a multifaceted application designed to enhance student life by prov
 - **Administration**: Handling user reports, system updates, and data analysis for continuous improvement.
 
 ## Frontend
-- [ ] Created with [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - single-page web application framework being a part of the .NET ecosystem
-- [ ] Written in C#, can run in the browser by using [Blazor Server](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
-
+- **Framework**: [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - single-page web application framework being a part of the .NET ecosystem
+- **Components**: [Radzen](https://blazor.radzen.com/) and [MudBlazor](https://mudblazor.com/) - used to enhance aesthetics and reponsiveness at pages of our application
 
 ## Backend
 - **Framework**: Backend services are built using [Convey](https://github.com/snatch-dev/Convey), a set of libraries optimized for building .NET microservices.
 - **Architecture**: Implements a microservice architecture with an emphasis on the CQRS pattern, separating read operations from update operations to enhance performance and scalability.
 - **Services**:
   - Identity Service
-  - User Service
-  - Event Service
-  - Reports Service
-  - Notifications Service
-  - Friend Service
-  - Post Service
-  - Organizer Service
-  - Media Files Service
+  - Students Service
+  - Events Service
+  - Posts Service
+  - Friends Service
   - Comments Service
   - Reactions Service
-  - Students Service
   - Organizations Service
+  - MediaFiles Service
+  - Reports Service
+  - Notifications Service
+  - Email Service
 - **API Gateway**: Utilizes [Ntrada](https://github.com/snatch-dev/Ntrada) for routing and managing requests across multiple services through a single entry point.
 
 
 ## Infrastructure
-- [ ] [MongoDB](https://www.mongodb.com/products/platform/cloud) - document-oriented database
-- [ ] [Consul](https://www.consul.io) - microservices discovery
-- [ ] [RabbitMQ](https://www.rabbitmq.com) - message broker
-- [ ] [Fabio](https://github.com/fabiolb/fabio) - load balancing
-- [ ] [Jaeger](https://www.jaegertracing.io) - distributed tracing
-- [ ] [Grafana](https://grafana.com) - metrics extension
-- [ ] [Prometheus](https://prometheus.io) - metrics extension
-- [ ] [Seq](https://datalust.co/seq) - logging extension
-- [ ] [Vault](https://www.vaultproject.io) - secrets extension
+- [**MongoDB**](https://www.mongodb.com/products/platform/cloud) - document-oriented database
+- [**Consul**](https://www.consul.io) - microservices discovery
+- [**RabbitMQ**](https://www.rabbitmq.com) - message broker
+- [**Fabio**](https://github.com/fabiolb/fabio) - load balancing
+- [**Jaeger**](https://www.jaegertracing.io) - distributed tracing
+- [**Grafana**](https://grafana.com) - metrics extension
+- [**Prometheus**](https://prometheus.io) - metrics extension
+- [**Seq**](https://datalust.co/seq) - logging extension
+- [**Vault**](https://www.vaultproject.io) - secrets extension
 
 
 ## Code Coverage
@@ -84,7 +82,7 @@ Contributions are what make the open-source community such an amazing place to l
 Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
 
 ## License
-Distributed under the MIT License. See [LICENSE](./LICENCE) for more information.
+Distributed under the Apache License. See [LICENSE](./LICENCE) for more information.
 
 ## Contact
 - Project Link: [https://github.com/SaintAngeLs/distributed_minispace](https://github.com/SaintAngeLs/distributed_minispace)
