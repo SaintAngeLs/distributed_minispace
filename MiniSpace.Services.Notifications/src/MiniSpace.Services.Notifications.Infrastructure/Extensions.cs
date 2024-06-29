@@ -42,6 +42,7 @@ using MiniSpace.Services.Notifications.Infrastructure.Services;
 using MiniSpace.Services.Notifications.Infrastructure;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
+using MiniSpace.Services.Notifications.Infrastructure.Managers;
 
 namespace MiniSpace.Services.Notifications.Infrastructure
 {
@@ -93,6 +94,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddMongoRepository<StudentNotificationsDocument, Guid>("students-notifications")
                 // .AddMongoRepository<FriendEventDocument, Guid>("events-service")
+                .AddSignalRInfrastructure() 
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -141,6 +143,15 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 
             return app;
         }
+
+        public static IConveyBuilder AddSignalRInfrastructure(this IConveyBuilder builder)
+        {
+            // Register a singleton for managing SignalR connections if needed
+            builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
+
+            return builder;
+        }
+
 
         internal static CorrelationContext GetCorrelationContext(this IHttpContextAccessor accessor)
             => accessor.HttpContext?.Request.Headers.TryGetValue("Correlation-Context", out var json) is true
