@@ -43,6 +43,7 @@ using MiniSpace.Services.Notifications.Infrastructure;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
 using MiniSpace.Services.Notifications.Infrastructure.Managers;
+using MiniSpace.Services.Notifications.Infrastructure.Hubs;
 
 namespace MiniSpace.Services.Notifications.Infrastructure
 {
@@ -52,6 +53,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
         {
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
             builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
             builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
             builder.Services.AddTransient<IStudentNotificationsRepository, StudentNotificationsMongoRepository>();
@@ -140,7 +142,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<ReportResolved>()
                 .SubscribeEvent<ReportRejected>()
                 .SubscribeEvent<ReportCancelled>();
-                
             return app;
         }
 
