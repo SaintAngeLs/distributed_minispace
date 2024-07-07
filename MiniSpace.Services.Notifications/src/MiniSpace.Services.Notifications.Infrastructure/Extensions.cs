@@ -147,7 +147,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure
 
         public static IConveyBuilder AddSignalRInfrastructure(this IConveyBuilder builder)
         {
-            // Register a singleton for managing SignalR connections if needed
             builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
 
             return builder;
