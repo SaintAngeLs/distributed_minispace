@@ -14,6 +14,7 @@ using MiniSpace.Services.Notifications.Application.Commands;
 using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Queries;
 using MiniSpace.Services.Notifications.Infrastructure;
+using MiniSpace.Services.Notifications.Infrastructure.Hubs;
 
 namespace MiniSpace.Services.Notifications.Api
 {
@@ -29,6 +30,10 @@ namespace MiniSpace.Services.Notifications.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
+                    .UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapHub<NotificationHub>("/notificationHub");
+                    })
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetNotificationsByUser, Application.Queries.PagedResult<NotificationDto>>("notifications/{userId}")
