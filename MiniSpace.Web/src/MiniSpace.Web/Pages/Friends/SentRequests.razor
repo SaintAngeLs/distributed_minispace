@@ -256,57 +256,51 @@
     }
 
     private async Task FetchImageAsync(Guid inviteeId, Guid profileImage)
-{
-    if (profileImage == Guid.Empty)
     {
-        // Assign the default image directly if the profileImage GUID is empty.
-        images[inviteeId] = "images/default_profile_image.webp";
-        return;
-    }
-
-    try
-    {
-        var result = await MediaFilesService.GetFileAsync(profileImage);
-        if (result != null && !string.IsNullOrWhiteSpace(result.Base64Content))
+        if (profileImage == Guid.Empty)
         {
-            images[inviteeId] = result.Base64Content;
+            images[inviteeId] = "images/default_profile_image.webp";
+            return;
         }
-        else
+
+        try
         {
-            // Assign a default image if the fetch operation fails or returns an empty result.
+            var result = await MediaFilesService.GetFileAsync(profileImage);
+            if (result != null && !string.IsNullOrWhiteSpace(result.Base64Content))
+            {
+                images[inviteeId] = result.Base64Content;
+            }
+            else
+            {
+                images[inviteeId] = "images/default_profile_image.webp";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to fetch image for {inviteeId}: {ex.Message}");
             images[inviteeId] = "images/default_profile_image.webp";
         }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to fetch image for {inviteeId}: {ex.Message}");
-        // Assign a default image in case of exceptions.
-        images[inviteeId] = "images/default_profile_image.webp";
-    }
-}
 
 
 
 
     private string GetImage(Guid studentId)
-{
-    if (images.TryGetValue(studentId, out var image))
     {
-        // Check if it's a base64 string or a direct URL
-        if (image.StartsWith("data:image"))
+        if (images.TryGetValue(studentId, out var image))
         {
-            return image;  // It's already a base64 encoded image
+            if (image.StartsWith("data:image"))
+            {
+                return image;  
+            }
+            else
+            {
+                return image;  
+            }
         }
-        else
-        {
-            // It's a URL to an image, not a base64 string
-            return image;  // Return the URL directly
-        }
-    }
 
-    // Return default image URL directly without base64 prefix
-    return "images/default_profile_image.webp";
-}
+        return "images/default_profile_image.webp";
+    }
 
 
     private void SearchSentRequests()
