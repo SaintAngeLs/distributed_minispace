@@ -6,6 +6,8 @@ using Convey.Types;
 using Convey.WebApi;
 using Convey.WebApi.CQRS;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +24,17 @@ namespace MiniSpace.Services.Notifications.Api
     {
         public static async Task Main(string[] args)
             => await WebHost.CreateDefaultBuilder(args)
-                .ConfigureServices(services => services
-                    .AddConvey()
-                    .AddWebApi()
-                    .AddApplication()
-                    .AddInfrastructure()
-                    .Build())
+                .ConfigureServices(services =>
+                {
+                    services.AddConvey()
+                            .AddWebApi()
+                            .AddApplication()
+                            .AddInfrastructure();
+                    services.AddSignalR(); 
+                })
                 .Configure(app => app
                     .UseInfrastructure()
+                    .UseRouting()
                     .UseEndpoints(endpoints =>
                     {
                         endpoints.MapHub<NotificationHub>("/notificationHub");
