@@ -154,7 +154,7 @@ namespace MiniSpace.Web.Areas.Identity
                         catch (Exception ex)
                         {
                             await _localStorage.RemoveItemAsync("jwtDto");
-                            
+
                             _navigationManager.NavigateTo("signin", forceLoad: true);
 
                             throw new InvalidOperationException("Failed to refresh token: " + ex.Message);
@@ -171,6 +171,7 @@ namespace MiniSpace.Web.Areas.Identity
 
             throw new InvalidOperationException("Authentication required.");
         }
+
 
         public async Task InitializeAuthenticationState()
         {

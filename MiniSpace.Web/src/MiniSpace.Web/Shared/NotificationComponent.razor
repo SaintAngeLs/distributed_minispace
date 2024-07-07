@@ -1,11 +1,11 @@
+@page "/notifications"
 @using MiniSpace.Web.Areas.Notifications
+@using MiniSpace.Web.DTO.Notifications
 @inject INotificationsService NotificationsService
 @inject IIdentityService IdentityService
-@using MiniSpace.Web.DTO.Notifications
-@using System.Globalization
-@using System.Threading
-@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@using System.Globalization
+@inject IJSRuntime JSRuntime
 
 <div style="background-color: #fff; color: white; padding: 10px; border-radius: 5px;">
     <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
@@ -23,7 +23,6 @@
                          @RenderHtml(TruncateMessage(notification.Message))
                     </span>
                     <span style="display: block; font-size: 0.8em; color: #666;">
-                        @* @ToLocalTime(notification.CreatedAt, timezoneOffset).ToString("g") *@
                         @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
                     </span>
                 </li>
@@ -38,54 +37,41 @@
 </div>
 
 @code {
-    private List<NotificationDto> previousNotifications = new List<NotificationDto>();
-    private List<NotificationDto> notifications;
-    private Timer timer;
-    private DateTime lastCheckedTime = DateTime.MinValue;
-    private int timezoneOffset;
+    private List<NotificationDto> notifications = new List<NotificationDto>();
+    private SignalRService SignalRService;
+    private Guid userId;
 
     protected override async Task OnInitializedAsync()
     {
+        userId = IdentityService.GetCurrentUserId();
+        SignalRService = new SignalRService(NavigationManager, IdentityService);
+
         await LoadNotifications();
-        var timezoneOffset = await JSRuntime.InvokeAsync<int>("getUserTimezoneOffset");
-        // Setup a timer to refresh notifications every 15 seconds
-        timer = new Timer(new TimerCallback(_ => InvokeAsync(LoadNotifications)), null, 0, 15000);
+
+        SignalRService.OnNotificationReceived(notification =>
+        {
+            if (notification.UserId == userId)
+            {
+                notifications.Add(notification);
+                InvokeAsync(StateHasChanged); // Ensure the UI updates
+                PlayNotificationSound();
+            }
+        });
+
+        await SignalRService.StartAsync();
     }
+
 
     private async Task LoadNotifications()
     {
         try
         {
-            var userId = IdentityService.GetCurrentUserId(); 
-            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, status: "Unread");
-            var latestNotifications = paginatedResponse.Results;
-
-             if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
-            {
-                PlayNotificationSound();
-                await JSRuntime.InvokeVoidAsync("updateTitle", "New Notification - MiniSpace | Social");
-                lastCheckedTime = DateTime.Now; 
-            }
-
-            notifications = latestNotifications;
-            StateHasChanged();
+            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, pageSize: 10, sortOrder: "desc", status: "Unread");
+            notifications = paginatedResponse.Results;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading notifications: {ex.Message}");
-        }
-    }
-
-
-    private bool isNewNotificationReceived()
-    {
-        if (previousNotifications == null || !previousNotifications.Any())
-        {
-            return notifications.Any();
-        }
-        else
-        {
-            return notifications.Any(n => !previousNotifications.Any(p => p.NotificationId == n.NotificationId));
         }
     }
 
@@ -104,19 +90,13 @@
         return message.Length > 80 ? message.Substring(0, 80) + "..." : message;
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        timer?.Dispose();
+        await SignalRService.StopAsync();
     }
 
     private MarkupString RenderHtml(string htmlContent)
     {
         return new MarkupString(htmlContent);
     }
-
-    private DateTime ToLocalTime(DateTime utcDate, int offsetMinutes)
-    {
-        return utcDate.AddMinutes(-offsetMinutes);
-    }
-
 }

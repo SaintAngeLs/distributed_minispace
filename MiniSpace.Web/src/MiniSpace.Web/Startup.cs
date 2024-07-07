@@ -76,13 +76,13 @@ namespace MiniSpace.Web
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
             services.AddScoped<IFriendsService, FriendsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
+            services.AddScoped<SignalRService>();
             services.AddScoped<IReactionsService, ReactionsService>();
             services.AddScoped<ICommentsService, CommentsService>();
             services.AddScoped<IReportsService, ReportsService>();
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
