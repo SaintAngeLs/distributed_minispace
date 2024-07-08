@@ -11,18 +11,24 @@
 @if (!showNotifications)
 {
     <div class="notification-toggle-container" @onclick="ToggleNotifications" style="position: fixed; top: 10%; right: 10px; z-index: 1001;">
-        <div class="notification-circle circle1">N</div>
+        <div class="notification-circle circle1">
+            N
+            @if (hasNewNotification)
+            {
+                <div class="notification-new-circle"></div>
+            }
+        </div>
         <div class="notification-circle circle2"></div>
         <div class="notification-circle circle3"></div>
     </div>
 }
 
 <div class="notification-panel @(!showNotifications ? "hidden" : "")">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
         <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px; margin: 0;">Notifications</h3>
         <button @onclick="ToggleNotifications" style="background: none; border: none; color: #30445F; font-size: 1.5em;">&times;</button>
     </div>
-    <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px;">
+    <div class="notification-content" style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px; overflow-y: auto; max-height: 70vh;">
         @if (notifications != null && notifications.Any())
         {
             <ul style="list-style: none; padding: 0; margin: 0;">
@@ -58,33 +64,52 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .notification-circle {
     background-color: #30445F;
     border-radius: 50%;
-    margin-bottom: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 1.5em;
     font-weight: bold;
+    position: relative;
 }
 
 .circle1 {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
 }
 
 .circle2 {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
 }
 
 .circle3 {
     width: 30px;
     height: 30px;
+}
+
+.notification-new-circle {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(0, 187, 255);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 2px solid white;
 }
 
 .notification-panel {
@@ -93,7 +118,6 @@
     right: 1%;
     width: 300px;
     max-height: 80vh;
-    overflow-y: auto;
     background-color: #fff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
@@ -101,9 +125,8 @@
     transition: transform 0.3s ease-in-out;
 }
 
-
 .notification-panel.hidden {
-    transform: translateX(103%);
+    transform: translateX(105%);
 }
 </style>
 
@@ -111,7 +134,8 @@
     private List<NotificationDto> notifications = new List<NotificationDto>();
     private SignalRService SignalRService;
     private Guid userId;
-    private bool showNotifications = false; // Start with notifications hidden
+    private bool showNotifications = false; 
+    private bool hasNewNotification = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,9 +144,8 @@
 
         SignalRService.NotificationReceived += OnNotificationReceived;
 
-        await SignalRService.StartAsync(userId);  // Pass the user ID
+        await SignalRService.StartAsync(userId);  
 
-        // Pass the userId to the JavaScript function to initialize SignalR
         await JSRuntime.InvokeVoidAsync("setUserId", userId.ToString());
 
         await LoadNotifications();
@@ -132,7 +155,7 @@
     {
         try
         {
-            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, pageSize: 10, sortOrder: "desc", status: "Unread");
+            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, pageSize: 15, sortOrder: "desc", status: "Unread");
             notifications = paginatedResponse.Results;
         }
         catch (Exception ex)
@@ -147,6 +170,7 @@
         if (notification.UserId == userId)
         {
             notifications.Insert(0, notification); // Add to the top of the list
+            hasNewNotification = true;
             InvokeAsync(StateHasChanged); // Ensure the UI updates
             PlayNotificationSound();
         }
@@ -170,6 +194,10 @@
     private void ToggleNotifications()
     {
         showNotifications = !showNotifications;
+        if (showNotifications)
+        {
+            hasNewNotification = false;
+        }
     }
 
     public async ValueTask DisposeAsync()
