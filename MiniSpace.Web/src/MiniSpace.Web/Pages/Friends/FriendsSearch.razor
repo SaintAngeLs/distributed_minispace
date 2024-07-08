@@ -15,6 +15,7 @@
 @using MudBlazor
 @using Radzen
 
+<AuthWrapper>
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
@@ -162,7 +163,7 @@
     <button @onclick="() => SetPage(currentPage + 1)">Next</button>
     <button  @onclick="() => SetPage((totalStudents + pageSize - 1) / pageSize)">Last</button>
 </div>
-
+</AuthWrapper>
 
 <style>
 
