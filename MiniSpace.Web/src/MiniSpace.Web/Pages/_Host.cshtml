@@ -48,7 +48,7 @@
         }
 
         function playNotificationSoundNotificationsService() {
-            var audio = new Audio('sounds/new-notification.wav');
+            var audio = new Audio('sounds/new-notification1.mp3');
             audio.play();
         }
 
@@ -81,7 +81,8 @@
                 var notification = JSON.parse(jsonMessage);
                 console.log("Notification received: ", notification);
 
-                // Send acknowledgment back to the server
+                playNotificationSoundNotificationsService();
+
                 connection.invoke("AcknowledgeNotification", notification.UserId, notification.NotificationId)
                     .then(function () {
                         console.log("Acknowledgment sent for notification: ", notification.NotificationId);
