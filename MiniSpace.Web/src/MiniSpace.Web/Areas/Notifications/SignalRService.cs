@@ -7,17 +7,25 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Web.Areas.Notifications
 {
-    public class SignalRService
+    public class SignalRService : IAsyncDisposable
     {
-        private readonly HubConnection _hubConnection;
+        private HubConnection _hubConnection;
         private readonly NavigationManager _navigationManager;
         private readonly IIdentityService _identityService;
+        private Guid _userId;
+
+        public event Action<NotificationDto> NotificationReceived;
 
         public SignalRService(NavigationManager navigationManager, IIdentityService identityService)
         {
             _navigationManager = navigationManager;
             _identityService = identityService;
-            var hubUrl = "http://localhost:5006/notificationHub";  // Correct URL for the hub
+        }
+
+        public async Task StartAsync(Guid userId)
+        {
+            _userId = userId;
+            var hubUrl = $"http://localhost:5006/notificationHub?userId={userId}";
 
             Console.WriteLine($"Initializing SignalR connection to URL: {hubUrl}");
 
@@ -33,13 +41,22 @@ namespace MiniSpace.Web.Areas.Notifications
                 })
                 .WithAutomaticReconnect()
                 .Build();
-        }
 
-        public async Task StartAsync()
-        {
+            _hubConnection.On<string>("ReceiveNotification", (jsonMessage) =>
+            {
+                var notification = System.Text.Json.JsonSerializer.Deserialize<NotificationDto>(jsonMessage);
+                NotificationReceived?.Invoke(notification);
+            });
+
+            _hubConnection.Closed += async (error) =>
+            {
+                Console.WriteLine($"Connection closed due to an error: {error?.Message}");
+                await Task.Delay(new Random().Next(0, 5) * 1000);
+                await _hubConnection.StartAsync();
+            };
+
             try
             {
-                Console.WriteLine("Starting SignalR connection...");
                 await _hubConnection.StartAsync();
                 Console.WriteLine("SignalR connection started successfully.");
             }
@@ -63,24 +80,12 @@ namespace MiniSpace.Web.Areas.Notifications
             }
         }
 
-        public void OnNotificationReceived(Action<NotificationDto> handler)
+        public async ValueTask DisposeAsync()
         {
-            _hubConnection.On<string>("ReceiveMessage", (jsonMessage) =>
+            if (_hubConnection != null)
             {
-                try
-                {
-                    var notification = System.Text.Json.JsonSerializer.Deserialize<NotificationDto>(jsonMessage);
-                    if (notification != null)
-                    {
-                        handler(notification);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error deserializing notification message: {ex.Message}");
-                }
-            });
+                await _hubConnection.DisposeAsync();
+            }
         }
-
     }
 }

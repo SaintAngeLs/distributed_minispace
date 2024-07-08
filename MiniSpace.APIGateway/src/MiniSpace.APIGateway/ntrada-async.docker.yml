@@ -273,6 +273,18 @@ modules:
         auth: true  
         description: Updates the status of a specific notification.
 
+      - upstream: /notificationHub
+        method: GET
+        use: downstream
+        downstream: notifications-service/notificationHub
+        auth: false
+
+      - upstream: /notificationHub/negotiate
+        method: POST
+        use: downstream
+        downstream: notifications-service/notificationHub/negotiate
+        auth: false
+
     services:
       notifications-service:
         localUrl: localhost:5006

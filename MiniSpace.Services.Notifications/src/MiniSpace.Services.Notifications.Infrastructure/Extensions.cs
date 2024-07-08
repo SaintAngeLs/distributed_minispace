@@ -39,11 +39,10 @@ using MiniSpace.Services.Notifications.Infrastructure.Logging;
 using MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Notifications.Infrastructure.Services;
-using MiniSpace.Services.Notifications.Infrastructure;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
-using MiniSpace.Services.Notifications.Infrastructure.Managers;
-using MiniSpace.Services.Notifications.Infrastructure.Hubs;
+// using MiniSpace.Services.Notifications.Infrastructure.Managers;
+using MiniSpace.Services.Notifications.Application.Hubs;
 
 namespace MiniSpace.Services.Notifications.Infrastructure
 {
@@ -53,7 +52,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
         {
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
+            // builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
             builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
             builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
             builder.Services.AddTransient<IStudentNotificationsRepository, StudentNotificationsMongoRepository>();
@@ -75,6 +74,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
             builder.Services.AddHostedService<DailyNotificationCleanupService>();  
             builder.Services.AddHostedService<PeriodicNotificationCleanupService>();  
+            // builder.Services.AddScoped<INotificationHub, NotificationHub>();
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -147,7 +147,17 @@ namespace MiniSpace.Services.Notifications.Infrastructure
 
         public static IConveyBuilder AddSignalRInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    .SetIsOriginAllowed((host) => true)); 
+            });
+
+            builder.Services.AddSignalR();
 
             return builder;
         }

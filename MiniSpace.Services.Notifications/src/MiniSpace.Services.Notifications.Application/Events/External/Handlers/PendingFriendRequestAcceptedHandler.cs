@@ -7,6 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Services;
+using Microsoft.AspNetCore.SignalR;
+using MiniSpace.Services.Notifications.Application.Hubs;
+using MiniSpace.Services.Notifications.Application.Dto;
+
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -16,17 +20,20 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly ILogger<PendingFriendRequestAcceptedHandler> _logger;
+        private readonly IHubContext<NotificationHub> _hubContext; 
 
         public PendingFriendRequestAcceptedHandler(
             IStudentNotificationsRepository studentNotificationsRepository, 
             IMessageBroker messageBroker, 
             IStudentsServiceClient studentsServiceClient, 
-            ILogger<PendingFriendRequestAcceptedHandler> logger)
+            ILogger<PendingFriendRequestAcceptedHandler> logger,
+            IHubContext<NotificationHub> hubContext)
         {
             _studentNotificationsRepository = studentNotificationsRepository;
             _messageBroker = messageBroker;
             _studentsServiceClient = studentsServiceClient;
             _logger = logger;
+            _hubContext = hubContext;
         }
 
         public async Task HandleAsync(PendingFriendAccepted @event, CancellationToken cancellationToken)
@@ -74,6 +81,19 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 relatedEntityId: @event.FriendId,
                 details: detailsHtml
             );
+
+            var notificationDto = new NotificationDto
+            {
+                UserId = @event.RequesterId,
+                Message = notificationMessage,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.FriendRequestAccepted,
+                RelatedEntityId = @event.FriendId,
+                Details = detailsHtml
+            };
+
+            await _hubContext.Clients.User(@event.RequesterId.ToString()).SendAsync("ReceiveNotification", notificationDto);
+
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
             _logger.LogInformation($"Published enhanced NotificationCreated event for UserId={notification.UserId}");

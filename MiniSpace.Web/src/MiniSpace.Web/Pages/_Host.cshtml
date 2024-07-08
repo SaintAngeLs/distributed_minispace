@@ -23,8 +23,8 @@
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
     <script>
-        
         window.scrollToSection = function scrollToSection(sectionId) {
             let attempt = 0;
             const maxAttempts = 10;
@@ -61,6 +61,42 @@
             setTimeout(() => document.title = "MiniSpace | Social", 8000); 
         }
 
+        // Initialize SignalR connection
+        let userId;
+
+        window.setUserId = function (id) {
+            userId = id;
+            initializeSignalR();
+        };
+
+        function initializeSignalR() {
+            if (!userId) return;
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(`http://localhost:5006/notificationHub?userId=${userId}`)
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("ReceiveNotification", function (jsonMessage) {
+                var notification = JSON.parse(jsonMessage);
+                console.log("Notification received: ", notification);
+
+                // Send acknowledgment back to the server
+                connection.invoke("AcknowledgeNotification", notification.UserId, notification.NotificationId)
+                    .then(function () {
+                        console.log("Acknowledgment sent for notification: ", notification.NotificationId);
+                    })
+                    .catch(function (err) {
+                        console.error(err.toString());
+                    });
+            });
+
+            connection.start().then(function () {
+                console.log("SignalR connection established.");
+            }).catch(function (err) {
+                console.error("Error establishing SignalR connection: ", err.toString());
+            });
+        }
     </script>
 </body>
 </html>

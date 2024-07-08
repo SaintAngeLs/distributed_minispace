@@ -1,38 +1,39 @@
-@page "/notifications"
 @using MiniSpace.Web.Areas.Notifications
 @using MiniSpace.Web.DTO.Notifications
+@using Microsoft.Extensions.Logging
+@using System.Globalization
 @inject INotificationsService NotificationsService
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
-@using System.Globalization
 @inject IJSRuntime JSRuntime
+@inject ILogger<SignalRService> Logger
 
 <div style="background-color: #fff; color: white; padding: 10px; border-radius: 5px;">
     <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
 
     <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px;">
-    @if (notifications != null && notifications.Any())
-    {
-        <ul style="list-style: none; padding: 0; margin: 0;">
-            @foreach (var notification in notifications)
-            {
-                <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)" 
-                    class="notification-item"
-                    style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;" >
-                    <span style="display: block; color: #333; margin-bottom: 4px;">
-                         @RenderHtml(TruncateMessage(notification.Message))
-                    </span>
-                    <span style="display: block; font-size: 0.8em; color: #666;">
-                        @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
-                    </span>
-                </li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p style="text-align: center; color: #888;">No new notifications.</p>
-    }
+        @if (notifications != null && notifications.Any())
+        {
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                @foreach (var notification in notifications)
+                {
+                    <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)"
+                        class="notification-item"
+                        style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;">
+                        <span style="display: block; color: #333; margin-bottom: 4px;">
+                            @RenderHtml(TruncateMessage(notification.Message))
+                        </span>
+                        <span style="display: block; font-size: 0.8em; color: #666;">
+                            @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
+                        </span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p style="text-align: center; color: #888;">No new notifications.</p>
+        }
     </div>
 </div>
 
@@ -46,21 +47,15 @@
         userId = IdentityService.GetCurrentUserId();
         SignalRService = new SignalRService(NavigationManager, IdentityService);
 
+        SignalRService.NotificationReceived += OnNotificationReceived;
+
+        await SignalRService.StartAsync(userId);  // Pass the user ID
+
+        // Pass the userId to the JavaScript function to initialize SignalR
+        await JSRuntime.InvokeVoidAsync("setUserId", userId.ToString());
+
         await LoadNotifications();
-
-        SignalRService.OnNotificationReceived(notification =>
-        {
-            if (notification.UserId == userId)
-            {
-                notifications.Add(notification);
-                InvokeAsync(StateHasChanged); // Ensure the UI updates
-                PlayNotificationSound();
-            }
-        });
-
-        await SignalRService.StartAsync();
     }
-
 
     private async Task LoadNotifications()
     {
@@ -71,13 +66,24 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading notifications: {ex.Message}");
+            Logger.LogError($"Error loading notifications: {ex.Message}");
+        }
+    }
+
+    private void OnNotificationReceived(NotificationDto notification)
+    {
+        Logger.LogInformation($"Received notification for user {notification.UserId}");
+        if (notification.UserId == userId)
+        {
+            notifications.Insert(0, notification); // Add to the top of the list
+            InvokeAsync(StateHasChanged); // Ensure the UI updates
+            PlayNotificationSound();
         }
     }
 
     private void PlayNotificationSound()
     {
-        JSRuntime.InvokeVoidAsync("playNotificationSoundNotificationsService");
+        JSRuntime.InvokeVoidAsync("playNotificationSound");
     }
 
     private void NavigateToNotificationDetail(Guid notificationId)
@@ -92,6 +98,7 @@
 
     public async ValueTask DisposeAsync()
     {
+        SignalRService.NotificationReceived -= OnNotificationReceived;
         await SignalRService.StopAsync();
     }
 

@@ -16,7 +16,8 @@ using MiniSpace.Services.Notifications.Application.Commands;
 using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Queries;
 using MiniSpace.Services.Notifications.Infrastructure;
-using MiniSpace.Services.Notifications.Infrastructure.Hubs;
+using MiniSpace.Services.Notifications.Application.Hubs;
+
 
 namespace MiniSpace.Services.Notifications.Api
 {
@@ -30,14 +31,28 @@ namespace MiniSpace.Services.Notifications.Api
                             .AddWebApi()
                             .AddApplication()
                             .AddInfrastructure();
-                    services.AddSignalR(); 
+                    services.AddCors(options =>
+                    {
+                        options.AddPolicy("CorsPolicy",
+                            builder => builder
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .SetIsOriginAllowed((host) => true));
+                    });
+                    services.AddSignalR();
+                    services.AddAuthentication(); 
+                    services.AddAuthorization(); 
                 })
                 .Configure(app => app
                     .UseInfrastructure()
                     .UseRouting()
+                    .UseCors("CorsPolicy")
+                    .UseAuthentication()
+                    .UseAuthorization()
                     .UseEndpoints(endpoints =>
                     {
-                        endpoints.MapHub<NotificationHub>("/notificationHub");
+                        endpoints.MapHub<NotificationHub>("/notificationHub").RequireCors("CorsPolicy");
                     })
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
