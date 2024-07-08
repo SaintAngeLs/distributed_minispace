@@ -1,12 +1,16 @@
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Convey.CQRS.Events;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Hubs;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Core.Entities;
-using System;
-using System.Threading.Tasks;
-using System.Threading;
-using MiniSpace.Services.Notifications.Application.Services.Clients;
-using MiniSpace.Services.Notifications.Application.Dto;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -17,19 +21,25 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IReactionsServiceClient _reactionsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IPostsServiceClient _postsServiceClient;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly ILogger<ReactionCreatedHandler> _logger;
 
-         public ReactionCreatedHandler(
+        public ReactionCreatedHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
             IReactionsServiceClient reactionsServiceClient,
             IEventsServiceClient eventsServiceClient,
-            IPostsServiceClient postsServiceClient)
+            IPostsServiceClient postsServiceClient,
+            IHubContext<NotificationHub> hubContext,
+            ILogger<ReactionCreatedHandler> logger)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _reactionsServiceClient = reactionsServiceClient;
             _eventsServiceClient = eventsServiceClient;
             _postsServiceClient = postsServiceClient;
+            _hubContext = hubContext;
+            _logger = logger;
         }
 
         public async Task HandleAsync(ReactionCreated eventArgs, CancellationToken cancellationToken)
@@ -39,7 +49,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             if (reaction == null)
             {
-                Console.WriteLine("Reaction details not found.");
+                _logger.LogError("Reaction details not found.");
                 return;
             }
 
@@ -49,34 +59,49 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 studentNotifications = new StudentNotifications(reaction.StudentId);
             }
 
+            var notificationMessage = "Your reaction has been recorded.";
+            var notificationDetailsHtml = "<p>Thank you for your reaction! Your interaction helps us to better understand what content resonates with our community.</p>";
+
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: reaction.StudentId,
-                message: $"Your reaction has been recorded.",
+                message: notificationMessage,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
                 relatedEntityId: reaction.ContentId,
-                eventType: NotificationEventType.ReactionAdded
+                eventType: NotificationEventType.ReactionAdded,
+                details: notificationDetailsHtml
             );
 
             studentNotifications.AddNotification(notification);
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 
-            var notificationDetailsHtml = $@"
-                <p>Thank you for your reaction! Your interaction helps us to better understand what content resonates with our community.</p>";
-
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: Guid.NewGuid(),
-                userId: reaction.StudentId,
-                message: $"Your reaction has been recorded.",
-                createdAt: DateTime.UtcNow,
-                eventType: NotificationEventType.ReactionAdded.ToString(),
-                relatedEntityId: reaction.ContentId,
-                details: notificationDetailsHtml
+                notification.NotificationId,
+                reaction.StudentId,
+                notificationMessage,
+                DateTime.UtcNow,
+                NotificationEventType.ReactionAdded.ToString(),
+                reaction.ContentId,
+                notificationDetailsHtml
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            var notificationDto = new NotificationDto
+            {
+                UserId = reaction.StudentId,
+                Message = notificationMessage,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.ReactionAdded,
+                RelatedEntityId = reaction.ContentId,
+                Details = notificationDetailsHtml
+            };
+
+            // Broadcast SignalR notification to the student
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to student with ID {reaction.StudentId}.");
 
             // Notify the organizer
             Guid? organizerId = null;
@@ -99,29 +124,49 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     organizerNotifications = new StudentNotifications(organizerId.Value);
                 }
 
+                var organizerNotificationMessage = "A new reaction has been added to your content.";
+                var organizerNotificationDetailsHtml = $"<p>{reaction.StudentFullName} reacted to your content.</p>";
+
                 var organizerNotification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: organizerId.Value,
-                    message: $"A new reaction has been added to your content.",
+                    message: organizerNotificationMessage,
                     status: NotificationStatus.Unread,
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,
                     relatedEntityId: reaction.ContentId,
-                    eventType: NotificationEventType.ReactionAdded
+                    eventType: NotificationEventType.ReactionAdded,
+                    details: organizerNotificationDetailsHtml
                 );
 
                 organizerNotifications.AddNotification(organizerNotification);
                 await _studentNotificationsRepository.AddOrUpdateAsync(organizerNotifications);
 
-                await _messageBroker.PublishAsync(new NotificationCreated(
-                    notificationId: Guid.NewGuid(),
-                    userId: organizerId.Value,
-                    message: $"A new reaction has been added to your content.",
-                    createdAt: DateTime.UtcNow,
-                    eventType: NotificationEventType.ReactionAdded.ToString(),
-                    relatedEntityId: reaction.ContentId,
-                    details: $"<p>{reaction.StudentFullName} reacted to your content.</p>"
-                ));
+                var organizerNotificationCreatedEvent = new NotificationCreated(
+                    organizerNotification.NotificationId,
+                    organizerId.Value,
+                    organizerNotificationMessage,
+                    DateTime.UtcNow,
+                    NotificationEventType.ReactionAdded.ToString(),
+                    reaction.ContentId,
+                    organizerNotificationDetailsHtml
+                );
+
+                await _messageBroker.PublishAsync(organizerNotificationCreatedEvent);
+
+                var organizerNotificationDto = new NotificationDto
+                {
+                    UserId = organizerId.Value,
+                    Message = organizerNotificationMessage,
+                    CreatedAt = DateTime.UtcNow,
+                    EventType = NotificationEventType.ReactionAdded,
+                    RelatedEntityId = reaction.ContentId,
+                    Details = organizerNotificationDetailsHtml
+                };
+
+                // Broadcast SignalR notification to the organizer
+                await NotificationHub.BroadcastNotification(_hubContext, organizerNotificationDto, _logger);
+                _logger.LogInformation($"Broadcasted SignalR notification to organizer with ID {organizerId.Value}.");
             }
         }
     }

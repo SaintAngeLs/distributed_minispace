@@ -92,8 +92,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 Details = detailsHtml
             };
 
-            await _hubContext.Clients.User(@event.RequesterId.ToString()).SendAsync("ReceiveNotification", notificationDto);
-
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation("Broadcasted SignalR notification to all users.");
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
             _logger.LogInformation($"Published enhanced NotificationCreated event for UserId={notification.UserId}");
