@@ -4,7 +4,7 @@ using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
 using System.Collections.Generic;
 using MiniSpace.Services.Notifications.Application.Exceptions;
-
+// This event handler is not used! ⁉️
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class FriendAddedHandler : IEventHandler<NotificationCreated>

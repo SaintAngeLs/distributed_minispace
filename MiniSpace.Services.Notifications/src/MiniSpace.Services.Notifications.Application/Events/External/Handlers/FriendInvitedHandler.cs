@@ -89,9 +89,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 Details = detailsHtml
             };
 
-            await _hubContext.Clients.User(@event.InviteeId.ToString()).SendAsync("ReceiveNotification", notificationDto);
-
-            _logger.LogInformation($"Sent SignalR notification to UserId={@event.InviteeId}");
+              await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Sent SignalR notification to all users with user id UserId={@event.InviteeId}.");
 
 
             var serializedEvent = JsonSerializer.Serialize(notificationCreatedEvent, new JsonSerializerOptions
