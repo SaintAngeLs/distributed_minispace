@@ -1,12 +1,15 @@
 using System;
-using Convey.CQRS.Events;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Core.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using Convey.CQRS.Events;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Hubs;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Notifications.Core.Repositories;
+using MiniSpace.Services.Notifications.Application.Services;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -16,33 +19,48 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly ILogger<StudentShowedInterestInEventHandler> _logger;
 
         public StudentShowedInterestInEventHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
-            IEventsServiceClient eventsServiceClient)
+            IEventsServiceClient eventsServiceClient,
+            IHubContext<NotificationHub> hubContext,
+            ILogger<StudentShowedInterestInEventHandler> logger)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _studentsServiceClient = studentsServiceClient;
             _eventsServiceClient = eventsServiceClient;
+            _hubContext = hubContext;
+            _logger = logger;
         }
 
         public async Task HandleAsync(StudentShowedInterestInEvent eventArgs, CancellationToken cancellationToken)
         {
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.StudentId);
             var student = await _studentsServiceClient.GetAsync(eventArgs.StudentId);
+            if (student == null)
+            {
+                _logger.LogError($"Student details not found for StudentId={eventArgs.StudentId}");
+                return;
+            }
+
+            var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);
+            if (eventDetails == null)
+            {
+                _logger.LogError($"Event details not found for EventId={eventArgs.EventId}");
+                return;
+            }
+
+            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.StudentId);
             if (studentNotifications == null)
             {
                 studentNotifications = new StudentNotifications(eventArgs.StudentId);
             }
 
-            var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);
-            var detailsHtml = eventDetails != null ?
-                $"<p>{student.FirstName} {student.LastName}, you have shown interest in the event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>" :
-                "<p>Event details could not be retrieved.</p>";
-
+            var detailsHtml = $"<p>{student.FirstName} {student.LastName}, you have shown interest in the event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>";
             var notificationMessage = $"You have shown interest in the event '{eventDetails.Name}'.";
 
             var notification = new Notification(
@@ -56,12 +74,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 eventType: NotificationEventType.StudentShowedInterestInEvent,
                 details: detailsHtml
             );
-           
+
             studentNotifications.AddNotification(notification);
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 
-             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: Guid.NewGuid(),
+            var notificationCreatedEvent = new NotificationCreated(
+                notificationId: notification.NotificationId,
                 userId: eventArgs.StudentId,
                 message: notificationMessage,
                 createdAt: DateTime.UtcNow,
@@ -71,15 +89,29 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
-            
 
-            if (eventDetails != null && eventDetails.Organizer != null)
+            var notificationDto = new NotificationDto
+            {
+                UserId = eventArgs.StudentId,
+                Message = notificationMessage,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.StudentShowedInterestInEvent,
+                RelatedEntityId = eventArgs.EventId,
+                Details = detailsHtml
+            };
+
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to student with ID {eventArgs.StudentId}.");
+
+            if (eventDetails.Organizer != null)
             {
                 var detailsHtmlForOrganizer = $"<p>{student.FirstName} {student.LastName} has shown interest in your event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>";
+                var organizerNotificationMessage = $"{student.FirstName} {student.LastName} has shown interest in your event '{eventDetails.Name}'.";
+
                 var organizerNotification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: eventDetails.Organizer.Id,
-                    message: $"{student.FirstName} {student.LastName} has shown interest in your event '{eventDetails.Name}'.",
+                    message: organizerNotificationMessage,
                     status: NotificationStatus.Unread,
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,
@@ -93,20 +125,34 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 {
                     organizerNotifications = new StudentNotifications(eventDetails.Organizer.Id);
                 }
-               
+
                 organizerNotifications.AddNotification(organizerNotification);
                 await _studentNotificationsRepository.AddOrUpdateAsync(organizerNotifications);
 
                 var organizerNotificationCreatedEvent = new NotificationCreated(
-                    notificationId: Guid.NewGuid(),
+                    notificationId: organizerNotification.NotificationId,
                     userId: eventDetails.Organizer.Id,
-                    message: $"{student.FirstName} {student.LastName} has shown interest in your event '{eventDetails.Name}'.",
+                    message: organizerNotificationMessage,
                     createdAt: DateTime.UtcNow,
                     eventType: NotificationEventType.StudentShowedInterestInEvent.ToString(),
                     relatedEntityId: eventArgs.EventId,
                     details: detailsHtmlForOrganizer
                 );
+
                 await _messageBroker.PublishAsync(organizerNotificationCreatedEvent);
+
+                var organizerNotificationDto = new NotificationDto
+                {
+                    UserId = eventDetails.Organizer.Id,
+                    Message = organizerNotificationMessage,
+                    CreatedAt = DateTime.UtcNow,
+                    EventType = NotificationEventType.StudentShowedInterestInEvent,
+                    RelatedEntityId = eventArgs.EventId,
+                    Details = detailsHtmlForOrganizer
+                };
+
+                await NotificationHub.BroadcastNotification(_hubContext, organizerNotificationDto, _logger);
+                _logger.LogInformation($"Broadcasted SignalR notification to organizer with ID {eventDetails.Organizer.Id}.");
             }
         }
     }
