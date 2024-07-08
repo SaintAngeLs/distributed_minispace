@@ -13,11 +13,15 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public string Password { get; set; }
         public DateTime CreatedAt { get; private set; }
         public IEnumerable<string> Permissions { get; private set; }
+        public bool IsEmailVerified { get; private set; }
+        public string EmailVerificationToken { get; private set; }
+        public bool IsTwoFactorEnabled { get; private set; }
+        public string TwoFactorSecret { get; private set; }
 
         public User(Guid id, string name, string email, string password, string role, DateTime createdAt,
             IEnumerable<string> permissions = null)
         {
-            if(string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
             {
                 throw new InvalidNameException(name);
             }
@@ -84,6 +88,49 @@ namespace MiniSpace.Services.Identity.Core.Entities
             }
 
             Role = Entities.Role.User;
+        }
+
+        public void SetEmailVerificationToken(string token)
+        {
+            if (IsEmailVerified)
+            {
+                throw new EmailAlreadyVerifiedException();
+            }
+
+            EmailVerificationToken = token;
+        }
+
+        public void VerifyEmail()
+        {
+            if (IsEmailVerified)
+            {
+                throw new EmailAlreadyVerifiedException();
+            }
+
+            IsEmailVerified = true;
+            EmailVerificationToken = null;
+        }
+
+        public void EnableTwoFactorAuthentication(string secret)
+        {
+            if (IsTwoFactorEnabled)
+            {
+                throw new TwoFactorAlreadyEnabledException(Id);
+            }
+
+            IsTwoFactorEnabled = true;
+            TwoFactorSecret = secret;
+        }
+
+        public void DisableTwoFactorAuthentication()
+        {
+            if (!IsTwoFactorEnabled)
+            {
+                throw new TwoFactorNotEnabledException(Id);
+            }
+
+            IsTwoFactorEnabled = false;
+            TwoFactorSecret = null;
         }
     }
 
