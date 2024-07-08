@@ -7,7 +7,8 @@
     using MiniSpace.Services.Identity.Application.Commands;
     using MiniSpace.Services.Identity.Application.DTO;
     using MiniSpace.Services.Identity.Application.Events;
-    using MiniSpace.Services.Identity.Application.Exceptions;
+using MiniSpace.Services.Identity.Application.Events.Rejected;
+using MiniSpace.Services.Identity.Application.Exceptions;
     using MiniSpace.Services.Identity.Core.Entities;
     using MiniSpace.Services.Identity.Core.Exceptions;
     using MiniSpace.Services.Identity.Core.Repositories;
@@ -228,6 +229,60 @@
                 await _userResetTokenRepository.InvalidateTokenAsync(user.Id);
 
                 await _messageBroker.PublishAsync(new PasswordReset(user.Id));
+            }
+
+            public async Task VerifyEmailAsync(VerifyEmail command)
+            {
+                var user = await _userRepository.GetAsync(command.Email);
+                if (user == null)
+                {
+                    _logger.LogError($"No user associated with email: {command.Email}");
+                    throw new UserNotFoundByEmailException(command.Email);
+                }
+
+                if (user.EmailVerificationToken != command.Token)
+                {
+                    _logger.LogError($"Invalid verification token for email: {command.Email}");
+                    throw new InvalidTokenException();
+                }
+
+                user.VerifyEmail();
+                await _userRepository.UpdateAsync(user);
+
+                _logger.LogInformation($"Email verified for user id: {user.Id}");
+                await _messageBroker.PublishAsync(new EmailVerified(user.Id, user.Email, DateTime.UtcNow));
+            }
+
+            public async Task EnableTwoFactorAsync(EnableTwoFactor command)
+            {
+                var user = await _userRepository.GetAsync(command.UserId);
+                if (user == null)
+                {
+                    _logger.LogError($"User with id: {command.UserId} was not found.");
+                    throw new UserNotFoundException(command.UserId);
+                }
+
+                user.EnableTwoFactorAuthentication(command.Secret);
+                await _userRepository.UpdateAsync(user);
+
+                _logger.LogInformation($"Two-factor authentication enabled for user id: {user.Id}");
+                await _messageBroker.PublishAsync(new TwoFactorAuthenticationEnabled(user.Id, command.Secret));
+            }
+
+            public async Task DisableTwoFactorAsync(DisableTwoFactor command)
+            {
+                var user = await _userRepository.GetAsync(command.UserId);
+                if (user == null)
+                {
+                    _logger.LogError($"User with id: {command.UserId} was not found.");
+                    throw new UserNotFoundException(command.UserId);
+                }
+
+                user.DisableTwoFactorAuthentication();
+                await _userRepository.UpdateAsync(user);
+
+                _logger.LogInformation($"Two-factor authentication disabled for user id: {user.Id}");
+                await _messageBroker.PublishAsync(new TwoFactorAuthenticationDisabled(user.Id));
             }
         }
     }

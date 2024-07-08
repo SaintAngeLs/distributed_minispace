@@ -13,10 +13,11 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public string Password { get; set; }
         public DateTime CreatedAt { get; private set; }
         public IEnumerable<string> Permissions { get; private set; }
-        public bool IsEmailVerified { get; private set; }
-        public string EmailVerificationToken { get; private set; }
-        public bool IsTwoFactorEnabled { get; private set; }
-        public string TwoFactorSecret { get; private set; }
+        public bool IsEmailVerified { get; set; }
+        public string EmailVerificationToken { get; set; }
+        public DateTime? EmailVerifiedAt { get; set; } 
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecret { get; set; }
 
         public User(Guid id, string name, string email, string password, string role, DateTime createdAt,
             IEnumerable<string> permissions = null)
@@ -48,6 +49,18 @@ namespace MiniSpace.Services.Identity.Core.Entities
             Role = role.ToLowerInvariant();
             CreatedAt = createdAt;
             Permissions = permissions ?? Enumerable.Empty<string>();
+        }
+
+        internal User(Guid id, string name, string email, string password, string role, DateTime createdAt,
+            bool isEmailVerified, string emailVerificationToken, DateTime? emailVerifiedAt, 
+            bool isTwoFactorEnabled, string twoFactorSecret, IEnumerable<string> permissions = null)
+            : this(id, name, email, password, role, createdAt, permissions)
+        {
+            IsEmailVerified = isEmailVerified;
+            EmailVerificationToken = emailVerificationToken;
+            EmailVerifiedAt = emailVerifiedAt;
+            IsTwoFactorEnabled = isTwoFactorEnabled;
+            TwoFactorSecret = twoFactorSecret;
         }
         
         public void GrantOrganizerRights()
@@ -109,6 +122,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
 
             IsEmailVerified = true;
             EmailVerificationToken = null;
+            EmailVerifiedAt = DateTime.UtcNow;
         }
 
         public void EnableTwoFactorAuthentication(string secret)

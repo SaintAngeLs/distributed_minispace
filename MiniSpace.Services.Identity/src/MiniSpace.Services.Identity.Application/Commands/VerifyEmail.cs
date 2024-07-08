@@ -1,0 +1,17 @@
+using Convey.CQRS.Commands;
+
+namespace MiniSpace.Services.Identity.Application.Commands
+{
+    [Contract]
+    public class VerifyEmail : ICommand
+    {
+        public string Token { get; }
+        public string Email { get; }
+
+        public VerifyEmail(string token, string email)
+        {
+            Token = token;
+            Email = email;
+        }
+    }
+}

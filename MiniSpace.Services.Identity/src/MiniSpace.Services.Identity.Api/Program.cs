@@ -99,6 +99,21 @@ namespace MiniSpace.Services.Identity.Api
                             await ctx.RequestServices.GetService<IIdentityService>().ResetPasswordAsync(cmd);
                             ctx.Response.StatusCode = 204;
                         })
+                         .Post<VerifyEmail>("email/verify", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().VerifyEmailAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
+                        .Post<EnableTwoFactor>("2fa/enable", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().EnableTwoFactorAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
+                        .Post<DisableTwoFactor>("2fa/disable", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().DisableTwoFactorAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
 
                     ))
                 .UseLogging()

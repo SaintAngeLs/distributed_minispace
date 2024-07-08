@@ -15,5 +15,10 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
         public string Password { get; set; }
         public DateTime CreatedAt { get; set; }
         public IEnumerable<string> Permissions { get; set; }
+        public bool IsEmailVerified { get; set; }
+        public string EmailVerificationToken { get; set; }
+        public DateTime? EmailVerifiedAt { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecret { get; set; }
     }
 }
