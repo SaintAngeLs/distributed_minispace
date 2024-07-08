@@ -5,7 +5,7 @@
 <MudLayout Class="landing-page container">
     <MudContainer MaxWidth="MaxWidth.False" Class="split-screen" Style="display: flex; align-items: center; justify-content: center; height: 80vh; margin-left: auto; margin-right: auto;" id="home">
         <MudGrid Style="width: 100%;">
-            <MudItem xs="12" md="6" xl="12" Class="carousel-section" Style="display: flex;">
+            <MudItem xs="12" md="12" xl="12" Class="carousel-section" Style="display: flex;">
                 <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 50vh;" ShowArrows="@arrows" ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
                     @foreach (var img in images)
                     {

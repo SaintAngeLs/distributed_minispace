@@ -98,6 +98,18 @@
                 console.error("Error establishing SignalR connection: ", err.toString());
             });
         }
+
+        window.getScreenSize = () => {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        };
+
+        window.onresize = () => {
+            DotNet.invokeMethodAsync('MiniSpace.Web', 'UpdateScreenSize');
+        };
+
     </script>
 </body>
 </html>
