@@ -1,11 +1,15 @@
-using Convey.CQRS.Events;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
+using Convey.CQRS.Events;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Hubs;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -14,15 +18,21 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly ILogger<ReportRejectedHandler> _logger;
 
         public ReportRejectedHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
-            IStudentsServiceClient studentsServiceClient)
+            IStudentsServiceClient studentsServiceClient,
+            IHubContext<NotificationHub> hubContext,
+            ILogger<ReportRejectedHandler> logger)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _studentsServiceClient = studentsServiceClient;
+            _hubContext = hubContext;
+            _logger = logger;
         }
 
         public async Task HandleAsync(ReportRejected eventArgs, CancellationToken cancellationToken)
@@ -31,13 +41,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
             var targetOwner = await _studentsServiceClient.GetAsync(eventArgs.TargetOwnerId);
 
+            if (issuer == null || targetOwner == null)
+            {
+                _logger.LogError("Issuer or target owner details not found.");
+                return;
+            }
+
             string issuerName = $"{issuer.FirstName} {issuer.LastName}";
-            string targetOwnerName = $"{targetOwner.FirstName} {targetOwner.LastName}";
 
             // Detailed notification for issuer
             string issuerMessage = $"Dear {issuerName}, your report about '{eventArgs.Category}' concerning '{eventArgs.ContextType}' has been rejected for the following reason: '{eventArgs.Reason}'.";
             var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, issuerMessage);
-            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportRejected", issuerName);
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, issuerMessage);
         }
 
         private async Task<Notification> CreateNotificationForUser(Guid userId, ReportRejected eventArgs, string message)
@@ -58,19 +73,33 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             return notification;
         }
 
-        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType, string userName)
+        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string message)
         {
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: $"{userName}, {notification.Message}",
-                createdAt: notification.CreatedAt,
-                eventType: NotificationEventType.ReportRejected.ToString(),
-                relatedEntityId: notification.RelatedEntityId,
-                details: $"Notification for user {userId} ({userName}). Message: {notification.Message}"
+                notification.NotificationId,
+                notification.UserId,
+                message,
+                notification.CreatedAt,
+                NotificationEventType.ReportRejected.ToString(),
+                notification.RelatedEntityId,
+                $"Notification for user {userId}. Message: {message}"
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            var notificationDto = new NotificationDto
+            {
+                UserId = notification.UserId,
+                Message = message,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.ReportRejected,
+                RelatedEntityId = notification.RelatedEntityId,
+                Details = $"Notification for user {userId}. Message: {message}"
+            };
+
+            // Broadcast SignalR notification
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to user with ID {userId}.");
         }
     }
 }
