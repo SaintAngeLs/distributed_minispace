@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             var welcomeMessage = $"Welcome to MiniSpace, {@event.FirstName} {@event.LastName}!";
             
-            var verificationLink = $"https://minispace.itsharppro.com/verify-email/{System.Net.WebUtility.UrlEncode(@event.Token)}/{System.Net.WebUtility.UrlEncode(@event.Email)}";
+            var verificationLink = $"https://localhost:5606/verify-email/{HttpUtility.UrlEncode(@event.Token)}/{HttpUtility.UrlEncode(@event.Email)}/{HttpUtility.UrlEncode(@event.HashedToken)}/verify";
 
             var detailsHtml = $@"
                 <p>Dear {@event.FirstName},<br>

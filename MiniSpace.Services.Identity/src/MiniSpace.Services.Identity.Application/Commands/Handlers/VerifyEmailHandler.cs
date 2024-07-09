@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Identity.Application.Commands.Handlers
         public async Task HandleAsync(VerifyEmail command)
         {
             await _identityService.VerifyEmailAsync(command);
-            _logger.LogInformation($"Email verification for token: {command.Token} and email: {command.Email} processed.");
+            _logger.LogInformation($"Email verification for token: {command.Token}, email: {command.Email}, and hashed token: {command.HashedToken} processed.");
         }
     }
 }

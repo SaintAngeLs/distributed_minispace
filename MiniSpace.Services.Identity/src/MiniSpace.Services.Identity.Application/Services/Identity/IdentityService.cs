@@ -246,7 +246,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 throw new UserNotFoundByEmailException(command.Email);
             }
 
-            if (user.EmailVerificationToken != command.Token)
+            if (!_verificationTokenService.ValidateToken(command.Token, command.HashedToken))
             {
                 _logger.LogError($"Invalid verification token for email: {command.Email}");
                 throw new InvalidTokenException();
@@ -258,6 +258,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _logger.LogInformation($"Email verified for user id: {user.Id}");
             await _messageBroker.PublishAsync(new EmailVerified(user.Id, user.Email, DateTime.UtcNow));
         }
+
 
         public async Task EnableTwoFactorAsync(EnableTwoFactor command)
         {

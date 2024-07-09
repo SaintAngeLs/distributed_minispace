@@ -1,4 +1,4 @@
-@page "/verify-email/{Token}/{Email}"
+@page "/verify-email/{Token}/{Email}/{HashedToken}/verify"
 @using MiniSpace.Web.Areas.Identity
 @using Radzen
 @inject IIdentityService IdentityService
@@ -92,8 +92,9 @@
 </div>
 
 @code {
-    [Parameter] public string Token { get; set; }
-    [Parameter] public string Email { get; set; }
+    [Parameter] public string Token { get; set; } = "";
+    [Parameter] public string Email { get; set; } = "";
+    [Parameter] public string HashedToken { get; set; } = "";
 
     private bool showSuccess = false;
     private bool showError = false;
@@ -102,11 +103,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrEmpty(Token) && !string.IsNullOrEmpty(Email))
+        Console.WriteLine($"Token received: {Token}");
+        Console.WriteLine($"Email received: {Email}");
+        Console.WriteLine($"HashedToken received: {HashedToken}");
+
+        if (!string.IsNullOrEmpty(Token) && !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(HashedToken))
         {
             var decodedEmail = HttpUtility.UrlDecode(Email); 
-            var response = await IdentityService.VerifyEmailAsync(Token, decodedEmail);
-            if (response != null && response.Content != null)
+            var response = await IdentityService.VerifyEmailAsync(Token, decodedEmail, HashedToken);
+            if (response != null)
             {
                 successMessage = "Thank you, your email has been verified.";
                 showSuccess = true;

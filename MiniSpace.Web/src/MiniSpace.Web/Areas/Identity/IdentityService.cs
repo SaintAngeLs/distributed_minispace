@@ -327,17 +327,15 @@ namespace MiniSpace.Web.Areas.Identity
 
         private Guid DecodeToken(string token)
         {
-            // Implement token decoding to extract the UserID
-            // This is pseudo-code. You need to implement according to your JWT structure and validation method
             var handler = new JwtSecurityTokenHandler();
             var jwtToken = handler.ReadJwtToken(token);
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "sub"); // Assuming 'sub' holds UserId
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "sub"); 
             return Guid.Parse(userIdClaim.Value);
         }
 
-        public async Task<HttpResponse<object>> VerifyEmailAsync(string token, string email)
+        public async Task<HttpResponse<object>> VerifyEmailAsync(string token, string email, string hashedToken)
         {
-            var response = await _httpClient.PostAsync<object, object>("identity/email/verify", new { Token = token, Email = email });
+            var response = await _httpClient.PostAsync<object, object>("identity/email/verify", new { Token = token, Email = email, HashedToken = hashedToken });
             return response;
         }
 

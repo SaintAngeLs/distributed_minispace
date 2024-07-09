@@ -7,11 +7,13 @@ namespace MiniSpace.Services.Identity.Application.Commands
     {
         public string Token { get; }
         public string Email { get; }
+        public string HashedToken { get; }
 
-        public VerifyEmail(string token, string email)
+        public VerifyEmail(string token, string email, string hashedToken)
         {
             Token = token;
             Email = email;
+            HashedToken = hashedToken;
         }
     }
 }
