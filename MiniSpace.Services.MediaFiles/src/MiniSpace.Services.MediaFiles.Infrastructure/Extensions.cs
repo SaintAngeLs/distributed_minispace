@@ -40,6 +40,8 @@ using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services.Workers;
 using MongoDB.Driver;
+using Amazon.S3;
+using MiniSpace.Services.MediaFiles.Infrastructure.Options;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure
 {
@@ -64,6 +66,20 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 var database = mongoClient.GetDatabase(mongoDbOptions.Database);
                 return new GridFSService(database);
             });
+
+            builder.Services.Configure<AwsOptions>(options =>
+            {
+                options.AccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+                options.SecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+                options.Region = Environment.GetEnvironmentVariable("AWS_REGION");
+            });
+            
+            builder.Services.AddSingleton<IAmazonS3>(sp =>
+            {
+                var awsOptions = sp.GetRequiredService<AwsOptions>(); 
+                return new AmazonS3Client(awsOptions.AccessKeyId, awsOptions.SecretAccessKey, Amazon.RegionEndpoint.GetBySystemName(awsOptions.Region));
+            });
+
             builder.Services.AddHostedService<FileCleanupWorker>();
 
             return builder

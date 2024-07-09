@@ -3,25 +3,27 @@ using MiniSpace.Services.MediaFiles.Application.Events;
 using MiniSpace.Services.MediaFiles.Application.Exceptions;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 {
-    public class DeleteMediaFileHandler: ICommandHandler<DeleteMediaFile>
+    public class DeleteMediaFileHandler : ICommandHandler<DeleteMediaFile>
     {
         private readonly IFileSourceInfoRepository _fileSourceInfoRepository;
-        private readonly IGridFSService _gridFSService;
+        private readonly IS3Service _s3Service;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
-        
-        public DeleteMediaFileHandler(IFileSourceInfoRepository fileSourceInfoRepository, IGridFSService gridFSService,
+
+        public DeleteMediaFileHandler(IFileSourceInfoRepository fileSourceInfoRepository, IS3Service s3Service,
             IAppContext appContext, IMessageBroker messageBroker)
         {
             _fileSourceInfoRepository = fileSourceInfoRepository;
-            _gridFSService = gridFSService;
+            _s3Service = s3Service;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
-        
+
         public async Task HandleAsync(DeleteMediaFile command, CancellationToken cancellationToken)
         {
             var fileSourceInfo = await _fileSourceInfoRepository.GetAsync(command.MediaFileId);
@@ -29,15 +31,15 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             {
                 throw new MediaFileNotFoundException(command.MediaFileId);
             }
-            
+
             var identity = _appContext.Identity;
-            if(identity.IsAuthenticated && identity.Id != fileSourceInfo.UploaderId && !identity.IsAdmin)
+            if (identity.IsAuthenticated && identity.Id != fileSourceInfo.UploaderId && !identity.IsAdmin)
             {
                 throw new UnauthorizedMediaFileAccessException(fileSourceInfo.Id, identity.Id, fileSourceInfo.UploaderId);
             }
-            
-            await _gridFSService.DeleteFileAsync(fileSourceInfo.OriginalFileId);
-            await _gridFSService.DeleteFileAsync(fileSourceInfo.FileId);
+
+            await _s3Service.DeleteFileAsync(fileSourceInfo.OriginalFileUrl);
+            await _s3Service.DeleteFileAsync(fileSourceInfo.FileUrl);
             await _fileSourceInfoRepository.DeleteAsync(command.MediaFileId);
             await _messageBroker.PublishAsync(new MediaFileDeleted(command.MediaFileId, 
                 fileSourceInfo.SourceId, fileSourceInfo.SourceType.ToString()));
