@@ -3,6 +3,7 @@
 @using Radzen
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@using System.Web
 
 <style>
     /* General body and font styles */
@@ -103,7 +104,8 @@
     {
         if (!string.IsNullOrEmpty(Token) && !string.IsNullOrEmpty(Email))
         {
-            var response = await IdentityService.VerifyEmailAsync(Token, Email);
+            var decodedEmail = HttpUtility.UrlDecode(Email); 
+            var response = await IdentityService.VerifyEmailAsync(Token, decodedEmail);
             if (response != null && response.Content != null)
             {
                 successMessage = "Thank you, your email has been verified.";
