@@ -28,11 +28,11 @@ namespace MiniSpace.Services.Students.Core.Entities
         public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Guid BannerId { get; private set; }
+        public Guid? BannerId { get; private set; }
         public IEnumerable<Guid> GalleryOfImages
         {
             get => _galleryOfImages;
-            set => _galleryOfImages = new HashSet<Guid>(value);
+            set => _galleryOfImages = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
         public string Education { get; private set; }
         public string WorkPosition { get; private set; }
@@ -40,29 +40,32 @@ namespace MiniSpace.Services.Students.Core.Entities
         public IEnumerable<string> Languages
         {
             get => _languages;
-            set => _languages = new HashSet<string>(value);
+            set => _languages = new HashSet<string>(value ?? Enumerable.Empty<string>());
         }
         public IEnumerable<string> Interests
         {
             get => _interests;
-            set => _interests = new HashSet<string>(value);
+            set => _interests = new HashSet<string>(value ?? Enumerable.Empty<string>());
         }
+        public bool IsTwoFactorEnabled { get; private set; }
+        public string TwoFactorSecret { get; private set; }
 
         public IEnumerable<Guid> InterestedInEvents
         {
             get => _interestedInEvents;
-            set => _interestedInEvents = new HashSet<Guid>(value);
+            set => _interestedInEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
         public IEnumerable<Guid> SignedUpEvents
         {
             get => _signedUpEvents;
-            set => _signedUpEvents = new HashSet<Guid>(value);
+            set => _signedUpEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
 
         public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
             : this(id, email, createdAt, firstName, lastName, 0, Guid.Empty, string.Empty, null,
-                false, false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), Guid.Empty, 
-                Enumerable.Empty<Guid>(), string.Empty, string.Empty, string.Empty, Enumerable.Empty<string>(), Enumerable.Empty<string>())
+                false, false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), null, 
+                Enumerable.Empty<Guid>(), null, null, null, Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+                false, null)
         {
             CheckFullName(firstName, lastName);
         }
@@ -71,8 +74,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             int numberOfFriends, Guid profileImage, string description, DateTime? dateOfBirth,
             bool emailNotifications, bool isBanned, bool isOrganizer, State state,
             IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
-            Guid bannerId, IEnumerable<Guid> galleryOfImages, string education,
-            string workPosition, string company, IEnumerable<string> languages, IEnumerable<string> interests)
+            Guid? bannerId, IEnumerable<Guid> galleryOfImages, string education,
+            string workPosition, string company, IEnumerable<string> languages, IEnumerable<string> interests,
+            bool isTwoFactorEnabled, string twoFactorSecret)
         {
             Id = id;
             Email = email;
@@ -96,6 +100,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             Company = company;
             Languages = languages ?? Enumerable.Empty<string>();
             Interests = interests ?? Enumerable.Empty<string>();
+            IsTwoFactorEnabled = isTwoFactorEnabled;
+            TwoFactorSecret = twoFactorSecret;
         }
 
         public void SetIncomplete() => SetState(State.Incomplete);
@@ -146,81 +152,65 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentUpdated(this));
         }
 
-        public void UpdateBannerId(Guid bannerId)
+        public void UpdateBannerId(Guid? bannerId)
         {
-            if (bannerId == Guid.Empty)
-            {
-                throw new InvalidBannerIdException(Id);
-            }
-
             BannerId = bannerId;
             AddEvent(new StudentBannerUpdated(this));
         }
 
         public void UpdateGalleryOfImages(IEnumerable<Guid> galleryOfImages)
         {
-            if (galleryOfImages == null || !galleryOfImages.Any())
-            {
-                throw new InvalidGalleryOfImagesException(Id);
-            }
-
-            GalleryOfImages = new HashSet<Guid>(galleryOfImages);
+            GalleryOfImages = new HashSet<Guid>(galleryOfImages ?? Enumerable.Empty<Guid>());
             AddEvent(new StudentGalleryOfImagesUpdated(this));
         }
 
         public void UpdateEducation(string education)
         {
-            if (string.IsNullOrWhiteSpace(education))
-            {
-                throw new InvalidEducationException(Id);
-            }
-
             Education = education;
             AddEvent(new StudentEducationUpdated(this));
         }
 
         public void UpdateWorkPosition(string workPosition)
         {
-            if (string.IsNullOrWhiteSpace(workPosition))
-            {
-                throw new InvalidWorkPositionException(Id);
-            }
-
             WorkPosition = workPosition;
             AddEvent(new StudentWorkPositionUpdated(this));
         }
 
         public void UpdateCompany(string company)
         {
-            if (string.IsNullOrWhiteSpace(company))
-            {
-                throw new InvalidCompanyException(Id);
-            }
-
             Company = company;
             AddEvent(new StudentCompanyUpdated(this));
         }
 
         public void UpdateLanguages(IEnumerable<string> languages)
         {
-            if (languages == null || !languages.Any())
-            {
-                throw new InvalidLanguagesException(Id);
-            }
-
-            Languages = new HashSet<string>(languages);
+            Languages = new HashSet<string>(languages ?? Enumerable.Empty<string>());
             AddEvent(new StudentLanguagesUpdated(this));
         }
 
         public void UpdateInterests(IEnumerable<string> interests)
         {
-            if (interests == null || !interests.Any())
+            Interests = new HashSet<string>(interests ?? Enumerable.Empty<string>());
+            AddEvent(new StudentInterestsUpdated(this));
+        }
+
+        public void EnableTwoFactorAuthentication(string twoFactorSecret)
+        {
+            if (string.IsNullOrWhiteSpace(twoFactorSecret))
             {
-                throw new InvalidInterestsException(Id);
+                throw new InvalidTwoFactorSecretException(Id);
             }
 
-            Interests = new HashSet<string>(interests);
-            AddEvent(new StudentInterestsUpdated(this));
+            IsTwoFactorEnabled = true;
+            TwoFactorSecret = twoFactorSecret;
+            AddEvent(new StudentTwoFactorEnabled(this));
+        }
+
+        public void DisableTwoFactorAuthentication()
+        {
+            IsTwoFactorEnabled = false;
+            TwoFactorSecret = null;
+            AddEvent(new StudentTwoFactorDisabled(this));
         }
 
         private void CheckFullName(string firstName, string lastName)
