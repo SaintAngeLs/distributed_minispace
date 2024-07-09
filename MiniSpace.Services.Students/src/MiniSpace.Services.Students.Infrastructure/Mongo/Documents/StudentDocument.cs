@@ -33,5 +33,6 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public IEnumerable<string> Interests { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
+        public string ContactEmail { get; set; } 
     }
 }

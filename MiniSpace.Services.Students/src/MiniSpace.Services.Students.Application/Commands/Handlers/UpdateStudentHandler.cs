@@ -47,6 +47,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             student.UpdateCompany(command.Company);
             student.UpdateLanguages(command.Languages);
             student.UpdateInterests(command.Interests);
+            student.UpdateContactEmail(command.ContactEmail);
 
             if (command.EnableTwoFactor)
             {
@@ -70,7 +71,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 student.WorkPosition,
                 student.Company,
                 student.Languages,
-                student.Interests
+                student.Interests,
+                student.ContactEmail 
             );
 
             await _messageBroker.PublishAsync(studentUpdatedEvent);

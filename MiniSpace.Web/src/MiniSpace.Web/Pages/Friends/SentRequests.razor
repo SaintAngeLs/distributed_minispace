@@ -232,8 +232,8 @@
 
             students = (await Task.WhenAll(studentTasks)).ToList();
 
-            var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
-            await Task.WhenAll(imageTasks);
+            @* var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImageUrl));
+            await Task.WhenAll(imageTasks); *@
 
             foreach (var request in sentRequests)
             {

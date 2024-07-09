@@ -29,7 +29,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
                         e.Student.WorkPosition,
                         e.Student.Company,
                         e.Student.Languages,
-                        e.Student.Interests);
+                        e.Student.Interests,
+                        e.Student.ContactEmail);
                 case StudentStateChanged e:
                     return new Application.Events.StudentStateChanged(
                         e.Student.Id, 

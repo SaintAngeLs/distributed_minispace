@@ -27,6 +27,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public bool IsOrganizer { get; private set; }
         public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public string ContactEmail { get; private set; }
 
         public string BannerUrl { get; private set; }
         public IEnumerable<string> GalleryOfImageUrls
@@ -76,7 +77,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
             string bannerUrl, IEnumerable<string> galleryOfImageUrls, string education,
             string workPosition, string company, IEnumerable<string> languages, IEnumerable<string> interests,
-            bool isTwoFactorEnabled, string twoFactorSecret)
+            bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail = null)
         {
             Id = id;
             Email = email;
@@ -102,6 +103,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             Interests = interests ?? Enumerable.Empty<string>();
             IsTwoFactorEnabled = isTwoFactorEnabled;
             TwoFactorSecret = twoFactorSecret;
+            ContactEmail = contactEmail;
         }
 
         public void SetIncomplete() => SetState(State.Incomplete);
@@ -136,7 +138,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-        public void Update(string profileImageUrl, string description, bool emailNotifications)
+          public void Update(string profileImageUrl, string description, bool emailNotifications, string contactEmail)
         {
             CheckDescription(description);
 
@@ -148,6 +150,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             ProfileImageUrl = profileImageUrl;
             Description = description;
             EmailNotifications = emailNotifications;
+            ContactEmail = contactEmail;
 
             AddEvent(new StudentUpdated(this));
         }
@@ -224,6 +227,12 @@ namespace MiniSpace.Services.Students.Core.Entities
         {
             Interests = new HashSet<string>(interests ?? Enumerable.Empty<string>());
             AddEvent(new StudentInterestsUpdated(this));
+        }
+
+        public void UpdateContactEmail(string contactEmail)
+        {
+            ContactEmail = contactEmail;
+            AddEvent(new StudentUpdated(this));
         }
 
         public void EnableTwoFactorAuthentication(string twoFactorSecret)

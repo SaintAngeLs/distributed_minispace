@@ -380,7 +380,7 @@
     
    private async Task FetchImageAsync(StudentDto student)
     {
-        var result = await MediaFilesService.GetFileAsync(student.ProfileImage);
+        @* var result = await MediaFilesService.GetFileAsync(student.ProfileImage);
         if (result != null)
         {
             if (images.ContainsKey(student.Id))
@@ -391,7 +391,7 @@
             {
                 images.Add(student.Id, result.Base64Content);
             }
-        }
+        } *@
     }
     
    private async Task LoadStudents(string searchArgument = null) {

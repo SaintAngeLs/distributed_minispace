@@ -184,10 +184,10 @@
 
     private async Task LoadImages() {
         foreach (var friend in friends) {
-            var result = await MediaFilesService.GetFileAsync(friend.StudentDetails.ProfileImage);
+            @* var result = await MediaFilesService.GetFileAsync(friend.StudentDetails.ProfileImageUrl);
             if (result != null) {
                 images[friend.StudentDetails.Id] = result.Base64Content;
-            }
+            } *@
         }
     }
 

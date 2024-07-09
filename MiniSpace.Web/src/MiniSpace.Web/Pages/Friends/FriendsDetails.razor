@@ -109,8 +109,8 @@ else
                 studentNotFound = true;
                 return;
             }
-            var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImage);
-            profileImage = imageResult != null ? $"data:image/webp;base64,{imageResult.Base64Content}" : "images/default_profile_image.webp";
+            @* var imageResult = await MediaFilesService.GetFileAsync(student.ProfileImageUrl); *@
+            profileImage = student.ProfileImageUrl != null ? $"data:image/webp;base64,{student.ProfileImageUrl}" : "images/default_profile_image.webp";
         }
         else
         {

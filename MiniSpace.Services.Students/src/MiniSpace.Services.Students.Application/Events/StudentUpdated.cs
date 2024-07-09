@@ -1,4 +1,5 @@
 using Convey.CQRS.Events;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -17,10 +18,12 @@ namespace MiniSpace.Services.Students.Application.Events
         public string Company { get; }
         public IEnumerable<string> Languages { get; }
         public IEnumerable<string> Interests { get; }
+        public string ContactEmail { get; } // New property
 
         public StudentUpdated(Guid studentId, string fullName, string profileImageUrl, string bannerUrl,
                               IEnumerable<string> galleryOfImageUrls, string education, string workPosition,
-                              string company, IEnumerable<string> languages, IEnumerable<string> interests)
+                              string company, IEnumerable<string> languages, IEnumerable<string> interests,
+                              string contactEmail)
         {
             StudentId = studentId;
             FullName = fullName;
@@ -32,6 +35,7 @@ namespace MiniSpace.Services.Students.Application.Events
             Company = company;
             Languages = languages;
             Interests = interests;
+            ContactEmail = contactEmail;
         }
     }
 }

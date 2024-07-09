@@ -231,7 +231,7 @@
 
             students = (await Task.WhenAll(studentTasks)).ToList();
 
-            var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImage));
+            var imageTasks = students.Select(student => FetchImageAsync(student.Id, student.ProfileImageUrl));
             await Task.WhenAll(imageTasks);
 
             foreach (var request in incomingRequests)
@@ -256,13 +256,13 @@
         }
     }
 
-    private async Task FetchImageAsync(Guid inviterId, Guid profileImage)
+    private async Task FetchImageAsync(Guid inviterId, string profileImage)
     {
-        var result = await MediaFilesService.GetFileAsync(profileImage);
+        @* var result = await MediaFilesService.GetFileAsync(profileImage);
         if (result != null)
         {
             images[inviterId] = result.Base64Content;
-        }
+        } *@
     }
 
     private string GetImage(Guid studentId)

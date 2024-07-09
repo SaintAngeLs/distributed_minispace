@@ -32,7 +32,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.Languages,
                 document.Interests,
                 document.IsTwoFactorEnabled,
-                document.TwoFactorSecret
+                document.TwoFactorSecret,
+                document.ContactEmail 
             );
 
         public static StudentDocument AsDocument(this Student entity)
@@ -61,7 +62,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 Languages = entity.Languages,
                 Interests = entity.Interests,
                 IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
-                TwoFactorSecret = entity.TwoFactorSecret
+                TwoFactorSecret = entity.TwoFactorSecret,
+                ContactEmail = entity.ContactEmail
             };
 
         public static StudentDto AsDto(this StudentDocument document)
@@ -88,7 +90,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 WorkPosition = document.WorkPosition,
                 Company = document.Company,
                 Languages = document.Languages,
-                Interests = document.Interests
+                Interests = document.Interests,
+                ContactEmail = document.ContactEmail 
             };
     }
 }
