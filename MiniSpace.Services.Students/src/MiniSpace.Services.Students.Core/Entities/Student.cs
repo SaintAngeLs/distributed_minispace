@@ -8,9 +8,9 @@ namespace MiniSpace.Services.Students.Core.Entities
 {
     public class Student : AggregateRoot
     {
-        private ISet<Guid> _interestedInEvents = new HashSet<Guid>();
-        private ISet<Guid> _signedUpEvents = new HashSet<Guid>();
-        private ISet<Guid> _galleryOfImages = new HashSet<Guid>();
+        private ISet<string> _interestedInEvents = new HashSet<string>();
+        private ISet<string> _signedUpEvents = new HashSet<string>();
+        private ISet<string> _galleryOfImages = new HashSet<string>();
         private ISet<string> _languages = new HashSet<string>();
         private ISet<string> _interests = new HashSet<string>();
 
@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string LastName { get; private set; }
         public string FullName => $"{FirstName} {LastName}";
         public int NumberOfFriends { get; private set; }
-        public Guid ProfileImage { get; private set; }
+        public string ProfileImageUrl { get; private set; }
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public bool EmailNotifications { get; private set; }
@@ -28,11 +28,11 @@ namespace MiniSpace.Services.Students.Core.Entities
         public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Guid? BannerId { get; private set; }
-        public IEnumerable<Guid> GalleryOfImages
+        public string BannerUrl { get; private set; }
+        public IEnumerable<string> GalleryOfImageUrls
         {
             get => _galleryOfImages;
-            set => _galleryOfImages = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
+            set => _galleryOfImages = new HashSet<string>(value ?? Enumerable.Empty<string>());
         }
         public string Education { get; private set; }
         public string WorkPosition { get; private set; }
@@ -50,31 +50,31 @@ namespace MiniSpace.Services.Students.Core.Entities
         public bool IsTwoFactorEnabled { get; private set; }
         public string TwoFactorSecret { get; private set; }
 
-        public IEnumerable<Guid> InterestedInEvents
+        public IEnumerable<string> InterestedInEvents
         {
             get => _interestedInEvents;
-            set => _interestedInEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
+            set => _interestedInEvents = new HashSet<string>(value ?? Enumerable.Empty<string>());
         }
-        public IEnumerable<Guid> SignedUpEvents
+        public IEnumerable<string> SignedUpEvents
         {
             get => _signedUpEvents;
-            set => _signedUpEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
+            set => _signedUpEvents = new HashSet<string>(value ?? Enumerable.Empty<string>());
         }
 
         public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
-            : this(id, email, createdAt, firstName, lastName, 0, Guid.Empty, string.Empty, null,
-                false, false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), null, 
-                Enumerable.Empty<Guid>(), null, null, null, Enumerable.Empty<string>(), Enumerable.Empty<string>(),
+            : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
+                false, false, false, State.Unverified, Enumerable.Empty<string>(), Enumerable.Empty<string>(), null, 
+                Enumerable.Empty<string>(), null, null, null, Enumerable.Empty<string>(), Enumerable.Empty<string>(),
                 false, null)
         {
             CheckFullName(firstName, lastName);
         }
 
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
-            int numberOfFriends, Guid profileImage, string description, DateTime? dateOfBirth,
+            int numberOfFriends, string profileImageUrl, string description, DateTime? dateOfBirth,
             bool emailNotifications, bool isBanned, bool isOrganizer, State state,
-            IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
-            Guid? bannerId, IEnumerable<Guid> galleryOfImages, string education,
+            IEnumerable<string> interestedInEvents, IEnumerable<string> signedUpEvents,
+            string bannerUrl, IEnumerable<string> galleryOfImageUrls, string education,
             string workPosition, string company, IEnumerable<string> languages, IEnumerable<string> interests,
             bool isTwoFactorEnabled, string twoFactorSecret)
         {
@@ -84,17 +84,17 @@ namespace MiniSpace.Services.Students.Core.Entities
             FirstName = firstName;
             LastName = lastName;
             NumberOfFriends = numberOfFriends;
-            ProfileImage = profileImage;
+            ProfileImageUrl = profileImageUrl;
             Description = description;
             DateOfBirth = dateOfBirth;
             EmailNotifications = emailNotifications;
             IsBanned = isBanned;
             IsOrganizer = isOrganizer;
             State = state;
-            InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
-            SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
-            BannerId = bannerId;
-            GalleryOfImages = galleryOfImages ?? Enumerable.Empty<Guid>();
+            InterestedInEvents = interestedInEvents ?? Enumerable.Empty<string>();
+            SignedUpEvents = signedUpEvents ?? Enumerable.Empty<string>();
+            BannerUrl = bannerUrl;
+            GalleryOfImageUrls = galleryOfImageUrls ?? Enumerable.Empty<string>();
             Education = education;
             WorkPosition = workPosition;
             Company = company;
@@ -116,7 +116,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentStateChanged(this, previousState));
         }
 
-        public void CompleteRegistration(Guid profileImage, string description,
+        public void CompleteRegistration(string profileImageUrl, string description,
             DateTime dateOfBirth, DateTime now, bool emailNotifications)
         {
             CheckDescription(description);
@@ -127,7 +127,7 @@ namespace MiniSpace.Services.Students.Core.Entities
                 throw new CannotChangeStudentStateException(Id, State);
             }
 
-            ProfileImage = profileImage;
+            ProfileImageUrl = profileImageUrl;
             Description = description;
             DateOfBirth = dateOfBirth;
             EmailNotifications = emailNotifications;
@@ -136,7 +136,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-        public void Update(Guid profileImage, string description, bool emailNotifications)
+        public void Update(string profileImageUrl, string description, bool emailNotifications)
         {
             CheckDescription(description);
 
@@ -145,42 +145,42 @@ namespace MiniSpace.Services.Students.Core.Entities
                 throw new CannotUpdateStudentException(Id);
             }
 
-            ProfileImage = profileImage;
+            ProfileImageUrl = profileImageUrl;
             Description = description;
             EmailNotifications = emailNotifications;
 
             AddEvent(new StudentUpdated(this));
         }
 
-        public void UpdateBannerId(Guid? bannerId)
+        public void UpdateBannerUrl(string bannerUrl)
         {
-            BannerId = bannerId;
+            BannerUrl = bannerUrl;
             AddEvent(new StudentBannerUpdated(this));
         }
 
-        public void UpdateGalleryOfImages(IEnumerable<Guid> galleryOfImages)
+        public void UpdateGalleryOfImageUrls(IEnumerable<string> galleryOfImageUrls)
         {
-            GalleryOfImages = new HashSet<Guid>(galleryOfImages ?? Enumerable.Empty<Guid>());
+            GalleryOfImageUrls = new HashSet<string>(galleryOfImageUrls ?? Enumerable.Empty<string>());
             AddEvent(new StudentGalleryOfImagesUpdated(this));
         }
 
-        public void RemoveGalleryImage(Guid mediaFileId)
+        public void RemoveGalleryImage(string imageUrl)
         {
-            if (!_galleryOfImages.Remove(mediaFileId))
+            if (!_galleryOfImages.Remove(imageUrl))
             {
-                throw new StudentGalleryImageNotFoundException(Id, mediaFileId);
+                throw new StudentGalleryImageNotFoundException(Id, imageUrl);
             }
             AddEvent(new StudentGalleryOfImagesUpdated(this));
         }
 
         public void RemoveBannerImage()
         {
-            if (BannerId == null)
+            if (string.IsNullOrEmpty(BannerUrl))
             {
                 throw new InvalidBannerIdException(Id);
             }
 
-            BannerId = null;
+            BannerUrl = null;
             AddEvent(new StudentBannerUpdated(this));
         }
 
@@ -264,7 +264,7 @@ namespace MiniSpace.Services.Students.Core.Entities
                 return;
             }
 
-            if (!_interestedInEvents.Add(eventId))
+            if (!_interestedInEvents.Add(eventId.ToString()))
             {
                 throw new StudentAlreadyInterestedInException(Id, eventId);
             }
@@ -272,7 +272,7 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void RemoveInterestedInEvent(Guid eventId)
         {
-            if (!_interestedInEvents.Remove(eventId))
+            if (!_interestedInEvents.Remove(eventId.ToString()))
             {
                 throw new StudentIsNotInterestedException(Id, eventId);
             }
@@ -285,7 +285,7 @@ namespace MiniSpace.Services.Students.Core.Entities
                 return;
             }
 
-            if (!_signedUpEvents.Add(eventId))
+            if (!_signedUpEvents.Add(eventId.ToString()))
             {
                 throw new StudentAlreadySignedUpException(Id, eventId);
             }
@@ -293,20 +293,15 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void RemoveSignedUpEvent(Guid eventId)
         {
-            if (!_signedUpEvents.Remove(eventId))
+            if (!_signedUpEvents.Remove(eventId.ToString()))
             {
                 throw new StudentIsNotSignedUpException(Id, eventId);
             }
         }
 
-        public void RemoveProfileImage(Guid mediaFileId)
+        public void RemoveProfileImage()
         {
-            if (ProfileImage != mediaFileId)
-            {
-                return;
-            }
-
-            ProfileImage = Guid.Empty;
+            ProfileImageUrl = string.Empty;
         }
 
         public void Ban() => IsBanned = true;
