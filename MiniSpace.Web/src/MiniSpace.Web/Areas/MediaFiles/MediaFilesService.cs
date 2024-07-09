@@ -32,8 +32,15 @@ namespace MiniSpace.Web.Areas.MediaFiles
             string fileContentType, string base64Content)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", new {sourceId, sourceType, uploaderId, 
-                fileName, fileContentType, base64Content });
+            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", new { 
+                MediaFileId = Guid.NewGuid(), 
+                SourceId = sourceId,
+                SourceType = sourceType,
+                UploaderId = uploaderId,
+                FileName = fileName,
+                FileContentType = fileContentType,
+                Base64Content = base64Content 
+            });
         }
         
         public Task DeleteMediaFileAsync(Guid fileId)

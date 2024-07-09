@@ -124,7 +124,7 @@
                 byte[] bytes = await ReadFully(stream);
                 var base64Content = Convert.ToBase64String(bytes);
                 var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
-                    MediaFileContextType.StudentProfile.ToString(), IdentityService.UserDto.Id,
+                    MediaFileContextType.StudentProfileImage.ToString(), IdentityService.UserDto.Id,
                     file.Name, file.ContentType, base64Content);
                 if (response.Content != null && response.Content.FileId != Guid.Empty)
                 {

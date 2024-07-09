@@ -4,6 +4,8 @@
     {
         Event,
         Post,
-        StudentProfile,
+        StudentProfileImage,
+        StudentBannerImage,
+        StudentGalleryImage
     }
 }

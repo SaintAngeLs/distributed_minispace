@@ -39,7 +39,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
             }
 
-            student.Update(command.ProfileImageUrl, command.Description, command.EmailNotifications);
+            student.UpdateProfileImageUrl(command.ProfileImageUrl);
             student.UpdateBannerUrl(command.BannerUrl);
             student.UpdateGalleryOfImageUrls(command.GalleryOfImageUrls);
             student.UpdateEducation(command.Education);

@@ -152,10 +152,22 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentUpdated(this));
         }
 
+        public void UpdateProfileImageUrl(string profileImageUrl)
+        {
+            ProfileImageUrl = profileImageUrl;
+            AddEvent(new StudentUpdated(this));
+        }
+
         public void UpdateBannerUrl(string bannerUrl)
         {
             BannerUrl = bannerUrl;
             AddEvent(new StudentBannerUpdated(this));
+        }
+
+        public void AddGalleryImageUrl(string imageUrl)
+        {
+            _galleryOfImages.Add(imageUrl);
+            AddEvent(new StudentGalleryOfImagesUpdated(this));
         }
 
         public void UpdateGalleryOfImageUrls(IEnumerable<string> galleryOfImageUrls)

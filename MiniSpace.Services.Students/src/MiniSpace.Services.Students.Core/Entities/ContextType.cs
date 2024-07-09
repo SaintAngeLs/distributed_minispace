@@ -1,6 +1,6 @@
-﻿namespace MiniSpace.Web.DTO.Types
+namespace MiniSpace.Services.Students.Core.Entities
 {
-    public enum MediaFileContextType
+    public enum ContextType
     {
         Event,
         Post,

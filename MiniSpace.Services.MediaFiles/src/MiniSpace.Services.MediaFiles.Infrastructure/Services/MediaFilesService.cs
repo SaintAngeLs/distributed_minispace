@@ -2,6 +2,7 @@
 using MiniSpace.Services.MediaFiles.Application.Commands;
 using MiniSpace.Services.MediaFiles.Application.Dto;
 using MiniSpace.Services.MediaFiles.Application.Events;
+using MiniSpace.Services.MediaFiles.Application.Events.External;
 using MiniSpace.Services.MediaFiles.Application.Exceptions;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Core.Entities;
@@ -69,6 +70,16 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
 
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, command.FileName));
+
+            // Publish event to student service
+            if (sourceType == ContextType.StudentProfileImage ||
+                sourceType == ContextType.StudentBannerImage ||
+                sourceType == ContextType.StudentGalleryImage)
+            {
+                var imageType = sourceType.ToString();
+                var studentImageUploadedEvent = new StudentImageUploaded(command.SourceId, originalUrl, imageType);
+                await _messageBroker.PublishAsync(studentImageUploadedEvent);
+            }
 
             return new FileUploadResponseDto(fileSourceInfo.Id);
         }
