@@ -164,6 +164,24 @@ modules:
         downstream: identity-service/password/reset
         auth: false
 
+      - upstream: /email/verify
+        method: POST
+        use: downstream
+        downstream: identity-service/email/verify
+        auth: false
+
+      - upstream: /2fa/enable
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/enable
+        auth: true
+
+      - upstream: /2fa/disable
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/disable
+        auth: true
+
     services:
       identity-service:
         localUrl: localhost:5004
@@ -221,6 +239,7 @@ modules:
         use: downstream
         downstream: reports-service/reports/students/{studentId}
         auth: true
+        
 
     services:
       reports-service:

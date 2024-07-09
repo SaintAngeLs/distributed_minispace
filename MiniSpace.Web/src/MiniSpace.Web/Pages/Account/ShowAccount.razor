@@ -14,6 +14,7 @@
 @inject NavigationManager NavigationManager
 @using MudBlazor
 
+<AuthWrapper>
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
@@ -126,7 +127,7 @@ else
         </RadzenProgressBarCircular>
     </div>
 }
-
+</AuthWrapper>
 <style>
     .account-font {
                 font-family: Arial, sans-serif; /* Change this to your preferred font */

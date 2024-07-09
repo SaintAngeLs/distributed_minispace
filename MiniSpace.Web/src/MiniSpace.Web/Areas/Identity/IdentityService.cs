@@ -335,5 +335,11 @@ namespace MiniSpace.Web.Areas.Identity
             return Guid.Parse(userIdClaim.Value);
         }
 
+        public async Task<HttpResponse<object>> VerifyEmailAsync(string token, string email)
+        {
+            var response = await _httpClient.PostAsync<object, object>("identity/email/verify", new { Token = token, Email = email });
+            return response;
+        }
+
     }
 }
