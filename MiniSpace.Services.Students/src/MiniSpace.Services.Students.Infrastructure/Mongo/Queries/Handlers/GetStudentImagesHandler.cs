@@ -31,11 +31,12 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
             var studentImages = new StudentImagesDto(
                 document.Id,
-                document.BannerId ?? Guid.Empty,
-                document.GalleryOfImages
+                document.BannerUrl,
+                document.GalleryOfImageUrls
             );
 
-            return studentImages;
+            return studentImages;       
         }
     }
 }
+

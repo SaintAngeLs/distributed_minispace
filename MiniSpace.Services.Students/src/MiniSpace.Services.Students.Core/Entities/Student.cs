@@ -8,8 +8,8 @@ namespace MiniSpace.Services.Students.Core.Entities
 {
     public class Student : AggregateRoot
     {
-        private ISet<string> _interestedInEvents = new HashSet<string>();
-        private ISet<string> _signedUpEvents = new HashSet<string>();
+        private ISet<Guid> _interestedInEvents = new HashSet<Guid>();
+        private ISet<Guid> _signedUpEvents = new HashSet<Guid>();
         private ISet<string> _galleryOfImages = new HashSet<string>();
         private ISet<string> _languages = new HashSet<string>();
         private ISet<string> _interests = new HashSet<string>();
@@ -50,20 +50,20 @@ namespace MiniSpace.Services.Students.Core.Entities
         public bool IsTwoFactorEnabled { get; private set; }
         public string TwoFactorSecret { get; private set; }
 
-        public IEnumerable<string> InterestedInEvents
+        public IEnumerable<Guid> InterestedInEvents
         {
             get => _interestedInEvents;
-            set => _interestedInEvents = new HashSet<string>(value ?? Enumerable.Empty<string>());
+            set => _interestedInEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
-        public IEnumerable<string> SignedUpEvents
+        public IEnumerable<Guid> SignedUpEvents
         {
             get => _signedUpEvents;
-            set => _signedUpEvents = new HashSet<string>(value ?? Enumerable.Empty<string>());
+            set => _signedUpEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
 
         public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
             : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
-                false, false, false, State.Unverified, Enumerable.Empty<string>(), Enumerable.Empty<string>(), null, 
+                false, false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), null, 
                 Enumerable.Empty<string>(), null, null, null, Enumerable.Empty<string>(), Enumerable.Empty<string>(),
                 false, null)
         {
@@ -73,7 +73,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             int numberOfFriends, string profileImageUrl, string description, DateTime? dateOfBirth,
             bool emailNotifications, bool isBanned, bool isOrganizer, State state,
-            IEnumerable<string> interestedInEvents, IEnumerable<string> signedUpEvents,
+            IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
             string bannerUrl, IEnumerable<string> galleryOfImageUrls, string education,
             string workPosition, string company, IEnumerable<string> languages, IEnumerable<string> interests,
             bool isTwoFactorEnabled, string twoFactorSecret)
@@ -91,8 +91,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             IsBanned = isBanned;
             IsOrganizer = isOrganizer;
             State = state;
-            InterestedInEvents = interestedInEvents ?? Enumerable.Empty<string>();
-            SignedUpEvents = signedUpEvents ?? Enumerable.Empty<string>();
+            InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
+            SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
             BannerUrl = bannerUrl;
             GalleryOfImageUrls = galleryOfImageUrls ?? Enumerable.Empty<string>();
             Education = education;
@@ -264,7 +264,7 @@ namespace MiniSpace.Services.Students.Core.Entities
                 return;
             }
 
-            if (!_interestedInEvents.Add(eventId.ToString()))
+            if (!_interestedInEvents.Add(eventId))
             {
                 throw new StudentAlreadyInterestedInException(Id, eventId);
             }
@@ -272,7 +272,7 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void RemoveInterestedInEvent(Guid eventId)
         {
-            if (!_interestedInEvents.Remove(eventId.ToString()))
+            if (!_interestedInEvents.Remove(eventId))
             {
                 throw new StudentIsNotInterestedException(Id, eventId);
             }
@@ -285,7 +285,7 @@ namespace MiniSpace.Services.Students.Core.Entities
                 return;
             }
 
-            if (!_signedUpEvents.Add(eventId.ToString()))
+            if (!_signedUpEvents.Add(eventId))
             {
                 throw new StudentAlreadySignedUpException(Id, eventId);
             }
@@ -293,7 +293,7 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void RemoveSignedUpEvent(Guid eventId)
         {
-            if (!_signedUpEvents.Remove(eventId.ToString()))
+            if (!_signedUpEvents.Remove(eventId))
             {
                 throw new StudentIsNotSignedUpException(Id, eventId);
             }

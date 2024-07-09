@@ -8,13 +8,13 @@ namespace MiniSpace.Services.Students.Application.Events
     {
         public Guid StudentId { get; }
         public string FullName { get; }
-        public Guid MediaFileId { get; }
+        public string ProfileImageUrl { get; }
 
-        public StudentCreated(Guid studentId, string fullName, Guid mediaFileId)
+        public StudentCreated(Guid studentId, string fullName, string profileImageUrl)
         {
             StudentId = studentId;
             FullName = fullName;
-            MediaFileId = mediaFileId;
+            ProfileImageUrl = profileImageUrl;
         }
     }
 }
