@@ -119,7 +119,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .SubscribeCommand<DeleteMediaFile>()
                 .SubscribeCommand<CleanupUnassociatedFiles>()
                 .SubscribeEvent<StudentCreated>()
-                .SubscribeEvent<StudentUpdated>()
+                // .SubscribeEvent<StudentUpdated>()
                 .SubscribeEvent<PostCreated>()
                 .SubscribeEvent<EventCreated>();
 

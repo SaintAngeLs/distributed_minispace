@@ -56,5 +56,11 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories
                 s => s.SourceId == sourceId && s.SourceType == sourceType);
             return fileSourceInfos?.Select(s => s.AsEntity());
         }
+
+        public async Task<IEnumerable<FileSourceInfo>> FindByUploaderIdAndSourceTypeAsync(Guid uploaderId, ContextType sourceType)
+        {
+            var fileSourceInfos = await _repository.FindAsync(s => s.UploaderId == uploaderId && s.SourceType == sourceType);
+            return fileSourceInfos?.Select(s => s.AsEntity());
+        }
     }
 }
