@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Dto
@@ -18,7 +20,16 @@ namespace MiniSpace.Services.Students.Application.Dto
         public bool IsOrganizer { get; set; }
         public string State { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string Education { get; set; }
+        public string WorkPosition { get; set; }
+        public string Company { get; set; }
+        public IEnumerable<string> Languages { get; set; }
+        public IEnumerable<string> Interests { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecret { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }
-    }    
+        public Guid? BannerId { get; set; }
+        public IEnumerable<Guid> GalleryOfImages { get; set; }
+    }
 }

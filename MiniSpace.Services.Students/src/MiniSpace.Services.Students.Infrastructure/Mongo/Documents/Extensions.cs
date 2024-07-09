@@ -8,11 +8,32 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id, document.Email, document.CreatedAt, document.FirstName,
-                document.LastName, document.NumberOfFriends, document.ProfileImage,
-                document.Description, document.DateOfBirth, document.EmailNotifications,
-                document.IsBanned, document.IsOrganizer, document.State,
-                document.InterestedInEvents, document.SignedUpEvents);
+            => new Student(
+                document.Id,
+                document.Email,
+                document.CreatedAt,
+                document.FirstName,
+                document.LastName,
+                document.NumberOfFriends,
+                document.ProfileImage,
+                document.Description,
+                document.DateOfBirth,
+                document.EmailNotifications,
+                document.IsBanned,
+                document.IsOrganizer,
+                document.State,
+                document.InterestedInEvents,
+                document.SignedUpEvents,
+                document.BannerId,
+                document.GalleryOfImages,
+                document.Education,
+                document.WorkPosition,
+                document.Company,
+                document.Languages,
+                document.Interests,
+                document.IsTwoFactorEnabled,
+                document.TwoFactorSecret
+            );
 
         public static StudentDocument AsDocument(this Student entity)
             => new StudentDocument()
@@ -31,7 +52,16 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 State = entity.State,
                 CreatedAt = entity.CreatedAt,
                 InterestedInEvents = entity.InterestedInEvents,
-                SignedUpEvents = entity.SignedUpEvents
+                SignedUpEvents = entity.SignedUpEvents,
+                BannerId = entity.BannerId,
+                GalleryOfImages = entity.GalleryOfImages,
+                Education = entity.Education,
+                WorkPosition = entity.WorkPosition,
+                Company = entity.Company,
+                Languages = entity.Languages,
+                Interests = entity.Interests,
+                IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
+                TwoFactorSecret = entity.TwoFactorSecret
             };
 
         public static StudentDto AsDto(this StudentDocument document)
@@ -51,7 +81,14 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 State = document.State.ToString().ToLowerInvariant(),
                 CreatedAt = document.CreatedAt,
                 InterestedInEvents = document.InterestedInEvents,
-                SignedUpEvents = document.SignedUpEvents
+                SignedUpEvents = document.SignedUpEvents,
+                BannerId = document.BannerId,
+                GalleryOfImages = document.GalleryOfImages,
+                Education = document.Education,
+                WorkPosition = document.WorkPosition,
+                Company = document.Company,
+                Languages = document.Languages,
+                Interests = document.Interests
             };
-    }    
+    }
 }

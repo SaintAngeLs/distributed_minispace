@@ -1,5 +1,7 @@
 using Convey.Types;
 using MiniSpace.Services.Students.Core.Entities;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
@@ -22,5 +24,14 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public DateTime CreatedAt { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }
-    }    
+        public Guid? BannerId { get; set; }
+        public IEnumerable<Guid> GalleryOfImages { get; set; }
+        public string Education { get; set; }
+        public string WorkPosition { get; set; }
+        public string Company { get; set; }
+        public IEnumerable<string> Languages { get; set; }
+        public IEnumerable<string> Interests { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecret { get; set; }
+    }
 }

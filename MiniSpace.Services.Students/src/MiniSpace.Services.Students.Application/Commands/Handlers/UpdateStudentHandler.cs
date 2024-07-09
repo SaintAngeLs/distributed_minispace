@@ -2,6 +2,9 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Repositories;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
@@ -20,7 +23,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
         }
-        
+
         public async Task HandleAsync(UpdateStudent command, CancellationToken cancellationToken = default)
         {
             var student = await _studentRepository.GetAsync(command.StudentId);
@@ -28,18 +31,36 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             {
                 throw new StudentNotFoundException(command.StudentId);
             }
-            
+
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != student.Id && !identity.IsAdmin)
             {
                 throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
             }
-            
+
             student.Update(command.ProfileImage, command.Description, command.EmailNotifications);
+            student.UpdateBannerId(command.BannerId);
+            student.UpdateGalleryOfImages(command.GalleryOfImages);
+            student.UpdateEducation(command.Education);
+            student.UpdateWorkPosition(command.WorkPosition);
+            student.UpdateCompany(command.Company);
+            student.UpdateLanguages(command.Languages);
+            student.UpdateInterests(command.Interests);
+
+            if (command.EnableTwoFactor)
+            {
+                student.EnableTwoFactorAuthentication(command.TwoFactorSecret);
+            }
+
+            if (command.DisableTwoFactor)
+            {
+                student.DisableTwoFactorAuthentication();
+            }
+
             await _studentRepository.UpdateAsync(student);
 
             var events = _eventMapper.MapAll(student.Events);
             await _messageBroker.PublishAsync(events.ToArray());
         }
-    }    
+    }
 }

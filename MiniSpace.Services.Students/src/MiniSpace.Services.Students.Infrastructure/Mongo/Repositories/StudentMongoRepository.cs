@@ -55,7 +55,6 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 
          private async Task<long> CountAsync(FilterDefinition<StudentDocument> filter, CancellationToken cancellationToken)
         {
-            // Use the CountDocumentsAsync method of IMongoCollection to count documents that match the filter
             return await _repository.Collection.CountDocumentsAsync(filter).ConfigureAwait(false);
         }
     }    
