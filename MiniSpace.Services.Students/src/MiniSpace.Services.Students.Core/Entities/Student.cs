@@ -164,6 +164,26 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentGalleryOfImagesUpdated(this));
         }
 
+        public void RemoveGalleryImage(Guid mediaFileId)
+        {
+            if (!_galleryOfImages.Remove(mediaFileId))
+            {
+                throw new StudentGalleryImageNotFoundException(Id, mediaFileId);
+            }
+            AddEvent(new StudentGalleryOfImagesUpdated(this));
+        }
+
+        public void RemoveBannerImage()
+        {
+            if (BannerId == null)
+            {
+                throw new InvalidBannerIdException(Id);
+            }
+
+            BannerId = null;
+            AddEvent(new StudentBannerUpdated(this));
+        }
+
         public void UpdateEducation(string education)
         {
             Education = education;
