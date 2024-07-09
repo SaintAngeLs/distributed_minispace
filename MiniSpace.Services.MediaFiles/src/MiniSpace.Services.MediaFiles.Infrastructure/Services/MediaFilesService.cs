@@ -60,8 +60,8 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             inStream.Position = 0;
             outStream.Position = 0;
 
-            var originalUrl = await _s3Service.UploadFileAsync(command.FileName, inStream);
-            var processedUrl = await _s3Service.UploadFileAsync(command.FileName, outStream);
+            var originalUrl = await _s3Service.UploadFileAsync("images", command.FileName, inStream);
+            var processedUrl = await _s3Service.UploadFileAsync("webps", command.FileName, outStream);
 
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
                 command.UploaderId, State.Unassociated, _dateTimeProvider.Now, originalUrl, 
