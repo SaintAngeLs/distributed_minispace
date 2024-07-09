@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.310.3" />
     <PackageReference Include="Convey" Version="1.1.448" />
     <PackageReference Include="Convey.Auth" Version="1.1.448" />
     <PackageReference Include="Convey.CQRS.Queries" Version="1.1.448" />
