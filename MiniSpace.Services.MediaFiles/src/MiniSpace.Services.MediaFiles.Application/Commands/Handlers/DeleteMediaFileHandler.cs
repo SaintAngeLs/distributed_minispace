@@ -26,10 +26,10 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 
         public async Task HandleAsync(DeleteMediaFile command, CancellationToken cancellationToken)
         {
-            var fileSourceInfo = await _fileSourceInfoRepository.GetAsync(command.MediaFileId);
+            var fileSourceInfo = await _fileSourceInfoRepository.GetAsync(command.MediaFileUrl);
             if (fileSourceInfo is null)
             {
-                throw new MediaFileNotFoundException(command.MediaFileId);
+                throw new MediaFileNotFoundException(command.MediaFileUrl);
             }
 
             var identity = _appContext.Identity;
@@ -40,8 +40,8 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 
             await _s3Service.DeleteFileAsync(fileSourceInfo.OriginalFileUrl);
             await _s3Service.DeleteFileAsync(fileSourceInfo.FileUrl);
-            await _fileSourceInfoRepository.DeleteAsync(command.MediaFileId);
-            await _messageBroker.PublishAsync(new MediaFileDeleted(command.MediaFileId, 
+            await _fileSourceInfoRepository.DeleteAsync(command.MediaFileUrl);
+            await _messageBroker.PublishAsync(new MediaFileDeleted(command.MediaFileUrl, 
                 fileSourceInfo.SourceId, fileSourceInfo.SourceType.ToString()));
         }
     }

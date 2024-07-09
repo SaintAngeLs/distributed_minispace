@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,17 +20,15 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories
             _repository = repository;
         }
 
-        public async Task<FileSourceInfo> GetAsync(Guid id)
+        public async Task<FileSourceInfo> GetAsync(string url)
         {
-            var fileSourceInfo = await _repository.GetAsync(s => s.Id == id);
-
+            var fileSourceInfo = await _repository.GetAsync(s => s.OriginalFileUrl == url || s.FileUrl == url);
             return fileSourceInfo?.AsEntity();
         }
         
         public async Task<IEnumerable<FileSourceInfo>> GetAllUnassociatedAsync()
         {
             var fileSourceInfos = await _repository.FindAsync(s => s.State == State.Unassociated);
-
             return fileSourceInfos?.Select(s => s.AsEntity());
         }
 
@@ -41,17 +38,22 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories
         public Task UpdateAsync(FileSourceInfo fileSourceInfo)
             => _repository.UpdateAsync(fileSourceInfo.AsDocument());
 
-        public Task DeleteAsync(Guid id)
-            => _repository.DeleteAsync(id);
+        public async Task DeleteAsync(string url)
+        {
+            var fileSourceInfo = await _repository.GetAsync(s => s.OriginalFileUrl == url || s.FileUrl == url);
+            if (fileSourceInfo != null)
+            {
+                await _repository.DeleteAsync(fileSourceInfo.Id);
+            }
+        }
         
-        public Task<bool> ExistsAsync(Guid id)
-            => _repository.ExistsAsync(s => s.Id == id);
+        public Task<bool> ExistsAsync(string url)
+            => _repository.ExistsAsync(s => s.OriginalFileUrl == url || s.FileUrl == url);
         
         public async Task<IEnumerable<FileSourceInfo>> FindAsync(Guid sourceId, ContextType sourceType)
         {
             var fileSourceInfos = await _repository.FindAsync(
                 s => s.SourceId == sourceId && s.SourceType == sourceType);
-
             return fileSourceInfos?.Select(s => s.AsEntity());
         }
     }

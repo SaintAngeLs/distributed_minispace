@@ -1,4 +1,5 @@
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Students.Application.Events;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Repositories;
@@ -38,9 +39,9 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
             }
 
-            student.Update(command.ProfileImage, command.Description, command.EmailNotifications);
-            student.UpdateBannerId(command.BannerId);
-            student.UpdateGalleryOfImages(command.GalleryOfImages);
+            student.Update(command.ProfileImageUrl, command.Description, command.EmailNotifications);
+            student.UpdateBannerUrl(command.BannerUrl);
+            student.UpdateGalleryOfImageUrls(command.GalleryOfImageUrls);
             student.UpdateEducation(command.Education);
             student.UpdateWorkPosition(command.WorkPosition);
             student.UpdateCompany(command.Company);
@@ -59,8 +60,20 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
             await _studentRepository.UpdateAsync(student);
 
-            var events = _eventMapper.MapAll(student.Events);
-            await _messageBroker.PublishAsync(events.ToArray());
+            var studentUpdatedEvent = new StudentUpdated(
+                student.Id,
+                student.FullName,
+                student.ProfileImageUrl,
+                student.BannerUrl,
+                student.GalleryOfImageUrls,
+                student.Education,
+                student.WorkPosition,
+                student.Company,
+                student.Languages,
+                student.Interests
+            );
+
+            await _messageBroker.PublishAsync(studentUpdatedEvent);
         }
     }
 }

@@ -4,15 +4,15 @@ using Convey.MessageBrokers;
 namespace MiniSpace.Services.Students.Application.Events.External
 {
     [Message("mediafiles")]
-    public class MediaFileDeleted: IEvent
+    public class MediaFileDeleted : IEvent
     {
-        public Guid MediaFileId { get; }
+        public string MediaFileUrl { get; }
         public Guid SourceId { get; }
         public string Source { get; }
 
-        public MediaFileDeleted(Guid mediaFileId, Guid sourceId, string source)
+        public MediaFileDeleted(string mediaFileUrl, Guid sourceId, string source)
         {
-            MediaFileId = mediaFileId;
+            MediaFileUrl = mediaFileUrl;
             SourceId = sourceId;
             Source = source;
         }

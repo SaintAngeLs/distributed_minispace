@@ -9,18 +9,17 @@ namespace MiniSpace.Services.MediaFiles.Application.Events.External
     public class StudentUpdated : IEvent
     {
         public Guid StudentId { get; }
-        public Guid MediaFileId { get; }
-        public Guid BannerMediaFileId { get; }
-        public IEnumerable<Guid> GalleryOfImages { get; }
-  
-
-        public StudentUpdated(Guid studentId, Guid mediaFileId, Guid bannerMediaFileId,
-                              IEnumerable<Guid> galleryOfImages)
+        public string ProfileImageUrl { get; }
+        public string BannerUrl { get; }
+        public IEnumerable<string> GalleryOfImageUrls { get; }
+       
+        public StudentUpdated(Guid studentId, string profileImageUrl, string bannerUrl,
+                              IEnumerable<string> galleryOfImageUrls)
         {
             StudentId = studentId;
-            MediaFileId = mediaFileId;
-            BannerMediaFileId = bannerMediaFileId;
-            GalleryOfImages = galleryOfImages;
+            ProfileImageUrl = profileImageUrl;
+            BannerUrl = bannerUrl;
+            GalleryOfImageUrls = galleryOfImageUrls;
         }
     }  
 }

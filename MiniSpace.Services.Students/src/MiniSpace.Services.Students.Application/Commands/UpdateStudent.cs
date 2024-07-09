@@ -1,17 +1,18 @@
 using Convey.CQRS.Commands;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MiniSpace.Services.Students.Application.Commands
 {
     public class UpdateStudent : ICommand
     {
         public Guid StudentId { get; }
-        public Guid ProfileImage { get; }
+        public string ProfileImageUrl { get; }
         public string Description { get; }
         public bool EmailNotifications { get; }
-        public Guid? BannerId { get; }
-        public IEnumerable<Guid> GalleryOfImages { get; }
+        public string? BannerUrl { get; }
+        public IEnumerable<string> GalleryOfImageUrls { get; }
         public string Education { get; }
         public string WorkPosition { get; }
         public string Company { get; }
@@ -21,17 +22,17 @@ namespace MiniSpace.Services.Students.Application.Commands
         public bool DisableTwoFactor { get; }
         public string TwoFactorSecret { get; }
 
-        public UpdateStudent(Guid studentId, Guid profileImage, string description, bool emailNotifications,
-            Guid? bannerId, IEnumerable<Guid> galleryOfImages, string education, string workPosition, 
+        public UpdateStudent(Guid studentId, string profileImageUrl, string description, bool emailNotifications,
+            string? bannerUrl, IEnumerable<string> galleryOfImageUrls, string education, string workPosition, 
             string company, IEnumerable<string> languages, IEnumerable<string> interests,
             bool enableTwoFactor, bool disableTwoFactor, string twoFactorSecret)
         {
             StudentId = studentId;
-            ProfileImage = profileImage;
+            ProfileImageUrl = profileImageUrl;
             Description = description;
             EmailNotifications = emailNotifications;
-            BannerId = bannerId;
-            GalleryOfImages = galleryOfImages ?? Enumerable.Empty<Guid>();
+            BannerUrl = bannerUrl;
+            GalleryOfImageUrls = galleryOfImageUrls ?? Enumerable.Empty<string>();
             Education = education;
             WorkPosition = workPosition;
             Company = company;

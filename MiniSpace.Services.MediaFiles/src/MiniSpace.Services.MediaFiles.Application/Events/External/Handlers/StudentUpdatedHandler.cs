@@ -2,7 +2,6 @@
 using Convey.CQRS.Events;
 using MiniSpace.Services.MediaFiles.Core.Entities;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -23,16 +22,18 @@ namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
 
         public async Task HandleAsync(StudentUpdated @event, CancellationToken cancellationToken = default)
         {
-            var profileImageInfo = await _fileSourceInfoRepository.GetAsync(@event.MediaFileId);
+            // Handle profile image
+            var profileImageInfo = await _fileSourceInfoRepository.GetAsync(@event.ProfileImageUrl);
             if (profileImageInfo != null)
             {
                 profileImageInfo.Associate();
                 await _fileSourceInfoRepository.UpdateAsync(profileImageInfo);
             }
 
-            if (@event.BannerMediaFileId != Guid.Empty)
+            // Handle banner image
+            if (!string.IsNullOrEmpty(@event.BannerUrl))
             {
-                var bannerImageInfo = await _fileSourceInfoRepository.GetAsync(@event.BannerMediaFileId);
+                var bannerImageInfo = await _fileSourceInfoRepository.GetAsync(@event.BannerUrl);
                 if (bannerImageInfo != null)
                 {
                     bannerImageInfo.Associate();
@@ -40,24 +41,22 @@ namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
                 }
             }
 
-            var galleryImageInfos = await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfile);
-            foreach (var galleryImageInfo in galleryImageInfos)
+            // Handle gallery images
+            foreach (var galleryImageUrl in @event.GalleryOfImageUrls)
             {
-                if (@event.GalleryOfImages.Contains(galleryImageInfo.Id))
+                var galleryImageInfo = await _fileSourceInfoRepository.GetAsync(galleryImageUrl);
+                if (galleryImageInfo != null)
                 {
                     galleryImageInfo.Associate();
+                    await _fileSourceInfoRepository.UpdateAsync(galleryImageInfo);
                 }
-                else
-                {
-                    galleryImageInfo.Unassociate();
-                }
-                await _fileSourceInfoRepository.UpdateAsync(galleryImageInfo);
             }
 
+            // Unassociate files that are no longer associated with the student
             var allStudentFiles = await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfile);
             foreach (var file in allStudentFiles)
             {
-                if (file.Id != @event.MediaFileId && file.Id != @event.BannerMediaFileId && !@event.GalleryOfImages.Contains(file.Id))
+                if (file.FileUrl != @event.ProfileImageUrl && file.FileUrl != @event.BannerUrl && !@event.GalleryOfImageUrls.Contains(file.FileUrl))
                 {
                     file.Unassociate();
                     await _fileSourceInfoRepository.UpdateAsync(file);
