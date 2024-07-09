@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Convey.CQRS.Events;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
@@ -27,7 +28,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             var welcomeMessage = $"Welcome to MiniSpace, {@event.FirstName} {@event.LastName}!";
             
-            var verificationLink = $"https://minispace.itsharppro.com/verify-email/{@event.Token}/{@event.Email}";
+            var verificationLink = $"https://minispace.itsharppro.com/verify-email/{System.Net.WebUtility.UrlEncode(@event.Token)}/{System.Net.WebUtility.UrlEncode(@event.Email)}";
 
             var detailsHtml = $@"
                 <p>Dear {@event.FirstName},<br>
