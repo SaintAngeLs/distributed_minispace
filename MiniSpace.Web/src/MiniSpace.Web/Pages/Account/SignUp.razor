@@ -8,7 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject IErrorMapperService ErrorMapperService
 
-<MudThemeProvider />
+<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
 <style>
     body {
         margin: 0;
@@ -102,6 +102,11 @@
                                       InputType="@passwordInputType" Adornment="Adornment.End" AdornmentIcon="@passwordInputIcon" 
                                       OnAdornmentClick="TogglePasswordVisibility" Required="true" RequiredError="Password is required" />
                     </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="signUpModel.ConfirmPassword" Label="Confirm Password" Variant="Variant.Outlined"
+                                      InputType="InputType.Password" Adornment="Adornment.End" AdornmentIcon="@passwordInputIcon"
+                                      OnAdornmentClick="TogglePasswordVisibility" Required="true" RequiredError="Confirm Password is required" />
+                    </MudItem>
                     <MudItem xs="12" Class="d-flex justify-center">
                         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Sign Up</MudButton>
                     </MudItem>
@@ -145,6 +150,13 @@
     {
         try
         {
+            if (signUpModel.Password != signUpModel.ConfirmPassword)
+            {
+                showError = true;
+                errorMessage = "Passwords do not match.";
+                return;
+            }
+
             var response = await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email, signUpModel.Password, "user");
             if (response.ErrorMessage == null)
             {
