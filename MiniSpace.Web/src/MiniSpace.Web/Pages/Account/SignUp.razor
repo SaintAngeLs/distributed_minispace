@@ -2,16 +2,14 @@
 @using MiniSpace.Web.Models.Identity
 @using MiniSpace.Web.Areas.Identity
 @using MiniSpace.Web.Areas.Students
-@using Radzen
 @using MiniSpace.Web.Areas.Http
+@using MudBlazor
 @inject IIdentityService IdentityService
-@inject IStudentsService StudentsService
-@inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject IErrorMapperService ErrorMapperService
 
+<MudThemeProvider />
 <style>
-    /* General body and font styles */
     body {
         margin: 0;
         font-family: 'Roboto', sans-serif;
@@ -19,14 +17,12 @@
         color: #333;
     }
 
-    /* Flexbox container for video and form */
     .split-container {
         display: flex;
         height: 100vh;
         overflow: hidden;
     }
 
-    /* Styling for the video and form sections */
     .left-side, .right-side {
         flex: 1;
         display: flex;
@@ -34,13 +30,15 @@
         justify-content: center;
     }
 
-    /* Specific styles for video background */
     .left-side {
-        background: black; /* Fallback for non-supported browsers */
+        background: black;
         position: relative;
     }
 
-    /* Fullscreen background video */
+    .right-side {
+        margin-top: 5rem !important;
+    }
+
     video {
         position: absolute;
         top: 0;
@@ -50,7 +48,6 @@
         object-fit: cover;
     }
 
-    /* Form container with adaptive sizing and padding */
     .form-container {
         width: 100%;
         max-width: 400px;
@@ -60,15 +57,12 @@
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
-   
-
-    /* Link and button styles for interaction */
     a, button {
         transition: color 0.3s ease, background-color 0.3s ease;
     }
 
     a:hover, button:hover {
-        color: #007BFF; /* Highlight color on hover */
+        color: #007BFF;
     }
 </style>
 
@@ -81,32 +75,40 @@
     </div>
     <div class="right-side">
         <div class="form-container">
-            <h2>Welcome to MiniSpace</h2>
-            <p>Please sign up to create your account and explore our world to the full.</p>
-            <h3>Sign Up</h3>
-            <RadzenTemplateForm Data="@signUpModel" Submit="@(async (SignUpModel args) => { await HandleSignUp(); })">
-                <RadzenFieldset>
-                    <RadzenStack Gap="1rem">
-                        <RadzenTextBox Name="firstname" Placeholder="Firstname" Style="width: 100%;" @bind-Value="signUpModel.FirstName"/>
-                        <RadzenRequiredValidator Component="firstname" Text="Firstname is required"/>
-
-                        <RadzenTextBox Name="lastname" Placeholder="Lastname" Style="width: 100%;" @bind-Value="signUpModel.LastName"/>
-                        <RadzenRequiredValidator Component="lastname" Text="Lastname is required"/>
-
-                        <RadzenTextBox Name="email" Placeholder="Email" Style="width: 100%;" @bind-Value="signUpModel.Email"/>
-                        <RadzenRequiredValidator Component="email" Text="Email is required"/>
-                        <RadzenEmailValidator Component="email" Text="Email is invalid"/>
-
-                        <RadzenPassword Name="password" Placeholder="Password" Style="width: 100%;" @bind-Value="signUpModel.Password"/>
-                        <RadzenRequiredValidator Component="password" Text="Password is required"/>
-
-                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Large" Text="Sign Up"/>
-                    </RadzenStack>
-                </RadzenFieldset>
-            </RadzenTemplateForm>
-
-            <div style="text-align:center; margin-top: 3rem !important;">
-                <a href="/signin">Already have an account? Sign In</a>
+            <div class="sign-in-up-pre-info">
+                <h2>Welcome to MiniSpace</h2>
+                <p>Please sign up to create your account and explore our world to the full.</p>
+                <h3>Sign Up</h3>
+            </div>
+            @if (showError)
+            {
+                <MudAlert Severity="Severity.Error" OnClose="OnAlertClose">
+                    @errorMessage
+                </MudAlert>
+            }
+            <EditForm Model="@signUpModel" OnValidSubmit="HandleSignUp">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="signUpModel.FirstName" Label="First Name" Variant="Variant.Outlined" Required="true" RequiredError="First Name is required" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="signUpModel.LastName" Label="Last Name" Variant="Variant.Outlined" Required="true" RequiredError="Last Name is required" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="signUpModel.Email" Label="Email" Variant="Variant.Outlined" Required="true" RequiredError="Email is required" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="signUpModel.Password" Label="Password" Variant="Variant.Outlined" 
+                                      InputType="@passwordInputType" Adornment="Adornment.End" AdornmentIcon="@passwordInputIcon" 
+                                      OnAdornmentClick="TogglePasswordVisibility" Required="true" RequiredError="Password is required" />
+                    </MudItem>
+                    <MudItem xs="12" Class="d-flex justify-center">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Sign Up</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+            <div style="text-align: center; margin-top: 3rem !important;">
+                <MudLink Href="/signin">Already have an account? Sign In</MudLink>
             </div>
         </div>
     </div>
@@ -116,23 +118,49 @@
     private SignUpModel signUpModel = new SignUpModel();
     private bool showError = false;
     private string errorMessage = string.Empty;
-    private bool popup;
+    private InputType passwordInputType = InputType.Password;
+    private string passwordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-    private async Task HandleSignUp()
+    private void OnAlertClose()
     {
-        var response = await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email, signUpModel.Password, "user");
-        if(response.ErrorMessage == null)
-            NavigationManager.NavigateTo("/signin");
+        showError = false;
+        errorMessage = string.Empty;
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        if (passwordInputType == InputType.Password)
+        {
+            passwordInputType = InputType.Text;
+            passwordInputIcon = Icons.Material.Filled.Visibility;
+        }
         else
         {
-            showError = true;
-            errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
+            passwordInputType = InputType.Password;
+            passwordInputIcon = Icons.Material.Filled.VisibilityOff;
         }
     }
 
-    @* protected override async Task OnAfterRenderAsync(bool firstRender) {
-        if (firstRender) {
-            await JSRuntime.InvokeVoidAsync("initializeVideoPlayer", "videos/video-component/video_1.mp4", "videos/video-component/video_2.mp4");
+    private async Task HandleSignUp()
+    {
+        try
+        {
+            var response = await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email, signUpModel.Password, "user");
+            if (response.ErrorMessage == null)
+            {
+                NavigationManager.NavigateTo("/signin");
+            }
+            else
+            {
+                showError = true;
+                errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
+            }
         }
-    } *@
+        catch (Exception ex)
+        {
+            showError = true;
+            errorMessage = $"Error during sign up: {ex.Message}";
+            StateHasChanged(); 
+        }
+    }
 }

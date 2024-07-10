@@ -6,60 +6,60 @@
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.DTO.Types
 @using MiniSpace.Web.Shared
-@using Radzen
 @using MudBlazor
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
+<MudThemeProvider />
 <AuthWrapper>
-<div class="breadcrumbs-container">
-    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
-</div>
+    <div class="breadcrumbs-container">
+        <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+    </div>
 
-@code {
-    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
-    };
-}
-<MudContainer Class="account-container">
-    <MudGrid>
-        <MudItem xs="12" sm="4" md="3">
-            <MudNavMenu Elevation="1" Class="navigation-panel">
-                <MudNavLink Href="#profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
-                <MudNavLink Href="#security" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
-                <MudNavLink Href="#notifications" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
-                <MudNavLink Href="#privacy" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
-            </MudNavMenu>
-        </MudItem>
-        <MudItem xs="12" sm="8" md="9">
-            <MudPaper Elevation="1" Class="content-panel">
-                <MudTabs>
-                    <MudTabPanel Text="Profile" Icon="@Icons.Material.Filled.Person">
-                        @ProfileContent()
-                    </MudTabPanel>
-                    <MudTabPanel Text="Security" Icon="@Icons.Material.Filled.Security">
-                        @SecurityContent()
-                    </MudTabPanel>
-                    <MudTabPanel Text="Notifications" Icon="@Icons.Material.Filled.Notifications">
-                        @NotificationsContent()
-                    </MudTabPanel>
-                    <MudTabPanel Text="Privacy" Icon="@Icons.Material.Filled.PrivacyTip">
-                        @PrivacyContent()
-                    </MudTabPanel>
-                </MudTabs>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
+    @code {
+        private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+            new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+        };
+    }
 
-
+    <MudContainer Class="account-container">
+        <MudGrid>
+            <MudItem xs="12" sm="4" md="3">
+                <MudNavMenu Elevation="1" Class="navigation-panel">
+                    <MudNavLink Href="#profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+                    <MudNavLink Href="#security" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
+                    <MudNavLink Href="#notifications" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+                    <MudNavLink Href="#privacy" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
+                </MudNavMenu>
+            </MudItem>
+            <MudItem xs="12" sm="8" md="9">
+                <MudPaper Elevation="1" Class="content-panel">
+                    <MudTabs>
+                        <MudTabPanel Text="Profile" Icon="@Icons.Material.Filled.Person">
+                            @ProfileContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Security" Icon="@Icons.Material.Filled.Security">
+                            @SecurityContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Notifications" Icon="@Icons.Material.Filled.Notifications">
+                            @NotificationsContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Privacy" Icon="@Icons.Material.Filled.PrivacyTip">
+                            @PrivacyContent()
+                        </MudTabPanel>
+                    </MudTabs>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
 </AuthWrapper>
+
 <style>
-    .account-container {
+.account-container {
     margin-top: 20px;
 }
 
@@ -88,8 +88,8 @@
 .mud-switch {
     margin-bottom: 10px;
 }
-
 </style>
+
 @code {
     private StudentDto studentDto = new();
     private bool isLoading = true;
@@ -124,6 +124,20 @@
         }
     }
 
+    private async Task SaveChangesAsync()
+    {
+        try
+        {
+            await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImageUrl, studentDto.Description, studentDto.EmailNotifications, studentDto.ContactEmail);
+            // Add any additional success handling here
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            // Add any error handling here
+        }
+    }
+
     private RenderFragment ProfileContent() => @<div>
         <MudText Typo="Typo.h4" GutterBottom="true">Profile</MudText>
         @if (isLoading)
@@ -134,12 +148,13 @@
         {
             <MudStack>
                 <MudAvatar Size="Size.Large" Image="@GetImage()" Alt="Profile image" />
-                <MudTextField Value="studentDto.FullName" Label="Fullname" ReadOnly="true" />
-                <MudTextField @bind-Value="studentDto.Email" Label="Email" ReadOnly="true" />
-                <MudTextField @bind-Value="studentDto.Education" Label="Education" ReadOnly="true" />
-                <MudTextField @bind-Value="studentDto.WorkPosition" Label="Work Position" ReadOnly="true" />
-                <MudTextField @bind-Value="studentDto.Company" Label="Company" ReadOnly="true" />
-                <MudTextField @bind-Value="studentDto.Description" Label="Description" ReadOnly="true" />
+                <MudTextField Value="@studentDto.FullName" Label="Fullname" HelperText="Your full name" Variant="Variant.Outlined" Margin="Margin.Dense" ReadOnly="true"/>
+                <MudTextField @bind-Value="studentDto.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudTextField @bind-Value="studentDto.Education" Label="Education" HelperText="Your education background" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudTextField @bind-Value="studentDto.WorkPosition" Label="Work Position" HelperText="Your current work position" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudTextField @bind-Value="studentDto.Company" Label="Company" HelperText="Your current company" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudTextField @bind-Value="studentDto.Description" Label="Description" Lines="3" HelperText="A brief description about yourself" AutoGrow Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
             </MudStack>
         }
     </div>;
@@ -154,6 +169,7 @@
         {
             <MudStack>
                 <MudSwitch @bind-Checked="studentDto.IsTwoFactorEnabled" Label="Two-Factor Authentication" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
             </MudStack>
         }
     </div>;
@@ -166,7 +182,10 @@
         }
         else
         {
-            <MudSwitch @bind-Checked="studentDto.EmailNotifications" Label="Email Notifications" />
+            <MudStack>
+                <MudSwitch @bind-Checked="studentDto.EmailNotifications" Label="Email Notifications" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+            </MudStack>
         }
     </div>;
 
@@ -178,7 +197,10 @@
         }
         else
         {
-            <MudTextField @bind-Value="studentDto.ContactEmail" Label="Contact Email" ReadOnly="true" />
+            <MudStack>
+                <MudTextField @bind-Value="studentDto.ContactEmail" Label="Contact Email" ReadOnly="true" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+            </MudStack>
         }
     </div>;
 

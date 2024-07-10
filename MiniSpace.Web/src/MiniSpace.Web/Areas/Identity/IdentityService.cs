@@ -20,8 +20,8 @@ namespace MiniSpace.Web.Areas.Identity
         
         public JwtDto JwtDto { get; set; }
         public UserDto UserDto { get; set; }
-        public string Name {get; private set; }
-        public string Email {get; private set; }
+        public string Name { get; private set; }
+        public string Email { get; private set; }
         public bool IsAuthenticated { get; set; }
         
         public IdentityService(IHttpClient httpClient, ILocalStorageService localStorage, NavigationManager navigationManager)
@@ -29,7 +29,7 @@ namespace MiniSpace.Web.Areas.Identity
             _httpClient = httpClient;
             _jwtHandler = new JwtSecurityTokenHandler();
             _localStorage = localStorage;
-             _navigationManager = navigationManager;
+            _navigationManager = navigationManager;
         }
         
         public Task<UserDto> GetAccountAsync(JwtDto jwtDto)
@@ -42,29 +42,10 @@ namespace MiniSpace.Web.Areas.Identity
             IEnumerable<string> permissions = null)
         {
             return await _httpClient.PostAsync<object, object>("identity/sign-up", 
-                new {firstName, lastName, email, password, role, permissions});
-            
+                new { firstName, lastName, email, password, role, permissions });
         }
 
-        // public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
-        // {
-        //     var response = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new {email, password});
-        //     JwtDto = response.Content;
-            
-        //     if (JwtDto != null)
-        //     {
-        //         var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
-        //         var payload = jwtToken.Payload;
-        //         UserDto = await GetAccountAsync(JwtDto);
-        //         Name = (string)payload["name"];
-        //         Email = (string)payload["e-mail"];
-        //         IsAuthenticated = true;
-        //     }
-            
-        //     return response;
-        // }
-
-         public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
+        public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password)
         {
             var response = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", new { email, password });
             if (response.Content != null)
@@ -85,6 +66,10 @@ namespace MiniSpace.Web.Areas.Identity
 
         public async Task Logout()
         {
+            if (JwtDto != null && !string.IsNullOrEmpty(JwtDto.RefreshToken))
+            {
+                await RevokeRefreshToken(JwtDto.RefreshToken);
+            }
             await _localStorage.RemoveItemAsync("jwtDto");
             JwtDto = null;
             UserDto = null;
@@ -97,7 +82,7 @@ namespace MiniSpace.Web.Areas.Identity
         private async Task<JwtDto> RefreshAccessToken(string refreshToken)
         {
             var payload = new { refreshToken };
-            var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-token", payload);
+            var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-tokens/use", payload);
             if (response.ErrorMessage != null)
             {
                 throw new InvalidOperationException($"Error refreshing token: {response.ErrorMessage.Reason}");
@@ -111,15 +96,16 @@ namespace MiniSpace.Web.Areas.Identity
             throw new InvalidOperationException("Failed to refresh token");
         }
 
-        // Make the Logout asynchronous 😕
-        // public void Logout()
-        // {
-        //     JwtDto = null;
-        //     UserDto = null;
-        //     Name = null;
-        //     Email = null;
-        //     IsAuthenticated = false;
-        // }
+        private async Task RevokeRefreshToken(string refreshToken)
+        {
+            var payload = new { refreshToken };
+            var response = await _httpClient.PostAsync<object, object>("identity/refresh-tokens/revoke", payload);
+            if (response.ErrorMessage != null)
+            {
+                throw new InvalidOperationException($"Error revoking refresh token: {response.ErrorMessage.Reason}");
+            }
+        }
+
         public async Task<string> GetAccessTokenAsync()
         {
             var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
@@ -171,7 +157,6 @@ namespace MiniSpace.Web.Areas.Identity
 
             throw new InvalidOperationException("Authentication required.");
         }
-
 
         public async Task InitializeAuthenticationState()
         {
@@ -226,7 +211,7 @@ namespace MiniSpace.Web.Areas.Identity
         {
             try
             {
-                var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-token", new { refreshToken });
+                var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-tokens/use", new { refreshToken });
                 if (response.Content != null)
                 {
                     var newJwtDtoJson = JsonSerializer.Serialize(response.Content);
@@ -274,7 +259,7 @@ namespace MiniSpace.Web.Areas.Identity
         public Task GrantOrganizerRightsAsync(Guid userId)
         {
             _httpClient.SetAccessToken(JwtDto.AccessToken);
-            return _httpClient.PostAsync($"identity/users/{userId}/organizer-rights", new {userId});
+            return _httpClient.PostAsync($"identity/users/{userId}/organizer-rights", new { userId });
         }
 
         public Task RevokeOrganizerRightsAsync(Guid userId)
@@ -286,7 +271,7 @@ namespace MiniSpace.Web.Areas.Identity
         public Task BanUserAsync(Guid userId)
         {
             _httpClient.SetAccessToken(JwtDto.AccessToken);
-            return _httpClient.PostAsync($"identity/users/{userId}/ban", new {userId});
+            return _httpClient.PostAsync($"identity/users/{userId}/ban", new { userId });
         }
 
         public Task UnbanUserAsync(Guid userId)
@@ -338,6 +323,5 @@ namespace MiniSpace.Web.Areas.Identity
             var response = await _httpClient.PostAsync<object, object>("identity/email/verify", new { Token = token, Email = email, HashedToken = hashedToken });
             return response;
         }
-
     }
 }
