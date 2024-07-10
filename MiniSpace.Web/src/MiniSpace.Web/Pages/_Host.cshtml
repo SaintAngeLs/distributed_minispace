@@ -14,12 +14,24 @@
     <link href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#03173d" />
 </head>
 <body>
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
-
+<script>
+         if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        }   
+    </script>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
@@ -111,5 +123,7 @@
         };
 
     </script>
+
+    
 </body>
 </html>
