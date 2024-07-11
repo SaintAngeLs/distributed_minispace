@@ -8,6 +8,8 @@ namespace MiniSpace.Services.Students.Application.Commands
     public class UpdateStudent : ICommand
     {
         public Guid StudentId { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
         public string ProfileImageUrl { get; }
         public string Description { get; }
         public bool EmailNotifications { get; }
@@ -23,12 +25,14 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string TwoFactorSecret { get; }
         public string? ContactEmail { get; }
 
-        public UpdateStudent(Guid studentId, string profileImageUrl, string description, bool emailNotifications,
+        public UpdateStudent(Guid studentId, string firstName, string lastName, string profileImageUrl, string description, bool emailNotifications,
             string? bannerUrl, IEnumerable<string> galleryOfImageUrls, string education, string workPosition, 
             string company, IEnumerable<string> languages, IEnumerable<string> interests,
             bool enableTwoFactor, bool disableTwoFactor, string twoFactorSecret, string? contactEmail)
         {
             StudentId = studentId;
+            FirstName = firstName;
+            LastName = lastName;
             ProfileImageUrl = profileImageUrl;
             Description = description;
             EmailNotifications = emailNotifications;

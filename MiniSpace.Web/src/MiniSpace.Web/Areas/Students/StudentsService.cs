@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
@@ -45,20 +46,59 @@ namespace MiniSpace.Web.Areas.Students
             return _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>("students");
         }
 
-        public Task UpdateStudentAsync(Guid studentId, string profileImageUrl, string description, bool emailNotifications, string contactEmail)
+        public async Task UpdateStudentAsync(
+            Guid studentId, 
+            string firstName, 
+            string lastName, 
+            string profileImageUrl, 
+            string description, 
+            bool emailNotifications, 
+            string contactEmail, 
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests, 
+            bool enableTwoFactor, 
+            bool disableTwoFactor, 
+            string twoFactorSecret,
+            string education,
+            string workPosition,
+            string company)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync($"students/{studentId}", new { studentId, profileImageUrl, description, emailNotifications, contactEmail });
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var updateStudentData = new
+            {
+                studentId,
+                firstName,
+                lastName,
+                profileImageUrl,
+                description,
+                emailNotifications,
+                contactEmail,
+                languages,
+                interests,
+                enableTwoFactor,
+                disableTwoFactor,
+                twoFactorSecret,
+                education,
+                workPosition,
+                company
+            };
+
+            // Serialize the data to JSON and log it
+            var jsonData = JsonSerializer.Serialize(updateStudentData);
+            Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
+
+            await _httpClient.PutAsync($"students/{studentId}", updateStudentData);
         }
 
-        public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl,
-            string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail)
-            => _httpClient.PostAsync<object,object>("students", new { studentId, profileImageUrl, description, dateOfBirth, emailNotifications, contactEmail });
+        public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl, string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail)
+            => _httpClient.PostAsync<object, object>("students", new { studentId, profileImageUrl, description, dateOfBirth, emailNotifications, contactEmail });
 
         public async Task<string> GetStudentStateAsync(Guid studentId)
         {
             var student = await GetStudentAsync(studentId);
-            return student != null ? student.State : "invalid"; 
+            return student != null ? student.State : "invalid";
         }
     }
 }

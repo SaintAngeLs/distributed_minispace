@@ -138,8 +138,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-          public void Update(string profileImageUrl, string description, bool emailNotifications, string contactEmail)
+        public void Update(string firstName, string lastName, string profileImageUrl, string description, bool emailNotifications, string contactEmail)
         {
+            CheckFullName(firstName, lastName);
             CheckDescription(description);
 
             if (State != State.Valid)
@@ -147,6 +148,8 @@ namespace MiniSpace.Services.Students.Core.Entities
                 throw new CannotUpdateStudentException(Id);
             }
 
+            FirstName = firstName;
+            LastName = lastName;
             ProfileImageUrl = profileImageUrl;
             Description = description;
             EmailNotifications = emailNotifications;

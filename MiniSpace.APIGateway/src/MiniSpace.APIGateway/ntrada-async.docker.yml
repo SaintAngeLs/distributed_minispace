@@ -182,6 +182,18 @@ modules:
         downstream: identity-service/2fa/disable
         auth: true
 
+      - upstream: /refresh-tokens/use
+        method: POST
+        use: downstream
+        downstream: identity-service/refresh-tokens/use
+        auth: false
+
+      - upstream: /refresh-tokens/revoke
+        method: POST
+        use: downstream
+        downstream: identity-service/refresh-tokens/revoke
+        auth: false
+
     services:
       identity-service:
         localUrl: localhost:5004

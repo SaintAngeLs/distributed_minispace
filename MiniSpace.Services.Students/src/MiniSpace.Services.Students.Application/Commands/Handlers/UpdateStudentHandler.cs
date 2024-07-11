@@ -3,7 +3,9 @@ using MiniSpace.Services.Students.Application.Events;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Repositories;
+using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,6 +29,10 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateStudent command, CancellationToken cancellationToken = default)
         {
+            // Log the command received
+            var commandJson = JsonSerializer.Serialize(command);
+            Console.WriteLine($"Received UpdateStudent command: {commandJson}");
+
             var student = await _studentRepository.GetAsync(command.StudentId);
             if (student is null)
             {
@@ -39,7 +45,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
             }
 
-            student.UpdateProfileImageUrl(command.ProfileImageUrl);
+            student.Update(command.FirstName, command.LastName, command.ProfileImageUrl, command.Description, command.EmailNotifications, command.ContactEmail);
             student.UpdateBannerUrl(command.BannerUrl);
             student.UpdateGalleryOfImageUrls(command.GalleryOfImageUrls);
             student.UpdateEducation(command.Education);
@@ -47,7 +53,6 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             student.UpdateCompany(command.Company);
             student.UpdateLanguages(command.Languages);
             student.UpdateInterests(command.Interests);
-            student.UpdateContactEmail(command.ContactEmail);
 
             if (command.EnableTwoFactor)
             {

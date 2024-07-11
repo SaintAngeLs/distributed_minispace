@@ -145,12 +145,12 @@
         <div style="flex: 1; display: flex; margin-left: @(_isUserAuthenticated && isPC ? "200px" : "0px"); background: linear-gradient(to bottom, #f5f7fa, #c3cfe2)">
             <div style="flex: 1; display: flex; justify-content: center;">
                 <div class="main-content" style="flex-grow: 1; max-width: 960px;">
-                    <div style="flex: 1; display: flex; justify-content: flex-end;">
+                    @* <div style="flex: 1; display: flex; justify-content: flex-end;">
                         <div class="main-content" style="flex-grow: 1; max-width: 960px;">
                             <DynamicContentComponent Route="@currentRoute" />
                         </div>
-                    </div>
-                    <div style="background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.15); padding: 20px; border-radius: 5px; margin: 20px;">
+                    </div> *@
+                    <div style="background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.15); padding: 10px; border-radius: 5px; margin: 20px;">
                         @Body
                     </div>
                 </div>
@@ -212,7 +212,7 @@
     public async Task UpdateScreenSize()
     {
         var screenSize = await JSRuntime.InvokeAsync<ScreenSize>("getScreenSize");
-        isPC = screenSize.Width > 768; // Adjust this width based on your breakpoint preference
+        isPC = screenSize.Width > 868; // Adjust this width based on your breakpoint preference
         StateHasChanged();
     }
 

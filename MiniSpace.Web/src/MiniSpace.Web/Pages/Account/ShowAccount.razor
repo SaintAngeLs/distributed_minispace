@@ -6,40 +6,151 @@
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.DTO.Types
 @using MiniSpace.Web.Shared
-@using Radzen
+@using MudBlazor
 @using System.IO
+@using System.Text.Json
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
-@using MudBlazor
 
 <AuthWrapper>
-<div class="breadcrumbs-container">
-    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
-</div>
+    <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
+    <div class="breadcrumbs-container">
+        <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+    </div>
+
+    @code {
+        private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+            new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+        };
+
+        private List<string> availableLanguages = new List<string>
+        {
+            "English",
+            "Spanish",
+            "French",
+            "German",
+            "Chinese",
+            "Japanese",
+            "Korean",
+            "Italian",
+            "Russian",
+            "Portuguese"
+        };
+
+        private int activeTabIndex = 0;
+        private bool enableTwoFactor;
+        private bool disableTwoFactor;
+
+        private void SetActiveTabIndex(int index)
+        {
+            activeTabIndex = index;
+        }
+    }
+
+    <MudContainer Class="account-container">
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="3">
+                <MudNavMenu Elevation="1" Class="navigation-panel">
+                    <MudNavLink OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
+                </MudNavMenu>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="9">
+                <MudPaper Elevation="1" Class="content-panel">
+                    <MudTabs @bind-ActivePanelIndex="activeTabIndex">
+                        <MudTabPanel Text="Profile" Icon="@Icons.Material.Filled.Person">
+                            @ProfileContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Security" Icon="@Icons.Material.Filled.Security">
+                            @SecurityContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Notifications" Icon="@Icons.Material.Filled.Notifications">
+                            @NotificationsContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Privacy" Icon="@Icons.Material.Filled.PrivacyTip">
+                            @PrivacyContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Languages & Interests" Icon="@Icons.Material.Filled.Language">
+                            @LanguagesAndInterestsContent()
+                        </MudTabPanel>
+                        <MudTabPanel Text="Gallery" Icon="@Icons.Material.Filled.PhotoLibrary">
+                            @GalleryContent()
+                        </MudTabPanel>
+                    </MudTabs>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
+    }
+
+    .navigation-panel {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .content-panel {
+        padding: 20px;
+    }
+
+    .mud-tabs {
+        margin-top: 20px;
+    }
+
+    .mud-tabpanel {
+        padding: 20px;
+    }
+
+    .mud-text-field {
+        margin-bottom: 10px;
+    }
+
+    .mud-switch {
+        margin-bottom: 10px;
+    }
+
+    .image-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center.
+    }
+
+    .profile-image {
+        height: 150px;
+        width: 150px;
+    }
+
+    textarea.mud-input-slot.mud-input-root.mud-input-root-outlined {
+        padding: 10px !important;
+    }
+</style>
 
 @code {
-    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
-    };
     private StudentDto studentDto = new();
-    private bool editionDisabled = true;
-    private string profileImage = string.Empty;
-    private TaskCompletionSource<bool> clientChangeCompletionSource;
-    private bool isUploading = false;
     private bool isLoading = true;
-    
-    private const string dateFormat = "dd/MM/yyyy HH:mm";
-    private const string shortDateFormat = "dd/MM/yyyy";
+    private string profileImage = string.Empty;
+    private bool isUploading = false;
+    private IBrowserFile file;
+    private long maxFileSize = 10 * 1024 * 1024;
 
     protected override async Task OnInitializedAsync()
     {
         isLoading = true;
         StateHasChanged();
-        
+
         try
         {
             await IdentityService.InitializeAuthenticationState();
@@ -48,7 +159,9 @@
             {
                 var studentId = IdentityService.GetCurrentUserId();
                 studentDto = await StudentsService.GetStudentAsync(studentId);
-                profileImage = studentDto.ProfileImageUrl; // Directly using the URL from the DTO
+                profileImage = studentDto.ProfileImageUrl;
+                enableTwoFactor = studentDto.IsTwoFactorEnabled;
+                disableTwoFactor = !studentDto.IsTwoFactorEnabled;
             }
             else
             {
@@ -66,73 +179,264 @@
         }
     }
 
-    void EnableEdition()
+    private async Task SaveChangesAsync()
     {
-        editionDisabled = false;
-        StateHasChanged();
+        try
+        {
+            if (file != null)
+            {
+                isUploading = true;
+                StateHasChanged();
+
+                try
+                {
+                    var stream = file.OpenReadStream(maxFileSize);
+                    byte[] bytes = await ReadFully(stream);
+                    var base64Content = Convert.ToBase64String(bytes);
+                    var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
+                        MediaFileContextType.StudentProfileImage.ToString(), IdentityService.UserDto.Id,
+                        file.Name, file.ContentType, base64Content);
+                    if (response.Content != null && !string.IsNullOrEmpty(response.Content.FileUrl))
+                    {
+                        studentDto.ProfileImageUrl = response.Content.FileUrl;
+                        profileImage = response.Content.FileUrl;
+                    }
+
+                    stream.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error uploading image: {ex.Message}");
+                }
+                finally
+                {
+                    isUploading = false;
+                    StateHasChanged();
+                }
+            }
+
+            var updateStudentData = new
+            {
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                studentDto.Education,             
+                studentDto.WorkPosition,          
+                studentDto.Company,  
+                EnableTwoFactor = enableTwoFactor,
+                DisableTwoFactor = disableTwoFactor,
+                studentDto.TwoFactorSecret
+            };
+
+            // Serialize the data to JSON and log it
+            var jsonData = JsonSerializer.Serialize(updateStudentData);
+            Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
+
+            // Update student information
+            await StudentsService.UpdateStudentAsync(
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                enableTwoFactor,
+                disableTwoFactor,
+                studentDto.TwoFactorSecret,
+                studentDto.Education,           
+                studentDto.WorkPosition,         
+                studentDto.Company 
+            );
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
-    private async Task HandleUpdateStudent()
-    {
-        if (clientChangeCompletionSource != null)
+    private RenderFragment ProfileContent() => @<div>
+        <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
+        @if (isLoading)
         {
-            await clientChangeCompletionSource.Task;
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
         }
-        editionDisabled = true;
-        await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImageUrl,
-            studentDto.Description, studentDto.EmailNotifications, studentDto.ContactEmail);
-        await OnInitializedAsync();
-    }
-    
+        else
+        {
+            <MudGrid>
+                <MudItem xs="6" sm="6" md="4">
+                    <div class="image-upload-container">
+                        <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
+                        <MudFileUpload T="IBrowserFile" @bind-Files="file" Accept=".jpg,.jpeg,.png">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                                           for="@context">
+                                    Upload Image
+                                </MudButton>
+                            </ButtonTemplate>
+                            <SelectedTemplate>
+                                @if (file != null)
+                                {
+                                    <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @file.Name </MudText>
+                                }
+                                else
+                                {
+                                    <MudText><MudIcon Icon="@Icons.Material.Filled.Attachment" /> No Files Selected</MudText>
+                                }
+                            </SelectedTemplate>
+                        </MudFileUpload>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="8">
+                    <MudGrid>
+                        <MudItem xs="12" sm="12">
+                            <MudTextField @bind-Value="studentDto.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                        </MudItem>
+                        <MudItem xs="12" sm="12">
+                            <MudTextField @bind-Value="studentDto.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="11">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="studentDto.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="studentDto.Education" Label="Education" HelperText="Your education background" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="studentDto.WorkPosition" Label="Work Position" HelperText="Your current work position" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="studentDto.Company" Label="Company" HelperText="Your current company" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="studentDto.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+
+            @if (isUploading)
+            {
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            }
+        }
+    </div>;
+
+    private RenderFragment SecurityContent() => @<div>
+        <MudText Typo="Typo.h6" GutterBottom="true">Security</MudText>
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else
+        {
+            <MudStack>
+                <MudSwitch @bind-Checked="enableTwoFactor" Label="Enable Two-Factor Authentication" />
+                <MudSwitch @bind-Checked="disableTwoFactor" Label="Disable Two-Factor Authentication" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+            </MudStack>
+        }
+    </div>;
+
+    private RenderFragment NotificationsContent() => @<div>
+        <MudText Typo="Typo.h6" GutterBottom="true">Notifications</MudText>
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else
+        {
+            <MudStack>
+                <MudSwitch @bind-Checked="studentDto.EmailNotifications" Label="Email Notifications" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+            </MudStack>
+        }
+    </div>;
+
+    private RenderFragment PrivacyContent() => @<div>
+        <MudText Typo="Typo.h6" GutterBottom="true">Privacy</MudText>
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else
+        {
+            <MudStack>
+                <MudTextField @bind-Value="studentDto.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+            </MudStack>
+        }
+    </div>;
+
+    private RenderFragment LanguagesAndInterestsContent() => @<div>
+        <MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
+                    <MudSelect @bind-SelectedValues="studentDto.Languages" Label="Select Languages" Variant="Variant.Outlined" T="string" MultiSelection="true">
+                        @foreach (var language in availableLanguages)
+                        {
+                            <MudSelectItem Value="@language">@language</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
+                    <MudTextField @bind-Value="studentDto.Interests" Label="Interests" HelperText="Your interests" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+            </MudGrid>
+        }
+    </div>;
+
+    private RenderFragment GalleryContent() => @<div>
+        <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else
+        {
+            <MudGrid>
+                @foreach (var imageUrl in studentDto.GalleryOfImageUrls)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard>
+                            <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    </div>;
+
     private string GetImage()
     {
-        if (!string.IsNullOrEmpty(profileImage))
-        {
-            return profileImage;
-        }
-
-        return "images/default_profile_image.webp";
+        return !string.IsNullOrEmpty(profileImage) ? profileImage : "images/default_profile_image.webp";
     }
-    
-    async void OnClientChange(UploadChangeEventArgs args)
-    {
-        clientChangeCompletionSource = new TaskCompletionSource<bool>();
 
-        foreach (var file in args.Files)
-        {
-            isUploading = true;
-            StateHasChanged();
-
-            try
-            {
-                long maxFileSize = 10 * 1024 * 1024;
-                var stream = file.OpenReadStream(maxFileSize);
-                byte[] bytes = await ReadFully(stream);
-                var base64Content = Convert.ToBase64String(bytes);
-                var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
-                    MediaFileContextType.StudentProfileImage.ToString(), IdentityService.UserDto.Id,
-                    file.Name, file.ContentType, base64Content);
-                if (response.Content != null && !string.IsNullOrEmpty(response.Content.FileUrl))
-                {
-                    studentDto.ProfileImageUrl = response.Content.FileUrl;
-                    profileImage = response.Content.FileUrl; // Update the local profile image URL
-                }
-
-                stream.Close();
-                clientChangeCompletionSource.SetResult(true);
-            }
-            catch (Exception ex)
-            {
-                clientChangeCompletionSource.SetResult(false);
-            }
-            finally
-            {
-                isUploading = false;
-                StateHasChanged();
-            }
-        }
-    }
-    
     private static async Task<byte[]> ReadFully(Stream input)
     {
         byte[] buffer = new byte[16 * 1024];
@@ -147,147 +451,3 @@
         }
     }
 }
-
-<h2 class="rz-p-8 account-font">Your account</h2>
-
-@if (isLoading)
-{
-    <div style="display: flex; justify-content: center; align-items: center;">
-        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
-                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
-            <Template>Loading...</Template>
-        </RadzenProgressBarCircular>
-    </div>
-}
-else if (studentDto.Id != Guid.Empty)
-{
-    <RadzenStack Gap="2rem">
-        @if (studentDto.State == "valid")
-        {
-            <RadzenStack AlignItems="Radzen.AlignItems.Center" Class="rz-mx-auto rz-my-10">
-                <RadzenImage Path="@(GetImage())" AlternateText="Profile image"
-                             Style="width: 20em" class="rz-border-radius-10"/>
-            </RadzenStack>
-        }
-        
-        <RadzenLabels Id="fullname" LabelText="Fullname:" Value="@studentDto.FullName"/>
-        <RadzenLabels Id="email" LabelText="Email:" Value="@studentDto.Email"/>
-        <RadzenLabels Id="number-of-friends" LabelText="Number of Friends:" Value="@studentDto.NumberOfFriends.ToString()"/>
-        <RadzenLabels Id="education" LabelText="Education:" Value="@studentDto.Education"/>
-        <RadzenLabels Id="work-position" LabelText="Work Position:" Value="@studentDto.WorkPosition"/>
-        <RadzenLabels Id="company" LabelText="Company:" Value="@studentDto.Company"/>
-        <RadzenLabels Id="languages" LabelText="Languages:" Value="@string.Join(", ", studentDto.Languages)"/>
-        <RadzenLabels Id="interests" LabelText="Interests:" Value="@string.Join(", ", studentDto.Interests)"/>
-        <RadzenLabels Id="is-banned" LabelText="Is Banned:" Value="@(studentDto.IsBanned ? "Yes" : "No")"/>
-        <RadzenLabels Id="is-organizer" LabelText="Is Organizer:" Value="@(studentDto.IsOrganizer ? "Yes" : "No")"/>
-        <RadzenLabels Id="is-two-factor-enabled" LabelText="Is Two-Factor Enabled:" Value="@(studentDto.IsTwoFactorEnabled ? "Yes" : "No")"/>
-        <RadzenLabels Id="banner-url" LabelText="Banner URL:" Value="@studentDto.BannerUrl"/>
-        
-        @if (studentDto.GalleryOfImageUrls != null && studentDto.GalleryOfImageUrls.Any())
-        {
-            <RadzenStack Gap="1rem">
-                <RadzenLabel Text="Gallery of Images:" />
-                @foreach (var imageUrl in studentDto.GalleryOfImageUrls)
-                {
-                    <RadzenImage Path="@imageUrl" Style="width: 5em; height: 5em;" />
-                }
-            </RadzenStack>
-        }
-        
-        @if (studentDto.State == "valid")
-        {
-            @if (editionDisabled)
-            {
-                <RadzenLabels Id="description" LabelText="Description:" @bind-Value="@studentDto.Description"/>
-            }
-            else
-            {
-                <RadzenLabelWithTextBox Id="description" LabelText="Description:" @bind-Value="@studentDto.Description" Disabled=@editionDisabled/>   
-            }
-
-            <RadzenLabels Id="state" LabelText="State:" Value="@studentDto.State"/>
-            <RadzenLabels Id="date-of-birth" LabelText="Date of birth:" Value="@studentDto.DateOfBirth.ToLocalTime().ToString(shortDateFormat)"/>
-            <RadzenLabels Id="created-at" LabelText="Created:" Value="@studentDto.CreatedAt.ToLocalTime().ToString(dateFormat)"/>
-            <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:" @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
-            <RadzenLabels Id="contact-email" LabelText="Contact Email:" Value="@studentDto.ContactEmail"/>
-        }
-        
-        @if (studentDto.State == "incomplete")
-        {
-            <p class="rz-p-4" style="color: darkblue">
-                <b>Completing registration is necessary, go ahead by clicking the button below.</b>
-            </p>
-
-            <RadzenRow AlignItems="Radzen.AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="12">
-                    <RadzenButton Size="ButtonSize.Large" Text="Complete registration" Click="@(() => NavigationManager.NavigateTo("/signup/complete"))"/>
-                </RadzenColumn>
-            </RadzenRow>
-        }
-        else
-        {
-            if (editionDisabled)
-            {
-                <RadzenRow AlignItems="Radzen.AlignItems.Center">
-                    <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenButton Size="ButtonSize.Large" Text="Update account" class="separate-button" Click=@EnableEdition/>
-                    </RadzenColumn> 
-                </RadzenRow>
-            }
-            else
-            {
-                <RadzenRow AlignItems="Radzen.AlignItems.Center">
-                    <RadzenColumn Size="12" SizeMD="5">
-                        <RadzenLabel Text="Update profile image:" Component="profile-image" />
-                        <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100" Name="profile-image"
-                                      InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "select file" } })"/>
-                    </RadzenColumn>
-                    <RadzenColumn>
-                        @if (isUploading)
-                        {
-                            <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
-                                                       Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
-                                <Template>Uploading</Template>
-                            </RadzenProgressBarCircular>
-                        }
-                    </RadzenColumn>
-                    <RadzenColumn Size="12" SizeMD="5">
-                        <RadzenButton Size="ButtonSize.Large" Text="Save account" class="separate-button" Click=@HandleUpdateStudent/>
-                    </RadzenColumn>
-                </RadzenRow>
-            }
-        }
-    </RadzenStack>
-}
-else
-{
-    <div style="display: flex; justify-content: center; align-items: center;">
-        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
-                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
-            <Template>Loading...</Template>
-        </RadzenProgressBarCircular>
-    </div>
-}
-</AuthWrapper>
-
-<style>
-    .account-font {
-        font-family: Arial, sans-serif;
-        font-size: 40px;
-        font-weight: bold; 
-    }
-    
-    .separate-button {
-        margin: 10px; 
-        border: 1px solid #ccc; 
-        border-radius: 5px; 
-        padding: 12px;
-        color: #333; 
-        transition: background-color 0.3s ease; 
-    }
-    
-    .separate-button:hover {
-        background-color: #30445f; 
-        color: #000; 
-    }
-</style>
