@@ -29,12 +29,13 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IMessageBroker _messageBroker;
         private readonly IVerificationTokenService _verificationTokenService;
+        private readonly ITwoFactorSecretTokenService _twoFactorSecretTokenService;
         private readonly ILogger<IdentityService> _logger;
 
         public IdentityService(IUserRepository userRepository, IPasswordService passwordService,
             IJwtProvider jwtProvider, IRefreshTokenService refreshTokenService,
             IMessageBroker messageBroker, IUserResetTokenRepository userResetTokenRepository,
-            IVerificationTokenService verificationTokenService, ILogger<IdentityService> logger)
+            IVerificationTokenService verificationTokenService, ITwoFactorSecretTokenService twoFactorSecretTokenService, ILogger<IdentityService> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
@@ -43,6 +44,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _messageBroker = messageBroker ?? throw new ArgumentNullException(nameof(messageBroker));
             _userResetTokenRepository = userResetTokenRepository ?? throw new ArgumentNullException(nameof(userResetTokenRepository));
             _verificationTokenService = verificationTokenService ?? throw new ArgumentNullException(nameof(verificationTokenService));
+            _twoFactorSecretTokenService = twoFactorSecretTokenService ?? throw new ArgumentNullException(nameof(twoFactorSecretTokenService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -290,6 +292,22 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
             _logger.LogInformation($"Two-factor authentication disabled for user id: {user.Id}");
             await _messageBroker.PublishAsync(new TwoFactorAuthenticationDisabled(user.Id));
+        }
+
+        public async Task<string> GenerateTwoFactorSecretAsync(GenerateTwoFactorSecret command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user == null)
+            {
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            var secret = _twoFactorSecretTokenService.GenerateSecret();
+
+            user.SetTwoFactorSecret(secret);
+            await _userRepository.UpdateAsync(user);
+
+            return secret;
         }
     }
 }

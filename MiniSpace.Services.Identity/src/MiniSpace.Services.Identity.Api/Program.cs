@@ -114,7 +114,11 @@ namespace MiniSpace.Services.Identity.Api
                             await ctx.RequestServices.GetService<IIdentityService>().DisableTwoFactorAsync(cmd);
                             ctx.Response.StatusCode = 204;
                         })
-
+                        .Post<GenerateTwoFactorSecret>("2fa/generate-secret", async (cmd, ctx) =>
+                        {
+                            var secret = await ctx.RequestServices.GetService<IIdentityService>().GenerateTwoFactorSecretAsync(cmd);
+                            await ctx.Response.WriteJsonAsync(new { Secret = secret });
+                        })
                     ))
                 .UseLogging()
                 .Build()

@@ -146,6 +146,11 @@ namespace MiniSpace.Services.Identity.Core.Entities
             IsTwoFactorEnabled = false;
             TwoFactorSecret = null;
         }
+
+        public void SetTwoFactorSecret(string secret)
+        {
+            TwoFactorSecret = secret;
+        }
     }
 
     public static class UserPermissions
