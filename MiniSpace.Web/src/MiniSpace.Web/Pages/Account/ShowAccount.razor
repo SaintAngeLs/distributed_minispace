@@ -160,10 +160,6 @@
             {
                 var studentId = IdentityService.GetCurrentUserId();
                 studentDto = await StudentsService.GetStudentAsync(studentId);
-
-                var studentJson = JsonSerializer.Serialize(studentDto);
-                Console.WriteLine($"Student DTO: {studentJson}");
-                
                 profileImage = studentDto.ProfileImageUrl;
                 isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
                 twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
