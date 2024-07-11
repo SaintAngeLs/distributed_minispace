@@ -159,6 +159,12 @@ modules:
         downstream: identity-service/2fa/disable
         auth: true
 
+      - upstream: /2fa/generate-secret
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/generate-secret
+        auth: true
+
       - upstream: /refresh-tokens/use
         method: POST
         use: downstream
