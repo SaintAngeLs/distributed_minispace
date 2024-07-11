@@ -13,6 +13,21 @@ namespace MiniSpace.Services.Students.Core.Entities
         public bool PostsNotifications { get; private set; }
         public bool FriendsNotifications { get; private set; }
 
+         
+        public NotificationPreferences()
+        {
+            
+            AccountChanges = false;
+            SystemLogin = false;
+            NewEvent = false;
+            InterestBasedEvents = false;
+            EventNotifications = false;
+            CommentsNotifications = false;
+            PostsNotifications = false;
+            FriendsNotifications = false;
+        }
+
+
         public NotificationPreferences(bool accountChanges, bool systemLogin, bool newEvent, bool interestBasedEvents,
                                        bool eventNotifications, bool commentsNotifications, bool postsNotifications,
                                        bool friendsNotifications)

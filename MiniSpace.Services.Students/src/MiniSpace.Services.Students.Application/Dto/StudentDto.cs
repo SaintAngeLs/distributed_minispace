@@ -32,5 +32,6 @@ namespace MiniSpace.Services.Students.Application.Dto
         public string BannerUrl { get; set; }
         public IEnumerable<string> GalleryOfImageUrls { get; set; }
         public string ContactEmail { get; set; } 
+        public NotificationPreferencesDto NotificationPreferences { get; set; } 
     }
 }

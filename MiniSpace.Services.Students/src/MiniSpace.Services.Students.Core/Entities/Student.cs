@@ -28,7 +28,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public string ContactEmail { get; private set; }
-
         public string BannerUrl { get; private set; }
         public IEnumerable<string> GalleryOfImageUrls
         {
@@ -50,7 +49,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
         public bool IsTwoFactorEnabled { get; private set; }
         public string TwoFactorSecret { get; private set; }
-
         public IEnumerable<Guid> InterestedInEvents
         {
             get => _interestedInEvents;
@@ -66,7 +64,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
                 false, false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), null, 
                 Enumerable.Empty<string>(), null, null, null, Enumerable.Empty<string>(), Enumerable.Empty<string>(),
-                false, null)
+                false, null, null)
         {
             CheckFullName(firstName, lastName);
         }
@@ -332,5 +330,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         public void Unban() => IsBanned = false;
         public void GrantOrganizerRights() => IsOrganizer = true;
         public void RevokeOrganizerRights() => IsOrganizer = false;
+
     }
 }
