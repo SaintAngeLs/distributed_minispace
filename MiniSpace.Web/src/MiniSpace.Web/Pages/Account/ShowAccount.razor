@@ -95,7 +95,7 @@
         margin-bottom: 10px;
     }
 
-     .image-upload-container {
+    .image-upload-container {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -109,6 +109,9 @@
     }
 
     textarea.mud-input-slot.mud-input-root.mud-input-root-outlined {
+        padding: 10px !important;
+    }
+    .mud-input>input.mud-input-root {
         padding: 10px !important;
     }
 </style>
@@ -157,6 +160,10 @@
             {
                 var studentId = IdentityService.GetCurrentUserId();
                 studentDto = await StudentsService.GetStudentAsync(studentId);
+
+                var studentJson = JsonSerializer.Serialize(studentDto);
+                Console.WriteLine($"Student DTO: {studentJson}");
+                
                 profileImage = studentDto.ProfileImageUrl;
                 isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
                 twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
@@ -213,6 +220,20 @@
                 }
             }
 
+            if (isTwoFactorEnabled)
+            {
+                if (string.IsNullOrEmpty(twoFactorSecret))
+                {
+                    throw new InvalidOperationException("Secret token must be generated before enabling 2FA.");
+                }
+
+                await IdentityService.EnableTwoFactorAsync(IdentityService.GetCurrentUserId(), twoFactorSecret);
+            }
+            else
+            {
+                await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
+            }
+
             var updateStudentData = new
             {
                 studentDto.Id,
@@ -226,16 +247,14 @@
                 studentDto.Interests,
                 studentDto.Education,
                 studentDto.WorkPosition,
-                studentDto.Company, // Include the company field
+                studentDto.Company,
                 IsTwoFactorEnabled = isTwoFactorEnabled,
                 TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
             };
 
-            // Serialize the data to JSON and log it
             var jsonData = JsonSerializer.Serialize(updateStudentData);
             Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
 
-            // Update student information
             await StudentsService.UpdateStudentAsync(
                 studentDto.Id,
                 studentDto.FirstName,
@@ -251,7 +270,7 @@
                 isTwoFactorEnabled ? twoFactorSecret : null,
                 studentDto.Education,
                 studentDto.WorkPosition,
-                studentDto.Company // Include the company field
+                studentDto.Company
             );
         }
         catch (Exception ex)
@@ -259,8 +278,6 @@
             Console.WriteLine(ex.Message);
         }
     }
-
-
 
     private RenderFragment ProfileContent() => @<div>
         <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
@@ -359,7 +376,7 @@
                         <MudTextField @bind-Value="twoFactorSecret" Label="Two-Factor Authentication Secret" ReadOnly="true" />
                     }
                 }
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync" Disabled="@(!isTwoFactorEnabled || (isTwoFactorEnabled && string.IsNullOrEmpty(twoFactorSecret)))">Save</MudButton>
             </MudStack>
         }
     </div>;
@@ -369,7 +386,13 @@
         isTwoFactorEnabled = enabled;
         if (!enabled)
         {
+            await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
             twoFactorSecret = null;
+        }
+        else
+        {
+            twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
+            await IdentityService.EnableTwoFactorAsync(IdentityService.GetCurrentUserId(), twoFactorSecret);
         }
         StateHasChanged();
     }
@@ -380,7 +403,6 @@
         twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(userId);
         StateHasChanged();
     }
-
 
     private RenderFragment NotificationsContent() => @<div>
         <MudText Typo="Typo.h6" GutterBottom="true">Notifications</MudText>

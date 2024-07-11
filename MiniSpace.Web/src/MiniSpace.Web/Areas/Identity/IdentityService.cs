@@ -334,5 +334,17 @@ namespace MiniSpace.Web.Areas.Identity
             }
             throw new InvalidOperationException("Failed to generate two-factor secret.");
         }
+
+         public async Task EnableTwoFactorAsync(Guid userId, string secret)
+        {
+            await _httpClient.PostAsync("identity/2fa/enable", new { UserId = userId, Secret = secret });
+        }
+
+        public async Task DisableTwoFactorAsync(Guid userId)
+        {
+            await _httpClient.PostAsync("identity/2fa/disable", new { UserId = userId });
+        }
+
+        
     }
 }

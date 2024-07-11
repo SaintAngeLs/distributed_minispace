@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 {
     [ExcludeFromCodeCoverage]
-    public static class Extensions
+     public static class Extensions
     {
         public static Student AsEntity(this StudentDocument document)
             => new Student(
@@ -91,6 +91,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 Company = document.Company,
                 Languages = document.Languages,
                 Interests = document.Interests,
+                IsTwoFactorEnabled = document.IsTwoFactorEnabled,
+                TwoFactorSecret = document.TwoFactorSecret,
                 ContactEmail = document.ContactEmail 
             };
     }

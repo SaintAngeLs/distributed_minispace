@@ -8,6 +8,9 @@ namespace MiniSpace.Web.DTO
         public string Name { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public bool IsEmailVerified { get; set; }
+        public DateTime? EmailVerifiedAt { get; set; } 
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecret { get; set; }
     }
 }
