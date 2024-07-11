@@ -323,5 +323,16 @@ namespace MiniSpace.Web.Areas.Identity
             var response = await _httpClient.PostAsync<object, object>("identity/email/verify", new { Token = token, Email = email, HashedToken = hashedToken });
             return response;
         }
+
+        public async Task<string> GenerateTwoFactorSecretAsync(Guid userId)
+        {
+            _httpClient.SetAccessToken(JwtDto.AccessToken);
+            var response = await _httpClient.PostAsync<object, GenerateTwoFactorSecretResponse>("identity/2fa/generate-secret", new { UserId = userId });
+            if (response.Content != null)
+            {
+                return response.Content.Secret;
+            }
+            throw new InvalidOperationException("Failed to generate two-factor secret.");
+        }
     }
 }

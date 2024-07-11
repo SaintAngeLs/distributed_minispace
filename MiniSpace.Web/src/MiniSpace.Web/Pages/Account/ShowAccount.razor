@@ -20,41 +20,10 @@
         <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
     </div>
 
-    @code {
-        private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-        {
-            new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-            new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
-        };
-
-        private List<string> availableLanguages = new List<string>
-        {
-            "English",
-            "Spanish",
-            "French",
-            "German",
-            "Chinese",
-            "Japanese",
-            "Korean",
-            "Italian",
-            "Russian",
-            "Portuguese"
-        };
-
-        private int activeTabIndex = 0;
-        private bool enableTwoFactor;
-        private bool disableTwoFactor;
-
-        private void SetActiveTabIndex(int index)
-        {
-            activeTabIndex = index;
-        }
-    }
-
     <MudContainer Class="account-container">
         <MudGrid>
             <MudItem xs="12" sm="4" md="3">
-                <MudNavMenu Elevation="1" >
+                <MudNavMenu Elevation="1">
                     <MudNavLink OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
@@ -145,12 +114,35 @@
 </style>
 
 @code {
-    private StudentDto studentDto = new();
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+    };
+
+    private List<string> availableLanguages = new List<string>
+    {
+        "English",
+        "Spanish",
+        "French",
+        "German",
+        "Chinese",
+        "Japanese",
+        "Korean",
+        "Italian",
+        "Russian",
+        "Portuguese"
+    };
+
+    private int activeTabIndex = 0;
+    private bool isTwoFactorEnabled;
+    private string twoFactorSecret;
     private bool isLoading = true;
     private string profileImage = string.Empty;
     private bool isUploading = false;
     private IBrowserFile file;
     private long maxFileSize = 10 * 1024 * 1024;
+    private StudentDto studentDto = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -166,8 +158,8 @@
                 var studentId = IdentityService.GetCurrentUserId();
                 studentDto = await StudentsService.GetStudentAsync(studentId);
                 profileImage = studentDto.ProfileImageUrl;
-                enableTwoFactor = studentDto.IsTwoFactorEnabled;
-                disableTwoFactor = !studentDto.IsTwoFactorEnabled;
+                isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
+                twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
             }
             else
             {
@@ -232,12 +224,11 @@
                 studentDto.ContactEmail,
                 studentDto.Languages,
                 studentDto.Interests,
-                studentDto.Education,             
-                studentDto.WorkPosition,          
-                studentDto.Company,  
-                EnableTwoFactor = enableTwoFactor,
-                DisableTwoFactor = disableTwoFactor,
-                studentDto.TwoFactorSecret
+                studentDto.Education,
+                studentDto.WorkPosition,
+                studentDto.Company, // Include the company field
+                IsTwoFactorEnabled = isTwoFactorEnabled,
+                TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
             };
 
             // Serialize the data to JSON and log it
@@ -255,12 +246,12 @@
                 studentDto.ContactEmail,
                 studentDto.Languages,
                 studentDto.Interests,
-                enableTwoFactor,
-                disableTwoFactor,
-                studentDto.TwoFactorSecret,
-                studentDto.Education,           
-                studentDto.WorkPosition,         
-                studentDto.Company 
+                isTwoFactorEnabled,
+                !isTwoFactorEnabled,
+                isTwoFactorEnabled ? twoFactorSecret : null,
+                studentDto.Education,
+                studentDto.WorkPosition,
+                studentDto.Company // Include the company field
             );
         }
         catch (Exception ex)
@@ -268,6 +259,8 @@
             Console.WriteLine(ex.Message);
         }
     }
+
+
 
     private RenderFragment ProfileContent() => @<div>
         <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
@@ -331,11 +324,7 @@
                         <MudItem xs="11">
                             <MudTextField @bind-Value="studentDto.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
                         </MudItem>
-                        <MudItem xs="11">
-                          
-                        </MudItem>
                     </MudGrid>
-                     
                 </MudItem>
             </MudGrid>
             <MudStack>
@@ -358,12 +347,40 @@
         else
         {
             <MudStack>
-                <MudSwitch @bind-Checked="enableTwoFactor" Label="Enable Two-Factor Authentication" />
-                <MudSwitch @bind-Checked="disableTwoFactor" Label="Disable Two-Factor Authentication" />
+                <MudSwitch @bind-Checked="isTwoFactorEnabled" Label="Enable Two-Factor Authentication" OnChange="ToggleTwoFactor" />
+                @if (isTwoFactorEnabled)
+                {
+                    @if (string.IsNullOrEmpty(twoFactorSecret))
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GenerateTwoFactorSecret">Generate Secret Token</MudButton>
+                    }
+                    else
+                    {
+                        <MudTextField @bind-Value="twoFactorSecret" Label="Two-Factor Authentication Secret" ReadOnly="true" />
+                    }
+                }
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
             </MudStack>
         }
     </div>;
+
+    private async Task ToggleTwoFactor(bool enabled)
+    {
+        isTwoFactorEnabled = enabled;
+        if (!enabled)
+        {
+            twoFactorSecret = null;
+        }
+        StateHasChanged();
+    }
+
+    private async Task GenerateTwoFactorSecret()
+    {
+        var userId = IdentityService.GetCurrentUserId();
+        twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(userId);
+        StateHasChanged();
+    }
+
 
     private RenderFragment NotificationsContent() => @<div>
         <MudText Typo="Typo.h6" GutterBottom="true">Notifications</MudText>
@@ -459,5 +476,10 @@
             }
             return ms.ToArray();
         }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
     }
 }
