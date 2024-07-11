@@ -626,3 +626,15 @@ html, body {
     }
 }
 
+
+
+@media (max-width: 600px) {
+    .account-container {
+        padding: 0 5px;
+    }
+
+    .profile-image {
+        height: 100px;
+        width: 100px;
+    }
+}

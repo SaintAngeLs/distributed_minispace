@@ -53,8 +53,8 @@
 
     <MudContainer Class="account-container">
         <MudGrid>
-            <MudItem xs="12" sm="6" md="3">
-                <MudNavMenu Elevation="1" Class="navigation-panel">
+            <MudItem xs="12" sm="4" md="3">
+                <MudNavMenu Elevation="1" >
                     <MudNavLink OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
@@ -63,28 +63,32 @@
                     <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
                 </MudNavMenu>
             </MudItem>
-            <MudItem xs="12" sm="6" md="9">
+            <MudItem xs="12" sm="8" md="9">
                 <MudPaper Elevation="1" Class="content-panel">
-                    <MudTabs @bind-ActivePanelIndex="activeTabIndex">
-                        <MudTabPanel Text="Profile" Icon="@Icons.Material.Filled.Person">
-                            @ProfileContent()
-                        </MudTabPanel>
-                        <MudTabPanel Text="Security" Icon="@Icons.Material.Filled.Security">
-                            @SecurityContent()
-                        </MudTabPanel>
-                        <MudTabPanel Text="Notifications" Icon="@Icons.Material.Filled.Notifications">
-                            @NotificationsContent()
-                        </MudTabPanel>
-                        <MudTabPanel Text="Privacy" Icon="@Icons.Material.Filled.PrivacyTip">
-                            @PrivacyContent()
-                        </MudTabPanel>
-                        <MudTabPanel Text="Languages & Interests" Icon="@Icons.Material.Filled.Language">
-                            @LanguagesAndInterestsContent()
-                        </MudTabPanel>
-                        <MudTabPanel Text="Gallery" Icon="@Icons.Material.Filled.PhotoLibrary">
-                            @GalleryContent()
-                        </MudTabPanel>
-                    </MudTabs>
+                    @if (activeTabIndex == 0)
+                    {
+                        @ProfileContent()
+                    }
+                    else if (activeTabIndex == 1)
+                    {
+                        @SecurityContent()
+                    }
+                    else if (activeTabIndex == 2)
+                    {
+                        @NotificationsContent()
+                    }
+                    else if (activeTabIndex == 3)
+                    {
+                        @PrivacyContent()
+                    }
+                    else if (activeTabIndex == 4)
+                    {
+                        @LanguagesAndInterestsContent()
+                    }
+                    else if (activeTabIndex == 5)
+                    {
+                        @GalleryContent()
+                    }
                 </MudPaper>
             </MudItem>
         </MudGrid>
@@ -122,10 +126,12 @@
         margin-bottom: 10px;
     }
 
-    .image-upload-container {
+     .image-upload-container {
         display: flex;
         flex-direction: column;
-        align-items: center.
+        align-items: center;
+        justify-content: center;
+        width: 100%;
     }
 
     .profile-image {
@@ -272,7 +278,7 @@
         else
         {
             <MudGrid>
-                <MudItem xs="6" sm="6" md="4">
+                <MudItem xs="12" sm="6" md="4">
                     <div class="image-upload-container">
                         <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
                         <MudFileUpload T="IBrowserFile" @bind-Files="file" Accept=".jpg,.jpeg,.png">
@@ -298,39 +304,43 @@
                         </MudFileUpload>
                     </div>
                 </MudItem>
-                <MudItem xs="12" sm="12" md="8">
+                <MudItem xs="12" sm="11" md="8">
                     <MudGrid>
-                        <MudItem xs="12" sm="12">
+                        <MudItem xs="11" sm="12">
                             <MudTextField @bind-Value="studentDto.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                         </MudItem>
-                        <MudItem xs="12" sm="12">
+                        <MudItem xs="11" sm="12">
                             <MudTextField @bind-Value="studentDto.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                         </MudItem>
                     </MudGrid>
                 </MudItem>
-                <MudItem xs="12" sm="6" md="11">
+                <MudItem xs="12" sm="11" md="11">
                     <MudGrid>
-                        <MudItem xs="12">
+                        <MudItem xs="11">
                             <MudTextField @bind-Value="studentDto.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
                         </MudItem>
-                        <MudItem xs="12">
+                        <MudItem xs="11">
                             <MudTextField @bind-Value="studentDto.Education" Label="Education" HelperText="Your education background" Variant="Variant.Outlined" Margin="Margin.Dense" />
                         </MudItem>
-                        <MudItem xs="12">
+                        <MudItem xs="11">
                             <MudTextField @bind-Value="studentDto.WorkPosition" Label="Work Position" HelperText="Your current work position" Variant="Variant.Outlined" Margin="Margin.Dense" />
                         </MudItem>
-                        <MudItem xs="12">
+                        <MudItem xs="11">
                             <MudTextField @bind-Value="studentDto.Company" Label="Company" HelperText="Your current company" Variant="Variant.Outlined" Margin="Margin.Dense" />
                         </MudItem>
-                        <MudItem xs="12">
+                        <MudItem xs="11">
                             <MudTextField @bind-Value="studentDto.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
                         </MudItem>
-                        <MudItem xs="12">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+                        <MudItem xs="11">
+                          
                         </MudItem>
                     </MudGrid>
+                     
                 </MudItem>
             </MudGrid>
+            <MudStack>
+                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+            </MudStack>
 
             @if (isUploading)
             {
