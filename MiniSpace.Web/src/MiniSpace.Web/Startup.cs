@@ -28,7 +28,8 @@ using MiniSpace.Web.Areas.Comments;
 using MiniSpace.Web.Areas.MediaFiles;
 using MiniSpace.Web.Areas.Reactions;
 using MiniSpace.Web.Areas.Reports;
-
+using Cropper.Blazor.Extensions;
+using Cropper.Blazor.Components;
 
 namespace MiniSpace.Web
 {
@@ -60,6 +61,8 @@ namespace MiniSpace.Web
             });
 
             services.AddBlazoredLocalStorage(); 
+
+            services.AddCropper();
 
 
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();

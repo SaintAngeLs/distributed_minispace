@@ -1,12 +1,11 @@
 @page "/verify-email/{Token}/{Email}/{HashedToken}/verify"
 @using MiniSpace.Web.Areas.Identity
-@using Radzen
+@using MudBlazor
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @using System.Web
 
 <style>
-    /* General body and font styles */
     body {
         margin: 0;
         font-family: 'Roboto', sans-serif;
@@ -14,14 +13,12 @@
         color: #333;
     }
 
-    /* Flexbox container for video and form */
     .split-container {
         display: flex;
         height: 100vh;
         overflow: hidden;
     }
 
-    /* Styling for the video and form sections */
     .left-side, .right-side {
         flex: 1;
         display: flex;
@@ -29,16 +26,15 @@
         justify-content: center;
     }
 
-    /* Specific styles for video background */
     .left-side {
-        background: black; /* Fallback for non-supported browsers */
+        background: black;
         position: relative;
     }
+
     .right-side {
         margin-top: 5rem !important;
     }
 
-    /* Fullscreen background video */
     video {
         position: absolute;
         top: 0;
@@ -48,7 +44,6 @@
         object-fit: cover;
     }
 
-    /* Form container with adaptive sizing and padding */
     .form-container {
         width: 100%;
         max-width: 400px;
@@ -59,18 +54,15 @@
         text-align: center;
     }
 
-    /* Link and button styles for interaction */
     a, button {
         transition: color 0.3s ease, background-color 0.3s ease;
     }
 
     a:hover, button:hover {
-        color: #007BFF; /* Highlight color on hover */
+        color: #007BFF;
     }
-
-    /* Custom styles for Radzen components can be added here */
 </style>
-
+<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
 <div class="split-container">
     <div class="left-side">
         <video id="videoPlayer" autoplay muted loop>
@@ -81,12 +73,22 @@
     <div class="right-side">
         <div class="form-container">
             <h2>Email Verification</h2>
-            <RadzenAlert AlertStyle="AlertStyle.Success" @bind-Visible="showSuccess" Close="@OnAlertClose">
-                @successMessage
-            </RadzenAlert>
-            <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" Close="@OnAlertClose">
-                @errorMessage
-            </RadzenAlert>
+            @if (showSuccess)
+            {
+                <MudAlert Severity="Severity.Success" OnClose="OnAlertClose">
+                    @successMessage
+                </MudAlert>
+                <div>
+                    @* Include the sign-in form *@
+                    <SignInComponent />
+                </div>
+            }
+            @if (showError)
+            {
+                <MudAlert Severity="Severity.Error" OnClose="OnAlertClose">
+                    @errorMessage
+                </MudAlert>
+            }
         </div>
     </div>
 </div>
@@ -109,7 +111,7 @@
 
         if (!string.IsNullOrEmpty(Token) && !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(HashedToken))
         {
-            var decodedEmail = HttpUtility.UrlDecode(Email); 
+            var decodedEmail = HttpUtility.UrlDecode(Email);
             var response = await IdentityService.VerifyEmailAsync(Token, decodedEmail, HashedToken);
             if (response != null)
             {

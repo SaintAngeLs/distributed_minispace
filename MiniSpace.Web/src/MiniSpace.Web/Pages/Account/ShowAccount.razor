@@ -56,7 +56,7 @@
                     }
                     else if (activeTabIndex == 5)
                     {
-                        @GalleryContent()
+                         <MiniSpace.Web.Pages.Account.Components.GalleryComponent />
                     }
                 </MudPaper>
             </MudItem>
@@ -146,6 +146,7 @@
     private IBrowserFile file;
     private long maxFileSize = 10 * 1024 * 1024;
     private StudentDto studentDto = new();
+    private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
 
     protected override async Task OnInitializedAsync()
     {
@@ -160,6 +161,10 @@
             {
                 var studentId = IdentityService.GetCurrentUserId();
                 studentDto = await StudentsService.GetStudentAsync(studentId);
+                if (studentDto.EmailNotifications)
+                {
+                    notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
+                }
                 profileImage = studentDto.ProfileImageUrl;
                 isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
                 twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
@@ -268,6 +273,11 @@
                 studentDto.WorkPosition,
                 studentDto.Company
             );
+
+            if (studentDto.EmailNotifications)
+            {
+                await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto);
+            }
         }
         catch (Exception ex)
         {
@@ -310,12 +320,12 @@
                         </MudFileUpload>
                     </div>
                 </MudItem>
-                <MudItem xs="12" sm="11" md="8">
+                <MudItem xs="12" sm="11" md="7">
                     <MudGrid>
-                        <MudItem xs="11" sm="12">
+                        <MudItem xs="11" sm="11">
                             <MudTextField @bind-Value="studentDto.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                         </MudItem>
-                        <MudItem xs="11" sm="12">
+                        <MudItem xs="11" sm="11">
                             <MudTextField @bind-Value="studentDto.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                         </MudItem>
                     </MudGrid>
@@ -410,6 +420,17 @@
         {
             <MudStack>
                 <MudSwitch @bind-Checked="studentDto.EmailNotifications" Label="Email Notifications" />
+                @if (studentDto.EmailNotifications)
+                {
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.SystemLogin" Label="System Login" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.NewEvent" Label="New Event" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.EventNotifications" Label="Event Notifications" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.PostsNotifications" Label="Posts Notifications" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" />
+                }
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
             </MudStack>
         }

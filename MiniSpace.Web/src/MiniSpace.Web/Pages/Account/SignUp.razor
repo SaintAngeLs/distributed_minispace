@@ -160,7 +160,7 @@
             var response = await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email, signUpModel.Password, "user");
             if (response.ErrorMessage == null)
             {
-                NavigationManager.NavigateTo("/signin");
+                NavigationManager.NavigateTo("/email-verification-info");
             }
             else
             {

@@ -85,7 +85,6 @@ namespace MiniSpace.Web.Areas.Students
                 company
             };
 
-            // Serialize the data to JSON and log it
             var jsonData = JsonSerializer.Serialize(updateStudentData);
             Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
 
@@ -99,6 +98,39 @@ namespace MiniSpace.Web.Areas.Students
         {
             var student = await GetStudentAsync(studentId);
             return student != null ? student.State : "invalid";
+        }
+
+        // New methods for notification preferences
+        public async Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<NotificationPreferencesDto>($"students/{studentId}/notifications");
+        }
+
+        public async Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var updatePreferencesData = new
+            {
+                studentId,
+                preferencesDto.AccountChanges,
+                preferencesDto.SystemLogin,
+                preferencesDto.NewEvent,
+                preferencesDto.InterestBasedEvents,
+                preferencesDto.EventNotifications,
+                preferencesDto.CommentsNotifications,
+                preferencesDto.PostsNotifications,
+                preferencesDto.FriendsNotifications
+            };
+
+            // Serialize the data to JSON and log it
+            var jsonData = JsonSerializer.Serialize(updatePreferencesData);
+            Console.WriteLine($"Sending UpdateUserNotificationPreferences request: {jsonData}");
+
+            await _httpClient.PostAsync($"students/{studentId}/notifications", updatePreferencesData);
         }
     }
 }

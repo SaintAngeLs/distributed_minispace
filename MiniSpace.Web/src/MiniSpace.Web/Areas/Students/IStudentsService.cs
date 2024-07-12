@@ -32,5 +32,8 @@ namespace MiniSpace.Web.Areas.Students
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl,
             string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail);
         Task<string> GetStudentStateAsync(Guid studentId);
+
+        Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId);
+        Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto);
     }
 }
