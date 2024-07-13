@@ -1,0 +1,117 @@
+@page "/update-banner"
+@using MiniSpace.Web.DTO.Types
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.MediaFiles
+@using Microsoft.AspNetCore.Components.Forms
+@inject IMediaFilesService MediaFilesService
+@inject IIdentityService IdentityService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@using MudBlazor
+
+<MudDialogProvider/>
+<div>
+    <MudText Typo="Typo.h6" GutterBottom="true">Update Banner Image</MudText>
+    <InputFile OnChange="HandleImageSelected" accept="image/*" />
+
+    @if (!string.IsNullOrEmpty(bannerFileSrc))
+    {
+        <!-- Image display for cropping -->
+        <img id="image-to-crop" src="@bannerFileSrc" style="max-width: 100%;" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartCropping">Initialize Cropper</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CropImage">Crop Image</MudButton>
+    }
+
+    @if (!string.IsNullOrEmpty(croppedImageBase64))
+    {
+        <!-- Display of cropped image -->
+        <img src="@croppedImageBase64" alt="Cropped Image" style="max-width: 100%;" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveCroppedImage">Save Banner Image</MudButton>
+    }
+</div>
+
+<RadzenDialog />
+
+<style>
+    .img-container {
+        max-height: 400px;
+        width: 100%;
+        display: block;
+        position: relative;
+        overflow: hidden;
+    }
+    .cropped-image-preview img {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+
+@code {
+    private string bannerFileSrc;
+    private string croppedImageBase64;
+
+    private DotNetObjectReference<UpdateBanerImage> dotNetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", dotNetRef);
+        }
+    }
+
+    private async Task HandleImageSelected(InputFileChangeEventArgs e)
+    {
+        var imageFile = e.File;
+        if (imageFile != null)
+        {
+            var buffer = new byte[imageFile.Size];
+            await imageFile.OpenReadStream().ReadAsync(buffer);
+            bannerFileSrc = $"data:image/jpeg;base64,{Convert.ToBase64String(buffer)}";
+            StateHasChanged();
+        }
+    }
+
+    private async Task StartCropping()
+    {
+        await JSRuntime.InvokeVoidAsync("initializeCropper", "image-to-crop", 16 / 9);
+    }
+
+    private async Task CropImage()
+    {
+        await JSRuntime.InvokeVoidAsync("getCroppedImage", "ReceiveCroppedImage");
+    }
+
+      [JSInvokable]
+    public async Task ReceiveCroppedImage(string base64Result)
+    {
+        croppedImageBase64 = base64Result;
+        StateHasChanged();
+    }
+
+    private async Task SaveCroppedImage()
+    {
+        try
+        {
+            var base64Content = croppedImageBase64.Split(',')[1];
+            var response = await MediaFilesService.UploadMediaFileAsync(
+                IdentityService.GetCurrentUserId(),
+                MediaFileContextType.StudentBannerImage.ToString(),
+                IdentityService.GetCurrentUserId(),
+                "banner.jpg",
+                "image/jpeg",
+                base64Content
+            );
+
+            if (response.Content != null && !string.IsNullOrEmpty(response.Content.FileUrl))
+            {
+                NavigationManager.NavigateTo("/student-profile");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error saving the cropped image: {ex.Message}");
+        }
+    }
+}

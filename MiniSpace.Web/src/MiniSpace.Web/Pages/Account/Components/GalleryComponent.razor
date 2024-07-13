@@ -10,9 +10,7 @@
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
-@inject IJSRuntime JSRuntime
 @using MudBlazor
-@using Cropper.Blazor.Models
 
 <MudDialogProvider/>
 <div>
@@ -32,26 +30,7 @@
                         <MudCardMedia Image="@studentDto.BannerUrl" Alt="Banner image" />
                     </MudCard>
                 }
-                <div class="image-upload-container">
-                    <InputFile OnChange="OnInputFileChange" Accept=".jpg,.jpeg,.png" />
-                    @if (bannerFile != null)
-                    {
-                        <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @bannerFile.Name </MudText>
-                    }
-                    else
-                    {
-                        <MudText><MudIcon Icon="@Icons.Material.Filled.Attachment" /> No Files Selected</MudText>
-                    }
-                </div>
-                @if (!string.IsNullOrEmpty(croppedBannerBase64))
-                {
-                    <div class="cropped-banner-preview">
-                        <MudCard>
-                            <MudCardMedia Image="@croppedBannerBase64" Alt="Cropped Banner Preview" />
-                        </MudCard>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveCroppedBanner">Save Banner Image</MudButton>
-                    </div>
-                }
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToBannerUpdate">Change Banner Image</MudButton>
             </MudItem>
 
             <MudItem xs="12">
@@ -69,7 +48,7 @@
                     }
                 </div>
                 <div class="image-upload-container">
-                    <InputFile OnChange="OnGalleryFilesChanged" Accept=".jpg,.jpeg,.png" Multiple />
+                    <MudImageInput T="IBrowserFile" OnChange="OnGalleryFilesChanged" Label="Choose Gallery Files" Accept="image/*" Multiple Color="Color.Primary" />
                     @if (galleryFiles != null && galleryFiles.Any())
                     {
                         <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @galleryFiles.Count() files selected </MudText>
@@ -85,41 +64,14 @@
     }
 </div>
 
-@if (bannerFile != null)
-{
-    <div class="modal is-active">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Crop Image</p>
-                <button class="delete" aria-label="close" @onclick="CloseCropper"></button>
-            </header>
-            <section class="modal-card-body" style="overflow-x: hidden">
-                <CropperComponent Class="cropper-container"
-                                  ErrorLoadImageClass="cropper-error-load"
-                                  @ref="cropperComponent"
-                           
-                                  Src="@bannerFileSrc"
-                                  Options="new Options { AspectRatio = 1.7777777777777777m, ViewMode = ViewMode.Vm1 }" />
-            </section>
-            <footer class="modal-card-foot">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="DoneCrop">Done</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="CloseCropper">Cancel</MudButton>
-            </footer>
-        </div>
-    </div>
-}
+<RadzenDialog />
 
 @code {
     private bool isLoading = true;
     private StudentDto studentDto = new();
     private IList<IBrowserFile> galleryFiles = new List<IBrowserFile>();
-    private IBrowserFile bannerFile;
-    private string bannerFileSrc;
-    private string croppedBannerBase64;
-    private CropperComponent cropperComponent;
-    private bool showCropper = false;
-    private const long maxFileSize = 10 * 1024 * 1024;
+
+    private long maxFileSize = 32 * 1024 * 1024;
 
     protected override async Task OnInitializedAsync()
     {
@@ -148,53 +100,9 @@
         }
     }
 
-    private async Task OnInputFileChange(InputFileChangeEventArgs args)
-    {
-        var file = args.File;
-        if (file != null)
-        {
-            var buffer = new byte[file.Size];
-            await file.OpenReadStream().ReadAsync(buffer);
-            bannerFile = file;
-            bannerFileSrc = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
-            showCropper = true;
-            StateHasChanged();
-        }
-    }
-
     private async Task OnGalleryFilesChanged(InputFileChangeEventArgs args)
     {
         galleryFiles = args.GetMultipleFiles().ToList();
-        StateHasChanged();
-    }
-
-    private async Task DoneCrop()
-    {
-        var croppedImage = await cropperComponent.GetCroppedCanvasDataURLAsync(new GetCroppedCanvasOptions());
-        croppedBannerBase64 = croppedImage;
-        showCropper = false;
-        StateHasChanged();
-    }
-
-    private async Task SaveCroppedBanner()
-    {
-        var base64Content = croppedBannerBase64.Split(',')[1]; // Remove data URL prefix
-        var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.GetCurrentUserId(),
-            MediaFileContextType.StudentBannerImage.ToString(), IdentityService.GetCurrentUserId(),
-            "banner.jpg", "image/jpeg", base64Content);
-        if (response.Content != null && !string.IsNullOrEmpty(response.Content.FileUrl))
-        {
-            studentDto.BannerUrl = response.Content.FileUrl;
-            croppedBannerBase64 = null;
-            StateHasChanged();
-        }
-    }
-
-    private void CloseCropper()
-    {
-        showCropper = false;
-        bannerFile = null;
-        bannerFileSrc = null;
         StateHasChanged();
     }
 
@@ -234,16 +142,8 @@
         }
     }
 
-    // private void OnCropEvent(JSEventData<CropEvent> cropEvent)
-    // {
-    //     // Console.WriteLine($"CropEvent: {cropEvent.Detail?.ActionEvent}");
-    // }
-    //
-    // private void OnZoomEvent(JSEventData<ZoomEvent> zoomEvent)
-    // {
-    //     // Console.WriteLine($"ZoomEvent: OldRatio: {zoomEvent.Detail?.OldRatio}, Ratio: {zoomEvent.Detail?.Ratio}");
-    // }
+    private void NavigateToBannerUpdate()
+    {
+        NavigationManager.NavigateTo("/update-banner");
+    }
 }
-<style>
-    @@import url("https://fastly.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css");
-</style>

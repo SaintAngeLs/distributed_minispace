@@ -30,6 +30,7 @@ using MiniSpace.Web.Areas.Reactions;
 using MiniSpace.Web.Areas.Reports;
 using Cropper.Blazor.Extensions;
 using Cropper.Blazor.Components;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace MiniSpace.Web
 {
@@ -64,9 +65,31 @@ namespace MiniSpace.Web
 
             services.AddCropper();
 
+            services.AddServerSideBlazor()
+                .AddHubOptions(options => 
+                {
+                    options.MaximumReceiveMessageSize = 32 * 1024 * 1024; // 32 MB
+                });
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = 32 * 1024 * 1024; // 32 MB
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = 32 * 1024 * 1024; // 32 MB
+            });
 
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
             services.AddScoped<Radzen.NotificationService>(); 
+
+            services.AddServerSideBlazor()
+                .AddCircuitOptions(options => 
+                {
+                    options.DetailedErrors = true;
+                });
+
             
             
             services.AddScoped<IIdentityService, IdentityService>();
@@ -105,13 +128,13 @@ namespace MiniSpace.Web
 
             app.UseRouting();
             app.UseAuthorization();  
+            
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-
         }
     }
 }
