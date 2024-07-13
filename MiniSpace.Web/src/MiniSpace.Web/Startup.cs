@@ -28,8 +28,6 @@ using MiniSpace.Web.Areas.Comments;
 using MiniSpace.Web.Areas.MediaFiles;
 using MiniSpace.Web.Areas.Reactions;
 using MiniSpace.Web.Areas.Reports;
-using Cropper.Blazor.Extensions;
-using Cropper.Blazor.Components;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace MiniSpace.Web
@@ -63,8 +61,6 @@ namespace MiniSpace.Web
 
             services.AddBlazoredLocalStorage(); 
 
-            services.AddCropper();
-
             services.AddServerSideBlazor()
                 .AddHubOptions(options => 
                 {
@@ -73,12 +69,12 @@ namespace MiniSpace.Web
 
             services.Configure<IISServerOptions>(options =>
             {
-                options.MaxRequestBodySize = 32 * 1024 * 1024; // 32 MB
+                options.MaxRequestBodySize = 32 * 1024 * 1024; 
             });
 
             services.Configure<KestrelServerOptions>(options =>
             {
-                options.Limits.MaxRequestBodySize = 32 * 1024 * 1024; // 32 MB
+                options.Limits.MaxRequestBodySize = 32 * 1024 * 1024; 
             });
 
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
@@ -88,6 +84,10 @@ namespace MiniSpace.Web
                 .AddCircuitOptions(options => 
                 {
                     options.DetailedErrors = true;
+                })
+                .AddHubOptions(options =>
+                {
+                    options.MaximumReceiveMessageSize = 32 * 1024 * 1024; // 32 MB
                 });
 
             
