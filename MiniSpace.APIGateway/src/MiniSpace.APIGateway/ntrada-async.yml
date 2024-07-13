@@ -385,6 +385,18 @@ modules:
         downstream: students-service/students/{studentId}/events
         auth: true
 
+      - upstream: /{studentId}/notifications
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/notifications
+        auth: true
+
+      - upstream: /{studentId}/notifications
+        method: POST
+        use: downstream
+        downstream: students-service/students/{studentId}/notifications
+        auth: true
+
     services:
       students-service:
         localUrl: localhost:5007

@@ -4,6 +4,7 @@ namespace MiniSpace.Services.Students.Application.Dto
 {
     public class NotificationPreferencesDto
     {
+        public Guid StudentId { get; set; }
         public bool AccountChanges { get; set; }
         public bool SystemLogin { get; set; }
         public bool NewEvent { get; set; }
@@ -25,10 +26,11 @@ namespace MiniSpace.Services.Students.Application.Dto
             FriendsNotifications = false;
         }
 
-        public NotificationPreferencesDto(bool accountChanges, bool systemLogin, bool newEvent, bool interestBasedEvents,
+        public NotificationPreferencesDto(Guid studentId, bool accountChanges, bool systemLogin, bool newEvent, bool interestBasedEvents,
                                           bool eventNotifications, bool commentsNotifications, bool postsNotifications,
                                           bool friendsNotifications)
         {
+            StudentId = studentId;
             AccountChanges = accountChanges;
             SystemLogin = systemLogin;
             NewEvent = newEvent;

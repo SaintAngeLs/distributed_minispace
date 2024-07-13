@@ -32,7 +32,6 @@ namespace MiniSpace.Services.Students.Api
                     .UseInfrastructure()
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        // .Get<GetStudents, IEnumerable<StudentDto>>("students")
                         .Get<GetStudents, Application.Queries.PagedResult<StudentDto>>("students")
                         .Get<GetStudent, StudentDto>("students/{studentId}")
                         .Put<UpdateStudent>("students/{studentId}")
@@ -41,7 +40,9 @@ namespace MiniSpace.Services.Students.Api
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))
                         .Put<ChangeStudentState>("students/{studentId}/state/{state}",
                             afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
-                        .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")))
+                        .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")
+                        .Get<GetUserNotificationPreferences, NotificationPreferencesDto>("students/{studentId}/notifications")
+                        .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")))
                 .UseLogging()
                 .Build()
                 .RunAsync();

@@ -50,8 +50,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 throw new InvalidContextTypeException(command.SourceType);
             }
 
-            // Unassociate previous files of the same context type and uploader ID
-            if (sourceType == ContextType.StudentProfileImage)
+            if (sourceType == ContextType.StudentProfileImage || sourceType == ContextType.StudentBannerImage)
             {
                 var existingFiles = await _fileSourceInfoRepository.FindByUploaderIdAndSourceTypeAsync(command.UploaderId, sourceType);
                 foreach (var existingFile in existingFiles)
@@ -76,7 +75,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             var processedUrl = await _s3Service.UploadFileAsync("webps", command.FileName, outStream);
 
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
-                command.UploaderId, State.Associated, _dateTimeProvider.Now, originalUrl, 
+                command.UploaderId, State.Associated, _dateTimeProvider.Now, processedUrl, 
                 command.FileContentType, processedUrl, command.FileName);
 
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
@@ -88,7 +87,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 sourceType == ContextType.StudentGalleryImage)
             {
                 var imageType = sourceType.ToString();
-                var studentImageUploadedEvent = new StudentImageUploaded(command.SourceId, originalUrl, imageType);
+                var studentImageUploadedEvent = new StudentImageUploaded(command.SourceId, processedUrl, imageType);
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
             }
 

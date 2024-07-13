@@ -95,5 +95,50 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 TwoFactorSecret = document.TwoFactorSecret,
                 ContactEmail = document.ContactEmail 
             };
+
+
+             public static UserNotifications AsEntity(this UserNotificationsDocument document)
+            => new UserNotifications(
+                document.StudentId,
+                document.NotificationPreferences
+            );
+
+        public static UserNotificationsDocument AsDocument(this UserNotifications entity)
+            => new UserNotificationsDocument
+            {
+                Id = Guid.NewGuid(), // Ensure a unique identifier is set
+                StudentId = entity.StudentId,
+                NotificationPreferences = entity.NotificationPreferences
+            };
+
+        public static NotificationPreferencesDto AsDto(this NotificationPreferences notificationPreferences)
+            => new NotificationPreferencesDto
+            {
+                AccountChanges = notificationPreferences.AccountChanges,
+                SystemLogin = notificationPreferences.SystemLogin,
+                NewEvent = notificationPreferences.NewEvent,
+                InterestBasedEvents = notificationPreferences.InterestBasedEvents,
+                EventNotifications = notificationPreferences.EventNotifications,
+                CommentsNotifications = notificationPreferences.CommentsNotifications,
+                PostsNotifications = notificationPreferences.PostsNotifications,
+                FriendsNotifications = notificationPreferences.FriendsNotifications
+            };
+
+        public static UserNotificationsDocument AsDocument(this NotificationPreferencesDto dto)
+            => new UserNotificationsDocument
+            {
+                Id = Guid.NewGuid(), 
+                StudentId = dto.StudentId,
+                NotificationPreferences = new NotificationPreferences(
+                    dto.AccountChanges,
+                    dto.SystemLogin,
+                    dto.NewEvent,
+                    dto.InterestBasedEvents,
+                    dto.EventNotifications,
+                    dto.CommentsNotifications,
+                    dto.PostsNotifications,
+                    dto.FriendsNotifications
+                )
+            };
     }
 }

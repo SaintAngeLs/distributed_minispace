@@ -265,10 +265,10 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         private void CheckDescription(string description)
         {
-            if (string.IsNullOrWhiteSpace(description))
-            {
-                throw new InvalidStudentDescriptionException(Id, description);
-            }
+            // if (string.IsNullOrWhiteSpace(description))
+            // {
+            //     throw new InvalidStudentDescriptionException(Id, description);
+            // }
         }
 
         private void CheckDateOfBirth(DateTime dateOfBirth, DateTime now)
