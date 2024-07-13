@@ -28,8 +28,13 @@ namespace MiniSpace.Web.Areas.MediaFiles
             return _httpClient.GetAsync<FileDto>($"media-files/{fileId}/original");
         }
 
-        public Task<HttpResponse<FileUploadResponseDto>> UploadMediaFileAsync(Guid sourceId, string sourceType, Guid uploaderId, string fileName,
-            string fileContentType, string base64Content)
+        public Task<HttpResponse<FileUploadResponseDto>> UploadMediaFileAsync(
+            Guid sourceId, 
+            string sourceType, 
+            Guid uploaderId, 
+            string fileName,
+            string fileContentType, 
+            string base64Content)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", new { 

@@ -87,7 +87,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 sourceType == ContextType.StudentGalleryImage)
             {
                 var imageType = sourceType.ToString();
-                var studentImageUploadedEvent = new StudentImageUploaded(command.SourceId, processedUrl, imageType);
+                var studentImageUploadedEvent = new StudentImageUploaded(command.UploaderId, processedUrl, imageType);
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
             }
 

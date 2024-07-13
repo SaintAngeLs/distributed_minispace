@@ -15,11 +15,19 @@
     <MudText Typo="Typo.h6" GutterBottom="true">Update Banner Image</MudText>
     <InputFile OnChange="HandleImageSelected" accept="image/*" id="file-input" />
     
+    @if (isProcessing)
+    {
+        <div class="overlay">
+            <MudSnackbar>
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            </MudSnackbar>
+        </div>
+    }
+
     <div id="image-container" class="img-container"></div>
 
     @if (!string.IsNullOrEmpty(croppedImageBase64))
     {
-        <!-- Display of cropped image -->
         <div class="cropped-image-preview">
             <img src="@croppedImageBase64" alt="Cropped Image" style="max-width: 100%;" />
         </div>
@@ -40,10 +48,23 @@
         max-width: 100%;
         height: auto;
     }
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
 </style>
 
 @code {
     private string croppedImageBase64;
+    private bool isProcessing = false;
 
     private DotNetObjectReference<UpdateBannerImage> dotNetRef;
 
@@ -61,7 +82,8 @@
         var imageFile = e.File;
         if (imageFile != null)
         {
-            // Define a new maximum size limit for the file, e.g., 5 MB
+            isProcessing = true;
+            StateHasChanged();
             long maxAllowedSize = 5 * 1024 * 1024; // 5 MB in bytes
 
             try
@@ -77,6 +99,11 @@
             {
                 Console.Error.WriteLine($"File size exceeds the maximum limit: {ex.Message}");
             }
+            finally
+            {
+                isProcessing = false;
+                StateHasChanged();
+            }
         }
     }
 
@@ -87,18 +114,47 @@
         StateHasChanged();
     }
 
+    private string GetFileExtensionFromBase64(string base64String)
+    {
+        var dataUriPattern = new System.Text.RegularExpressions.Regex(@"^data:(?<type>image\/.+?);base64,(?<data>.+)$");
+        var match = dataUriPattern.Match(base64String);
+        if (match.Success)
+        {
+            var type = match.Groups["type"].Value;
+            return type switch
+            {
+                "image/jpeg" => "jpg",
+                "image/png" => "png",
+                "image/gif" => "gif",
+                "image/tiff" => "tiff",
+                "image/webp" => "webp",
+                _ => throw new InvalidOperationException("Unsupported image type"),
+            };
+        }
+        throw new InvalidOperationException("Invalid base64 image data");
+    }
+
     [JSInvokable]
     public async Task SaveCroppedImage()
     {
         try
         {
+            isProcessing = true;
+            StateHasChanged();
+
+            var userId = IdentityService.GetCurrentUserId();
+            var fileExtension = GetFileExtensionFromBase64(croppedImageBase64);
+            var randomGuid = Guid.NewGuid().ToString();
+            var fileName = $"banner_image_{userId}_{randomGuid}.{fileExtension}";
+            var contentType = $"image/{fileExtension}";
+
             var base64Content = croppedImageBase64.Split(',')[1];
             var response = await MediaFilesService.UploadMediaFileAsync(
-                IdentityService.GetCurrentUserId(),
+                Guid.NewGuid(),
                 MediaFileContextType.StudentBannerImage.ToString(),
-                IdentityService.GetCurrentUserId(),
-                "banner.jpg",
-                "image/jpeg",
+                userId,
+                fileName,
+                contentType,
                 base64Content
             );
 
@@ -110,6 +166,11 @@
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Error saving the cropped image: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
+            StateHasChanged();
         }
     }
 }
