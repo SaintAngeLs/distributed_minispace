@@ -20,6 +20,21 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories
             _repository = repository;
         }
 
+        public async Task<IEnumerable<FileSourceInfo>> GetAllAsync(string url)
+        {
+            var fileSourceInfos = await _repository.FindAsync(s => (s.OriginalFileUrl == url || s.FileUrl == url) && s.State == State.Associated);
+            return fileSourceInfos?.Select(s => s.AsEntity());
+        }
+
+        public async Task DeleteAllAsync(string url)
+        {
+            var fileSourceInfos = await _repository.FindAsync(s => (s.OriginalFileUrl == url || s.FileUrl == url) && s.State == State.Associated);
+            foreach (var fileSourceInfo in fileSourceInfos)
+            {
+                await _repository.DeleteAsync(fileSourceInfo.Id);
+            }
+        }
+
         public async Task<FileSourceInfo> GetAsync(string url)
         {
             var fileSourceInfo = await _repository.GetAsync(s => s.OriginalFileUrl == url || s.FileUrl == url);

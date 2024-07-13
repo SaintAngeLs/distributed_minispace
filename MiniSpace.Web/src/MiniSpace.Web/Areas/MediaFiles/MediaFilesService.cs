@@ -48,11 +48,12 @@ namespace MiniSpace.Web.Areas.MediaFiles
             });
         }
         
-        public Task DeleteMediaFileAsync(Guid fileId)
+       public Task DeleteMediaFileAsync(string fileUrl)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"media-files/{fileId}");
+            return _httpClient.DeleteAsync("media-files/delete", new { MediaFileUrl = fileUrl });
         }
+
         
     }
 }

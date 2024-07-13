@@ -782,11 +782,12 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files/{mediaFileId}/original
 
-      - upstream: /{mediaFileId}
+      - upstream: /delete
         method: DELETE
         use: downstream
-        downstream: mediafiles-service/media-files/{mediaFileId}
+        downstream: mediafiles-service/media-files/delete
         auth: true
+        passQueryString: true 
 
     services:
       mediafiles-service:

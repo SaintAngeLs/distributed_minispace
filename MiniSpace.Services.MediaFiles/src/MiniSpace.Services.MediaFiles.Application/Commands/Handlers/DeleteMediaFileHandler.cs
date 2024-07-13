@@ -33,7 +33,7 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             }
 
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != fileSourceInfo.UploaderId && !identity.IsAdmin)
+            if (identity.IsAuthenticated && identity.Id != fileSourceInfo.UploaderId)
             {
                 throw new UnauthorizedMediaFileAccessException(fileSourceInfo.Id, identity.Id, fileSourceInfo.UploaderId);
             }

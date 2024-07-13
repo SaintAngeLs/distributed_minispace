@@ -1,22 +1,22 @@
-@page "/student-profile"
+@page "/edit-gallery"
 @using MiniSpace.Web.DTO.Types
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.Areas.Students
-@using System.IO
-@using Microsoft.AspNetCore.Components.Forms
 @inject IMediaFilesService MediaFilesService
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
+@using Microsoft.AspNetCore.Components.Forms
 @using MudBlazor
+@using System.IO
 @inject IJSRuntime JS
 @using Microsoft.JSInterop
 
 <MudDialogProvider/>
 <div>
-    <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
+    <MudText Typo="Typo.h6" GutterBottom="true">Edit Gallery</MudText>
     @if (isLoading)
     {
         <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
@@ -25,45 +25,29 @@
     {
         <MudGrid>
             <MudItem xs="12">
-                <MudText Typo="Typo.h6" GutterBottom="true">Current Banner</MudText>
-                @if (!string.IsNullOrEmpty(studentDto.BannerUrl))
-                {
-                    <MudCard>
-                        <MudCardMedia Image="@studentDto.BannerUrl" Alt="Banner image" />
-                    </MudCard>
-                }
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToBannerUpdate">Change Banner Image</MudButton>
-            </MudItem>
-
-            <MudItem xs="12">
                 <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
                 <MudGrid class="spotlight-group" Spacing="3">
                     @foreach (var imageUrl in studentDto.GalleryOfImageUrls)
                     {
                         <MudItem xs="12" sm="6" md="4">
-                            <a class="spotlight" href="@imageUrl">
-                                <MudCard>
-                                    <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
-                                </MudCard>
-                            </a>
+                            <MudCard>
+                                <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
+                                <MudCardActions>
+                                    <MudCheckBox @bind-Checked="selectedImages[imageUrl]" />
+                                </MudCardActions>
+                            </MudCard>
                         </MudItem>
                     }
                 </MudGrid>
                 <div class="image-upload-container">
                     <InputFile id="fileInput" OnChange="OnGalleryFilesChanged" multiple accept="image/*" style="display: none;" />
-                    <MudGrid>
-                        <MudItem xs="12" sm="6">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TriggerFileInputClick">Choose Gallery Files</MudButton>
-                        </MudItem>
-                        <MudItem xs="12" sm="6">
-                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="NavigateToEditGallery">Edit Gallery</MudButton>
-                        </MudItem>
-                    </MudGrid>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TriggerFileInputClick">Add Gallery Images</MudButton>
                     @if (galleryFiles != null && galleryFiles.Any())
                     {
                         <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @galleryFiles.Count() files selected </MudText>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UploadGalleryImagesAsync">Upload to Gallery</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UploadGalleryImagesAsync">Upload</MudButton>
                     }
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteSelectedImages">Delete Selected Images</MudButton>
                     @if (isUploading)
                     {
                         <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
@@ -74,15 +58,13 @@
     }
 </div>
 
-<RadzenDialog />
-
 @code {
     private bool isLoading = true;
-    private bool isUploading = false; // New state for upload progress
+    private bool isUploading = false;
     private StudentDto studentDto = new();
-    private IList<IBrowserFile> galleryFiles = new List<IBrowserFile>();
-
+    private List<IBrowserFile> galleryFiles = new List<IBrowserFile>();
     private long maxFileSize = 32 * 1024 * 1024;
+    private Dictionary<string, bool> selectedImages = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,6 +76,7 @@
             {
                 var studentId = IdentityService.GetCurrentUserId();
                 studentDto = await StudentsService.GetStudentAsync(studentId);
+                selectedImages = studentDto.GalleryOfImageUrls.ToDictionary(url => url, url => false);
             }
             else
             {
@@ -121,7 +104,7 @@
     {
         if (galleryFiles != null && galleryFiles.Count > 0)
         {
-            isUploading = true; // Set uploading state to true
+            isUploading = true;
             StateHasChanged();
             try
             {
@@ -136,6 +119,7 @@
                     if (response.Content != null && !string.IsNullOrEmpty(response.Content.FileUrl))
                     {
                         studentDto.GalleryOfImageUrls = studentDto.GalleryOfImageUrls.Append(response.Content.FileUrl).ToList();
+                        selectedImages.Add(response.Content.FileUrl, false);
                     }
                     stream.Close();
                 }
@@ -143,10 +127,24 @@
             finally
             {
                 galleryFiles.Clear();
-                isUploading = false; // Set uploading state to false
+                isUploading = false;
                 StateHasChanged();
             }
         }
+    }
+
+    private async Task DeleteSelectedImages()
+    {
+        var imagesToDelete = selectedImages.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
+        foreach (var imageUrl in imagesToDelete)
+        {
+            await MediaFilesService.DeleteMediaFileAsync(imageUrl);
+          
+                studentDto.GalleryOfImageUrls = studentDto.GalleryOfImageUrls.Where(url => url != imageUrl).ToList();
+                selectedImages.Remove(imageUrl);
+            
+        }
+        StateHasChanged();
     }
 
     private static async Task<byte[]> ReadFully(Stream input)
@@ -163,19 +161,9 @@
         }
     }
 
-    private void NavigateToBannerUpdate()
-    {
-        NavigationManager.NavigateTo("/update-banner");
-    }
-
     private async Task TriggerFileInputClick()
     {
         var fileInput = await JS.InvokeAsync<IJSObjectReference>("document.getElementById", "fileInput");
         await fileInput.InvokeVoidAsync("click");
-    }
-
-    private void NavigateToEditGallery()
-    {
-        NavigationManager.NavigateTo("/edit-gallery");
     }
 }

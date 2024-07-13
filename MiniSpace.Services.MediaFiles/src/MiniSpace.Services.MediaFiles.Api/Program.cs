@@ -17,6 +17,7 @@ using MiniSpace.Services.MediaFiles.Application.Queries;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Infrastructure;
 using DotNetEnv;
+using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.MediaFiles.Api
 {
@@ -46,7 +47,7 @@ namespace MiniSpace.Services.MediaFiles.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetMediaFile, FileDto>("media-files/{mediaFileId}")
                         .Get<GetOriginalMediaFile, FileDto>("media-files/{mediaFileId}/original")
-                        .Delete<DeleteMediaFile>("media-files/{mediaFileId}")
+                        .Delete<DeleteMediaFile>("media-files/delete")
                     ))
                 .UseLogging()
                 .Build()
