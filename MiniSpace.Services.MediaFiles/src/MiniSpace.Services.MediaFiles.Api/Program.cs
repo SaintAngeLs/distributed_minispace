@@ -47,7 +47,7 @@ namespace MiniSpace.Services.MediaFiles.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetMediaFile, FileDto>("media-files/{mediaFileId}")
                         .Get<GetOriginalMediaFile, FileDto>("media-files/{mediaFileId}/original")
-                        .Delete<DeleteMediaFile>("media-files/delete")
+                        .Delete<DeleteMediaFile>("media-files/delete/{mediaFileUrl}")
                     ))
                 .UseLogging()
                 .Build()

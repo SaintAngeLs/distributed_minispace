@@ -26,11 +26,12 @@
         <MudGrid>
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" GutterBottom="true">Current Banner</MudText>
-                @if (!string.IsNullOrEmpty(studentDto.BannerUrl))
+                @if (!string.IsNullOrEmpty(studentDto.BannerUrl) && IsValidImageUrl(studentDto.BannerUrl))
                 {
                     <MudCard>
                         <MudCardMedia Image="@studentDto.BannerUrl" Alt="Banner image" />
                     </MudCard>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="RemoveBannerImage">Remove Banner Image</MudButton>
                 }
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToBannerUpdate">Change Banner Image</MudButton>
             </MudItem>
@@ -38,7 +39,7 @@
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
                 <MudGrid class="spotlight-group" Spacing="3">
-                    @foreach (var imageUrl in studentDto.GalleryOfImageUrls)
+                    @foreach (var imageUrl in studentDto.GalleryOfImageUrls.Where(IsValidImageUrl))
                     {
                         <MudItem xs="12" sm="6" md="4">
                             <a class="spotlight" href="@imageUrl">
@@ -83,6 +84,7 @@
     private IList<IBrowserFile> galleryFiles = new List<IBrowserFile>();
 
     private long maxFileSize = 32 * 1024 * 1024;
+    private readonly List<string> validImageExtensions = new List<string> { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,7 +113,7 @@
         }
     }
 
-    private async Task OnGalleryFilesChanged(InputFileChangeEventArgs args)
+    private void OnGalleryFilesChanged(InputFileChangeEventArgs args)
     {
         galleryFiles = args.GetMultipleFiles().ToList();
         StateHasChanged();
@@ -177,5 +179,28 @@
     private void NavigateToEditGallery()
     {
         NavigationManager.NavigateTo("/edit-gallery");
+    }
+
+    private async Task RemoveBannerImage()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(studentDto.BannerUrl))
+            {
+                Console.WriteLine($"{studentDto.BannerUrl}");
+                await MediaFilesService.DeleteMediaFileAsync(studentDto.BannerUrl);
+                studentDto.BannerUrl = null;
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error removing banner image: {ex.Message}");
+        }
+    }
+
+    private bool IsValidImageUrl(string url)
+    {
+        return validImageExtensions.Contains(Path.GetExtension(url)?.ToLower());
     }
 }

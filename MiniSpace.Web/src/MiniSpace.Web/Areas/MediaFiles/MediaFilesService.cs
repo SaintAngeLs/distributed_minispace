@@ -51,7 +51,7 @@ namespace MiniSpace.Web.Areas.MediaFiles
        public Task DeleteMediaFileAsync(string fileUrl)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync("media-files/delete", new { MediaFileUrl = fileUrl });
+            return _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", new { MediaFileUrl = fileUrl });
         }
 
         

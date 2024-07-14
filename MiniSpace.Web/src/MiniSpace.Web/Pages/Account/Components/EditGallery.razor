@@ -15,6 +15,14 @@
 @using Microsoft.JSInterop
 
 <MudDialogProvider/>
+
+<AuthWrapper>
+    <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
+    <div class="breadcrumbs-container">
+        <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+    </div>
+
+
 <div>
     <MudText Typo="Typo.h6" GutterBottom="true">Edit Gallery</MudText>
     @if (isLoading)
@@ -27,7 +35,7 @@
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
                 <MudGrid class="spotlight-group" Spacing="3">
-                    @foreach (var imageUrl in studentDto.GalleryOfImageUrls)
+                    @foreach (var imageUrl in studentDto.GalleryOfImageUrls.Where(IsValidImageUrl))
                     {
                         <MudItem xs="12" sm="6" md="4">
                             <MudCard>
@@ -57,14 +65,25 @@
         </MudGrid>
     }
 </div>
+</AuthWrapper>
 
 @code {
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/account", icon: @Icons.Material.Filled.ManageAccounts),
+        new BreadcrumbItem("Gallery", href: "/edit-gallery", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+    };
+
+
     private bool isLoading = true;
     private bool isUploading = false;
     private StudentDto studentDto = new();
     private List<IBrowserFile> galleryFiles = new List<IBrowserFile>();
     private long maxFileSize = 32 * 1024 * 1024;
     private Dictionary<string, bool> selectedImages = new();
+    private readonly List<string> validImageExtensions = new List<string> { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,7 +113,7 @@
         }
     }
 
-    private async Task OnGalleryFilesChanged(InputFileChangeEventArgs args)
+    private void OnGalleryFilesChanged(InputFileChangeEventArgs args)
     {
         galleryFiles = args.GetMultipleFiles().ToList();
         StateHasChanged();
@@ -110,7 +129,7 @@
             {
                 foreach (var file in galleryFiles)
                 {
-                    var stream = file.OpenReadStream(maxFileSize);
+                    using var stream = file.OpenReadStream(maxFileSize);
                     byte[] bytes = await ReadFully(stream);
                     var base64Content = Convert.ToBase64String(bytes);
                     var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.GetCurrentUserId(),
@@ -121,14 +140,14 @@
                         studentDto.GalleryOfImageUrls = studentDto.GalleryOfImageUrls.Append(response.Content.FileUrl).ToList();
                         selectedImages.Add(response.Content.FileUrl, false);
                     }
-                    stream.Close();
                 }
             }
             finally
             {
                 galleryFiles.Clear();
                 isUploading = false;
-                StateHasChanged();
+                // Reload the page after images have been uploaded
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             }
         }
     }
@@ -139,12 +158,11 @@
         foreach (var imageUrl in imagesToDelete)
         {
             await MediaFilesService.DeleteMediaFileAsync(imageUrl);
-          
-                studentDto.GalleryOfImageUrls = studentDto.GalleryOfImageUrls.Where(url => url != imageUrl).ToList();
-                selectedImages.Remove(imageUrl);
-            
+            studentDto.GalleryOfImageUrls = studentDto.GalleryOfImageUrls.Where(url => url != imageUrl).ToList();
+            selectedImages.Remove(imageUrl);
         }
-        StateHasChanged();
+        // Reload the page after images have been deleted
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 
     private static async Task<byte[]> ReadFully(Stream input)
@@ -165,5 +183,10 @@
     {
         var fileInput = await JS.InvokeAsync<IJSObjectReference>("document.getElementById", "fileInput");
         await fileInput.InvokeVoidAsync("click");
+    }
+
+    private bool IsValidImageUrl(string url)
+    {
+        return validImageExtensions.Contains(Path.GetExtension(url)?.ToLower());
     }
 }

@@ -805,12 +805,11 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files/{mediaFileId}/original
 
-      - upstream: /delete
+      - upstream: /delete/{mediaFileUrl}
         method: DELETE
         use: downstream
-        downstream: mediafiles-service/media-files/delete
+        downstream: mediafiles-service/media-files/delete/{mediaFileUrl}
         auth: true
-        passQueryString: true 
 
     services:
       mediafiles-service:

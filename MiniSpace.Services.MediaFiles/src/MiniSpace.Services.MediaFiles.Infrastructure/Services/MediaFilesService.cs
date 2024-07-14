@@ -112,5 +112,6 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(fileName));
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
+        
     }
 }

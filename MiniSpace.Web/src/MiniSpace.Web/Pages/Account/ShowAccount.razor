@@ -114,6 +114,10 @@
     .mud-input>input.mud-input-root {
         padding: 10px !important;
     }
+
+    .button-margins {
+        margin: 10px 0 !important;
+    }
 </style>
 
 @code {
@@ -300,6 +304,7 @@ private async Task SaveImageAsync()
                                     Variant="Variant.Filled"
                                     Color="Color.Primary"
                                     StartIcon="@Icons.Material.Filled.CloudUpload"
+                                    Class="button-margins"
                                     for="@context">
                                 Upload Image
                             </MudButton>
@@ -349,8 +354,10 @@ private async Task SaveImageAsync()
             </MudItem>
         </MudGrid>
         <MudStack>
-             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+             
         </MudStack>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save profile</MudButton>
 
         @if (isUploading)
         {
@@ -369,7 +376,7 @@ private async Task SaveImageAsync()
         else
         {
             <MudStack>
-                <MudSwitch @bind-Checked="isTwoFactorEnabled" Label="Enable Two-Factor Authentication" OnChange="ToggleTwoFactor" />
+                <MudSwitch @bind-Checked="isTwoFactorEnabled" Label="Enable Two-Factor Authentication" OnChange="ToggleTwoFactor" Color="Color.Primary"/>
                 @if (isTwoFactorEnabled)
                 {
                     @if (string.IsNullOrEmpty(twoFactorSecret))
@@ -381,8 +388,9 @@ private async Task SaveImageAsync()
                         <MudTextField @bind-Value="twoFactorSecret" Label="Two-Factor Authentication Secret" ReadOnly="true" />
                     }
                 }
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTwoFactorSettingsAsync" Disabled="@(!isTwoFactorEnabled || (isTwoFactorEnabled && string.IsNullOrEmpty(twoFactorSecret)))">Save 2FA Settings</MudButton>
+                
             </MudStack>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTwoFactorSettingsAsync" Disabled="@(!isTwoFactorEnabled || (isTwoFactorEnabled && string.IsNullOrEmpty(twoFactorSecret)))" Class="button-margins">Save 2FA Settings</MudButton>
         }
     </div>;
 
@@ -446,17 +454,18 @@ private async Task SaveImageAsync()
                 <MudSwitch @bind-Checked="studentDto.EmailNotifications" Label="Email Notifications" />
                 @if (studentDto.EmailNotifications)
                 {
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" />
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.SystemLogin" Label="System Login" />
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.NewEvent" Label="New Event" />
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" />
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.EventNotifications" Label="Event Notifications" />
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" />
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.PostsNotifications" Label="Posts Notifications" />
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" />
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.SystemLogin" Label="System Login" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.NewEvent" Label="New Event" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.EventNotifications" Label="Event Notifications" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.PostsNotifications" Label="Posts Notifications" Color="Color.Primary"/>
+                    <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary"/>
                 }
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+                
             </MudStack>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save preferences</MudButton>
         }
     </div>;
 
@@ -470,8 +479,9 @@ private async Task SaveImageAsync()
         {
             <MudStack>
                 <MudTextField @bind-Value="studentDto.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save</MudButton>
+                
             </MudStack>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save privacy</MudButton>
         }
     </div>;
 

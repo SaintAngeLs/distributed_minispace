@@ -182,21 +182,19 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void RemoveGalleryImage(string imageUrl)
         {
-            if (!_galleryOfImages.Remove(imageUrl))
+            if (!_galleryOfImages.Contains(imageUrl))
             {
                 throw new StudentGalleryImageNotFoundException(Id, imageUrl);
             }
+
+            _galleryOfImages = new HashSet<string>(_galleryOfImages.Select(url => url == imageUrl ? string.Empty : url));
             AddEvent(new StudentGalleryOfImagesUpdated(this));
         }
 
         public void RemoveBannerImage()
         {
-            if (string.IsNullOrEmpty(BannerUrl))
-            {
-                throw new InvalidBannerIdException(Id);
-            }
 
-            BannerUrl = null;
+            BannerUrl = string.Empty;
             AddEvent(new StudentBannerUpdated(this));
         }
 

@@ -1,10 +1,11 @@
-﻿using Convey.CQRS.Commands;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Convey.CQRS.Commands;
 using MiniSpace.Services.MediaFiles.Application.Events;
 using MiniSpace.Services.MediaFiles.Application.Exceptions;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 {
@@ -26,10 +27,14 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 
         public async Task HandleAsync(DeleteMediaFile command, CancellationToken cancellationToken)
         {
-            var fileSourceInfo = await _fileSourceInfoRepository.GetAsync(command.MediaFileUrl);
+            // Decode the URL before using it
+            var decodedUrl = Uri.UnescapeDataString(command.MediaFileUrl);
+
+            Console.WriteLine($"DeleteMediaFileHandler: {decodedUrl}");
+            var fileSourceInfo = await _fileSourceInfoRepository.GetAsync(decodedUrl);
             if (fileSourceInfo is null)
             {
-                throw new MediaFileNotFoundException(command.MediaFileUrl);
+                throw new MediaFileNotFoundException(decodedUrl);
             }
 
             var identity = _appContext.Identity;
@@ -40,8 +45,8 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
 
             await _s3Service.DeleteFileAsync(fileSourceInfo.OriginalFileUrl);
             await _s3Service.DeleteFileAsync(fileSourceInfo.FileUrl);
-            await _fileSourceInfoRepository.DeleteAsync(command.MediaFileUrl);
-            await _messageBroker.PublishAsync(new MediaFileDeleted(command.MediaFileUrl, 
+            await _fileSourceInfoRepository.DeleteAsync(decodedUrl);
+            await _messageBroker.PublishAsync(new MediaFileDeleted(decodedUrl, 
                 fileSourceInfo.SourceId, fileSourceInfo.SourceType.ToString()));
         }
     }

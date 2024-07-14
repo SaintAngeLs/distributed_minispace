@@ -17,8 +17,11 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 
         public async Task HandleAsync(MediaFileDeleted @event, CancellationToken cancellationToken)
         {
+            Console.WriteLine($"Received MediaFileDeleted event: {@event.MediaFileUrl}");
+
             if (@event.Source.ToLowerInvariant() != "studentprofileimage")
             {
+                Console.WriteLine("Event source is not 'studentprofileimage', ignoring the event.");
                 return;
             }
 
@@ -32,6 +35,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 {
                     student.RemoveProfileImage();
                     updated = true;
+                    Console.WriteLine("Removed profile image.");
                 }
 
                 // Check and remove banner image
@@ -39,6 +43,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 {
                     student.RemoveBannerImage();
                     updated = true;
+                    Console.WriteLine("Removed banner image.");
                 }
 
                 // Check and remove gallery images
@@ -46,13 +51,16 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 {
                     student.RemoveGalleryImage(@event.MediaFileUrl);
                     updated = true;
+                    Console.WriteLine("Removed gallery image.");
                 }
 
                 if (updated)
                 {
                     await _studentRepository.UpdateAsync(student);
+                    Console.WriteLine("Updated student repository.");
                 }
             }
         }
+
     }
 }
