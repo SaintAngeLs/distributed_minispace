@@ -1,4 +1,4 @@
-@page "/friends/search"
+@page "/bad-friends/bad-search"
 @using MiniSpace.Services.Friends.Application.Dto
 @using MiniSpace.Web.HttpClients
 @using MudBlazor
@@ -93,9 +93,15 @@
                     </div>
                 </div>
             }
-            <div id="end-of-list"></div>
         </div>
     </div>
+</div>
+<div class="pagination-controls">
+    <button @onclick="() => SetPage(1)">First</button>
+    <button @onclick="() => SetPage(currentPage - 1)">Previous</button>
+    <span>Page @currentPage of @(Math.Ceiling((double)totalStudents / pageSize))</span>
+    <button @onclick="() => SetPage(currentPage + 1)">Next</button>
+    <button @onclick="() => SetPage((totalStudents + pageSize - 1) / pageSize)">Last</button>
 </div>
 </AuthWrapper>
 
@@ -195,6 +201,47 @@
         box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
     }
 
+    .pagination-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 0;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+    }
+
+    .pagination-controls button {
+        padding: 5px 10px;
+        margin: 0 5px !important;
+        background-image: linear-gradient(to right, #007BFF, #0062cc); 
+        color: white;
+        font-size: 16px;
+        border: 1px solid #0056b3;
+        border-radius: 6px; 
+        cursor: pointer;
+        transition: all 0.3s ease; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .pagination-controls button:hover {
+        background-image: linear-gradient(to right, #0056b3, #004080); 
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+    }
+
+    .pagination-controls button:disabled {
+        background-color: #ccc;
+        color: #666;
+        border: 1px solid #aaa;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .pagination-controls span {
+        color: #333;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 0 15px;
+    }
+
 </style>
 
 @code {
@@ -209,7 +256,6 @@
     private IEnumerable<FriendDto> allFriends;
     private IEnumerable<FriendRequestDto> incomingRequests;
     private bool pageInitialized;
-    private DotNetObjectReference<FriendsSearch> _dotNetRef;
 
     protected override async Task OnInitializedAsync() 
     {
@@ -224,9 +270,6 @@
             await LoadStudents();
             pageInitialized = true;
             StateHasChanged();
-
-            _dotNetRef = DotNetObjectReference.Create(this);
-            await JSRuntime.InvokeVoidAsync("infiniteScroll.initialize", _dotNetRef);
         }
         else
         {
@@ -240,19 +283,19 @@
     }
 
    private async Task LoadStudents(string searchArgument = null) {
+        int maxPage = (int)Math.Ceiling((double)totalStudents / pageSize);
+        if (currentPage > maxPage) currentPage = maxPage;
+        if (currentPage < 1) currentPage = 1;
+
         var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize, searchArgument);
         if (response != null) {
-            students.AddRange(response.Results);
+            students = response.Results;
             totalStudents = response.Total; 
             StateHasChanged();
+        } else {
+            students = new List<StudentDto>();
         }
-    }
-
-    [JSInvokable]
-    public async Task LoadMoreData()
-    {
-        currentPage++;
-        await LoadStudents(searchTerm);
+        StateHasChanged(); 
     }
 
     private void OnDetails(StudentDto selectedStudent) 
@@ -262,8 +305,6 @@
     }
 
     private async Task SearchFriends() {
-        currentPage = 1;
-        students.Clear();
         await LoadStudents(searchTerm);
     }
 
@@ -282,6 +323,16 @@
         NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
         await JSRuntime.InvokeVoidAsync("playNotificationSound");
         StateHasChanged(); 
+    }
+
+    private async Task SetPage(int page) 
+    {
+        if (page < 1 || page > Math.Ceiling((double)totalStudents / pageSize)) {
+            return;
+        }
+        currentPage = page;
+        student = null;
+        await LoadStudents();
     }
 
     private void ViewDetails(Guid studentId)
