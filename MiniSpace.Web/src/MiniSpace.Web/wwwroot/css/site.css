@@ -11,7 +11,7 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 * {
-    /* margin: unset !important;  */
+    
 }
 
 a, .btn-link {
@@ -445,7 +445,7 @@ html, body {
     background-color: #f9f9f9; 
     border-radius: 5px; 
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 20px !important; 
+    margin: 20px 0 20px 0 !important; 
     margin-top: 30px !important; 
 }
 
@@ -647,4 +647,13 @@ html, body {
     .button-text {
         display: none !important;
     }
+}
+
+
+.center-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    max-width: 900px !important;
+    margin: auto !important;
 }

@@ -1,0 +1,20 @@
+@using MiniSpace.Web.DTO
+@using MudBlazor
+
+
+<MudCard>
+    <MudCardHeader>
+        <MudText Typo="Typo.h6">@Post.TextContent</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">@Post.State</MudText>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="MudBlazor.Variant.Text" Color="MudBlazor.Color.Primary">Read More</MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public PostDto Post { get; set; }
+}

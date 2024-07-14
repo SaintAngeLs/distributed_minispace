@@ -11,6 +11,8 @@
 @inject IJSRuntime JSRuntime
 
 <AuthWrapper>
+<div class="center-container"> 
+    
 <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -71,6 +73,7 @@
         }
     </div>
 </div>
+</div>
 </AuthWrapper>
 
 <style>
@@ -105,8 +108,7 @@
     .left-panel, .right-panel {
         background-color: #f7f7f7; 
         border-radius: 8px;
-        padding: 20px;
-        margin: 10px;
+       
         box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
     }
     .search-bar {
