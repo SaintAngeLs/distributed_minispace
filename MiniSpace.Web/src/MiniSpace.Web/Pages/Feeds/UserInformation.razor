@@ -75,10 +75,10 @@
                         <MudText Typo="Typo.h5">Gallery</MudText>
                     </MudCardHeader>
                     <MudCardContent>
-                        @if (student.GalleryOfImageUrls != null && student.GalleryOfImageUrls.Any())
+                        @if (filteredGalleryImages != null && filteredGalleryImages.Any())
                         {
                             <MudGrid>
-                                @foreach (var imageUrl in student.GalleryOfImageUrls)
+                                @foreach (var imageUrl in filteredGalleryImages)
                                 {
                                     <MudItem xs="12" sm="6" md="4">
                                         <MudImage Src="@imageUrl" Alt="Gallery Image"/>
@@ -114,10 +114,23 @@
     public Guid UserId { get; set; }
 
     private StudentDto student;
+    private List<string> filteredGalleryImages;
 
     protected override async Task OnInitializedAsync()
     {
         student = await StudentsService.GetStudentAsync(UserId);
+        FilterGalleryImages();
+    }
+
+    private void FilterGalleryImages()
+    {
+        if (student?.GalleryOfImageUrls != null)
+        {
+            var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            filteredGalleryImages = student.GalleryOfImageUrls
+                .Where(url => !string.IsNullOrEmpty(url) && validExtensions.Contains(System.IO.Path.GetExtension(url).ToLower()))
+                .ToList();
+        }
     }
 }
 
