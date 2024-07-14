@@ -33,23 +33,34 @@
                     </MudCard>
                     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="RemoveBannerImage">Remove Banner Image</MudButton>
                 }
+                else
+                {
+                    <MudText Typo="Typo.subtitle2" Color="Color.Secondary">No banner image available</MudText>
+                }
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToBannerUpdate">Change Banner Image</MudButton>
             </MudItem>
 
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
-                <MudGrid class="spotlight-group" Spacing="3">
-                    @foreach (var imageUrl in studentDto.GalleryOfImageUrls.Where(IsValidImageUrl))
-                    {
-                        <MudItem xs="12" sm="6" md="4">
-                            <a class="spotlight" href="@imageUrl">
-                                <MudCard>
-                                    <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
-                                </MudCard>
-                            </a>
-                        </MudItem>
-                    }
-                </MudGrid>
+                @if (studentDto.GalleryOfImageUrls == null || !studentDto.GalleryOfImageUrls.Any(IsValidImageUrl))
+                {
+                    <MudText Typo="Typo.subtitle2" Color="Color.Secondary">No gallery images available</MudText>
+                }
+                else
+                {
+                    <MudGrid class="spotlight-group" Spacing="3">
+                        @foreach (var imageUrl in studentDto.GalleryOfImageUrls.Where(IsValidImageUrl))
+                        {
+                            <MudItem xs="12" sm="6" md="4">
+                                <a class="spotlight" href="@imageUrl">
+                                    <MudCard>
+                                        <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
+                                    </MudCard>
+                                </a>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                }
                 <div class="image-upload-container">
                     <InputFile id="fileInput" OnChange="OnGalleryFilesChanged" multiple accept="image/*" style="display: none;" />
                     <MudGrid>
