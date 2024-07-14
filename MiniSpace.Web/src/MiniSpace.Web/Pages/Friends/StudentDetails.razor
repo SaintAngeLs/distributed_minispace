@@ -1,0 +1,241 @@
+@page "/student-details/{Id:guid}"
+@using MiniSpace.Web.Areas.Friends
+@inject NavigationManager NavigationManager
+@inject IFriendsService FriendsService
+@using MiniSpace.Web.Areas.MediaFiles
+@inject IMediaFilesService MediaFilesService
+@using MiniSpace.Web.Models.Reports
+@using MiniSpace.Web.Pages.Reports.Dialogs
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@using MiniSpace.Web.DTO
+@using MudBlazor
+
+<AuthWrapper>
+    <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
+    <div class="breadcrumbs-container">
+        <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+    </div>
+    @if (studentNotFound)
+    {
+        <h3 class="rz-p-12">Student profile not found!</h3>
+        <h3>Probably has been deleted!</h3>
+    }
+    else if (student == null)
+    {
+        <MudProgressCircular Indeterminate="true" Size="Size.Large" />
+    }
+    else
+    {
+        <div class="card">
+            <div class="banner">
+                @if (IsValidImageUrl(student.BannerUrl))
+                {
+                    <img src="@student.BannerUrl" alt="Banner Image" class="banner-image" />
+                }
+                else
+                {
+                    <div class="banner-placeholder"></div>
+                }
+            </div>
+            <div class="card-header">
+                <img src="@GetProfileImageUrl(student.ProfileImageUrl)" alt="Profile Image" class="profile-image" />
+                <h3>@student.FirstName @student.LastName</h3>
+                <p>@student.Email</p>
+            </div>
+            <div class="card-body">
+                <p><strong>Description:</strong> @student.Description</p>
+                @if (!string.IsNullOrEmpty(student.Education))
+                {
+                    <p><strong>Education:</strong> @student.Education</p>
+                }
+                @if (!string.IsNullOrEmpty(student.WorkPosition))
+                {
+                    <p><strong>Work Position:</strong> @student.WorkPosition</p>
+                }
+                @if (!string.IsNullOrEmpty(student.Company))
+                {
+                    <p><strong>Company:</strong> @student.Company</p>
+                }
+                @if (student.Languages != null && student.Languages.Any())
+                {
+                    <p><strong>Languages:</strong> @string.Join(", ", student.Languages)</p>
+                }
+                @if (student.Interests != null && student.Interests.Any())
+                {
+                    <p><strong>Interests:</strong> @string.Join(", ", student.Interests)</p>
+                }
+                <p><strong>Number of Friends:</strong> @student.NumberOfFriends</p>
+                <p><strong>Date of Birth:</strong> @student.DateOfBirth.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                <p><strong>State:</strong> @student.State</p>
+                <p><strong>Joined:</strong> @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+            </div>
+            @if (IdentityService.IsAuthenticated)
+            {
+                <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@(() => ReportStudentProfile(student))">
+                    Report profile
+                </MudButton>
+            }
+        </div>
+        
+        <h4>Gallery</h4>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
+            <MudGrid class="spotlight-group" Spacing="3">
+                @if (student.GalleryOfImageUrls != null && student.GalleryOfImageUrls.Any(IsValidImageUrl))
+                {
+                    @foreach (var imageUrl in student.GalleryOfImageUrls.Where(IsValidImageUrl))
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <a class="spotlight" href="@imageUrl">
+                                <MudCard>
+                                    <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
+                                </MudCard>
+                            </a>
+                        </MudItem>
+                    }
+                }
+                else
+                {
+                    <MudText>No gallery images available.</MudText>
+                }
+            </MudGrid>
+        </MudItem>
+    }
+</AuthWrapper>
+
+<style>
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+
+    .banner {
+        width: 100%;
+        overflow: hidden;
+        text-align: center;
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .banner-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .banner-placeholder {
+        font-size: 1.5rem;
+        color: #888;
+        height: 100px; /* Adjust height as needed */
+    }
+
+    .card-header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    .spotlight-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .spotlight {
+        display: block;
+        width: 100%;
+    }
+
+    .spotlight img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+</style>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private StudentDto student;
+    private bool studentNotFound;
+    private List<BreadcrumbItem> _items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+            new BreadcrumbItem("Search", href: "/friends/search", icon: Icons.Material.Filled.PersonSearch),
+            new BreadcrumbItem("Friends", href: "/friends", icon: Icons.Material.Filled.LibraryAddCheck),
+            new BreadcrumbItem("Requests", href: "/friends/requests", icon: Icons.Material.Filled.GroupAdd),
+            new BreadcrumbItem("Sent Requests", href: "/friends/sent-requests", icon: Icons.Material.Filled.PersonAddAlt1),
+            new BreadcrumbItem("Student details", href: $"/student-details/{Id}",  disabled: true, icon: Icons.Material.Filled.Person)
+        };
+
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        {
+            student = await FriendsService.GetStudentAsync(Id);
+            if (student == null)
+            {
+                studentNotFound = true;
+                return;
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private string GetProfileImageUrl(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "images/default_profile_image.webp" : profileImageUrl;
+    }
+
+    private bool IsValidImageUrl(string url)
+    {
+        if (string.IsNullOrEmpty(url))
+            return false;
+
+        string[] validExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        string extension = System.IO.Path.GetExtension(url)?.ToLower();
+        return validExtensions.Contains(extension);
+    }
+
+    private async Task ReportStudentProfile(StudentDto studentDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = IdentityService.GetCurrentUserId(),
+            TargetId = studentDto.Id,
+            TargetOwnerId = studentDto.Id,
+            ContextType = "StudentProfile"
+        };
+
+        await DialogService.OpenAsync<CreateReportDialog>("Report profile of the student:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+}

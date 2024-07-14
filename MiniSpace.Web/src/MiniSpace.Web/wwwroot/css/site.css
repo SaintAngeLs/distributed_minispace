@@ -620,8 +620,8 @@ html, body {
 
 @media only screen and (max-width: 768px) {
     .friend-img {
-        width: 60px;
-        height: 60px;
+        width: 50px !important;
+        height: 50px !important;
         margin-right: 10px;
     }
 }
@@ -639,4 +639,12 @@ html, body {
     }
 }
 
-
+@media (max-width: 600px) {
+    .small-button {
+        padding: 0.15rem 0.3rem !important;
+        font-size: 0.65rem !important;
+    }
+    .button-text {
+        display: none !important;
+    }
+}
