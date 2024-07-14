@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.HttpClients;

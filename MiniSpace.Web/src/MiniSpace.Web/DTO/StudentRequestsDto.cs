@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using MiniSpace.Services.Friends.Application.Dto;
 
 namespace  MiniSpace.Web.DTO
 {

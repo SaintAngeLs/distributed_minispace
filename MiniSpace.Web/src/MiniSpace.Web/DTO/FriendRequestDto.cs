@@ -1,7 +1,7 @@
 using System;
 using MiniSpace.Web.DTO.States;
 
-namespace MiniSpace.Services.Friends.Application.Dto
+namespace MiniSpace.Web.DTO
 {
     public class FriendRequestDto
     {
