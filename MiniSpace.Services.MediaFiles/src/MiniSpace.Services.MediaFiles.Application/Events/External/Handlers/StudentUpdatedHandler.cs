@@ -1,8 +1,11 @@
 ﻿using Convey.CQRS.Commands;
 using Convey.CQRS.Events;
-using MiniSpace.Services.MediaFiles.Application.Commands;
 using MiniSpace.Services.MediaFiles.Core.Entities;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
 {
@@ -17,22 +20,48 @@ namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
             _commandDispatcher = commandDispatcher;
         }
 
-        public async Task HandleAsync(StudentUpdated @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(StudentUpdated @event, CancellationToken cancellationToken = default)
         {
-            var fileSourceInfos =
-                await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfile);
-            foreach (var fileSourceInfo in fileSourceInfos)
-            {
-                if (fileSourceInfo.Id == @event.MediaFileId)
-                {
-                    fileSourceInfo.Associate();
-                }
-                else
-                {
-                    fileSourceInfo.Unassociate();
-                }
-                await _fileSourceInfoRepository.UpdateAsync(fileSourceInfo);
-            }
+            // Handle profile image
+            // var profileImageInfo = await _fileSourceInfoRepository.GetAsync(@event.ProfileImageUrl);
+            // if (profileImageInfo != null)
+            // {
+            //     profileImageInfo.Associate();
+            //     await _fileSourceInfoRepository.UpdateAsync(profileImageInfo);
+            // }
+
+            // Handle banner image
+            // if (!string.IsNullOrEmpty(@event.BannerUrl))
+            // {
+            //     var bannerImageInfo = await _fileSourceInfoRepository.GetAsync(@event.BannerUrl);
+            //     if (bannerImageInfo != null)
+            //     {
+            //         bannerImageInfo.Associate();
+            //         await _fileSourceInfoRepository.UpdateAsync(bannerImageInfo);
+            //     }
+            // }
+
+            // Handle gallery images
+            // foreach (var galleryImageUrl in @event.GalleryOfImageUrls)
+            // {
+            //     var galleryImageInfo = await _fileSourceInfoRepository.GetAsync(galleryImageUrl);
+            //     if (galleryImageInfo != null)
+            //     {
+            //         galleryImageInfo.Associate();
+            //         await _fileSourceInfoRepository.UpdateAsync(galleryImageInfo);
+            //     }
+            // }
+
+            // Unassociate files that are no longer associated with the student
+            // var allStudentFiles = await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfileImage);
+            // foreach (var file in allStudentFiles)
+            // {
+            //     if (file.FileUrl != @event.ProfileImageUrl && file.FileUrl != @event.BannerUrl && !@event.GalleryOfImageUrls.Contains(file.FileUrl))
+            //     {
+            //         file.Unassociate();
+            //         await _fileSourceInfoRepository.UpdateAsync(file);
+            //     }
+            // }
         }
     }
 }

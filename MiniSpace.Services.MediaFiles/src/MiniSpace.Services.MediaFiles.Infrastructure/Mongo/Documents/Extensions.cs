@@ -1,27 +1,38 @@
-﻿using MiniSpace.Services.MediaFiles.Core.Entities;
+﻿using MiniSpace.Services.MediaFiles.Application.Dto;
+using MiniSpace.Services.MediaFiles.Core.Entities;
+using System;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        public static FileSourceInfoDocument AsDocument(this FileSourceInfo fileSourceInfo)
+        public static FileSourceInfo AsEntity(this FileSourceInfoDocument document)
+            => new FileSourceInfo(
+                document.Id,
+                document.SourceId,
+                document.SourceType,
+                document.UploaderId,
+                document.State,
+                document.CreatedAt,
+                document.OriginalFileUrl,
+                document.OriginalFileContentType,
+                document.FileUrl,
+                document.FileName
+            );
+
+        public static FileSourceInfoDocument AsDocument(this FileSourceInfo entity)
             => new FileSourceInfoDocument
             {
-                Id = fileSourceInfo.Id,
-                SourceId = fileSourceInfo.SourceId,
-                SourceType = fileSourceInfo.SourceType,
-                UploaderId = fileSourceInfo.UploaderId,
-                State = fileSourceInfo.State,
-                CreatedAt = fileSourceInfo.CreatedAt,
-                OriginalFileId = fileSourceInfo.OriginalFileId,
-                OriginalFileContentType = fileSourceInfo.OriginalFileContentType,
-                FileId = fileSourceInfo.FileId,
-                FileName = fileSourceInfo.FileName
+                Id = entity.Id,
+                SourceId = entity.SourceId,
+                SourceType = entity.SourceType,
+                UploaderId = entity.UploaderId,
+                State = entity.State,
+                CreatedAt = entity.CreatedAt,
+                OriginalFileUrl = entity.OriginalFileUrl,
+                OriginalFileContentType = entity.OriginalFileContentType,
+                FileUrl = entity.FileUrl,
+                FileName = entity.FileName
             };
-
-        public static FileSourceInfo AsEntity(this FileSourceInfoDocument document)
-            => new FileSourceInfo(document.Id, document.SourceId, document.SourceType, document.UploaderId, 
-                document.State, document.CreatedAt, document.OriginalFileId, document.OriginalFileContentType, 
-                document.FileId, document.FileName);
     }
 }

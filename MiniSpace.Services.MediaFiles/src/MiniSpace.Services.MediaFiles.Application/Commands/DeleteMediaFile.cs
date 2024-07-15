@@ -4,6 +4,12 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands
 {
     public class DeleteMediaFile: ICommand
     {
-        public Guid MediaFileId { get; set; }
+        public string MediaFileUrl { get; set; }
+
+        public DeleteMediaFile() {} 
+        public DeleteMediaFile(string mediaFileUrl) 
+        {
+            MediaFileUrl = mediaFileUrl;
+        }
     }
 }

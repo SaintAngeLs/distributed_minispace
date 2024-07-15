@@ -13,6 +13,7 @@
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 
+<AuthWrapper>
 <h1>Manage organizations</h1>
 
 @if (!pageInitialized)
@@ -73,7 +74,7 @@ else
 
     </RadzenStack>
 }
-
+</AuthWrapper>
 @code {
     private bool pageInitialized = false;
     

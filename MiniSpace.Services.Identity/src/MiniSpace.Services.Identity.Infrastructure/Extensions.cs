@@ -60,6 +60,9 @@ namespace MiniSpace.Services.Identity.Infrastructure
             builder.Services.AddSingleton<IPasswordHasher<IPasswordService>, PasswordHasher<IPasswordService>>();
             builder.Services.AddTransient<IIdentityService, IdentityService>();
             builder.Services.AddTransient<IRefreshTokenService, RefreshTokenService>();
+            builder.Services.AddSingleton<ITwoFactorSecretTokenService, TwoFactorSecretTokenService>();
+            builder.Services.AddSingleton<IPasswordHasher<IVerificationTokenService>, PasswordHasher<IVerificationTokenService>>();
+            builder.Services.AddSingleton<IVerificationTokenService, VerificationTokenService>();
             builder.Services.AddSingleton<IRng, Rng>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();

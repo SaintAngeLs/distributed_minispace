@@ -1,11 +1,14 @@
 using System;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 using Convey.CQRS.Events;
-using MiniSpace.Services.Notifications.Application.Services.Clients;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Core.Entities;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Hubs;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.DTO;
 
@@ -18,19 +21,25 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IPostsServiceClient _postsServiceClient;
         private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly ILogger<PostUpdatedHandler> _logger;
 
         public PostUpdatedHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
             IEventsServiceClient eventsServiceClient,
             IPostsServiceClient postsServiceClient,
-            IStudentsServiceClient studentsServiceClient)
+            IStudentsServiceClient studentsServiceClient,
+            IHubContext<NotificationHub> hubContext,
+            ILogger<PostUpdatedHandler> logger)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _eventsServiceClient = eventsServiceClient;
             _postsServiceClient = postsServiceClient;
             _studentsServiceClient = studentsServiceClient;
+            _hubContext = hubContext;
+            _logger = logger;
         }
 
         public async Task HandleAsync(PostUpdated eventArgs, CancellationToken cancellationToken)
@@ -38,24 +47,24 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             var post = await _postsServiceClient.GetPostAsync(eventArgs.PostId);
             if (post == null)
             {
-                Console.WriteLine("Updated post not found.");
+                _logger.LogError("Post not found.");
                 return;
             }
 
             var eventDetails = await _eventsServiceClient.GetEventAsync(post.EventId);
             if (eventDetails == null)
             {
-                Console.WriteLine("Event not found for the updated post.");
+                _logger.LogError("Event not found for the post.");
                 return;
             }
 
             var eventParticipants = await _eventsServiceClient.GetParticipantsAsync(post.EventId);
             if (eventParticipants == null)
             {
-                Console.WriteLine("No participants found for the event.");
+                _logger.LogError("No participants found for the event.");
                 return;
             }
-    
+
             foreach (var studentParticipant in eventParticipants.InterestedStudents)
             {
                 var student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);
@@ -73,7 +82,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     await NotifyStudent(student, eventDetails, post);
                 }
             }
-            
 
             // Notify the organizer
             await NotifyOrganizer(eventDetails.Organizer, eventDetails, post);
@@ -96,28 +104,42 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 details: detailsHtml
             );
 
-            Console.WriteLine($"Creating post update notification for user: {student.Id}");
+            _logger.LogInformation($"Creating post update notification for user: {student.Id}");
 
             var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(student.Id);
             if (studentNotifications == null)
             {
                 studentNotifications = new StudentNotifications(student.Id);
             }
-            
+
             studentNotifications.AddNotification(notification);
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: notification.Message,
-                createdAt: notification.CreatedAt,
-                eventType: notification.EventType.ToString(),
-                relatedEntityId: notification.RelatedEntityId,
-                details: detailsHtml
+                notification.NotificationId,
+                student.Id,
+                notificationMessage,
+                DateTime.UtcNow,
+                NotificationEventType.PostUpdated.ToString(),
+                post.EventId,
+                detailsHtml
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            var notificationDto = new NotificationDto
+            {
+                UserId = student.Id,
+                Message = notificationMessage,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.PostUpdated,
+                RelatedEntityId = post.EventId,
+                Details = detailsHtml
+            };
+
+            // Broadcast SignalR notification
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to student with ID {student.Id}.");
         }
 
         private async Task NotifyOrganizer(OrganizerDto organizer, EventDto eventDetails, PostDto post)
@@ -137,7 +159,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 details: detailsHtml
             );
 
-            Console.WriteLine($"Creating post update notification for organizer: {organizer.Id}");
+            _logger.LogInformation($"Creating post update notification for organizer: {organizer.Id}");
 
             var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(organizer.Id);
             if (organizerNotifications == null)
@@ -149,18 +171,30 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _studentNotificationsRepository.AddOrUpdateAsync(organizerNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: Guid.NewGuid(),
-                userId: organizer.Id,
-                message: notificationMessage,
-                createdAt: DateTime.UtcNow,
-                eventType: NotificationEventType.PostUpdated.ToString(),
-                relatedEntityId: post.EventId,
-                details: detailsHtml
+                notification.NotificationId,
+                organizer.Id,
+                notificationMessage,
+                DateTime.UtcNow,
+                NotificationEventType.PostUpdated.ToString(),
+                post.EventId,
+                detailsHtml
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
 
-           
+            var notificationDto = new NotificationDto
+            {
+                UserId = organizer.Id,
+                Message = notificationMessage,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.PostUpdated,
+                RelatedEntityId = post.EventId,
+                Details = detailsHtml
+            };
+
+            // Broadcast SignalR notification
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to organizer with ID {organizer.Id}.");
         }
     }
 }

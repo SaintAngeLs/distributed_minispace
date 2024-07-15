@@ -1,6 +1,7 @@
 ﻿using Convey.Types;
 using MiniSpace.Services.MediaFiles.Core.Entities;
 using MongoDB.Bson;
+using System;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents
 {
@@ -12,9 +13,9 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents
         public Guid UploaderId { get; set; }
         public State State { get; set; }
         public DateTime CreatedAt { get; set; }
-        public ObjectId OriginalFileId { get; set; }
+        public string OriginalFileUrl { get; set; }
         public string OriginalFileContentType { get; set; }
-        public ObjectId FileId { get; set; }
+        public string FileUrl { get; set; }
         public string FileName { get; set; }
     }
 }

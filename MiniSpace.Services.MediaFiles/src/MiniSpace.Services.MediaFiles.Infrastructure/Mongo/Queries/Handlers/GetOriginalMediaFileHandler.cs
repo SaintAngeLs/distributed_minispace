@@ -1,25 +1,26 @@
 ﻿using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using MiniSpace.Services.MediaFiles.Application.Dto;
 using MiniSpace.Services.MediaFiles.Application.Queries;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents;
-using MongoDB.Bson;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Queries.Handlers
 {
     public class GetOriginalMediaFileHandler : IQueryHandler<GetOriginalMediaFile, FileDto>
     {
         private readonly IMongoRepository<FileSourceInfoDocument, Guid> _fileSourceInfoRepository;
-        private readonly IGridFSService _gridFSService;
+        private readonly IS3Service _s3Service;
 
         public GetOriginalMediaFileHandler(IMongoRepository<FileSourceInfoDocument, Guid> fileSourceInfoRepository,
-            IGridFSService gridFSService)
+            IS3Service s3Service)
         {
             _fileSourceInfoRepository = fileSourceInfoRepository;
-            _gridFSService = gridFSService;
+            _s3Service = s3Service;
         }
 
         public async Task<FileDto> HandleAsync(GetOriginalMediaFile query, CancellationToken cancellationToken)
@@ -31,7 +32,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Queries.Handlers
             }
 
             var fileStream = new MemoryStream();
-            await _gridFSService.DownloadFileAsync(fileSourceInfo.OriginalFileId, fileStream);
+            await _s3Service.DownloadFileAsync(fileSourceInfo.OriginalFileUrl, fileStream);
             fileStream.Seek(0, SeekOrigin.Begin);
             byte[] fileContent = fileStream.ToArray();
             var base64String = Convert.ToBase64String(fileContent);

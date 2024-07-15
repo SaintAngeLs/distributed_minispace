@@ -9,6 +9,7 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+<AuthWrapper>
 <RadzenRow Size="12" AlignItems="AlignItems.Center">
     <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="@showError" ShowIcon="false"
                  Variant="Variant.Flat" Shade="Shade.Lighter" class="rz-my-3">
@@ -27,7 +28,7 @@
                       Click="@(() => GoToTargetOwnerProfile(ReportDto))"/>
     </RadzenColumn>
 </RadzenRow>
-
+</AuthWrapper>
 @code {
     [Parameter]
     public ReportDto ReportDto { get; set; }

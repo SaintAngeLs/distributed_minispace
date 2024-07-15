@@ -29,5 +29,10 @@ namespace MiniSpace.Web.Areas.Identity
 
         Task ForgotPasswordAsync(string email);
         Task<HttpResponse<object>> ResetPasswordAsync(string token, string email, string newPassword);
+        Task<HttpResponse<object>> VerifyEmailAsync(string token, string email, string hashedToken);
+        Task<string> GenerateTwoFactorSecretAsync(Guid userId);
+
+        Task EnableTwoFactorAsync(Guid userId, string secret);
+        Task DisableTwoFactorAsync(Guid userId);
     }
 }

@@ -159,7 +159,8 @@
         await base.OnInitializedAsync();
         dialogInitialized = true;
         StateHasChanged();
-        profileImage = await MediaFilesService.GetFileAsync(studentDto.ProfileImage);
+        @* profileImage = await MediaFilesService.GetFileAsync(studentDto.ProfileImage); *@
+        @* profileImage = studentDto.ProfileImageUrl;  *@
     }
     
     private string GetImage(FileDto file)

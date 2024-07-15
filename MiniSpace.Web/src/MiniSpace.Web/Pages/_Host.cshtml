@@ -11,20 +11,39 @@
     <base href="~/" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/humanistic-base.css">
     <link href="css/site.css" rel="stylesheet" />
-    <link href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="_content/Cropper.Blazor/cropper.min.css" rel="stylesheet" />
+    <script src="spotlight.bundle.js"></script>
+    <script src="js/cropperInterop.js"></script>
+    <script src="js/infiniteScroll.js"></script>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#03173d" />
 </head>
 <body>
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
-
+<script>
+         if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        }   
+    </script>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="_content/Cropper.Blazor/cropper.min.js"></script>
+    @* <script src="_content/Chronos.Blazor.Cropper/CropHelper.js"></script> *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
-        
         window.scrollToSection = function scrollToSection(sectionId) {
             let attempt = 0;
             const maxAttempts = 10;
@@ -48,7 +67,7 @@
         }
 
         function playNotificationSoundNotificationsService() {
-            var audio = new Audio('sounds/new-notification.wav');
+            var audio = new Audio('sounds/new-notification1.mp3');
             audio.play();
         }
 
@@ -61,6 +80,57 @@
             setTimeout(() => document.title = "MiniSpace | Social", 8000); 
         }
 
+        // Initialize SignalR connection
+        let userId;
+
+        window.setUserId = function (id) {
+            userId = id;
+            initializeSignalR();
+        };
+
+        function initializeSignalR() {
+            if (!userId) return;
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(`http://localhost:5006/notificationHub?userId=${userId}`)
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("ReceiveNotification", function (jsonMessage) {
+                var notification = JSON.parse(jsonMessage);
+                console.log("Notification received: ", notification);
+
+                playNotificationSoundNotificationsService();
+
+                connection.invoke("AcknowledgeNotification", notification.UserId, notification.NotificationId)
+                    .then(function () {
+                        console.log("Acknowledgment sent for notification: ", notification.NotificationId);
+                    })
+                    .catch(function (err) {
+                        console.error(err.toString());
+                    });
+            });
+
+            connection.start().then(function () {
+                console.log("SignalR connection established.");
+            }).catch(function (err) {
+                console.error("Error establishing SignalR connection: ", err.toString());
+            });
+        }
+
+        window.getScreenSize = () => {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        };
+
+        window.onresize = () => {
+            DotNet.invokeMethodAsync('MiniSpace.Web', 'UpdateScreenSize');
+        };
+
     </script>
+
+    
 </body>
 </html>

@@ -16,13 +16,18 @@ using MiniSpace.Services.MediaFiles.Application.Dto;
 using MiniSpace.Services.MediaFiles.Application.Queries;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Infrastructure;
+using DotNetEnv;
+using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.MediaFiles.Api
 {
     public class Program
     {
         public static async Task Main(string[] args)
-            => await WebHost.CreateDefaultBuilder(args)
+        {
+            Env.Load();
+
+            await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
                     .AddConvey()
                     .AddWebApi()
@@ -42,10 +47,11 @@ namespace MiniSpace.Services.MediaFiles.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetMediaFile, FileDto>("media-files/{mediaFileId}")
                         .Get<GetOriginalMediaFile, FileDto>("media-files/{mediaFileId}/original")
-                        .Delete<DeleteMediaFile>("media-files/{mediaFileId}")
-                        ))
+                        .Delete<DeleteMediaFile>("media-files/delete/{mediaFileUrl}")
+                    ))
                 .UseLogging()
                 .Build()
                 .RunAsync();
+        }
     }
 }

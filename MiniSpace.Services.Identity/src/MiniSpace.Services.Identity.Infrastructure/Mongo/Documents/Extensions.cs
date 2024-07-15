@@ -11,7 +11,14 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
     {
         public static User AsEntity(this UserDocument document)
             => new User(document.Id, document.Name, document.Email, document.Password, document.Role, document.CreatedAt,
-                document.Permissions);
+                document.Permissions)
+            {
+                IsEmailVerified = document.IsEmailVerified,
+                EmailVerificationToken = document.EmailVerificationToken,
+                EmailVerifiedAt = document.EmailVerifiedAt,
+                IsTwoFactorEnabled = document.IsTwoFactorEnabled,
+                TwoFactorSecret = document.TwoFactorSecret
+            };
 
         public static UserDocument AsDocument(this User entity)
             => new UserDocument
@@ -22,7 +29,12 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 Password = entity.Password,
                 Role = entity.Role,
                 CreatedAt = entity.CreatedAt,
-                Permissions = entity.Permissions ?? Enumerable.Empty<string>()
+                Permissions = entity.Permissions ?? Enumerable.Empty<string>(),
+                IsEmailVerified = entity.IsEmailVerified,
+                EmailVerificationToken = entity.EmailVerificationToken,
+                EmailVerifiedAt = entity.EmailVerifiedAt,
+                IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
+                TwoFactorSecret = entity.TwoFactorSecret
             };
 
         public static UserDto AsDto(this UserDocument document)
@@ -33,7 +45,11 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 Email = document.Email,
                 Role = document.Role,
                 CreatedAt = document.CreatedAt,
-                Permissions = document.Permissions ?? Enumerable.Empty<string>()
+                Permissions = document.Permissions ?? Enumerable.Empty<string>(),
+                IsEmailVerified = document.IsEmailVerified,
+                EmailVerifiedAt = document.EmailVerifiedAt,
+                IsTwoFactorEnabled = document.IsTwoFactorEnabled,
+                TwoFactorSecret = document.TwoFactorSecret
             };
 
         public static RefreshToken AsEntity(this RefreshTokenDocument document)

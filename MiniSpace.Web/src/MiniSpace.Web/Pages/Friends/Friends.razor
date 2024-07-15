@@ -1,22 +1,21 @@
 @page "/friends"
 @using MiniSpace.Web.HttpClients
-@using Radzen.Blazor
 @using MiniSpace.Web.Areas.Friends
-@using MiniSpace.Web.DTO;
+@using MiniSpace.Web.DTO
 @inject IIdentityService IdentityService
 @inject IFriendsService FriendsService
 @inject NavigationManager NavigationManager
 @inject Radzen.NotificationService NotificationService
 @inject Radzen.DialogService DialogService
-@using MiniSpace.Web.Areas.MediaFiles
-@inject IMediaFilesService MediaFilesService
 @using MudBlazor
-@using Radzen
 
-
+<AuthWrapper>
+<div class="center-container">  
+<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
+
 @code {
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
@@ -26,38 +25,45 @@
     };
 }
 
-
+<div style="display: flex;">
     <div class="left-panel">
-    <div class="search-bar">
-        <RadzenTextBox @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 100%;" />
-        <RadzenButton Text="Search" Click="@SearchFriends" ButtonStyle="Radzen.ButtonStyle.Secondary" Icon="search" Style="width: 100%; margin-top: 10px;" />
-    </div>
-    <div class="friends-container">
-        @if (friends != null && friends.Any())
+        <div class="search-bar">
+            <MudTextField @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
+            <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@SearchFriends" Style="margin-left: 10px; width: 23%;">
+                <MudIcon Icon="@Icons.Material.Filled.Search" />
+                <span class="button-text">Search</span>
+            </MudButton>
+        </div>
+        @if (!pageInitialized)
         {
-            foreach (var friend in friends)
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" />
+            </div>
+        }
+        else if (friends != null && friends.Any())
+        {
+            @foreach (var friend in friends)
             {
-                <div class="friend-card">
-                    <img src="@GetImage(friend.StudentDetails.Id)" alt="Friend Image" class="friend-img">
-                    <div class="friend-info">
-                        <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
-                        <p><RadzenIcon Icon="email" Style="color: #30445f;"/>@friend.StudentDetails.Email</p>
+                <div class="friend-card" @onclick="@(() => ViewDetails(friend.FriendId))">
+                    <div class="friend-row">
+                        <img src="@GetProfileImageUrl(friend.StudentDetails.ProfileImageUrl)" alt="Friend Image" class="friend-img" onerror="this.onerror=null;this.src='images/default_profile_image.webp';">
+                        <div class="friend-info">
+                            <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
+                            <p>@friend.StudentDetails.Email</p>
+                        </div>
                         <div class="buttons">
-                            <RadzenButton ButtonStyle="Radzen.ButtonStyle.Secondary" Text="Details" Click="@(() => ViewDetails(friend.FriendId))"/>
-                            <RadzenButton Text="Remove" Click="@(() => ConfirmRemoveFriend(friend.StudentDetails.Id))" ButtonStyle="Radzen.ButtonStyle.Danger" />
+                            <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@(() => ViewDetails(friend.FriendId))" Class="action-button">
+                                <MudIcon Icon="@Icons.Material.Filled.Info" />
+                                <span class="button-text">Details</span>
+                            </MudButton>
+                            <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@(() => ConfirmRemoveFriend(friend.StudentDetails.Id))" Class="action-button" Color="Color.Error">
+                                <MudIcon Icon="@Icons.Material.Filled.Delete" />
+                                <span class="button-text">Remove</span>
+                            </MudButton>
                         </div>
                     </div>
                 </div>
             }
-        }
-        else if (!pageInitialized)
-        {
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
-                                           Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
-                    <Template>Loading...</Template>
-                </RadzenProgressBarCircular>
-            </div>
         }
         else
         {
@@ -65,31 +71,58 @@
         }
     </div>
 </div>
-
+</div>
+</AuthWrapper>
 
 <style>
-    .main-container { 
-        display: flex; 
-        padding: 50px;
+    .notification-block {
+        position: fixed; 
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        max-width: 300px;
     }
 
+    .main-container { 
+        overflow: visible; 
+        display: flex;   
+        align-items: 
+        flex-start; 
+    }
+
+    .left-panel {  
+        width: 100%;   
+        overflow-y: auto; 
+    }
+
+    .right-panel {
+        width: 70%; 
+        padding: 25px;
+        position: sticky;
+        top: 100px; 
+        background-color: white; 
+    }
+
+    .left-panel, .right-panel {
+        background-color: #f7f7f7; 
+        border-radius: 8px;
+        
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    }
     .search-bar {
         display: flex; 
         margin-bottom: 20px; 
-        width: 100%;
-    }
-
-    .friends-container {
+        }
+    
+    .card-container {
         display: flex;
         flex-direction: column;
-        width: 100%;
-        overflow-y: auto;
     }
 
     .friend-card {
         display: flex;
         background-color: #ffffff;
-        margin-bottom: 1rem;
+        margin-bottom: 1rem !important;
         border: 1px solid #ddd;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         transition: all 0.3s;
@@ -103,47 +136,56 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     }
 
+    .friend-row {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
     .friend-img {
         width: 100px;
         height: 100px;
         border-radius: 50%;
-        margin-right: 20px;
         object-fit: cover;
-        border: 3px solid #007BFF; 
+        border: 3px solid #007BFF;
+        margin-right: 20px;
     }
 
     .friend-info {
-        flex: 1;
-        font-family: 'Segoe UI', 'Arial', sans-serif;
-        padding-left: 20px;
-    }
-
-     .left-panel, .right-panel {
-        background-color: #f7f7f7;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-
-
-    h5, p {
-        margin-bottom: 5px;
-        color: #333;
+        flex: 2;
     }
 
     .buttons {
-        
-        align-items: center;
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        margin-left: auto;
     }
-</style>
 
+    .action-button {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .button-text {
+        display: inline-block;
+        margin-left: 8px;
+    }
+
+
+    .search-bar input:focus {
+        outline: none;
+        border: 2px solid #0056b3;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    }
+
+</style>
 
 @code {
     private List<FriendDto> friends;
-    private Guid studentId;
     private string searchTerm;
-    private Dictionary<Guid, string> images = new ();
     private bool pageInitialized;
 
     protected override async Task OnInitializedAsync()
@@ -151,26 +193,17 @@
         await IdentityService.InitializeAuthenticationState();
         if (IdentityService.IsAuthenticated)
         { 
-
             try 
             {
-                studentId = IdentityService.GetCurrentUserId();
+                var studentId = IdentityService.GetCurrentUserId();
                 var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
-                if (friendsResult != null) 
-                {
-                    friends = friendsResult.ToList();
-                    await LoadImages();
-                } 
-                else 
-                {
-                    friends = new List<FriendDto>();  
-                }
+                friends = friendsResult?.ToList() ?? new List<FriendDto>();
             }
-            catch (Exception ex) {
+            catch (Exception ex) 
+            {
                 NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
                 friends = new List<FriendDto>();  
             }
-
             pageInitialized = true;
         }
         else
@@ -179,13 +212,9 @@
         }
     }
 
-    private async Task LoadImages() {
-        foreach (var friend in friends) {
-            var result = await MediaFilesService.GetFileAsync(friend.StudentDetails.ProfileImage);
-            if (result != null) {
-                images[friend.StudentDetails.Id] = result.Base64Content;
-            }
-        }
+    private string GetProfileImageUrl(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "images/default_profile_image.webp" : profileImageUrl;
     }
 
     private void ViewDetails(Guid friendId)
@@ -196,22 +225,10 @@
     private async Task RemoveFriend(Guid friendId)
     {
         await FriendsService.RemoveFriendAsync(friendId);
-        friends.RemoveAll(f => f.StudentId == friendId);
-    
+        friends = friends.Where(f => f.StudentId != friendId).ToList();
         NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Friend Removed", $"You have removed a friend.", 5000);
         StateHasChanged();
     }
-
-    private string GetImage(Guid studentId)
-    {
-        if (images.TryGetValue(studentId, out var image))
-        {
-            return $"data:image/webp;base64,{image}";
-        }
-
-        return "images/default_profile_image.webp";
-    }
-
 
     private async Task ConfirmRemoveFriend(Guid friendId)
     {
@@ -222,38 +239,32 @@
         }
     }
 
-     private async Task LoadFriends()
+    private void SearchFriends()
+    {
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+            friends = friends.Where(f => f.StudentDetails.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || f.StudentDetails.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else
+        {
+            ReloadFriends().Wait();
+        }
+        StateHasChanged();
+    }
+
+    private async Task ReloadFriends()
     {
         try
         {
+            var studentId = IdentityService.GetCurrentUserId();
             var friendsResult = await FriendsService.GetAllFriendsAsync(studentId);
-            if (friendsResult != null)
-            {
-                friends = friendsResult.ToList();
-            }
-            else
-            {
-                friends = new List<FriendDto>();
-            }
+            friends = friendsResult?.ToList() ?? new List<FriendDto>();
         }
         catch (Exception ex)
         {
             NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
             friends = new List<FriendDto>();
         }
-    }
-
-    private void SearchFriends()
-    {
-        searchTerm = searchTerm.Trim();
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            friends = friends.Where(f => f.StudentDetails.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || f.StudentDetails.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-        else
-        {
-            LoadFriends().Wait(); 
-        }
-        StateHasChanged();
     }
 }

@@ -40,6 +40,8 @@ using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services;
 using MiniSpace.Services.MediaFiles.Infrastructure.Services.Workers;
 using MongoDB.Driver;
+using Amazon.S3;
+using MiniSpace.Services.MediaFiles.Infrastructure.Options;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure
 {
@@ -54,6 +56,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IMediaFilesService, MediaFilesService>();
+            builder.Services.AddTransient<IS3Service, S3Service>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
@@ -64,7 +67,22 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 var database = mongoClient.GetDatabase(mongoDbOptions.Database);
                 return new GridFSService(database);
             });
-            builder.Services.AddHostedService<FileCleanupWorker>();
+            
+            var awsOptions = new AwsOptions
+            {
+                AccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),
+                SecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"),
+                Region = Environment.GetEnvironmentVariable("AWS_REGION")
+            };
+            builder.Services.AddSingleton(awsOptions);
+
+            builder.Services.AddSingleton<IAmazonS3>(sp =>
+            {
+                var options = sp.GetRequiredService<AwsOptions>();
+                return new AmazonS3Client(options.AccessKeyId, options.SecretAccessKey, Amazon.RegionEndpoint.GetBySystemName(options.Region));
+            });
+
+            // builder.Services.AddHostedService<FileCleanupWorker>();
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -101,7 +119,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .SubscribeCommand<DeleteMediaFile>()
                 .SubscribeCommand<CleanupUnassociatedFiles>()
                 .SubscribeEvent<StudentCreated>()
-                .SubscribeEvent<StudentUpdated>()
+                // .SubscribeEvent<StudentUpdated>()
                 .SubscribeEvent<PostCreated>()
                 .SubscribeEvent<EventCreated>();
 

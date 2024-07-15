@@ -49,13 +49,11 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 
             string baseUrl = "students";                
 
-             // Fix CS4034: Mark the lambda expression as async
             return new PagedResult<StudentDocument>(await result.ToListAsync(cancellationToken).ConfigureAwait(false), page, pageSize, (int)await CountAsync(filter, cancellationToken).ConfigureAwait(false), baseUrl);
         }
 
          private async Task<long> CountAsync(FilterDefinition<StudentDocument> filter, CancellationToken cancellationToken)
         {
-            // Use the CountDocumentsAsync method of IMongoCollection to count documents that match the filter
             return await _repository.Collection.CountDocumentsAsync(filter).ConfigureAwait(false);
         }
     }    

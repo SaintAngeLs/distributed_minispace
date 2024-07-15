@@ -32,7 +32,6 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
                 var parts = searchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                // Create regex filters
                 var filters = new List<FilterDefinition<StudentDocument>>();
 
                 if (parts.Length == 1)

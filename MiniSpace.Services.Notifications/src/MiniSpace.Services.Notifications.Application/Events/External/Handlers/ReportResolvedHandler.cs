@@ -27,7 +27,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(ReportResolved eventArgs, CancellationToken cancellationToken)
         {
-            // Fetch student details
             var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
             var reviewer = eventArgs.ReviewerId.HasValue ? await _studentsServiceClient.GetAsync(eventArgs.ReviewerId.Value) : null;
 

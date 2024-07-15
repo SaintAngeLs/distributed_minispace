@@ -5,6 +5,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         Unknown,
         Valid,
         Incomplete,
-        Banned
+        Banned,
+        Unverified
     }    
 }

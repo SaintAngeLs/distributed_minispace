@@ -14,6 +14,7 @@
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 
+<AuthWrapper>
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
@@ -105,12 +106,12 @@
         </RadzenTabs>
     </RadzenStack>
 }
-
+</AuthWrapper>
 <style>
     .search-font {
-        font-family: Arial, sans-serif; /* Change this to your preferred font */
-        font-size: 40px; /* Change this to your preferred font size */
-        font-weight: bold; /* Change this to your preferred font weight */
+        font-family: Arial, sans-serif; 
+        font-size: 40px; 
+        font-weight: bold;
     }
 </style>
 

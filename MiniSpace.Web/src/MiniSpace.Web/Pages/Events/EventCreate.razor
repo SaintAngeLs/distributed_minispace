@@ -16,6 +16,7 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
+<AuthWrapper>
 <h3>Create new event</h3>
 
 @if (!pageInitialized)
@@ -213,7 +214,7 @@
         </RadzenFieldset>
     </RadzenTemplateForm>
 }
-
+</AuthWrapper>
 @code {
     private Guid organizerId;
     private bool pageInitialized = false;

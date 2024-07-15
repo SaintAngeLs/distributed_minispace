@@ -14,6 +14,7 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
+<AuthWrapper>
 <h3>Create new post</h3>
 
 <RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
@@ -85,7 +86,7 @@
         </RadzenStack>
     </RadzenFieldset>
 </RadzenTemplateForm>
-
+</AuthWrapper>
 @code {
     [Parameter]
     public string EventId { get; set; }

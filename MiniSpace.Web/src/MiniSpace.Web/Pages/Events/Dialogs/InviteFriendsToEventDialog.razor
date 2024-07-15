@@ -64,9 +64,9 @@
         foreach (var friend in friends)
         {
             if (friend.StudentDetails == null) continue;
-            Console.WriteLine(friend.StudentDetails.ProfileImage);
-            var result = await MediaFilesService.GetFileAsync(friend.StudentDetails.ProfileImage);
-            images[friend.StudentDetails.Id] = result?.Base64Content ?? "images/user_default.png";
+            Console.WriteLine(friend.StudentDetails.ProfileImageUrl);
+            @* var result = await MediaFilesService.GetFileAsync(friend.StudentDetails.ProfileImageUrl);
+            images[friend.StudentDetails.Id] = result?.Base64Content ?? "images/user_default.png"; *@
         }
     }
 

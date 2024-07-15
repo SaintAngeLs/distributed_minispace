@@ -19,8 +19,7 @@ namespace MiniSpace.Services.Students.Application.Queries
             Total = total;
             PageSize = pageSize;
             Page = page;
-            
-            // Calculate if there's a next page
+        
             int totalPages = (int)Math.Ceiling(total / (double)pageSize);
             NextPage = page < totalPages ? $"{baseUrl}?page={page + 1}&resultsPerPage={pageSize}" : null;
             PrevPage = page > 1 ? $"{baseUrl}?page={page - 1}&resultsPerPage={pageSize}" : null;

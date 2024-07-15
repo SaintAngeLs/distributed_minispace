@@ -12,13 +12,13 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Logging
                 {
                     typeof(UploadMediaFile),  new HandlerLogTemplate
                     {
-                        After = "Uploaded media file with ID: {MediaFileId} and name: {FileName}.",
+                        After = "Uploaded media file with ID: {MediaFileUrl} and name: {FileName}.",
                     }
                 },
                 {
                     typeof(DeleteMediaFile),  new HandlerLogTemplate
                     {
-                        After = "Deleted media file with ID: {MediaFileId}.",
+                        After = "Deleted media file with ID: {MediaFileUrl}.",
                     }
                 },
                 {

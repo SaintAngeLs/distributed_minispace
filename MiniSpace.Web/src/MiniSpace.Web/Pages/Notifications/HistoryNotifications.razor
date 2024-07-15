@@ -8,6 +8,7 @@
 @inject IIdentityService IdentityService
 @using MudBlazor
 
+<AuthWrapper>
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
@@ -72,7 +73,7 @@ else
 {
     <p>No notifications found.</p>
 }
-
+</AuthWrapper>
 @code {
     private List<NotificationDto> notifications;
     private int currentPage = 1;

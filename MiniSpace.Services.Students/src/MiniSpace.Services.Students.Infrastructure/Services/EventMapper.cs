@@ -17,12 +17,26 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
             switch (@event)
             {
                 case StudentRegistrationCompleted e:
-                    return new Application.Events.StudentCreated(e.Student.Id, e.Student.FullName, e.Student.ProfileImage);
+                    return new Application.Events.StudentCreated(e.Student.Id, e.Student.FullName, e.Student.ProfileImageUrl);
                 case StudentUpdated e:
-                    return new Application.Events.StudentUpdated(e.Student.Id, e.Student.FullName, e.Student.ProfileImage);
+                    return new Application.Events.StudentUpdated(
+                        e.Student.Id, 
+                        e.Student.FullName, 
+                        e.Student.ProfileImageUrl,
+                        e.Student.BannerUrl,  
+                        e.Student.GalleryOfImageUrls,
+                        e.Student.Education,
+                        e.Student.WorkPosition,
+                        e.Student.Company,
+                        e.Student.Languages,
+                        e.Student.Interests,
+                        e.Student.ContactEmail);
                 case StudentStateChanged e:
-                    return new Application.Events.StudentStateChanged(e.Student.Id, e.Student.FullName,
-                        e.Student.State.ToString().ToLowerInvariant(), e.PreviousState.ToString().ToLowerInvariant());
+                    return new Application.Events.StudentStateChanged(
+                        e.Student.Id, 
+                        e.Student.FullName,
+                        e.Student.State.ToString().ToLowerInvariant(), 
+                        e.PreviousState.ToString().ToLowerInvariant());
             }
 
             return null;

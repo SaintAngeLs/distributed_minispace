@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniSpace.Services.MediaFiles.Core", "MiniSpace.Services.MediaFiles.Core.csproj", "{8767FE38-F252-4727-913A-F16800755822}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8767FE38-F252-4727-913A-F16800755822}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8767FE38-F252-4727-913A-F16800755822}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8767FE38-F252-4727-913A-F16800755822}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8767FE38-F252-4727-913A-F16800755822}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7E2904D-2FE3-4793-B024-10E1ACAC0E80}
+	EndGlobalSection
+EndGlobal

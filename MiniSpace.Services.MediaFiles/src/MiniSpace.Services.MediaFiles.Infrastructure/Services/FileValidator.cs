@@ -5,7 +5,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
 {
     public class FileValidator : IFileValidator
     {
-        private const int MaxFileSize = 1_000_000;
+        private const int MaxFileSize = 5_000_000;
 
         private readonly Dictionary<string, string> _mimeTypes = new Dictionary<string, string>()
         {

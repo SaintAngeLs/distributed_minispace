@@ -7,9 +7,10 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageReference Include="Blazorise" Version="1.5.1" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="1.5.1" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.5.1" />
+    <!-- <PackageReference Include="Chronos.Blazor.Cropper" Version="1.2.16" /> -->
+    <PackageReference Include="Cropper.Blazor" Version="1.3.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.0" />
     <PackageReference Include="MudBlazor" Version="6.19.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Polly" Version="7.1.1" />

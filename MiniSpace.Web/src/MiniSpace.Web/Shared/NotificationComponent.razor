@@ -1,97 +1,184 @@
 @using MiniSpace.Web.Areas.Notifications
+@using MiniSpace.Web.DTO.Notifications
+@using Microsoft.Extensions.Logging
+@using System.Globalization
 @inject INotificationsService NotificationsService
 @inject IIdentityService IdentityService
-@using MiniSpace.Web.DTO.Notifications
-@using System.Globalization
-@using System.Threading
-@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject ILogger<SignalRService> Logger
 
-<div style="background-color: #fff; color: white; padding: 10px; border-radius: 5px;">
-    <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px;">Notifications</h3>
-
-    <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px;">
-    @if (notifications != null && notifications.Any())
-    {
-        <ul style="list-style: none; padding: 0; margin: 0;">
-            @foreach (var notification in notifications)
+@if (!showNotifications)
+{
+    <div class="notification-toggle-container" @onclick="ToggleNotifications" style="position: fixed; top: 10%; right: 10px; z-index: 1001;">
+        <div class="notification-circle circle1">
+            N
+            @if (hasNewNotification)
             {
-                <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)" 
-                    class="notification-item"
-                    style="padding: 8px 12px; border-bottom: 1px solid #dee2e6;" >
-                    <span style="display: block; color: #333; margin-bottom: 4px;">
-                         @RenderHtml(TruncateMessage(notification.Message))
-                    </span>
-                    <span style="display: block; font-size: 0.8em; color: #666;">
-                        @* @ToLocalTime(notification.CreatedAt, timezoneOffset).ToString("g") *@
-                        @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
-                    </span>
-                </li>
+                <div class="notification-new-circle"></div>
             }
-        </ul>
-    }
-    else
-    {
-        <p style="text-align: center; color: #888;">No new notifications.</p>
-    }
+        </div>
+        <div class="notification-circle circle2"></div>
+        <div class="notification-circle circle3"></div>
+    </div>
+}
+
+<div class="notification-panel @(!showNotifications ? "hidden" : "")">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+        <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px; margin: 0;">Notifications</h3>
+        <button @onclick="ToggleNotifications" style="background: none; border: none; color: #30445F; font-size: 1.5em;">&times;</button>
+    </div>
+    <div class="notification-content" style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px; overflow-y: auto; max-height: 70vh;">
+        @if (notifications != null && notifications.Any())
+        {
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                @foreach (var notification in notifications)
+                {
+                    <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)"
+                        class="notification-item"
+                        style="padding: 8px 12px; border-bottom: 1px solid #dee2e6; cursor: pointer;">
+                        <span style="display: block; color: #333; margin-bottom: 4px;">
+                            @RenderHtml(TruncateMessage(notification.Message))
+                        </span>
+                        <span style="display: block; font-size: 0.8em; color: #666;">
+                            @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
+                        </span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p style="text-align: center; color: #888;">No new notifications.</p>
+        }
     </div>
 </div>
 
+<style>
+.notification-toggle-container {
+    position: fixed;
+    top: 10%;
+    right: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.notification-circle {
+    background-color: #30445F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    position: relative;
+}
+
+.circle1 {
+    width: 60px;
+    height: 60px;
+}
+
+.circle2 {
+    width: 45px;
+    height: 45px;
+}
+
+.circle3 {
+    width: 30px;
+    height: 30px;
+}
+
+.notification-new-circle {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(0, 187, 255);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 2px solid white;
+}
+
+.notification-panel {
+    position: fixed;
+    top: 10%;
+    right: 1%;
+    width: 300px;
+    max-height: 80vh;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+}
+
+.notification-panel.hidden {
+    transform: translateX(105%);
+}
+</style>
+
 @code {
-    private List<NotificationDto> previousNotifications = new List<NotificationDto>();
-    private List<NotificationDto> notifications;
-    private Timer timer;
-    private DateTime lastCheckedTime = DateTime.MinValue;
-    private int timezoneOffset;
+    private List<NotificationDto> notifications = new List<NotificationDto>();
+    private SignalRService SignalRService;
+    private Guid userId;
+    private bool showNotifications = false; 
+    private bool hasNewNotification = false;
 
     protected override async Task OnInitializedAsync()
     {
+        userId = IdentityService.GetCurrentUserId();
+        SignalRService = new SignalRService(NavigationManager, IdentityService);
+
+        SignalRService.NotificationReceived += OnNotificationReceived;
+
+        await SignalRService.StartAsync(userId);  
+
+        await JSRuntime.InvokeVoidAsync("setUserId", userId.ToString());
+
         await LoadNotifications();
-        var timezoneOffset = await JSRuntime.InvokeAsync<int>("getUserTimezoneOffset");
-        // Setup a timer to refresh notifications every 15 seconds
-        timer = new Timer(new TimerCallback(_ => InvokeAsync(LoadNotifications)), null, 0, 15000);
     }
 
     private async Task LoadNotifications()
     {
         try
         {
-            var userId = IdentityService.GetCurrentUserId(); 
-            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, status: "Unread");
-            var latestNotifications = paginatedResponse.Results;
-
-             if (latestNotifications.Any(n => n.CreatedAt > lastCheckedTime))
-            {
-                PlayNotificationSound();
-                await JSRuntime.InvokeVoidAsync("updateTitle", "New Notification - MiniSpace | Social");
-                lastCheckedTime = DateTime.Now; 
-            }
-
-            notifications = latestNotifications;
-            StateHasChanged();
+            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, pageSize: 15, sortOrder: "desc", status: "Unread");
+            notifications = paginatedResponse.Results;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading notifications: {ex.Message}");
+            Logger.LogError($"Error loading notifications: {ex.Message}");
         }
     }
 
-
-    private bool isNewNotificationReceived()
+    private void OnNotificationReceived(NotificationDto notification)
     {
-        if (previousNotifications == null || !previousNotifications.Any())
+        Logger.LogInformation($"Received notification for user {notification.UserId}");
+        if (notification.UserId == userId)
         {
-            return notifications.Any();
-        }
-        else
-        {
-            return notifications.Any(n => !previousNotifications.Any(p => p.NotificationId == n.NotificationId));
+            notifications.Insert(0, notification); // Add to the top of the list
+            hasNewNotification = true;
+            InvokeAsync(StateHasChanged); // Ensure the UI updates
+            PlayNotificationSound();
         }
     }
 
     private void PlayNotificationSound()
     {
-        JSRuntime.InvokeVoidAsync("playNotificationSoundNotificationsService");
+        JSRuntime.InvokeVoidAsync("playNotificationSound");
     }
 
     private void NavigateToNotificationDetail(Guid notificationId)
@@ -104,19 +191,23 @@
         return message.Length > 80 ? message.Substring(0, 80) + "..." : message;
     }
 
-    public void Dispose()
+    private void ToggleNotifications()
     {
-        timer?.Dispose();
+        showNotifications = !showNotifications;
+        if (showNotifications)
+        {
+            hasNewNotification = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        SignalRService.NotificationReceived -= OnNotificationReceived;
+        await SignalRService.StopAsync();
     }
 
     private MarkupString RenderHtml(string htmlContent)
     {
         return new MarkupString(htmlContent);
     }
-
-    private DateTime ToLocalTime(DateTime utcDate, int offsetMinutes)
-    {
-        return utcDate.AddMinutes(-offsetMinutes);
-    }
-
 }

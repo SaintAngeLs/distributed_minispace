@@ -13,9 +13,27 @@ namespace MiniSpace.Web.Areas.Students
         void ClearStudentDto();
         Task<StudentDto> GetStudentAsync(Guid studentId);
         Task<PaginatedResponseDto<StudentDto>> GetStudentsAsync();
-        Task UpdateStudentAsync(Guid studentId, Guid profileImage, string description, bool emailNotifications);
-        Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, Guid profileImage,
-            string description, DateTime dateOfBirth, bool emailNotifications);
+        Task UpdateStudentAsync(
+            Guid studentId, 
+            string firstName, 
+            string lastName, 
+            string profileImageUrl, 
+            string description, 
+            bool emailNotifications, 
+            string contactEmail, 
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests, 
+            bool enableTwoFactor, 
+            bool disableTwoFactor, 
+            string twoFactorSecret,
+            string education,
+            string workPosition,
+            string company);
+        public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl,
+            string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail);
         Task<string> GetStudentStateAsync(Guid studentId);
+
+        Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId);
+        Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto);
     }
 }
