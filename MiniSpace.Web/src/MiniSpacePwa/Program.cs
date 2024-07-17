@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MiniSpacePwa;
 using MiniSpacePwa.HttpClients;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -16,5 +17,8 @@ builder.Services.AddHttpClient<IHttpClient, CustomHttpClient>((serviceProvider, 
     var options = serviceProvider.GetRequiredService<HttpClientOptions>();
     client.BaseAddress = new Uri(options.ApiUrl);
 });
+
+// Add MudServices
+builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();
