@@ -1,9 +1,90 @@
-﻿@page "/"
+﻿@page "/home"
+@using MiniSpacePwa.DTO
+@using MiniSpacePwa.Areas.Identity
+@using MiniSpacePwa.Areas.Posts
+@using MiniSpacePwa.Data.Posts
+@using MiniSpacePwa.DTO.Wrappers
+@using Radzen
+@using System.Globalization
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@inject IPostsService PostsService
 
-<PageTitle>Home</PageTitle>
+<h1 class="rz-p-8 search-font">Discover What's New</h1>
 
-<h1>Hello, world!</h1>
+@if (pageInitialized)
+{
+    @if (posts.Any())
+    {
+        <RadzenStack>
+            <RadzenDataList PageSize="6" AllowPaging="true" Data="@posts" TItem="PostDto">
+                <Template Context="post">
+                    <RadzenHomePostCard Post="post"></RadzenHomePostCard>
+                </Template>
+            </RadzenDataList>
+        </RadzenStack>
+    }
+    else
+    {
+        <h3 class="rz-p-8 ">No activity found</h3>
+        <RadzenButton class="join-button" Text="Please join an event first" Click="@(() => NavigationManager.NavigateTo("/events/search"))" />
+    }
+}
 
-Welcome to your new app.
+<style>
+    .search-font {
+        font-family: Arial, sans-serif; /* Change this to your preferred font */
+        font-size: 40px; /* Change this to your preferred font size */
+        font-weight: bold; /* Change this to your preferred font weight */
+    }
+    
+    .join-button {
+        border: 1px solid #30445f; 
+        background-color: transparent !important;
+        border-radius: 5px;
+        color: #30445f !important;
+    }  
+</style>
 
-<RadzenButton>Click</RadzenButton>
+
+@code {
+    private IEnumerable<PostDto> posts;
+    private Guid studentId;
+    private bool pageInitialized = false;
+    private SearchPosts searchModel;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService != null && IdentityService.IsAuthenticated)
+        {
+            studentId = IdentityService.GetCurrentUserId();
+            searchModel = InitializeSearchModel(studentId);
+            var result = await PostsService.SearchPostsAsync(searchModel);
+            posts = result.Content.Content;
+            pageInitialized = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("");
+
+        }
+    }
+    
+    private static SearchPosts InitializeSearchModel(Guid studentId)
+    {
+        return new()
+        {
+            StudentId = studentId,
+            Pageable = new PageableDto()
+            {
+                Page = 1,
+                Size = 8,
+                Sort = new SortDto()
+                {
+                    SortBy = new List<string>() {"publishDate"},
+                    Direction = "des"
+                }
+            }
+        };
+    }
+}
