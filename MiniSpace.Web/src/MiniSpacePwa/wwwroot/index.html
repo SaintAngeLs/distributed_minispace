@@ -4,14 +4,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MiniSpacePwa</title>
+    <title>MiniSpace | Social</title>
     <base href="/" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/humanistic-base.css">
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/png" href="favicon.ico" />
     <link href="MiniSpacePwa.styles.css" rel="stylesheet" />
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
@@ -20,10 +20,6 @@
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
         <div class="loading-progress-text"></div>
     </div>
 
@@ -36,6 +32,94 @@
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
+    <script>
+        window.scrollToSection = function scrollToSection(sectionId) {
+            let attempt = 0;
+            const maxAttempts = 10;
+            const attemptInterval = 300; // milliseconds
+
+            const scroll = () => {
+                const sectionElement = document.getElementById(sectionId);
+                if (sectionElement) {
+                    sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (attempt++ < maxAttempts) {
+                    setTimeout(scroll, attemptInterval);
+                }
+            };
+
+            scroll();
+        }
+
+        function playNotificationSound() {
+            var audio = new Audio('sounds/create-connection-new.wav');
+            audio.play();
+        }
+
+        function playNotificationSoundNotificationsService() {
+            var audio = new Audio('sounds/new-notification1.mp3');
+            audio.play();
+        }
+
+        function getUserTimezoneOffset() {
+            return new Date().getTimezoneOffset();
+        }
+
+        function updateTitle(message) {
+            document.title = message;
+            setTimeout(() => document.title = "MiniSpace | Social", 8000);
+        }
+
+        // Initialize SignalR connection
+        let userId;
+
+        window.setUserId = function (id) {
+            userId = id;
+            initializeSignalR();
+        };
+
+        function initializeSignalR() {
+            if (!userId) return;
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(`http://localhost:5006/notificationHub?userId=${userId}`)
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("ReceiveNotification", function (jsonMessage) {
+                var notification = JSON.parse(jsonMessage);
+                console.log("Notification received: ", notification);
+
+                playNotificationSoundNotificationsService();
+
+                connection.invoke("AcknowledgeNotification", notification.UserId, notification.NotificationId)
+                    .then(function () {
+                        console.log("Acknowledgment sent for notification: ", notification.NotificationId);
+                    })
+                    .catch(function (err) {
+                        console.error(err.toString());
+                    });
+            });
+
+            connection.start().then(function () {
+                console.log("SignalR connection established.");
+            }).catch(function (err) {
+                console.error("Error establishing SignalR connection: ", err.toString());
+            });
+        }
+
+        window.getScreenSize = () => {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        };
+
+        window.onresize = () => {
+            DotNet.invokeMethodAsync('MiniSpace.Web', 'UpdateScreenSize');
+        };
+
+    </script>
 </body>
 
 </html>
