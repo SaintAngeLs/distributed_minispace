@@ -1,0 +1,138 @@
+@page "/signup"
+@using MiniSpacePwa.Models.Identity
+@using MiniSpacePwa.Areas.Identity
+@using MiniSpacePwa.Areas.Students
+@using Radzen
+@using MiniSpacePwa.Areas.Http
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IErrorMapperService ErrorMapperService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<style>
+    /* General body and font styles */
+    body {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        background: #f4f4f9;
+        color: #333;
+    }
+
+    /* Flexbox container for video and form */
+    .split-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Styling for the video and form sections */
+    .left-side, .right-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Specific styles for video background */
+    .left-side {
+        background: black; /* Fallback for non-supported browsers */
+        position: relative;
+    }
+
+    /* Fullscreen background video */
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Form container with adaptive sizing and padding */
+    .form-container {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+   
+
+    /* Link and button styles for interaction */
+    a, button {
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    a:hover, button:hover {
+        color: #007BFF; /* Highlight color on hover */
+    }
+</style>
+
+<div class="split-container">
+    <div class="left-side">
+        <video id="videoPlayer" autoplay muted loop>
+            <source src="videos/video-component/video_2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="right-side">
+        <div class="form-container">
+            <h2>Welcome to MiniSpace</h2>
+            <p>Please sign up to create your account and explore our world to the full.</p>
+            <h3>Sign Up</h3>
+            <RadzenTemplateForm Data="@signUpModel" Submit="@(async (SignUpModel args) => { await HandleSignUp(); })">
+                <RadzenFieldset>
+                    <RadzenStack Gap="1rem">
+                        <RadzenTextBox Name="firstname" Placeholder="Firstname" Style="width: 100%;" @bind-Value="signUpModel.FirstName"/>
+                        <RadzenRequiredValidator Component="firstname" Text="Firstname is required"/>
+
+                        <RadzenTextBox Name="lastname" Placeholder="Lastname" Style="width: 100%;" @bind-Value="signUpModel.LastName"/>
+                        <RadzenRequiredValidator Component="lastname" Text="Lastname is required"/>
+
+                        <RadzenTextBox Name="email" Placeholder="Email" Style="width: 100%;" @bind-Value="signUpModel.Email"/>
+                        <RadzenRequiredValidator Component="email" Text="Email is required"/>
+                        <RadzenEmailValidator Component="email" Text="Email is invalid"/>
+
+                        <RadzenPassword Name="password" Placeholder="Password" Style="width: 100%;" @bind-Value="signUpModel.Password"/>
+                        <RadzenRequiredValidator Component="password" Text="Password is required"/>
+
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Large" Text="Sign Up"/>
+                    </RadzenStack>
+                </RadzenFieldset>
+            </RadzenTemplateForm>
+
+            <div style="text-align:center; margin-top: 3rem !important;">
+                <a href="/signin">Already have an account? Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private SignUpModel signUpModel = new SignUpModel();
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    private bool popup;
+
+    private async Task HandleSignUp()
+    {
+        var response = await IdentityService.SignUpAsync(signUpModel.FirstName, signUpModel.LastName, signUpModel.Email, signUpModel.Password, "user");
+        if(response.ErrorMessage == null)
+            NavigationManager.NavigateTo("/signin");
+        else
+        {
+            showError = true;
+            errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
+        }
+    }
+
+    @* protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            await JSRuntime.InvokeVoidAsync("initializeVideoPlayer", "videos/video-component/video_1.mp4", "videos/video-component/video_2.mp4");
+        }
+    } *@
+}

@@ -28,6 +28,7 @@ extensions:
     allowCredentials: true
     allowedOrigins:
       - 'http://localhost:5606'
+      - 'http://localhost:5228'
     allowedMethods:
       - GET
       - POST

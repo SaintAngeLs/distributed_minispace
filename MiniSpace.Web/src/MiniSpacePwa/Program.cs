@@ -2,6 +2,8 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using MiniSpacePwa;
 using MiniSpacePwa.Areas.Comments;
 using MiniSpacePwa.Areas.Events;
@@ -16,6 +18,7 @@ using MiniSpacePwa.Areas.Reactions;
 using MiniSpacePwa.Areas.Reports;
 using MiniSpacePwa.Areas.Students;
 using MiniSpacePwa.HttpClients;
+using System;
 using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

@@ -1,0 +1,260 @@
+@page "/account"
+@using System.Globalization
+@using MiniSpacePwa.Areas.Identity
+@using MiniSpacePwa.Areas.Students
+@using MiniSpacePwa.Components
+@using MiniSpacePwa.DTO
+@using System.IO
+@using MiniSpacePwa.Areas.MediaFiles
+@using MiniSpacePwa.DTO.Types
+@using MiniSpacePwa.Shared
+@using Radzen
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IMediaFilesService MediaFilesService
+@inject NavigationManager NavigationManager
+@using MudBlazor
+
+<div class="breadcrumbs-container">
+    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+</div>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+    };
+}
+
+<h2 class="rz-p-8 account-font">Your account</h2>
+
+@if (studentDto.Id != Guid.Empty)
+{
+    <RadzenStack Gap="2rem">
+        @if (studentDto.State == "valid")
+        {
+            <RadzenStack AlignItems="Radzen.AlignItems.Center" Class="rz-mx-auto rz-my-10">
+                <RadzenImage Path="@(GetImage())" AlternateText="base64 image"
+                             Style="width: 20em" class="rz-border-radius-10"/>
+            </RadzenStack>
+        }
+        
+        <RadzenLabels Id="fullname" LabelText="Fullname:" Value="@studentDto.FullName"/>
+        <RadzenLabels Id="email" LabelText="Email:" Value="@studentDto.Email"/>
+        
+        @if (studentDto.State == "valid")
+        {
+            @if (editionDisabled)
+            {
+                <RadzenLabels Id="description" LabelText="Description:"
+                                        @bind-Value="@studentDto.Description"/>
+            }
+            else
+            {
+                <RadzenLabelWithTextBox Id="description" LabelText="Description:"
+                                        @bind-Value="@studentDto.Description" Disabled=@editionDisabled/>   
+            }
+
+            <RadzenLabels Id="state" LabelText="State:" Value="@studentDto.State"/>
+
+            <RadzenLabels Id="date-of-birth" LabelText="Date of birth:"
+                          Value="@studentDto.DateOfBirth.ToLocalTime().ToString(shortDateFormat)"/>
+            
+            <RadzenLabels Id="created-at" LabelText="Created:"
+                          Value="@studentDto.CreatedAt.ToLocalTime().ToString(dateFormat)"/>
+            
+            <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:"
+                                     @bind-Value="@studentDto.EmailNotifications" Disabled=@editionDisabled/>
+        }
+        
+        @if (studentDto.State == "incomplete")
+        {
+            <p class="rz-p-4" style="color: darkblue">
+                <b>Completing registration is necessary, go ahead by clicking the button below.</b>
+            </p>
+
+            <RadzenRow AlignItems="Radzen.AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenButton Size="ButtonSize.Large" Text="Complete registration"
+                                  Click="@(() => NavigationManager.NavigateTo("/signup/complete"))"/>
+                </RadzenColumn>
+            </RadzenRow>
+        }
+        else
+        {
+            if (editionDisabled)
+            {
+                <RadzenRow AlignItems="Radzen.AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenButton Size="ButtonSize.Large" Text="Update account" class="separate-button"
+                                      Click=@EnableEdition/>
+                    </RadzenColumn> 
+                </RadzenRow>
+            }
+            else
+            {
+                <RadzenRow AlignItems="Radzen.AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="5">
+                        <RadzenLabel Text="Update profile image:" Component="profile-image" />
+                        <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100" Name="profile-image"
+                                      InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "select file" } })"/>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        @if (isUploading)
+                        {
+                            <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                                       Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                                <Template>Uploading</Template>
+                            </RadzenProgressBarCircular>
+                        }
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="5">
+                        <RadzenButton Size="ButtonSize.Large" Text="Save account" class="separate-button"
+                                      Click=@HandleUpdateStudent/>
+                    </RadzenColumn>
+                </RadzenRow>
+            }
+        }
+    </RadzenStack>
+}
+else
+{
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
+                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Loading...</Template>
+        </RadzenProgressBarCircular>
+    </div>
+}
+
+<style>
+    .account-font {
+                font-family: Arial, sans-serif; /* Change this to your preferred font */
+                font-size: 40px; /* Change this to your preferred font size */
+                font-weight: bold; /* Change this to your preferred font weight */
+    }
+    
+    .separate-button {
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        padding: 12px;
+        color: #333; 
+        transition: background-color 0.3s ease; 
+    }
+    
+    .separate-button:hover {
+        background-color: #30445f; 
+        color: #000; 
+    }
+</style>
+
+@code {
+    private StudentDto studentDto = new();
+    private bool editionDisabled = true;
+    private string profileImage = string.Empty;
+    private TaskCompletionSource<bool> clientChangeCompletionSource;
+    private bool isUploading = false;
+    
+    private const string dateFormat = "dd/MM/yyyy HH:mm";
+    private const string shortDateFormat = "dd/MM/yyyy";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+            studentDto = StudentsService.StudentDto;
+            StateHasChanged();
+            if (studentDto.ProfileImage != Guid.Empty)
+            {
+                var imageResponse = await MediaFilesService.GetFileAsync(studentDto.ProfileImage);
+                profileImage = imageResponse.Base64Content;
+            }
+        }
+    }
+
+    void EnableEdition()
+    {
+        editionDisabled = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleUpdateStudent()
+    {
+        if (clientChangeCompletionSource != null)
+        {
+            await clientChangeCompletionSource.Task;
+        }
+        editionDisabled = true;
+        await StudentsService.UpdateStudentAsync(studentDto.Id, studentDto.ProfileImage,
+            studentDto.Description, studentDto.EmailNotifications);
+        await OnInitializedAsync();
+    }
+    
+    private string GetImage()
+    {
+        if (profileImage != string.Empty)
+        {
+            return $"data:image/webp;base64,{profileImage}";
+        }
+
+        return "images/default_profile_image.webp";
+    }
+    
+    async void OnClientChange(UploadChangeEventArgs args)
+    {
+        @* Console.WriteLine("Client-side upload changed"); *@
+        clientChangeCompletionSource = new TaskCompletionSource<bool>();
+
+        foreach (var file in args.Files)
+        {
+            @* Console.WriteLine($"File: {file.Name} / {file.Size} bytes"); *@
+            isUploading = true;
+            StateHasChanged();
+
+            try
+            {
+                long maxFileSize = 10 * 1024 * 1024;
+                var stream = file.OpenReadStream(maxFileSize);
+                byte[] bytes = await ReadFully(stream);
+                var base64Content = Convert.ToBase64String(bytes);
+                var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
+                    MediaFileContextType.StudentProfile.ToString(), IdentityService.UserDto.Id,
+                    file.Name, file.ContentType, base64Content);
+                if (response.Content != null && response.Content.FileId != Guid.Empty)
+                {
+                    studentDto.ProfileImage = response.Content.FileId;
+                }
+
+                stream.Close();
+                clientChangeCompletionSource.SetResult(true);
+            }
+            catch (Exception ex)
+            {
+                @* Console.WriteLine($"Client-side file read error: {ex.Message}"); *@
+                clientChangeCompletionSource.SetResult(false);
+            }
+            finally
+            {
+                isUploading = false;
+                StateHasChanged();
+            }
+        }
+    }
+    
+    private static async Task<byte[]> ReadFully(Stream input)
+    {
+        byte[] buffer = new byte[16*1024];
+        using (MemoryStream ms = new MemoryStream())
+        {
+            int read;
+            while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+            return ms.ToArray();
+        }
+    }
+}

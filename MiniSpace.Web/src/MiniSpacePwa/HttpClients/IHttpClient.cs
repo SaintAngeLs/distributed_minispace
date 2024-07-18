@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace MiniSpacePwa.HttpClients;
 
 public interface IHttpClient

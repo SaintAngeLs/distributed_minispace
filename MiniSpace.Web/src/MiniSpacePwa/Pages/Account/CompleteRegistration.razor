@@ -1,0 +1,155 @@
+@page "/signup/complete"
+@using MiniSpacePwa.Areas.Identity
+@using MiniSpacePwa.Areas.Students
+@using MiniSpacePwa.Components
+@using MiniSpacePwa.Models.Students
+@using System.IO
+@using MiniSpacePwa.Areas.Http
+@using MiniSpacePwa.Areas.MediaFiles
+@using MiniSpacePwa.DTO.Types
+@using Radzen
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IMediaFilesService MediaFilesService
+@inject IErrorMapperService ErrorMapperService
+@inject NavigationManager NavigationManager
+
+<h3 class="rz-p-6">Complete your registration</h3>
+
+<RadzenAlert AlertStyle="AlertStyle.Danger" @bind-Visible="showError" ShowIcon="false" Variant="Variant.Flat"
+             Shade="Shade.Lighter">
+    @errorMessage
+</RadzenAlert>
+
+<RadzenTemplateForm Data="@completeRegistrationModel"
+                    Submit="@(async (CompleteRegistrationModel args) => { await HandleCompleteRegistration(); })">
+    <RadzenFieldset>
+        <RadzenStack Gap="1rem">
+            <RadzenLabelWithTextBox Id="description" LabelText="Description:" Disabled="false"
+                                    @bind-Value="@completeRegistrationModel.Description"
+                                    ValueRequired="true" Popup=@popup />
+            
+            <RadzenLabelWithDatePicker Id="date-of-birth" LabelText="Date of birth:" Disabled="false"
+                                       @bind-Value="@completeRegistrationModel.DateOfBirth" />
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="6">
+                    <RadzenLabel Component="profile-image">
+                        <strong>Profile image:</strong>
+                    </RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="5">
+                    <RadzenUpload Multiple="false" Change="@OnClientChange" class="w-100"
+                                    InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})" />
+                </RadzenColumn>
+            </RadzenRow>
+            
+            <RadzenLabelWithCheckbox Id="email-notifications" LabelText="Email notifications:" Disabled="false"
+                                     @bind-Value="@completeRegistrationModel.EmailNotifications" />
+            
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large"
+                                  Text="Complete registration" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+@code {
+    private CompleteRegistrationModel completeRegistrationModel = new();
+    private string fileName;
+    private long? fileSize;
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    private bool popup;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService.IsAuthenticated)
+        {
+            completeRegistrationModel.StudentId = IdentityService.UserDto.Id;
+            completeRegistrationModel.ProfileImage = Guid.Empty;
+            completeRegistrationModel.DateOfBirth = DateTime.Now;
+        }
+    }
+    
+    private async Task HandleCompleteRegistration()
+    {
+        var response = await StudentsService.CompleteStudentRegistrationAsync(completeRegistrationModel.StudentId,
+            completeRegistrationModel.ProfileImage, completeRegistrationModel.Description,
+            completeRegistrationModel.DateOfBirth.ToUniversalTime(), completeRegistrationModel.EmailNotifications);
+        // Handle the post-sign-up logic, such as redirection or displaying a success message
+        if (response.ErrorMessage != null)
+        {
+            errorMessage = ErrorMapperService.MapError(response.ErrorMessage);
+            showError = true;
+        }
+        else if (IdentityService.IsAuthenticated)
+        {
+            await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin", true);
+        }
+    }
+    
+    void OnChange(string value, string name)
+    {
+        showError = false;
+        StateHasChanged(); // Force the component to re-render
+    }
+
+    void OnError(UploadErrorEventArgs args, string name)
+    {
+        showError = true;
+        StateHasChanged(); // Force the component to re-render
+    }
+    
+    async void OnClientChange(UploadChangeEventArgs args)
+    {
+        @* Console.WriteLine("Client-side upload changed"); *@
+
+        foreach (var file in args.Files)
+        {
+            @* Console.WriteLine($"File: {file.Name} / {file.Size} bytes"); *@
+
+            try
+            {
+                long maxFileSize = 10 * 1024 * 1024;
+                var stream = file.OpenReadStream(maxFileSize);
+                byte[] bytes = await ReadFully(stream);
+                var base64Content = Convert.ToBase64String(bytes);
+                var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
+                    MediaFileContextType.StudentProfile.ToString(), IdentityService.UserDto.Id,
+                    file.Name, file.ContentType, base64Content);
+                if (response.Content != null && response.Content.FileId != Guid.Empty)
+                {
+                    completeRegistrationModel.ProfileImage = response.Content.FileId;
+                }
+                stream.Close();
+            }
+            catch (Exception ex)
+            { 
+                @* Console.WriteLine($"Client-side file read error: {ex.Message}"); *@
+            }
+        }
+    }
+    
+    private static async Task<byte[]> ReadFully(Stream input)
+    {
+        byte[] buffer = new byte[16*1024];
+        using (MemoryStream ms = new MemoryStream())
+        {
+            int read;
+            while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+            return ms.ToArray();
+        }
+    }
+}
