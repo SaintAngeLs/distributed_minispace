@@ -16,14 +16,32 @@ function setup_environment() {
     echo "Pulling latest images and cloning settings repository..."
 
     # List all the services and pull their images from GitLab container registry
-    declare -a services=("api-gateway" "web" "services-identity" "services-events" "services-students" "services-friends" "services-reactions" "services-posts" "services-comments" "services-mediafiles" "services-notifications" "services-reports" "services-email" "services-organizations")
+    declare -a services=("api-gateway" 
+    "web" 
+    "services-identity" 
+    "services-events" 
+    "services-students" 
+    "services-friends" 
+    "services-reactions" 
+    "services-posts" 
+    "services-comments" 
+    "services-mediafiles" 
+    "services-notifications" 
+    "services-reports" 
+    # "service-organizations"
+    "services-email")
 
     for service in "${services[@]}"
     do
-        docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/$service:latest
+        if docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/$service:latest; then
+            echo "$service image pulled successfully"
+        else
+            echo "Warning: $service image not found"
+        fi
     done
 
-    # Clone the settings repository
+    # Remove any existing settings directory and clone the new one
+    rm -rf /tmp/events_public_settings
     git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_public_settings.git /tmp/events_public_settings
 }
 
@@ -40,6 +58,12 @@ function copy_configuration() {
     cp "${source_path}/appsettings.docker.json" "${destination_path}/appsettings.docker.json"
 }
 
+# Copy the Docker Compose file to the correct location
+if [ ! -f "$DOCKER_COMPOSE_FILE" ]; then
+  echo "Error: $DOCKER_COMPOSE_FILE does not exist. Please ensure it is copied to the server."
+  exit 1
+fi
+
 # Setup environment
 setup_environment
 
@@ -53,7 +77,7 @@ copy_configuration "Services.Friends"
 copy_configuration "Services.Identity"
 copy_configuration "Services.MediaFiles"
 copy_configuration "Services.Notifications"
-copy_configuration "Services.Organizations"
+# copy_configuration "Services.Organizations"
 copy_configuration "Services.Posts"
 copy_configuration "Services.Reactions"
 copy_configuration "Services.Reports"
