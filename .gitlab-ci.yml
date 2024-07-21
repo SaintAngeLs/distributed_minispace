@@ -187,6 +187,7 @@ build_services_email:
         paths:
           - MiniSpace.Services.Email/**
 
+
 deploy:
   stage: deploy
   image: docker:latest
