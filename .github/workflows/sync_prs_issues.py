@@ -27,10 +27,11 @@ def get_github_pull_requests():
 def create_gitlab_issue(issue, gitlab_repo):
     url = f"{GITLAB_API_URL}/projects/{gitlab_repo.replace('/', '%2F')}/issues"
     headers = {"PRIVATE-TOKEN": GITLAB_TOKEN}
+    labels = [label['name'] for label in issue.get('labels', [])]
     data = {
         "title": issue['title'],
         "description": issue['body'] or '',
-        "labels": ','.join(issue.get('labels', []))
+        "labels": ','.join(labels)
     }
     response = requests.post(url, headers=headers, json=data)
     response.raise_for_status()
