@@ -40,6 +40,12 @@ jobs:
           git config --global user.email "voznesenskijandrej5@gmail.com"
           git config --global user.name "Andrii Voznesenskyi"
 
+      - name: Remove .gitlab-ci.yml for specific repository
+        run: |
+          if [[ "${{ github.repository }}" == "SaintAngeLs/distributed_minispace" ]]; then
+            rm -f .gitlab-ci.yml
+          fi
+
       - name: Adding GitLab remote repository 1
         run: |
           GITLAB_REPO="https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/SaintAngeLs/distributed_minispace.git"
@@ -48,7 +54,6 @@ jobs:
             git remote set-url gitlab1 $GITLAB_REPO
           else
             git remote add gitlab1 $GITLAB_REPO
-          fi
 
       - name: Push all branches to GitLab 1
         run: git push gitlab1 --all --force
@@ -64,7 +69,6 @@ jobs:
             git remote set-url gitlab2 $GITLAB_REPO
           else
             git remote add gitlab2 $GITLAB_REPO
-          fi
 
       - name: Push all branches to GitLab 2
         run: git push gitlab2 --all --force
