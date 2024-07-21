@@ -56,10 +56,15 @@ jobs:
           GITLAB_REPO="https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace.git"
           git remote add gitlab2 $GITLAB_REPO || git remote set-url gitlab2 $GITLAB_REPO
 
-      - name: Push all branches and tags to both GitLab repositories
+      - name: Push all branches to both GitLab repositories
         run: |
-          git push gitlab1 --all --tags --force
-          git push gitlab2 --all --tags --force
+          git push gitlab1 --all --force
+          git push gitlab2 --all --force
+
+      - name: Push all tags to both GitLab repositories
+        run: |
+          git push gitlab1 --tags --force
+          git push gitlab2 --tags --force
 
       - name: Sync Pull Requests and Issues to GitLab
         env:
