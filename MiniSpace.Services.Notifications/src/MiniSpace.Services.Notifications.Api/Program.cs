@@ -53,6 +53,7 @@ namespace MiniSpace.Services.Notifications.Api
                     .UseEndpoints(endpoints =>
                     {
                         endpoints.MapHub<NotificationHub>("/notificationHub").RequireCors("CorsPolicy");
+                        endpoints.MapHub<ChatHub>("/chatHub").RequireCors("CorsPolicy");
                     })
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))

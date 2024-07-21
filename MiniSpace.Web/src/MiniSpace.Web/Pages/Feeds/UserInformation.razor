@@ -9,102 +9,118 @@
     {
         <MudGrid>
             <MudItem xs="12">
-                <MudCard>
+                <MudCard Class="profile-card">
                     <MudCardContent>
                         <div class="profile-header">
-                            <MudAvatar Image="@student.ProfileImageUrl"  Style="height:200px; width:200px; font-size:2rem;" Class="profile-avatar" />
+                            <MudAvatar Image="@GetProfileImage()" Style="height:150px; width:150px; font-size:2rem;" Class="profile-avatar" />
                             <div class="profile-info">
-                                <MudText Typo="Typo.h4">@student.FullName</MudText>
-                                <MudText Typo="Typo.subtitle1">@student.Description</MudText>
+                                <MudText Typo="Typo.h4" Class="profile-name">@student.FullName</MudText>
+                                <MudText Typo="Typo.subtitle1" Class="profile-description">@student.Description</MudText>
+                                <MudButton Variant="MudBlazor.Variant.Outlined" Color="MudBlazor.Color.Primary" OnClick="@NavigateToProfileSettings">Edit Profile</MudButton>
                             </div>
                         </div>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
 
-            <MudItem xs="12">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h5">Contact Information</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText Typo="Typo.body2">Email: @student.Email</MudText>
-                        <MudText Typo="Typo.body2">Contact Email: @student.ContactEmail</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            @if (!string.IsNullOrEmpty(student.ContactEmail))
+            {
+                <MudItem xs="12">
+                    <MudCard Class="info-card">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.Email" Class="icon-margin" />
+                            <MudText Typo="Typo.h5">Contact Information</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            @if (!string.IsNullOrEmpty(student.ContactEmail))
+                            {
+                                <MudText Typo="Typo.body2">Contact Email: <a href="mailto:@student.ContactEmail">@student.ContactEmail</a></MudText>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
 
-            <MudItem xs="12">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h5">Education</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText Typo="Typo.body2">Education: @student.Education</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            @if (!string.IsNullOrEmpty(student.Education))
+            {
+                <MudItem xs="12">
+                    <MudCard Class="info-card">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.School" Class="icon-margin" />
+                            <MudText Typo="Typo.h5">Education</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Typo="Typo.body2">@student.Education</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
 
-            <MudItem xs="12">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h5">Work Experience</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText Typo="Typo.body2">Position: @student.WorkPosition</MudText>
-                        <MudText Typo="Typo.body2">Company: @student.Company</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            @if (!string.IsNullOrEmpty(student.WorkPosition) || !string.IsNullOrEmpty(student.Company))
+            {
+                <MudItem xs="12">
+                    <MudCard Class="info-card">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.Work" Class="icon-margin" />
+                            <MudText Typo="Typo.h5">Work Experience</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            @if (!string.IsNullOrEmpty(student.WorkPosition))
+                            {
+                                <MudText Typo="Typo.body2">Position: @student.WorkPosition</MudText>
+                            }
+                            @if (!string.IsNullOrEmpty(student.Company))
+                            {
+                                <MudText Typo="Typo.body2">Company: @student.Company</MudText>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
 
-            <MudItem xs="12">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h5">Skills and Interests</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText Typo="Typo.body2">Languages: @string.Join(", ", student.Languages)</MudText>
-                        <MudText Typo="Typo.body2">Interests: @string.Join(", ", student.Interests)</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            @if ((student.Languages != null && student.Languages.Any()) || (student.Interests != null && student.Interests.Any()))
+            {
+                <MudItem xs="12">
+                    <MudCard Class="info-card">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.Interests" Class="icon-margin" />
+                            <MudText Typo="Typo.h5">Skills and Interests</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            @if (student.Languages != null && student.Languages.Any())
+                            {
+                                <MudText Typo="Typo.body2">Languages: @string.Join(", ", student.Languages)</MudText>
+                            }
+                            @if (student.Interests != null && student.Interests.Any())
+                            {
+                                <MudText Typo="Typo.body2">Interests: @string.Join(", ", student.Interests)</MudText>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
 
-            <MudItem xs="12">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h5">Gallery</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        @if (student.GalleryOfImageUrls != null && student.GalleryOfImageUrls.Any())
-                        {
-                            <MudGrid>
-                                @foreach (var imageUrl in student.GalleryOfImageUrls)
-                                {
-                                    <MudItem xs="12" sm="6" md="4">
-                                        <MudImage Src="@imageUrl" Alt="Gallery Image"/>
-                                    </MudItem>
-                                }
-                            </MudGrid>
-                        }
-                        else
-                        {
-                            <MudText Typo="Typo.body2">No images available.</MudText>
-                        }
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-
-            <MudItem xs="12">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h5">Events</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText Typo="Typo.body2">Interested in Events: @string.Join(", ", student.InterestedInEvents.Select(e => e.ToString()))</MudText>
-                        <MudText Typo="Typo.body2">Signed Up for Events: @string.Join(", ", student.SignedUpEvents.Select(e => e.ToString()))</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            @if ((student.InterestedInEvents != null && student.InterestedInEvents.Any()) || (student.SignedUpEvents != null && student.SignedUpEvents.Any()))
+            {
+                <MudItem xs="12">
+                    <MudCard Class="info-card">
+                        <MudCardHeader>
+                            <MudIcon Icon="@Icons.Material.Filled.Event" Class="icon-margin" />
+                            <MudText Typo="Typo.h5">Events</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            @if (student.InterestedInEvents != null && student.InterestedInEvents.Any())
+                            {
+                                <MudText Typo="Typo.body2">Interested in Events: @string.Join(", ", student.InterestedInEvents.Select(e => e.ToString()))</MudText>
+                            }
+                            @if (student.SignedUpEvents != null && student.SignedUpEvents.Any())
+                            {
+                                <MudText Typo="Typo.body2">Signed Up for Events: @string.Join(", ", student.SignedUpEvents.Select(e => e.ToString()))</MudText>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
         </MudGrid>
     }
 </MudPaper>
@@ -119,15 +135,33 @@
     {
         student = await StudentsService.GetStudentAsync(UserId);
     }
+
+    private string GetProfileImage()
+    {
+        var defaultImage = "path/to/default/image.png"; // Set path to your default image
+        var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+
+        if (string.IsNullOrEmpty(student?.ProfileImageUrl) || !validExtensions.Contains(System.IO.Path.GetExtension(student.ProfileImageUrl)?.ToLower()))
+        {
+            return defaultImage;
+        }
+
+        return student.ProfileImageUrl;
+    }
+
+    private void NavigateToProfileSettings()
+    {
+        NavigationManager.NavigateTo("/showaccount");
+    }
 }
 
 <style>
     .profile-paper {
         padding: 20px;
         margin: 20px;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .profile-header {
@@ -136,20 +170,49 @@
         justify-content: center;
         flex-direction: column;
         text-align: center;
+        margin-bottom: 20px;
     }
 
     .profile-avatar {
-        width: 200px;
-        height: 200px;
+        width: 150px;
+        height: 150px;
         border-radius: 50%;
+        margin-bottom: 10px;
     }
 
     .profile-info {
         margin-top: 10px;
     }
 
-    .my-2 {
-        margin-top: 1rem !important;
-        margin-bottom: 1rem !important;
+    .profile-name {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .profile-description {
+        color: #555;
+    }
+
+    .profile-id {
+        color: #777;
+        margin-top: 10px;
+    }
+
+    .info-card {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .icon-margin {
+        margin-right: 8px;
+    }
+
+    a {
+        color: #1e88e5;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
     }
 </style>

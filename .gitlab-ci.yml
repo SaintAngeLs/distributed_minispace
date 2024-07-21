@@ -1,0 +1,59 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: registry.gitlab.com
+  DOCKER_IMAGE: $DOCKER_REGISTRY/distributed-asp-net-core-blazor-social-app/distributed_minispace
+
+services:
+  - docker:dind
+
+before_script:
+  - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+
+build:
+  stage: build
+  image: docker:latest
+  script:
+    - docker build -t $DOCKER_IMAGE/api-gateway:latest MiniSpace.APIGateway
+    - docker build -t $DOCKER_IMAGE/web:latest MiniSpace.Web
+    - docker build -t $DOCKER_IMAGE/services-identity:latest MiniSpace.Services.Identity
+    - docker build -t $DOCKER_IMAGE/services-events:latest MiniSpace.Services.Events
+    - docker build -t $DOCKER_IMAGE/services-students:latest MiniSpace.Services.Students
+    - docker build -t $DOCKER_IMAGE/services-friends:latest MiniSpace.Services.Friends
+    - docker build -t $DOCKER_IMAGE/services-reactions:latest MiniSpace.Services.Reactions
+    - docker build -t $DOCKER_IMAGE/services-posts:latest MiniSpace.Services.Posts
+    - docker build -t $DOCKER_IMAGE/services-comments:latest MiniSpace.Services.Comments
+    - docker build -t $DOCKER_IMAGE/services-mediafiles:latest MiniSpace.Services.MediaFiles
+    # - docker build -t $DOCKER_IMAGE/services-organizations:latest MiniSpace.Services.Organizations
+    - docker build -t $DOCKER_IMAGE/services-notifications:latest MiniSpace.Services.Notifications
+    - docker build -t $DOCKER_IMAGE/services-reports:latest MiniSpace.Services.Reports
+    - docker build -t $DOCKER_IMAGE/services-email:latest MiniSpace.Services.Email
+    - docker push $DOCKER_IMAGE/api-gateway:latest
+    - docker push $DOCKER_IMAGE/web:latest
+    - docker push $DOCKER_IMAGE/services-identity:latest
+    - docker push $DOCKER_IMAGE/services-events:latest
+    - docker push $DOCKER_IMAGE/services-students:latest
+    - docker push $DOCKER_IMAGE/services-friends:latest
+    - docker push $DOCKER_IMAGE/services-reactions:latest
+    - docker push $DOCKER_IMAGE/services-posts:latest
+    - docker push $DOCKER_IMAGE/services-comments:latest
+    - docker push $DOCKER_IMAGE/services-mediafiles:latest
+    # - docker push $DOCKER_IMAGE/services-organizations:latest
+    - docker push $DOCKER_IMAGE/services-notifications:latest
+    - docker push $DOCKER_IMAGE/services-reports:latest
+    - docker push $DOCKER_IMAGE/services-email:latest
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $PRODUCTION_SERVER_IP >> ~/.ssh/known_hosts
+    - ssh $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP 'bash -s' < deploy.sh $GITLAB_TOKEN
+  only:
+    - notification_service_update
