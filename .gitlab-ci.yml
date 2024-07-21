@@ -10,10 +10,7 @@ services:
   - docker:dind
 
 before_script:
-  - echo "Checking Docker version"
-  - if ! docker --version; then echo "Docker not found, installing Docker"; curl -fsSL https://get.docker.com | sh; fi
-  - echo "Logging into Docker registry"
-  - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $DOCKER_REGISTRY
+  - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
 
 build:
   stage: build
