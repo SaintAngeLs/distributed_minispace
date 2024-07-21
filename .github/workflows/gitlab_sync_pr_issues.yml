@@ -28,6 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GITHUB_REPO: ${{ github.repository }}
-          GITLAB_REPO: 'SaintAngeLs/distributed_minispace'
+          GITLAB_REPO_1: 'SaintAngeLs/distributed_minispace'
+          GITLAB_REPO_2: 'distributed-asp-net-core-blazor-social-app/distributed-asp-net-core-blazor-social-application/distributed-minispace'
         run: |
           python sync_prs_issues.py
