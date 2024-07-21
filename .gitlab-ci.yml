@@ -14,6 +14,7 @@ before_script:
 
 build:
   stage: build
+  image: docker:latest
   script:
     - docker build -t $DOCKER_IMAGE/api-gateway:latest MiniSpace.APIGateway
     - docker build -t $DOCKER_IMAGE/web:latest MiniSpace.Web
@@ -46,6 +47,7 @@ build:
 
 deploy:
   stage: deploy
+  image: alpine:latest
   script:
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
