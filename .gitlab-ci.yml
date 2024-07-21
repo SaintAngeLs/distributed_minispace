@@ -18,6 +18,8 @@ before_script:
   script:
     - docker build -t $DOCKER_IMAGE/$SERVICE_NAME:latest $SERVICE_PATH
     - docker push $DOCKER_IMAGE/$SERVICE_NAME:latest
+  only:
+    - main
 
 build_api_gateway:
   <<: *build_template
@@ -203,3 +205,5 @@ deploy:
         - MiniSpace.Services.Reports/**
         - MiniSpace.Services.Email/**
         # - MiniSpace.Services.Organizations/**
+  only:
+    - main
