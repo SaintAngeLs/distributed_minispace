@@ -47,7 +47,7 @@ build:
 
 deploy:
   stage: deploy
-  image: alpine:latest
+  image: docker:latest
   script:
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
