@@ -1,62 +1,64 @@
 #!/bin/bash
 
+# Check if the GitLab token is provided
 if [ -z "$1" ]; then
-  echo "GITLAB_TOKEN is not provided"
+  echo "Error: GITLAB_TOKEN is not provided"
   exit 1
 fi
 
 GITLAB_TOKEN=$1
 
-
-# Pull the latest images
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/api-gateway:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/web:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-identity:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-events:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-students:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-friends:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reactions:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-posts:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-comments:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-mediafiles:latest
-# docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-notifications:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reports:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-email:latest
-
 echo "Using GITLAB_TOKEN: ${GITLAB_TOKEN}"
-# Clone the appsettings repository
-git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_public_settings.git /tmp/events_public_settings
 
-# Copy the appsettings to the correct locations
-cp /tmp/events_public_settings/APIGateway/appsettings.json /root/social_net_app/MiniSpace.APIGateway/src/MiniSpace.APIGateway/
-cp /tmp/events_public_settings/APIGateway/appsettings.docker.json /root/social_net_app/MiniSpace.APIGateway/src/MiniSpace.APIGateway/
+# Function to pull images and clone settings repository
+function setup_environment() {
+    echo "Pulling latest images and cloning settings repository..."
 
-cp /tmp/events_public_settings/Services.Comments/appsettings.json /root/social_net_app/MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/
-cp /tmp/events_public_settings/Services.Comments/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/
+    # Pull images for all services
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/api-gateway:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/web:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-identity:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-events:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-students:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-friends:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reactions:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-posts:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-comments:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-mediafiles:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-notifications:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reports:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-email:latest
+    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
 
-cp /tmp/events_public_settings/Services.Email/appsettings.json /root/social_net_app/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/
-cp /tmp/events_public_settings/Services.Email/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/
+    # Clone the settings repository
+    git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_public_settings.git /tmp/events_public_settings
+}
 
-cp /tmp/events_public_settings/Services.Events/appsettings.json /root/social_net_app/MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/
-cp /tmp/events_public_settings/Services.Events/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/
+function copy_configuration() {
+    local service=$1
+    local source_path=$2
+    local destination_path=$3
 
-cp /tmp/events_public_settings/Services.Friends/appsettings.json /root/social_net_app/MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/
-cp /tmp/events_public_settings/Services.Friends/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/
+    echo "Setting up configuration for $service..."
 
-cp /tmp/events_public_settings/Services.Identity/appsettings.json /root/social_net_app/MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/
-cp /tmp/events_public_settings/Services.Identity/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/
+    mkdir -p "${destination_path}"
+    cp "${source_path}/appsettings.json" "${destination_path}"
+    cp "${source_path}/appsettings.docker.json" "${destination_path}"
+}
 
-cp /tmp/events_public_settings/Services.MediaFiles/appsettings.json /root/social_net_app/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/
-cp /tmp/events_public_settings/Services.MediaFiles/appsettings.docker.json /root/social_net_app/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/
+# Setup environment
+setup_environment
 
-cp /tmp/events_public_settings/Services.Notifications/appsettings.json /root/social_net_app/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/
-cp /tmp/events_public_settings/Services.Notifications/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/
+# Copy configurations to respective directories
+copy_configuration "API Gateway" "/tmp/events_public_settings/APIGateway" "/root/social_net_app/MiniSpace.APIGateway/src/MiniSpace.APIGateway"
+copy_configuration "Services Comments" "/tmp/events_public_settings/Services.Comments" "/root/social_net_app/MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api"
+copy_configuration "Services Email" "/tmp/events_public_settings/Services.Email" "/root/social_net_app/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api"
+copy_configuration "Services Events" "/tmp/events_public_settings/Services.Events" "/root/social_net_app/MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api"
+copy_configuration "Services Friends" "/tmp/events_public_settings/Services.Friends" "/root/social_net_app/MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api"
+copy_configuration "Services Identity" "/tmp/events_public_settings/Services.Identity" "/root/social_net_app/MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api"
+copy_configuration "Services MediaFiles" "/tmp/events_public_settings/Services.MediaFiles" "/root/social_net_app/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api"
+copy_configuration "Services Notifications" "/tmp/events_public_settings/Services.Notifications" "/root/social_net_app/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api"
+copy_configuration "Services Organizations" "/tmp/events_public_settings/Services.Organizations" "/root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api"
+copy_configuration "Services Posts" "/tmp/events_public_settings/Services.Posts" "/root/social_net_app/MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api"
 
-# cp /tmp/events_public_settings/Services.Organizations/appsettings.json /root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
-# cp /tmp/events_public_settings/Services.Organizations/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
-
-cp /tmp/events_public_settings/Services.Posts/appsettings.json /root/social_net_app/MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/
-cp /tmp/events_public_settings/Services.Posts/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/
-
-cp /tmp/events_public_settings/Services.Reactions/appsettings.json /root/social_net_app
+echo "Deployment completed successfully."
