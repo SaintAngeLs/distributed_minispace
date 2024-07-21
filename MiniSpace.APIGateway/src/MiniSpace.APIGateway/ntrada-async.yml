@@ -164,6 +164,42 @@ modules:
         downstream: identity-service/password/reset
         auth: false
 
+      - upstream: /email/verify
+        method: POST
+        use: downstream
+        downstream: identity-service/email/verify
+        auth: false
+
+      - upstream: /2fa/enable
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/enable
+        auth: true
+
+      - upstream: /2fa/disable
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/disable
+        auth: true
+
+      - upstream: /2fa/generate-secret
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/generate-secret
+        auth: true
+
+      - upstream: /refresh-tokens/use
+        method: POST
+        use: downstream
+        downstream: identity-service/refresh-tokens/use
+        auth: false
+
+      - upstream: /refresh-tokens/revoke
+        method: POST
+        use: downstream
+        downstream: identity-service/refresh-tokens/revoke
+        auth: false
+
     services:
       identity-service:
         localUrl: localhost:5004
@@ -273,6 +309,18 @@ modules:
         auth: true  
         description: Updates the status of a specific notification.
 
+      - upstream: /notificationHub
+        method: GET
+        use: downstream
+        downstream: notifications-service/notificationHub
+        auth: false
+
+      - upstream: /notificationHub/negotiate
+        method: POST
+        use: downstream
+        downstream: notifications-service/notificationHub/negotiate
+        auth: false
+
     services:
       notifications-service:
         localUrl: localhost:5006
@@ -335,6 +383,18 @@ modules:
         method: GET
         use: downstream
         downstream: students-service/students/{studentId}/events
+        auth: true
+
+      - upstream: /{studentId}/notifications
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/notifications
+        auth: true
+
+      - upstream: /{studentId}/notifications
+        method: POST
+        use: downstream
+        downstream: students-service/students/{studentId}/notifications
         auth: true
 
     services:
@@ -745,10 +805,10 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files/{mediaFileId}/original
 
-      - upstream: /{mediaFileId}
+      - upstream: /delete/{mediaFileUrl}
         method: DELETE
         use: downstream
-        downstream: mediafiles-service/media-files/{mediaFileId}
+        downstream: mediafiles-service/media-files/delete/{mediaFileUrl}
         auth: true
 
     services:

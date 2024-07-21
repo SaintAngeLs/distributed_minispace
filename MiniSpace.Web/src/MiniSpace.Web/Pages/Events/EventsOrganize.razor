@@ -18,6 +18,7 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+<AuthWrapper>
 <h1 class="rz-p-8 organize-font">Organize events</h1>
 
 <div class="rz-p-4">
@@ -69,7 +70,7 @@
                        Rectangular="true" ShowFirstButton="true" ShowLastButton="true"/>
     </RadzenStack>   
 }
-
+</AuthWrapper>
 <style>
     .organize-font {
             font-family: Arial, sans-serif; /* Change this to your preferred font */

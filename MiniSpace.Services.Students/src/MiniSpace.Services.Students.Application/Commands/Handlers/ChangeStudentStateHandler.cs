@@ -4,6 +4,9 @@ using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Exceptions;
 using MiniSpace.Services.Students.Core.Repositories;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
@@ -49,6 +52,9 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                     break;
                 case State.Banned:
                     student.SetBanned();
+                    break;
+                case State.Unverified:
+                    student.SetUnverified();
                     break;
                 default:
                     throw new CannotChangeStudentStateException(student.Id, state);

@@ -1,0 +1,141 @@
+@page "/verify-email/{Token}/{Email}/{HashedToken}/verify"
+@using MiniSpace.Web.Areas.Identity
+@using MudBlazor
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@using System.Web
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        background: #f4f4f9;
+        color: #333;
+    }
+
+    .split-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .left-side, .right-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .left-side {
+        background: black;
+        position: relative;
+    }
+
+    .right-side {
+        margin-top: 5rem !important;
+    }
+
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    a, button {
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    a:hover, button:hover {
+        color: #007BFF;
+    }
+</style>
+<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
+<div class="split-container">
+    <div class="left-side">
+        <video id="videoPlayer" autoplay muted loop>
+            <source src="videos/video-component/video_1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="right-side">
+        <div class="form-container">
+            <h2>Email Verification</h2>
+            @if (showSuccess)
+            {
+                <MudAlert Severity="Severity.Success" OnClose="OnAlertClose">
+                    @successMessage
+                </MudAlert>
+                <div>
+                    @* Include the sign-in form *@
+                    <SignInComponent />
+                </div>
+            }
+            @if (showError)
+            {
+                <MudAlert Severity="Severity.Error" OnClose="OnAlertClose">
+                    @errorMessage
+                </MudAlert>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Token { get; set; } = "";
+    [Parameter] public string Email { get; set; } = "";
+    [Parameter] public string HashedToken { get; set; } = "";
+
+    private bool showSuccess = false;
+    private bool showError = false;
+    private string successMessage = string.Empty;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine($"Token received: {Token}");
+        Console.WriteLine($"Email received: {Email}");
+        Console.WriteLine($"HashedToken received: {HashedToken}");
+
+        if (!string.IsNullOrEmpty(Token) && !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(HashedToken))
+        {
+            var decodedEmail = HttpUtility.UrlDecode(Email);
+            var response = await IdentityService.VerifyEmailAsync(Token, decodedEmail, HashedToken);
+            if (response != null)
+            {
+                successMessage = "Thank you, your email has been verified.";
+                showSuccess = true;
+            }
+            else
+            {
+                errorMessage = "Sorry, we could not verify your email.";
+                showError = true;
+            }
+        }
+        else
+        {
+            errorMessage = "Invalid verification link.";
+            showError = true;
+        }
+    }
+
+    private void OnAlertClose()
+    {
+        showSuccess = false;
+        showError = false;
+        successMessage = string.Empty;
+        errorMessage = string.Empty;
+    }
+}

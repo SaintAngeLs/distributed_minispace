@@ -1,11 +1,15 @@
-using Convey.CQRS.Events;
 using System;
-using System.Threading.Tasks;
 using System.Threading;
-using MiniSpace.Services.Notifications.Core.Entities;
-using MiniSpace.Services.Notifications.Core.Repositories;
+using System.Threading.Tasks;
+using Convey.CQRS.Events;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Hubs;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Notifications.Core.Repositories;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -14,15 +18,21 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly ILogger<ReportCancelledHandler> _logger;
 
         public ReportCancelledHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
-            IStudentsServiceClient studentsServiceClient)
+            IStudentsServiceClient studentsServiceClient,
+            IHubContext<NotificationHub> hubContext,
+            ILogger<ReportCancelledHandler> logger)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _studentsServiceClient = studentsServiceClient;
+            _hubContext = hubContext;
+            _logger = logger;
         }
 
         public async Task HandleAsync(ReportCancelled eventArgs, CancellationToken cancellationToken)
@@ -30,21 +40,27 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
             var targetOwner = await _studentsServiceClient.GetAsync(eventArgs.TargetOwnerId);
 
+            if (issuer == null || targetOwner == null)
+            {
+                _logger.LogError("Issuer or target owner details not found.");
+                return;
+            }
+
             string issuerName = $"{issuer.FirstName} {issuer.LastName}";
             string targetOwnerName = $"{targetOwner.FirstName} {targetOwner.LastName}";
 
-            // Notification message for issuer with more details
+            // Notification message for issuer
             string issuerMessage = $"Your report about '{eventArgs.Category}' concerning '{eventArgs.ContextType}' has been successfully cancelled.";
             var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, issuerMessage);
-            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportCancellationConfirmed", issuerName);
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, issuerMessage);
             
-            // Notification message for target owner with more details
+            // Notification message for target owner
             string targetOwnerMessage = $"A report about '{eventArgs.Category}' concerning your content '{eventArgs.ContextType}' has been cancelled.";
             var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, targetOwnerMessage);
-            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportCancelled", targetOwnerName);
+            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, targetOwnerMessage);
         }
 
-         private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCancelled eventArgs, string message)
+        private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCancelled eventArgs, string message)
         {
             var notifications = await _studentNotificationsRepository.GetByStudentIdAsync(userId) ?? new StudentNotifications(userId);
             var notification = new Notification(
@@ -62,19 +78,33 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             return notification;
         }
 
-        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType, string userName)
+        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string message)
         {
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: $"{userName}, {notification.Message}",
-                createdAt: notification.CreatedAt,
-                eventType: NotificationEventType.ReportCancelled.ToString(),
-                relatedEntityId: notification.RelatedEntityId,
-                details: $"Notification for user {userId} ({userName}). Message: {notification.Message}"
+                notification.NotificationId,
+                notification.UserId,
+                message,
+                notification.CreatedAt,
+                NotificationEventType.ReportCancelled.ToString(),
+                notification.RelatedEntityId,
+                $"Notification for user {userId}. Message: {message}"
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            var notificationDto = new NotificationDto
+            {
+                UserId = notification.UserId,
+                Message = message,
+                CreatedAt = notification.CreatedAt,
+                EventType = NotificationEventType.ReportCancelled,
+                RelatedEntityId = notification.RelatedEntityId,
+                Details = $"Notification for user {userId}. Message: {message}"
+            };
+
+            // Broadcast SignalR notification
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to user with ID {userId}.");
         }
     }
 }

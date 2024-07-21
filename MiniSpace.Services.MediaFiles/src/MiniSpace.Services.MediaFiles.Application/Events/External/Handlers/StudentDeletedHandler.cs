@@ -20,7 +20,7 @@ namespace MiniSpace.Services.MediaFiles.Application.Events.External.Handlers
         public async Task HandleAsync(StudentDeleted @event, CancellationToken cancellationToken)
         {
             var fileSourceInfos =
-                await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfile);
+                await _fileSourceInfoRepository.FindAsync(@event.StudentId, ContextType.StudentProfileImage);
             foreach (var fileSourceInfo in fileSourceInfos)
             {
                 fileSourceInfo.Unassociate();

@@ -28,7 +28,7 @@ using MiniSpace.Web.Areas.Comments;
 using MiniSpace.Web.Areas.MediaFiles;
 using MiniSpace.Web.Areas.Reactions;
 using MiniSpace.Web.Areas.Reports;
-
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace MiniSpace.Web
 {
@@ -61,9 +61,35 @@ namespace MiniSpace.Web
 
             services.AddBlazoredLocalStorage(); 
 
+            services.AddServerSideBlazor()
+                .AddHubOptions(options => 
+                {
+                    options.MaximumReceiveMessageSize = 32 * 1024 * 1024; // 32 MB
+                });
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = 32 * 1024 * 1024; 
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = 32 * 1024 * 1024; 
+            });
 
             services.AddScoped<Radzen.DialogService, Radzen.DialogService>();
             services.AddScoped<Radzen.NotificationService>(); 
+
+            services.AddServerSideBlazor()
+                .AddCircuitOptions(options => 
+                {
+                    options.DetailedErrors = true;
+                })
+                .AddHubOptions(options =>
+                {
+                    options.MaximumReceiveMessageSize = 32 * 1024 * 1024; // 32 MB
+                });
+
             
             
             services.AddScoped<IIdentityService, IdentityService>();
@@ -76,13 +102,13 @@ namespace MiniSpace.Web
             services.AddScoped<IErrorMapperService, ErrorMapperService>();
             services.AddScoped<IFriendsService, FriendsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
+            services.AddScoped<SignalRService>();
             services.AddScoped<IReactionsService, ReactionsService>();
             services.AddScoped<ICommentsService, CommentsService>();
             services.AddScoped<IReportsService, ReportsService>();
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -92,7 +118,6 @@ namespace MiniSpace.Web
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -102,13 +127,13 @@ namespace MiniSpace.Web
 
             app.UseRouting();
             app.UseAuthorization();  
+            
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-
         }
     }
 }

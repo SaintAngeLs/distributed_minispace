@@ -49,6 +49,7 @@ namespace MiniSpace.Services.Students.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IUserNotificationPreferencesRepository, UserNotificationPreferencesRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -73,6 +74,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<UserNotificationsDocument, Guid>("user-notifications")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -93,6 +95,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeCommand<CompleteStudentRegistration>()
                 .SubscribeCommand<ChangeStudentState>()
                 .SubscribeEvent<SignedUp>()
+                .SubscribeEvent<EmailVerified>()
                 .SubscribeEvent<StudentShowedInterestInEvent>()
                 .SubscribeEvent<StudentCancelledInterestInEvent>()
                 .SubscribeEvent<StudentSignedUpToEvent>()
@@ -100,7 +103,9 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeEvent<UserBanned>()
                 .SubscribeEvent<UserUnbanned>()
                 .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>();
+                .SubscribeEvent<OrganizerRightsRevoked>()
+                .SubscribeEvent<StudentImageUploaded>()
+                .SubscribeEvent<MediaFileDeleted>();
 
             return app;
         }

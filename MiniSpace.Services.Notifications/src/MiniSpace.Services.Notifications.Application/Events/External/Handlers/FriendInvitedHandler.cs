@@ -6,6 +6,10 @@ using System.Collections.Generic;
 using MiniSpace.Services.Notifications.Application.Exceptions;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using System.Text.Json;
+using Microsoft.AspNetCore.SignalR;
+using MiniSpace.Services.Notifications.Application.Hubs;
+using Microsoft.Extensions.Logging;
+using MiniSpace.Services.Notifications.Application.Dto;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -16,13 +20,17 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
+        private readonly ILogger<FriendInvitedHandler> _logger;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         public FriendInvitedHandler(
             INotificationRepository notificationRepository,
             IStudentNotificationsRepository studentNotificationsRepository,  
             IStudentsServiceClient studentsServiceClient, 
             IEventMapper eventMapper, 
-            IMessageBroker messageBroker
+            IMessageBroker messageBroker,
+            ILogger<FriendInvitedHandler> logger,
+            IHubContext<NotificationHub> hubContext
         )
         {
             _notificationRepository = notificationRepository;
@@ -30,6 +38,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             _studentsServiceClient = studentsServiceClient;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
+            _logger = logger;
+            _hubContext = hubContext;
         }
 
         public async Task HandleAsync(FriendInvited @event, CancellationToken cancellationToken)
@@ -68,6 +78,20 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 @event.InviterId,
                 detailsHtml
             );
+            
+            var notificationDto = new NotificationDto
+            {
+                UserId = @event.InviteeId,
+                Message = notificationMessage,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.FriendRequestAccepted,
+                RelatedEntityId = @event.InviterId,
+                Details = detailsHtml
+            };
+
+              await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Sent SignalR notification to all users with user id UserId={@event.InviteeId}.");
+
 
             var serializedEvent = JsonSerializer.Serialize(notificationCreatedEvent, new JsonSerializerOptions
             {

@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories
             var document = await GetByUserIdAsync(userId);
             if (document != null && document.ResetTokenExpires > DateTime.UtcNow)
             {
-                document.ResetTokenExpires = DateTime.UtcNow; // Adjust logic as needed
+                document.ResetTokenExpires = DateTime.UtcNow; 
                 await _repository.UpdateAsync(document.AsDocument());
             }
         }

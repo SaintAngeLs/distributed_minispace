@@ -16,5 +16,10 @@ namespace MiniSpace.Services.Identity.Application.Services
         Task UnbanUserAsync(UnbanUser command);
         Task ForgotPasswordAsync(ForgotPassword command);
         Task ResetPasswordAsync(ResetPassword command);
+
+        Task VerifyEmailAsync(VerifyEmail command);
+        Task EnableTwoFactorAsync(EnableTwoFactor command);
+        Task DisableTwoFactorAsync(DisableTwoFactor command);
+        Task<string> GenerateTwoFactorSecretAsync(GenerateTwoFactorSecret command);
     }
 }

@@ -9,6 +9,7 @@
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 
+<AuthWrapper>
 <h1>Manage students</h1>
 
 @if (!pageInitialized)
@@ -53,7 +54,7 @@
         </RadzenDataGrid>
     </RadzenStack>
 }
-
+</AuthWrapper>
 @code {
     private const string dateFormat = "dd/MM/yyyy HH:mm";
     private const string shortDateFormat = "dd/MM/yyyy";

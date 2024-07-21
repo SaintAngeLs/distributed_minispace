@@ -13,11 +13,16 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public string Password { get; set; }
         public DateTime CreatedAt { get; private set; }
         public IEnumerable<string> Permissions { get; private set; }
+        public bool IsEmailVerified { get; set; }
+        public string EmailVerificationToken { get; set; }
+        public DateTime? EmailVerifiedAt { get; set; } 
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecret { get; set; }
 
         public User(Guid id, string name, string email, string password, string role, DateTime createdAt,
             IEnumerable<string> permissions = null)
         {
-            if(string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
             {
                 throw new InvalidNameException(name);
             }
@@ -44,6 +49,18 @@ namespace MiniSpace.Services.Identity.Core.Entities
             Role = role.ToLowerInvariant();
             CreatedAt = createdAt;
             Permissions = permissions ?? Enumerable.Empty<string>();
+        }
+
+        internal User(Guid id, string name, string email, string password, string role, DateTime createdAt,
+            bool isEmailVerified, string emailVerificationToken, DateTime? emailVerifiedAt, 
+            bool isTwoFactorEnabled, string twoFactorSecret, IEnumerable<string> permissions = null)
+            : this(id, name, email, password, role, createdAt, permissions)
+        {
+            IsEmailVerified = isEmailVerified;
+            EmailVerificationToken = emailVerificationToken;
+            EmailVerifiedAt = emailVerifiedAt;
+            IsTwoFactorEnabled = isTwoFactorEnabled;
+            TwoFactorSecret = twoFactorSecret;
         }
         
         public void GrantOrganizerRights()
@@ -84,6 +101,55 @@ namespace MiniSpace.Services.Identity.Core.Entities
             }
 
             Role = Entities.Role.User;
+        }
+
+        public void SetEmailVerificationToken(string token)
+        {
+            if (IsEmailVerified)
+            {
+                throw new EmailAlreadyVerifiedException();
+            }
+
+            EmailVerificationToken = token;
+        }
+
+        public void VerifyEmail()
+        {
+            if (IsEmailVerified)
+            {
+                throw new EmailAlreadyVerifiedException();
+            }
+
+            IsEmailVerified = true;
+            EmailVerificationToken = null;
+            EmailVerifiedAt = DateTime.UtcNow;
+        }
+
+        public void EnableTwoFactorAuthentication(string secret)
+        {
+            if (IsTwoFactorEnabled)
+            {
+                throw new TwoFactorAlreadyEnabledException(Id);
+            }
+
+            IsTwoFactorEnabled = true;
+            TwoFactorSecret = secret;
+        }
+
+        public void DisableTwoFactorAuthentication()
+        {
+            if (!IsTwoFactorEnabled)
+            {
+                throw new TwoFactorNotEnabledException(Id);
+            }
+
+            IsTwoFactorEnabled = false;
+            TwoFactorSecret = null;
+        }
+
+        public void SetTwoFactorSecret(string secret)
+        {
+            TwoFactorSecret = secret;
         }
     }
 

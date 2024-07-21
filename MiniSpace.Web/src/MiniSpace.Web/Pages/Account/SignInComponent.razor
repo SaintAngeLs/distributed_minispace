@@ -1,0 +1,95 @@
+@page "/signin-verify"
+@using MiniSpace.Web.Models.Identity
+@using MiniSpace.Web.Areas.Identity
+@using MudBlazor
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+
+<div class="form-container">
+    <div class="sign-in-up-pre-info">
+        <h2>Welcome to MiniSpace</h2>
+        <p>Please sign in to access your account and manage your details.</p>
+        <h3>Sign In</h3>
+    </div>
+    @if (showError)
+    {
+        <MudAlert Severity="Severity.Error" OnClose="OnAlertClose">
+            @errorMessage
+        </MudAlert>
+    }
+    <EditForm Model="@signInModel" OnValidSubmit="HandleSignIn">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="signInModel.Email" Label="Email" Variant="Variant.Outlined" Required="true" RequiredError="Email is required" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="signInModel.Password" Label="Password" Variant="Variant.Outlined" 
+                              InputType="@passwordInputType" Adornment="Adornment.End" AdornmentIcon="@passwordInputIcon" 
+                              OnAdornmentClick="TogglePasswordVisibility" Required="true" RequiredError="Password is required" />
+            </MudItem>
+            <MudItem xs="12" Class="d-flex justify-space-between align-center">
+                <MudCheckBox @bind-Checked="rememberMe" Label="Remember me?" Color="Color.Primary" Class="ml-n1"></MudCheckBox>
+                <MudLink Href="/forgot-password">Forgot Password?</MudLink>
+            </MudItem>
+            <MudItem xs="12" Class="d-flex justify-center">
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Sign In</MudButton>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+    <div style="text-align: center; margin-top: 3rem !important;">
+        <MudLink Href="/signup">Create Account</MudLink>
+    </div>
+</div>
+
+@code {
+    private SignInModel signInModel = new SignInModel();
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    private bool rememberMe = false;
+    private InputType passwordInputType = InputType.Password;
+    private string passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    private void OnAlertClose()
+    {
+        showError = false;
+        errorMessage = string.Empty;
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        if (passwordInputType == InputType.Password)
+        {
+            passwordInputType = InputType.Text;
+            passwordInputIcon = Icons.Material.Filled.Visibility;
+        }
+        else
+        {
+            passwordInputType = InputType.Password;
+            passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+        }
+    }
+
+    private async Task HandleSignIn()
+    {
+        try
+        {
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+            if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
+            {
+                NavigationManager.NavigateTo("/", true);
+            }
+            else
+            {
+                showError = true;
+                errorMessage = $"Error during sign in: {response?.ErrorMessage?.Reason}";
+                StateHasChanged(); 
+            }
+        }
+        catch (Exception ex)
+        {
+            showError = true;
+            errorMessage = $"Error during sign in: {ex.Message}";
+            StateHasChanged(); 
+        }
+    }
+}

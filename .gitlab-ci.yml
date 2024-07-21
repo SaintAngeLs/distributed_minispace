@@ -1,0 +1,206 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: registry.gitlab.com
+  DOCKER_IMAGE: $DOCKER_REGISTRY/distributed-asp-net-core-blazor-social-app/distributed_minispace
+
+services:
+  - docker:dind
+
+before_script:
+  - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+
+.build_template: &build_template
+  stage: build
+  image: docker:latest
+  script:
+    - docker build -t $DOCKER_IMAGE/$SERVICE_NAME:latest $SERVICE_PATH
+    - docker push $DOCKER_IMAGE/$SERVICE_NAME:latest
+    
+
+build_api_gateway:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: api-gateway
+    SERVICE_PATH: MiniSpace.APIGateway
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.APIGateway/**
+
+build_web:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: web
+    SERVICE_PATH: MiniSpace.Web
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Web/**
+
+build_services_identity:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-identity
+    SERVICE_PATH: MiniSpace.Services.Identity
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Identity/**
+
+build_services_events:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-events
+    SERVICE_PATH: MiniSpace.Services.Events
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Events/**
+
+build_services_students:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-students
+    SERVICE_PATH: MiniSpace.Services.Students
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Students/**
+
+build_services_friends:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-friends
+    SERVICE_PATH: MiniSpace.Services.Friends
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Friends/**
+
+build_services_reactions:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-reactions
+    SERVICE_PATH: MiniSpace.Services.Reactions
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Reactions/**
+
+build_services_posts:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-posts
+    SERVICE_PATH: MiniSpace.Services.Posts
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Posts/**
+
+build_services_comments:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-comments
+    SERVICE_PATH: MiniSpace.Services.Comments
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Comments/**
+
+build_services_mediafiles:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-mediafiles
+    SERVICE_PATH: MiniSpace.Services.MediaFiles
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.MediaFiles/**
+
+# build_services_organizations:
+#   <<: *build_template
+#   variables:
+#     SERVICE_NAME: services-organizations
+#     SERVICE_PATH: MiniSpace.Services.Organizations
+#   rules:
+#     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+#     - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+#       changes:
+#         - MiniSpace.Services.Organizations/**
+
+build_services_notifications:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-notifications
+    SERVICE_PATH: MiniSpace.Services.Notifications
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Notifications/**
+
+build_services_reports:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-reports
+    SERVICE_PATH: MiniSpace.Services.Reports
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Reports/**
+
+build_services_email:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-email
+    SERVICE_PATH: MiniSpace.Services.Email
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.Services.Email/**
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $PRODUCTION_SERVER_IP >> ~/.ssh/known_hosts
+    - scp ./MiniSpace/compose/services-prod.yml $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP:/root/social_net_app
+    - ssh $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP 'bash -s' < deploy.sh $GITLAB_TOKEN
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE =~ /deploy/'
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE !~ /deploy-all/ && $CI_COMMIT_MESSAGE !~ /deploy/'
+      changes:
+        - MiniSpace.APIGateway/**
+        - MiniSpace.Web/**
+        - MiniSpace.Services.Identity/**
+        - MiniSpace.Services.Events/**
+        - MiniSpace.Services.Students/**
+        - MiniSpace.Services.Friends/**
+        - MiniSpace.Services.Reactions/**
+        - MiniSpace.Services.Posts/**
+        - MiniSpace.Services.Comments/**
+        - MiniSpace.Services.MediaFiles/**
+        - MiniSpace.Services.Notifications/**
+        - MiniSpace.Services.Reports/**
+        - MiniSpace.Services.Email/**
+        # - MiniSpace.Services.Organizations/**

@@ -1,11 +1,15 @@
 using System;
-using Convey.CQRS.Events;
-using MiniSpace.Services.Notifications.Core.Repositories;
-using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Core.Entities;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
+using Convey.CQRS.Events;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Hubs;
+using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
+using MiniSpace.Services.Notifications.Core.Entities;
+using MiniSpace.Services.Notifications.Core.Repositories;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -15,17 +19,23 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
+        private readonly ILogger<EventParticipantRemovedHandler> _logger;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         public EventParticipantRemovedHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
-            IEventsServiceClient eventsServiceClient)
+            IEventsServiceClient eventsServiceClient,
+            ILogger<EventParticipantRemovedHandler> logger,
+            IHubContext<NotificationHub> hubContext)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _studentsServiceClient = studentsServiceClient;
             _eventsServiceClient = eventsServiceClient;
+            _logger = logger;
+            _hubContext = hubContext;
         }
 
         public async Task HandleAsync(EventParticipantRemoved eventArgs, CancellationToken cancellationToken)
@@ -60,16 +70,29 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await _studentNotificationsRepository.AddOrUpdateAsync(participantNotifications);
 
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: Guid.NewGuid(),
-                userId: eventArgs.Participant,
-                message: notificationMessage,
-                createdAt: DateTime.UtcNow,
-                eventType: NotificationEventType.NewEvent.ToString(),
-                relatedEntityId: eventArgs.EventId,
-                details: detailsHtml
+                notification.NotificationId,
+                eventArgs.Participant,
+                notificationMessage,
+                DateTime.UtcNow,
+                NotificationEventType.EventParticipantRemoved.ToString(),
+                eventArgs.EventId,
+                detailsHtml
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            var notificationDto = new NotificationDto
+            {
+                UserId = eventArgs.Participant,
+                Message = notificationMessage,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.EventParticipantRemoved,
+                RelatedEntityId = eventArgs.EventId,
+                Details = detailsHtml
+            };
+
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to participant with ID {eventArgs.Participant}.");
         }
     }
 }

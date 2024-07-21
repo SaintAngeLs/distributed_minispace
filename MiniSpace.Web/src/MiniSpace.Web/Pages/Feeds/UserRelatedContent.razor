@@ -1,0 +1,35 @@
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Students
+@inject IStudentsService StudentsService
+@using MudBlazor
+
+<MudPaper>
+    <MudText Typo="Typo.h5">Recommendations</MudText>
+    <!-- Add recommendation logic here -->
+    @if (recommendations != null)
+    {
+        @foreach (var recommendation in recommendations)
+        {
+            <MudText Typo="Typo.body1">@recommendation</MudText>
+        }
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    private List<string> recommendations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch recommendations based on the user ID
+        recommendations = await FetchRecommendationsAsync(UserId);
+    }
+
+    private Task<List<string>> FetchRecommendationsAsync(Guid userId)
+    {
+        // Dummy implementation, replace with actual recommendation logic
+        return Task.FromResult(new List<string> { "Event 1", "Event 2", "Event 3" });
+    }
+}

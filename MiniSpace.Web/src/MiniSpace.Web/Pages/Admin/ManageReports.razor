@@ -16,6 +16,7 @@
 @inject IReportsService ReportsService
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+<AuthWrapper>
 <h1>Manage reports</h1>
 
 @if (!pageInitialized)
@@ -106,7 +107,7 @@
         }
     </RadzenStack>
 }
-
+</AuthWrapper>
 @code {
     private SearchReportsModel searchReportsModel = new();
     

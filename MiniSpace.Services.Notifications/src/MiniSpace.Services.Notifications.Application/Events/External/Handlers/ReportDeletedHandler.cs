@@ -1,11 +1,15 @@
-using Convey.CQRS.Events;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
+using Convey.CQRS.Events;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Hubs;
+using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
-using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -14,22 +18,33 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly ILogger<ReportDeletedHandler> _logger;
 
         public ReportDeletedHandler(
             IMessageBroker messageBroker,
             IStudentNotificationsRepository studentNotificationsRepository,
-            IStudentsServiceClient studentsServiceClient)
+            IStudentsServiceClient studentsServiceClient,
+            IHubContext<NotificationHub> hubContext,
+            ILogger<ReportDeletedHandler> logger)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
             _studentsServiceClient = studentsServiceClient;
+            _hubContext = hubContext;
+            _logger = logger;
         }
 
         public async Task HandleAsync(ReportDeleted eventArgs, CancellationToken cancellationToken)
         {
-            // Fetch student details
             var issuer = await _studentsServiceClient.GetAsync(eventArgs.IssuerId);
             var targetOwner = await _studentsServiceClient.GetAsync(eventArgs.TargetOwnerId);
+
+            if (issuer == null || targetOwner == null)
+            {
+                _logger.LogError("Issuer or target owner details not found.");
+                return;
+            }
 
             string issuerName = $"{issuer.FirstName} {issuer.LastName}";
             string targetOwnerName = $"{targetOwner.FirstName} {targetOwner.LastName}";
@@ -37,12 +52,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             // Detailed notification for issuer
             string issuerMessage = $"Dear {issuerName}, the report you filed about '{eventArgs.Category}' concerning '{eventArgs.ContextType}' has been deleted.";
             var issuerNotification = await CreateNotificationForUser(eventArgs.IssuerId, eventArgs, issuerMessage);
-            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, "ReportDeletionConfirmed", issuerName);
-            
+            await PublishAndSaveNotification(issuerNotification, eventArgs.IssuerId, issuerMessage);
+
             // Detailed notification for target owner
             string targetOwnerMessage = $"Hello {targetOwnerName}, a report about '{eventArgs.Category}' concerning your content '{eventArgs.ContextType}' has been deleted.";
             var targetOwnerNotification = await CreateNotificationForUser(eventArgs.TargetOwnerId, eventArgs, targetOwnerMessage);
-            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, "ReportDeleted", targetOwnerName);
+            await PublishAndSaveNotification(targetOwnerNotification, eventArgs.TargetOwnerId, targetOwnerMessage);
         }
 
         private async Task<Notification> CreateNotificationForUser(Guid userId, ReportDeleted eventArgs, string message)
@@ -63,19 +78,33 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             return notification;
         }
 
-        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string eventType, string userName)
+        private async Task PublishAndSaveNotification(Notification notification, Guid userId, string message)
         {
             var notificationCreatedEvent = new NotificationCreated(
-                notificationId: notification.NotificationId,
-                userId: notification.UserId,
-                message: $"{userName}, {notification.Message}",
-                createdAt: notification.CreatedAt,
-                eventType: NotificationEventType.ReportDeleted.ToString(),
-                relatedEntityId: notification.RelatedEntityId,
-                details: $"Notification for user {userId} ({userName}). Message: {notification.Message}"
+                notification.NotificationId,
+                notification.UserId,
+                message,
+                notification.CreatedAt,
+                NotificationEventType.ReportDeleted.ToString(),
+                notification.RelatedEntityId,
+                $"Notification for user {userId}. Message: {message}"
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
+
+            var notificationDto = new NotificationDto
+            {
+                UserId = notification.UserId,
+                Message = message,
+                CreatedAt = DateTime.UtcNow,
+                EventType = NotificationEventType.ReportDeleted,
+                RelatedEntityId = notification.RelatedEntityId,
+                Details = $"Notification for user {userId}. Message: {message}"
+            };
+
+            // Broadcast SignalR notification
+            await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
+            _logger.LogInformation($"Broadcasted SignalR notification to user with ID {userId}.");
         }
     }
 }

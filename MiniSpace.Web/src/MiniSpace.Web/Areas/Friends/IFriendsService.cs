@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.HttpClients;
 

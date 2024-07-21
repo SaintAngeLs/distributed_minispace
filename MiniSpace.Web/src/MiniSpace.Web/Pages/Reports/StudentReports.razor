@@ -17,7 +17,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 
-
+<AuthWrapper>
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
 </div>
@@ -138,7 +138,7 @@
         }
     </RadzenStack>
 }
-
+</AuthWrapper>
 @code {
     private GetStudentReportsModel getStudentReportsModel = new();
     

@@ -10,6 +10,7 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 
+<AuthWrapper>
 <h3>Update your event</h3>
 
 @if (!pageInitialized)
@@ -166,7 +167,7 @@
         </RadzenFieldset>
     </RadzenTemplateForm>
 }
-
+</AuthWrapper>
 @code {
     [Parameter]
     public string EventId { get; set; }

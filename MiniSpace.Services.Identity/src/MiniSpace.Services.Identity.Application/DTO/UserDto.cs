@@ -14,6 +14,10 @@ namespace MiniSpace.Services.Identity.Application.DTO
         public string Role { get; set; }
         public DateTime CreatedAt { get; set; }
         public IEnumerable<string> Permissions { get; set; }
+        public bool IsEmailVerified { get; set; }
+        public DateTime? EmailVerifiedAt { get; set; } 
+        public bool IsTwoFactorEnabled { get; set; }
+        public string TwoFactorSecret { get; set; }
 
         public UserDto()
         {
@@ -27,6 +31,10 @@ namespace MiniSpace.Services.Identity.Application.DTO
             Role = user.Role;
             CreatedAt = user.CreatedAt;
             Permissions = user.Permissions;
+            IsEmailVerified = user.IsEmailVerified;
+            EmailVerifiedAt = user.EmailVerifiedAt;
+            IsTwoFactorEnabled = user.IsTwoFactorEnabled;
+            TwoFactorSecret = user.TwoFactorSecret;
         }
     }
 }
