@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
-          fetch-depth: 0  # Fetch all branches
+          fetch-depth: 0  # Fetch all branches and tags
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -43,6 +43,7 @@ jobs:
       - name: Remove .gitlab-ci.yml for specific repository
         run: |
           if [[ "${{ github.repository }}" == "SaintAngeLs/distributed_minispace" ]]; then
+            echo "Removing .gitlab-ci.yml from the deployment package for SaintAngeLs repository."
             rm -f .gitlab-ci.yml
           fi
 
@@ -73,5 +74,4 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
           GITLAB_REPO_1: 'SaintAngeLs/distributed_minispace'
           GITLAB_REPO_2: 'distributed-asp-net-core-blazor-social-app/distributed_minispace'
-        run: |
-          python .github/workflows/sync_prs_issues.py
+        run: python .github/workflows/sync_prs_issues.py
