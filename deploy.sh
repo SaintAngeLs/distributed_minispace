@@ -16,6 +16,7 @@ docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distr
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reports:latest
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-email:latest
 
+echo "Using GITLAB_TOKEN: ${GITLAB_TOKEN}"
 # Clone the appsettings repository
 git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_public_settings.git /tmp/events_public_settings
 
