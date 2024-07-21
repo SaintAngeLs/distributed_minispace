@@ -44,6 +44,8 @@ build:
     - docker push $DOCKER_IMAGE/services-notifications:latest
     - docker push $DOCKER_IMAGE/services-reports:latest
     - docker push $DOCKER_IMAGE/services-email:latest
+   only:
+    - main
 
 deploy:
   stage: deploy
@@ -56,4 +58,4 @@ deploy:
     - ssh-keyscan -H $PRODUCTION_SERVER_IP >> ~/.ssh/known_hosts
     - ssh $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP 'bash -s' < deploy.sh $GITLAB_TOKEN
   only:
-    - notification_service_update
+    - main
