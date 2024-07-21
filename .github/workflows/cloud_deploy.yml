@@ -3,7 +3,7 @@ name: Deploy to Cloud
 on:
   push:
     branches:
-      - main
+      - notification_service_update
   pull_request:
     branches:
       - main 
