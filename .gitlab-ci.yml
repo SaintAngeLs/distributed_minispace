@@ -47,13 +47,13 @@ build:
 
 deploy:
   stage: deploy
-  image: docker:latest
+  image: alpine:latest
   script:
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $PRODUCTION_SERVER_IP >> ~/.ssh/known_hosts
-    - ssh $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP 'bash -s' < deploy.sh
+    - ssh $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP 'bash -s' < deploy.sh $GITLAB_TOKEN
   only:
     - notification_service_update

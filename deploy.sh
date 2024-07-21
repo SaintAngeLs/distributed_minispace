@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ -z "$1" ]; then
+  echo "GITLAB_TOKEN is not provided"
+  exit 1
+fi
+
+GITLAB_TOKEN=$1
+
+
 # Pull the latest images
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/api-gateway:latest
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/web:latest
