@@ -119,6 +119,7 @@ build_services_mediafiles:
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
       - MiniSpace.Services.MediaFiles/**
 
+
 # build_services_organizations:
 #   <<: *build_template
 #   variables:
