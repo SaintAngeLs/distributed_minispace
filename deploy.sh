@@ -33,6 +33,7 @@ function setup_environment() {
 
     for service in "${services[@]}"
     do
+        echo "Pulling image for $service"
         if docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/$service:latest; then
             echo "$service image pulled successfully"
         else
