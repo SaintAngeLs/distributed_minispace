@@ -23,23 +23,68 @@ jobs:
         ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
         cat ~/.ssh/known_hosts 
 
-    - name: Check the structure
-      run: |
-        pwd
-        ls -la
-        cd ./MiniSpace/scripts/ 
-        ls -la
-
     - name: Docker Login
       run: |
         echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Clone appsettings repository
+      env:
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      run: |
+        git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_public_settings.git /tmp/events_public_settings
+        ls -la /tmp/events_public_settings
+
+    - name: Copy appsettings to the correct locations
+      run: |
+        cp /tmp/events_public_settings/APIGateway/appsettings.json ./MiniSpace.APIGateway/src/MiniSpace.APIGateway/
+        cp /tmp/events_public_settings/APIGateway/appsettings.docker.json ./MiniSpace.APIGateway/src/MiniSpace.APIGateway/
+        
+        cp /tmp/events_public_settings/Services.Comments/appsettings.json ./MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/
+        cp /tmp/events_public_settings/Services.Comments/appsettings.docker.json ./MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/
+        
+        cp /tmp/events_public_settings/Services.Email/appsettings.json ./MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/
+        cp /tmp/events_public_settings/Services.Email/appsettings.docker.json ./MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/
+        
+        cp /tmp/events_public_settings/Services.Events/appsettings.json ./MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/
+        cp /tmp/events_public_settings/Services.Events/appsettings.docker.json ./MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/
+        
+        cp /tmp/events_public_settings/Services.Friends/appsettings.json ./MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/
+        cp /tmp/events_public_settings/Services.Friends/appsettings.docker.json ./MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/
+        
+        cp /tmp/events_public_settings/Services.Identity/appsettings.json ./MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/
+        cp /tmp/events_public_settings/Services.Identity/appsettings.docker.json ./MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/
+        
+        cp /tmp/events_public_settings/Services.MediaFiles/appsettings.json ./MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/
+        cp /tmp/events_public_settings/Services.MediaFiles/appsettings.docker.json ./MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/
+        
+        cp /tmp/events_public_settings/Services.Notifications/appsettings.json ./MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/
+        cp /tmp/events_public_settings/Services.Notifications/appsettings.docker.json ./MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/
+        
+        cp /tmp/events_public_settings/Services.Organizations/appsettings.json ./MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
+        cp /tmp/events_public_settings/Services.Organizations/appsettings.docker.json ./MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
+        
+        cp /tmp/events_public_settings/Services.Posts/appsettings.json ./MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/
+        cp /tmp/events_public_settings/Services.Posts/appsettings.docker.json ./MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/
+        
+        cp /tmp/events_public_settings/Services.Reactions/appsettings.json ./MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api/
+        cp /tmp/events_public_settings/Services.Reactions/appsettings.docker.json ./MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api/
+        
+        cp /tmp/events_public_settings/Services.Reports/appsettings.json ./MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api/
+        cp /tmp/events_public_settings/Services.Reports/appsettings.docker.json ./MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api/
+        
+        cp /tmp/events_public_settings/Services.Students/appsettings.json ./MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/
+        cp /tmp/events_public_settings/Services.Students/appsettings.docker.json ./MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/
+        
+        cp /tmp/events_public_settings/Web/appsettings.json ./MiniSpace.Web/src/MiniSpace.Web/
+        cp /tmp/events_public_settings/Web/appsettings.Development.json ./MiniSpace.Web/src/MiniSpace.Web/
+        ls -la ./MiniSpace/
 
     - name: Run dockerize_all.sh
       run: |
         chmod +x ./MiniSpace/scripts/dockerize-all.sh
         ./MiniSpace/scripts/dockerize-all.sh
 
-    - name: Check the structure 2
+    - name: Check the structure
       run: |
         pwd
         ls -la
@@ -62,7 +107,7 @@ jobs:
           docker-compose -f infrastructure.yml up -d
           docker ps -a
         EOF
-        
+
     - name: Pull latest images for services
       run: |
         ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
@@ -77,17 +122,3 @@ jobs:
           docker-compose -f services.yml up -d
           docker ps -a
         EOF
-
-   
-    # - name: Stop and Remove Containers
-    #   run: |
-    #     ssh root@${{ secrets.DROPLET_IP }} "docker ps -q --filter network=swiftparcel-network | xargs -r docker stop && docker ps -a -q --filter network=swiftparcel-network | xargs -r docker rm"
-
-    # - name: Clean up existing Cloud networks
-    #   run: |
-    #     ssh root@${{ secrets.DROPLET_IP }} "docker network rm swiftparcel-network || true"
-
-    # - name: Deploy to Cloud
-    #   run: |
-    #     scp -r ./SwiftParcel/d-docker-compose root@${{ secrets.DROPLET_IP }}:${{ secrets.CLOUD_PROJECT_PATH }}
-    #     ssh root@${{ secrets.DROPLET_IP }} "cd ${{ secrets.CLOUD_PROJECT_PATH }}/SwiftParcel/d-docker-compose && docker-compose -f ${{ secrets.CLOUD_DEPLOYMENT_FILE }} pull && docker-compose -f ${{ secrets.CLOUD_DEPLOYMENT_FILE }} up -d --force-recreate"
