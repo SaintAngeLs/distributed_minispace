@@ -12,40 +12,138 @@ services:
 before_script:
   - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
 
-build:
+.build_template: &build_template
   stage: build
   image: docker:latest
   script:
-    - docker build -t $DOCKER_IMAGE/api-gateway:latest MiniSpace.APIGateway
-    - docker build -t $DOCKER_IMAGE/web:latest MiniSpace.Web
-    - docker build -t $DOCKER_IMAGE/services-identity:latest MiniSpace.Services.Identity
-    - docker build -t $DOCKER_IMAGE/services-events:latest MiniSpace.Services.Events
-    - docker build -t $DOCKER_IMAGE/services-students:latest MiniSpace.Services.Students
-    - docker build -t $DOCKER_IMAGE/services-friends:latest MiniSpace.Services.Friends
-    - docker build -t $DOCKER_IMAGE/services-reactions:latest MiniSpace.Services.Reactions
-    - docker build -t $DOCKER_IMAGE/services-posts:latest MiniSpace.Services.Posts
-    - docker build -t $DOCKER_IMAGE/services-comments:latest MiniSpace.Services.Comments
-    - docker build -t $DOCKER_IMAGE/services-mediafiles:latest MiniSpace.Services.MediaFiles
-    # - docker build -t $DOCKER_IMAGE/services-organizations:latest MiniSpace.Services.Organizations
-    - docker build -t $DOCKER_IMAGE/services-notifications:latest MiniSpace.Services.Notifications
-    - docker build -t $DOCKER_IMAGE/services-reports:latest MiniSpace.Services.Reports
-    - docker build -t $DOCKER_IMAGE/services-email:latest MiniSpace.Services.Email
-    - docker push $DOCKER_IMAGE/api-gateway:latest
-    - docker push $DOCKER_IMAGE/web:latest
-    - docker push $DOCKER_IMAGE/services-identity:latest
-    - docker push $DOCKER_IMAGE/services-events:latest
-    - docker push $DOCKER_IMAGE/services-students:latest
-    - docker push $DOCKER_IMAGE/services-friends:latest
-    - docker push $DOCKER_IMAGE/services-reactions:latest
-    - docker push $DOCKER_IMAGE/services-posts:latest
-    - docker push $DOCKER_IMAGE/services-comments:latest
-    - docker push $DOCKER_IMAGE/services-mediafiles:latest
-    # - docker push $DOCKER_IMAGE/services-organizations:latest
-    - docker push $DOCKER_IMAGE/services-notifications:latest
-    - docker push $DOCKER_IMAGE/services-reports:latest
-    - docker push $DOCKER_IMAGE/services-email:latest
-  # only:
-  #   - main
+    - docker build -t $DOCKER_IMAGE/$SERVICE_NAME:latest $SERVICE_PATH
+    - docker push $DOCKER_IMAGE/$SERVICE_NAME:latest
+
+build_api_gateway:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: api-gateway
+    SERVICE_PATH: MiniSpace.APIGateway
+  rules:
+    - changes:
+      - MiniSpace.APIGateway/**
+
+build_web:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: web
+    SERVICE_PATH: MiniSpace.Web
+  rules:
+    - changes:
+      - MiniSpace.Web/**
+
+build_services_identity:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-identity
+    SERVICE_PATH: MiniSpace.Services.Identity
+  rules:
+    - changes:
+      - MiniSpace.Services.Identity/**
+
+build_services_events:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-events
+    SERVICE_PATH: MiniSpace.Services.Events
+  rules:
+    - changes:
+      - MiniSpace.Services.Events/**
+
+build_services_students:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-students
+    SERVICE_PATH: MiniSpace.Services.Students
+  rules:
+    - changes:
+      - MiniSpace.Services.Students/**
+
+build_services_friends:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-friends
+    SERVICE_PATH: MiniSpace.Services.Friends
+  rules:
+    - changes:
+      - MiniSpace.Services.Friends/**
+
+build_services_reactions:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-reactions
+    SERVICE_PATH: MiniSpace.Services.Reactions
+  rules:
+    - changes:
+      - MiniSpace.Services.Reactions/**
+
+build_services_posts:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-posts
+    SERVICE_PATH: MiniSpace.Services.Posts
+  rules:
+    - changes:
+      - MiniSpace.Services.Posts/**
+
+build_services_comments:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-comments
+    SERVICE_PATH: MiniSpace.Services.Comments
+  rules:
+    - changes:
+      - MiniSpace.Services.Comments/**
+
+build_services_mediafiles:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-mediafiles
+    SERVICE_PATH: MiniSpace.Services.MediaFiles
+  rules:
+    - changes:
+      - MiniSpace.Services.MediaFiles/**
+
+# build_services_organizations:
+#   <<: *build_template
+#   variables:
+#     SERVICE_NAME: services-organizations
+#     SERVICE_PATH: MiniSpace.Services.Organizations
+#   rules:
+#     - changes:
+#       - MiniSpace.Services.Organizations/**
+
+build_services_notifications:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-notifications
+    SERVICE_PATH: MiniSpace.Services.Notifications
+  rules:
+    - changes:
+      - MiniSpace.Services.Notifications/**
+
+build_services_reports:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-reports
+    SERVICE_PATH: MiniSpace.Services.Reports
+  rules:
+    - changes:
+      - MiniSpace.Services.Reports/**
+
+build_services_email:
+  <<: *build_template
+  variables:
+    SERVICE_NAME: services-email
+    SERVICE_PATH: MiniSpace.Services.Email
+  rules:
+    - changes:
+      - MiniSpace.Services.Email/**
 
 deploy:
   stage: deploy
@@ -58,5 +156,5 @@ deploy:
     - ssh-keyscan -H $PRODUCTION_SERVER_IP >> ~/.ssh/known_hosts
     - scp ./MiniSpace/compose/services-prod.yml $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP:/root/social_net_app
     - ssh $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP 'bash -s' < deploy.sh $GITLAB_TOKEN
-  # only:
-  #   - main
+  only:
+    - main
