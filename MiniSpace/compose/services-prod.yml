@@ -82,14 +82,14 @@ services:
     networks:
       - minispace
 
-  organizations-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
-    container_name: organizations-service
-    restart: unless-stopped
-    ports:
-      - 5015:80
-    networks:
-      - minispace
+  # organizations-service:
+  #   image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
+  #   container_name: organizations-service
+  #   restart: unless-stopped
+  #   ports:
+  #     - 5015:80
+  #   networks:
+  #     - minispace
 
   notifications-service:
     image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-notifications:latest

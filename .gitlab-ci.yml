@@ -202,3 +202,4 @@ deploy:
         - MiniSpace.Services.Notifications/**
         - MiniSpace.Services.Reports/**
         - MiniSpace.Services.Email/**
+        # - MiniSpace.Services.Organizations/**
