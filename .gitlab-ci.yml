@@ -27,7 +27,8 @@ build_api_gateway:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.APIGateway/**
+        paths:
+          - MiniSpace.APIGateway/**
 
 build_web:
   <<: *build_template
@@ -37,7 +38,8 @@ build_web:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Web/**
+        paths:
+          - MiniSpace.Web/**
 
 build_services_identity:
   <<: *build_template
@@ -47,7 +49,8 @@ build_services_identity:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Identity/**
+        paths:
+          - MiniSpace.Services.Identity/**
 
 build_services_events:
   <<: *build_template
@@ -57,7 +60,8 @@ build_services_events:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Events/**
+        paths:
+          - MiniSpace.Services.Events/**
 
 build_services_students:
   <<: *build_template
@@ -67,7 +71,8 @@ build_services_students:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Students/**
+        paths:
+          - MiniSpace.Services.Students/**
 
 build_services_friends:
   <<: *build_template
@@ -77,7 +82,8 @@ build_services_friends:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Friends/**
+        paths:
+          - MiniSpace.Services.Friends/**
 
 build_services_reactions:
   <<: *build_template
@@ -87,7 +93,8 @@ build_services_reactions:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Reactions/**
+        paths:
+          - MiniSpace.Services.Reactions/**
 
 build_services_posts:
   <<: *build_template
@@ -97,7 +104,8 @@ build_services_posts:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Posts/**
+        paths:
+          - MiniSpace.Services.Posts/**
 
 build_services_comments:
   <<: *build_template
@@ -107,7 +115,8 @@ build_services_comments:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Comments/**
+        paths:
+          - MiniSpace.Services.Comments/**
 
 build_services_mediafiles:
   <<: *build_template
@@ -117,8 +126,8 @@ build_services_mediafiles:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.MediaFiles/**
-
+        paths:
+          - MiniSpace.Services.MediaFiles/**
 
 # build_services_organizations:
 #   <<: *build_template
@@ -128,7 +137,8 @@ build_services_mediafiles:
 #   rules:
 #     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
 #     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-#       - MiniSpace.Services.Organizations/**
+#         paths:
+#           - MiniSpace.Services.Organizations/**
 
 build_services_notifications:
   <<: *build_template
@@ -138,7 +148,8 @@ build_services_notifications:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Notifications/**
+        paths:
+          - MiniSpace.Services.Notifications/**
 
 build_services_reports:
   <<: *build_template
@@ -148,7 +159,8 @@ build_services_reports:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Reports/**
+        paths:
+          - MiniSpace.Services.Reports/**
 
 build_services_email:
   <<: *build_template
@@ -158,7 +170,8 @@ build_services_email:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.Services.Email/**
+        paths:
+          - MiniSpace.Services.Email/**
 
 deploy:
   stage: deploy
@@ -175,18 +188,19 @@ deploy:
     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
     - if: '$CI_COMMIT_MESSAGE =~ /deploy/'
     - if: '$CI_COMMIT_MESSAGE !~ /deploy-all/ && $CI_COMMIT_MESSAGE !~ /deploy/' && changes:
-      - MiniSpace.APIGateway/**
-      - MiniSpace.Web/**
-      - MiniSpace.Services.Identity/**
-      - MiniSpace.Services.Events/**
-      - MiniSpace.Services.Students/**
-      - MiniSpace.Services.Friends/**
-      - MiniSpace.Services.Reactions**
-      - MiniSpace.Services.Posts/**
-      - MiniSpace.Services.Comments/**
-      - MiniSpace.Services.MediaFiles/**
-      - MiniSpace.Services.Notifications/**
-      - MiniSpace.Services.Reports/**
-      - MiniSpace.Services.Email/**
+        paths:
+          - MiniSpace.APIGateway/**
+          - MiniSpace.Web/**
+          - MiniSpace.Services.Identity/**
+          - MiniSpace.Services.Events/**
+          - MiniSpace.Services.Students/**
+          - MiniSpace.Services.Friends/**
+          - MiniSpace.Services.Reactions/**
+          - MiniSpace.Services.Posts/**
+          - MiniSpace.Services.Comments/**
+          - MiniSpace.Services.MediaFiles/**
+          - MiniSpace.Services.Notifications/**
+          - MiniSpace.Services.Reports/**
+          - MiniSpace.Services.Email/**
   only:
     - main
