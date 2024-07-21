@@ -11,7 +11,7 @@ services:
       - minispace
 
   identity-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/identity-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-identity:latest
     container_name: identity-service
     restart: unless-stopped
     ports:
@@ -20,7 +20,7 @@ services:
       - minispace
 
   students-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/students-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-students:latest
     container_name: students-service
     restart: unless-stopped
     ports:
@@ -29,7 +29,7 @@ services:
       - minispace
 
   events-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/events-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-events:latest
     container_name: events-service
     restart: unless-stopped
     ports:
@@ -38,7 +38,7 @@ services:
       - minispace
 
   comments-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/comments-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-comments:latest
     container_name: comments-service
     restart: unless-stopped
     ports:
@@ -47,7 +47,7 @@ services:
       - minispace
 
   reactions-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/reactions-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reactions:latest
     container_name: reactions-service
     restart: unless-stopped
     ports:
@@ -56,7 +56,7 @@ services:
       - minispace
 
   friends-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/friends-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-friends:latest
     container_name: friends-service
     restart: unless-stopped
     ports:
@@ -65,7 +65,7 @@ services:
       - minispace
 
   posts-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/posts-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-posts:latest
     container_name: posts-service
     restart: unless-stopped
     ports:
@@ -74,7 +74,7 @@ services:
       - minispace
 
   mediafiles-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/mediafiles-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-mediafiles:latest
     container_name: mediafiles-service
     restart: unless-stopped
     ports:
@@ -83,7 +83,7 @@ services:
       - minispace
 
   organizations-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/organizations-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
     container_name: organizations-service
     restart: unless-stopped
     ports:
@@ -92,7 +92,7 @@ services:
       - minispace
 
   notifications-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/notifications-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-notifications:latest
     container_name: notifications-service
     restart: unless-stopped
     ports:
@@ -101,7 +101,7 @@ services:
       - minispace
 
   reports-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/reports-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reports:latest
     container_name: reports-service
     restart: unless-stopped
     ports:
@@ -110,14 +110,14 @@ services:
       - minispace
 
   email-service:
-    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/email-service:latest
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-email:latest
     container_name: email-service
     restart: unless-stopped
     ports:
       - 5016:80
     networks:
       - minispace
-  
+
   web:
     image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/web:latest
     container_name: web
