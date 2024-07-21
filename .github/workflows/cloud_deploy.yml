@@ -15,13 +15,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up SSH
-      run: |
-        mkdir -p ~/.ssh/
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
-        cat ~/.ssh/known_hosts 
+    # - name: Set up SSH
+    #   run: |
+    #     mkdir -p ~/.ssh/
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+    #     cat ~/.ssh/known_hosts 
 
     - name: Docker Login
       run: |
@@ -31,7 +31,7 @@ jobs:
       env:
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       run: |
-        git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_public_settings.git /tmp/events_public_settings
+        git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_apsettings_dev.git /tmp/events_public_settings
         ls -la /tmp/events_public_settings
 
     - name: Copy appsettings to the correct locations
@@ -89,36 +89,36 @@ jobs:
         pwd
         ls -la
 
-    - name: Test SSH Connection
-      run: |
-        ssh -vvv ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
+    # - name: Test SSH Connection
+    #   run: |
+    #     ssh -vvv ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} "echo SSH Connection Successful"
 
-    - name: Copy and recreate deployment files
-      run: |
-        scp -r ./MiniSpace/compose/infrastructure.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
-        scp -r ./MiniSpace/compose/services.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
-        scp -r ./MiniSpace/compose/prometheus ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
-        scp -r ./MiniSpace/compose/rabbitmq ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+    # - name: Copy and recreate deployment files
+    #   run: |
+    #     scp -r ./MiniSpace/compose/infrastructure.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+    #     scp -r ./MiniSpace/compose/services.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+    #     scp -r ./MiniSpace/compose/prometheus ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
+    #     scp -r ./MiniSpace/compose/rabbitmq ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/social_net_app/
 
-    - name: Deploy containers with the infrastructure images
-      run: |
-        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
-          cd /root/social_net_app
-          docker-compose -f infrastructure.yml up -d
-          docker ps -a
-        EOF
+    # - name: Deploy containers with the infrastructure images
+    #   run: |
+    #     ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+    #       cd /root/social_net_app
+    #       docker-compose -f infrastructure.yml up -d
+    #       docker ps -a
+    #     EOF
 
-    - name: Pull latest images for services
-      run: |
-        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
-          cd /root/social_net_app
-          docker-compose -f services.yml pull
-        EOF
+    # - name: Pull latest images for services
+    #   run: |
+    #     ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+    #       cd /root/social_net_app
+    #       docker-compose -f services.yml pull
+    #     EOF
 
-    - name: Deploy containers with the services images
-      run: |
-        ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
-          cd /root/social_net_app
-          docker-compose -f services.yml up -d
-          docker ps -a
-        EOF
+    # - name: Deploy containers with the services images
+    #   run: |
+    #     ssh -T ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << EOF
+    #       cd /root/social_net_app
+    #       docker-compose -f services.yml up -d
+    #       docker ps -a
+    #     EOF

@@ -1,0 +1,133 @@
+version: "3.7"
+
+services:
+  api-gateway:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/api-gateway:latest
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - 5000:80
+    networks:
+      - minispace
+
+  identity-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/identity-service:latest
+    container_name: identity-service
+    restart: unless-stopped
+    ports:
+      - 5004:80
+    networks:
+      - minispace
+
+  students-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/students-service:latest
+    container_name: students-service
+    restart: unless-stopped
+    ports:
+      - 5007:80
+    networks:
+      - minispace
+
+  events-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/events-service:latest
+    container_name: events-service
+    restart: unless-stopped
+    ports:
+      - 5008:80
+    networks:
+      - minispace
+
+  comments-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/comments-service:latest
+    container_name: comments-service
+    restart: unless-stopped
+    ports:
+      - 5009:80
+    networks:
+      - minispace
+
+  reactions-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/reactions-service:latest
+    container_name: reactions-service
+    restart: unless-stopped
+    ports:
+      - 5010:80
+    networks:
+      - minispace
+
+  friends-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/friends-service:latest
+    container_name: friends-service
+    restart: unless-stopped
+    ports:
+      - 5012:80
+    networks:
+      - minispace
+
+  posts-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/posts-service:latest
+    container_name: posts-service
+    restart: unless-stopped
+    ports:
+      - 5013:80
+    networks:
+      - minispace
+
+  mediafiles-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/mediafiles-service:latest
+    container_name: mediafiles-service
+    restart: unless-stopped
+    ports:
+      - 5014:80
+    networks:
+      - minispace
+
+  organizations-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/organizations-service:latest
+    container_name: organizations-service
+    restart: unless-stopped
+    ports:
+      - 5015:80
+    networks:
+      - minispace
+
+  notifications-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/notifications-service:latest
+    container_name: notifications-service
+    restart: unless-stopped
+    ports:
+      - 5006:80
+    networks:
+      - minispace
+
+  reports-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/reports-service:latest
+    container_name: reports-service
+    restart: unless-stopped
+    ports:
+      - 5005:80
+    networks:
+      - minispace
+
+  email-service:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/email-service:latest
+    container_name: email-service
+    restart: unless-stopped
+    ports:
+      - 5016:80
+    networks:
+      - minispace
+  
+  web:
+    image: registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/web:latest
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - 5606:80
+    networks:
+      - minispace
+
+networks:
+  minispace:
+    name: minispace-network
+    external: true

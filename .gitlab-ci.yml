@@ -56,6 +56,7 @@ deploy:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $PRODUCTION_SERVER_IP >> ~/.ssh/known_hosts
+    - scp ./MiniSpace/compose/services-prod.yml $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP:/root/social_net_app
     - ssh $PRODUCTION_SERVER_USER@$PRODUCTION_SERVER_IP 'bash -s' < deploy.sh $GITLAB_TOKEN
   # only:
   #   - main

@@ -7,6 +7,7 @@ if [ -z "$1" ]; then
 fi
 
 GITLAB_TOKEN=$1
+DOCKER_COMPOSE_FILE="/root/social_net_app/services-prod.yml"
 
 echo "Using GITLAB_TOKEN: ${GITLAB_TOKEN}"
 
@@ -14,51 +15,53 @@ echo "Using GITLAB_TOKEN: ${GITLAB_TOKEN}"
 function setup_environment() {
     echo "Pulling latest images and cloning settings repository..."
 
-    # Pull images for all services
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/api-gateway:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/web:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-identity:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-events:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-students:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-friends:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reactions:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-posts:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-comments:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-mediafiles:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-notifications:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reports:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-email:latest
-    docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
+    # List all the services and pull their images from GitLab container registry
+    declare -a services=("api-gateway" "web" "services-identity" "services-events" "services-students" "services-friends" "services-reactions" "services-posts" "services-comments" "services-mediafiles" "services-notifications" "services-reports" "services-email" "services-organizations")
+
+    for service in "${services[@]}"
+    do
+        docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/$service:latest
+    done
 
     # Clone the settings repository
     git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/distributed-asp-net-core-blazor-social-app/events_public_settings.git /tmp/events_public_settings
 }
 
 function copy_configuration() {
-    local service=$1
-    local source_path=$2
-    local destination_path=$3
+    local service_name=$1
+    local source_path="/tmp/events_public_settings/${service_name}"
+    local destination_path="/root/social_net_app/MiniSpace.${service_name}/src/MiniSpace.${service_name}"
 
-    echo "Setting up configuration for $service..."
+    echo "Setting up configuration for $service_name..."
 
+    # Ensure the destination directory exists and copy the configuration files
     mkdir -p "${destination_path}"
-    cp "${source_path}/appsettings.json" "${destination_path}"
-    cp "${source_path}/appsettings.docker.json" "${destination_path}"
+    cp "${source_path}/appsettings.json" "${destination_path}/appsettings.json"
+    cp "${source_path}/appsettings.docker.json" "${destination_path}/appsettings.docker.json"
 }
 
 # Setup environment
 setup_environment
 
 # Copy configurations to respective directories
-copy_configuration "API Gateway" "/tmp/events_public_settings/APIGateway" "/root/social_net_app/MiniSpace.APIGateway/src/MiniSpace.APIGateway"
-copy_configuration "Services Comments" "/tmp/events_public_settings/Services.Comments" "/root/social_net_app/MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api"
-copy_configuration "Services Email" "/tmp/events_public_settings/Services.Email" "/root/social_net_app/MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api"
-copy_configuration "Services Events" "/tmp/events_public_settings/Services.Events" "/root/social_net_app/MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api"
-copy_configuration "Services Friends" "/tmp/events_public_settings/Services.Friends" "/root/social_net_app/MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api"
-copy_configuration "Services Identity" "/tmp/events_public_settings/Services.Identity" "/root/social_net_app/MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api"
-copy_configuration "Services MediaFiles" "/tmp/events_public_settings/Services.MediaFiles" "/root/social_net_app/MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api"
-copy_configuration "Services Notifications" "/tmp/events_public_settings/Services.Notifications" "/root/social_net_app/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api"
-copy_configuration "Services Organizations" "/tmp/events_public_settings/Services.Organizations" "/root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api"
-copy_configuration "Services Posts" "/tmp/events_public_settings/Services.Posts" "/root/social_net_app/MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api"
+# Specify the exact name of the folder if it differs from the service name
+copy_configuration "APIGateway"
+copy_configuration "Services.Comments"
+copy_configuration "Services.Email"
+copy_configuration "Services.Events"
+copy_configuration "Services.Friends"
+copy_configuration "Services.Identity"
+copy_configuration "Services.MediaFiles"
+copy_configuration "Services.Notifications"
+copy_configuration "Services.Organizations"
+copy_configuration "Services.Posts"
+copy_configuration "Services.Reactions"
+copy_configuration "Services.Reports"
+copy_configuration "Services.Students"
+
+echo "Configurations set. Deploying with Docker Compose..."
+
+# Run Docker Compose to start all services
+docker-compose -f "$DOCKER_COMPOSE_FILE" up -d
 
 echo "Deployment completed successfully."
