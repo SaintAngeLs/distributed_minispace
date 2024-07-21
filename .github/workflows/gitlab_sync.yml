@@ -33,7 +33,7 @@ jobs:
           pip install requests
 
       - name: Sync Pull Requests and Issues to GitLab
-        run: python sync_prs_issues.py
+        run: python .github/workflows/sync_prs_issues.py
 
       - name: Configuring git
         run: |
