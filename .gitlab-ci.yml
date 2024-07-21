@@ -44,7 +44,7 @@ build:
     - docker push $DOCKER_IMAGE/services-notifications:latest
     - docker push $DOCKER_IMAGE/services-reports:latest
     - docker push $DOCKER_IMAGE/services-email:latest
-   only:
+  only:
     - main
 
 deploy:
