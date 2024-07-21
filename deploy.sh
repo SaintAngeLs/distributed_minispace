@@ -11,7 +11,7 @@ docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distr
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-posts:latest
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-comments:latest
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-mediafiles:latest
-docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
+# docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-organizations:latest
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-notifications:latest
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-reports:latest
 docker pull registry.gitlab.com/distributed-asp-net-core-blazor-social-app/distributed_minispace/services-email:latest
@@ -44,8 +44,8 @@ cp /tmp/events_public_settings/Services.MediaFiles/appsettings.docker.json /root
 cp /tmp/events_public_settings/Services.Notifications/appsettings.json /root/social_net_app/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/
 cp /tmp/events_public_settings/Services.Notifications/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/
 
-cp /tmp/events_public_settings/Services.Organizations/appsettings.json /root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
-cp /tmp/events_public_settings/Services.Organizations/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
+# cp /tmp/events_public_settings/Services.Organizations/appsettings.json /root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
+# cp /tmp/events_public_settings/Services.Organizations/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/
 
 cp /tmp/events_public_settings/Services.Posts/appsettings.json /root/social_net_app/MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/
 cp /tmp/events_public_settings/Services.Posts/appsettings.docker.json /root/social_net_app/MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/

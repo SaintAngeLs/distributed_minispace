@@ -26,7 +26,7 @@ build:
     - docker build -t $DOCKER_IMAGE/services-posts:latest MiniSpace.Services.Posts
     - docker build -t $DOCKER_IMAGE/services-comments:latest MiniSpace.Services.Comments
     - docker build -t $DOCKER_IMAGE/services-mediafiles:latest MiniSpace.Services.MediaFiles
-    - docker build -t $DOCKER_IMAGE/services-organizations:latest MiniSpace.Services.Organizations
+    # - docker build -t $DOCKER_IMAGE/services-organizations:latest MiniSpace.Services.Organizations
     - docker build -t $DOCKER_IMAGE/services-notifications:latest MiniSpace.Services.Notifications
     - docker build -t $DOCKER_IMAGE/services-reports:latest MiniSpace.Services.Reports
     - docker build -t $DOCKER_IMAGE/services-email:latest MiniSpace.Services.Email
@@ -40,7 +40,7 @@ build:
     - docker push $DOCKER_IMAGE/services-posts:latest
     - docker push $DOCKER_IMAGE/services-comments:latest
     - docker push $DOCKER_IMAGE/services-mediafiles:latest
-    - docker push $DOCKER_IMAGE/services-organizations:latest
+    # - docker push $DOCKER_IMAGE/services-organizations:latest
     - docker push $DOCKER_IMAGE/services-notifications:latest
     - docker push $DOCKER_IMAGE/services-reports:latest
     - docker push $DOCKER_IMAGE/services-email:latest
