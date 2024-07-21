@@ -59,12 +59,3 @@ jobs:
         run: |
           git push gitlab1 --tags --force
           git push gitlab2 --tags --force
-
-      - name: Sync Pull Requests and Issues to GitLab
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-          GITHUB_REPO: ${{ github.repository }}
-          GITLAB_REPO_1: 'SaintAngeLs/distributed_minispace'
-          GITLAB_REPO_2: 'distributed-asp-net-core-blazor-social-app/distributed_minispace'
-        run: python .github/workflows/sync_prs_issues.py
