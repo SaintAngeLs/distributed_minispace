@@ -18,6 +18,7 @@ before_script:
   script:
     - docker build -t $DOCKER_IMAGE/$SERVICE_NAME:latest $SERVICE_PATH
     - docker push $DOCKER_IMAGE/$SERVICE_NAME:latest
+    
 
 build_api_gateway:
   <<: *build_template
@@ -25,8 +26,8 @@ build_api_gateway:
     SERVICE_NAME: api-gateway
     SERVICE_PATH: MiniSpace.APIGateway
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.APIGateway/**
 
@@ -36,8 +37,8 @@ build_web:
     SERVICE_NAME: web
     SERVICE_PATH: MiniSpace.Web
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Web/**
 
@@ -47,8 +48,8 @@ build_services_identity:
     SERVICE_NAME: services-identity
     SERVICE_PATH: MiniSpace.Services.Identity
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Identity/**
 
@@ -58,8 +59,8 @@ build_services_events:
     SERVICE_NAME: services-events
     SERVICE_PATH: MiniSpace.Services.Events
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Events/**
 
@@ -69,8 +70,8 @@ build_services_students:
     SERVICE_NAME: services-students
     SERVICE_PATH: MiniSpace.Services.Students
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Students/**
 
@@ -80,8 +81,8 @@ build_services_friends:
     SERVICE_NAME: services-friends
     SERVICE_PATH: MiniSpace.Services.Friends
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Friends/**
 
@@ -91,8 +92,8 @@ build_services_reactions:
     SERVICE_NAME: services-reactions
     SERVICE_PATH: MiniSpace.Services.Reactions
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Reactions/**
 
@@ -102,8 +103,8 @@ build_services_posts:
     SERVICE_NAME: services-posts
     SERVICE_PATH: MiniSpace.Services.Posts
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Posts/**
 
@@ -113,8 +114,8 @@ build_services_comments:
     SERVICE_NAME: services-comments
     SERVICE_PATH: MiniSpace.Services.Comments
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Comments/**
 
@@ -124,8 +125,8 @@ build_services_mediafiles:
     SERVICE_NAME: services-mediafiles
     SERVICE_PATH: MiniSpace.Services.MediaFiles
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.MediaFiles/**
 
@@ -135,8 +136,8 @@ build_services_mediafiles:
 #     SERVICE_NAME: services-organizations
 #     SERVICE_PATH: MiniSpace.Services.Organizations
 #   rules:
-#     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-#     - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+#     - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+#     - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
 #       changes:
 #         - MiniSpace.Services.Organizations/**
 
@@ -146,8 +147,8 @@ build_services_notifications:
     SERVICE_NAME: services-notifications
     SERVICE_PATH: MiniSpace.Services.Notifications
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Notifications/**
 
@@ -157,8 +158,8 @@ build_services_reports:
     SERVICE_NAME: services-reports
     SERVICE_PATH: MiniSpace.Services.Reports
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Reports/**
 
@@ -168,8 +169,8 @@ build_services_email:
     SERVICE_NAME: services-email
     SERVICE_PATH: MiniSpace.Services.Email
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/' && $CI_COMMIT_BRANCH == "main"
-    - if: '$CI_COMMIT_MESSAGE !~ /deploy/' && $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_MESSAGE =~ /deploy-all/'
+    - if: '$CI_COMMIT_MESSAGE !~ /deploy/'
       changes:
         - MiniSpace.Services.Email/**
 
