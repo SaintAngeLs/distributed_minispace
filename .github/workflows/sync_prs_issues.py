@@ -39,7 +39,16 @@ def create_gitlab_issue(issue, gitlab_repo):
 
 def create_gitlab_merge_request(pr, gitlab_repo):
     url = f"{GITLAB_API_URL}/projects/{gitlab_repo.replace('/', '%2F')}/merge_requests"
+    search_params = {
+        "source_branch": pr['head']['ref'],
+        "target_branch": pr['base']['ref']
+    }
     headers = {"PRIVATE-TOKEN": GITLAB_TOKEN}
+    existing_mrs = requests.get(url, headers=headers, params=search_params)
+    if existing_mrs.status_code == 200 and existing_mrs.json():
+        print("Merge request already exists between these branches. Skipping creation.")
+        return None 
+
     data = {
         "title": pr['title'],
         "description": pr['body'] or '',
@@ -49,6 +58,7 @@ def create_gitlab_merge_request(pr, gitlab_repo):
     response = requests.post(url, headers=headers, json=data)
     response.raise_for_status()
     return response.json()
+
 
 def sync_issues():
     issues = get_github_issues()
