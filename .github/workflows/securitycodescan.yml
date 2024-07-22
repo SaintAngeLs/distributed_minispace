@@ -1,4 +1,4 @@
-name: SecurityCodeScan
+name: SecurityCodeScan Analysis
 
 on:
   push:
