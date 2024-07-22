@@ -1,0 +1,27 @@
+name: GitGuardian Secret Detection
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+  schedule:
+    - cron: '0 1 * * *' 
+
+jobs:
+  gitguardian:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install GitGuardian
+        run: |
+          curl -s https://api.gitguardian.com/external/actions/install.sh | bash
+
+      - name: Run GitGuardian scan
+        env:
+          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+        run: |
+          ggshield secret scan pre-receive --show-secrets --exit-zero
