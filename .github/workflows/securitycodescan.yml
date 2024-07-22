@@ -33,8 +33,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -62,8 +68,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -91,8 +103,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -120,8 +138,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -149,8 +173,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -178,8 +208,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -207,8 +243,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -236,8 +278,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -265,8 +313,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -294,8 +348,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -323,8 +383,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -352,8 +418,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -381,8 +453,14 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
 
@@ -410,7 +488,13 @@ jobs:
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
           node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
       - name: Upload sarif
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
