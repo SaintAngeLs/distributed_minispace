@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
   schedule:
-    - cron: '0 1 * * *' 
+    - cron: '0 1 * * *'
 
 jobs:
   gitguardian:
@@ -16,9 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
       - name: Install GitGuardian
         run: |
-          curl -s https://api.gitguardian.com/external/actions/install.sh | bash
+          python -m pip install --upgrade pip
+          pip install ggshield
 
       - name: Run GitGuardian scan
         env:
