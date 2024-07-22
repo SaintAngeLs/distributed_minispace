@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{39A1656E-B715-493E-8965-CCAE32EE5517}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Web", "src\Pacco.Web\Pacco.Web.csproj", "{C651C432-79B9-4589-A758-E12A9CDBE5C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Web", "src\minispace.Web\minispace.Web.csproj", "{C651C432-79B9-4589-A758-E12A9CDBE5C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

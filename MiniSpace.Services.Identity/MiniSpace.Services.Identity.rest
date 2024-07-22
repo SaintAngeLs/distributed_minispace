@@ -7,7 +7,7 @@ POST {{url}}/sign-up
 Content-Type: application/json
 
 {
-  "email": "pacco-user1@mailinator.com",
+  "email": "minispace-user1@mailinator.com",
   "password": "secret"
 }
 
@@ -16,7 +16,7 @@ POST {{url}}/sign-in
 Content-Type: application/json
 
 {
-  "email": "pacco-user1@mailinator.com",
+  "email": "minispace-user1@mailinator.com",
   "password": "secret"
 }
 

@@ -77,7 +77,7 @@ docker run --name mongo-express -d -p 8081:8081 mongo-express
 
 -e ME_CONFIG_MONGODB_ADMINUSERNAME=user -e ME_CONFIG_MONGODB_ADMINPASSWORD=secret
 
---network pacco-network
+--network minispace-network
 
 
 ===========================================================================================================================
@@ -145,7 +145,7 @@ docker run -it --rm redis redis-cli -h redis -p 6379
 
 --- Optional ---
 
---network pacco-network
+--network minispace-network
 
 ===========================================================================================================================
 *** SERVICE DISCOVERY ***
@@ -293,7 +293,7 @@ vault write database/roles/availability-service \
 vault secrets enable pki
 
 vault write pki/root/generate/internal \
-    common_name=pacco.io \
+    common_name=minispace.io \
     ttl=87600h > CA_cert.crt
 
 vault delete pki/root
@@ -303,22 +303,22 @@ vault write pki/config/urls \
     crl_distribution_points="http://localhost:8200/v1/pki/crl"
 
 vault write pki/roles/availability-service \
-    allowed_domains=pacco.io \
+    allowed_domains=minispace.io \
     allow_localhost=true \
     allow_subdomains=true \
     max_ttl=72h
 
 vault write pki/issue/availability-service \
-    common_name=availability-service.pacco.io
+    common_name=availability-service.minispace.io
 
 vault write pki/roles/customers-service \
-  allowed_domains=pacco.io \
+  allowed_domains=minispace.io \
   allow_localhost=true \
   allow_subdomains=true \
   max_ttl=72h
 
 vault write pki/issue/customers-service \
-    common_name=customers-service.pacco.io
+    common_name=customers-service.minispace.io
 
 ===========================================================================================================================
 *** MONITORING ***

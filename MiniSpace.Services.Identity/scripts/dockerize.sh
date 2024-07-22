@@ -13,7 +13,7 @@ case "$TRAVIS_BRANCH" in
     ;;    
 esac
 
-REPOSITORY=$DOCKER_USERNAME/pacco.services.identity
+REPOSITORY=$DOCKER_USERNAME/minispace.services.identity
 
 docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 docker build -t $REPOSITORY:$TAG -t $REPOSITORY:$VERSION_TAG .

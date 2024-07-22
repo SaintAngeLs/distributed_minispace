@@ -3,97 +3,97 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.APIGateway", "..\Pacco.APIGateway\src\Pacco.APIGateway\Pacco.APIGateway.csproj", "{D60E3F0B-0091-442B-8B4D-CBD65E25F1C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.APIGateway", "..\minispace.APIGateway\src\minispace.APIGateway\minispace.APIGateway.csproj", "{D60E3F0B-0091-442B-8B4D-CBD65E25F1C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Customers.Api", "..\Pacco.Services.Customers\src\Pacco.Services.Customers.Api\Pacco.Services.Customers.Api.csproj", "{B1407433-CFE6-45B2-8D12-2270653514C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Customers.Api", "..\minispace.Services.Customers\src\minispace.Services.Customers.Api\minispace.Services.Customers.Api.csproj", "{B1407433-CFE6-45B2-8D12-2270653514C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Customers.Application", "..\Pacco.Services.Customers\src\Pacco.Services.Customers.Application\Pacco.Services.Customers.Application.csproj", "{F418C916-92CB-4760-AEB7-C513A081FFA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Customers.Application", "..\minispace.Services.Customers\src\minispace.Services.Customers.Application\minispace.Services.Customers.Application.csproj", "{F418C916-92CB-4760-AEB7-C513A081FFA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Customers.Core", "..\Pacco.Services.Customers\src\Pacco.Services.Customers.Core\Pacco.Services.Customers.Core.csproj", "{AE6E3714-3E0F-4995-99D6-B52B7873430F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Customers.Core", "..\minispace.Services.Customers\src\minispace.Services.Customers.Core\minispace.Services.Customers.Core.csproj", "{AE6E3714-3E0F-4995-99D6-B52B7873430F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Customers.Infrastructure", "..\Pacco.Services.Customers\src\Pacco.Services.Customers.Infrastructure\Pacco.Services.Customers.Infrastructure.csproj", "{9439DFCF-27C1-4CA3-9A72-40C110047B9D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Customers.Infrastructure", "..\minispace.Services.Customers\src\minispace.Services.Customers.Infrastructure\minispace.Services.Customers.Infrastructure.csproj", "{9439DFCF-27C1-4CA3-9A72-40C110047B9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Deliveries.Application", "..\Pacco.Services.Deliveries\src\Pacco.Services.Deliveries.Application\Pacco.Services.Deliveries.Application.csproj", "{B4DE899F-879C-4871-849C-8AE87E8760B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Deliveries.Application", "..\minispace.Services.Deliveries\src\minispace.Services.Deliveries.Application\minispace.Services.Deliveries.Application.csproj", "{B4DE899F-879C-4871-849C-8AE87E8760B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Deliveries.Core", "..\Pacco.Services.Deliveries\src\Pacco.Services.Deliveries.Core\Pacco.Services.Deliveries.Core.csproj", "{C139C132-0036-4D91-92E9-3665282A7F0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Deliveries.Core", "..\minispace.Services.Deliveries\src\minispace.Services.Deliveries.Core\minispace.Services.Deliveries.Core.csproj", "{C139C132-0036-4D91-92E9-3665282A7F0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Deliveries.Infrastructure", "..\Pacco.Services.Deliveries\src\Pacco.Services.Deliveries.Infrastructure\Pacco.Services.Deliveries.Infrastructure.csproj", "{15724989-96EF-4974-B80D-62AC27C70579}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Deliveries.Infrastructure", "..\minispace.Services.Deliveries\src\minispace.Services.Deliveries.Infrastructure\minispace.Services.Deliveries.Infrastructure.csproj", "{15724989-96EF-4974-B80D-62AC27C70579}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Deliveries.Api", "..\Pacco.Services.Deliveries\src\Pacco.Services.Deliveries.Api\Pacco.Services.Deliveries.Api.csproj", "{E74C4038-B1D0-4A80-89D0-9A7ED82C6396}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Deliveries.Api", "..\minispace.Services.Deliveries\src\minispace.Services.Deliveries.Api\minispace.Services.Deliveries.Api.csproj", "{E74C4038-B1D0-4A80-89D0-9A7ED82C6396}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Identity.Api", "..\Pacco.Services.Identity\src\Pacco.Services.Identity.Api\Pacco.Services.Identity.Api.csproj", "{EC224C7F-7849-4F91-B121-B5FB6E6E0E65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Identity.Api", "..\minispace.Services.Identity\src\minispace.Services.Identity.Api\minispace.Services.Identity.Api.csproj", "{EC224C7F-7849-4F91-B121-B5FB6E6E0E65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Identity.Application", "..\Pacco.Services.Identity\src\Pacco.Services.Identity.Application\Pacco.Services.Identity.Application.csproj", "{133FD659-6B11-4D47-AD5E-99780EC0B9CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Identity.Application", "..\minispace.Services.Identity\src\minispace.Services.Identity.Application\minispace.Services.Identity.Application.csproj", "{133FD659-6B11-4D47-AD5E-99780EC0B9CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Identity.Core", "..\Pacco.Services.Identity\src\Pacco.Services.Identity.Core\Pacco.Services.Identity.Core.csproj", "{FB3AD879-3087-4418-955B-AE3C1E3CE07A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Identity.Core", "..\minispace.Services.Identity\src\minispace.Services.Identity.Core\minispace.Services.Identity.Core.csproj", "{FB3AD879-3087-4418-955B-AE3C1E3CE07A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Identity.Infrastructure", "..\Pacco.Services.Identity\src\Pacco.Services.Identity.Infrastructure\Pacco.Services.Identity.Infrastructure.csproj", "{1F4D2D05-A491-49FF-95BB-5BC6AB42E60F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Identity.Infrastructure", "..\minispace.Services.Identity\src\minispace.Services.Identity.Infrastructure\minispace.Services.Identity.Infrastructure.csproj", "{1F4D2D05-A491-49FF-95BB-5BC6AB42E60F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Operations.Api", "..\Pacco.Services.Operations\src\Pacco.Services.Operations.Api\Pacco.Services.Operations.Api.csproj", "{1BCB68C2-7052-4C38-9F79-D4DD8D59A02D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Operations.Api", "..\minispace.Services.Operations\src\minispace.Services.Operations.Api\minispace.Services.Operations.Api.csproj", "{1BCB68C2-7052-4C38-9F79-D4DD8D59A02D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Orders.Api", "..\Pacco.Services.Orders\src\Pacco.Services.Orders.Api\Pacco.Services.Orders.Api.csproj", "{179691D1-05B6-49F1-BBC4-AD4133B7A7B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Orders.Api", "..\minispace.Services.Orders\src\minispace.Services.Orders.Api\minispace.Services.Orders.Api.csproj", "{179691D1-05B6-49F1-BBC4-AD4133B7A7B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Orders.Application", "..\Pacco.Services.Orders\src\Pacco.Services.Orders.Application\Pacco.Services.Orders.Application.csproj", "{014D3DF4-36A9-4C5B-9FC2-BB52B60CF06D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Orders.Application", "..\minispace.Services.Orders\src\minispace.Services.Orders.Application\minispace.Services.Orders.Application.csproj", "{014D3DF4-36A9-4C5B-9FC2-BB52B60CF06D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Orders.Core", "..\Pacco.Services.Orders\src\Pacco.Services.Orders.Core\Pacco.Services.Orders.Core.csproj", "{E1647639-F020-456F-AE67-3346C1774ED6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Orders.Core", "..\minispace.Services.Orders\src\minispace.Services.Orders.Core\minispace.Services.Orders.Core.csproj", "{E1647639-F020-456F-AE67-3346C1774ED6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Orders.Infrastructure", "..\Pacco.Services.Orders\src\Pacco.Services.Orders.Infrastructure\Pacco.Services.Orders.Infrastructure.csproj", "{2BB95459-3484-4607-87A2-5812E87D21CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Orders.Infrastructure", "..\minispace.Services.Orders\src\minispace.Services.Orders.Infrastructure\minispace.Services.Orders.Infrastructure.csproj", "{2BB95459-3484-4607-87A2-5812E87D21CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Parcels.Api", "..\Pacco.Services.Parcels\src\Pacco.Services.Parcels.Api\Pacco.Services.Parcels.Api.csproj", "{BDCC24F0-1FC8-4295-8DB9-F7364FC44BFF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Parcels.Api", "..\minispace.Services.Parcels\src\minispace.Services.Parcels.Api\minispace.Services.Parcels.Api.csproj", "{BDCC24F0-1FC8-4295-8DB9-F7364FC44BFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Parcels.Application", "..\Pacco.Services.Parcels\src\Pacco.Services.Parcels.Application\Pacco.Services.Parcels.Application.csproj", "{B00E40C7-D6AC-4063-BB4F-8EAECD00012E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Parcels.Application", "..\minispace.Services.Parcels\src\minispace.Services.Parcels.Application\minispace.Services.Parcels.Application.csproj", "{B00E40C7-D6AC-4063-BB4F-8EAECD00012E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Parcels.Core", "..\Pacco.Services.Parcels\src\Pacco.Services.Parcels.Core\Pacco.Services.Parcels.Core.csproj", "{C907610F-EB5F-4939-8A3E-4A25326E59DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Parcels.Core", "..\minispace.Services.Parcels\src\minispace.Services.Parcels.Core\minispace.Services.Parcels.Core.csproj", "{C907610F-EB5F-4939-8A3E-4A25326E59DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Parcels.Infrastructure", "..\Pacco.Services.Parcels\src\Pacco.Services.Parcels.Infrastructure\Pacco.Services.Parcels.Infrastructure.csproj", "{C67699A6-5094-45C1-82BA-B6EC891F5A6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Parcels.Infrastructure", "..\minispace.Services.Parcels\src\minispace.Services.Parcels.Infrastructure\minispace.Services.Parcels.Infrastructure.csproj", "{C67699A6-5094-45C1-82BA-B6EC891F5A6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Pricing.Api", "..\Pacco.Services.Pricing\src\Pacco.Services.Pricing.Api\Pacco.Services.Pricing.Api.csproj", "{72EBB611-F6B4-436E-8D2F-72B259F418D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Pricing.Api", "..\minispace.Services.Pricing\src\minispace.Services.Pricing.Api\minispace.Services.Pricing.Api.csproj", "{72EBB611-F6B4-436E-8D2F-72B259F418D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Vehicles.Application", "..\Pacco.Services.Vehicles\src\Pacco.Services.Vehicles.Application\Pacco.Services.Vehicles.Application.csproj", "{9D680611-CF14-472F-B525-E9310173B333}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Vehicles.Application", "..\minispace.Services.Vehicles\src\minispace.Services.Vehicles.Application\minispace.Services.Vehicles.Application.csproj", "{9D680611-CF14-472F-B525-E9310173B333}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Vehicles.Core", "..\Pacco.Services.Vehicles\src\Pacco.Services.Vehicles.Core\Pacco.Services.Vehicles.Core.csproj", "{423A6CA2-10E6-438A-9598-6D814D95CFC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Vehicles.Core", "..\minispace.Services.Vehicles\src\minispace.Services.Vehicles.Core\minispace.Services.Vehicles.Core.csproj", "{423A6CA2-10E6-438A-9598-6D814D95CFC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Vehicles.Infrastructure", "..\Pacco.Services.Vehicles\src\Pacco.Services.Vehicles.Infrastructure\Pacco.Services.Vehicles.Infrastructure.csproj", "{7DE3A9F9-D7FF-4ABC-A02C-B66422E3A999}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Vehicles.Infrastructure", "..\minispace.Services.Vehicles\src\minispace.Services.Vehicles.Infrastructure\minispace.Services.Vehicles.Infrastructure.csproj", "{7DE3A9F9-D7FF-4ABC-A02C-B66422E3A999}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.APIGateway", "Pacco.APIGateway", "{448D723B-5318-4EBF-8050-96FAEF05FB65}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.APIGateway", "minispace.APIGateway", "{448D723B-5318-4EBF-8050-96FAEF05FB65}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Customers", "Pacco.Services.Customers", "{E15D31BF-0EDA-4CC4-9A60-593120E68308}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Customers", "minispace.Services.Customers", "{E15D31BF-0EDA-4CC4-9A60-593120E68308}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Deliveries", "Pacco.Services.Deliveries", "{114D012F-D88C-4AF8-A6EB-E888F746A994}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Deliveries", "minispace.Services.Deliveries", "{114D012F-D88C-4AF8-A6EB-E888F746A994}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Identity", "Pacco.Services.Identity", "{BD70E4D1-1DDE-4AD4-9A8E-9B80157AF7A4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Identity", "minispace.Services.Identity", "{BD70E4D1-1DDE-4AD4-9A8E-9B80157AF7A4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Operations", "Pacco.Services.Operations", "{5B0AC0C4-336E-4052-9A64-5C62802BD02C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Operations", "minispace.Services.Operations", "{5B0AC0C4-336E-4052-9A64-5C62802BD02C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Orders", "Pacco.Services.Orders", "{D42B6768-4B44-466D-8BE5-AC7C6B3D1AA6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Orders", "minispace.Services.Orders", "{D42B6768-4B44-466D-8BE5-AC7C6B3D1AA6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Parcels", "Pacco.Services.Parcels", "{4A395D87-B108-42C9-9B30-4212AB85C567}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Parcels", "minispace.Services.Parcels", "{4A395D87-B108-42C9-9B30-4212AB85C567}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Pricing", "Pacco.Services.Pricing", "{6BB2245D-82C5-47FF-ABD1-C99C32976B3D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Pricing", "minispace.Services.Pricing", "{6BB2245D-82C5-47FF-ABD1-C99C32976B3D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Vehicles", "Pacco.Services.Vehicles", "{EAB2B57F-7E18-4E4D-AD10-19BDBC3232F1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Vehicles", "minispace.Services.Vehicles", "{EAB2B57F-7E18-4E4D-AD10-19BDBC3232F1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.Availability", "Pacco.Services.Availability", "{175382DE-404D-4400-AEC7-F7F8A15C7766}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.Availability", "minispace.Services.Availability", "{175382DE-404D-4400-AEC7-F7F8A15C7766}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Vehicles.Api", "..\Pacco.Services.Vehicles\src\Pacco.Services.Vehicles.Api\Pacco.Services.Vehicles.Api.csproj", "{66B293E2-AD53-4B0C-BBD8-F66AA0742F69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Vehicles.Api", "..\minispace.Services.Vehicles\src\minispace.Services.Vehicles.Api\minispace.Services.Vehicles.Api.csproj", "{66B293E2-AD53-4B0C-BBD8-F66AA0742F69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Api", "..\Pacco.Services.Availability\src\Pacco.Services.Availability.Api\Pacco.Services.Availability.Api.csproj", "{F7356583-875C-4C7E-899F-783E62663A2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Api", "..\minispace.Services.Availability\src\minispace.Services.Availability.Api\minispace.Services.Availability.Api.csproj", "{F7356583-875C-4C7E-899F-783E62663A2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Application", "..\Pacco.Services.Availability\src\Pacco.Services.Availability.Application\Pacco.Services.Availability.Application.csproj", "{04265E6E-E40C-4BD9-B57C-F2A8674E63CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Application", "..\minispace.Services.Availability\src\minispace.Services.Availability.Application\minispace.Services.Availability.Application.csproj", "{04265E6E-E40C-4BD9-B57C-F2A8674E63CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Core", "..\Pacco.Services.Availability\src\Pacco.Services.Availability.Core\Pacco.Services.Availability.Core.csproj", "{466833DC-3CE1-44F2-AC94-D755FC6E0E50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Core", "..\minispace.Services.Availability\src\minispace.Services.Availability.Core\minispace.Services.Availability.Core.csproj", "{466833DC-3CE1-44F2-AC94-D755FC6E0E50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Infrastructure", "..\Pacco.Services.Availability\src\Pacco.Services.Availability.Infrastructure\Pacco.Services.Availability.Infrastructure.csproj", "{5C4BC235-1E90-4198-B375-609D253EBAF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Infrastructure", "..\minispace.Services.Availability\src\minispace.Services.Availability.Infrastructure\minispace.Services.Availability.Infrastructure.csproj", "{5C4BC235-1E90-4198-B375-609D253EBAF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Tests.Integration", "..\Pacco.Services.Availability\tests\Pacco.Services.Availability.Tests.Integration\Pacco.Services.Availability.Tests.Integration.csproj", "{387A2156-11B0-44AC-9392-2826E42ED3D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Tests.Integration", "..\minispace.Services.Availability\tests\minispace.Services.Availability.Tests.Integration\minispace.Services.Availability.Tests.Integration.csproj", "{387A2156-11B0-44AC-9392-2826E42ED3D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Orders.PactConsumerTests", "..\Pacco.Services.Orders\tests\Pacco.Services.Orders.PactConsumerTests\Pacco.Services.Orders.PactConsumerTests.csproj", "{5C5E2C0B-87C9-495E-AEA3-3ACBAD314094}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Orders.PactConsumerTests", "..\minispace.Services.Orders\tests\minispace.Services.Orders.PactConsumerTests\minispace.Services.Orders.PactConsumerTests.csproj", "{5C5E2C0B-87C9-495E-AEA3-3ACBAD314094}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Parcels.PactProviderTests", "..\Pacco.Services.Parcels\tests\Pacco.Services.Parcels.PactProviderTests\Pacco.Services.Parcels.PactProviderTests.csproj", "{50138598-6C4C-42D8-9AA6-9630018C48F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Parcels.PactProviderTests", "..\minispace.Services.Parcels\tests\minispace.Services.Parcels.PactProviderTests\minispace.Services.Parcels.PactProviderTests.csproj", "{50138598-6C4C-42D8-9AA6-9630018C48F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.OrderMaker", "..\Pacco.Services.OrderMaker\src\Pacco.Services.OrderMaker\Pacco.Services.OrderMaker.csproj", "{E80FC2F4-2AA5-4CA2-9498-B318890EEC18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.OrderMaker", "..\minispace.Services.OrderMaker\src\minispace.Services.OrderMaker\minispace.Services.OrderMaker.csproj", "{E80FC2F4-2AA5-4CA2-9498-B318890EEC18}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.Services.OrderMaker", "Pacco.Services.OrderMaker", "{C41A357F-1EA2-4A4E-83D3-A709284336BF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.Services.OrderMaker", "minispace.Services.OrderMaker", "{C41A357F-1EA2-4A4E-83D3-A709284336BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3516DE00-9F06-4659-BC78-D9DA768CB114}"
 EndProject
@@ -139,19 +139,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A34B93A5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0C74F8AE-DCF3-4AC4-B352-17EB0AF00C6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Operations.GrpcClient", "..\Pacco.Services.Operations\src\Pacco.Services.Operations.GrpcClient\Pacco.Services.Operations.GrpcClient.csproj", "{41EA283C-F724-4BF8-BAD2-B81D29CFAC62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Operations.GrpcClient", "..\minispace.Services.Operations\src\minispace.Services.Operations.GrpcClient\minispace.Services.Operations.GrpcClient.csproj", "{41EA283C-F724-4BF8-BAD2-B81D29CFAC62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Tests.EndToEnd", "..\Pacco.Services.Availability\tests\Pacco.Services.Availability.Tests.EndToEnd\Pacco.Services.Availability.Tests.EndToEnd.csproj", "{54AE8CA7-715F-4E19-83F1-986F463BEC8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Tests.EndToEnd", "..\minispace.Services.Availability\tests\minispace.Services.Availability.Tests.EndToEnd\minispace.Services.Availability.Tests.EndToEnd.csproj", "{54AE8CA7-715F-4E19-83F1-986F463BEC8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Tests.Unit", "..\Pacco.Services.Availability\tests\Pacco.Services.Availability.Tests.Unit\Pacco.Services.Availability.Tests.Unit.csproj", "{E50EC731-1ED4-4DC6-8C24-F1C1A4B47E0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Tests.Unit", "..\minispace.Services.Availability\tests\minispace.Services.Availability.Tests.Unit\minispace.Services.Availability.Tests.Unit.csproj", "{E50EC731-1ED4-4DC6-8C24-F1C1A4B47E0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Tests.Performance", "..\Pacco.Services.Availability\tests\Pacco.Services.Availability.Tests.Performance\Pacco.Services.Availability.Tests.Performance.csproj", "{9F5C2BB1-A199-45B2-97E6-72137684236B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Tests.Performance", "..\minispace.Services.Availability\tests\minispace.Services.Availability.Tests.Performance\minispace.Services.Availability.Tests.Performance.csproj", "{9F5C2BB1-A199-45B2-97E6-72137684236B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.Services.Availability.Tests.Shared", "..\Pacco.Services.Availability\tests\Pacco.Services.Availability.Tests.Shared\Pacco.Services.Availability.Tests.Shared.csproj", "{D20C1733-D340-40C5-AD59-320BE8E13685}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.Services.Availability.Tests.Shared", "..\minispace.Services.Availability\tests\minispace.Services.Availability.Tests.Shared\minispace.Services.Availability.Tests.Shared.csproj", "{D20C1733-D340-40C5-AD59-320BE8E13685}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacco.APIGateway.Ocelot", "..\Pacco.APIGateway.Ocelot\src\Pacco.APIGateway.Ocelot\Pacco.APIGateway.Ocelot.csproj", "{1E0A4526-817A-4E3F-A531-BB98E3BE7F82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minispace.APIGateway.Ocelot", "..\minispace.APIGateway.Ocelot\src\minispace.APIGateway.Ocelot\minispace.APIGateway.Ocelot.csproj", "{1E0A4526-817A-4E3F-A531-BB98E3BE7F82}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pacco.APIGateway.Ocelot", "Pacco.APIGateway.Ocelot", "{658CE4A5-17B5-4E0C-A49B-21CC3D086A78}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minispace.APIGateway.Ocelot", "minispace.APIGateway.Ocelot", "{658CE4A5-17B5-4E0C-A49B-21CC3D086A78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{343032EA-9EC5-445C-8E12-D282A9E34219}"
 EndProject
