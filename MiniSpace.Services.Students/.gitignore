@@ -329,3 +329,7 @@ ASALocalRun/
 .mfractor/
 
 logs/
+
+
+# Ignore appsettings.json files
+**/appsettings*.json
