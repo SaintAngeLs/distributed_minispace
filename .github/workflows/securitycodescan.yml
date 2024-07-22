@@ -67,51 +67,6 @@ jobs:
       - name: Convert sarif for uploading to GitHub
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
-          sarif merge --output-file results.sarif --force **/*.sarif
-          echo "Checking results.sarif content..."
-          if [ ! -f results.sarif ]; then
-            echo "results.sarif file not found!"
-            exit 1
-          fi
-          cat results.sarif
-          node .github/convert.js results.sarif
-      - name: Verify filtered SARIF file
-        run: |
-          echo "Verifying filtered SARIF file..."
-          if [ ! -f filtered-results.sarif ]; then
-            echo "Filtered SARIF file not found!"
-            exit 1
-          fi
-          echo "Filtered SARIF file found. Content:"
-          cat filtered-results.sarif
-      - name: Upload filtered SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: filtered-results.sarif
-
-  jobs:
-  services_comments:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: nuget/setup-nuget@v1
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '3.1.x'
-      - name: Install .NET 8.x
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0
-      - name: Set up projects for analysis
-        uses: security-code-scan/security-code-scan-add-action@v1
-      - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/MiniSpace.Services.Comments.Api.csproj
-      - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/MiniSpace.Services.Comments.Api.csproj
-      - name: Convert sarif for uploading to GitHub
-        run: |
-          dotnet tool install --global Sarif.Multitool --version 2.3.10
           # Verify individual SARIF files
           echo "Listing all SARIF files..."
           find . -name "*.sarif" -print
@@ -136,6 +91,42 @@ jobs:
           echo "Filtered SARIF file found. Content:"
           cat filtered-results.sarif
       - name: Upload filtered SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: filtered-results.sarif
+
+  services_email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nuget/setup-nuget@v1
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Set up projects for analysis
+        uses: security-code-scan/security-code-scan-add-action@v1
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/MiniSpace.Services.Email.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/MiniSpace.Services.Email.Api.csproj
+      - name: Convert sarif for uploading to GitHub
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif merge --output-file results.sarif --force **/*.sarif
+          node .github/convert.js results.sarif
+      - name: Verify SARIF file
+        run: |
+          if [ ! -f filtered-results.sarif ]; then
+            echo "Filtered SARIF file not found!"
+            exit 1
+          fi
+          cat filtered-results.sarif
+      - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
