@@ -29,9 +29,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.APIGateway/src/MiniSpace.APIGateway/MiniSpace.APIGateway.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_comments:
     runs-on: ubuntu-latest
@@ -53,9 +58,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/MiniSpace.Services.Comments.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_email:
     runs-on: ubuntu-latest
@@ -77,9 +87,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/MiniSpace.Services.Email.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_events:
     runs-on: ubuntu-latest
@@ -101,9 +116,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/MiniSpace.Services.Events.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_friends:
     runs-on: ubuntu-latest
@@ -125,9 +145,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/MiniSpace.Services.Friends.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_identity:
     runs-on: ubuntu-latest
@@ -149,9 +174,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/MiniSpace.Services.Identity.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_mediafiles:
     runs-on: ubuntu-latest
@@ -173,9 +203,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/MiniSpace.Services.MediaFiles.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_notifications:
     runs-on: ubuntu-latest
@@ -197,9 +232,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/MiniSpace.Services.Notifications.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_organizations:
     runs-on: ubuntu-latest
@@ -221,9 +261,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/MiniSpace.Services.Organizations.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_posts:
     runs-on: ubuntu-latest
@@ -245,9 +290,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/MiniSpace.Services.Posts.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_reactions:
     runs-on: ubuntu-latest
@@ -269,9 +319,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api/MiniSpace.Services.Reactions.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_reports:
     runs-on: ubuntu-latest
@@ -293,9 +348,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api/MiniSpace.Services.Reports.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   services_students:
     runs-on: ubuntu-latest
@@ -317,9 +377,14 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/MiniSpace.Services.Students.Api.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
 
   web:
     runs-on: ubuntu-latest
@@ -341,6 +406,11 @@ jobs:
       - name: Build
         run: dotnet build --no-restore MiniSpace.Web/src/MiniSpace.Web/MiniSpace.Web.csproj
       - name: Convert sarif for uploading to GitHub
-        uses: security-code-scan/security-code-scan-results-action@v1
+        run: |
+          dotnet tool install --global Sarif.Multitool --version 2.3.10
+          sarif multitool merge --output results.sarif --force **/*.sarif
+          node .github/convert.js
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: filtered-results.sarif
