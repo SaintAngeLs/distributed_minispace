@@ -2,9 +2,9 @@ name: SecurityCodeScan Analysis
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: ["main", "dev"]
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: ["main", "dev"]
   schedule:
     - cron: '45 14 * * 3'
 
@@ -32,7 +32,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -61,7 +61,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -90,7 +90,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -119,7 +119,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -148,7 +148,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -177,7 +177,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -206,7 +206,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -235,7 +235,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -264,7 +264,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -293,7 +293,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -322,7 +322,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -351,7 +351,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -380,7 +380,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -409,7 +409,7 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge -o results.sarif -f **/*.sarif
-          node .github/convert.js
+          node .github/convert.js results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
