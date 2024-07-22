@@ -39,6 +39,29 @@ Generated\ Files/
 # NUNIT
 *.VisualState.xml
 TestResult.xml
+ChatGPT
+GPT
+Name Generator
+GPT
+Logo Creator
+
+Explore GPTs
+Yesterday
+Deploy Script Modifications
+
+CSV File Creation
+Business Name and Domain
+GitLab CI Container Registry
+Docker Command Not Found
+CI/CD Docker Deployment
+Docker Command Not Found
+Development Team Meeting Invite
+Previous 7 Days
+Organizational Management Overview
+Tworzenie stron internetowych
+Page Reload Issue
+Cyk algorithm analyzed in example
+
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
@@ -329,3 +352,7 @@ ASALocalRun/
 .mfractor/
 
 logs/
+
+
+# Ignore appsettings.json files
+**/appsettings*.json
