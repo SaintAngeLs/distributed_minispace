@@ -1,6 +1,14 @@
 const fs = require('fs');
+const path = require('path');
 
-fs.readFile('results.sarif', 'utf8', (err, data) => {
+const filePath = process.argv[2];
+
+if (!filePath || !fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) {
+    console.error("Error: The SARIF file path provided is invalid.");
+    process.exit(1);
+}
+
+fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
         console.error("Error reading SARIF file:", err);
         process.exit(1);
@@ -13,7 +21,8 @@ fs.readFile('results.sarif', 'utf8', (err, data) => {
         }
     });
 
-    fs.writeFile('filtered-results.sarif', JSON.stringify(sarif), (err) => {
+    const outputFilePath = path.join(path.dirname(filePath), 'filtered-results.sarif');
+    fs.writeFile(outputFilePath, JSON.stringify(sarif), (err) => {
         if (err) {
             console.error("Error writing filtered SARIF file:", err);
             process.exit(1);
