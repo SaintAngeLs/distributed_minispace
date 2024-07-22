@@ -28,11 +28,11 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     });
 
     const outputFilePath = path.join(path.dirname(filePath), 'filtered-results.sarif');
-    fs.writeFile(outputFilePath, JSON.stringify(sarif, null, 2), (err) => {
+    fs.writeFile(outputFilePath, JSON.stringify(sarif), (err) => {
         if (err) {
             console.error("Error writing filtered SARIF file:", err);
             process.exit(1);
         }
-        console.log("Filtered SARIF file created successfully:", outputFilePath);
+        console.log("Filtered SARIF file created at:", outputFilePath);
     });
 });
