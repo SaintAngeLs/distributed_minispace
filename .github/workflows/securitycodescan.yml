@@ -10,11 +10,14 @@ on:
 
 jobs:
   apigateway:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -27,11 +30,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_comments:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -44,11 +50,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_email:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -61,11 +70,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_events:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -78,11 +90,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_friends:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -94,14 +109,15 @@ jobs:
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
 
-  # Repeat the same for the rest of your projects
-
   services_identity:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -114,11 +130,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_mediafiles:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -131,11 +150,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_notifications:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -148,11 +170,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_organizations:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -165,11 +190,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_posts:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -182,11 +210,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_reactions:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -199,11 +230,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_reports:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -216,11 +250,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   services_students:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
@@ -233,14 +270,21 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
 
   web:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nuget/setup-nuget@v1
-      - uses: microsoft/setup-msbuild@v1.0.2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
         run: dotnet restore MiniSpace.Web/MiniSpace.Web.sln
       - name: Build
-        run: dot
+        run: dotnet build --no-restore MiniSpace.Web/MiniSpace.Web.sln
+      - name: Convert sarif for uploading to GitHub
+        uses: security-code-scan/security-code-scan-results-action@v1
+      - name: Upload sarif
+        uses: github/codeql-action/upload-sarif@v2
