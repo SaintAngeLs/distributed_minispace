@@ -1,0 +1,33 @@
+name: GitGuardian Secret Detection
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  gitguardian:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install GitGuardian
+        run: |
+          python -m pip install --upgrade pip
+          pip install ggshield
+
+      - name: Run GitGuardian scan
+        env:
+          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+        run: |
+          ggshield secret scan path --show-secrets .

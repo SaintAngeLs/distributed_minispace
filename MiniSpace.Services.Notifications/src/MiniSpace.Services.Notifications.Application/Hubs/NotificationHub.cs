@@ -21,11 +21,10 @@ namespace MiniSpace.Services.Notifications.Application.Hubs
             if (!string.IsNullOrEmpty(userId))
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, userId);
-                _logger.LogInformation($"======================================================================================User {userId} connected with connection ID: {Context.ConnectionId}");
             }
             else
             {
-                _logger.LogWarning("=========================================================================================User ID is missing in the query string.");
+                _logger.LogWarning("User ID is missing in the query string.");
             }
             await base.OnConnectedAsync();
         }
@@ -36,7 +35,7 @@ namespace MiniSpace.Services.Notifications.Application.Hubs
             if (!string.IsNullOrEmpty(userId))
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
-                _logger.LogInformation($"User {userId} disconnected with connection ID: {Context.ConnectionId}");
+                // _logger.LogInformation($"User {userId} disconnected with connection ID: {Context.ConnectionId}");
             }
             await base.OnDisconnectedAsync(exception);
         }
