@@ -68,15 +68,23 @@ jobs:
         run: |
           dotnet tool install --global Sarif.Multitool --version 2.3.10
           sarif merge --output-file results.sarif --force **/*.sarif
+          echo "Checking results.sarif content..."
+          if [ ! -f results.sarif ]; then
+            echo "results.sarif file not found!"
+            exit 1
+          fi
+          cat results.sarif
           node .github/convert.js results.sarif
-      - name: Verify SARIF file
+      - name: Verify filtered SARIF file
         run: |
+          echo "Verifying filtered SARIF file..."
           if [ ! -f filtered-results.sarif ]; then
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          echo "Filtered SARIF file found. Content:"
           cat filtered-results.sarif
-      - name: Upload sarif
+      - name: Upload filtered SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: filtered-results.sarif
