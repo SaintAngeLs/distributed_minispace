@@ -39,6 +39,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -74,6 +75,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -109,6 +111,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -144,6 +147,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -179,6 +183,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -214,6 +219,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -249,6 +255,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -284,6 +291,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -319,6 +327,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -354,6 +363,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -389,6 +399,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -424,6 +435,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -459,6 +471,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -494,6 +507,7 @@ jobs:
             echo "Filtered SARIF file not found!"
             exit 1
           fi
+          cat filtered-results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v3
         with:
