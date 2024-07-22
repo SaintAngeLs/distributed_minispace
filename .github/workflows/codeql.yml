@@ -1,67 +1,346 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
-name: "CodeQL analyzer"
+name: CodeQL analyzer
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: ["main", "dev"]
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: ["main", "dev"]
   schedule:
     - cron: '40 18 * * 1'
 
 jobs:
-  analyze:
-    name: Analyze (${{ matrix.language }})
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
-    permissions:
-      security-events: write
-      packages: read
-      actions: read
-      contents: read
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - language: csharp
-          build-mode: none
-        - language: javascript-typescript
-          build-mode: none
-        - language: python
-          build-mode: none
-
+  apigateway:
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.APIGateway/src/MiniSpace.APIGateway/MiniSpace.APIGateway.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.APIGateway/src/MiniSpace.APIGateway/MiniSpace.APIGateway.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+  services_comments:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/MiniSpace.Services.Comments.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/MiniSpace.Services.Comments.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
 
-    - if: matrix.build-mode == 'manual'
-      shell: bash
-      run: |
-        echo 'If you are using a "manual" build mode for one or more of the' \
-          'languages you are analyzing, replace this with the commands to build' \
-          'your code, for example:'
-        echo '  make bootstrap'
-        echo '  make release'
-        exit 1
+  services_email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/MiniSpace.Services.Email.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/MiniSpace.Services.Email.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+  services_events:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/MiniSpace.Services.Events.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/MiniSpace.Services.Events.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_friends:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/MiniSpace.Services.Friends.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/MiniSpace.Services.Friends.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_identity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/MiniSpace.Services.Identity.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/MiniSpace.Services.Identity.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_mediafiles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/MiniSpace.Services.MediaFiles.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/MiniSpace.Services.MediaFiles.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/MiniSpace.Services.Notifications.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/MiniSpace.Services.Notifications.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_organizations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/MiniSpace.Services.Organizations.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/MiniSpace.Services.Organizations.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_posts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/MiniSpace.Services.Posts.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/MiniSpace.Services.Posts.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_reactions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api/MiniSpace.Services.Reactions.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api/MiniSpace.Services.Reactions.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_reports:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api/MiniSpace.Services.Reports.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api/MiniSpace.Services.Reports.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  services_students:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/MiniSpace.Services.Students.Api.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/MiniSpace.Services.Students.Api.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.1.x'
+      - name: Install .NET 8.x
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-8.0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'csharp'
+      - name: Restore dependencies
+        run: dotnet restore MiniSpace.Web/src/MiniSpace.Web/MiniSpace.Web.csproj
+      - name: Build
+        run: dotnet build --no-restore MiniSpace.Web/src/MiniSpace.Web/MiniSpace.Web.csproj
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"

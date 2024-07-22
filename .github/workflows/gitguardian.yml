@@ -30,4 +30,4 @@ jobs:
         env:
           GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
         run: |
-          ggshield secret scan path --show-secrets .
+          ggshield secret scan path --recursive --show-secrets .
