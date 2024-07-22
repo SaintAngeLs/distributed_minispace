@@ -21,9 +21,16 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         process.exit(1);
     }
 
+    if (!sarif.runs || sarif.runs.length === 0) {
+        console.error("No runs found in SARIF file");
+        process.exit(1);
+    }
+
     sarif.runs.forEach(run => {
         if (run.tool && run.tool.driver && run.tool.driver.rules) {
+            const originalLength = run.tool.driver.rules.length;
             run.tool.driver.rules = run.tool.driver.rules.filter(e => e.id.startsWith("SCS"));
+            console.log(`Filtered ${originalLength - run.tool.driver.rules.length} rules out of ${originalLength}`);
         }
     });
 
