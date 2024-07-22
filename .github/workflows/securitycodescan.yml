@@ -25,9 +25,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.APIGateway/MiniSpace.APIGateway.sln
+        run: dotnet restore MiniSpace.APIGateway/src/MiniSpace.APIGateway/MiniSpace.APIGateway.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.APIGateway/MiniSpace.APIGateway.sln
+        run: dotnet build --no-restore MiniSpace.APIGateway/src/MiniSpace.APIGateway/MiniSpace.APIGateway.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -49,9 +49,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Comments/MiniSpace.Services.Comments.sln
+        run: dotnet restore MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/MiniSpace.Services.Comments.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Comments/MiniSpace.Services.Comments.sln
+        run: dotnet build --no-restore MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api/MiniSpace.Services.Comments.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -73,9 +73,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Email/MiniSpace.Services.Email.sln
+        run: dotnet restore MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/MiniSpace.Services.Email.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Email/MiniSpace.Services.Email.sln
+        run: dotnet build --no-restore MiniSpace.Services.Email/src/MiniSpace.Services.Email.Api/MiniSpace.Services.Email.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -97,9 +97,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Events/MiniSpace.Services.Events.sln
+        run: dotnet restore MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/MiniSpace.Services.Events.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Events/MiniSpace.Services.Events.sln
+        run: dotnet build --no-restore MiniSpace.Services.Events/src/MiniSpace.Services.Events.Api/MiniSpace.Services.Events.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -121,9 +121,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Friends/MiniSpace.Services.Friends.sln
+        run: dotnet restore MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/MiniSpace.Services.Friends.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Friends/MiniSpace.Services.Friends.sln
+        run: dotnet build --no-restore MiniSpace.Services.Friends/src/MiniSpace.Services.Friends.Api/MiniSpace.Services.Friends.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -145,9 +145,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Identity/MiniSpace.Services.Identity.sln
+        run: dotnet restore MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/MiniSpace.Services.Identity.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Identity/MiniSpace.Services.Identity.sln
+        run: dotnet build --no-restore MiniSpace.Services.Identity/src/MiniSpace.Services.Identity.Api/MiniSpace.Services.Identity.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -169,9 +169,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.MediaFiles/MiniSpace.Services.MediaFiles.sln
+        run: dotnet restore MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/MiniSpace.Services.MediaFiles.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.MediaFiles/MiniSpace.Services.MediaFiles.sln
+        run: dotnet build --no-restore MiniSpace.Services.MediaFiles/src/MiniSpace.Services.MediaFiles.Api/MiniSpace.Services.MediaFiles.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -193,9 +193,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Notifications/MiniSpace.Services.Notifications.sln
+        run: dotnet restore MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/MiniSpace.Services.Notifications.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Notifications/MiniSpace.Services.Notifications.sln
+        run: dotnet build --no-restore MiniSpace.Services.Notifications/src/MiniSpace.Services.Notifications.Api/MiniSpace.Services.Notifications.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -217,9 +217,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Organizations/MiniSpace.Services.Organizations.sln
+        run: dotnet restore MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/MiniSpace.Services.Organizations.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Organizations/MiniSpace.Services.Organizations.sln
+        run: dotnet build --no-restore MiniSpace.Services.Organizations/src/MiniSpace.Services.Organizations.Api/MiniSpace.Services.Organizations.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -241,9 +241,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Posts/MiniSpace.Services.Posts.sln
+        run: dotnet restore MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/MiniSpace.Services.Posts.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Posts/MiniSpace.Services.Posts.sln
+        run: dotnet build --no-restore MiniSpace.Services.Posts/src/MiniSpace.Services.Posts.Api/MiniSpace.Services.Posts.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -265,9 +265,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Reactions/MiniSpace.Services.Reactions.sln
+        run: dotnet restore MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api/MiniSpace.Services.Reactions.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Reactions/MiniSpace.Services.Reactions.sln
+        run: dotnet build --no-restore MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api/MiniSpace.Services.Reactions.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -289,9 +289,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Reports/MiniSpace.Services.Reports.sln
+        run: dotnet restore MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api/MiniSpace.Services.Reports.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Reports/MiniSpace.Services.Reports.sln
+        run: dotnet build --no-restore MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api/MiniSpace.Services.Reports.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -313,9 +313,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Services.Students/MiniSpace.Services.Students.sln
+        run: dotnet restore MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/MiniSpace.Services.Students.Api.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Services.Students/MiniSpace.Services.Students.sln
+        run: dotnet build --no-restore MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api/MiniSpace.Services.Students.Api.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
@@ -337,9 +337,9 @@ jobs:
       - name: Set up projects for analysis
         uses: security-code-scan/security-code-scan-add-action@v1
       - name: Restore dependencies
-        run: dotnet restore MiniSpace.Web/MiniSpace.Web.sln
+        run: dotnet restore MiniSpace.Web/src/MiniSpace.Web/MiniSpace.Web.csproj
       - name: Build
-        run: dotnet build --no-restore MiniSpace.Web/MiniSpace.Web.sln
+        run: dotnet build --no-restore MiniSpace.Web/src/MiniSpace.Web/MiniSpace.Web.csproj
       - name: Convert sarif for uploading to GitHub
         uses: security-code-scan/security-code-scan-results-action@v1
       - name: Upload sarif
