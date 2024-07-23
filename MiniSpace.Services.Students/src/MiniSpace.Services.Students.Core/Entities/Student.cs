@@ -24,11 +24,13 @@ namespace MiniSpace.Services.Students.Core.Entities
         public DateTime? DateOfBirth { get; private set; }
         public bool EmailNotifications { get; private set; }
         public bool IsBanned { get; private set; }
-        public bool IsOrganizer { get; private set; }
         public State State { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public string ContactEmail { get; private set; }
         public string BannerUrl { get; private set; }
+        public string PhoneNumber { get; private set; } 
+        public FrontendVersion FrontendVersion { get; private set; } 
+        public PreferredLanguage PreferredLanguage { get; private set; } 
         public IEnumerable<string> GalleryOfImageUrls
         {
             get => _galleryOfImages;
@@ -62,20 +64,21 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
             : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
-                false, false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), null, 
+                false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), null, 
                 Enumerable.Empty<string>(), null, null, null, Enumerable.Empty<string>(), Enumerable.Empty<string>(),
-                false, null, null)
+                false, null, null, null, FrontendVersion.Auto, PreferredLanguage.English)
         {
             CheckFullName(firstName, lastName);
         }
 
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             int numberOfFriends, string profileImageUrl, string description, DateTime? dateOfBirth,
-            bool emailNotifications, bool isBanned, bool isOrganizer, State state,
+            bool emailNotifications, bool isBanned, State state,
             IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
             string bannerUrl, IEnumerable<string> galleryOfImageUrls, string education,
             string workPosition, string company, IEnumerable<string> languages, IEnumerable<string> interests,
-            bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail = null)
+            bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail = null, string phoneNumber = null,
+            FrontendVersion frontendVersion = FrontendVersion.Auto, PreferredLanguage preferredLanguage = PreferredLanguage.English)
         {
             Id = id;
             Email = email;
@@ -88,7 +91,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             DateOfBirth = dateOfBirth;
             EmailNotifications = emailNotifications;
             IsBanned = isBanned;
-            IsOrganizer = isOrganizer;
             State = state;
             InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
@@ -102,6 +104,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             IsTwoFactorEnabled = isTwoFactorEnabled;
             TwoFactorSecret = twoFactorSecret;
             ContactEmail = contactEmail;
+            PhoneNumber = phoneNumber; 
+            FrontendVersion = frontendVersion; 
+            PreferredLanguage = preferredLanguage;
         }
 
         public void SetIncomplete() => SetState(State.Incomplete);
@@ -136,7 +141,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-        public void Update(string firstName, string lastName, string profileImageUrl, string description, bool emailNotifications, string contactEmail)
+        public void Update(string firstName, string lastName, string profileImageUrl, string description, bool emailNotifications, string contactEmail, string phoneNumber, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
         {
             CheckFullName(firstName, lastName);
             CheckDescription(description);
@@ -152,6 +157,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             Description = description;
             EmailNotifications = emailNotifications;
             ContactEmail = contactEmail;
+            PhoneNumber = phoneNumber; 
+            FrontendVersion = frontendVersion; 
+            PreferredLanguage = preferredLanguage; 
 
             AddEvent(new StudentUpdated(this));
         }
@@ -193,7 +201,6 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void RemoveBannerImage()
         {
-
             BannerUrl = string.Empty;
             AddEvent(new StudentBannerUpdated(this));
         }
@@ -326,8 +333,5 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void Ban() => IsBanned = true;
         public void Unban() => IsBanned = false;
-        public void GrantOrganizerRights() => IsOrganizer = true;
-        public void RevokeOrganizerRights() => IsOrganizer = false;
-
     }
 }
