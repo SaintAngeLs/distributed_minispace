@@ -10,9 +10,8 @@ namespace MiniSpace.Services.Students.Core.Entities
     {
         private ISet<Guid> _interestedInEvents = new HashSet<Guid>();
         private ISet<Guid> _signedUpEvents = new HashSet<Guid>();
-        private ISet<string> _galleryOfImages = new HashSet<string>();
         private ISet<string> _languages = new HashSet<string>();
-        private ISet<string> _interests = new HashSet<string>();
+        private ISet<Interest> _interests = new HashSet<Interest>();
 
         public string Email { get; private set; }
         public string FirstName { get; private set; }
@@ -28,14 +27,9 @@ namespace MiniSpace.Services.Students.Core.Entities
         public DateTime CreatedAt { get; private set; }
         public string ContactEmail { get; private set; }
         public string BannerUrl { get; private set; }
-        public string PhoneNumber { get; private set; } 
-        public FrontendVersion FrontendVersion { get; private set; } 
-        public PreferredLanguage PreferredLanguage { get; private set; } 
-        public IEnumerable<string> GalleryOfImageUrls
-        {
-            get => _galleryOfImages;
-            set => _galleryOfImages = new HashSet<string>(value ?? Enumerable.Empty<string>());
-        }
+        public string PhoneNumber { get; private set; }
+        public FrontendVersion FrontendVersion { get; private set; }
+        public PreferredLanguage PreferredLanguage { get; private set; }
         public string Education { get; private set; }
         public string WorkPosition { get; private set; }
         public string Company { get; private set; }
@@ -44,10 +38,10 @@ namespace MiniSpace.Services.Students.Core.Entities
             get => _languages;
             set => _languages = new HashSet<string>(value ?? Enumerable.Empty<string>());
         }
-        public IEnumerable<string> Interests
+        public IEnumerable<Interest> Interests
         {
             get => _interests;
-            set => _interests = new HashSet<string>(value ?? Enumerable.Empty<string>());
+            set => _interests = new HashSet<Interest>(value ?? Enumerable.Empty<Interest>());
         }
         public bool IsTwoFactorEnabled { get; private set; }
         public string TwoFactorSecret { get; private set; }
@@ -62,23 +56,24 @@ namespace MiniSpace.Services.Students.Core.Entities
             set => _signedUpEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
 
-        public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
+       public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
             : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
-                false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), null, 
-                Enumerable.Empty<string>(), null, null, null, Enumerable.Empty<string>(), Enumerable.Empty<string>(),
-                false, null, null, null, FrontendVersion.Auto, PreferredLanguage.English)
+                false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), string.Empty,
+                string.Empty, string.Empty, string.Empty, Enumerable.Empty<string>(), Enumerable.Empty<Interest>(),
+                false, null, string.Empty, string.Empty, FrontendVersion.Auto, PreferredLanguage.English)
         {
             CheckFullName(firstName, lastName);
         }
+
 
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             int numberOfFriends, string profileImageUrl, string description, DateTime? dateOfBirth,
             bool emailNotifications, bool isBanned, State state,
             IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
-            string bannerUrl, IEnumerable<string> galleryOfImageUrls, string education,
-            string workPosition, string company, IEnumerable<string> languages, IEnumerable<string> interests,
-            bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail = null, string phoneNumber = null,
-            FrontendVersion frontendVersion = FrontendVersion.Auto, PreferredLanguage preferredLanguage = PreferredLanguage.English)
+            string bannerUrl, string education, string workPosition, string company,
+            IEnumerable<string> languages, IEnumerable<Interest> interests,
+            bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail,
+            string phoneNumber, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
         {
             Id = id;
             Email = email;
@@ -95,17 +90,16 @@ namespace MiniSpace.Services.Students.Core.Entities
             InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
             BannerUrl = bannerUrl;
-            GalleryOfImageUrls = galleryOfImageUrls ?? Enumerable.Empty<string>();
             Education = education;
             WorkPosition = workPosition;
             Company = company;
             Languages = languages ?? Enumerable.Empty<string>();
-            Interests = interests ?? Enumerable.Empty<string>();
+            Interests = interests ?? Enumerable.Empty<Interest>();
             IsTwoFactorEnabled = isTwoFactorEnabled;
             TwoFactorSecret = twoFactorSecret;
             ContactEmail = contactEmail;
-            PhoneNumber = phoneNumber; 
-            FrontendVersion = frontendVersion; 
+            PhoneNumber = phoneNumber;
+            FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
         }
 
@@ -141,7 +135,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-        public void Update(string firstName, string lastName, string profileImageUrl, string description, bool emailNotifications, string contactEmail, string phoneNumber, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
+        public void Update(string firstName, string lastName, string profileImageUrl, string description,
+            bool emailNotifications, string contactEmail, string phoneNumber, FrontendVersion frontendVersion,
+            PreferredLanguage preferredLanguage)
         {
             CheckFullName(firstName, lastName);
             CheckDescription(description);
@@ -157,9 +153,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             Description = description;
             EmailNotifications = emailNotifications;
             ContactEmail = contactEmail;
-            PhoneNumber = phoneNumber; 
-            FrontendVersion = frontendVersion; 
-            PreferredLanguage = preferredLanguage; 
+            PhoneNumber = phoneNumber;
+            FrontendVersion = frontendVersion;
+            PreferredLanguage = preferredLanguage;
 
             AddEvent(new StudentUpdated(this));
         }
@@ -173,35 +169,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         public void UpdateBannerUrl(string bannerUrl)
         {
             BannerUrl = bannerUrl;
-            AddEvent(new StudentBannerUpdated(this));
-        }
-
-        public void AddGalleryImageUrl(string imageUrl)
-        {
-            _galleryOfImages.Add(imageUrl);
-            AddEvent(new StudentGalleryOfImagesUpdated(this));
-        }
-
-        public void UpdateGalleryOfImageUrls(IEnumerable<string> galleryOfImageUrls)
-        {
-            GalleryOfImageUrls = new HashSet<string>(galleryOfImageUrls ?? Enumerable.Empty<string>());
-            AddEvent(new StudentGalleryOfImagesUpdated(this));
-        }
-
-        public void RemoveGalleryImage(string imageUrl)
-        {
-            if (!_galleryOfImages.Contains(imageUrl))
-            {
-                throw new StudentGalleryImageNotFoundException(Id, imageUrl);
-            }
-
-            _galleryOfImages = new HashSet<string>(_galleryOfImages.Select(url => url == imageUrl ? string.Empty : url));
-            AddEvent(new StudentGalleryOfImagesUpdated(this));
-        }
-
-        public void RemoveBannerImage()
-        {
-            BannerUrl = string.Empty;
             AddEvent(new StudentBannerUpdated(this));
         }
 
@@ -229,9 +196,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentLanguagesUpdated(this));
         }
 
-        public void UpdateInterests(IEnumerable<string> interests)
+        public void UpdateInterests(IEnumerable<Interest> interests)
         {
-            Interests = new HashSet<string>(interests ?? Enumerable.Empty<string>());
+            Interests = new HashSet<Interest>(interests ?? Enumerable.Empty<Interest>());
             AddEvent(new StudentInterestsUpdated(this));
         }
 
