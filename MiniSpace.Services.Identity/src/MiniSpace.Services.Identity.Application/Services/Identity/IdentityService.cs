@@ -84,7 +84,6 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
-            // _logger.LogInformation($"User with id: {user.Id} has been authenticated.");
             await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
 
             return auth;
@@ -110,7 +109,6 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             user = new User(command.UserId, $"{command.FirstName} {command.LastName}", command.Email, password,
                 role, DateTime.UtcNow, command.Permissions);
 
-            // Generate email verification token and hashed token
             var (token, hashedToken) = _verificationTokenService.GenerateToken(user.Id, user.Email);
             user.SetEmailVerificationToken(hashedToken);
 

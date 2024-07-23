@@ -1,21 +1,19 @@
+using System;
+
 namespace MiniSpace.Services.Identity.Core.Entities
 {
-    public static class Role
+    public enum Role
     {
-        public const string User = "user";
-        public const string Admin = "admin";
-        public const string Banned = "banned";
+        User,
+        Admin,
+        Banned
+    }
 
-        public static bool IsValid(string role)
+    public static class RoleExtensions
+    {
+        public static bool IsValid(this Role role)
         {
-            if (string.IsNullOrWhiteSpace(role))
-            {
-                return false;
-            }
-
-            role = role.ToLowerInvariant();
-
-            return role == User || role == Admin || role == Banned;
+            return Enum.IsDefined(typeof(Role), role);
         }
     }
 }
