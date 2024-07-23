@@ -141,7 +141,8 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .SubscribeEvent<ReportReviewStarted>()
                 .SubscribeEvent<ReportResolved>()
                 .SubscribeEvent<ReportRejected>()
-                .SubscribeEvent<ReportCancelled>();
+                .SubscribeEvent<ReportCancelled>()
+                .SubscribeEvent<EmailVerified>();
             return app;
         }
 
