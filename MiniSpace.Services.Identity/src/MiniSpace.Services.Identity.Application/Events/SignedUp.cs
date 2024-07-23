@@ -1,5 +1,6 @@
 using System;
 using Convey.CQRS.Events;
+using MiniSpace.Services.Identity.Core.Entities;
 
 namespace MiniSpace.Services.Identity.Application.Events
 {
@@ -10,11 +11,11 @@ namespace MiniSpace.Services.Identity.Application.Events
         public string FirstName { get; }
         public string LastName { get; }
         public string Email { get; }
-        public string Role { get; }
+        public Role Role { get; }
         public string Token { get; }
         public string HashedToken { get; }
 
-        public SignedUp(Guid userId, string firstName, string lastName, string email, string role, string token, string hashedToken)
+        public SignedUp(Guid userId, string firstName, string lastName, string email, Role role, string token, string hashedToken)
         {
             UserId = userId;
             FirstName = firstName;

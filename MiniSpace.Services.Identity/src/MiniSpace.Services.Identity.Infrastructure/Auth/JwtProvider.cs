@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Convey.Auth;
 using MiniSpace.Services.Identity.Application.DTO;
 using MiniSpace.Services.Identity.Application.Services;
+using MiniSpace.Services.Identity.Core.Entities;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Auth
 {
@@ -17,10 +18,11 @@ namespace MiniSpace.Services.Identity.Infrastructure.Auth
             _jwtHandler = jwtHandler;
         }
 
-        public AuthDto Create(Guid userId, string role, string audience = null,
+        public AuthDto Create(Guid userId, Role role, string audience = null,
             IDictionary<string, IEnumerable<string>> claims = null)
         {
-            var jwt = _jwtHandler.CreateToken(userId.ToString("N"), role, audience, claims);
+            var roleString = role.ToString();
+            var jwt = _jwtHandler.CreateToken(userId.ToString("N"), roleString, audience, claims);
 
             return new AuthDto
             {

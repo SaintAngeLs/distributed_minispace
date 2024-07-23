@@ -104,7 +104,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 throw new EmailInUseException(command.Email);
             }
 
-            var role = string.IsNullOrWhiteSpace(command.Role) ? "user" : command.Role.ToLowerInvariant();
+            var role = string.IsNullOrWhiteSpace(command.Role) ? Role.User : Enum.Parse<Role>(command.Role, true);
             var password = _passwordService.Hash(command.Password);
             user = new User(command.UserId, $"{command.FirstName} {command.LastName}", command.Email, password,
                 role, DateTime.UtcNow, command.Permissions);
