@@ -62,27 +62,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
             IsTwoFactorEnabled = isTwoFactorEnabled;
             TwoFactorSecret = twoFactorSecret;
         }
-        
-        public void GrantOrganizerRights()
-        {
-            if (Role != Entities.Role.User)
-            {
-                throw new UserCannotBecomeAnOrganizerException(Id, Role);
-            }
-
-            Role = Entities.Role.Organizer;
-        }
-        
-        public void RevokeOrganizerRights()
-        {
-            if (Role != Entities.Role.Organizer)
-            {
-                throw new UserIsNotAnOrganizerException(Id);
-            }
-
-            Role = Entities.Role.User;
-        }
-        
+                
         public void Ban()
         {
             if (Role == Entities.Role.Banned || Role == Entities.Role.Admin)
