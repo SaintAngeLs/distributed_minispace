@@ -58,20 +58,17 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         {
             if (!EmailRegex.IsMatch(command.Email))
             {
-                _logger.LogError($"Invalid email: {command.Email}");
                 throw new InvalidEmailException(command.Email);
             }
 
             var user = await _userRepository.GetAsync(command.Email);
             if (user is null || !_passwordService.IsValid(user.Password, command.Password))
             {
-                _logger.LogError($"User with email: {command.Email} was not found.");
                 throw new InvalidCredentialsException(command.Email);
             }
 
             if (!_passwordService.IsValid(user.Password, command.Password))
             {
-                _logger.LogError($"Invalid password for user with id: {user.Id}");
                 throw new InvalidCredentialsException(command.Email);
             }
 
@@ -87,7 +84,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
-            _logger.LogInformation($"User with id: {user.Id} has been authenticated.");
+            // _logger.LogInformation($"User with id: {user.Id} has been authenticated.");
             await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
 
             return auth;
@@ -123,38 +120,6 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
             await _messageBroker.PublishAsync(new SignedUp(user.Id, command.FirstName, command.LastName, 
                 user.Email, user.Role, token, hashedToken));
-        }
-
-        public async Task GrantOrganizerRightsAsync(GrantOrganizerRights command)
-        {
-            var user = await _userRepository.GetAsync(command.UserId);
-            if (user is null)
-            {
-                _logger.LogError($"User with id: {command.UserId} was not found.");
-                throw new UserNotFoundException(command.UserId);
-            }
-
-            user.GrantOrganizerRights();
-            await _userRepository.UpdateAsync(user);
-
-            _logger.LogInformation($"Granted organizer rights to the user with id: {user.Id}.");
-            await _messageBroker.PublishAsync(new OrganizerRightsGranted(user.Id));
-        }
-
-        public async Task RevokeOrganizerRightsAsync(RevokeOrganizerRights command)
-        {
-            var user = await _userRepository.GetAsync(command.UserId);
-            if (user is null)
-            {
-                _logger.LogError($"User with id: {command.UserId} was not found.");
-                throw new UserNotFoundException(command.UserId);
-            }
-
-            user.RevokeOrganizerRights();
-            await _userRepository.UpdateAsync(user);
-
-            _logger.LogInformation($"Revoked organizer rights from the user with id: {user.Id}.");
-            await _messageBroker.PublishAsync(new OrganizerRightsRevoked(user.Id));
         }
 
         public async Task BanUserAsync(BanUser command)
