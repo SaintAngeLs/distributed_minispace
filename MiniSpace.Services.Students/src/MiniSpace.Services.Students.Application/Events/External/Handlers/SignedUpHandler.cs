@@ -11,7 +11,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
     public class SignedUpHandler : IEventHandler<SignedUp>
     {
-        private const string RequiredRole = "user";
+        private const string RequiredRole = "User";
         private readonly IStudentRepository _studentRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ILogger<SignedUpHandler> _logger;

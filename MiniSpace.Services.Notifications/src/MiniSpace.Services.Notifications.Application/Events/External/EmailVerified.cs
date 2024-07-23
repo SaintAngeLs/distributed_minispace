@@ -1,8 +1,10 @@
 using System;
 using Convey.CQRS.Events;
+using Convey.MessageBrokers;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
+    [Message("identity")]
     public class EmailVerified : IEvent
     {
         public Guid UserId { get; }

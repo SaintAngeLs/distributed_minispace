@@ -117,7 +117,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _logger.LogInformation($"Created an account for the user with id: {user.Id}.");
 
             await _messageBroker.PublishAsync(new SignedUp(user.Id, command.FirstName, command.LastName, 
-                user.Email, user.Role, token, hashedToken));
+                user.Email, user.Role.ToString(), token, hashedToken));
         }
 
         public async Task BanUserAsync(BanUser command)
