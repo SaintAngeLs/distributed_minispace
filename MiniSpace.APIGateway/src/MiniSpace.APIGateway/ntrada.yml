@@ -436,6 +436,8 @@ modules:
         use: downstream
         downstream: students-service/students/{studentId}/settings
         auth: true
+        bind:
+          - studentId:{studentId}
 
       - upstream: /{studentId}/state/{state}
         method: PUT

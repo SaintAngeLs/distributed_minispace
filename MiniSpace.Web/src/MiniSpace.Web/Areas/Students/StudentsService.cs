@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
@@ -148,24 +150,32 @@ namespace MiniSpace.Web.Areas.Students
             var updateUserSettingsData = new
             {
                 studentId,
-                availableSettings.CreatedAtVisibility,
-                availableSettings.DateOfBirthVisibility,
-                availableSettings.InterestedInEventsVisibility,
-                availableSettings.SignedUpEventsVisibility,
-                availableSettings.EducationVisibility,
-                availableSettings.WorkPositionVisibility,
-                availableSettings.LanguagesVisibility,
-                availableSettings.InterestsVisibility,
-                availableSettings.ContactEmailVisibility,
-                availableSettings.PhoneNumberVisibility,
-                availableSettings.PreferredLanguage,
-                availableSettings.FrontendVersion
+                CreatedAtVisibility = availableSettings.CreatedAtVisibility.ToString(),
+                DateOfBirthVisibility = availableSettings.DateOfBirthVisibility.ToString(),
+                InterestedInEventsVisibility = availableSettings.InterestedInEventsVisibility.ToString(),
+                SignedUpEventsVisibility = availableSettings.SignedUpEventsVisibility.ToString(),
+                EducationVisibility = availableSettings.EducationVisibility.ToString(),
+                WorkPositionVisibility = availableSettings.WorkPositionVisibility.ToString(),
+                LanguagesVisibility = availableSettings.LanguagesVisibility.ToString(),
+                InterestsVisibility = availableSettings.InterestsVisibility.ToString(),
+                ContactEmailVisibility = availableSettings.ContactEmailVisibility.ToString(),
+                PhoneNumberVisibility = availableSettings.PhoneNumberVisibility.ToString(),
+                PreferredLanguage = availableSettings.PreferredLanguage.ToString(),
+                FrontendVersion = availableSettings.FrontendVersion.ToString()
             };
 
-            var jsonData = JsonSerializer.Serialize(updateUserSettingsData);
-            Console.WriteLine($"Sending UpdateUserSettings request: {jsonData}");
-
             await _httpClient.PutAsync($"students/{studentId}/settings", updateUserSettingsData);
+            
+
         }
+
+        public async Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<AvailableSettingsDto>($"students/{studentId}/settings");
+        }
+
+
     }
 }
