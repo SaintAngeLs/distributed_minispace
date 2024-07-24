@@ -30,12 +30,16 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         private readonly IMessageBroker _messageBroker;
         private readonly IVerificationTokenService _verificationTokenService;
         private readonly ITwoFactorSecretTokenService _twoFactorSecretTokenService;
+        private readonly ITwoFactorCodeService _twoFactorCodeService;
         private readonly ILogger<IdentityService> _logger;
 
         public IdentityService(IUserRepository userRepository, IPasswordService passwordService,
             IJwtProvider jwtProvider, IRefreshTokenService refreshTokenService,
             IMessageBroker messageBroker, IUserResetTokenRepository userResetTokenRepository,
-            IVerificationTokenService verificationTokenService, ITwoFactorSecretTokenService twoFactorSecretTokenService, ILogger<IdentityService> logger)
+            IVerificationTokenService verificationTokenService, 
+            ITwoFactorSecretTokenService twoFactorSecretTokenService,
+            ITwoFactorCodeService  twoFactorCodeService,
+            ILogger<IdentityService> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
@@ -45,6 +49,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _userResetTokenRepository = userResetTokenRepository ?? throw new ArgumentNullException(nameof(userResetTokenRepository));
             _verificationTokenService = verificationTokenService ?? throw new ArgumentNullException(nameof(verificationTokenService));
             _twoFactorSecretTokenService = twoFactorSecretTokenService ?? throw new ArgumentNullException(nameof(twoFactorSecretTokenService));
+            _twoFactorCodeService = twoFactorCodeService ?? throw new ArgumentNullException(nameof(twoFactorCodeService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -67,9 +72,16 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 throw new InvalidCredentialsException(command.Email);
             }
 
-            if (!_passwordService.IsValid(user.Password, command.Password))
+            if (user.IsTwoFactorEnabled)
             {
-                throw new InvalidCredentialsException(command.Email);
+                var code = _twoFactorCodeService.GenerateCode(user.TwoFactorSecret);
+                await _messageBroker.PublishAsync(new TwoFactorCodeGenerated(user.Id, code));
+
+                return new AuthDto
+                {
+                    IsTwoFactorRequired = true,
+                    UserId = user.Id
+                };
             }
 
             var claims = new Dictionary<string, IEnumerable<string>>
@@ -88,6 +100,8 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
             return auth;
         }
+
+
 
         public async Task SignUpAsync(SignUp command)
         {
@@ -272,5 +286,35 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
             return secret;
         }
+
+        public async Task<AuthDto> VerifyTwoFactorCodeAsync(VerifyTwoFactorCode command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user == null)
+            {
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            if (!_twoFactorCodeService.ValidateCode(user.TwoFactorSecret, command.Code))
+            {
+                throw new InvalidTwoFactorCodeException();
+            }
+
+            var claims = new Dictionary<string, IEnumerable<string>>
+            {
+                ["name"] = new[] { user.Name },
+                ["e-mail"] = new[] { user.Email }
+            };
+            if (user.Permissions.Any())
+            {
+                claims.Add("permissions", user.Permissions);
+            }
+            var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
+            auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
+
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
+            return auth;
+        }
+
     }
 }
