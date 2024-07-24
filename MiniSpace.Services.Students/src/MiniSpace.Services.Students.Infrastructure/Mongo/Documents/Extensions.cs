@@ -179,7 +179,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             };
 
         public static UserGalleryDto AsDto(this UserGalleryDocument document)
-            => new UserGalleryDto(document.UserId, document.GalleryOfImages.Select(gi => new GalleryImageDto(gi.ImageId, gi.ImageUrl)));
+            => new UserGalleryDto(document.UserId, document.GalleryOfImages.Select(gi => new GalleryImageDto(gi.ImageId, gi.ImageUrl, gi.DateAdded)));
 
         public static UserSettings AsEntity(this UserSettingsDocument document)
             => new UserSettings(
