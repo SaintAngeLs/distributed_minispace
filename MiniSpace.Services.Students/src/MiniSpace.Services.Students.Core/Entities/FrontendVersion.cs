@@ -5,6 +5,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         Auto,
         DarkMode,
         LightMode,
-        SystemMode
+        SystemMode,
+        Default
     }
 }

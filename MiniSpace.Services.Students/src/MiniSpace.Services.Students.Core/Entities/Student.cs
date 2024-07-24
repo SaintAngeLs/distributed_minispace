@@ -29,8 +29,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string ContactEmail { get; private set; }
         public string BannerUrl { get; private set; }
         public string PhoneNumber { get; private set; }
-        public FrontendVersion FrontendVersion { get; private set; }
-        public PreferredLanguage PreferredLanguage { get; private set; }
         public IEnumerable<string> Languages
         {
             get => _languages;
@@ -63,7 +61,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             get => _signedUpEvents;
             set => _signedUpEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
-        public UserSettings Settings { get; private set; }
 
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             string profileImageUrl, string description, DateTime? dateOfBirth,
@@ -72,8 +69,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             string bannerUrl, IEnumerable<Education> education, IEnumerable<Work> work,
             IEnumerable<string> languages, IEnumerable<Interest> interests,
             bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail,
-            string phoneNumber, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage,
-            UserSettings settings)
+            string phoneNumber)
         {
             Id = id;
             Email = email;
@@ -97,9 +93,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             TwoFactorSecret = twoFactorSecret;
             ContactEmail = contactEmail;
             PhoneNumber = phoneNumber;
-            FrontendVersion = frontendVersion;
-            PreferredLanguage = preferredLanguage;
-            Settings = settings ?? new UserSettings();
         }
 
 
@@ -136,8 +129,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
 
         public void Update(string firstName, string lastName, string description,
-            bool emailNotifications, string contactEmail, string phoneNumber, FrontendVersion frontendVersion,
-            PreferredLanguage preferredLanguage)
+            bool emailNotifications, string contactEmail, string phoneNumber)
         {
             CheckFullName(firstName, lastName);
             CheckDescription(description);
@@ -153,8 +145,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             EmailNotifications = emailNotifications;
             ContactEmail = contactEmail;
             PhoneNumber = phoneNumber;
-            FrontendVersion = frontendVersion;
-            PreferredLanguage = preferredLanguage;
 
             AddEvent(new StudentUpdated(this));
         }
@@ -302,3 +292,4 @@ namespace MiniSpace.Services.Students.Core.Entities
         public void Unban() => IsBanned = false;
     }
 }
+
