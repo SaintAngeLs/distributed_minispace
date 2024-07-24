@@ -30,6 +30,7 @@
                     <MudNavLink OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavLink>
                 </MudNavMenu>
             </MudItem>
             <MudItem xs="12" sm="8" md="9">
@@ -57,6 +58,10 @@
                     else if (activeTabIndex == 5)
                     {
                         @GalleryContent()
+                    }
+                    else if (activeTabIndex == 6)
+                    {
+                        @UserSettingsContent()
                     }
                 </MudPaper>
             </MudItem>
@@ -151,6 +156,7 @@
     private long maxFileSize = 10 * 1024 * 1024;
     private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
+    private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
 
     protected override async Task OnInitializedAsync()
     {
@@ -174,6 +180,22 @@
                 profileImage = studentDto.ProfileImageUrl;
                 isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
                 twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
+
+                availableSettingsDto = new AvailableSettingsDto
+                {
+                    CreatedAtVisibility = Visibility.Everyone,
+                    DateOfBirthVisibility = Visibility.Connections,
+                    InterestedInEventsVisibility = Visibility.NoOne,
+                    SignedUpEventsVisibility = Visibility.Connections,
+                    EducationVisibility = Visibility.Everyone,
+                    WorkPositionVisibility = Visibility.Everyone,
+                    LanguagesVisibility = Visibility.Everyone,
+                    InterestsVisibility = Visibility.Connections,
+                    ContactEmailVisibility = Visibility.Connections,
+                    PhoneNumberVisibility = Visibility.NoOne,
+                    PreferredLanguage = PreferredLanguage.English,
+                    FrontendVersion = FrontendVersion.Auto
+                };
             }
             else
             {
@@ -239,6 +261,8 @@
             {
                 await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto);
             }
+
+            await StudentsService.UpdateUserSettingsAsync(studentDto.Id, availableSettingsDto);
         }
         catch (Exception ex)
         {
@@ -515,6 +539,116 @@
                     </MudItem>
                 }
             </MudGrid>
+        }
+    </div>;
+
+    private RenderFragment UserSettingsContent() => @<div>
+        <MudText Typo="Typo.h6" GutterBottom="true">User Settings</MudText>
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.InterestedInEventsVisibility" Label="Interested In Events Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.SignedUpEventsVisibility" Label="Signed Up Events Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.EducationVisibility" Label="Education Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.WorkPositionVisibility" Label="Work Position Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.LanguagesVisibility" Label="Languages Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.InterestsVisibility" Label="Interests Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.ContactEmailVisibility" Label="Contact Email Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.PhoneNumberVisibility" Label="Phone Number Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.PreferredLanguage" Label="Preferred Language" HelperText="Preferred language for the interface" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var language in Enum.GetValues(typeof(PreferredLanguage)))
+                        {
+                            <MudSelectItem Value="@language">@language</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="availableSettingsDto.FrontendVersion" Label="Frontend Version" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var version in Enum.GetValues(typeof(FrontendVersion)))
+                        {
+                            <MudSelectItem Value="@version">@version</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save Settings</MudButton>
         }
     </div>;
 

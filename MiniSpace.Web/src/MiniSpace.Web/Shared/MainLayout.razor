@@ -49,7 +49,7 @@
         </RadzenStack>
     </header>
 
-    @if (_isUserAuthenticated && _studentState == "valid")
+    @if (_isUserAuthenticated)
     {
         <header class="header-services">
             <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
@@ -57,7 +57,7 @@
     }
 
     <div style="display: flex; flex: 1; flex-direction: row;" class="main-content-container">
-        @if (_isUserAuthenticated && _studentState == "valid")
+        @if (_isUserAuthenticated)
         {
             @if (isPC)
             {
@@ -163,7 +163,7 @@
                     </div>
                 </div>
             </div>
-            @if (_isUserAuthenticated && _studentState == "valid")
+            @if (_isUserAuthenticated)
             {
                 <div style="nax-width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
                     <NotificationComponent />

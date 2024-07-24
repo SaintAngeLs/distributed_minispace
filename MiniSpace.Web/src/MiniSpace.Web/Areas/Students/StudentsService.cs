@@ -139,5 +139,33 @@ namespace MiniSpace.Web.Areas.Students
             _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<StudentWithGalleryImagesDto>($"students/{studentId}/gallery");
         }
+
+        public async Task UpdateUserSettingsAsync(Guid studentId, AvailableSettingsDto availableSettings)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var updateUserSettingsData = new
+            {
+                studentId,
+                availableSettings.CreatedAtVisibility,
+                availableSettings.DateOfBirthVisibility,
+                availableSettings.InterestedInEventsVisibility,
+                availableSettings.SignedUpEventsVisibility,
+                availableSettings.EducationVisibility,
+                availableSettings.WorkPositionVisibility,
+                availableSettings.LanguagesVisibility,
+                availableSettings.InterestsVisibility,
+                availableSettings.ContactEmailVisibility,
+                availableSettings.PhoneNumberVisibility,
+                availableSettings.PreferredLanguage,
+                availableSettings.FrontendVersion
+            };
+
+            var jsonData = JsonSerializer.Serialize(updateUserSettingsData);
+            Console.WriteLine($"Sending UpdateUserSettings request: {jsonData}");
+
+            await _httpClient.PutAsync($"students/{studentId}/settings", updateUserSettingsData);
+        }
     }
 }
