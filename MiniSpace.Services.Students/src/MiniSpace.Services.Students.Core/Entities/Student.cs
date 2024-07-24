@@ -65,15 +65,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
         public UserSettings Settings { get; private set; }
 
-        public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
-            : this(id, email, createdAt, firstName, lastName, string.Empty, string.Empty, null,
-                false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), string.Empty,
-                Enumerable.Empty<Education>(), Enumerable.Empty<Work>(), Enumerable.Empty<string>(), Enumerable.Empty<Interest>(),
-                false, null, string.Empty, string.Empty, FrontendVersion.Auto, PreferredLanguage.English)
-        {
-            CheckFullName(firstName, lastName);
-        }
-
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
             string profileImageUrl, string description, DateTime? dateOfBirth,
             bool emailNotifications, bool isBanned, State state,
@@ -81,7 +72,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             string bannerUrl, IEnumerable<Education> education, IEnumerable<Work> work,
             IEnumerable<string> languages, IEnumerable<Interest> interests,
             bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail,
-            string phoneNumber, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
+            string phoneNumber, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage,
+            UserSettings settings)
         {
             Id = id;
             Email = email;
@@ -107,8 +99,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             PhoneNumber = phoneNumber;
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
-            Settings = new UserSettings();
+            Settings = settings ?? new UserSettings();
         }
+
 
         public void SetIncomplete() => SetState(State.Incomplete);
         public void SetValid() => SetState(State.Valid);

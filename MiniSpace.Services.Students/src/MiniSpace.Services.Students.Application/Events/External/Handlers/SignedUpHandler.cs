@@ -6,6 +6,7 @@ using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
@@ -39,8 +40,34 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 throw new StudentAlreadyCreatedException(student.Id);
             }
 
-            var newStudent = new Student(@event.UserId, @event.FirstName, @event.LastName,
-                @event.Email, _dateTimeProvider.Now);
+            var newStudent = new Student(
+                @event.UserId,
+                @event.Email,
+                _dateTimeProvider.Now,
+                @event.FirstName,
+                @event.LastName,
+                string.Empty, // ProfileImageUrl
+                string.Empty, // Description
+                null, // DateOfBirth
+                false, // EmailNotifications
+                false, // IsBanned
+                State.Unverified, // State
+                new List<Guid>(), // InterestedInEvents
+                new List<Guid>(), // SignedUpEvents
+                string.Empty, // BannerUrl
+                new List<Education>(), // Education
+                new List<Work>(), // Work
+                new List<string>(), // Languages
+                new List<Interest>(), // Interests
+                false, // IsTwoFactorEnabled
+                string.Empty, // TwoFactorSecret
+                string.Empty, // ContactEmail
+                string.Empty, // PhoneNumber
+                FrontendVersion.Auto, // FrontendVersion
+                PreferredLanguage.English, // PreferredLanguage
+                new UserSettings() // Settings
+            );
+
             await _studentRepository.AddAsync(newStudent);
 
             var defaultPreferences = new NotificationPreferences();

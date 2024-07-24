@@ -2,7 +2,9 @@ using Convey.CQRS.Events;
 using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core;
 using MiniSpace.Services.Students.Core.Events;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace MiniSpace.Services.Students.Infrastructure.Services
 {
@@ -22,14 +24,25 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
                     return new Application.Events.StudentUpdated(
                         e.Student.Id, 
                         e.Student.FullName, 
-                        e.Student.ProfileImageUrl,
-                        e.Student.BannerUrl,  
-                        e.Student.GalleryOfImageUrls,
-                        e.Student.Education,
-                        e.Student.WorkPosition,
-                        e.Student.Company,
+                        e.Student.Description,
+                        e.Student.Education.Select(ed => new Application.Dto.EducationDto 
+                        {
+                            InstitutionName = ed.InstitutionName,
+                            Degree = ed.Degree,
+                            StartDate = ed.StartDate,
+                            EndDate = ed.EndDate,
+                            Description = ed.Description
+                        }),
+                        e.Student.Work.Select(w => new Application.Dto.WorkDto
+                        {
+                            Company = w.Company,
+                            Position = w.Position,
+                            StartDate = w.StartDate,
+                            EndDate = w.EndDate,
+                            Description = w.Description
+                        }),
                         e.Student.Languages,
-                        e.Student.Interests,
+                        e.Student.Interests.Select(i => i.ToString()),
                         e.Student.ContactEmail);
                 case StudentStateChanged e:
                     return new Application.Events.StudentStateChanged(

@@ -1,19 +1,20 @@
+using Convey.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
-namespace MiniSpace.Services.Students.Application.Dto
+namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 {
-    [ExcludeFromCodeCoverage]
-    public class GalleryImageDto
+    public class GalleryImageDocument
     {
         public Guid ImageId { get; set; }
         public string ImageUrl { get; set; }
+        public DateTime DateAdded { get; set; }
 
-        public GalleryImageDto(Guid imageId, string imageUrl)
+        public GalleryImageDocument(Guid imageId, string imageUrl)
         {
             ImageId = imageId;
             ImageUrl = imageUrl ?? throw new ArgumentNullException(nameof(imageUrl));
+            DateAdded = DateTime.UtcNow;
         }
     }
 }

@@ -104,8 +104,6 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeEvent<StudentCancelledSignUpToEvent>()
                 .SubscribeEvent<UserBanned>()
                 .SubscribeEvent<UserUnbanned>()
-                .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>()
                 .SubscribeEvent<StudentImageUploaded>()
                 .SubscribeEvent<MediaFileDeleted>();
 

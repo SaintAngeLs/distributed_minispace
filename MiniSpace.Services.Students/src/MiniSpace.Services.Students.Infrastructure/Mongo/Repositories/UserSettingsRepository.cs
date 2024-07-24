@@ -22,7 +22,24 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
         public async Task<UserSettings> GetUserSettingsAsync(Guid studentId)
         {
             var userSettingsDocument = await _repository.GetAsync(x => x.StudentId == studentId);
-            return userSettingsDocument?.Settings ?? new UserSettings();
+            if (userSettingsDocument == null)
+            {
+                return new UserSettings();
+            }
+
+            return new UserSettings
+            {
+                CreatedAtVisibility = userSettingsDocument.CreatedAtVisibility,
+                DateOfBirthVisibility = userSettingsDocument.DateOfBirthVisibility,
+                InterestedInEventsVisibility = userSettingsDocument.InterestedInEventsVisibility,
+                SignedUpEventsVisibility = userSettingsDocument.SignedUpEventsVisibility,
+                EducationVisibility = userSettingsDocument.EducationVisibility,
+                WorkPositionVisibility = userSettingsDocument.WorkPositionVisibility,
+                LanguagesVisibility = userSettingsDocument.LanguagesVisibility,
+                InterestsVisibility = userSettingsDocument.InterestsVisibility,
+                ContactEmailVisibility = userSettingsDocument.ContactEmailVisibility,
+                PhoneNumberVisibility = userSettingsDocument.PhoneNumberVisibility
+            };
         }
 
         public async Task UpdateUserSettingsAsync(Guid studentId, UserSettings userSettings)
@@ -35,14 +52,33 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
                 {
                     Id = Guid.NewGuid(),
                     StudentId = studentId,
-                    Settings = userSettings
+                    CreatedAtVisibility = userSettings.CreatedAtVisibility,
+                    DateOfBirthVisibility = userSettings.DateOfBirthVisibility,
+                    InterestedInEventsVisibility = userSettings.InterestedInEventsVisibility,
+                    SignedUpEventsVisibility = userSettings.SignedUpEventsVisibility,
+                    EducationVisibility = userSettings.EducationVisibility,
+                    WorkPositionVisibility = userSettings.WorkPositionVisibility,
+                    LanguagesVisibility = userSettings.LanguagesVisibility,
+                    InterestsVisibility = userSettings.InterestsVisibility,
+                    ContactEmailVisibility = userSettings.ContactEmailVisibility,
+                    PhoneNumberVisibility = userSettings.PhoneNumberVisibility
                 };
 
                 await _repository.AddAsync(userSettingsDocument);
             }
             else
             {
-                userSettingsDocument.Settings = userSettings;
+                userSettingsDocument.CreatedAtVisibility = userSettings.CreatedAtVisibility;
+                userSettingsDocument.DateOfBirthVisibility = userSettings.DateOfBirthVisibility;
+                userSettingsDocument.InterestedInEventsVisibility = userSettings.InterestedInEventsVisibility;
+                userSettingsDocument.SignedUpEventsVisibility = userSettings.SignedUpEventsVisibility;
+                userSettingsDocument.EducationVisibility = userSettings.EducationVisibility;
+                userSettingsDocument.WorkPositionVisibility = userSettings.WorkPositionVisibility;
+                userSettingsDocument.LanguagesVisibility = userSettings.LanguagesVisibility;
+                userSettingsDocument.InterestsVisibility = userSettings.InterestsVisibility;
+                userSettingsDocument.ContactEmailVisibility = userSettings.ContactEmailVisibility;
+                userSettingsDocument.PhoneNumberVisibility = userSettings.PhoneNumberVisibility;
+
                 await _repository.UpdateAsync(userSettingsDocument);
             }
         }

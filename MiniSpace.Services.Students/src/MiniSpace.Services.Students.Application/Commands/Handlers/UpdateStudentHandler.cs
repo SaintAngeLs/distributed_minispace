@@ -55,21 +55,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             command.PhoneNumber, 
             command.FrontendVersion, 
             command.PreferredLanguage);
-            student.UpdateEducation(command.Education.Select(e => new Education
-            {
-                InstitutionName = e.InstitutionName,
-                Degree = e.Degree,
-                StartDate = e.StartDate,
-                EndDate = e.EndDate
-            }));
-            student.UpdateWork(command.Work.Select(w => new Work
-            {
-                Company = w.Company,
-                Position = w.Position,
-                StartDate = w.StartDate,
-                EndDate = w.EndDate,
-                Description = w.Description
-            }));
+            student.UpdateEducation(command.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)));
+            student.UpdateWork(command.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)));
             student.UpdateLanguages(command.Languages);
             student.UpdateInterests(command.Interests.Select(i => (Interest)Enum.Parse(typeof(Interest), i)));
 
@@ -94,7 +81,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                     InstitutionName = e.InstitutionName,
                     Degree = e.Degree,
                     StartDate = e.StartDate,
-                    EndDate = e.EndDate
+                    EndDate = e.EndDate,
+                    Description = e.Description
                 }).ToList(),
                 student.Work.Select(w => new WorkDto
                 {
