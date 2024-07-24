@@ -12,12 +12,12 @@ namespace MiniSpace.Services.Students.Core.Entities
         private ISet<Guid> _signedUpEvents = new HashSet<Guid>();
         private ISet<string> _languages = new HashSet<string>();
         private ISet<Interest> _interests = new HashSet<Interest>();
+        private ISet<Education> _education = new HashSet<Education>();
 
         public string Email { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public string FullName => $"{FirstName} {LastName}";
-        public int NumberOfFriends { get; private set; }
         public string ProfileImageUrl { get; private set; }
         public string Description { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
@@ -30,7 +30,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string PhoneNumber { get; private set; }
         public FrontendVersion FrontendVersion { get; private set; }
         public PreferredLanguage PreferredLanguage { get; private set; }
-        public string Education { get; private set; }
         public string WorkPosition { get; private set; }
         public string Company { get; private set; }
         public IEnumerable<string> Languages
@@ -42,6 +41,11 @@ namespace MiniSpace.Services.Students.Core.Entities
         {
             get => _interests;
             set => _interests = new HashSet<Interest>(value ?? Enumerable.Empty<Interest>());
+        }
+        public IEnumerable<Education> Education
+        {
+            get => _education;
+            set => _education = new HashSet<Education>(value ?? Enumerable.Empty<Education>());
         }
         public bool IsTwoFactorEnabled { get; private set; }
         public string TwoFactorSecret { get; private set; }
@@ -56,21 +60,20 @@ namespace MiniSpace.Services.Students.Core.Entities
             set => _signedUpEvents = new HashSet<Guid>(value ?? Enumerable.Empty<Guid>());
         }
 
-       public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
-            : this(id, email, createdAt, firstName, lastName, 0, string.Empty, string.Empty, null,
+        public Student(Guid id, string firstName, string lastName, string email, DateTime createdAt)
+            : this(id, email, createdAt, firstName, lastName, string.Empty, string.Empty, null,
                 false, false, State.Unverified, Enumerable.Empty<Guid>(), Enumerable.Empty<Guid>(), string.Empty,
-                string.Empty, string.Empty, string.Empty, Enumerable.Empty<string>(), Enumerable.Empty<Interest>(),
+                Enumerable.Empty<Education>(), string.Empty, string.Empty, Enumerable.Empty<string>(), Enumerable.Empty<Interest>(),
                 false, null, string.Empty, string.Empty, FrontendVersion.Auto, PreferredLanguage.English)
         {
             CheckFullName(firstName, lastName);
         }
 
-
         public Student(Guid id, string email, DateTime createdAt, string firstName, string lastName,
-            int numberOfFriends, string profileImageUrl, string description, DateTime? dateOfBirth,
+            string profileImageUrl, string description, DateTime? dateOfBirth,
             bool emailNotifications, bool isBanned, State state,
             IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
-            string bannerUrl, string education, string workPosition, string company,
+            string bannerUrl, IEnumerable<Education> education, string workPosition, string company,
             IEnumerable<string> languages, IEnumerable<Interest> interests,
             bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail,
             string phoneNumber, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
@@ -80,7 +83,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             CreatedAt = createdAt;
             FirstName = firstName;
             LastName = lastName;
-            NumberOfFriends = numberOfFriends;
             ProfileImageUrl = profileImageUrl;
             Description = description;
             DateOfBirth = dateOfBirth;
@@ -90,7 +92,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             InterestedInEvents = interestedInEvents ?? Enumerable.Empty<Guid>();
             SignedUpEvents = signedUpEvents ?? Enumerable.Empty<Guid>();
             BannerUrl = bannerUrl;
-            Education = education;
+            Education = education ?? Enumerable.Empty<Education>();
             WorkPosition = workPosition;
             Company = company;
             Languages = languages ?? Enumerable.Empty<string>();
@@ -172,9 +174,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentBannerUpdated(this));
         }
 
-        public void UpdateEducation(string education)
+        public void UpdateEducation(IEnumerable<Education> education)
         {
-            Education = education;
+            Education = new HashSet<Education>(education ?? Enumerable.Empty<Education>());
             AddEvent(new StudentEducationUpdated(this));
         }
 
