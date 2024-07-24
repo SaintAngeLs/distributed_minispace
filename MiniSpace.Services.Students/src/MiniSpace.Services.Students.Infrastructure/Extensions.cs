@@ -96,6 +96,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeCommand<DeleteStudent>()
                 .SubscribeCommand<CompleteStudentRegistration>()
                 .SubscribeCommand<ChangeStudentState>()
+                .SubscribeCommand<UpdateUserSettings>()
                 .SubscribeEvent<SignedUp>()
                 .SubscribeEvent<EmailVerified>()
                 .SubscribeEvent<StudentShowedInterestInEvent>()
