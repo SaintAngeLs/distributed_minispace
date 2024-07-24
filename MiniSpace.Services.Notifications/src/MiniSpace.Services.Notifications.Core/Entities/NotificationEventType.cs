@@ -31,5 +31,6 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         ReportCancelled,
         Other,
         EmailVerified,
+        TwoFactorCodeGenerated,
     }
 }
