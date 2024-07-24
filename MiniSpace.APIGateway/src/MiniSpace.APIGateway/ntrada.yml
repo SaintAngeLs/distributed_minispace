@@ -43,7 +43,7 @@ extensions:
       - Total-Count
 
   jwt:
-    issuerSigningKey: eiquief5phee9pazo0Faegaez9gohThailiur5woy2befiech1oarai4aiLi6ahVecah3ie9Aiz6Peij
+    issuerSigningKey: Gtn9vBDB5RCDLJSMqZQQmN75J8hgzbQwWkcD8jMIXnvCLAmlL0QVacUAbyootWihMrPIz
     validIssuer: minispace
     validateAudience: false
     validateIssuer: false
