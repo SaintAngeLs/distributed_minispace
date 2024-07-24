@@ -22,18 +22,19 @@ namespace MiniSpace.Web.Areas.Students
             bool emailNotifications, 
             string contactEmail, 
             IEnumerable<string> languages, 
-            IEnumerable<string> interests, 
+            IEnumerable<InterestDto> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
-            string education,
-            string workPosition,
-            string company);
+            IEnumerable<EducationDto> education,
+            IEnumerable<WorkDto> work,
+            string phoneNumber);
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl,
             string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail);
         Task<string> GetStudentStateAsync(Guid studentId);
 
         Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId);
         Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto);
+        Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId);
     }
 }

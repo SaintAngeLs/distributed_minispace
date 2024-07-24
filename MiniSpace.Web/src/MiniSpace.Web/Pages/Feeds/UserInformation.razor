@@ -1,9 +1,10 @@
+@page "/user-information/{UserId:guid}"
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Students
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
-
 @using MudBlazor
+
 <MudPaper Class="profile-paper">
     @if (student != null)
     {
@@ -14,7 +15,7 @@
                         <div class="profile-header">
                             <MudAvatar Image="@GetProfileImage()" Style="height:150px; width:150px; font-size:2rem;" Class="profile-avatar" />
                             <div class="profile-info">
-                                <MudText Typo="Typo.h4" Class="profile-name">@student.FullName</MudText>
+                                <MudText Typo="Typo.h4" Class="profile-name">@($"{student.FirstName} {student.LastName}")</MudText>
                                 <MudText Typo="Typo.subtitle1" Class="profile-description">@student.Description</MudText>
                                 <MudButton Variant="MudBlazor.Variant.Outlined" Color="MudBlazor.Color.Primary" OnClick="@NavigateToProfileSettings">Edit Profile</MudButton>
                             </div>
@@ -32,16 +33,13 @@
                             <MudText Typo="Typo.h5">Contact Information</MudText>
                         </MudCardHeader>
                         <MudCardContent>
-                            @if (!string.IsNullOrEmpty(student.ContactEmail))
-                            {
-                                <MudText Typo="Typo.body2">Contact Email: <a href="mailto:@student.ContactEmail">@student.ContactEmail</a></MudText>
-                            }
+                            <MudText Typo="Typo.body2">Contact Email: <a href="mailto:@student.ContactEmail">@student.ContactEmail</a></MudText>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
             }
 
-            @if (!string.IsNullOrEmpty(student.Education))
+            @if (student.Education != null && student.Education.Any())
             {
                 <MudItem xs="12">
                     <MudCard Class="info-card">
@@ -50,13 +48,16 @@
                             <MudText Typo="Typo.h5">Education</MudText>
                         </MudCardHeader>
                         <MudCardContent>
-                            <MudText Typo="Typo.body2">@student.Education</MudText>
+                            @foreach (var education in student.Education)
+                            {
+                                <MudText Typo="Typo.body2">Institution: @education.InstitutionName, Degree: @education.Degree, Period: @education.StartDate.ToString("yyyy-MM-dd") - @education.EndDate.ToString("yyyy-MM-dd")</MudText>
+                            }
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
             }
 
-            @if (!string.IsNullOrEmpty(student.WorkPosition) || !string.IsNullOrEmpty(student.Company))
+            @if (student.Work != null && student.Work.Any())
             {
                 <MudItem xs="12">
                     <MudCard Class="info-card">
@@ -65,13 +66,9 @@
                             <MudText Typo="Typo.h5">Work Experience</MudText>
                         </MudCardHeader>
                         <MudCardContent>
-                            @if (!string.IsNullOrEmpty(student.WorkPosition))
+                            @foreach (var work in student.Work)
                             {
-                                <MudText Typo="Typo.body2">Position: @student.WorkPosition</MudText>
-                            }
-                            @if (!string.IsNullOrEmpty(student.Company))
-                            {
-                                <MudText Typo="Typo.body2">Company: @student.Company</MudText>
+                                <MudText Typo="Typo.body2">Position: @work.Position, Company: @work.Company, Period: @work.StartDate.ToString("yyyy-MM-dd") - @work.EndDate.ToString("yyyy-MM-dd")</MudText>
                             }
                         </MudCardContent>
                     </MudCard>
@@ -93,7 +90,7 @@
                             }
                             @if (student.Interests != null && student.Interests.Any())
                             {
-                                <MudText Typo="Typo.body2">Interests: @string.Join(", ", student.Interests)</MudText>
+                                <MudText Typo="Typo.body2">Interests: @string.Join(", ", student.Interests.Select(i => i.Name))</MudText>
                             }
                         </MudCardContent>
                     </MudCard>

@@ -56,7 +56,7 @@
                     }
                     else if (activeTabIndex == 5)
                     {
-                         <MiniSpace.Web.Pages.Account.Components.GalleryComponent />
+                        @GalleryContent()
                     }
                 </MudPaper>
             </MudItem>
@@ -149,7 +149,7 @@
     private bool isUploading = false;
     private IBrowserFile file;
     private long maxFileSize = 10 * 1024 * 1024;
-    private StudentDto studentDto = new();
+    private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
 
     protected override async Task OnInitializedAsync()
@@ -164,7 +164,9 @@
             if (IdentityService.IsAuthenticated)
             {
                 var studentId = IdentityService.GetCurrentUserId();
-                studentDto = await StudentsService.GetStudentAsync(studentId);
+                studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+                var studentDto = studentWithGalleryImagesDto.Student;
+
                 if (studentDto.EmailNotifications)
                 {
                     notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
@@ -190,182 +192,170 @@
     }
 
     private async Task SaveChangesAsync()
-{
-    try
     {
-        var updateStudentData = new
+        try
         {
-            studentDto.Id,
-            studentDto.FirstName,
-            studentDto.LastName,
-            studentDto.ProfileImageUrl,
-            studentDto.Description,
-            studentDto.EmailNotifications,
-            studentDto.ContactEmail,
-            studentDto.Languages,
-            studentDto.Interests,
-            studentDto.Education,
-            studentDto.WorkPosition,
-            studentDto.Company,
-            IsTwoFactorEnabled = isTwoFactorEnabled, 
-            TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null 
-        };
+            var studentDto = studentWithGalleryImagesDto.Student;
+            var updateStudentData = new
+            {
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                studentDto.Education,
+                studentDto.Work,
+                studentDto.PhoneNumber,
+                IsTwoFactorEnabled = isTwoFactorEnabled,
+                TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
+            };
 
-        var jsonData = JsonSerializer.Serialize(updateStudentData);
-        Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
+            var jsonData = JsonSerializer.Serialize(updateStudentData);
+            Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
 
-        await StudentsService.UpdateStudentAsync(
-            studentDto.Id,
-            studentDto.FirstName,
-            studentDto.LastName,
-            studentDto.ProfileImageUrl,
-            studentDto.Description,
-            studentDto.EmailNotifications,
-            studentDto.ContactEmail,
-            studentDto.Languages,
-            studentDto.Interests,
-            isTwoFactorEnabled,
-            !isTwoFactorEnabled,
-            isTwoFactorEnabled ? twoFactorSecret : null,
-            studentDto.Education,
-            studentDto.WorkPosition,
-            studentDto.Company
-        );
+            await StudentsService.UpdateStudentAsync(
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                isTwoFactorEnabled,
+                !isTwoFactorEnabled,
+                isTwoFactorEnabled ? twoFactorSecret : null,
+                studentDto.Education,
+                studentDto.Work,
+                studentDto.PhoneNumber
+            );
 
-        if (studentDto.EmailNotifications)
+            if (studentDto.EmailNotifications)
+            {
+                await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto);
+            }
+        }
+        catch (Exception ex)
         {
-            await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto);
+            Console.WriteLine(ex.Message);
         }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex.Message);
-    }
-}
 
-
-private async Task SaveImageAsync()
-{
-    try
+    private async Task SaveImageAsync()
     {
-        if (file != null)
+        try
         {
-            isUploading = true;
-            StateHasChanged();
-
-            try
+            if (file != null)
             {
-                var stream = file.OpenReadStream(maxFileSize);
-                byte[] bytes = await ReadFully(stream);
-                var base64Content = Convert.ToBase64String(bytes);
-                var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
-                    MediaFileContextType.StudentProfileImage.ToString(), IdentityService.UserDto.Id,
-                    file.Name, file.ContentType, base64Content);
-               
-                studentDto.ProfileImageUrl = response.Content.FileUrl;
-                profileImage = response.Content.FileUrl;
-
-                stream.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error uploading image: {ex.Message}");
-            }
-            finally
-            {
-                isUploading = false;
+                isUploading = true;
                 StateHasChanged();
+
+                try
+                {
+                    var stream = file.OpenReadStream(maxFileSize);
+                    byte[] bytes = await ReadFully(stream);
+                    var base64Content = Convert.ToBase64String(bytes);
+                    var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
+                        MediaFileContextType.StudentProfileImage.ToString(), IdentityService.UserDto.Id,
+                        file.Name, file.ContentType, base64Content);
+               
+                    studentWithGalleryImagesDto.Student.ProfileImageUrl = response.Content.FileUrl;
+                    profileImage = response.Content.FileUrl;
+
+                    stream.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error uploading image: {ex.Message}");
+                }
+                finally
+                {
+                    isUploading = false;
+                    StateHasChanged();
+                }
             }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex.Message);
-    }
-}
-
-
 
     private RenderFragment ProfileContent() => @<div>
-    <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
-    @if (isLoading)
-    {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-    }
-    else
-    {
-        <MudGrid>
-            <MudItem xs="12" sm="6" md="4">
-                <div class="image-upload-container">
-                    <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
-                    <MudFileUpload T="IBrowserFile" @bind-Files="file" Accept=".jpg,.jpeg,.png">
-                        <ButtonTemplate>
-                            <MudButton HtmlTag="label"
+        <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="4">
+                    <div class="image-upload-container">
+                        <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
+                        <MudFileUpload T="IBrowserFile" @bind-Files="file" Accept=".jpg,.jpeg,.png">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label"
                                     Variant="Variant.Filled"
                                     Color="Color.Primary"
                                     StartIcon="@Icons.Material.Filled.CloudUpload"
                                     Class="button-margins"
                                     for="@context">
-                                Upload Image
-                            </MudButton>
-                        </ButtonTemplate>
-                        <SelectedTemplate>
-                            @if (file != null)
-                            {
-                                <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @file.Name </MudText>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveImageAsync">Save Image</MudButton>
-                            }
-                            else
-                            {
-                                <MudText><MudIcon Icon="@Icons.Material.Filled.Attachment" /> No Files Selected</MudText>
-                            }
-                        </SelectedTemplate>
-                    </MudFileUpload>
-                </div>
-            </MudItem>
-            <MudItem xs="12" sm="11" md="7">
-                <MudGrid>
-                    <MudItem xs="11" sm="11">
-                        <MudTextField @bind-Value="studentDto.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-                    </MudItem>
-                    <MudItem xs="11" sm="11">
-                        <MudTextField @bind-Value="studentDto.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="12" sm="11" md="11">
-                <MudGrid>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Education" Label="Education" HelperText="Your education background" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.WorkPosition" Label="Work Position" HelperText="Your current work position" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Company" Label="Company" HelperText="Your current company" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-        </MudGrid>
-        <MudStack>
-             
-        </MudStack>
-
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save profile</MudButton>
-
-        @if (isUploading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                                    Upload Image
+                                </MudButton>
+                            </ButtonTemplate>
+                            <SelectedTemplate>
+                                @if (file != null)
+                                {
+                                    <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @file.Name </MudText>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveImageAsync">Save Image</MudButton>
+                                }
+                                else
+                                {
+                                    <MudText><MudIcon Icon="@Icons.Material.Filled.Attachment" /> No Files Selected</MudText>
+                                }
+                            </SelectedTemplate>
+                        </MudFileUpload>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" sm="11" md="7">
+                    <MudGrid>
+                        <MudItem xs="11" sm="11">
+                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                        </MudItem>
+                        <MudItem xs="11" sm="11">
+                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12" sm="11" md="11">
+                    <MudGrid>
+                        <MudItem xs="11">
+                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem xs="11">
+                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.PhoneNumber" Label="Phone Number" HelperText="Your phone number" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                        </MudItem>
+                        <MudItem xs="11">
+                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+            <MudStack>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save profile</MudButton>
+                @if (isUploading)
+                {
+                    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                }
+            </MudStack>
         }
-    }
-</div>;
-
+    </div>;
 
     private RenderFragment SecurityContent() => @<div>
         <MudText Typo="Typo.h6" GutterBottom="true">Security</MudText>
@@ -388,7 +378,6 @@ private async Task SaveImageAsync()
                         <MudTextField @bind-Value="twoFactorSecret" Label="Two-Factor Authentication Secret" ReadOnly="true" />
                     }
                 }
-                
             </MudStack>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTwoFactorSettingsAsync" Disabled="@(!isTwoFactorEnabled || (isTwoFactorEnabled && string.IsNullOrEmpty(twoFactorSecret)))" Class="button-margins">Save 2FA Settings</MudButton>
         }
@@ -417,7 +406,6 @@ private async Task SaveImageAsync()
             Console.WriteLine($"Error saving 2FA settings: {ex.Message}");
         }
     }
-
 
     private async Task ToggleTwoFactor(bool enabled)
     {
@@ -451,8 +439,8 @@ private async Task SaveImageAsync()
         else
         {
             <MudStack>
-                <MudSwitch @bind-Checked="studentDto.EmailNotifications" Label="Email Notifications" />
-                @if (studentDto.EmailNotifications)
+                <MudSwitch @bind-Checked="studentWithGalleryImagesDto.Student.EmailNotifications" Label="Email Notifications" />
+                @if (studentWithGalleryImagesDto.Student.EmailNotifications)
                 {
                     <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary"/>
                     <MudSwitch @bind-Checked="notificationPreferencesDto.SystemLogin" Label="System Login" Color="Color.Primary"/>
@@ -463,7 +451,6 @@ private async Task SaveImageAsync()
                     <MudSwitch @bind-Checked="notificationPreferencesDto.PostsNotifications" Label="Posts Notifications" Color="Color.Primary"/>
                     <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary"/>
                 }
-                
             </MudStack>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save preferences</MudButton>
         }
@@ -478,8 +465,7 @@ private async Task SaveImageAsync()
         else
         {
             <MudStack>
-                <MudTextField @bind-Value="studentDto.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                
+                <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
             </MudStack>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save privacy</MudButton>
         }
@@ -496,7 +482,7 @@ private async Task SaveImageAsync()
             <MudGrid>
                 <MudItem xs="12">
                     <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
-                    <MudSelect @bind-SelectedValues="studentDto.Languages" Label="Select Languages" Variant="Variant.Outlined" T="string" MultiSelection="true">
+                    <MudSelect @bind-SelectedValues="studentWithGalleryImagesDto.Student.Languages" Label="Select Languages" Variant="Variant.Outlined" T="string" MultiSelection="true">
                         @foreach (var language in availableLanguages)
                         {
                             <MudSelectItem Value="@language">@language</MudSelectItem>
@@ -505,7 +491,7 @@ private async Task SaveImageAsync()
                 </MudItem>
                 <MudItem xs="12">
                     <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
-                    <MudTextField @bind-Value="studentDto.Interests" Label="Interests" HelperText="Your interests" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Interests" Label="Interests" HelperText="Your interests" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
             </MudGrid>
         }
@@ -520,11 +506,11 @@ private async Task SaveImageAsync()
         else
         {
             <MudGrid>
-                @foreach (var imageUrl in studentDto.GalleryOfImageUrls)
+                @foreach (var galleryImage in studentWithGalleryImagesDto.GalleryImages)
                 {
                     <MudItem xs="12" sm="6" md="4">
                         <MudCard>
-                            <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
+                            <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
                         </MudCard>
                     </MudItem>
                 }

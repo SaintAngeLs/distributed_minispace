@@ -55,13 +55,13 @@ namespace MiniSpace.Web.Areas.Students
             bool emailNotifications, 
             string contactEmail, 
             IEnumerable<string> languages, 
-            IEnumerable<string> interests, 
+            IEnumerable<InterestDto> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
-            string education,
-            string workPosition,
-            string company)
+            IEnumerable<EducationDto> education,
+            IEnumerable<WorkDto> work,
+            string phoneNumber)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -81,8 +81,8 @@ namespace MiniSpace.Web.Areas.Students
                 disableTwoFactor,
                 twoFactorSecret,
                 education,
-                workPosition,
-                company
+                work,
+                phoneNumber
             };
 
             var jsonData = JsonSerializer.Serialize(updateStudentData);
@@ -131,6 +131,13 @@ namespace MiniSpace.Web.Areas.Students
             Console.WriteLine($"Sending UpdateUserNotificationPreferences request: {jsonData}");
 
             await _httpClient.PostAsync($"students/{studentId}/notifications", updatePreferencesData);
+        }
+
+        public async Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<StudentWithGalleryImagesDto>($"students/{studentId}/gallery");
         }
     }
 }

@@ -58,42 +58,14 @@
                         <RadzenButton Size="ButtonSize.Medium" Text="Ban" Style="width: 200px"
                                       ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
                                       Click="@(() => Ban(StudentDto))"/>
-                        @if (!StudentDto.IsOrganizer)
-                        {
-                            <RadzenButton Size="ButtonSize.Medium" Text="Grant organizer rights" Style="width: 200px"
-                                          ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
-                                          Click="@(() => GrantOrganizerRights(StudentDto))"/>
-                        }
-                        else
-                        {
-                            <RadzenButton Size="ButtonSize.Medium" Text="Revoke organizer rights" Style="width: 200px"
-                                          ButtonStyle="ButtonStyle.Primary" class="rz-border-radius-1"
-                                          Click="@(() => RevokeOrganizerRights(StudentDto))"/>
-                        }
+                      
                     }
                 </RadzenStack>
             </RadzenStack>
         </ChildContent>
     </RadzenFieldset>
 
-    @if (StudentDto.IsOrganizer)
-    {
-        <RadzenFieldset>
-            <HeaderTemplate>
-                <RadzenStack Gap="0" Orientation="Orientation.Horizontal">
-                    <RadzenIcon Icon="assignment" class="me-1"/>
-                    <b>Organizer's organizations</b>
-                </RadzenStack>
-            </HeaderTemplate>
-            <ChildContent>
-                <RadzenStack Gap="2rem" AlignItems="AlignItems.Center">
-                    <RadzenListBox FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true"
-                                   Data="@organizations" TextProperty="Name" Style="width: 70%;"
-                                   @bind-Value="@selectedOrganization" />
-                </RadzenStack>
-            </ChildContent>
-        </RadzenFieldset>   
-    }
+  
     
     <RadzenFieldset>
         <HeaderTemplate>
@@ -156,7 +128,7 @@
                 <RadzenRow Size="12">
                     <RadzenColumn Size="6">
                         <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Date of birth</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.DateOfBirth.ToLocalTime().ToString(shortDateFormat))</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6"><b>@(StudentDto.DateOfBirth?.ToLocalTime().ToString(shortDateFormat))</b></RadzenText>
                     </RadzenColumn>
 
                     <RadzenColumn Size="6">
@@ -215,17 +187,5 @@
         StateHasChanged();
     }
     
-    private async void GrantOrganizerRights(StudentDto studentDto)
-    {
-        await IdentityService.GrantOrganizerRightsAsync(studentDto.Id);
-        studentDto.IsOrganizer = true;
-        StateHasChanged();
-    }
-    
-    private async void RevokeOrganizerRights(StudentDto studentDto)
-    {
-        await IdentityService.RevokeOrganizerRightsAsync(studentDto.Id);
-        studentDto.IsOrganizer = false;
-        StateHasChanged();
-    }
+   
 }

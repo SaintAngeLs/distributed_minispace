@@ -48,17 +48,21 @@
             </div>
             <div class="card-body">
                 <p><strong>Description:</strong> @student.Description</p>
-                @if (!string.IsNullOrEmpty(student.Education))
+                @if (student.Education != null && student.Education.Any())
                 {
-                    <p><strong>Education:</strong> @student.Education</p>
+                    <p><strong>Education:</strong></p>
+                    @foreach (var education in student.Education)
+                    {
+                        <p>@education.InstitutionName - @education.Degree (@education.StartDate.ToLocalTime().ToString("yyyy-MM-dd") to @education.EndDate.ToLocalTime().ToString("yyyy-MM-dd"))</p>
+                    }
                 }
-                @if (!string.IsNullOrEmpty(student.WorkPosition))
+                @if (student.Work != null && student.Work.Any())
                 {
-                    <p><strong>Work Position:</strong> @student.WorkPosition</p>
-                }
-                @if (!string.IsNullOrEmpty(student.Company))
-                {
-                    <p><strong>Company:</strong> @student.Company</p>
+                    <p><strong>Work:</strong></p>
+                    @foreach (var work in student.Work)
+                    {
+                        <p>@work.Company - @work.Position (@work.StartDate.ToLocalTime().ToString("yyyy-MM-dd") to @work.EndDate.ToLocalTime().ToString("yyyy-MM-dd"))</p>
+                    }
                 }
                 @if (student.Languages != null && student.Languages.Any())
                 {
@@ -68,8 +72,7 @@
                 {
                     <p><strong>Interests:</strong> @string.Join(", ", student.Interests)</p>
                 }
-                <p><strong>Number of Friends:</strong> @student.NumberOfFriends</p>
-                <p><strong>Date of Birth:</strong> @student.DateOfBirth.ToLocalTime().ToString("yyyy-MM-dd")</p>
+                <p><strong>Date of Birth:</strong> @student.DateOfBirth?.ToLocalTime().ToString("yyyy-MM-dd")</p>
                 <p><strong>State:</strong> @student.State</p>
                 <p><strong>Joined:</strong> @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
             </div>
@@ -85,14 +88,14 @@
         <MudItem xs="12">
             <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
             <MudGrid class="spotlight-group" Spacing="3">
-                @if (student.GalleryOfImageUrls != null && student.GalleryOfImageUrls.Any(IsValidImageUrl))
+                @if (student.GalleryOfImageUrls != null && student.GalleryOfImageUrls.Any(img => IsValidImageUrl(img.ImageUrl)))
                 {
-                    @foreach (var imageUrl in student.GalleryOfImageUrls.Where(IsValidImageUrl))
+                    @foreach (var galleryImage in student.GalleryOfImageUrls.Where(img => IsValidImageUrl(img.ImageUrl)))
                     {
                         <MudItem xs="12" sm="6" md="4">
-                            <a class="spotlight" href="@imageUrl">
+                            <a class="spotlight" href="@galleryImage.ImageUrl">
                                 <MudCard>
-                                    <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
+                                    <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
                                 </MudCard>
                             </a>
                         </MudItem>
