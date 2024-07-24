@@ -21,8 +21,6 @@ namespace MiniSpace.Services.Students.Application.Dto
         public string ContactEmail { get; set; }
         public string BannerUrl { get; set; }
         public string PhoneNumber { get; set; }
-        public string FrontendVersion { get; set; }
-        public string PreferredLanguage { get; set; }
         public IEnumerable<string> Languages { get; set; }
         public IEnumerable<InterestDto> Interests { get; set; }
         public IEnumerable<EducationDto> Education { get; set; }
@@ -31,6 +29,5 @@ namespace MiniSpace.Services.Students.Application.Dto
         public string TwoFactorSecret { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }
-        public UserSettingsDto Settings { get; set; }
     }
 }

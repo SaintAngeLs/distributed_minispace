@@ -7,12 +7,12 @@ namespace MiniSpace.Services.Students.Application.Commands
     public class UpdateUserSettings : ICommand
     {
         public Guid StudentId { get; }
-        public UserSettingsDto Settings { get; }
+        public AvailableSettingsDto AvailableSettings { get; }
 
-        public UpdateUserSettings(Guid studentId, UserSettingsDto settings)
+        public UpdateUserSettings(Guid studentId, AvailableSettingsDto availableSettings)
         {
             StudentId = studentId;
-            Settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            AvailableSettings = availableSettings ?? throw new ArgumentNullException(nameof(availableSettings));
         }
     }
 }

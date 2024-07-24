@@ -1,5 +1,4 @@
 using Convey.Persistence.MongoDB;
-using MongoDB.Driver;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
@@ -22,63 +21,27 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
         public async Task<UserSettings> GetUserSettingsAsync(Guid studentId)
         {
             var userSettingsDocument = await _repository.GetAsync(x => x.StudentId == studentId);
-            if (userSettingsDocument == null)
-            {
-                return new UserSettings();
-            }
-
-            return new UserSettings
-            {
-                CreatedAtVisibility = userSettingsDocument.CreatedAtVisibility,
-                DateOfBirthVisibility = userSettingsDocument.DateOfBirthVisibility,
-                InterestedInEventsVisibility = userSettingsDocument.InterestedInEventsVisibility,
-                SignedUpEventsVisibility = userSettingsDocument.SignedUpEventsVisibility,
-                EducationVisibility = userSettingsDocument.EducationVisibility,
-                WorkPositionVisibility = userSettingsDocument.WorkPositionVisibility,
-                LanguagesVisibility = userSettingsDocument.LanguagesVisibility,
-                InterestsVisibility = userSettingsDocument.InterestsVisibility,
-                ContactEmailVisibility = userSettingsDocument.ContactEmailVisibility,
-                PhoneNumberVisibility = userSettingsDocument.PhoneNumberVisibility
-            };
+            return userSettingsDocument?.AsEntity();
         }
 
-        public async Task UpdateUserSettingsAsync(Guid studentId, UserSettings userSettings)
+        public async Task AddUserSettingsAsync(UserSettings userSettings)
         {
-            var userSettingsDocument = await _repository.GetAsync(x => x.StudentId == studentId);
+            var userSettingsDocument = userSettings.AsDocument();
+            await _repository.AddAsync(userSettingsDocument);
+        }
+
+        public async Task UpdateUserSettingsAsync(UserSettings userSettings)
+        {
+            var userSettingsDocument = await _repository.GetAsync(x => x.StudentId == userSettings.StudentId);
 
             if (userSettingsDocument == null)
             {
-                userSettingsDocument = new UserSettingsDocument
-                {
-                    Id = Guid.NewGuid(),
-                    StudentId = studentId,
-                    CreatedAtVisibility = userSettings.CreatedAtVisibility,
-                    DateOfBirthVisibility = userSettings.DateOfBirthVisibility,
-                    InterestedInEventsVisibility = userSettings.InterestedInEventsVisibility,
-                    SignedUpEventsVisibility = userSettings.SignedUpEventsVisibility,
-                    EducationVisibility = userSettings.EducationVisibility,
-                    WorkPositionVisibility = userSettings.WorkPositionVisibility,
-                    LanguagesVisibility = userSettings.LanguagesVisibility,
-                    InterestsVisibility = userSettings.InterestsVisibility,
-                    ContactEmailVisibility = userSettings.ContactEmailVisibility,
-                    PhoneNumberVisibility = userSettings.PhoneNumberVisibility
-                };
-
+                userSettingsDocument = userSettings.AsDocument();
                 await _repository.AddAsync(userSettingsDocument);
             }
             else
             {
-                userSettingsDocument.CreatedAtVisibility = userSettings.CreatedAtVisibility;
-                userSettingsDocument.DateOfBirthVisibility = userSettings.DateOfBirthVisibility;
-                userSettingsDocument.InterestedInEventsVisibility = userSettings.InterestedInEventsVisibility;
-                userSettingsDocument.SignedUpEventsVisibility = userSettings.SignedUpEventsVisibility;
-                userSettingsDocument.EducationVisibility = userSettings.EducationVisibility;
-                userSettingsDocument.WorkPositionVisibility = userSettings.WorkPositionVisibility;
-                userSettingsDocument.LanguagesVisibility = userSettings.LanguagesVisibility;
-                userSettingsDocument.InterestsVisibility = userSettings.InterestsVisibility;
-                userSettingsDocument.ContactEmailVisibility = userSettings.ContactEmailVisibility;
-                userSettingsDocument.PhoneNumberVisibility = userSettings.PhoneNumberVisibility;
-
+                userSettingsDocument.AvailableSettings = userSettings.AvailableSettings;
                 await _repository.UpdateAsync(userSettingsDocument);
             }
         }

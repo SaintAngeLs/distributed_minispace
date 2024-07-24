@@ -10,6 +10,6 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
     {
         public Guid Id { get; set; }
         public Guid StudentId { get; set; }
-        public UserAvailableSettings UserSettings { get; set; }
+        public UserAvailableSettings AvailableSettings { get; set; }
     }
 }

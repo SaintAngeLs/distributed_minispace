@@ -35,18 +35,18 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             }
 
             var availableSettings = new UserAvailableSettings(
-                Enum.Parse<Visibility>(command.Settings.CreatedAtVisibility),
-                Enum.Parse<Visibility>(command.Settings.DateOfBirthVisibility),
-                Enum.Parse<Visibility>(command.Settings.InterestedInEventsVisibility),
-                Enum.Parse<Visibility>(command.Settings.SignedUpEventsVisibility),
-                Enum.Parse<Visibility>(command.Settings.EducationVisibility),
-                Enum.Parse<Visibility>(command.Settings.WorkPositionVisibility),
-                Enum.Parse<Visibility>(command.Settings.LanguagesVisibility),
-                Enum.Parse<Visibility>(command.Settings.InterestsVisibility),
-                Enum.Parse<Visibility>(command.Settings.ContactEmailVisibility),
-                Enum.Parse<Visibility>(command.Settings.PhoneNumberVisibility),
-                Enum.Parse<FrontendVersion>(command.Settings.FrontendVersion),
-                Enum.Parse<PreferredLanguage>(command.Settings.PreferredLanguage)
+                Enum.Parse<Visibility>(command.AvailableSettings.CreatedAtVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.DateOfBirthVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.InterestedInEventsVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.SignedUpEventsVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.EducationVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.WorkPositionVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.LanguagesVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.InterestsVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.ContactEmailVisibility),
+                Enum.Parse<Visibility>(command.AvailableSettings.PhoneNumberVisibility),
+                Enum.Parse<FrontendVersion>(command.AvailableSettings.FrontendVersion),
+                Enum.Parse<PreferredLanguage>(command.AvailableSettings.PreferredLanguage)
             );
 
             userSettings.UpdateSettings(availableSettings);
