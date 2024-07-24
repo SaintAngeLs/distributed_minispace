@@ -80,7 +80,8 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
         private async Task<string> LoadHtmlTemplate(string filePath, NotificationCreated eventDetails, StudentDto student)
         {
             string htmlContent = await System.IO.File.ReadAllTextAsync(filePath);
-            htmlContent = htmlContent.Replace("{Message}", eventDetails.Message);
+            var eventType = (NotificationEventType)Enum.Parse(typeof(NotificationEventType), eventDetails.EventType);
+            htmlContent = htmlContent.Replace("{Message}", EmailContentFactory.CreateContent(eventType, eventDetails.Details));
             htmlContent = htmlContent.Replace("{Details}", eventDetails.Details ?? "No details provided");
             htmlContent = htmlContent.Replace("{CreatedAt}", eventDetails.CreatedAt.ToString("dddd, dd MMMM yyyy"));
 
