@@ -142,7 +142,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentRegistrationCompleted(this));
         }
 
-        public void Update(string firstName, string lastName, string profileImageUrl, string description,
+        public void Update(string firstName, string lastName, string description,
             bool emailNotifications, string contactEmail, string phoneNumber, FrontendVersion frontendVersion,
             PreferredLanguage preferredLanguage)
         {
@@ -156,7 +156,6 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             FirstName = firstName;
             LastName = lastName;
-            ProfileImageUrl = profileImageUrl;
             Description = description;
             EmailNotifications = emailNotifications;
             ContactEmail = contactEmail;
@@ -207,6 +206,18 @@ namespace MiniSpace.Services.Students.Core.Entities
         {
             ContactEmail = contactEmail;
             AddEvent(new StudentUpdated(this));
+        }
+
+        public void RemoveProfileImage()
+        {
+            ProfileImageUrl = string.Empty;
+            AddEvent(new StudentProfileImageRemoved(this));
+        }
+
+        public void RemoveBannerImage()
+        {
+            BannerUrl = string.Empty;
+            AddEvent(new StudentBannerImageRemoved(this));
         }
 
         public void EnableTwoFactorAuthentication(string twoFactorSecret)
@@ -292,11 +303,6 @@ namespace MiniSpace.Services.Students.Core.Entities
             {
                 throw new StudentIsNotSignedUpException(Id, eventId);
             }
-        }
-
-        public void RemoveProfileImage()
-        {
-            ProfileImageUrl = string.Empty;
         }
 
         public void Ban() => IsBanned = true;
