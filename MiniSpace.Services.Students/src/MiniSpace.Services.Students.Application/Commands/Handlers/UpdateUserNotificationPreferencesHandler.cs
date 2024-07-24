@@ -19,7 +19,6 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateUserNotificationPreferences command, CancellationToken cancellationToken = default)
         {
-            // Log the command received
             var commandJson = JsonSerializer.Serialize(command);
             Console.WriteLine($"Received UpdateUserNotificationPreferences command: {commandJson}");
 
