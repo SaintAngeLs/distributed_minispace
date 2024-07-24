@@ -85,13 +85,13 @@ modules:
         auth: true
         claims:
           role: admin
-    
+
       - upstream: /me
         method: GET
         use: downstream
         downstream: identity-service/me
         auth: true
-    
+
       - upstream: /sign-up
         method: POST
         use: downstream
@@ -100,23 +100,83 @@ modules:
         resourceId:
           property: userId
           generate: true
-    
+
       - upstream: /sign-in
         method: POST
         use: downstream
         downstream: identity-service/sign-in
         auth: false
 
-      - upstream: /users/{userId}/organizer-rights
+      - upstream: /users/{userId}/ban
         method: POST
         use: downstream
-        downstream: identity-service/users/{userId}/organizer-rights
+        downstream: identity-service/users/{userId}/ban
         auth: true
 
-      - upstream: /users/{userId}/organizer-rights
+      - upstream: /users/{userId}/ban
         method: DELETE
         use: downstream
-        downstream: identity-service/users/{userId}/organizer-rights
+        downstream: identity-service/users/{userId}/ban
+        auth: true
+
+      - upstream: /password/forgot
+        method: POST
+        use: downstream
+        downstream: identity-service/password/forgot
+        auth: false
+
+      - upstream: /password/reset
+        method: POST
+        use: downstream
+        downstream: identity-service/password/reset
+        auth: false
+
+      - upstream: /email/verify
+        method: POST
+        use: downstream
+        downstream: identity-service/email/verify
+        auth: false
+
+      - upstream: /2fa/enable
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/enable
+        auth: true
+
+      - upstream: /2fa/disable
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/disable
+        auth: true
+
+      - upstream: /2fa/generate-secret
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/generate-secret
+        auth: true
+
+      - upstream: /2fa/verify-code
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/verify-code
+        auth: true
+
+      - upstream: /access-tokens/revoke
+        method: POST
+        use: downstream
+        downstream: identity-service/access-tokens/revoke
+        auth: true
+
+      - upstream: /refresh-tokens/use
+        method: POST
+        use: downstream
+        downstream: identity-service/refresh-tokens/use
+        auth: true
+
+      - upstream: /refresh-tokens/revoke
+        method: POST
+        use: downstream
+        downstream: identity-service/refresh-tokens/revoke
         auth: true
 
       - upstream: /users/{userId}/ban
@@ -160,24 +220,36 @@ modules:
         use: downstream
         downstream: identity-service/2fa/disable
         auth: true
-      
+
       - upstream: /2fa/generate-secret
         method: POST
         use: downstream
         downstream: identity-service/2fa/generate-secret
         auth: true
 
+      - upstream: /2fa/verify-code
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/verify-code
+        auth: true
+
+      - upstream: /access-tokens/revoke
+        method: POST
+        use: downstream
+        downstream: identity-service/access-tokens/revoke
+        auth: true
+
       - upstream: /refresh-tokens/use
         method: POST
         use: downstream
         downstream: identity-service/refresh-tokens/use
-        auth: false
+        auth: true
 
       - upstream: /refresh-tokens/revoke
         method: POST
         use: downstream
         downstream: identity-service/refresh-tokens/revoke
-        auth: false
+        auth: true
 
     services:
       identity-service:
