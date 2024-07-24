@@ -77,6 +77,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddHandlersLogging()
                 .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddMongoRepository<UserNotificationsDocument, Guid>("user-notifications")
+                .AddMongoRepository<UserSettingsDocument, Guid>("user-settings")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
