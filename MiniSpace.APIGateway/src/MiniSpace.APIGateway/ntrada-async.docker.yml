@@ -399,13 +399,7 @@ modules:
         localUrl: localhost:5006
         url: notifications-service
   
-
-        
-        
-
-
-
-
+  
   students:
     path: /students
     routes:
@@ -421,12 +415,57 @@ modules:
         downstream: students-service/students/{studentId}
         auth: true
 
+      - upstream: /{studentId}/settings
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/settings
+        auth: true
+
+      - upstream: /{studentId}/gallery
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/gallery
+        auth: true
+
+      - upstream: /{studentId}/visibility-settings
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/visibility-settings
+        auth: true
+
+      - upstream: /{studentId}/events
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/events
+        auth: true
+
+      - upstream: /{studentId}/notifications
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/notifications
+        auth: true
+
       - upstream: /{studentId}
         method: PUT
         use: downstream
         downstream: students-service/students/{studentId}
         bind:
           - studentId:{studentId}
+        auth: true
+
+      - upstream: /{studentId}/settings
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{studentId}/settings
+        auth: true
+
+      - upstream: /{studentId}/state/{state}
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{studentId}/state/{state}
+        bind:
+          - studentId:{studentId}
+          - state:{state}
         auth: true
 
       - upstream: /{studentId}
@@ -439,29 +478,6 @@ modules:
         method: POST
         use: downstream
         downstream: students-service/students
-        auth: true
-
-      - upstream: /{studentId}/state/{state}
-        method: PUT
-        use: downstream
-        downstream: students-service/students/{studentId}/state/{state}
-        bind:
-          - studentId:{studentId}
-          - state:{state}
-        auth: true
-        claims:
-          role: admin
-
-      - upstream: /{studentId}/events
-        method: GET
-        use: downstream
-        downstream: students-service/students/{studentId}/events
-        auth: true
-
-      - upstream: /{studentId}/notifications
-        method: GET
-        use: downstream
-        downstream: students-service/students/{studentId}/notifications
         auth: true
 
       - upstream: /{studentId}/notifications
