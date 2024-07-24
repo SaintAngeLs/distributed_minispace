@@ -78,8 +78,9 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             var originalUrl = await _s3Service.UploadFileAsync("images", originalFileName, inStream);
             var processedUrl = await _s3Service.UploadFileAsync("webps", webpFileName, outStream);
 
+            var uploadDate = _dateTimeProvider.Now;
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
-                command.UploaderId, State.Associated, _dateTimeProvider.Now, originalUrl, 
+                command.UploaderId, State.Associated, uploadDate, originalUrl, 
                 command.FileContentType, processedUrl, originalFileName);
 
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
@@ -90,7 +91,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 sourceType == ContextType.StudentGalleryImage)
             {
                 var imageType = sourceType.ToString();
-                var studentImageUploadedEvent = new StudentImageUploaded(command.UploaderId, processedUrl, imageType);
+                var studentImageUploadedEvent = new StudentImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
             }
 
@@ -112,6 +113,5 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(fileName));
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
-        
     }
 }
