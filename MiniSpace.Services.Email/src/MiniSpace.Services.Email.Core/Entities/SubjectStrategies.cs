@@ -146,4 +146,9 @@ namespace MiniSpace.Services.Email.Core.Entities
             return $"A report has been cancelled!";
         }
     }
+
+    public class TwoFactorCodeGeneratedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Your Two-Factor Authentication Code";
+    }
 }

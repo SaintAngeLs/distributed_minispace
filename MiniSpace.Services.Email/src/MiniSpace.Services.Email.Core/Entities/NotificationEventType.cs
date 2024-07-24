@@ -31,6 +31,7 @@ namespace MiniSpace.Services.Email.Core.Entities
         ReportCancelled,
         NewEventInvitation,
         EmailVerified,
+        TwoFactorCodeGenerated,
         Other
     }
 }
