@@ -41,7 +41,21 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
             }
             else
             {
-                userSettingsDocument.AvailableSettings = userSettings.AvailableSettings;
+                userSettingsDocument.AvailableSettings = new UserAvailableSettingsDocument
+                {
+                    CreatedAtVisibility = userSettings.AvailableSettings.CreatedAtVisibility,
+                    DateOfBirthVisibility = userSettings.AvailableSettings.DateOfBirthVisibility,
+                    InterestedInEventsVisibility = userSettings.AvailableSettings.InterestedInEventsVisibility,
+                    SignedUpEventsVisibility = userSettings.AvailableSettings.SignedUpEventsVisibility,
+                    EducationVisibility = userSettings.AvailableSettings.EducationVisibility,
+                    WorkPositionVisibility = userSettings.AvailableSettings.WorkPositionVisibility,
+                    LanguagesVisibility = userSettings.AvailableSettings.LanguagesVisibility,
+                    InterestsVisibility = userSettings.AvailableSettings.InterestsVisibility,
+                    ContactEmailVisibility = userSettings.AvailableSettings.ContactEmailVisibility,
+                    PhoneNumberVisibility = userSettings.AvailableSettings.PhoneNumberVisibility,
+                    FrontendVersion = userSettings.AvailableSettings.FrontendVersion,
+                    PreferredLanguage = userSettings.AvailableSettings.PreferredLanguage
+                };
                 await _repository.UpdateAsync(userSettingsDocument);
             }
         }

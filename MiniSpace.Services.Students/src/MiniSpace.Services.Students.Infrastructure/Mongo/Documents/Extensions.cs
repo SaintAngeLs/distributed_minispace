@@ -1,6 +1,7 @@
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
+using System;
 using System.Linq;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
@@ -71,7 +72,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
                 TwoFactorSecret = entity.TwoFactorSecret,
                 ContactEmail = entity.ContactEmail,
-                PhoneNumber = entity.PhoneNumber
+                PhoneNumber = entity.PhoneNumber,
             };
 
         public static StudentDto AsDto(this StudentDocument document)
@@ -112,7 +113,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 IsTwoFactorEnabled = document.IsTwoFactorEnabled,
                 TwoFactorSecret = document.TwoFactorSecret,
                 ContactEmail = document.ContactEmail,
-                PhoneNumber = document.PhoneNumber
+                PhoneNumber = document.PhoneNumber,
             };
 
         public static UserNotifications AsEntity(this UserNotificationsDocument document)
@@ -172,7 +173,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public static UserGalleryDocument AsDocument(this UserGallery entity)
             => new UserGalleryDocument
             {
-                Id = Guid.NewGuid(), // Ensure a unique identifier is set
+                Id = Guid.NewGuid(), 
                 UserId = entity.UserId,
                 GalleryOfImages = entity.GalleryOfImages.Select(gi => new GalleryImageDocument(gi.ImageId, gi.ImageUrl) { DateAdded = gi.DateAdded })
             };
@@ -184,38 +185,41 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             => new UserSettings(
                 document.StudentId,
                 new UserAvailableSettings(
-                    document.CreatedAtVisibility,
-                    document.DateOfBirthVisibility,
-                    document.InterestedInEventsVisibility,
-                    document.SignedUpEventsVisibility,
-                    document.EducationVisibility,
-                    document.WorkPositionVisibility,
-                    document.LanguagesVisibility,
-                    document.InterestsVisibility,
-                    document.ContactEmailVisibility,
-                    document.PhoneNumberVisibility,
-                    document.FrontendVersion,
-                    document.PreferredLanguage
+                    document.AvailableSettings.CreatedAtVisibility,
+                    document.AvailableSettings.DateOfBirthVisibility,
+                    document.AvailableSettings.InterestedInEventsVisibility,
+                    document.AvailableSettings.SignedUpEventsVisibility,
+                    document.AvailableSettings.EducationVisibility,
+                    document.AvailableSettings.WorkPositionVisibility,
+                    document.AvailableSettings.LanguagesVisibility,
+                    document.AvailableSettings.InterestsVisibility,
+                    document.AvailableSettings.ContactEmailVisibility,
+                    document.AvailableSettings.PhoneNumberVisibility,
+                    document.AvailableSettings.FrontendVersion,
+                    document.AvailableSettings.PreferredLanguage
                 )
             );
 
-        public static UserSettingsDocument AsDocument(this UserSettings entity)
+       public static UserSettingsDocument AsDocument(this UserSettings entity)
             => new UserSettingsDocument
             {
                 Id = Guid.NewGuid(), // Ensure a unique identifier is set
                 StudentId = entity.StudentId,
-                CreatedAtVisibility = entity.AvailableSettings.CreatedAtVisibility,
-                DateOfBirthVisibility = entity.AvailableSettings.DateOfBirthVisibility,
-                InterestedInEventsVisibility = entity.AvailableSettings.InterestedInEventsVisibility,
-                SignedUpEventsVisibility = entity.AvailableSettings.SignedUpEventsVisibility,
-                EducationVisibility = entity.AvailableSettings.EducationVisibility,
-                WorkPositionVisibility = entity.AvailableSettings.WorkPositionVisibility,
-                LanguagesVisibility = entity.AvailableSettings.LanguagesVisibility,
-                InterestsVisibility = entity.AvailableSettings.InterestsVisibility,
-                ContactEmailVisibility = entity.AvailableSettings.ContactEmailVisibility,
-                PhoneNumberVisibility = entity.AvailableSettings.PhoneNumberVisibility,
-                FrontendVersion = entity.AvailableSettings.FrontendVersion,
-                PreferredLanguage = entity.AvailableSettings.PreferredLanguage
+                AvailableSettings = new UserAvailableSettingsDocument
+                {
+                    CreatedAtVisibility = entity.AvailableSettings.CreatedAtVisibility,
+                    DateOfBirthVisibility = entity.AvailableSettings.DateOfBirthVisibility,
+                    InterestedInEventsVisibility = entity.AvailableSettings.InterestedInEventsVisibility,
+                    SignedUpEventsVisibility = entity.AvailableSettings.SignedUpEventsVisibility,
+                    EducationVisibility = entity.AvailableSettings.EducationVisibility,
+                    WorkPositionVisibility = entity.AvailableSettings.WorkPositionVisibility,
+                    LanguagesVisibility = entity.AvailableSettings.LanguagesVisibility,
+                    InterestsVisibility = entity.AvailableSettings.InterestsVisibility,
+                    ContactEmailVisibility = entity.AvailableSettings.ContactEmailVisibility,
+                    PhoneNumberVisibility = entity.AvailableSettings.PhoneNumberVisibility,
+                    FrontendVersion = entity.AvailableSettings.FrontendVersion,
+                    PreferredLanguage = entity.AvailableSettings.PreferredLanguage
+                }
             };
     }
 }
