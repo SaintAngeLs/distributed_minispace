@@ -42,7 +42,6 @@ using MiniSpace.Services.Students.Infrastructure.Services;
 using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
 using Convey.Types;
-using MiniSpace.Services.Students.Infrastructure.Options;
 
 namespace MiniSpace.Services.Students.Infrastructure
 {
@@ -149,34 +148,5 @@ namespace MiniSpace.Services.Students.Infrastructure
             return string.Empty;
         }
         
-    }
-
-
-    public static class MongoExtensions
-    {
-        public static IConveyBuilder AddMongoRead(this IConveyBuilder builder)
-        {
-            var options = builder.GetOptions<MiniSpace.Services.Students.Infrastructure.Options.MongoDbOptions>("mongo");
-            builder.Services.AddSingleton(sp =>
-            {
-                var client = new MongoClient(options.ConnectionString);
-                var database = client.GetDatabase(options.ReadDatabase);
-                return database;
-            });
-
-            return builder;
-        }
-
-        public static IConveyBuilder AddMongoReadRepository<TEntity, TIdentifiable>(this IConveyBuilder builder, string collectionName)
-            where TEntity : IIdentifiable<TIdentifiable>
-        {
-            builder.Services.AddSingleton<IMongoRepository<TEntity, TIdentifiable>>(sp =>
-            {
-                var database = sp.GetService<IMongoDatabase>();
-                return new ReadUserRepository<TEntity, TIdentifiable>(database, collectionName);
-            });
-
-            return builder;
-        }
     }
 }
