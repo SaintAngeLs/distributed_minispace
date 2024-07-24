@@ -52,6 +52,8 @@ namespace MiniSpace.Services.Students.Infrastructure
         {
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IUserNotificationPreferencesRepository, UserNotificationPreferencesRepository>();
+            builder.Services.AddTransient<IUserSettingsRepository, UserSettingsRepository>();
+            builder.Services.AddTransient<IUserGalleryRepository, UserGalleryRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -78,6 +80,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddMongoRepository<UserNotificationsDocument, Guid>("user-notifications")
                 .AddMongoRepository<UserSettingsDocument, Guid>("user-settings")
+                .AddMongoRepository<UserGalleryDocument, Guid>("user-gellery")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
