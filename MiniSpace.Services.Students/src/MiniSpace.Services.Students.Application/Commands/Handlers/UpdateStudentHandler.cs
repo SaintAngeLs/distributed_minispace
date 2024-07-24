@@ -52,9 +52,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             command.Description, 
             command.EmailNotifications, 
             command.ContactEmail, 
-            command.PhoneNumber, 
-            command.FrontendVersion, 
-            command.PreferredLanguage);
+            command.PhoneNumber);
             student.UpdateEducation(command.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)));
             student.UpdateWork(command.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)));
             student.UpdateLanguages(command.Languages);

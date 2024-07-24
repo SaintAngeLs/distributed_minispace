@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Dto
@@ -16,5 +17,7 @@ namespace MiniSpace.Services.Students.Application.Dto
         public string InterestsVisibility { get; set; }
         public string ContactEmailVisibility { get; set; }
         public string PhoneNumberVisibility { get; set; }
+        public string PreferredLanguage { get; set; }
+        public string FrontendVersion { get; set; }
     }
 }

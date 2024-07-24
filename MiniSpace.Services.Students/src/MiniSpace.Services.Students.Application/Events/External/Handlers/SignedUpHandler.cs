@@ -17,14 +17,17 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ILogger<SignedUpHandler> _logger;
         private readonly IUserNotificationPreferencesRepository _notificationPreferencesRepository;
+        private readonly IUserSettingsRepository _userSettingsRepository;
 
         public SignedUpHandler(IStudentRepository studentRepository, IDateTimeProvider dateTimeProvider,
-            ILogger<SignedUpHandler> logger, IUserNotificationPreferencesRepository notificationPreferencesRepository)
+            ILogger<SignedUpHandler> logger, IUserNotificationPreferencesRepository notificationPreferencesRepository,
+            IUserSettingsRepository userSettingsRepository)
         {
             _studentRepository = studentRepository;
             _dateTimeProvider = dateTimeProvider;
             _logger = logger;
             _notificationPreferencesRepository = notificationPreferencesRepository;
+            _userSettingsRepository = userSettingsRepository;
         }
 
         public async Task HandleAsync(SignedUp @event, CancellationToken cancellationToken = default)
@@ -62,10 +65,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 false, // IsTwoFactorEnabled
                 string.Empty, // TwoFactorSecret
                 string.Empty, // ContactEmail
-                string.Empty, // PhoneNumber
-                FrontendVersion.Auto, // FrontendVersion
-                PreferredLanguage.English, // PreferredLanguage
-                new UserSettings() // Settings
+                string.Empty // PhoneNumber
             );
 
             await _studentRepository.AddAsync(newStudent);
@@ -73,7 +73,11 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             var defaultPreferences = new NotificationPreferences();
             await _notificationPreferencesRepository.UpdateNotificationPreferencesAsync(newStudent.Id, defaultPreferences);
 
-            _logger.LogInformation($"New student created with ID: {@event.UserId} and default notification preferences set.");
+            var defaultAvailableSettings = new UserAvailableSettings();
+            var userSettings = new UserSettings(newStudent.Id, defaultAvailableSettings);
+            await _userSettingsRepository.AddUserSettingsAsync(userSettings);
+
+            _logger.LogInformation($"New student created with ID: {@event.UserId}, default notification preferences set, and default user settings initialized.");
         }
     }
 }
