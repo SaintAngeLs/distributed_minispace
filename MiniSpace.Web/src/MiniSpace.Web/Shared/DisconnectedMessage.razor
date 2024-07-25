@@ -1,26 +1,3 @@
-@code {
-    private void ReloadPage()
-    {
-        JSRuntime.InvokeVoidAsync("location.reload");
-    }
-
-    [Inject] IJSRuntime JSRuntime { get; set; }
-}
-
 <div class="disconnected-message">
-    <p>Disconnected from server. Reload page...</p>
-    <button @onclick="ReloadPage">Reload</button>
+    <p>XXXXXXXXXXXXXXXYou have been disconnected. Please check your internet connection.</p>
 </div>
-
-<style>
-    .disconnected-message {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background-color: red;
-        padding: 10px;
-        text-align: center;
-        z-index: 1000;
-    }
-</style>

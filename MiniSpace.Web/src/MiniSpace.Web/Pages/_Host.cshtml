@@ -28,13 +28,22 @@
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
-
-    <div id="components-reconnect-message" style="display: none;">
-        <component type="typeof(MiniSpace.Web.Shared.ReconnectMessage)" render-mode="Static" />
-    </div>
-
-    <div id="components-disconnected-message" style="display: none;">
-        <component type="typeof(MiniSpace.Web.Shared.DisconnectedMessage)" render-mode="Static" />
+ 
+    <div id="components-reconnect-modal">
+        <div class="reconnecting overlay-content">
+            <img src="images/failed_to_connect.svg" alt="Reconnecting" style="width: 100px; height: 100px;">
+            <p>Attempting to reconnect to the server...</p>
+        </div>
+        <div class="failedToConnect overlay-content">
+            <img src="images/failed_to_connect.svg" alt="Failed to Connect" style="width: 100px; height: 100px;">
+            <p>Failed to connect to the server</p>
+            <button class="overlay-button" onclick="ReconnectToServer()">Reconnect</button>
+        </div>
+        <div class="connectionRejected overlay-content">
+            <img src="images/failed_to_connect.svg" alt="Connection Rejected" style="width: 100px; height: 100px;">
+            <p>Connection to the server was rejected</p>
+            <button class="overlay-button" onclick="ReloadPage()">Refresh Page</button>
+        </div>
     </div>
 
     <script>
@@ -47,6 +56,7 @@
                     console.log('ServiceWorker registration failed: ', error);
                 });
         }
+        
 
         window.getScreenSize = function () {
             return {
@@ -133,24 +143,6 @@
             });
         }
 
-        Blazor.start({
-            reconnectionHandler: {
-                onConnectionUp: function () {
-                    document.getElementById('components-reconnect-message').style.display = 'none';
-                },
-                onConnectionDown: function () {
-                    document.getElementById('components-reconnect-message').style.display = 'block';
-                }
-            }
-        });
-
-        window.addEventListener('offline', function () {
-            document.getElementById('components-disconnected-message').style.display = 'block';
-        });
-
-        window.addEventListener('online', function () {
-            document.getElementById('components-disconnected-message').style.display = 'none';
-        });
     </script>
 
     <script src="_framework/blazor.server.js"></script>

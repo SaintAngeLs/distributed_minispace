@@ -1,25 +1,8 @@
-@code {
-    private void ReloadPage()
-    {
-        JSRuntime.InvokeVoidAsync("location.reload");
-    }
-
-    [Inject] IJSRuntime JSRuntime { get; set; }
-}
-
 <div class="reconnect-message">
-    <p>Attempting to reconnect to the server...</p>
+    <p>XXXXXXXXXXXXXXXXXXXAttempting to reconnect to the server: @CurrentAttempt of @MaxAttempts...</p>
 </div>
 
-<style>
-    .reconnect-message {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background-color: yellow;
-        padding: 10px;
-        text-align: center;
-        z-index: 1000;
-    }
-</style>
+@code {
+    [Parameter] public int CurrentAttempt { get; set; }
+    [Parameter] public int MaxAttempts { get; set; }
+}
