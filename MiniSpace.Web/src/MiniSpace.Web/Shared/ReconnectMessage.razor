@@ -1,5 +1,14 @@
+@code {
+    private void ReloadPage()
+    {
+        JSRuntime.InvokeVoidAsync("location.reload");
+    }
+
+    [Inject] IJSRuntime JSRuntime { get; set; }
+}
+
 <div class="reconnect-message">
-    <p>Attempting to reconnect to the server XD XD ...</p>
+    <p>Attempting to reconnect to the server...</p>
 </div>
 
 <style>

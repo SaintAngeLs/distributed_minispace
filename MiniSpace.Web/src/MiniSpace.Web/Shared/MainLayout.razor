@@ -43,51 +43,71 @@
                 <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
                 <MudNavLink Href="/account" Icon="@Icons.Material.Filled.AccountBox">Account settings</MudNavLink>
                 <MudNavLink Href="/notifications/all" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
-                <MudNavLink Href="#" OnClick="SignOut" Icon="@Icons.Material.Filled.ExitToApp">Sign Out</MudNavLink>
+                <MudNavLink OnClick="SignOut" Icon="@Icons.Material.Filled.ExitToApp">Sign Out</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
     }
-
-    <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
-        @if (!isPC)
-        {
-            <MudDrawerHeader>
-                <MudText Typo="Typo.h6">Menu</MudText>
-            </MudDrawerHeader>
-        }
-        <MudNavMenu>
-            <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-            <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
-            <MudNavGroup Text="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
-                <MudNavLink Href="events/follow" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
-                <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
-                @if (IdentityService.GetCurrentUserRole() == "organizer")
-                {
-                    <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
-                }
-            </MudNavGroup>
-            <MudNavGroup Text="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true">
-                <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
-                <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
-                <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
-                <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
-            </MudNavGroup>
-            <MudNavGroup Text="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
-                <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
-                <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
-                <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
-            </MudNavGroup>
-            <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
-            @if (IdentityService.GetCurrentUserRole() == "admin")
+    else
+    {
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
+            @if (!isPC)
             {
-                <MudNavGroup Text="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true">
-                    <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
-                    <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
-                    <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
-                </MudNavGroup>
+                <MudDrawerHeader>
+                    <MudText Typo="Typo.h6">Menu</MudText>
+                </MudDrawerHeader>
             }
-        </MudNavMenu>
-    </MudDrawer>
+            <MudNavMenu>
+                <MudNavLink Href="#home" OnClick="ScrollToHome" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+                <MudNavLink Href="#about" OnClick="ScrollToAbout" Icon="@Icons.Material.Filled.Info">About App</MudNavLink>
+                <MudNavLink Href="#connect" OnClick="ScrollToConnect" Icon="@Icons.Material.Filled.ConnectWithoutContact">Connect</MudNavLink>
+                <MudNavLink Href="signin" Icon="@Icons.Material.Filled.Login">Sign In</MudNavLink>
+                <MudNavLink Href="signup" Icon="@Icons.Material.Filled.HowToReg">Sign Up</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+    }
+    @if (_isUserAuthenticated)
+    {
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true" Width="250px">
+            @if (!isPC)
+            {
+                <MudDrawerHeader>
+                    <MudText Typo="Typo.h6">Menu</MudText>
+                </MudDrawerHeader>
+            }
+            <MudNavMenu>
+                <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+                <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
+                <MudNavGroup Text="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
+                    <MudNavLink Href="events/follow" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
+                    <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
+                    @if (IdentityService.GetCurrentUserRole() == "organizer")
+                    {
+                        <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
+                    }
+                </MudNavGroup>
+                <MudNavGroup Text="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true"  ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                    <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
+                    <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
+                    <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
+                    <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
+                </MudNavGroup>
+                <MudNavGroup Text="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
+                    <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
+                    <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
+                    <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
+                @if (IdentityService.GetCurrentUserRole() == "admin")
+                {
+                    <MudNavGroup Text="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true">
+                        <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
+                        <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
+                        <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
+                    </MudNavGroup>
+                }
+            </MudNavMenu>
+        </MudDrawer>
+    }
 
     <MudMainContent>
         <div style="flex: 1; display: flex; flex-direction: column; min-height: 100vh;">
@@ -187,6 +207,7 @@
     async Task SignOut()
     {
         await localStorage.ClearAsync();
+        await IdentityService.Logout();
         StateHasChanged();
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }

@@ -1,5 +1,14 @@
-@* <div class="disconnected-message">
-    <p>Disconnected from server. Reload page XDXD...</p>
+@code {
+    private void ReloadPage()
+    {
+        JSRuntime.InvokeVoidAsync("location.reload");
+    }
+
+    [Inject] IJSRuntime JSRuntime { get; set; }
+}
+
+<div class="disconnected-message">
+    <p>Disconnected from server. Reload page...</p>
     <button @onclick="ReloadPage">Reload</button>
 </div>
 
@@ -15,12 +24,3 @@
         z-index: 1000;
     }
 </style>
-
-@code {
-    private void ReloadPage()
-    {
-        JSRuntime.InvokeVoidAsync("location.reload");
-    }
-
-    [Inject] IJSRuntime JSRuntime { get; set; }
-} *@

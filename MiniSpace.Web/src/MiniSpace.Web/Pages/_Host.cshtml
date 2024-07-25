@@ -48,7 +48,6 @@
                 });
         }
 
-
         window.getScreenSize = function () {
             return {
                 width: window.innerWidth,
@@ -133,6 +132,25 @@
                 console.error("Error establishing SignalR connection: ", err.toString());
             });
         }
+
+        Blazor.start({
+            reconnectionHandler: {
+                onConnectionUp: function () {
+                    document.getElementById('components-reconnect-message').style.display = 'none';
+                },
+                onConnectionDown: function () {
+                    document.getElementById('components-reconnect-message').style.display = 'block';
+                }
+            }
+        });
+
+        window.addEventListener('offline', function () {
+            document.getElementById('components-disconnected-message').style.display = 'block';
+        });
+
+        window.addEventListener('online', function () {
+            document.getElementById('components-disconnected-message').style.display = 'none';
+        });
     </script>
 
     <script src="_framework/blazor.server.js"></script>
