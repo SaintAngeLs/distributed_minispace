@@ -77,7 +77,7 @@
             <MudNavMenu>
                 <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
                 <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
-                <MudNavGroup Text="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
+                <MudNavGroup Title="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
                     <MudNavLink Href="events/follow" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
                     <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
                     @if (IdentityService.GetCurrentUserRole() == "organizer")
@@ -85,13 +85,13 @@
                         <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
                     }
                 </MudNavGroup>
-                <MudNavGroup Text="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true"  ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true"  ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
                     <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
                     <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
                     <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
                 </MudNavGroup>
-                <MudNavGroup Text="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
+                <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
                     <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
                     <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
                     <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
@@ -99,7 +99,7 @@
                 <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
                 @if (IdentityService.GetCurrentUserRole() == "admin")
                 {
-                    <MudNavGroup Text="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true">
+                    <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true">
                         <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
                         <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
                         <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
