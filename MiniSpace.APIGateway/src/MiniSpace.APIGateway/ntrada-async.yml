@@ -254,24 +254,6 @@ modules:
         downstream: identity-service/2fa/verify-code
         auth: true
 
-      - upstream: /access-tokens/revoke
-        method: POST
-        use: downstream
-        downstream: identity-service/access-tokens/revoke
-        auth: true
-
-      - upstream: /refresh-tokens/use
-        method: POST
-        use: downstream
-        downstream: identity-service/refresh-tokens/use
-        auth: true
-
-      - upstream: /refresh-tokens/revoke
-        method: POST
-        use: downstream
-        downstream: identity-service/refresh-tokens/revoke
-        auth: true
-
     services:
       identity-service:
         localUrl: localhost:5004
