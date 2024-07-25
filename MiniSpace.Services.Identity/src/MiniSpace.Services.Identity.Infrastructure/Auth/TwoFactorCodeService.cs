@@ -17,7 +17,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Auth
             long unixTime = GetUnixTimestamp();
             byte[] secretBytes = Base32ToBytes(secret);
             
-            // Check OTP within the allowable time window
+
             for (int i = -Window; i <= Window; i++)
             {
                 int otp = ComputeTotp(secretBytes, (unixTime / Step) + i);
@@ -45,7 +45,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Auth
             return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
 
-        private static int ComputeTotp(byte[] key, long counter)
+        public static int ComputeTotp(byte[] key, long counter)
         {
             using (var hmac = new HMACSHA1(key))
             {
@@ -68,7 +68,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Auth
             }
         }
 
-        private static byte[] Base32ToBytes(string base32)
+        public static byte[] Base32ToBytes(string base32)
         {
             const string base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
             base32 = base32.TrimEnd('=').ToUpper();
