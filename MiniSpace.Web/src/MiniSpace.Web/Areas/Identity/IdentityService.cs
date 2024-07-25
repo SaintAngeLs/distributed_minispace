@@ -402,7 +402,7 @@ namespace MiniSpace.Web.Areas.Identity
         public async Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code)
         {
             var payload = new { userId, code };
-            var response = await _httpClient.PostAsync<object, JwtDto>("2fa/verify-code", payload);
+            var response = await _httpClient.PostAsync<object, JwtDto>("identity/2fa/verify-code", payload);
             if (response.Content != null)
             {
                 JwtDto = response.Content;

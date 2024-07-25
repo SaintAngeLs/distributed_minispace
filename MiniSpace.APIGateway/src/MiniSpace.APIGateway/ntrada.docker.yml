@@ -157,7 +157,7 @@ modules:
         method: POST
         use: downstream
         downstream: identity-service/2fa/verify-code
-        auth: true
+        auth: false
 
       - upstream: /access-tokens/revoke
         method: POST

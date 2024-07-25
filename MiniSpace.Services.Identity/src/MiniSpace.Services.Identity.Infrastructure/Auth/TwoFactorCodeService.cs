@@ -10,13 +10,26 @@ namespace MiniSpace.Services.Identity.Infrastructure.Auth
     {
         private const int Step = 30; // Time step in seconds
         private const int TOTPSize = 6; // Number of digits in the TOTP
+        private const int Window = 1; // Allowable time step window for clock drift
 
         public bool ValidateCode(string secret, string code)
         {
             long unixTime = GetUnixTimestamp();
             byte[] secretBytes = Base32ToBytes(secret);
-            int otp = ComputeTotp(secretBytes, unixTime / Step);
-            return otp.ToString("D6") == code;
+            
+            // Check OTP within the allowable time window
+            for (int i = -Window; i <= Window; i++)
+            {
+                int otp = ComputeTotp(secretBytes, (unixTime / Step) + i);
+                Console.WriteLine($"Generated OTP for step {i}: {otp.ToString("D6")}");
+
+                if (otp.ToString("D6") == code)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public string GenerateCode(string secret)

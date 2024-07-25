@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -290,12 +291,17 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         public async Task<AuthDto> VerifyTwoFactorCodeAsync(VerifyTwoFactorCode command)
         {
             var user = await _userRepository.GetAsync(command.UserId);
+            Console.WriteLine($"User retrieved: {JsonSerializer.Serialize(user)}"); 
             if (user == null)
             {
                 throw new UserNotFoundException(command.UserId);
             }
+            Console.WriteLine($"Code received is {command.Code}");
 
-            if (!_twoFactorCodeService.ValidateCode(user.TwoFactorSecret, command.Code))
+            bool isValidCode = _twoFactorCodeService.ValidateCode(user.TwoFactorSecret, command.Code);
+            Console.WriteLine($"Is the 2FA code valid? {isValidCode}");
+
+            if (!isValidCode)
             {
                 throw new InvalidTwoFactorCodeException();
             }
@@ -315,6 +321,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
             return auth;
         }
+
 
     }
 }
