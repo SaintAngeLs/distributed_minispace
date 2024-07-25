@@ -10,7 +10,7 @@
 
 <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
 <MudLayout>
-     <MudAppBar Elevation="4">
+    <MudAppBar Elevation="4">
         <div class="container-fluid d-flex">
             <div class="d-flex align-items-center">
                 @if (_isUserAuthenticated)
@@ -23,83 +23,7 @@
             <div class="d-flex justify-content-end">
                 @if (_isUserAuthenticated)
                 {
-                     <nav class="navbar navbar-expand-lg navbar-light">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <NavLink class="nav-link text-dark" href="/profile">
-                                        <MudIcon Icon="@Icons.Material.Filled.Person" /> Profile
-                                    </NavLink>
-                                </li>
-                                <li class="nav-item">
-                                    <NavLink class="nav-link text-dark" href="/settings">
-                                        <MudIcon Icon="@Icons.Material.Filled.Settings" /> Settings
-                                    </NavLink>
-                                </li>
-                            </ul>
-                            <ul class="navbar-nav ml-auto">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <MudIcon Icon="@Icons.Material.Filled.Person" /> Hello, @_userName
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                                        <NavLink class="dropdown-item text-dark" href="/account">
-                                            <MudIcon Icon="@Icons.Material.Filled.Settings" /> Account settings
-                                        </NavLink>
-                                        <NavLink class="dropdown-item text-dark" href="/notifications/all">
-                                            <MudIcon Icon="@Icons.Material.Filled.Notifications" /> Notifications
-                                        </NavLink>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-dark" href="#" @onclick="SignOut">
-                                            <MudIcon Icon="@Icons.Material.Filled.ExitToApp" /> Sign Out
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                }
-                else
-                {
-                    <nav class="navbar navbar-expand-lg navbar-light">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav mr-auto">
-                                <li class="nav-item">
-                                    <NavLink class="nav-link text-dark" href="#home" @onclick="ScrollToHome">
-                                        <MudIcon Icon="@Icons.Material.Filled.Home" /> Home
-                                    </NavLink>
-                                </li>
-                                <li class="nav-item">
-                                    <NavLink class="nav-link text-dark" href="#about" @onclick="ScrollToAbout">
-                                        <MudIcon Icon="@Icons.Material.Filled.Info" /> About App
-                                    </NavLink>
-                                </li>
-                                <li class="nav-item">
-                                    <NavLink class="nav-link text-dark" href="#connect" @onclick="ScrollToConnect">
-                                        <MudIcon Icon="@Icons.Material.Filled.ConnectWithoutContact" /> Connect
-                                    </NavLink>
-                                </li>
-                            </ul>
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <NavLink class="nav-link text-dark" href="signin">
-                                        <MudIcon Icon="@Icons.Material.Filled.Login" /> Sign In
-                                    </NavLink>
-                                </li>
-                                <li class="nav-item">
-                                    <NavLink class="nav-link text-dark" href="signup">
-                                        <MudIcon Icon="@Icons.Material.Filled.HowToReg" /> Sign Up
-                                    </NavLink>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
+                    <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@ToggleUserDrawer" />
                 }
             </div>
         </div>
@@ -107,48 +31,63 @@
 
     @if (_isUserAuthenticated)
     {
-        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" 
-                Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)">
-            @if (!isPC)
-            {
-                <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">Menu</MudText>
-                </MudDrawerHeader>
-            }
+        <MudDrawer @bind-Open="_userDrawerOpen" Elevation="1" Anchor="Anchor.Right" Variant="DrawerVariant.Temporary">
+            <MudDrawerHeader>
+                <div class="d-flex flex-column align-items-center">
+                    <MudAvatar Image="@_userAvatar" Size="Size.Large" />
+                    <MudText Typo="Typo.h6" Class="mt-2">@_userName</MudText>
+                </div>
+            </MudDrawerHeader>
             <MudNavMenu>
-                <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-                <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
-                <MudNavGroup Text="Events" Icon="@Icons.Material.Filled.Event">
-                    <MudNavLink Href="events/follow" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
-                    <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
-                    @if (IdentityService.GetCurrentUserRole() == "organizer")
-                    {
-                        <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
-                    }
-                </MudNavGroup>
-                <MudNavGroup Text="Friends" Icon="@Icons.Material.Filled.Group">
-                    <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
-                    <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
-                    <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
-                    <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
-                </MudNavGroup>
-                <MudNavGroup Text="Notifications" Icon="@Icons.Material.Filled.Send">
-                    <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
-                    <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
-                    <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
-                </MudNavGroup>
-                <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
-                @if (IdentityService.GetCurrentUserRole() == "admin")
-                {
-                    <MudNavGroup Text="Admin" Icon="@Icons.Material.Filled.Build">
-                        <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
-                        <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
-                        <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
-                    </MudNavGroup>
-                }
+                <MudNavLink Href="/profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+                <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+                <MudNavLink Href="/account" Icon="@Icons.Material.Filled.AccountBox">Account settings</MudNavLink>
+                <MudNavLink Href="/notifications/all" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+                <MudNavLink Href="#" OnClick="SignOut" Icon="@Icons.Material.Filled.ExitToApp">Sign Out</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
     }
+
+    <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
+        @if (!isPC)
+        {
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Menu</MudText>
+            </MudDrawerHeader>
+        }
+        <MudNavMenu>
+            <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
+            <MudNavGroup Text="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
+                <MudNavLink Href="events/follow" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
+                <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
+                @if (IdentityService.GetCurrentUserRole() == "organizer")
+                {
+                    <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
+                }
+            </MudNavGroup>
+            <MudNavGroup Text="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true">
+                <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
+                <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
+                <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
+                <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Text="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
+                <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
+                <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
+                <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
+            @if (IdentityService.GetCurrentUserRole() == "admin")
+            {
+                <MudNavGroup Text="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true">
+                    <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
+                    <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
+                    <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
+                </MudNavGroup>
+            }
+        </MudNavMenu>
+    </MudDrawer>
 
     <MudMainContent>
         <div style="flex: 1; display: flex; flex-direction: column; min-height: 100vh;">
@@ -172,17 +111,18 @@
     </MudMainContent>
 </MudLayout>
 
-@* <MudPopoverProvider /> *@
 <MudDialog />
 
 @code {
     private bool _sidebarExpanded = false;
+    private bool _userDrawerOpen = false;
     private bool isPC = true;
     private bool _isUserAuthenticated;
     private string _userName;
     private string _userEmail;
     private Guid _studentId;
     private string _studentState;
+    private string _userAvatar;
 
     [Inject] IJSRuntime JSRuntime { get; set; }
 
@@ -203,6 +143,7 @@
                     if (studentDto != null)
                     {
                         _studentState = studentDto.State;
+                        _userAvatar = studentDto.ProfileImageUrl; 
                     }
                 }
             }
@@ -215,7 +156,7 @@
     public async Task UpdateScreenSize()
     {
         var screenSize = await JSRuntime.InvokeAsync<ScreenSize>("getScreenSize");
-        isPC = screenSize.Width > 868; // Adjust this width based on your breakpoint preference
+        isPC = screenSize.Width > 868;
         StateHasChanged();
     }
 
@@ -238,6 +179,11 @@
         _sidebarExpanded = !_sidebarExpanded;
     }
 
+    private void ToggleUserDrawer()
+    {
+        _userDrawerOpen = !_userDrawerOpen;
+    }
+
     async Task SignOut()
     {
         await localStorage.ClearAsync();
@@ -245,7 +191,7 @@
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
 
-     private async Task ScrollToHome(MouseEventArgs e)
+    private async Task ScrollToHome(MouseEventArgs e)
     {
         await ScrollToSection("home");
     }
@@ -260,7 +206,6 @@
         await ScrollToSection("connect");
     }
 
-
     async Task ScrollToSection(string sectionId)
     {
         if (NavigationManager.Uri != NavigationManager.BaseUri)
@@ -269,7 +214,7 @@
         }
         while (NavigationManager.Uri != NavigationManager.BaseUri)
         {
-            await Task.Delay(100); // Check every 100ms
+            await Task.Delay(100);
         }
         await JSRuntime.InvokeVoidAsync("scrollToSection", sectionId);
     }
