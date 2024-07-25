@@ -200,60 +200,6 @@ modules:
         downstream: identity-service/refresh-tokens/revoke
         auth: true
 
-      - upstream: /users/{userId}/ban
-        method: POST
-        use: downstream
-        downstream: identity-service/users/{userId}/ban
-        auth: true
-
-      - upstream: /users/{userId}/ban
-        method: DELETE
-        use: downstream
-        downstream: identity-service/users/{userId}/ban
-        auth: true
-
-      - upstream: /password/forgot
-        method: POST
-        use: downstream
-        downstream: identity-service/password/forgot
-        auth: false
-
-      - upstream: /password/reset
-        method: POST
-        use: downstream
-        downstream: identity-service/password/reset
-        auth: false
-
-      - upstream: /email/verify
-        method: POST
-        use: downstream
-        downstream: identity-service/email/verify
-        auth: false
-
-      - upstream: /2fa/enable
-        method: POST
-        use: downstream
-        downstream: identity-service/2fa/enable
-        auth: true
-
-      - upstream: /2fa/disable
-        method: POST
-        use: downstream
-        downstream: identity-service/2fa/disable
-        auth: true
-
-      - upstream: /2fa/generate-secret
-        method: POST
-        use: downstream
-        downstream: identity-service/2fa/generate-secret
-        auth: true
-
-      - upstream: /2fa/verify-code
-        method: POST
-        use: downstream
-        downstream: identity-service/2fa/verify-code
-        auth: true
-
     services:
       identity-service:
         localUrl: localhost:5004
