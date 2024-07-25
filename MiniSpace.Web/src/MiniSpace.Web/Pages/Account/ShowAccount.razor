@@ -446,7 +446,7 @@
         else
         {
             <MudStack>
-                <MudSwitch @bind-Checked="studentWithGalleryImagesDto.Student.EmailNotifications" Label="Email Notifications" />
+                <MudSwitch @bind-Checked="studentWithGalleryImagesDto.Student.EmailNotifications" Label="Email Notifications" Color="Color.Primary"/>
                 @if (studentWithGalleryImagesDto.Student.EmailNotifications)
                 {
                     <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary"/>
@@ -459,9 +459,24 @@
                     <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary"/>
                 }
             </MudStack>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save preferences</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveNotificationPreferencesAsync">Save preferences</MudButton>
         }
     </div>;
+
+
+     private async Task SaveNotificationPreferencesAsync()
+    {
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, notificationPreferencesDto);
+            Console.WriteLine("Notification preferences updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving notification preferences: {ex.Message}");
+        }
+    }
 
     private RenderFragment PrivacyContent() => @<div>
         <MudText Typo="Typo.h6" GutterBottom="true">Privacy</MudText>
@@ -535,7 +550,7 @@
         {
             <MudGrid>
                 <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    <MudSelect @bind-Value="availableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" Margin="Margin.Dense">
                         @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                         {
                             <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -543,7 +558,7 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    <MudSelect @bind-Value="availableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility" Margin="Margin.Dense">
                         @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                         {
                             <MudSelectItem Value="@visibility">@visibility</MudSelectItem>

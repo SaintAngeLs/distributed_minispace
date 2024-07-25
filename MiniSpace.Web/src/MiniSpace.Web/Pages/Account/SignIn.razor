@@ -10,8 +10,6 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
- 
-
 <style>
     body {
         margin: 0;
@@ -81,7 +79,7 @@
             <div class="sign-in-up-pre-info">
                 <h2>Welcome to MiniSpace</h2>
                 <p>Please sign in to access your account and manage your details.</p>
-                <h3>Sign In</h3>
+                <h3>@(isTwoFactorRequired ? "Enter 2FA Code" : "Sign In")</h3>
             </div>
             @if (showError)
             {
@@ -89,39 +87,58 @@
                     @errorMessage
                 </MudAlert>
             }
-            <EditForm Model="@signInModel" OnValidSubmit="HandleSignIn">
-                <MudGrid>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="signInModel.Email" Label="Email" Variant="Variant.Outlined" Required="true" RequiredError="Email is required" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="signInModel.Password" Label="Password" Variant="Variant.Outlined" 
-                                      InputType="@passwordInputType" Adornment="Adornment.End" AdornmentIcon="@passwordInputIcon" 
-                                      OnAdornmentClick="TogglePasswordVisibility" Required="true" RequiredError="Password is required" />
-                    </MudItem>
-                    <MudItem xs="12" Class="d-flex justify-space-between align-center">
-                        <MudCheckBox @bind-Checked="rememberMe" Label="Remember me?" Color="Color.Primary" Class="ml-n1"></MudCheckBox>
-                        <MudLink Href="/forgot-password">Forgot Password?</MudLink>
-                    </MudItem>
-                    <MudItem xs="12" Class="d-flex justify-center">
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Sign In</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </EditForm>
-            <div style="text-align: center; margin-top: 3rem !important;">
-                <MudLink Href="/signup">Create Account</MudLink>
-            </div>
+            @if (isTwoFactorRequired)
+            {
+                <EditForm Model="@twoFactorModel" OnValidSubmit="HandleTwoFactor">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="twoFactorModel.Code" Label="2FA Code" Variant="Variant.Outlined" Required="true" RequiredError="2FA Code is required" />
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-center">
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Submit</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </EditForm>
+            }
+            else
+            {
+                <EditForm Model="@signInModel" OnValidSubmit="HandleSignIn">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="signInModel.Email" Label="Email" Variant="Variant.Outlined" Required="true" RequiredError="Email is required" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="signInModel.Password" Label="Password" Variant="Variant.Outlined" 
+                                          InputType="@passwordInputType" Adornment="Adornment.End" AdornmentIcon="@passwordInputIcon" 
+                                          OnAdornmentClick="TogglePasswordVisibility" Required="true" RequiredError="Password is required" />
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-space-between align-center">
+                            <MudCheckBox @bind-Checked="rememberMe" Label="Remember me?" Color="Color.Primary" Class="ml-n1"></MudCheckBox>
+                            <MudLink Href="/forgot-password">Forgot Password?</MudLink>
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-center">
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Sign In</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </EditForm>
+                <div style="text-align: center; margin-top: 3rem !important;">
+                    <MudLink Href="/signup">Create Account</MudLink>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 @code {
     private SignInModel signInModel = new SignInModel();
+    private TwoFactorModel twoFactorModel = new TwoFactorModel();
     private bool showError = false;
     private string errorMessage = string.Empty;
     private bool rememberMe = false;
     private InputType passwordInputType = InputType.Password;
     private string passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private bool isTwoFactorRequired = false;
+    private Guid userId;
 
     private void OnAlertClose()
     {
@@ -148,6 +165,48 @@
         try
         {
             var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+
+            if (response != null && response.Content != null)
+            {
+                if (response.Content.IsTwoFactorRequired)
+                {
+                    isTwoFactorRequired = true;
+                    userId = response.Content.UserId;
+                    StateHasChanged();
+                }
+                else if (!string.IsNullOrEmpty(response.Content.AccessToken))
+                {
+                    await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+                    var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/";
+                    NavigationManager.NavigateTo(nextPage, true);
+                }
+                else
+                {
+                    showError = true;
+                    errorMessage = $"Error during sign in: {response?.ErrorMessage?.Reason ?? "Unknown error"}";
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                showError = true;
+                errorMessage = $"Error during sign in: {response?.ErrorMessage?.Reason ?? "Unknown error"}";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            showError = true;
+            errorMessage = $"Error during sign in: {ex.Message}";
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleTwoFactor()
+    {
+        try
+        {
+            var response = await IdentityService.VerifyTwoFactorCodeAsync(userId, twoFactorModel.Code);
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
                 await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
@@ -157,15 +216,15 @@
             else
             {
                 showError = true;
-                errorMessage = $"Error during sign in: {response?.ErrorMessage?.Reason}";
-                StateHasChanged(); 
+                errorMessage = $"Error during 2FA verification: {response?.ErrorMessage?.Reason ?? "Unknown error"}";
+                StateHasChanged();
             }
         }
         catch (Exception ex)
         {
             showError = true;
-            errorMessage = $"Error during sign in: {ex.Message}";
-            StateHasChanged(); 
+            errorMessage = $"Error during 2FA verification: {ex.Message}";
+            StateHasChanged();
         }
     }
 }

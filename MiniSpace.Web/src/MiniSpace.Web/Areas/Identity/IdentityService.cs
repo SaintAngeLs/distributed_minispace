@@ -34,6 +34,9 @@ namespace MiniSpace.Web.Areas.Identity
         
         public Task<UserDto> GetAccountAsync(JwtDto jwtDto)
         {
+            if (jwtDto == null || string.IsNullOrEmpty(jwtDto.AccessToken))
+                throw new ArgumentNullException(nameof(jwtDto), "JWT DTO or Access Token is null");
+
             _httpClient.SetAccessToken(jwtDto.AccessToken);
             return _httpClient.GetAsync<UserDto>("identity/me");
         }
@@ -51,6 +54,13 @@ namespace MiniSpace.Web.Areas.Identity
             if (response.Content != null)
             {
                 JwtDto = response.Content;
+
+                if (JwtDto.IsTwoFactorRequired)
+                {
+                    // Indicate that 2FA is required
+                    return response;
+                }
+
                 var jwtDtoJson = JsonSerializer.Serialize(JwtDto);
                 await _localStorage.SetItemAsStringAsync("jwtDto", jwtDtoJson);
 
@@ -60,6 +70,10 @@ namespace MiniSpace.Web.Areas.Identity
                 Name = payload.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
                 Email = payload.Claims.FirstOrDefault(c => c.Type == "e-mail")?.Value;
                 IsAuthenticated = true;
+            }
+            else
+            {
+                throw new InvalidOperationException("Failed to sign in. No JWT token received.");
             }
             return response;
         }
@@ -114,44 +128,47 @@ namespace MiniSpace.Web.Areas.Identity
             {
                 JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
 
-                var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+                if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
+                {
+                    var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
 
-                if (jwtToken.ValidTo > DateTime.UtcNow)
-                {
-                    return jwtDto.AccessToken;
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(jwtDto.RefreshToken))
+                    if (jwtToken.ValidTo > DateTime.UtcNow)
                     {
-                        try
+                        return jwtDto.AccessToken;
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(jwtDto.RefreshToken))
                         {
-                            JwtDto newJwtDto = await RefreshAccessToken(jwtDto.RefreshToken);
-
-                            if (newJwtDto != null)
+                            try
                             {
-                                var newJwtDtoJson = JsonSerializer.Serialize(newJwtDto);
+                                JwtDto newJwtDto = await RefreshAccessToken(jwtDto.RefreshToken);
 
-                                await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
+                                if (newJwtDto != null)
+                                {
+                                    var newJwtDtoJson = JsonSerializer.Serialize(newJwtDto);
 
-                                return newJwtDto.AccessToken;
+                                    await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
+
+                                    return newJwtDto.AccessToken;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _localStorage.RemoveItemAsync("jwtDto");
+
+                                _navigationManager.NavigateTo("signin", forceLoad: true);
+
+                                throw new InvalidOperationException("Failed to refresh token: " + ex.Message);
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            await _localStorage.RemoveItemAsync("jwtDto");
 
-                            _navigationManager.NavigateTo("signin", forceLoad: true);
+                        await _localStorage.RemoveItemAsync("jwtDto");
 
-                            throw new InvalidOperationException("Failed to refresh token: " + ex.Message);
-                        }
+                        _navigationManager.NavigateTo("signin", forceLoad: true);
+
+                        throw new InvalidOperationException("Session expired, please login again.");
                     }
-
-                    await _localStorage.RemoveItemAsync("jwtDto");
-
-                    _navigationManager.NavigateTo("signin", forceLoad: true);
-
-                    throw new InvalidOperationException("Session expired, please login again.");
                 }
             }
 
@@ -190,37 +207,63 @@ namespace MiniSpace.Web.Areas.Identity
             if (!string.IsNullOrEmpty(jwtDtoJson))
             {
                 JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
-                var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
-                if (jwtToken.ValidTo > DateTime.UtcNow)
+                if (jwtDto?.AccessToken != null)
                 {
-                    IsAuthenticated = true;
+                    try
+                    {
+                        var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+                        if (jwtToken.ValidTo > DateTime.UtcNow)
+                        {
+                            IsAuthenticated = true;
+                        }
+                        else
+                        {
+                            IsAuthenticated = await TryRefreshToken(jwtDto.RefreshToken);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Token validation error: {ex.Message}");
+                        IsAuthenticated = false;
+                    }
                 }
                 else
                 {
-                    IsAuthenticated = await TryRefreshToken(jwtDto.RefreshToken);
+                    Console.WriteLine("AccessToken is null");
+                    IsAuthenticated = false;
                 }
             }
             else
             {
+                Console.WriteLine("jwtDtoJson is null or empty");
                 IsAuthenticated = false;
             }
             return IsAuthenticated;
         }
-        
+
         private async Task<bool> TryRefreshToken(string refreshToken)
         {
             try
             {
-                var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-tokens/use", new { refreshToken });
-                if (response.Content != null)
+                if (!string.IsNullOrEmpty(refreshToken))
                 {
-                    var newJwtDtoJson = JsonSerializer.Serialize(response.Content);
-                    await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
-                    return true;
+                    var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-tokens/use", new { refreshToken });
+                    if (response.Content != null)
+                    {
+                        var newJwtDtoJson = JsonSerializer.Serialize(response.Content);
+                        await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
+                        JwtDto = response.Content;
+                        return true;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("RefreshToken is null or empty");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error refreshing token: {ex.Message}");
                 await Logout();
             }
             return false;
@@ -232,8 +275,19 @@ namespace MiniSpace.Web.Areas.Identity
             if (!string.IsNullOrEmpty(jwtDtoJson))
             {
                 var jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
-                var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
-                return jwtToken.ValidTo > DateTime.UtcNow;
+                if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
+                {
+                    var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+                    return jwtToken.ValidTo > DateTime.UtcNow;
+                }
+                else
+                {
+                    Console.WriteLine("jwtDto or AccessToken is null");
+                }
+            }
+            else
+            {
+                Console.WriteLine("jwtDtoJson is null or empty");
             }
             return false;
         }
@@ -335,7 +389,7 @@ namespace MiniSpace.Web.Areas.Identity
             throw new InvalidOperationException("Failed to generate two-factor secret.");
         }
 
-         public async Task EnableTwoFactorAsync(Guid userId, string secret)
+        public async Task EnableTwoFactorAsync(Guid userId, string secret)
         {
             await _httpClient.PostAsync("identity/2fa/enable", new { UserId = userId, Secret = secret });
         }
@@ -345,6 +399,25 @@ namespace MiniSpace.Web.Areas.Identity
             await _httpClient.PostAsync("identity/2fa/disable", new { UserId = userId });
         }
 
-        
+        public async Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code)
+        {
+            var payload = new { userId, code };
+            var response = await _httpClient.PostAsync<object, JwtDto>("2fa/verify-code", payload);
+            if (response.Content != null)
+            {
+                JwtDto = response.Content;
+                var jwtDtoJson = JsonSerializer.Serialize(JwtDto);
+                await _localStorage.SetItemAsStringAsync("jwtDto", jwtDtoJson);
+
+                var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
+                var payloadClaims = jwtToken.Payload;
+                UserDto = await GetAccountAsync(JwtDto);
+                Name = payloadClaims.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+                Email = payloadClaims.Claims.FirstOrDefault(c => c.Type == "e-mail")?.Value;
+                IsAuthenticated = true;
+            }
+            return response;
+        }
+
     }
 }
