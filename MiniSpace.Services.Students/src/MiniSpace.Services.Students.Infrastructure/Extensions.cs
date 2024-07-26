@@ -39,7 +39,9 @@ using MiniSpace.Services.Students.Infrastructure.Logging;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Students.Infrastructure.Services;
+using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
+using Convey.Types;
 
 namespace MiniSpace.Services.Students.Infrastructure
 {
@@ -50,6 +52,8 @@ namespace MiniSpace.Services.Students.Infrastructure
         {
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IUserNotificationPreferencesRepository, UserNotificationPreferencesRepository>();
+            builder.Services.AddTransient<IUserSettingsRepository, UserSettingsRepository>();
+            builder.Services.AddTransient<IUserGalleryRepository, UserGalleryRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -75,6 +79,8 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddHandlersLogging()
                 .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddMongoRepository<UserNotificationsDocument, Guid>("user-notifications")
+                .AddMongoRepository<UserSettingsDocument, Guid>("user-settings")
+                .AddMongoRepository<UserGalleryDocument, Guid>("user-gellery")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -94,6 +100,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeCommand<DeleteStudent>()
                 .SubscribeCommand<CompleteStudentRegistration>()
                 .SubscribeCommand<ChangeStudentState>()
+                .SubscribeCommand<UpdateUserSettings>()
                 .SubscribeEvent<SignedUp>()
                 .SubscribeEvent<EmailVerified>()
                 .SubscribeEvent<StudentShowedInterestInEvent>()
@@ -102,8 +109,6 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeEvent<StudentCancelledSignUpToEvent>()
                 .SubscribeEvent<UserBanned>()
                 .SubscribeEvent<UserUnbanned>()
-                .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>()
                 .SubscribeEvent<StudentImageUploaded>()
                 .SubscribeEvent<MediaFileDeleted>();
 
@@ -145,5 +150,6 @@ namespace MiniSpace.Services.Students.Infrastructure
         
             return string.Empty;
         }
+        
     }
 }

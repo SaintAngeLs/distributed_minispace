@@ -69,16 +69,6 @@ namespace MiniSpace.Services.Identity.Api
                             await ctx.RequestServices.GetService<IRefreshTokenService>().RevokeAsync(cmd.RefreshToken);
                             ctx.Response.StatusCode = 204;
                         })
-                        .Post<GrantOrganizerRights>("users/{userId}/organizer-rights", async (cmd, ctx) =>
-                        {
-                            await ctx.RequestServices.GetService<IIdentityService>().GrantOrganizerRightsAsync(cmd);
-                            ctx.Response.StatusCode = 204;
-                        })
-                        .Delete<RevokeOrganizerRights>("users/{userId}/organizer-rights", async (cmd, ctx) =>
-                        {
-                            await ctx.RequestServices.GetService<IIdentityService>().RevokeOrganizerRightsAsync(cmd);
-                            ctx.Response.StatusCode = 204;
-                        })
                         .Post<BanUser>("users/{userId}/ban", async (cmd, ctx) =>
                         {
                             await ctx.RequestServices.GetService<IIdentityService>().BanUserAsync(cmd);
@@ -118,6 +108,11 @@ namespace MiniSpace.Services.Identity.Api
                         {
                             var secret = await ctx.RequestServices.GetService<IIdentityService>().GenerateTwoFactorSecretAsync(cmd);
                             await ctx.Response.WriteJsonAsync(new { Secret = secret });
+                        })
+                        .Post<VerifyTwoFactorCode>("2fa/verify-code", async (cmd, ctx) =>
+                        {
+                            var token = await ctx.RequestServices.GetService<IIdentityService>().VerifyTwoFactorCodeAsync(cmd);
+                            await ctx.Response.WriteJsonAsync(token);
                         })
                     ))
                 .UseLogging()

@@ -98,9 +98,7 @@ else
         if (IdentityService.IsAuthenticated && IdentityService.GetCurrentUserRole() == "admin")
         {
             var paginatedResponse = await StudentsService.GetStudentsAsync();
-            organizers = paginatedResponse.Results
-                .Where(o => o.IsOrganizer)
-                .Select(s => new OrganizerModel(s.Id, s.Email, $"{s.FirstName} {s.LastName}"));   
+           
         }
     }
     

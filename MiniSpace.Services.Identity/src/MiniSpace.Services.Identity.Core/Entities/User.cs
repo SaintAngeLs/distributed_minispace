@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
     {
         public string Name { get; private set; }
         public string Email { get; private set; }
-        public string Role { get; private set; }
+        public Role Role { get; private set; }
         public string Password { get; set; }
         public DateTime CreatedAt { get; private set; }
         public IEnumerable<string> Permissions { get; private set; }
@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
 
-        public User(Guid id, string name, string email, string password, string role, DateTime createdAt,
+        public User(Guid id, string name, string email, string password, Role role, DateTime createdAt,
             IEnumerable<string> permissions = null)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -37,21 +37,21 @@ namespace MiniSpace.Services.Identity.Core.Entities
                 throw new InvalidPasswordException();
             }
 
-            if (!Entities.Role.IsValid(role))
+            if (!role.IsValid())
             {
-                throw new InvalidRoleException(role);
+                throw new InvalidRoleException(role.ToString());
             }
 
             Id = id;
             Name = name;
             Email = email.ToLowerInvariant();
             Password = password;
-            Role = role.ToLowerInvariant();
+            Role = role;
             CreatedAt = createdAt;
             Permissions = permissions ?? Enumerable.Empty<string>();
         }
 
-        internal User(Guid id, string name, string email, string password, string role, DateTime createdAt,
+        internal User(Guid id, string name, string email, string password, Role role, DateTime createdAt,
             bool isEmailVerified, string emailVerificationToken, DateTime? emailVerifiedAt, 
             bool isTwoFactorEnabled, string twoFactorSecret, IEnumerable<string> permissions = null)
             : this(id, name, email, password, role, createdAt, permissions)
@@ -62,45 +62,25 @@ namespace MiniSpace.Services.Identity.Core.Entities
             IsTwoFactorEnabled = isTwoFactorEnabled;
             TwoFactorSecret = twoFactorSecret;
         }
-        
-        public void GrantOrganizerRights()
-        {
-            if (Role != Entities.Role.User)
-            {
-                throw new UserCannotBecomeAnOrganizerException(Id, Role);
-            }
-
-            Role = Entities.Role.Organizer;
-        }
-        
-        public void RevokeOrganizerRights()
-        {
-            if (Role != Entities.Role.Organizer)
-            {
-                throw new UserIsNotAnOrganizerException(Id);
-            }
-
-            Role = Entities.Role.User;
-        }
-        
+                
         public void Ban()
         {
-            if (Role == Entities.Role.Banned || Role == Entities.Role.Admin)
+            if (Role == Role.Banned || Role == Role.Admin)
             {
-                throw new UserCannotBeBannedException(Id, Role);
+                throw new UserCannotBeBannedException(Id, Role.ToString());
             }
 
-            Role = Entities.Role.Banned;
+            Role = Role.Banned;
         }
         
         public void Unban()
         {
-            if (Role != Entities.Role.Banned)
+            if (Role != Role.Banned)
             {
-                throw new UserIsNotBannedException(Id, Role);
+                throw new UserIsNotBannedException(Id, Role.ToString());
             }
 
-            Role = Entities.Role.User;
+            Role = Role.User;
         }
 
         public void SetEmailVerificationToken(string token)
@@ -157,4 +137,6 @@ namespace MiniSpace.Services.Identity.Core.Entities
     {
         public static string OrganizeEvents { get; private set; } = "organize_events";
     }
+    
+
 }

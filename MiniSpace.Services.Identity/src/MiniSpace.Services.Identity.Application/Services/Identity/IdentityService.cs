@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -30,12 +31,16 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         private readonly IMessageBroker _messageBroker;
         private readonly IVerificationTokenService _verificationTokenService;
         private readonly ITwoFactorSecretTokenService _twoFactorSecretTokenService;
+        private readonly ITwoFactorCodeService _twoFactorCodeService;
         private readonly ILogger<IdentityService> _logger;
 
         public IdentityService(IUserRepository userRepository, IPasswordService passwordService,
             IJwtProvider jwtProvider, IRefreshTokenService refreshTokenService,
             IMessageBroker messageBroker, IUserResetTokenRepository userResetTokenRepository,
-            IVerificationTokenService verificationTokenService, ITwoFactorSecretTokenService twoFactorSecretTokenService, ILogger<IdentityService> logger)
+            IVerificationTokenService verificationTokenService, 
+            ITwoFactorSecretTokenService twoFactorSecretTokenService,
+            ITwoFactorCodeService  twoFactorCodeService,
+            ILogger<IdentityService> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
@@ -45,6 +50,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _userResetTokenRepository = userResetTokenRepository ?? throw new ArgumentNullException(nameof(userResetTokenRepository));
             _verificationTokenService = verificationTokenService ?? throw new ArgumentNullException(nameof(verificationTokenService));
             _twoFactorSecretTokenService = twoFactorSecretTokenService ?? throw new ArgumentNullException(nameof(twoFactorSecretTokenService));
+            _twoFactorCodeService = twoFactorCodeService ?? throw new ArgumentNullException(nameof(twoFactorCodeService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -58,21 +64,25 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         {
             if (!EmailRegex.IsMatch(command.Email))
             {
-                _logger.LogError($"Invalid email: {command.Email}");
                 throw new InvalidEmailException(command.Email);
             }
 
             var user = await _userRepository.GetAsync(command.Email);
             if (user is null || !_passwordService.IsValid(user.Password, command.Password))
             {
-                _logger.LogError($"User with email: {command.Email} was not found.");
                 throw new InvalidCredentialsException(command.Email);
             }
 
-            if (!_passwordService.IsValid(user.Password, command.Password))
+            if (user.IsTwoFactorEnabled)
             {
-                _logger.LogError($"Invalid password for user with id: {user.Id}");
-                throw new InvalidCredentialsException(command.Email);
+                var code = _twoFactorCodeService.GenerateCode(user.TwoFactorSecret);
+                await _messageBroker.PublishAsync(new TwoFactorCodeGenerated(user.Id, code));
+
+                return new AuthDto
+                {
+                    IsTwoFactorRequired = true,
+                    UserId = user.Id
+                };
             }
 
             var claims = new Dictionary<string, IEnumerable<string>>
@@ -87,11 +97,12 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
-            _logger.LogInformation($"User with id: {user.Id} has been authenticated.");
             await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
 
             return auth;
         }
+
+
 
         public async Task SignUpAsync(SignUp command)
         {
@@ -108,12 +119,11 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 throw new EmailInUseException(command.Email);
             }
 
-            var role = string.IsNullOrWhiteSpace(command.Role) ? "user" : command.Role.ToLowerInvariant();
+            var role = string.IsNullOrWhiteSpace(command.Role) ? Role.User : Enum.Parse<Role>(command.Role, true);
             var password = _passwordService.Hash(command.Password);
             user = new User(command.UserId, $"{command.FirstName} {command.LastName}", command.Email, password,
                 role, DateTime.UtcNow, command.Permissions);
 
-            // Generate email verification token and hashed token
             var (token, hashedToken) = _verificationTokenService.GenerateToken(user.Id, user.Email);
             user.SetEmailVerificationToken(hashedToken);
 
@@ -122,39 +132,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _logger.LogInformation($"Created an account for the user with id: {user.Id}.");
 
             await _messageBroker.PublishAsync(new SignedUp(user.Id, command.FirstName, command.LastName, 
-                user.Email, user.Role, token, hashedToken));
-        }
-
-        public async Task GrantOrganizerRightsAsync(GrantOrganizerRights command)
-        {
-            var user = await _userRepository.GetAsync(command.UserId);
-            if (user is null)
-            {
-                _logger.LogError($"User with id: {command.UserId} was not found.");
-                throw new UserNotFoundException(command.UserId);
-            }
-
-            user.GrantOrganizerRights();
-            await _userRepository.UpdateAsync(user);
-
-            _logger.LogInformation($"Granted organizer rights to the user with id: {user.Id}.");
-            await _messageBroker.PublishAsync(new OrganizerRightsGranted(user.Id));
-        }
-
-        public async Task RevokeOrganizerRightsAsync(RevokeOrganizerRights command)
-        {
-            var user = await _userRepository.GetAsync(command.UserId);
-            if (user is null)
-            {
-                _logger.LogError($"User with id: {command.UserId} was not found.");
-                throw new UserNotFoundException(command.UserId);
-            }
-
-            user.RevokeOrganizerRights();
-            await _userRepository.UpdateAsync(user);
-
-            _logger.LogInformation($"Revoked organizer rights from the user with id: {user.Id}.");
-            await _messageBroker.PublishAsync(new OrganizerRightsRevoked(user.Id));
+                user.Email, user.Role.ToString(), token, hashedToken));
         }
 
         public async Task BanUserAsync(BanUser command)
@@ -308,6 +286,37 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             await _userRepository.UpdateAsync(user);
 
             return secret;
+        }
+
+        public async Task<AuthDto> VerifyTwoFactorCodeAsync(VerifyTwoFactorCode command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user == null)
+            {
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            bool isValidCode = _twoFactorCodeService.ValidateCode(user.TwoFactorSecret, command.Code);
+
+            if (!isValidCode)
+            {
+                throw new InvalidTwoFactorCodeException();
+            }
+
+            var claims = new Dictionary<string, IEnumerable<string>>
+            {
+                ["name"] = new[] { user.Name },
+                ["e-mail"] = new[] { user.Email }
+            };
+            if (user.Permissions.Any())
+            {
+                claims.Add("permissions", user.Permissions);
+            }
+            var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
+            auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
+
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
+            return auth;
         }
     }
 }

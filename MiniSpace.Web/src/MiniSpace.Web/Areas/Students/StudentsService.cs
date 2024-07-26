@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
@@ -55,13 +57,13 @@ namespace MiniSpace.Web.Areas.Students
             bool emailNotifications, 
             string contactEmail, 
             IEnumerable<string> languages, 
-            IEnumerable<string> interests, 
+            IEnumerable<InterestDto> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
-            string education,
-            string workPosition,
-            string company)
+            IEnumerable<EducationDto> education,
+            IEnumerable<WorkDto> work,
+            string phoneNumber)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -81,8 +83,8 @@ namespace MiniSpace.Web.Areas.Students
                 disableTwoFactor,
                 twoFactorSecret,
                 education,
-                workPosition,
-                company
+                work,
+                phoneNumber
             };
 
             var jsonData = JsonSerializer.Serialize(updateStudentData);
@@ -132,5 +134,48 @@ namespace MiniSpace.Web.Areas.Students
 
             await _httpClient.PostAsync($"students/{studentId}/notifications", updatePreferencesData);
         }
+
+        public async Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<StudentWithGalleryImagesDto>($"students/{studentId}/gallery");
+        }
+
+        public async Task UpdateUserSettingsAsync(Guid studentId, AvailableSettingsDto availableSettings)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var updateUserSettingsData = new
+            {
+                studentId,
+                CreatedAtVisibility = availableSettings.CreatedAtVisibility.ToString(),
+                DateOfBirthVisibility = availableSettings.DateOfBirthVisibility.ToString(),
+                InterestedInEventsVisibility = availableSettings.InterestedInEventsVisibility.ToString(),
+                SignedUpEventsVisibility = availableSettings.SignedUpEventsVisibility.ToString(),
+                EducationVisibility = availableSettings.EducationVisibility.ToString(),
+                WorkPositionVisibility = availableSettings.WorkPositionVisibility.ToString(),
+                LanguagesVisibility = availableSettings.LanguagesVisibility.ToString(),
+                InterestsVisibility = availableSettings.InterestsVisibility.ToString(),
+                ContactEmailVisibility = availableSettings.ContactEmailVisibility.ToString(),
+                PhoneNumberVisibility = availableSettings.PhoneNumberVisibility.ToString(),
+                PreferredLanguage = availableSettings.PreferredLanguage.ToString(),
+                FrontendVersion = availableSettings.FrontendVersion.ToString()
+            };
+
+            await _httpClient.PutAsync($"students/{studentId}/settings", updateUserSettingsData);
+            
+
+        }
+
+        public async Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<AvailableSettingsDto>($"students/{studentId}/settings");
+        }
+
+
     }
 }

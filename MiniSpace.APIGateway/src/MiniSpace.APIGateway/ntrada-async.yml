@@ -41,7 +41,7 @@ extensions:
       - Total-Count
 
   jwt:
-    issuerSigningKey: eiquief5phee9pazo0Faegaez9gohThailiur5woy2befiech1oarai4aiLi6ahVecah3ie9Aiz6Peij
+    issuerSigningKey: Gtn9vBDB5RCDLJSMqZQQmN75J8hgzbQwWkcD8jMIXnvCLAmlL0QVacUAbyootWihMrPIz
     validIssuer: minispace
     validateAudience: false
     validateIssuer: true
@@ -106,13 +106,13 @@ modules:
         auth: true
         claims:
           role: admin
-    
+
       - upstream: /me
         method: GET
         use: downstream
         downstream: identity-service/me
         auth: true
-    
+
       - upstream: /sign-up
         method: POST
         use: downstream
@@ -121,24 +121,12 @@ modules:
         resourceId:
           property: userId
           generate: true
-    
+
       - upstream: /sign-in
         method: POST
         use: downstream
         downstream: identity-service/sign-in
         auth: false
-
-      - upstream: /users/{userId}/organizer-rights
-        method: POST
-        use: downstream
-        downstream: identity-service/users/{userId}/organizer-rights
-        auth: true
-
-      - upstream: /users/{userId}/organizer-rights
-        method: DELETE
-        use: downstream
-        downstream: identity-service/users/{userId}/organizer-rights
-        auth: true
 
       - upstream: /users/{userId}/ban
         method: POST
@@ -188,17 +176,29 @@ modules:
         downstream: identity-service/2fa/generate-secret
         auth: true
 
+      - upstream: /2fa/verify-code
+        method: POST
+        use: downstream
+        downstream: identity-service/2fa/verify-code
+        auth: false
+
+      - upstream: /access-tokens/revoke
+        method: POST
+        use: downstream
+        downstream: identity-service/access-tokens/revoke
+        auth: true
+
       - upstream: /refresh-tokens/use
         method: POST
         use: downstream
         downstream: identity-service/refresh-tokens/use
-        auth: false
+        auth: true
 
       - upstream: /refresh-tokens/revoke
         method: POST
         use: downstream
         downstream: identity-service/refresh-tokens/revoke
-        auth: false
+        auth: true
 
     services:
       identity-service:
@@ -327,12 +327,6 @@ modules:
         url: notifications-service
   
 
-        
-        
-
-
-
-
   students:
     path: /students
     routes:
@@ -348,12 +342,57 @@ modules:
         downstream: students-service/students/{studentId}
         auth: true
 
+      - upstream: /{studentId}/settings
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/settings
+        auth: true
+
+      - upstream: /{studentId}/gallery
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/gallery
+        auth: true
+
+      - upstream: /{studentId}/visibility-settings
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/visibility-settings
+        auth: true
+
+      - upstream: /{studentId}/events
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/events
+        auth: true
+
+      - upstream: /{studentId}/notifications
+        method: GET
+        use: downstream
+        downstream: students-service/students/{studentId}/notifications
+        auth: true
+
       - upstream: /{studentId}
         method: PUT
         use: downstream
         downstream: students-service/students/{studentId}
         bind:
           - studentId:{studentId}
+        auth: true
+
+      - upstream: /{studentId}/settings
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{studentId}/settings
+        auth: true
+
+      - upstream: /{studentId}/state/{state}
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{studentId}/state/{state}
+        bind:
+          - studentId:{studentId}
+          - state:{state}
         auth: true
 
       - upstream: /{studentId}
@@ -366,29 +405,6 @@ modules:
         method: POST
         use: downstream
         downstream: students-service/students
-        auth: true
-
-      - upstream: /{studentId}/state/{state}
-        method: PUT
-        use: downstream
-        downstream: students-service/students/{studentId}/state/{state}
-        bind:
-          - studentId:{studentId}
-          - state:{state}
-        auth: true
-        claims:
-          role: admin
-
-      - upstream: /{studentId}/events
-        method: GET
-        use: downstream
-        downstream: students-service/students/{studentId}/events
-        auth: true
-
-      - upstream: /{studentId}/notifications
-        method: GET
-        use: downstream
-        downstream: students-service/students/{studentId}/notifications
         auth: true
 
       - upstream: /{studentId}/notifications

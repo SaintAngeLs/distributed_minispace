@@ -34,5 +34,6 @@ namespace MiniSpace.Web.Areas.Identity
 
         Task EnableTwoFactorAsync(Guid userId, string secret);
         Task DisableTwoFactorAsync(Guid userId);
+        Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code);
     }
 }

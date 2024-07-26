@@ -30,6 +30,8 @@ namespace MiniSpace.Services.Email.Core.Entities
         ReportReviewStarted,
         ReportCancelled,
         NewEventInvitation,
+        EmailVerified,
+        TwoFactorCodeGenerated,
         Other
     }
 }
