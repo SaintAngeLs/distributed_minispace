@@ -1,0 +1,42 @@
+name: PR Explainer
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  analyze-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Run PR Explainer Bot
+      env:
+        GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+      run: |
+        curl -X POST \
+          -H "Authorization: token $BOT_TOKEN" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}/comments \
+          -d '{
+                "body": "PR Explainer Bot is analyzing the changes. Please wait for the results."
+              }'
+
+    - name: Analyze Pull Request
+      id: pr-explainer
+      uses: pr-explainer-bot/action@v1
+      with:
+        repo-token: ${{ secrets.BOT_TOKEN }}
+
+    - name: Post Analysis Results
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+      run: |
+        curl -X POST \
+          -H "Authorization: token $BOT_TOKEN" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments \
+          -d "$(jq -n --arg body "${{ steps.pr-explainer.outputs.analysis }}" '{body: $body}')"
