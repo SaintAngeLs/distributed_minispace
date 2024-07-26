@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: @event.UserId,
-                message: notificationMessage,
+                message: null,
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,

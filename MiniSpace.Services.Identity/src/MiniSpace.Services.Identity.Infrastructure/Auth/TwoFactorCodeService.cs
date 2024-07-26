@@ -16,12 +16,11 @@ namespace MiniSpace.Services.Identity.Infrastructure.Auth
         {
             long unixTime = GetUnixTimestamp();
             byte[] secretBytes = Base32ToBytes(secret);
-            
+
 
             for (int i = -Window; i <= Window; i++)
             {
                 int otp = ComputeTotp(secretBytes, (unixTime / Step) + i);
-                Console.WriteLine($"Generated OTP for step {i}: {otp.ToString("D6")}");
 
                 if (otp.ToString("D6") == code)
                 {
