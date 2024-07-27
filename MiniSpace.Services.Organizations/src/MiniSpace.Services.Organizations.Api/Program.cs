@@ -47,6 +47,7 @@ namespace MiniSpace.Services.Organizations.Api
                         .Delete<RemoveOrganizerFromOrganization>("organizations/{organizationId}/organizer/{organizerId}")
                         .Post<InviteUserToOrganization>("organizations/{organizationId}/invite")
                         .Post<SetOrganizationPrivacy>("organizations/{organizationId}/privacy")
+                        .Put<UpdateOrganizationSettings>("organizations/{organizationId}/settings")
                         ))
                 .UseLogging()
                 .Build()
