@@ -4,6 +4,9 @@ using MiniSpace.Services.Organizations.Application.Exceptions;
 using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 {
@@ -24,19 +27,19 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
         public async Task HandleAsync(CreateRootOrganization command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
-            if(!identity.IsAuthenticated)
+            if (!identity.IsAuthenticated)
             {
-                throw new Exceptions.UnauthorizedAccessException("user");
+                throw new UnauthorizedAccessException("User is not authenticated.");
             }
 
             if (string.IsNullOrWhiteSpace(command.Name))
             {
                 throw new InvalidOrganizationNameException(command.Name);
             }
-            
-            var organization = new Organization(command.OrganizationId, command.Name);
+
+            var organization = new Organization(command.OrganizationId, command.Name, command.Settings);
             await _organizationRepository.AddAsync(organization);
-            await _messageBroker.PublishAsync(new RootOrganizationCreated(organization.Id, organization.Name));
+            await _messageBroker.PublishAsync(new RootOrganizationCreated(organization.Id, organization.Name, DateTime.UtcNow));
         }
     }
 }
