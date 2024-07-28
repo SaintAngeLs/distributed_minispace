@@ -15,9 +15,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 
     public class UserEntry
     {
-        public Guid Id { get; set; }
-        public Guid OrganizationId { get; set; }
-        public IEnumerable<RoleAssignment> Roles { get; set; }
+        public Guid UserId { get; set; }
+        public RoleAssignment Role { get; set; }
     }
 
     public class RoleAssignment

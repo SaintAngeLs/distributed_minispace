@@ -157,18 +157,17 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 
        
         public static User AsEntity(this UserEntry document)
-            => new User(document.Id, document.OrganizationId,
-                new Role(document.Roles.First().RoleName, "", new Dictionary<Permission, bool>()));
+            => new User(document.UserId, new Role(document.Role.RoleName));
 
         public static UserEntry AsDocument(this User entity)
             => new UserEntry
             {
-                Id = entity.Id,
-                Roles = entity.Roles.Select(r => new RoleAssignment
+                UserId = entity.Id,
+                Role = new RoleAssignment
                 {
-                    RoleId = r.Id,
-                    RoleName = r.Name
-                }).ToList()
+                    RoleId = entity.Role.Id,
+                    RoleName = entity.Role.Name
+                }
             };
 
         public static OrganizationMembersDocument AsUserDocument(this IEnumerable<User> entities, Guid organizationId)
