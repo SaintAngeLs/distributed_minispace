@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             var identity = _appContext.Identity;
             if(!identity.IsAuthenticated)
             {
-                throw new Exceptions.UnauthorizedAccessException("user");
+                throw new UserUnauthorizedAccessException("user");
             }
             
             var root = await _organizationRepository.GetAsync(command.RootId);
