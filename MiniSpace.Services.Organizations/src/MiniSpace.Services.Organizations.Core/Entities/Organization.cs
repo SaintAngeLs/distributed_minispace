@@ -13,12 +13,14 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         private ISet<User> _users = new HashSet<User>();
         private ISet<Role> _roles = new HashSet<Role>();
         private ISet<GalleryImage> _gallery = new HashSet<GalleryImage>();
+
         public string Name { get; private set; }
         public string Description { get; private set; }
         public OrganizationSettings Settings { get; private set; }
         public string BannerUrl { get; private set; }
         public string ImageUrl { get; private set; }
         public Guid OwnerId { get; private set; }
+        public Guid? ParentOrganizationId { get; private set; }
 
         public IEnumerable<Organization> SubOrganizations
         {
@@ -50,7 +52,15 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _gallery = new HashSet<GalleryImage>(value);
         }
 
-        public Organization(Guid id, string name, string description, OrganizationSettings settings, Guid ownerId, string bannerUrl = null, string imageUrl = null, IEnumerable<Organization> organizations = null)
+        public Organization(Guid id, 
+        string name, 
+        string description, 
+        OrganizationSettings settings, 
+        Guid ownerId, 
+        string bannerUrl = null, 
+        string imageUrl = null, 
+        Guid? parentOrganizationId = null, 
+        IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
@@ -59,8 +69,9 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             BannerUrl = bannerUrl;
             ImageUrl = imageUrl;
             OwnerId = ownerId;
+            ParentOrganizationId = parentOrganizationId;
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
-            AddEvent(new OrganizationCreated(Id, Name, Description, id, organizations?.FirstOrDefault()?.Id ?? Guid.Empty, OwnerId, DateTime.UtcNow));
+            AddEvent(new OrganizationCreated(Id, Name, Description, id, ParentOrganizationId ?? Guid.Empty, OwnerId, DateTime.UtcNow));
             InitializeDefaultRoles();
         }
 
