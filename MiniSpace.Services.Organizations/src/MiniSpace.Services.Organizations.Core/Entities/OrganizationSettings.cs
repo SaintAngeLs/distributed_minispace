@@ -4,6 +4,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
     {
         public bool IsVisible { get; private set; }
         public bool IsPublic { get; private set; }
+        public bool IsPrivate { get; private set; }
         public bool CanAddComments { get; private set; }
         public bool CanAddReactions { get; private set; }
         public bool CanPostPosts { get; private set; }
@@ -13,10 +14,12 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public bool CanAddReactionsToPosts { get; private set; }
         public bool CanAddCommentsToEvents { get; private set; }
         public bool CanAddReactionsToEvents { get; private set; }
+        public bool DisplayFeedInMainOrganization { get; private set; }
 
         public OrganizationSettings(
             bool isVisible = true, 
             bool isPublic = true, 
+            bool isPrivate = false, 
             bool canAddComments = true, 
             bool canAddReactions = true, 
             bool canPostPosts = true, 
@@ -25,10 +28,12 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             bool canAddCommentsToPosts = true,
             bool canAddReactionsToPosts = true,
             bool canAddCommentsToEvents = true,
-            bool canAddReactionsToEvents = true)
+            bool canAddReactionsToEvents = true,
+            bool displayFeedInMainOrganization = true)
         {
             IsVisible = isVisible;
             IsPublic = isPublic;
+            IsPrivate = isPrivate;
             CanAddComments = canAddComments;
             CanAddReactions = canAddReactions;
             CanPostPosts = canPostPosts;
@@ -38,8 +43,9 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             CanAddReactionsToPosts = canAddReactionsToPosts;
             CanAddCommentsToEvents = canAddCommentsToEvents;
             CanAddReactionsToEvents = canAddReactionsToEvents;
+            DisplayFeedInMainOrganization = displayFeedInMainOrganization;
         }
- 
+
         public void SetVisibility(bool isVisible)
         {
             IsVisible = isVisible;
@@ -48,6 +54,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public void SetPrivacy(bool isPublic)
         {
             IsPublic = isPublic;
+        }
+
+        public void SetIsPrivate(bool isPrivate)
+        {
+            IsPrivate = isPrivate;
         }
 
         public void SetCanAddComments(bool canAddComments)
@@ -93,6 +104,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public void SetCanAddReactionsToEvents(bool canAddReactionsToEvents)
         {
             CanAddReactionsToEvents = canAddReactionsToEvents;
+        }
+
+        public void SetDisplayFeedInMainOrganization(bool displayFeedInMainOrganization)
+        {
+            DisplayFeedInMainOrganization = displayFeedInMainOrganization;
         }
     }
 }

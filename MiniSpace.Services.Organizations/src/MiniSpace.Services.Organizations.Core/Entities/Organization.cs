@@ -7,19 +7,12 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class Organization : AggregateRoot
     {
-        private ISet<Organizer> _organizers = new HashSet<Organizer>();
         private ISet<Organization> _subOrganizations = new HashSet<Organization>();
         private ISet<Invitation> _invitations = new HashSet<Invitation>();
         private ISet<User> _users = new HashSet<User>();
         private ISet<Role> _roles = new HashSet<Role>();
         public string Name { get; private set; }
         public OrganizationSettings Settings { get; private set; }
-
-        public IEnumerable<Organizer> Organizers
-        {
-            get => _organizers;
-            private set => _organizers = new HashSet<Organizer>(value);
-        }
 
         public IEnumerable<Organization> SubOrganizations
         {
@@ -45,13 +38,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _roles = new HashSet<Role>(value);
         }
 
-        public Organization(Guid id, string name, OrganizationSettings settings, IEnumerable<Organizer> organizationOrganizers = null,
-            IEnumerable<Organization> organizations = null)
+        public Organization(Guid id, string name, OrganizationSettings settings, IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
             Settings = settings;
-            Organizers = organizationOrganizers ?? Enumerable.Empty<Organizer>();
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
             InitializeDefaultRoles();
         }
@@ -188,6 +179,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             Settings.SetVisibility(isVisible);
         }
 
+        public void SetIsPrivate(bool isPrivate)
+        {
+            Settings.SetIsPrivate(isPrivate);
+        }
+
         public void SetCanAddComments(bool canAddComments)
         {
             Settings.SetCanAddComments(canAddComments);
@@ -233,6 +229,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             Settings.SetCanAddReactionsToEvents(canAddReactionsToEvents);
         }
 
+        public void SetDisplayFeedInMainOrganization(bool displayFeedInMainOrganization)
+        {
+            Settings.SetDisplayFeedInMainOrganization(displayFeedInMainOrganization);
+        }
+
         public void AssignRole(Guid memberId, string role)
         {
             var user = _users.SingleOrDefault(u => u.Id == memberId);
@@ -275,24 +276,24 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public void AddSubOrganization(Organization organization)
             => _subOrganizations.Add(organization);
 
-        public static List<Organization> FindOrganizations(Guid targetOrganizerId, Organization rootOrganization)
+        public static List<Organization> FindOrganizations(Guid targetUserId, Organization rootOrganization)
         {
             var organizations = new List<Organization>();
-            FindOrganizationsRecursive(targetOrganizerId, rootOrganization, organizations);
+            FindOrganizationsRecursive(targetUserId, rootOrganization, organizations);
             return organizations;
         }
 
-        private static void FindOrganizationsRecursive(Guid targetOrganizerId, Organization currentOrganization,
+        private static void FindOrganizationsRecursive(Guid targetUserId, Organization currentOrganization,
             ICollection<Organization> organizations)
         {
-            if (currentOrganization.Organizers.Any(x => x.Id == targetOrganizerId))
+            if (currentOrganization.Users.Any(x => x.Id == targetUserId))
             {
                 organizations.Add(currentOrganization);
             }
 
             foreach (var subOrg in currentOrganization.SubOrganizations)
             {
-                FindOrganizationsRecursive(targetOrganizerId, subOrg, organizations);
+                FindOrganizationsRecursive(targetUserId, subOrg, organizations);
             }
         }
 
