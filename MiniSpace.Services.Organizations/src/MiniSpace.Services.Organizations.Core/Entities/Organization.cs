@@ -18,7 +18,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public OrganizationSettings Settings { get; private set; }
         public string BannerUrl { get; private set; }
         public string ImageUrl { get; private set; }
-
         public Guid OwnerId { get; private set; }
 
         public IEnumerable<Organization> SubOrganizations
@@ -61,7 +60,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             ImageUrl = imageUrl;
             OwnerId = ownerId;
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
-            AddEvent(new OrganizationCreated(Id, Name, DateTime.UtcNow));
+            AddEvent(new OrganizationCreated(Id, Name, Description, id, organizations?.FirstOrDefault()?.Id ?? Guid.Empty, OwnerId, DateTime.UtcNow));
             InitializeDefaultRoles();
         }
 
