@@ -48,6 +48,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IOrganizationRepository, OrganizationMongoRepository>();
+            builder.Services.AddTransient<IOrganizationGalleryRepository, OrganizationGalleryMongoRepository>();
+            builder.Services.AddTransient<IOrganizationMembersRepository, OrganizationMembersMongoRepository>();
+            builder.Services.AddTransient<IUserInvitationsRepository, UserInvitationsMongoRepository>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
@@ -73,6 +76,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<OrganizationDocument, Guid>("organizations")
+                .AddMongoRepository<OrganizationGalleryImageDocument, Guid>("organization_gallery_images")
+                .AddMongoRepository<OrganizationMembersDocument, Guid>("organization_members")
+                .AddMongoRepository<OrganizationInvitationDocument, Guid>("organization_invitations")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
