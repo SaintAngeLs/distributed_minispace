@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Organizations.Core.Repositories
     {
         Task<Invitation> GetInvitationAsync(Guid organizationId, Guid userId);
         Task<IEnumerable<Invitation>> GetInvitationsAsync(Guid organizationId);
-        Task AddInvitationAsync(Invitation invitation);
+        Task AddInvitationAsync(Guid organizationId, Invitation invitation);
         Task DeleteInvitationAsync(Guid organizationId, Guid userId);
     }
 }

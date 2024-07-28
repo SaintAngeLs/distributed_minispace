@@ -33,9 +33,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             return galleryDocument?.Gallery.Select(g => g.AsEntity());
         }
 
-        public async Task AddImageAsync(GalleryImage image)
+        public async Task AddImageAsync(Guid organizationId, GalleryImage image)
         {
-            var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == image.OrganizationId);
+            var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == organizationId);
             if (galleryDocument != null)
             {
                 var gallery = galleryDocument.Gallery.ToList();
@@ -43,11 +43,21 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 galleryDocument.Gallery = gallery;
                 await _galleryRepository.UpdateAsync(galleryDocument);
             }
+            else
+            {
+                galleryDocument = new OrganizationGalleryImageDocument
+                {
+                    Id = Guid.NewGuid(),
+                    OrganizationId = organizationId,
+                    Gallery = new List<GalleryImageEntry> { image.AsDocument() }
+                };
+                await _galleryRepository.AddAsync(galleryDocument);
+            }
         }
 
-        public async Task UpdateImageAsync(GalleryImage image)
+        public async Task UpdateImageAsync(Guid organizationId, GalleryImage image)
         {
-            var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == image.OrganizationId);
+            var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == organizationId);
             if (galleryDocument != null)
             {
                 var gallery = galleryDocument.Gallery.ToList();
@@ -62,9 +72,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             }
         }
 
-        public async Task DeleteImageAsync(Guid imageId)
+        public async Task DeleteImageAsync(Guid organizationId, Guid imageId)
         {
-            var galleryDocument = await _galleryRepository.GetAsync(g => g.Gallery.Any(img => img.Id == imageId));
+            var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == organizationId);
             if (galleryDocument != null)
             {
                 var gallery = galleryDocument.Gallery.ToList();

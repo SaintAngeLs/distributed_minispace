@@ -22,8 +22,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
 
         public async Task<User> GetMemberAsync(Guid organizationId, Guid memberId)
         {
-            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == organizationId && u.Users.Any(m => m.Id == memberId));
-            return userDocument?.Users.FirstOrDefault(u => u.Id == memberId)?.AsEntity();
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == organizationId && u.Users.Any(m => m.UserId == memberId));
+            return userDocument?.Users.FirstOrDefault(u => u.UserId == memberId)?.AsEntity();
         }
 
         public async Task<IEnumerable<User>> GetMembersAsync(Guid organizationId)
@@ -32,9 +32,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             return userDocument?.Users.Select(u => u.AsEntity());
         }
 
-        public async Task AddMemberAsync(User member)
+        public async Task AddMemberAsync(Guid organizationId, User member)
         {
-            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == member.OrganizationId);
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == organizationId);
             if (userDocument != null)
             {
                 var users = userDocument.Users.ToList();
@@ -42,15 +42,25 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 userDocument.Users = users;
                 await _userRepository.UpdateAsync(userDocument);
             }
+            else
+            {
+                userDocument = new OrganizationMembersDocument
+                {
+                    Id = Guid.NewGuid(),
+                    OrganizationId = organizationId,
+                    Users = new List<UserEntry> { member.AsDocument() }
+                };
+                await _userRepository.AddAsync(userDocument);
+            }
         }
 
-        public async Task UpdateMemberAsync(User member)
+        public async Task UpdateMemberAsync(Guid organizationId, User member)
         {
-            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == member.OrganizationId);
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == organizationId);
             if (userDocument != null)
             {
                 var users = userDocument.Users.ToList();
-                var existingMember = users.FirstOrDefault(u => u.Id == member.Id);
+                var existingMember = users.FirstOrDefault(u => u.UserId == member.Id);
                 if (existingMember != null)
                 {
                     users.Remove(existingMember);
@@ -67,7 +77,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             if (userDocument != null)
             {
                 var users = userDocument.Users.ToList();
-                var existingMember = users.FirstOrDefault(u => u.Id == memberId);
+                var existingMember = users.FirstOrDefault(u => u.UserId == memberId);
                 if (existingMember != null)
                 {
                     users.Remove(existingMember);

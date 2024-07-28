@@ -127,22 +127,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
         public static IEnumerable<Role> AsRoleEntities(this OrganizationRolesDocument document)
             => document.Roles.Select(r => r.AsEntity());
 
-        public static GalleryImage AsEntity(this GalleryImageEntry document)
-            => new GalleryImage(
-                document.Id,
-                document.Url,
-                document.CreatedAt,
-                document.Description
-                
-            );
-        public static GalleryImageEntry AsDocument(this GalleryImage entity)
-            => new GalleryImageEntry
-            {
-                Id = entity.Id,
-                Url = entity.Url,
-                Description = entity.Description,
-                CreatedAt = entity.CreatedAt
-            };
 
         public static OrganizationGalleryImageDocument AsGalleryImageDocument(this IEnumerable<GalleryImage> entities, Guid organizationId)
             => new OrganizationGalleryImageDocument
@@ -180,5 +164,21 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 
         public static IEnumerable<User> AsUserEntities(this OrganizationMembersDocument document)
             => document.Users.Select(u => u.AsEntity());
+
+        public static GalleryImage AsEntity(this GalleryImageEntry document)
+        {
+            return new GalleryImage(document.Id, document.Url, document.CreatedAt, document.Description);
+        }
+
+        public static GalleryImageEntry AsDocument(this GalleryImage entity)
+        {
+            return new GalleryImageEntry
+            {
+                Id = entity.Id,
+                Url = entity.Url,
+                Description = entity.Description,
+                CreatedAt = entity.CreatedAt
+            };
+        }
     }
 }

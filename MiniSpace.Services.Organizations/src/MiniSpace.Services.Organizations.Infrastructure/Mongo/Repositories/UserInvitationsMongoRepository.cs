@@ -32,15 +32,25 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             return invitationDocument?.Invitations.Select(i => i.AsEntity());
         }
 
-        public async Task AddInvitationAsync(Invitation invitation)
+        public async Task AddInvitationAsync(Guid organizationId, Invitation invitation)
         {
-            var invitationDocument = await _invitationRepository.GetAsync(i => i.OrganizationId == invitation.OrganizationId);
+            var invitationDocument = await _invitationRepository.GetAsync(i => i.OrganizationId == organizationId);
             if (invitationDocument != null)
             {
                 var invitations = invitationDocument.Invitations.ToList();
                 invitations.Add(invitation.AsDocument());
                 invitationDocument.Invitations = invitations;
                 await _invitationRepository.UpdateAsync(invitationDocument);
+            }
+            else
+            {
+                invitationDocument = new OrganizationInvitationDocument
+                {
+                    Id = Guid.NewGuid(),
+                    OrganizationId = organizationId,
+                    Invitations = new List<InvitationEntry> { invitation.AsDocument() }
+                };
+                await _invitationRepository.AddAsync(invitationDocument);
             }
         }
 
