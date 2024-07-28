@@ -12,8 +12,10 @@ namespace MiniSpace.Services.Organizations.Application.Commands
         public Guid ParentId { get; }
         public Guid OwnerId { get; }
         public OrganizationSettings Settings { get; }
+        public string BannerUrl { get; }
+        public string ImageUrl { get; }
 
-        public CreateSubOrganization(Guid subOrganizationId, string name, string description, Guid rootId, Guid parentId, Guid ownerId, OrganizationSettings settings)
+        public CreateSubOrganization(Guid subOrganizationId, string name, string description, Guid rootId, Guid parentId, Guid ownerId, OrganizationSettings settings, string bannerUrl, string imageUrl)
         {
             SubOrganizationId = subOrganizationId == Guid.Empty ? Guid.NewGuid() : subOrganizationId;
             Name = name;
@@ -22,6 +24,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands
             ParentId = parentId;
             OwnerId = ownerId;
             Settings = settings;
+            BannerUrl = bannerUrl;
+            ImageUrl = imageUrl;
         }
     }
 }
