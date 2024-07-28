@@ -41,5 +41,4 @@ We inform users of security updates through various channels. Users are encourag
 For any security-related inquiries or to report a vulnerability, please contact:
 
 - Email: **voznesenskijandrej5@gmail.com**
-- Email: **piotr.padamczyk@gmail.com**
-- Email: **an2508374@gmail.com**
+
