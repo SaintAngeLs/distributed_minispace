@@ -66,10 +66,10 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 
         private void InitializeDefaultRoles()
         {
-            _roles.Add(new Role("Creator", GetDefaultPermissionsForCreator()));
-            _roles.Add(new Role("Admin", GetDefaultPermissionsForAdmin()));
-            _roles.Add(new Role("Moderator", GetDefaultPermissionsForModerator()));
-            _roles.Add(new Role("User", GetDefaultPermissionsForUser()));
+            _roles.Add(new Role("Creator", "Default role with all permissions for the creator.", GetDefaultPermissionsForCreator()));
+            _roles.Add(new Role("Admin", "Default role with administrative permissions.", GetDefaultPermissionsForAdmin()));
+            _roles.Add(new Role("Moderator", "Default role with moderation permissions.", GetDefaultPermissionsForModerator()));
+            _roles.Add(new Role("User", "Default role with basic user permissions.", GetDefaultPermissionsForUser()));
         }
 
         private Dictionary<Permission, bool> GetDefaultPermissionsForCreator()
@@ -280,15 +280,24 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
-        public void AssignRole(Guid memberId, string role)
+        public void AssignRole(Guid memberId, string roleName)
         {
             var user = _users.SingleOrDefault(u => u.Id == memberId);
             if (user == null)
             {
                 throw new UserNotFoundException(memberId);
             }
-            _roles.Add(new Role(memberId, role));
-            AddEvent(new RoleAssignedToUser(Id, memberId, role));
+            
+            var role = _roles.SingleOrDefault(r => r.Name == roleName);
+            if (role == null)
+            {
+                throw new RoleNotFoundException(roleName);
+            }
+
+            // Assuming User entity has a method to assign roles
+            user.AssignRole(role);
+            
+            AddEvent(new RoleAssignedToUser(Id, memberId, roleName));
         }
 
         public void UpdateRolePermissions(Guid roleId, Dictionary<Permission, bool> permissions)
@@ -300,6 +309,19 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
             role.UpdatePermissions(permissions);
             AddEvent(new RolePermissionsUpdated(Id, roleId, permissions));
+        }
+
+        public void UpdateRole(Guid roleId, string newName, string newDescription, Dictionary<Permission, bool> newPermissions)
+        {
+            var role = _roles.SingleOrDefault(r => r.Id == roleId);
+            if (role == null)
+            {
+                throw new RoleNotFoundException(roleId);
+            }
+            role.UpdateName(newName);
+            role.UpdateDescription(newDescription);
+            role.UpdatePermissions(newPermissions);
+            AddEvent(new RoleUpdated(Id, roleId, newName, newDescription, newPermissions));
         }
 
         public Organization GetSubOrganization(Guid id)
@@ -319,6 +341,17 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
 
             return null;
+        }
+
+        public void AddRole(Role role)
+        {
+            if (_roles.Any(r => r.Name == role.Name))
+            {
+                throw new RoleAlreadyExistsException(role.Name);
+            }
+
+            _roles.Add(role);
+            AddEvent(new RoleCreated(Id, role.Id, role.Name, role.Description, role.Permissions));
         }
 
         public void AddSubOrganization(Organization organization)
