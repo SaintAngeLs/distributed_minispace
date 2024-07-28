@@ -52,13 +52,18 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new MemberNotFoundException(command.MemberId);
             }
 
-            var role = new Role(command.MemberId, command.Role);
-            await _organizationRolesRepository.AddRoleAsync(role);
+            // Fetch the role by its name
+            var existingRole = await _organizationRolesRepository.GetRoleByNameAsync(command.Role);
+            if (existingRole == null)
+            {
+                throw new RoleNotFoundException(command.Role);
+            }
 
-            organization.AssignRole(command.MemberId, command.Role);
+            // Assign the role to the member
+            organization.AssignRole(command.MemberId, existingRole.Name);
             await _organizationRepository.UpdateAsync(organization);
 
-            await _messageBroker.PublishAsync(new RoleAssignedToMember(organization.Id, command.MemberId, command.Role, DateTime.UtcNow));
+            await _messageBroker.PublishAsync(new RoleAssignedToMember(organization.Id, command.MemberId, existingRole.Name, DateTime.UtcNow));
         }
     }
 }
