@@ -193,9 +193,10 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             {
                 throw new UserAlreadyInvitedException(userId, Id);
             }
-            _invitations.Add(new Invitation(userId));
+            _invitations.Add(new Invitation(Id, userId));
             AddEvent(new UserInvitedToOrganization(Id, userId, DateTime.UtcNow));
         }
+
 
         public void SignUpUser(Guid userId)
         {
