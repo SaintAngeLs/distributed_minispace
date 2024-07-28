@@ -7,6 +7,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
     public class User
     {
         public Guid Id { get; }
+        public Guid OrganizationId { get; }
         private ISet<Role> _roles = new HashSet<Role>();
 
         public IEnumerable<Role> Roles
@@ -15,9 +16,10 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _roles = new HashSet<Role>(value);
         }
 
-        public User(Guid id)
+        public User(Guid id, Guid organizationId)
         {
             Id = id;
+            OrganizationId = organizationId;
         }
 
         public bool HasPermission(Permission permission)

@@ -197,17 +197,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             AddEvent(new UserInvitedToOrganization(Id, userId, DateTime.UtcNow));
         }
 
-
-        public void SignUpUser(Guid userId)
-        {
-            if (_users.Any(u => u.Id == userId))
-            {
-                throw new UserAlreadySignedUpException(userId, Id);
-            }
-            _users.Add(new User(userId));
-            AddEvent(new UserSignedUpToOrganization(Id, userId, DateTime.UtcNow));
-        }
-
         public void SetPrivacy(bool isPublic)
         {
             Settings.SetPrivacy(isPublic);
