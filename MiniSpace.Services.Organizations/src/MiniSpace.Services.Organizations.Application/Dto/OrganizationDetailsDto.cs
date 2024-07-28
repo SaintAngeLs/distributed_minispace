@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MiniSpace.Services.Organizations.Core.Entities;
 using System.Diagnostics.CodeAnalysis;
@@ -14,6 +15,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public string BannerUrl { get; set; }
         public string ImageUrl { get; set; }
         public Guid OwnerId { get; set; }
+        public Guid? ParentOrganizationId { get; set; }
         public IEnumerable<SubOrganizationDto> SubOrganizations { get; set; }
         public IEnumerable<InvitationDto> Invitations { get; set; }
         public IEnumerable<UserDto> Users { get; set; }
@@ -23,7 +25,6 @@ namespace MiniSpace.Services.Organizations.Application.DTO
 
         public OrganizationDetailsDto()
         {
-            
         }
 
         public OrganizationDetailsDto(Organization organization)
@@ -34,6 +35,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             BannerUrl = organization.BannerUrl;
             ImageUrl = organization.ImageUrl;
             OwnerId = organization.OwnerId;
+            ParentOrganizationId = organization.ParentOrganizationId;
             SubOrganizations = organization.SubOrganizations.Select(o => new SubOrganizationDto(o)).ToList();
             Invitations = organization.Invitations.Select(i => new InvitationDto(i)).ToList();
             Users = organization.Users.Select(u => new UserDto(u)).ToList();
