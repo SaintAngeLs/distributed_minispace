@@ -5,6 +5,7 @@ using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
 
+
 namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 {
     public class CreateOrganizationHandler : ICommandHandler<CreateOrganization>
@@ -24,32 +25,32 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
         public async Task HandleAsync(CreateOrganization command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
-            if(!identity.IsAuthenticated)
+            if (!identity.IsAuthenticated)
             {
-                throw new Exceptions.UnauthorizedAccessException("user");
+                throw new UserUnauthorizedAccessException("User is not authenticated.");
             }
-            
+
             var root = await _organizationRepository.GetAsync(command.RootId);
-            if(root is null)
+            if (root == null)
             {
                 throw new RootOrganizationNotFoundException(command.RootId);
             }
 
             var parent = root.GetSubOrganization(command.ParentId);
-            if(parent is null)
+            if (parent == null)
             {
                 throw new ParentOrganizationNotFoundException(command.ParentId);
             }
-            
+
             if (string.IsNullOrWhiteSpace(command.Name))
             {
                 throw new InvalidOrganizationNameException(command.Name);
             }
-            
-            var organization = new Organization(command.OrganizationId, command.Name);  
+
+            var organization = new Organization(command.OrganizationId, command.Name, command.Settings);
             parent.AddSubOrganization(organization);
             await _organizationRepository.UpdateAsync(root);
-            await _messageBroker.PublishAsync(new OrganizationCreated(organization.Id, organization.Name, parent.Id));
+            await _messageBroker.PublishAsync(new OrganizationCreated(organization.Id, organization.Name, parent.Id, DateTime.UtcNow));
         }
     }
 }
