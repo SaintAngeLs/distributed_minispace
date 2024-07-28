@@ -1,0 +1,30 @@
+namespace MiniSpace.Services.Organizations.Core.Entities
+{
+    public enum Permission
+    {
+        CreateSubGroups,
+        DeleteSubGroups,
+        EditOrganizationDetails,
+        InviteUsers,
+        RemoveMembers,
+        ManageMembershipRequests,
+        MakePosts,
+        EditPosts,
+        DeletePosts,
+        CommentOnPosts,
+        DeleteComments,
+        MakeReactions,
+        PinPosts,
+        CreateEvents,
+        EditEvents,
+        DeleteEvents,
+        ManageEventParticipation,
+        AssignRoles,
+        EditPermissions,
+        ViewAuditLogs,
+        SendMessageToAll,
+        CreateCommunicationChannels,
+        ManageFeed,
+        ModerateContent
+    }
+}

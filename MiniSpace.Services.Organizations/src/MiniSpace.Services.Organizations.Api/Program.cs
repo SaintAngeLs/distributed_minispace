@@ -43,7 +43,6 @@ namespace MiniSpace.Services.Organizations.Api
                         .Post<CreateOrganization>("organizations/{organizationId}/children",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}"))
                         .Delete<DeleteOrganization>("organizations/{organizationId}")
-                        .Post<AddOrganizerToOrganization>("organizations/{organizationId}/organizer")
                         .Delete<RemoveOrganizerFromOrganization>("organizations/{organizationId}/organizer/{organizerId}")
                         .Post<InviteUserToOrganization>("organizations/{organizationId}/invite")
                         .Post<AssignRoleToMember>("organizations/{organizationId}/roles/{memberId}")
