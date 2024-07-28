@@ -16,10 +16,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
         public string BannerUrl { get; set; }
         public string ImageUrl { get; set; }
         public Guid OwnerId { get; set; }
+        public Guid? ParentOrganizationId { get; set; }
         public IEnumerable<OrganizationDocument> SubOrganizations { get; set; }
-        public IEnumerable<InvitationDocument> Invitations { get; set; }
-        public IEnumerable<UserDocument> Users { get; set; }
-        public IEnumerable<RoleDocument> Roles { get; set; }
-        public IEnumerable<GalleryImageDocument> Gallery { get; set; }
     }
 }

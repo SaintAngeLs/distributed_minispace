@@ -10,6 +10,12 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
     {
         public Guid Id { get; set; }
         public Guid OrganizationId { get; set; }
+        public IEnumerable<UserEntry> Users { get; set; }
+    }
+
+    public class UserEntry
+    {
+        public Guid Id { get; set; }
         public IEnumerable<RoleAssignment> Roles { get; set; }
     }
 
