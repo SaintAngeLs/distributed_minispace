@@ -48,7 +48,15 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new InvalidOrganizationNameException(command.Name);
             }
 
-            var organization = new Organization(command.OrganizationId, command.Name, command.Description, command.Settings, command.BannerUrl, command.ImageUrl, ownerId: command.OwnerId);
+            var organization = new Organization(
+                command.OrganizationId, 
+                command.Name, 
+                command.Description, 
+                command.Settings, 
+                command.OwnerId, 
+                command.BannerUrl, 
+                command.ImageUrl);
+            
             parent.AddSubOrganization(organization);
             await _organizationRepository.UpdateAsync(root);
             await _messageBroker.PublishAsync(new OrganizationCreated(
