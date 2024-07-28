@@ -95,7 +95,10 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 { Permission.SendMessageToAll, true },
                 { Permission.CreateCommunicationChannels, true },
                 { Permission.ManageFeed, true },
-                { Permission.ModerateContent, true }
+                { Permission.ModerateContent, true },
+                { Permission.ModifyGallery, true },
+                { Permission.UpdateProfileImage, true },
+                { Permission.UpdateOrganizationImage, true }
             };
         }
 
@@ -126,7 +129,10 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 { Permission.SendMessageToAll, true },
                 { Permission.CreateCommunicationChannels, true },
                 { Permission.ManageFeed, true },
-                { Permission.ModerateContent, true }
+                { Permission.ModerateContent, true },
+                { Permission.ModifyGallery, true },
+                { Permission.UpdateProfileImage, true },
+                { Permission.UpdateOrganizationImage, true }
             };
         }
 
@@ -145,7 +151,8 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 { Permission.EditEvents, true },
                 { Permission.DeleteEvents, true },
                 { Permission.ManageEventParticipation, true },
-                { Permission.ModerateContent, true }
+                { Permission.ModerateContent, true },
+                { Permission.ModifyGallery, true }
             };
         }
 
@@ -322,6 +329,18 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
             _gallery.Remove(image);
             AddEvent(new GalleryImageRemoved(Id, imageId, DateTime.UtcNow));
+        }
+
+        public void UpdateBannerUrl(string bannerUrl)
+        {
+            BannerUrl = bannerUrl;
+            AddEvent(new OrganizationBannerUrlUpdated(Id, bannerUrl, DateTime.UtcNow));
+        }
+
+        public void UpdateImageUrl(string imageUrl)
+        {
+            ImageUrl = imageUrl;
+            AddEvent(new OrganizationImageUrlUpdated(Id, imageUrl, DateTime.UtcNow));
         }
 
         public static List<Organization> FindOrganizations(Guid targetUserId, Organization rootOrganization)

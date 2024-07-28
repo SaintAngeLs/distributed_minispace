@@ -25,6 +25,9 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         SendMessageToAll,
         CreateCommunicationChannels,
         ManageFeed,
-        ModerateContent
+        ModerateContent,
+        ModifyGallery,
+        UpdateProfileImage,
+        UpdateOrganizationImage
     }
 }
