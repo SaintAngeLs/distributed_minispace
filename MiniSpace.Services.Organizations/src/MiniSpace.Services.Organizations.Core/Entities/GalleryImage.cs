@@ -9,11 +9,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public string Description { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public GalleryImage(Guid id, string url,string description = null)
+        public GalleryImage(Guid id, string url, DateTime createdAt, string description = null)
         {
             Id = id;
             Url = url;
-            CreatedAt = DateTime.UtcNow;
+            CreatedAt = createdAt;
             Description = description;
         }
 
