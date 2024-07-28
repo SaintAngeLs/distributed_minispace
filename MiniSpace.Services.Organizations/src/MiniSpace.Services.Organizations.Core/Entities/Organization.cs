@@ -1,4 +1,6 @@
-﻿namespace MiniSpace.Services.Organizations.Core.Entities
+﻿using MiniSpace.Services.Organizations.Core.Exceptions;
+
+namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class Organization : AggregateRoot
     {
@@ -154,25 +156,6 @@
             };
         }
 
-        public void AddOrganizer(Guid organizerId)
-        {
-            if (Organizers.Any(x => x.Id == organizerId))
-            {
-                throw new OrganizerAlreadyAddedToOrganizationException(organizerId, Id);
-            }
-            _organizers.Add(new Organizer(organizerId));
-        }
-
-        public void RemoveOrganizer(Guid organizerId)
-        {
-            var organizer = _organizers.SingleOrDefault(x => x.Id == organizerId);
-            if (organizer is null)
-            {
-                throw new OrganizerIsNotInOrganization(organizerId, Id);
-            }
-            _organizers.Remove(organizer);
-        }
-
         public void InviteUser(Guid userId, string email)
         {
             if (_invitations.Any(i => i.UserId == userId))
@@ -181,16 +164,6 @@
             }
             _invitations.Add(new Invitation(userId, email));
         }
-
-        public void SignUpUser(Guid userId)
-        {
-            if (_users.Any(u => u.Id == userId))
-            {
-                throw new UserAlreadySignedUpException(userId, Id);
-            }
-            _users.Add(new User(userId));
-        }
-
         public void SetPrivacy(bool isPublic)
         {
             IsPublic = isPublic;
