@@ -7,6 +7,14 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public string Description { get; private set; }
         public Dictionary<Permission, bool> Permissions { get; private set; }
 
+        public Role(Guid id, string name, string description, Dictionary<Permission, bool> permissions)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            Permissions = permissions;
+        }
+
         public Role(string name, string description, Dictionary<Permission, bool> permissions)
         {
             Id = Guid.NewGuid();
@@ -28,6 +36,10 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public void UpdateDescription(string description)
         {
             Description = description;
+        }
+        public Role(string name)
+        {
+            Name = name;
         }
     }
 }

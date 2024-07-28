@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public Guid Id { get; }
         public Role Role { get; private set; }
 
-        public User(Guid id, Guid organizationId, Role role)
+        public User(Guid id, Role role)
         {
             Id = id;
             Role = role;
