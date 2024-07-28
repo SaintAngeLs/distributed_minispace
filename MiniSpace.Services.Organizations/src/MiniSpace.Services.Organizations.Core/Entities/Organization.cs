@@ -14,6 +14,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         private ISet<Role> _roles = new HashSet<Role>();
         private ISet<GalleryImage> _gallery = new HashSet<GalleryImage>();
         public string Name { get; private set; }
+        public string Description { get; private set; }
         public OrganizationSettings Settings { get; private set; }
         public string BannerUrl { get; private set; }
         public string ImageUrl { get; private set; }
@@ -48,10 +49,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _gallery = new HashSet<GalleryImage>(value);
         }
 
-        public Organization(Guid id, string name, OrganizationSettings settings, string bannerUrl = null, string imageUrl = null, IEnumerable<Organization> organizations = null)
+        public Organization(Guid id, string name, string description, OrganizationSettings settings, string bannerUrl = null, string imageUrl = null, IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
+            Description = description;
             Settings = settings;
             BannerUrl = bannerUrl;
             ImageUrl = imageUrl;
