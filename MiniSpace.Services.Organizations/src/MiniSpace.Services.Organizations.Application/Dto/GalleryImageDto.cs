@@ -11,7 +11,6 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public string Url { get; set; }
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
-        public Guid OrganizationId { get; set; }
 
         public GalleryImageDto()
         {
@@ -24,7 +23,6 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             Url = galleryImage.Url;
             Description = galleryImage.Description;
             CreatedAt = galleryImage.CreatedAt;
-            OrganizationId = galleryImage.OrganizationId;
         }
     }
 }
