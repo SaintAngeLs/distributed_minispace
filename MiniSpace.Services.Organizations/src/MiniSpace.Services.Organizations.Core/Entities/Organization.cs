@@ -19,6 +19,8 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public string BannerUrl { get; private set; }
         public string ImageUrl { get; private set; }
 
+        public Guid OwnerId { get; private set; }
+
         public IEnumerable<Organization> SubOrganizations
         {
             get => _subOrganizations;
@@ -49,7 +51,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _gallery = new HashSet<GalleryImage>(value);
         }
 
-        public Organization(Guid id, string name, string description, OrganizationSettings settings, string bannerUrl = null, string imageUrl = null, IEnumerable<Organization> organizations = null)
+        public Organization(Guid id, string name, string description, OrganizationSettings settings, Guid ownerId, string bannerUrl = null, string imageUrl = null, IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
@@ -57,6 +59,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             Settings = settings;
             BannerUrl = bannerUrl;
             ImageUrl = imageUrl;
+            OwnerId = ownerId;
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
             AddEvent(new OrganizationCreated(Id, Name, DateTime.UtcNow));
             InitializeDefaultRoles();
