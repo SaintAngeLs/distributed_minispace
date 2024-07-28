@@ -1,11 +1,13 @@
-﻿using Convey.CQRS.Queries;
+using Convey.CQRS.Queries;
 using MiniSpace.Services.Organizations.Application.DTO;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Application.Queries
 {
     [ExcludeFromCodeCoverage]
-    public class GetOrganization : IQuery<OrganizationDto>
+    public class GetOrganizationWithGalleryAndUsers : IQuery<OrganizationGalleryUsersDto>
     {
         public Guid OrganizationId { get; set; }
     }
