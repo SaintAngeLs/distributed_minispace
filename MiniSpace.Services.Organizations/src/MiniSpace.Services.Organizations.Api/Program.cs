@@ -38,12 +38,9 @@ namespace MiniSpace.Services.Organizations.Api
                         .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
                         .Get<GetChildrenOrganizations, IEnumerable<OrganizationDto>>("organizations/{organizationId}/children")
                         .Get<GetAllChildrenOrganizations, IEnumerable<Guid>>("organizations/{organizationId}/children/all")
-                        .Post<CreateRootOrganization>("organizations",
-                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/root"))
                         .Post<CreateOrganization>("organizations/{organizationId}/children",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}"))
                         .Delete<DeleteOrganization>("organizations/{organizationId}")
-                        .Delete<RemoveOrganizerFromOrganization>("organizations/{organizationId}/organizer/{organizerId}")
                         .Post<InviteUserToOrganization>("organizations/{organizationId}/invite")
                         .Post<AssignRoleToMember>("organizations/{organizationId}/roles/{memberId}")
                         .Put<UpdateRolePermissions>("organizations/{organizationId}/roles/{roleId}/permissions")
