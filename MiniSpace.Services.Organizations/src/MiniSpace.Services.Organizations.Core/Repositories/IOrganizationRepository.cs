@@ -1,4 +1,7 @@
 using MiniSpace.Services.Organizations.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Organizations.Core.Repositories
 {
@@ -9,5 +12,6 @@ namespace MiniSpace.Services.Organizations.Core.Repositories
         Task AddAsync(Organization organization);
         Task UpdateAsync(Organization organization);
         Task DeleteAsync(Guid id);
+        Task<User> GetMemberAsync(Guid organizationId, Guid memberId);
     }
 }

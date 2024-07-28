@@ -170,7 +170,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             };
         }
 
-        public void InviteUser(Guid userId, string email)
+        public void InviteUser(Guid userId)
         {
             var user = _users.SingleOrDefault(u => u.Id == OwnerId);
             if (user == null || !user.HasPermission(Permission.InviteUsers))
@@ -182,8 +182,8 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             {
                 throw new UserAlreadyInvitedException(userId, Id);
             }
-            _invitations.Add(new Invitation(userId, email));
-            AddEvent(new UserInvitedToOrganization(Id, userId, email, DateTime.UtcNow));
+            _invitations.Add(new Invitation(userId));
+            AddEvent(new UserInvitedToOrganization(Id, userId, DateTime.UtcNow));
         }
 
         public void SignUpUser(Guid userId)

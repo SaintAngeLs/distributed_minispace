@@ -6,14 +6,12 @@ namespace MiniSpace.Services.Organizations.Core.Events
     {
         public Guid OrganizationId { get; }
         public Guid UserId { get; }
-        public string Email { get; }
         public DateTime InvitedAt { get; }
 
-        public UserInvitedToOrganization(Guid organizationId, Guid userId, string email, DateTime invitedAt)
+        public UserInvitedToOrganization(Guid organizationId, Guid userId, DateTime invitedAt)
         {
             OrganizationId = organizationId;
             UserId = userId;
-            Email = email;
             InvitedAt = invitedAt;
         }
     }
