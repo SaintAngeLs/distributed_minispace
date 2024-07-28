@@ -1,4 +1,5 @@
 ﻿using MiniSpace.Services.Organizations.Core.Exceptions;
+using MiniSpace.Services.Organizations.Core.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             Name = name;
             Settings = settings;
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
+            AddEvent(new OrganizationCreated(Id, Name, DateTime.UtcNow));
             InitializeDefaultRoles();
         }
 
@@ -153,6 +155,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 throw new UserAlreadyInvitedException(userId, Id);
             }
             _invitations.Add(new Invitation(userId, email));
+            AddEvent(new UserInvitedToOrganization(Id, userId, email, DateTime.UtcNow));
         }
 
         public void SignUpUser(Guid userId)
@@ -162,76 +165,91 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 throw new UserAlreadySignedUpException(userId, Id);
             }
             _users.Add(new User(userId));
+            AddEvent(new UserSignedUpToOrganization(Id, userId, DateTime.UtcNow));
         }
 
         public void SetPrivacy(bool isPublic)
         {
             Settings.SetPrivacy(isPublic);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void UpdateSettings(OrganizationSettings settings)
         {
             Settings = settings;
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetVisibility(bool isVisible)
         {
             Settings.SetVisibility(isVisible);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetIsPrivate(bool isPrivate)
         {
             Settings.SetIsPrivate(isPrivate);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanAddComments(bool canAddComments)
         {
             Settings.SetCanAddComments(canAddComments);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanAddReactions(bool canAddReactions)
         {
             Settings.SetCanAddReactions(canAddReactions);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanPostPosts(bool canPostPosts)
         {
             Settings.SetCanPostPosts(canPostPosts);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanPostEvents(bool canPostEvents)
         {
             Settings.SetCanPostEvents(canPostEvents);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanMakeReposts(bool canMakeReposts)
         {
             Settings.SetCanMakeReposts(canMakeReposts);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanAddCommentsToPosts(bool canAddCommentsToPosts)
         {
             Settings.SetCanAddCommentsToPosts(canAddCommentsToPosts);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanAddReactionsToPosts(bool canAddReactionsToPosts)
         {
             Settings.SetCanAddReactionsToPosts(canAddReactionsToPosts);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanAddCommentsToEvents(bool canAddCommentsToEvents)
         {
             Settings.SetCanAddCommentsToEvents(canAddCommentsToEvents);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetCanAddReactionsToEvents(bool canAddReactionsToEvents)
         {
             Settings.SetCanAddReactionsToEvents(canAddReactionsToEvents);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void SetDisplayFeedInMainOrganization(bool displayFeedInMainOrganization)
         {
             Settings.SetDisplayFeedInMainOrganization(displayFeedInMainOrganization);
+            AddEvent(new OrganizationSettingsUpdated(Id, Settings));
         }
 
         public void AssignRole(Guid memberId, string role)
@@ -242,6 +260,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 throw new UserNotFoundException(memberId);
             }
             _roles.Add(new Role(memberId, role));
+            AddEvent(new RoleAssignedToUser(Id, memberId, role));
         }
 
         public void UpdateRolePermissions(Guid roleId, Dictionary<Permission, bool> permissions)
@@ -252,6 +271,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 throw new RoleNotFoundException(roleId);
             }
             role.UpdatePermissions(permissions);
+            AddEvent(new RolePermissionsUpdated(Id, roleId, permissions));
         }
 
         public Organization GetSubOrganization(Guid id)
