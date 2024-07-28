@@ -12,6 +12,11 @@ namespace MiniSpace.Services.Organizations.Core.Repositories
         Task AddAsync(Organization organization);
         Task UpdateAsync(Organization organization);
         Task DeleteAsync(Guid id);
+
         Task<User> GetMemberAsync(Guid organizationId, Guid memberId);
+        Task<IEnumerable<User>> GetMembersAsync(Guid organizationId);
+        Task AddMemberAsync(Guid organizationId, User member);
+        Task UpdateMemberAsync(Guid organizationId, User member);
+        Task DeleteMemberAsync(Guid organizationId, Guid memberId);
     }
 }
