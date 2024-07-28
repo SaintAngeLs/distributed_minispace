@@ -172,6 +172,12 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 
         public void InviteUser(Guid userId, string email)
         {
+            var user = _users.SingleOrDefault(u => u.Id == OwnerId);
+            if (user == null || !user.HasPermission(Permission.InviteUsers))
+            {
+                throw new UnauthorizedAccessException("User does not have permission to invite users.");
+            }
+
             if (_invitations.Any(i => i.UserId == userId))
             {
                 throw new UserAlreadyInvitedException(userId, Id);
