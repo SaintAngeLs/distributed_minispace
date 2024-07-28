@@ -12,8 +12,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         private ISet<Invitation> _invitations = new HashSet<Invitation>();
         private ISet<User> _users = new HashSet<User>();
         private ISet<Role> _roles = new HashSet<Role>();
+        private ISet<GalleryImage> _gallery = new HashSet<GalleryImage>();
         public string Name { get; private set; }
         public OrganizationSettings Settings { get; private set; }
+        public string BannerUrl { get; private set; }
+        public string ImageUrl { get; private set; }
 
         public IEnumerable<Organization> SubOrganizations
         {
@@ -39,11 +42,19 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _roles = new HashSet<Role>(value);
         }
 
-        public Organization(Guid id, string name, OrganizationSettings settings, IEnumerable<Organization> organizations = null)
+        public IEnumerable<GalleryImage> Gallery
+        {
+            get => _gallery;
+            private set => _gallery = new HashSet<GalleryImage>(value);
+        }
+
+        public Organization(Guid id, string name, OrganizationSettings settings, string bannerUrl = null, string imageUrl = null, IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
             Settings = settings;
+            BannerUrl = bannerUrl;
+            ImageUrl = imageUrl;
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
             AddEvent(new OrganizationCreated(Id, Name, DateTime.UtcNow));
             InitializeDefaultRoles();
@@ -295,6 +306,23 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 
         public void AddSubOrganization(Organization organization)
             => _subOrganizations.Add(organization);
+
+        public void AddGalleryImage(GalleryImage image)
+        {
+            _gallery.Add(image);
+            AddEvent(new GalleryImageAdded(Id, image.Id, image.Url, DateTime.UtcNow));
+        }
+
+        public void RemoveGalleryImage(Guid imageId)
+        {
+            var image = _gallery.SingleOrDefault(g => g.Id == imageId);
+            if (image == null)
+            {
+                throw new GalleryImageNotFoundException(imageId);
+            }
+            _gallery.Remove(image);
+            AddEvent(new GalleryImageRemoved(Id, imageId, DateTime.UtcNow));
+        }
 
         public static List<Organization> FindOrganizations(Guid targetUserId, Organization rootOrganization)
         {
