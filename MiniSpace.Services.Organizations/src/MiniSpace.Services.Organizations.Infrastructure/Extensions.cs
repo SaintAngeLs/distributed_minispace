@@ -28,8 +28,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Organizations.Application;
 using MiniSpace.Services.Organizations.Application.Commands;
-using MiniSpace.Services.Organizations.Application.Events.External;
-using MiniSpace.Services.Organizations.Application.Events.External.Handlers;
+
 using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using MiniSpace.Services.Organizations.Infrastructure.Contexts;
