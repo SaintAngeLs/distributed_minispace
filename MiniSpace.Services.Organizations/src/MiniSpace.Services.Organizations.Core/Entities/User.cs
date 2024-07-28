@@ -8,28 +8,23 @@ namespace MiniSpace.Services.Organizations.Core.Entities
     {
         public Guid Id { get; }
         public Guid OrganizationId { get; }
-        private ISet<Role> _roles = new HashSet<Role>();
+        public Role Role { get; private set; }
 
-        public IEnumerable<Role> Roles
-        {
-            get => _roles;
-            private set => _roles = new HashSet<Role>(value);
-        }
-
-        public User(Guid id, Guid organizationId)
+        public User(Guid id, Guid organizationId, Role role)
         {
             Id = id;
             OrganizationId = organizationId;
+            Role = role;
         }
 
         public bool HasPermission(Permission permission)
         {
-            return _roles.Any(role => role.Permissions.ContainsKey(permission) && role.Permissions[permission]);
+            return Role.Permissions.ContainsKey(permission) && Role.Permissions[permission];
         }
 
         public void AssignRole(Role role)
         {
-            _roles.Add(role);
+            Role = role;
         }
     }
 }
