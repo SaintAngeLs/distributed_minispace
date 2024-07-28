@@ -7,13 +7,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
     public class User
     {
         public Guid Id { get; }
-        public Guid OrganizationId { get; }
         public Role Role { get; private set; }
 
         public User(Guid id, Guid organizationId, Role role)
         {
             Id = id;
-            OrganizationId = organizationId;
             Role = role;
         }
 
