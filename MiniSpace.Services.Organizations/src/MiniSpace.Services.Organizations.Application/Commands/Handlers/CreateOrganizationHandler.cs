@@ -48,10 +48,17 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new InvalidOrganizationNameException(command.Name);
             }
 
-            var organization = new Organization(command.OrganizationId, command.Name, command.Description, command.Settings, ownerId: command.OwnerId);
+            var organization = new Organization(command.OrganizationId, command.Name, command.Description, command.Settings, command.BannerUrl, command.ImageUrl, ownerId: command.OwnerId);
             parent.AddSubOrganization(organization);
             await _organizationRepository.UpdateAsync(root);
-            await _messageBroker.PublishAsync(new OrganizationCreated(organization.Id, organization.Name, DateTime.UtcNow));
+            await _messageBroker.PublishAsync(new OrganizationCreated(
+                organization.Id, 
+                organization.Name, 
+                organization.Description, 
+                command.RootId, 
+                command.ParentId, 
+                command.OwnerId, 
+                DateTime.UtcNow));
         }
     }
 }
