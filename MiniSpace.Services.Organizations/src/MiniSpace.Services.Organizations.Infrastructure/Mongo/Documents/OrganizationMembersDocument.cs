@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 {
     [ExcludeFromCodeCoverage]
-    public class UserDocument : IIdentifiable<Guid>
+    public class OrganizationMembersDocument : IIdentifiable<Guid>
     {
         public Guid Id { get; set; }
         public Guid OrganizationId { get; set; }

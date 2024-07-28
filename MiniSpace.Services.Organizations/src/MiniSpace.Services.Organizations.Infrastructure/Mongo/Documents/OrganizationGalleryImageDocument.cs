@@ -1,5 +1,4 @@
 using Convey.Types;
-using MiniSpace.Services.Organizations.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -7,18 +6,18 @@ using System.Diagnostics.CodeAnalysis;
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 {
     [ExcludeFromCodeCoverage]
-    public class RoleDocument : IIdentifiable<Guid>
+    public class OrganizationGalleryImageDocument : IIdentifiable<Guid>
     {
         public Guid Id { get; set; }
         public Guid OrganizationId { get; set; }
-        public IEnumerable<RoleEntry> Roles { get; set; }
+        public IEnumerable<GalleryImageEntry> Gallery { get; set; }
     }
 
-    public class RoleEntry
+    public class GalleryImageEntry
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
+        public string Url { get; set; }
         public string Description { get; set; }
-        public Dictionary<Permission, bool> Permissions { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

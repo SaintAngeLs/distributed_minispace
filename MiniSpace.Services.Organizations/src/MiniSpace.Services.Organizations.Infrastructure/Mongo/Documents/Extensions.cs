@@ -58,7 +58,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 ImageUrl = document.ImageUrl,
                 OwnerId = document.OwnerId,
                 ParentOrganizationId = document.ParentOrganizationId,
-                SubOrganizations = document.SubOrganizations?.Select(o => o.AsSubDto()).ToList(),
+                SubOrganizations = document.SubOrganizations?.Select(o => new SubOrganizationDto(o)).ToList(),
             };
 
         public static OrganizationDto AsSubDto(this OrganizationDocument document)
@@ -73,11 +73,12 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             };
 
         public static Invitation AsEntity(this InvitationEntry document)
-            => new Invitation(document.UserId);
+            => new Invitation(document.OrganizationId, document.UserId);
 
         public static InvitationEntry AsDocument(this Invitation entity)
             => new InvitationEntry
             {
+                OrganizationId = entity.OrganizationId,
                 UserId = entity.UserId
             };
 
@@ -127,7 +128,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 document.Id,
                 document.Url,
                 document.OrganizationId,
-                document.Description
+                document.Description,
+                document.CreatedAt
             );
 
         public static GalleryImageEntry AsDocument(this GalleryImage entity)
@@ -136,7 +138,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 Id = entity.Id,
                 Url = entity.Url,
                 Description = entity.Description,
-                CreatedAt = entity.CreatedAt
+                CreatedAt = entity.CreatedAt,
+                OrganizationId = entity.OrganizationId
             };
 
         public static GalleryImageDocument AsGalleryImageDocument(this IEnumerable<GalleryImage> entities, Guid organizationId)
@@ -151,20 +154,24 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             => document.Gallery.Select(g => g.AsEntity());
 
         public static User AsEntity(this UserEntry document)
-            => new User(document.Id)
+            => new User(document.Id, document.OrganizationId)
             {
-                Roles = document.Roles?.Select(r => new Role(r.RoleName, "", new Dictionary<Permission, bool>())).ToHashSet()
+                Role = new Role(document.Roles.FirstOrDefault()?.RoleName ?? "", "", new Dictionary<Permission, bool>())
             };
 
         public static UserEntry AsDocument(this User entity)
             => new UserEntry
             {
                 Id = entity.Id,
-                Roles = entity.Roles?.Select(r => new RoleAssignment
+                OrganizationId = entity.OrganizationId,
+                Roles = new List<RoleAssignment>
                 {
-                    RoleId = r.Id,
-                    RoleName = r.Name
-                }).ToList()
+                    new RoleAssignment
+                    {
+                        RoleId = entity.Roles.First().Id,
+                        RoleName = entity.Roles.First().Name
+                    }
+                }
             };
 
         public static UserDocument AsUserDocument(this IEnumerable<User> entities, Guid organizationId)

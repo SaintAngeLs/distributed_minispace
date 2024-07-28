@@ -13,67 +13,66 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
     [ExcludeFromCodeCoverage]
     public class OrganizationMembersMongoRepository : IOrganizationMembersRepository
     {
-        private readonly IMongoRepository<OrganizationDocument, Guid> _organizationRepository;
+        private readonly IMongoRepository<OrganizationMembersDocument, Guid> _userRepository;
 
-        public OrganizationMembersMongoRepository(IMongoRepository<OrganizationDocument, Guid> organizationRepository)
+        public OrganizationMembersMongoRepository(IMongoRepository<OrganizationMembersDocument, Guid> userRepository)
         {
-            _organizationRepository = organizationRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<User> GetMemberAsync(Guid organizationId, Guid memberId)
         {
-            var organization = await _organizationRepository.GetAsync(o => o.Id == organizationId);
-            var userDocument = organization?.Users.FirstOrDefault(u => u.Id == memberId);
-            return userDocument?.AsEntity();
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == organizationId && u.Users.Any(m => m.Id == memberId));
+            return userDocument?.Users.FirstOrDefault(u => u.Id == memberId)?.AsEntity();
         }
 
         public async Task<IEnumerable<User>> GetMembersAsync(Guid organizationId)
         {
-            var organization = await _organizationRepository.GetAsync(o => o.Id == organizationId);
-            return organization?.Users.Select(u => u.AsEntity());
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == organizationId);
+            return userDocument?.Users.Select(u => u.AsEntity());
         }
 
         public async Task AddMemberAsync(User member)
         {
-            var organization = await _organizationRepository.GetAsync(o => o.Id == member.OrganizationId);
-            if (organization != null)
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == member.OrganizationId);
+            if (userDocument != null)
             {
-                var users = organization.Users.ToList();
-                users.Add(member.AsDocument(organization.Id));
-                organization.Users = users;
-                await _organizationRepository.UpdateAsync(organization);
+                var users = userDocument.Users.ToList();
+                users.Add(member.AsDocument());
+                userDocument.Users = users;
+                await _userRepository.UpdateAsync(userDocument);
             }
         }
 
         public async Task UpdateMemberAsync(User member)
         {
-            var organization = await _organizationRepository.GetAsync(o => o.Id == member.OrganizationId);
-            if (organization != null)
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == member.OrganizationId);
+            if (userDocument != null)
             {
-                var users = organization.Users.ToList();
-                var userDocument = users.FirstOrDefault(u => u.Id == member.Id);
-                if (userDocument != null)
+                var users = userDocument.Users.ToList();
+                var existingMember = users.FirstOrDefault(u => u.Id == member.Id);
+                if (existingMember != null)
                 {
-                    users.Remove(userDocument);
-                    users.Add(member.AsDocument(organization.Id));
-                    organization.Users = users;
-                    await _organizationRepository.UpdateAsync(organization);
+                    users.Remove(existingMember);
+                    users.Add(member.AsDocument());
+                    userDocument.Users = users;
+                    await _userRepository.UpdateAsync(userDocument);
                 }
             }
         }
 
         public async Task DeleteMemberAsync(Guid organizationId, Guid memberId)
         {
-            var organization = await _organizationRepository.GetAsync(o => o.Id == organizationId);
-            if (organization != null)
+            var userDocument = await _userRepository.GetAsync(u => u.OrganizationId == organizationId);
+            if (userDocument != null)
             {
-                var users = organization.Users.ToList();
-                var userDocument = users.FirstOrDefault(u => u.Id == memberId);
-                if (userDocument != null)
+                var users = userDocument.Users.ToList();
+                var existingMember = users.FirstOrDefault(u => u.Id == memberId);
+                if (existingMember != null)
                 {
-                    users.Remove(userDocument);
-                    organization.Users = users;
-                    await _organizationRepository.UpdateAsync(organization);
+                    users.Remove(existingMember);
+                    userDocument.Users = users;
+                    await _userRepository.UpdateAsync(userDocument);
                 }
             }
         }
