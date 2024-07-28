@@ -1,4 +1,7 @@
 ﻿using MiniSpace.Services.Organizations.Core.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MiniSpace.Services.Organizations.Core.Entities
 {
@@ -10,9 +13,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         private ISet<User> _users = new HashSet<User>();
         private ISet<Role> _roles = new HashSet<Role>();
         public string Name { get; private set; }
-        public bool IsPublic { get; private set; }
-        public bool IsVisible { get; private set; }
-        public string Settings { get; private set; }
+        public OrganizationSettings Settings { get; private set; }
 
         public IEnumerable<Organizer> Organizers
         {
@@ -44,13 +45,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _roles = new HashSet<Role>(value);
         }
 
-        public Organization(Guid id, string name, bool isPublic, IEnumerable<Organizer> organizationOrganizers = null,
-            IEnumerable<Organization> organizations = null, bool isVisible = true, string settings = null)
+        public Organization(Guid id, string name, OrganizationSettings settings, IEnumerable<Organizer> organizationOrganizers = null,
+            IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
-            IsPublic = isPublic;
-            IsVisible = isVisible;
             Settings = settings;
             Organizers = organizationOrganizers ?? Enumerable.Empty<Organizer>();
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
@@ -164,19 +163,74 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
             _invitations.Add(new Invitation(userId, email));
         }
-        public void SetPrivacy(bool isPublic)
+
+        public void SignUpUser(Guid userId)
         {
-            IsPublic = isPublic;
+            if (_users.Any(u => u.Id == userId))
+            {
+                throw new UserAlreadySignedUpException(userId, Id);
+            }
+            _users.Add(new User(userId));
         }
 
-        public void UpdateSettings(string settings)
+        public void SetPrivacy(bool isPublic)
+        {
+            Settings.SetPrivacy(isPublic);
+        }
+
+        public void UpdateSettings(OrganizationSettings settings)
         {
             Settings = settings;
         }
 
         public void SetVisibility(bool isVisible)
         {
-            IsVisible = isVisible;
+            Settings.SetVisibility(isVisible);
+        }
+
+        public void SetCanAddComments(bool canAddComments)
+        {
+            Settings.SetCanAddComments(canAddComments);
+        }
+
+        public void SetCanAddReactions(bool canAddReactions)
+        {
+            Settings.SetCanAddReactions(canAddReactions);
+        }
+
+        public void SetCanPostPosts(bool canPostPosts)
+        {
+            Settings.SetCanPostPosts(canPostPosts);
+        }
+
+        public void SetCanPostEvents(bool canPostEvents)
+        {
+            Settings.SetCanPostEvents(canPostEvents);
+        }
+
+        public void SetCanMakeReposts(bool canMakeReposts)
+        {
+            Settings.SetCanMakeReposts(canMakeReposts);
+        }
+
+        public void SetCanAddCommentsToPosts(bool canAddCommentsToPosts)
+        {
+            Settings.SetCanAddCommentsToPosts(canAddCommentsToPosts);
+        }
+
+        public void SetCanAddReactionsToPosts(bool canAddReactionsToPosts)
+        {
+            Settings.SetCanAddReactionsToPosts(canAddReactionsToPosts);
+        }
+
+        public void SetCanAddCommentsToEvents(bool canAddCommentsToEvents)
+        {
+            Settings.SetCanAddCommentsToEvents(canAddCommentsToEvents);
+        }
+
+        public void SetCanAddReactionsToEvents(bool canAddReactionsToEvents)
+        {
+            Settings.SetCanAddReactionsToEvents(canAddReactionsToEvents);
         }
 
         public void AssignRole(Guid memberId, string role)
