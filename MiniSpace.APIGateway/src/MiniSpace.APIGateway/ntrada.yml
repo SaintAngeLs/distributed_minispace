@@ -394,6 +394,14 @@ modules:
         downstream: students-service/students/{studentId}/notifications
         auth: true
 
+      - upstream: /{studentId}/languages-and-interests
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{studentId}/languages-and-interests
+        bind:
+          - studentId:{studentId}
+        auth: true
+
     services:
       students-service:
         localUrl: localhost:5007
