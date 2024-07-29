@@ -454,5 +454,38 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
             parent._subOrganizations.Remove(organization);
         }
+
+         public void UpdateDetails(string name, string description, OrganizationSettings settings, string bannerUrl, string imageUrl)
+        {
+            if (name != null && Name != name)
+            {
+                Name = name;
+                AddEvent(new OrganizationNameUpdated(Id, Name));
+            }
+
+            if (description != null && Description != description)
+            {
+                Description = description;
+                AddEvent(new OrganizationDescriptionUpdated(Id, Description));
+            }
+
+            if (settings != null && !Settings.Equals(settings))
+            {
+                Settings = settings;
+                AddEvent(new OrganizationSettingsUpdated(Id, Settings));
+            }
+
+            if (bannerUrl != null && BannerUrl != bannerUrl)
+            {
+                BannerUrl = bannerUrl;
+                AddEvent(new OrganizationBannerUrlUpdated(Id, BannerUrl, DateTime.UtcNow));
+            }
+
+            if (imageUrl != null && ImageUrl != imageUrl)
+            {
+                ImageUrl = imageUrl;
+                AddEvent(new OrganizationImageUrlUpdated(Id, ImageUrl, DateTime.UtcNow));
+            }
+        }
     }
 }

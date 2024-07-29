@@ -12,5 +12,6 @@ namespace MiniSpace.Services.Organizations.Core.Events
             BannerUrl = bannerUrl;
             UpdatedAt = updatedAt;
         }
+        
     }
 }
