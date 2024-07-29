@@ -104,6 +104,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .SubscribeCommand<SetOrganizationPrivacy>()
                 .SubscribeCommand<UpdateOrganizationSettings>()
                 .SubscribeCommand<SetOrganizationVisibility>()
+                .SubscribeCommand<UpdateOrganization>()
                 .SubscribeCommand<ManageFeed>();
 
             return app;
