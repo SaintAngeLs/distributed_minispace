@@ -101,6 +101,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeCommand<CompleteStudentRegistration>()
                 .SubscribeCommand<ChangeStudentState>()
                 .SubscribeCommand<UpdateUserSettings>()
+                .SubscribeCommand<UpdateStudentLanguagesAndInterests>()
                 .SubscribeEvent<SignedUp>()
                 .SubscribeEvent<EmailVerified>()
                 .SubscribeEvent<StudentShowedInterestInEvent>()

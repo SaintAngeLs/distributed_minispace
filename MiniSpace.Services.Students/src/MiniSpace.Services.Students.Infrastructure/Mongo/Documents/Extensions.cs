@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.BannerUrl,
                 document.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)),
                 document.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)),
-                document.Languages,
+                document.Languages, // Directly use document.Languages
                 document.Interests,
                 document.IsTwoFactorEnabled,
                 document.TwoFactorSecret,
@@ -67,7 +67,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     EndDate = w.EndDate,
                     Description = w.Description
                 }),
-                Languages = entity.Languages,
+                Languages = entity.Languages, // Directly use entity.Languages
                 Interests = entity.Interests,
                 IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
                 TwoFactorSecret = entity.TwoFactorSecret,
@@ -108,7 +108,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     EndDate = w.EndDate,
                     Description = w.Description
                 }),
-                Languages = document.Languages,
+                Languages = document.Languages.Select(l => l.ToString()), // Convert Language to string
                 Interests = document.Interests.Select(i => new InterestDto { Name = i.ToString() }),
                 IsTwoFactorEnabled = document.IsTwoFactorEnabled,
                 TwoFactorSecret = document.TwoFactorSecret,

@@ -25,7 +25,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public string BannerUrl { get; set; }
         public IEnumerable<EducationDocument> Education { get; set; }
         public IEnumerable<WorkDocument> Work { get; set; }
-        public IEnumerable<string> Languages { get; set; }
+        public IEnumerable<Language> Languages { get; set; }
         public IEnumerable<Interest> Interests { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
