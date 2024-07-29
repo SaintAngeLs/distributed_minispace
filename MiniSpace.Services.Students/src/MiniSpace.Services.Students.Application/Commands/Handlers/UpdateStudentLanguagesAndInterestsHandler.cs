@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
-    public class UpdateStudentHandler : ICommandHandler<UpdateStudent>
+    public class UpdateStudentLanguagesAndInterestsHandler : ICommandHandler<UpdateStudentLanguagesAndInterests>
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IAppContext _appContext;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public UpdateStudentHandler(IStudentRepository studentRepository, IAppContext appContext,
+        public UpdateStudentLanguagesAndInterestsHandler(IStudentRepository studentRepository, IAppContext appContext,
             IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _studentRepository = studentRepository;
@@ -29,11 +29,11 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             _messageBroker = messageBroker;
         }
 
-        public async Task HandleAsync(UpdateStudent command, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(UpdateStudentLanguagesAndInterests command, CancellationToken cancellationToken = default)
         {
             // Log the command received
             var commandJson = JsonSerializer.Serialize(command);
-            Console.WriteLine($"Received UpdateStudent command: {commandJson}");
+            Console.WriteLine($"Received UpdateStudentLanguagesAndInterests command: {commandJson}");
 
             var student = await _studentRepository.GetAsync(command.StudentId);
             if (student is null)
@@ -47,27 +47,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
             }
 
-            student.Update(command.FirstName, 
-                           command.LastName, 
-                           command.Description, 
-                           command.EmailNotifications, 
-                           command.ContactEmail, 
-                           command.PhoneNumber);
-
-            student.UpdateEducation(command.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)));
-            student.UpdateWork(command.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)));
             student.UpdateLanguages(command.Languages.Select(l => (Language)Enum.Parse(typeof(Language), l)));
             student.UpdateInterests(command.Interests.Select(i => (Interest)Enum.Parse(typeof(Interest), i)));
-
-            if (command.EnableTwoFactor)
-            {
-                student.EnableTwoFactorAuthentication(command.TwoFactorSecret);
-            }
-
-            if (command.DisableTwoFactor)
-            {
-                student.DisableTwoFactorAuthentication();
-            }
 
             await _studentRepository.UpdateAsync(student);
 

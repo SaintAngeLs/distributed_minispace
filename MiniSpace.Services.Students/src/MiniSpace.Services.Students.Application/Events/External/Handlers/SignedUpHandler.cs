@@ -60,7 +60,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 string.Empty, // BannerUrl
                 new List<Education>(), // Education
                 new List<Work>(), // Work
-                new List<string>(), // Languages
+                new List<Language>(), // Languages
                 new List<Interest>(), // Interests
                 false, // IsTwoFactorEnabled
                 string.Empty, // TwoFactorSecret
