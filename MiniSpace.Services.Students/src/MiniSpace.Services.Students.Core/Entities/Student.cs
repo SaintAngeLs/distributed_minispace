@@ -238,6 +238,14 @@ namespace MiniSpace.Services.Students.Core.Entities
             // }
         }
 
+        public void VerifyEmail(string email, DateTime verifiedAt)
+        {
+            if (Email == email)
+            {
+                State = State.Valid;
+            }
+        }
+
         private void CheckDateOfBirth(DateTime dateOfBirth, DateTime now)
         {
             if (dateOfBirth >= now)
@@ -290,6 +298,12 @@ namespace MiniSpace.Services.Students.Core.Entities
 
         public void Ban() => IsBanned = true;
         public void Unban() => IsBanned = false;
+
+        public void SetEmailNotifications(bool emailNotifications)
+        {
+            EmailNotifications = emailNotifications;
+            AddEvent(new StudentUpdated(this));
+        }
     }
 }
 
