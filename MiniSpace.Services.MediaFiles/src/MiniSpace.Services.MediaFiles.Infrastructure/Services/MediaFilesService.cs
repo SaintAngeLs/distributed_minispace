@@ -51,7 +51,10 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 throw new InvalidContextTypeException(command.SourceType);
             }
 
-            if (sourceType == ContextType.StudentProfileImage || sourceType == ContextType.StudentBannerImage)
+             if (sourceType == ContextType.StudentProfileImage || 
+                sourceType == ContextType.StudentBannerImage ||
+                sourceType == ContextType.OrganizationProfileImage ||
+                sourceType == ContextType.OrganizationBannerImage)
             {
                 var existingFiles = await _fileSourceInfoRepository.FindByUploaderIdAndSourceTypeAsync(command.UploaderId, sourceType);
                 foreach (var existingFile in existingFiles)
@@ -60,6 +63,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                     await _fileSourceInfoRepository.UpdateAsync(existingFile);
                 }
             }
+
 
             byte[] bytes = Convert.FromBase64String(command.Base64Content);
             _fileValidator.ValidateFileSize(bytes.Length);
@@ -93,6 +97,15 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 var imageType = sourceType.ToString();
                 var studentImageUploadedEvent = new StudentImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
+            }
+
+             if (sourceType == ContextType.OrganizationProfileImage ||
+                sourceType == ContextType.OrganizationBannerImage ||
+                sourceType == ContextType.OrganizationGalleryImage)
+            {
+                var imageType = sourceType.ToString();
+                var organizationImageUploadedEvent = new OrganizationImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
+                await _messageBroker.PublishAsync(organizationImageUploadedEvent);
             }
 
             return new FileUploadResponseDto(fileSourceInfo.Id);
