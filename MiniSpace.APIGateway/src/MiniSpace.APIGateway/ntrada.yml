@@ -826,6 +826,31 @@ modules:
         auth: true
 
       - upstream: /{organizationId}
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}
+
+      - upstream: /{organizationId}/details
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/details
+
+      - upstream: /root
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/root
+
+      - upstream: /{organizationId}/children
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children
+
+      - upstream: /{organizationId}/children/all
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children/all
+
+      - upstream: /{organizationId}
         method: DELETE
         use: downstream
         downstream: organizations-service/organizations/{organizationId}
@@ -836,49 +861,66 @@ modules:
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children
         auth: true
-        
-      - upstream: /{organizationId}/organizer
+
+      - upstream: /{organizationId}/roles
         method: POST
         use: downstream
-        downstream: organizations-service/organizations/{organizationId}/organizer
+        downstream: organizations-service/organizations/{organizationId}/roles
         auth: true
-        
-      - upstream: /{organizationId}/organizer/{organizerId}
-        method: DELETE
+
+      - upstream: /{organizationId}/roles/{roleId}/permissions
+        method: PUT
         use: downstream
-        downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
+        downstream: organizations-service/organizations/{organizationId}/roles/{roleId}/permissions
         auth: true
-        
+
+      - upstream: /{organizationId}/invite
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/invite
+        auth: true
+
+      - upstream: /{organizationId}/roles/{memberId}
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/roles/{memberId}
+        auth: true
+
+      - upstream: /{organizationId}/privacy
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/privacy
+        auth: true
+
+      - upstream: /{organizationId}/settings
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/settings
+        auth: true
+
+      - upstream: /{organizationId}/visibility
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/visibility
+        auth: true
+
+      - upstream: /{organizationId}/feed
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/feed
+        auth: true
+
       - upstream: /{organizationId}
-        method: GET
+        method: PUT
         use: downstream
         downstream: organizations-service/organizations/{organizationId}
-        
-      - upstream: /{organizationId}/details
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/{organizationId}/details
-
-      - upstream: /root
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/root
-        
-      - upstream: /{organizationId}/children
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/{organizationId}/children  
-
-      - upstream: /{organizationId}/children/all
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/{organizationId}/children/all  
-
-      - upstream: /organizer/{organizerId}
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/organizer/{organizerId}
         auth: true
+
+    services:
+      organizations-service:
+        localUrl: localhost:5015
+        url: organizations-service
+
 
     services:
       organizations-service:
