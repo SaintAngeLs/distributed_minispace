@@ -922,8 +922,3 @@ modules:
         url: organizations-service
 
 
-    services:
-      organizations-service:
-        localUrl: localhost:5015
-        url: organizations-service
-
