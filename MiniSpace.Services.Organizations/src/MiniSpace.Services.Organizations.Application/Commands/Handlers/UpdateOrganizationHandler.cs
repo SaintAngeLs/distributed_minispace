@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 {
-    public class UpdateOrganizationHandler : ICommandHandler<UpsertOrganization>
+    public class UpdateOrganizationHandler : ICommandHandler<UpdateOrganization>
     {
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IAppContext _appContext;
@@ -23,7 +23,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             _messageBroker = messageBroker;
         }
 
-        public async Task HandleAsync(UpsertOrganization command, CancellationToken cancellationToken)
+        public async Task HandleAsync(UpdateOrganization command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
             if (!identity.IsAuthenticated)

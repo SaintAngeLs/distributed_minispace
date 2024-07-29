@@ -3,7 +3,7 @@ using MiniSpace.Services.Organizations.Core.Entities;
 
 namespace MiniSpace.Services.Organizations.Application.Commands
 {
-    public class UpsertOrganization : ICommand
+    public class UpdateOrganization : ICommand
     {
         public Guid OrganizationId { get; private set; }
         public string Name { get; }
@@ -15,7 +15,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands
         public string BannerUrl { get; }
         public string ImageUrl { get; }
 
-        public UpsertOrganization(Guid organizationId, string name, string description, Guid rootId, Guid parentId, Guid ownerId, OrganizationSettings settings, string bannerUrl, string imageUrl)
+        public UpdateOrganization(Guid organizationId, string name, string description, Guid rootId, Guid parentId, Guid ownerId, OrganizationSettings settings, string bannerUrl, string imageUrl)
         {
             OrganizationId = organizationId == Guid.Empty ? Guid.NewGuid() : organizationId;
             Name = name;
