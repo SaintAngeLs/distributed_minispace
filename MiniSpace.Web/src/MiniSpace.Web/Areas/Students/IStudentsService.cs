@@ -38,5 +38,9 @@ namespace MiniSpace.Web.Areas.Students
         Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId);
         Task UpdateUserSettingsAsync(Guid studentId, AvailableSettingsDto availableSettings);
         Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId);
+        Task UpdateStudentLanguagesAndInterestsAsync(
+            Guid studentId, 
+            IEnumerable<string> languages, 
+            IEnumerable<InterestDto> interests);
     }
 }

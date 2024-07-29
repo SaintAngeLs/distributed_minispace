@@ -3,20 +3,25 @@
 @using MudBlazor
 
 <MudText Typo="Typo.h6" GutterBottom="true">Privacy</MudText>
-@if (isLoading)
+@if (IsLoading)
 {
     <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
 }
 else
 {
     <MudStack>
-        <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
     </MudStack>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveChangesAsync">Save privacy</MudButton>
 }
 
 @code {
-    [Parameter] public bool isLoading { get; set; }
-    [Parameter] public StudentWithGalleryImagesDto studentWithGalleryImagesDto { get; set; }
-    [Parameter] public EventCallback SaveChangesAsync { get; set; }
+    [Parameter]
+    public bool IsLoading { get; set; }
+    
+    [Parameter]
+    public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }
+
+    [Parameter]
+    public EventCallback SaveChangesAsync { get; set; }
 }

@@ -40,7 +40,7 @@
                     }
                     else if (activeTabIndex == 1)
                     {
-                        <SecurityComponent IsLoading="isLoading" IsTwoFactorEnabled="isTwoFactorEnabled" TwoFactorSecret="twoFactorSecret" ToggleTwoFactor="ToggleTwoFactor" GenerateTwoFactorSecret="GenerateTwoFactorSecret" SaveTwoFactorSettingsAsync="SaveTwoFactorSettingsAsync" />
+                        <SecurityComponent IsLoading="isLoading" IsTwoFactorEnabled="isTwoFactorEnabled" TwoFactorSecret="@(string.IsNullOrEmpty(twoFactorSecret) || twoFactorSecret == "twoFactorSecret" ? null : twoFactorSecret)" ToggleTwoFactor="ToggleTwoFactor" />
                     }
                     else if (activeTabIndex == 2)
                     {

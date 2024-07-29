@@ -174,5 +174,25 @@ namespace MiniSpace.Web.Areas.Students
             _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<AvailableSettingsDto>($"students/{studentId}/settings");
         }
+
+        public async Task UpdateStudentLanguagesAndInterestsAsync(
+            Guid studentId, 
+            IEnumerable<string> languages, 
+            IEnumerable<InterestDto> interests)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var updateData = new
+            {
+                languages,
+                interests
+            };
+
+            var jsonData = JsonSerializer.Serialize(updateData);
+            Console.WriteLine($"Sending UpdateStudentLanguagesAndInterests request: {jsonData}");
+
+            await _httpClient.PutAsync($"students/{studentId}/languages-and-interests", updateData);
+        }
     }
 }
