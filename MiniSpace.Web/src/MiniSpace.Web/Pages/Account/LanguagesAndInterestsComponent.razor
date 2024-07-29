@@ -1,0 +1,33 @@
+@page "/languages-and-interests"
+@inject IIdentityService IdentityService
+@using MudBlazor
+
+<MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
+@if (isLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
+            <MudSelect T="string" @bind-SelectedValues="studentWithGalleryImagesDto.Student.Languages" Label="Select Languages" Variant="Variant.Outlined" MultiSelection="true">
+                @foreach (var language in availableLanguages)
+                {
+                    <MudSelectItem Value="@language">@language</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
+            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Interests" Label="Interests" HelperText="Your interests" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    [Parameter] public bool isLoading { get; set; }
+    [Parameter] public List<string> availableLanguages { get; set; }
+    [Parameter] public StudentWithGalleryImagesDto studentWithGalleryImagesDto { get; set; }
+}

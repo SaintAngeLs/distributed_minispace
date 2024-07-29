@@ -1,0 +1,36 @@
+@page "/notifications-preferences"
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@using MiniSpace.Web.DTO
+@using MudBlazor
+
+<MudText Typo="Typo.h6" GutterBottom="true">Notifications</MudText>
+@if (isLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    <MudStack>
+        <MudSwitch @bind-Checked="studentWithGalleryImagesDto.Student.EmailNotifications" Label="Email Notifications" Color="Color.Primary"/>
+        @if (studentWithGalleryImagesDto.Student.EmailNotifications)
+        {
+            <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary"/>
+            <MudSwitch @bind-Checked="notificationPreferencesDto.SystemLogin" Label="System Login" Color="Color.Primary"/>
+            <MudSwitch @bind-Checked="notificationPreferencesDto.NewEvent" Label="New Event" Color="Color.Primary"/>
+            <MudSwitch @bind-Checked="notificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" Color="Color.Primary"/>
+            <MudSwitch @bind-Checked="notificationPreferencesDto.EventNotifications" Label="Event Notifications" Color="Color.Primary"/>
+            <MudSwitch @bind-Checked="notificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" Color="Color.Primary"/>
+            <MudSwitch @bind-Checked="notificationPreferencesDto.PostsNotifications" Label="Posts Notifications" Color="Color.Primary"/>
+            <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary"/>
+        }
+    </MudStack>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveNotificationPreferencesAsync">Save preferences</MudButton>
+}
+
+@code {
+    [Parameter] public bool isLoading { get; set; }
+    [Parameter] public StudentWithGalleryImagesDto studentWithGalleryImagesDto { get; set; }
+    [Parameter] public NotificationPreferencesDto notificationPreferencesDto { get; set; }
+    [Parameter] public EventCallback SaveNotificationPreferencesAsync { get; set; }
+}

@@ -1,0 +1,27 @@
+@page "/gallery"
+@inject IIdentityService IdentityService
+@using MiniSpace.Web.DTO
+
+<MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
+@if (isLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    <MudGrid>
+        @foreach (var galleryImage in studentWithGalleryImagesDto.GalleryImages)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudCard>
+                    <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+@code {
+    [Parameter] public bool isLoading { get; set; }
+    [Parameter] public StudentWithGalleryImagesDto studentWithGalleryImagesDto { get; set; }
+}

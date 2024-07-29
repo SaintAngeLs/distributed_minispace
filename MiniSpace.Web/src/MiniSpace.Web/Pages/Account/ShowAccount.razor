@@ -14,9 +14,7 @@
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 
- 
 <AuthWrapper>
-    
     <div class="breadcrumbs-container">
         <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
     </div>
@@ -38,31 +36,31 @@
                 <MudPaper Elevation="1" Class="content-panel">
                     @if (activeTabIndex == 0)
                     {
-                        @ProfileContent()
+                        <ProfileComponent isLoading="isLoading" file="file" studentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync" SaveImageAsync="SaveImageAsync" isUploading="isUploading" />
                     }
                     else if (activeTabIndex == 1)
                     {
-                        @SecurityContent()
+                        <SecurityComponent isLoading="isLoading" isTwoFactorEnabled="isTwoFactorEnabled" twoFactorSecret="twoFactorSecret" ToggleTwoFactor="ToggleTwoFactor" GenerateTwoFactorSecret="GenerateTwoFactorSecret" SaveTwoFactorSettingsAsync="SaveTwoFactorSettingsAsync" />
                     }
                     else if (activeTabIndex == 2)
                     {
-                        @NotificationsContent()
+                        <NotificationsComponent isLoading="isLoading" studentWithGalleryImagesDto="studentWithGalleryImagesDto" notificationPreferencesDto="notificationPreferencesDto" SaveNotificationPreferencesAsync="SaveNotificationPreferencesAsync" />
                     }
                     else if (activeTabIndex == 3)
                     {
-                        @PrivacyContent()
+                        <PrivacyComponent isLoading="isLoading" studentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync" />
                     }
                     else if (activeTabIndex == 4)
                     {
-                        @LanguagesAndInterestsContent()
+                        <LanguagesAndInterestsComponent isLoading="isLoading" availableLanguages="availableLanguages" studentWithGalleryImagesDto="studentWithGalleryImagesDto" />
                     }
                     else if (activeTabIndex == 5)
                     {
-                        @GalleryContent()
+                        <GalleryComponent isLoading="isLoading" studentWithGalleryImagesDto="studentWithGalleryImagesDto" />
                     }
                     else if (activeTabIndex == 6)
                     {
-                        @UserSettingsContent()
+                        <UserSettingsComponent isLoading="isLoading" availableSettingsDto="availableSettingsDto" SaveUserSettingsAsync="SaveUserSettingsAsync" />
                     }
                 </MudPaper>
             </MudItem>
@@ -151,7 +149,6 @@
     private bool isTwoFactorEnabled;
     private string twoFactorSecret;
     private bool isLoading = true;
-    private string profileImage = string.Empty;
     private bool isUploading = false;
     private IBrowserFile file;
     private long maxFileSize = 10 * 1024 * 1024;
@@ -178,7 +175,6 @@
                 {
                     notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
                 }
-                profileImage = studentDto.ProfileImageUrl;
                 isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
                 twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
 
@@ -274,9 +270,8 @@
                     var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
                         MediaFileContextType.StudentProfileImage.ToString(), IdentityService.UserDto.Id,
                         file.Name, file.ContentType, base64Content);
-               
+
                     studentWithGalleryImagesDto.Student.ProfileImageUrl = response.Content.FileUrl;
-                    profileImage = response.Content.FileUrl;
 
                     stream.Close();
                 }
@@ -296,99 +291,6 @@
             Console.WriteLine(ex.Message);
         }
     }
-
-    private RenderFragment ProfileContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudGrid>
-                <MudItem xs="12" sm="6" md="4">
-                    <div class="image-upload-container">
-                        <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
-                        <MudFileUpload T="IBrowserFile" @bind-Files="file" Accept=".jpg,.jpeg,.png">
-                            <ButtonTemplate>
-                                <MudButton HtmlTag="label"
-                                    Variant="Variant.Filled"
-                                    Color="Color.Primary"
-                                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                                    Class="button-margins"
-                                    for="@context">
-                                    Upload Image
-                                </MudButton>
-                            </ButtonTemplate>
-                            <SelectedTemplate>
-                                @if (file != null)
-                                {
-                                    <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @file.Name </MudText>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveImageAsync">Save Image</MudButton>
-                                }
-                                else
-                                {
-                                    <MudText><MudIcon Icon="@Icons.Material.Filled.Attachment" /> No Files Selected</MudText>
-                                }
-                            </SelectedTemplate>
-                        </MudFileUpload>
-                    </div>
-                </MudItem>
-                <MudItem xs="11" sm="11">
-                    <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-                </MudItem>
-                <MudItem xs="11" sm="11">
-                    <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-                </MudItem>
-                <MudItem xs="12" sm="11" md="11">
-                    <MudGrid>
-                        <MudItem xs="11">
-                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
-                        </MudItem>
-                        <MudItem xs="11">
-                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.PhoneNumber" Label="Phone Number" HelperText="Your phone number" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                        </MudItem>
-                        <MudItem xs="11">
-                            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
-                        </MudItem>
-                    </MudGrid>
-                </MudItem>
-            </MudGrid>
-            <MudStack>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save profile</MudButton>
-                @if (isUploading)
-                {
-                    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-                }
-            </MudStack>
-        }
-    </div>;
-
-    private RenderFragment SecurityContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Security</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudStack>
-                <MudSwitch @bind-Checked="isTwoFactorEnabled" Label="Enable Two-Factor Authentication" OnChange="ToggleTwoFactor" Color="Color.Primary"/>
-                @if (isTwoFactorEnabled)
-                {
-                    @if (string.IsNullOrEmpty(twoFactorSecret))
-                    {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GenerateTwoFactorSecret">Generate Secret Token</MudButton>
-                    }
-                    else
-                    {
-                        <MudTextField @bind-Value="twoFactorSecret" Label="Two-Factor Authentication Secret" ReadOnly="true" />
-                    }
-                }
-            </MudStack>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTwoFactorSettingsAsync" Disabled="@(!isTwoFactorEnabled || (isTwoFactorEnabled && string.IsNullOrEmpty(twoFactorSecret)))" Class="button-margins">Save 2FA Settings</MudButton>
-        }
-    </div>;
 
     private async Task SaveTwoFactorSettingsAsync()
     {
@@ -425,7 +327,6 @@
         else
         {
             twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
-            await IdentityService.EnableTwoFactorAsync(IdentityService.GetCurrentUserId(), twoFactorSecret);
         }
         StateHasChanged();
     }
@@ -437,34 +338,7 @@
         StateHasChanged();
     }
 
-    private RenderFragment NotificationsContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Notifications</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudStack>
-                <MudSwitch @bind-Checked="studentWithGalleryImagesDto.Student.EmailNotifications" Label="Email Notifications" Color="Color.Primary"/>
-                @if (studentWithGalleryImagesDto.Student.EmailNotifications)
-                {
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.SystemLogin" Label="System Login" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.NewEvent" Label="New Event" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.EventNotifications" Label="Event Notifications" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.PostsNotifications" Label="Posts Notifications" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary"/>
-                }
-            </MudStack>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveNotificationPreferencesAsync">Save preferences</MudButton>
-        }
-    </div>;
-
-
-     private async Task SaveNotificationPreferencesAsync()
+    private async Task SaveNotificationPreferencesAsync()
     {
         try
         {
@@ -478,181 +352,23 @@
         }
     }
 
-    private RenderFragment PrivacyContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Privacy</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudStack>
-                <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
-            </MudStack>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save privacy</MudButton>
-        }
-    </div>;
-
-    private RenderFragment LanguagesAndInterestsContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudGrid>
-                <MudItem xs="12">
-                    <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
-                    <MudSelect @bind-SelectedValues="studentWithGalleryImagesDto.Student.Languages" Label="Select Languages" Variant="Variant.Outlined" T="string" MultiSelection="true">
-                        @foreach (var language in availableLanguages)
-                        {
-                            <MudSelectItem Value="@language">@language</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
-                    <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Interests" Label="Interests" HelperText="Your interests" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-            </MudGrid>
-        }
-    </div>;
-
-    private RenderFragment GalleryContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudGrid>
-                @foreach (var galleryImage in studentWithGalleryImagesDto.GalleryImages)
-                {
-                    <MudItem xs="12" sm="6" md="4">
-                        <MudCard>
-                            <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
-                        </MudCard>
-                    </MudItem>
-                }
-            </MudGrid>
-        }
-    </div>;
-
-    private RenderFragment UserSettingsContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">User Settings</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudGrid>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" Margin="Margin.Dense">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility" Margin="Margin.Dense">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.InterestedInEventsVisibility" Label="Interested In Events Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.SignedUpEventsVisibility" Label="Signed Up Events Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.EducationVisibility" Label="Education Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.WorkPositionVisibility" Label="Work Position Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.LanguagesVisibility" Label="Languages Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.InterestsVisibility" Label="Interests Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.ContactEmailVisibility" Label="Contact Email Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.PhoneNumberVisibility" Label="Phone Number Visibility">
-                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                        {
-                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.PreferredLanguage" Label="Preferred Language" HelperText="Preferred language for the interface">
-                        @foreach (PreferredLanguage language in Enum.GetValues(typeof(PreferredLanguage)))
-                        {
-                            <MudSelectItem Value="@language">@language</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="availableSettingsDto.FrontendVersion" Label="Frontend Version">
-                        @foreach (FrontendVersion version in Enum.GetValues(typeof(FrontendVersion)))
-                        {
-                            <MudSelectItem Value="@version">@version</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-            </MudGrid>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveUserSettingsAsync">Save Settings</MudButton>
-        }
-    </div>;
-
-    private string GetImage()
+    private async Task SaveUserSettingsAsync()
     {
-        return !string.IsNullOrEmpty(profileImage) ? profileImage : "images/default_profile_image.webp";
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
+            Console.WriteLine("Student settings updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving user settings: {ex.Message}");
+        }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
     }
 
     private static async Task<byte[]> ReadFully(Stream input)
@@ -667,21 +383,5 @@
             }
             return ms.ToArray();
         }
-    }
-
-    private async Task SaveUserSettingsAsync()
-    {
-    
-            var studentId = IdentityService.GetCurrentUserId();
-            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
-            Console.WriteLine("Student settings updated successfully.");
-
-    }
-
-
-
-    private void SetActiveTabIndex(int index)
-    {
-        activeTabIndex = index;
     }
 }
