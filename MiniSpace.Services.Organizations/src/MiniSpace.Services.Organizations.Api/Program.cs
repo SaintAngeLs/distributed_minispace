@@ -51,6 +51,8 @@ namespace MiniSpace.Services.Organizations.Api
                         .Put<UpdateOrganizationSettings>("organizations/{organizationId}/settings")
                         .Put<SetOrganizationVisibility>("organizations/{organizationId}/visibility")
                         .Put<ManageFeed>("organizations/{organizationId}/feed")
+                        .Put<UpdateOrganization>("organizations/{organizationId}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}"))
                         ))
                 .UseLogging()
                 .Build()
