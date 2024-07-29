@@ -34,7 +34,7 @@ namespace MiniSpace.Web.Areas.Students
         Task<string> GetStudentStateAsync(Guid studentId);
 
         Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId);
-        Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto);
+        Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto, bool emailNotifications);
         Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId);
         Task UpdateUserSettingsAsync(Guid studentId, AvailableSettingsDto availableSettings);
         Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId);

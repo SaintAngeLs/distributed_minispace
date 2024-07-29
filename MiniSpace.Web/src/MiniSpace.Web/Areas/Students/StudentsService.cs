@@ -93,6 +93,13 @@ namespace MiniSpace.Web.Areas.Students
             await _httpClient.PutAsync($"students/{studentId}", updateStudentData);
         }
 
+        public async Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<NotificationPreferencesDto>($"students/{studentId}/notifications");
+        }
+
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl, string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail)
             => _httpClient.PostAsync<object, object>("students", new { studentId, profileImageUrl, description, dateOfBirth, emailNotifications, contactEmail });
 
@@ -102,15 +109,8 @@ namespace MiniSpace.Web.Areas.Students
             return student != null ? student.State : "invalid";
         }
 
-        // New methods for notification preferences
-        public async Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId)
-        {
-            var accessToken = await _identityService.GetAccessTokenAsync();
-            _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<NotificationPreferencesDto>($"students/{studentId}/notifications");
-        }
-
-        public async Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto)
+        // Updated method for notification preferences
+        public async Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto, bool emailNotifications)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -118,6 +118,7 @@ namespace MiniSpace.Web.Areas.Students
             var updatePreferencesData = new
             {
                 studentId,
+                emailNotifications,
                 preferencesDto.AccountChanges,
                 preferencesDto.SystemLogin,
                 preferencesDto.NewEvent,
@@ -165,8 +166,6 @@ namespace MiniSpace.Web.Areas.Students
             };
 
             await _httpClient.PutAsync($"students/{studentId}/settings", updateUserSettingsData);
-            
-
         }
 
         public async Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId)
@@ -175,7 +174,5 @@ namespace MiniSpace.Web.Areas.Students
             _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<AvailableSettingsDto>($"students/{studentId}/settings");
         }
-
-
     }
 }

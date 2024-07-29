@@ -5,7 +5,7 @@
 @using MudBlazor
 
 <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
-@if (isLoading)
+@if (IsLoading)
 {
     <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
 }
@@ -15,7 +15,7 @@ else
         <MudItem xs="12" sm="6" md="4">
             <div class="image-upload-container">
                 <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
-                <MudFileUpload T="IBrowserFile" @bind-Files="file" Accept=".jpg,.jpeg,.png">
+                <MudFileUpload T="IBrowserFile" @bind-Files="File" Accept=".jpg,.jpeg,.png">
                     <ButtonTemplate>
                         <MudButton HtmlTag="label"
                             Variant="Variant.Filled"
@@ -27,9 +27,9 @@ else
                         </MudButton>
                     </ButtonTemplate>
                     <SelectedTemplate>
-                        @if (file != null)
+                        @if (File != null)
                         {
-                            <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @file.Name </MudText>
+                            <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @File.Name </MudText>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveImageAsync">Save Image</MudButton>
                         }
                         else
@@ -41,28 +41,28 @@ else
             </div>
         </MudItem>
         <MudItem xs="11" sm="11">
-            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
         </MudItem>
         <MudItem xs="11" sm="11">
-            <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
         </MudItem>
         <MudItem xs="12" sm="11" md="11">
             <MudGrid>
                 <MudItem xs="11">
-                    <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="11">
-                    <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.PhoneNumber" Label="Phone Number" HelperText="Your phone number" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.PhoneNumber" Label="Phone Number" HelperText="Your phone number" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="11">
-                    <MudTextField @bind-Value="studentWithGalleryImagesDto.Student.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
                 </MudItem>
             </MudGrid>
         </MudItem>
     </MudGrid>
     <MudStack>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveChangesAsync">Save profile</MudButton>
-        @if (isUploading)
+        @if (IsUploading)
         {
             <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
         }
@@ -70,17 +70,17 @@ else
 }
 
 @code {
-    [Parameter] public bool isLoading { get; set; }
-    [Parameter] public IBrowserFile file { get; set; }
-    [Parameter] public StudentWithGalleryImagesDto studentWithGalleryImagesDto { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public IBrowserFile File { get; set; }
+    [Parameter] public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }
     [Parameter] public EventCallback SaveChangesAsync { get; set; }
     [Parameter] public EventCallback SaveImageAsync { get; set; }
-    [Parameter] public bool isUploading { get; set; }
+    [Parameter] public bool IsUploading { get; set; }
 
     private string GetImage()
     {
-        return !string.IsNullOrEmpty(studentWithGalleryImagesDto.Student.ProfileImageUrl) 
-            ? studentWithGalleryImagesDto.Student.ProfileImageUrl 
+        return !string.IsNullOrEmpty(StudentWithGalleryImagesDto.Student.ProfileImageUrl) 
+            ? StudentWithGalleryImagesDto.Student.ProfileImageUrl 
             : "images/default_profile_image.webp";
     }
 }

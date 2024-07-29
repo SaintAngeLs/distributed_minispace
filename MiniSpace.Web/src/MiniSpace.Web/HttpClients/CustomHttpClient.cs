@@ -40,7 +40,10 @@ namespace MiniSpace.Web.HttpClients
         {
             var (success, content) = await TryExecuteAsync(uri, client => client.GetAsync(uri));
 
-            return !success ? default : JsonConvert.DeserializeObject<T>(content, JsonSerializerSettings);
+            if (!success)
+                return default;
+
+            return JsonConvert.DeserializeObject<T>(content, JsonSerializerSettings);
         }
 
         public Task PostAsync<T>(string uri, T request)
@@ -57,8 +60,14 @@ namespace MiniSpace.Web.HttpClients
 
             var (success, content) = await TryExecuteAsync(uri, client => client.PostAsync(uri, GetPayload(request)));
 
-            return !success ? new HttpResponse<TResult>(JsonConvert.DeserializeObject<ErrorMessage>(content, JsonSerializerSettings)) 
-                : new HttpResponse<TResult>(JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings));
+            if (!success)
+            {
+                var errorMessage = JsonConvert.DeserializeObject<ErrorMessage>(content, JsonSerializerSettings);
+                return new HttpResponse<TResult>(errorMessage);
+            }
+
+            var result = JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings);
+            return new HttpResponse<TResult>(result);
         }
 
         public Task PutAsync<T>(string uri, T request)
@@ -68,8 +77,14 @@ namespace MiniSpace.Web.HttpClients
         {
             var (success, content) = await TryExecuteAsync(uri, client => client.PutAsync(uri, GetPayload(request)));
 
-            return !success ? new HttpResponse<TResult>(JsonConvert.DeserializeObject<ErrorMessage>(content, JsonSerializerSettings)) 
-                : new HttpResponse<TResult>(JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings));
+            if (!success)
+            {
+                var errorMessage = JsonConvert.DeserializeObject<ErrorMessage>(content, JsonSerializerSettings);
+                return new HttpResponse<TResult>(errorMessage);
+            }
+
+            var result = JsonConvert.DeserializeObject<TResult>(content, JsonSerializerSettings);
+            return new HttpResponse<TResult>(result);
         }
 
         public Task DeleteAsync(string uri)
@@ -94,8 +109,6 @@ namespace MiniSpace.Web.HttpClients
             }
         }
 
-
-
         private static StringContent GetPayload<T>(T request)
         {
             var json = JsonConvert.SerializeObject(request, JsonSerializerSettings);
@@ -103,53 +116,46 @@ namespace MiniSpace.Web.HttpClients
             return new StringContent(json, Encoding.UTF8, "text/plain");
         }
 
-
-
-       private Task<(bool success, string content)> TryExecuteAsync(string uri, Func<HttpClient, Task<HttpResponseMessage>> client)
-    => Policy.Handle<Exception>()
-        .WaitAndRetryAsync(_options.Retries, r => TimeSpan.FromSeconds(Math.Pow(2, r)))
-        .ExecuteAsync(async () =>
-        {
-            if (_client.BaseAddress != null && !Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-            {
-                if (!uri.StartsWith("/")) uri = "/" + uri;
-
-                uri = new Uri(_client.BaseAddress, uri).ToString();
-            }
-            else if (!Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-            {
-                _logger.LogError($"The provided URI '{uri}' is not a valid absolute URL and no BaseAddress is set.");
-                return default;
-            }
-
-            _logger.LogDebug($"Sending HTTP request to URI: {uri}");
-            using (var response = await client(_client))
-            {
-                if (response.IsSuccessStatusCode)
+        private Task<(bool success, string content)> TryExecuteAsync(string uri, Func<HttpClient, Task<HttpResponseMessage>> client)
+            => Policy.Handle<Exception>()
+                .WaitAndRetryAsync(_options.Retries, r => TimeSpan.FromSeconds(Math.Pow(2, r)))
+                .ExecuteAsync(async () =>
                 {
-                    _logger.LogDebug($"Received a valid response to HTTP request from URI: {uri}" +
-                                     $"{Environment.NewLine}{response}");
+                    if (_client.BaseAddress != null && !Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                    {
+                        if (!uri.StartsWith("/")) uri = "/" + uri;
 
-                    return (true, await response.Content.ReadAsStringAsync());
-                }
+                        uri = new Uri(_client.BaseAddress, uri).ToString();
+                    }
+                    else if (!Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                    {
+                        _logger.LogError($"The provided URI '{uri}' is not a valid absolute URL and no BaseAddress is set.");
+                        return default;
+                    }
 
-                var errorContent = "invalid_http_response";
-                if (!response.IsSuccessStatusCode)
-                {
-                    errorContent = await response.Content.ReadAsStringAsync();
-                    _logger.LogError($"Error response from server: {errorContent}");
-                }
+                    _logger.LogDebug($"Sending HTTP request to URI: {uri}");
+                    using (var response = await client(_client))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            _logger.LogDebug($"Received a valid response to HTTP request from URI: {uri}" +
+                                             $"{Environment.NewLine}{response}");
 
-                _logger.LogError($"Received an invalid response to HTTP request from URI: {uri}" +
-                                 $"{Environment.NewLine}{response}");
+                            return (true, await response.Content.ReadAsStringAsync());
+                        }
 
-                return (false, errorContent);
-            }
-        });
+                        var errorContent = "invalid_http_response";
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            errorContent = await response.Content.ReadAsStringAsync();
+                            _logger.LogError($"Error response from server: {errorContent}");
+                        }
 
+                        _logger.LogError($"Received an invalid response to HTTP request from URI: {uri}" +
+                                         $"{Environment.NewLine}{response}");
 
-
-
-
+                        return (false, errorContent);
+                    }
+                });
     }
 }
