@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Students.Core.Entities
     {
         private ISet<Guid> _interestedInEvents = new HashSet<Guid>();
         private ISet<Guid> _signedUpEvents = new HashSet<Guid>();
-        private ISet<string> _languages = new HashSet<string>();
+        private ISet<Language> _languages = new HashSet<Language>();
         private ISet<Interest> _interests = new HashSet<Interest>();
         private ISet<Education> _education = new HashSet<Education>();
         private ISet<Work> _work = new HashSet<Work>();
@@ -29,10 +29,10 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string ContactEmail { get; private set; }
         public string BannerUrl { get; private set; }
         public string PhoneNumber { get; private set; }
-        public IEnumerable<string> Languages
+        public IEnumerable<Language> Languages
         {
             get => _languages;
-            set => _languages = new HashSet<string>(value ?? Enumerable.Empty<string>());
+            set => _languages = new HashSet<Language>(value ?? Enumerable.Empty<Language>());
         }
         public IEnumerable<Interest> Interests
         {
@@ -67,7 +67,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             bool emailNotifications, bool isBanned, State state,
             IEnumerable<Guid> interestedInEvents, IEnumerable<Guid> signedUpEvents,
             string bannerUrl, IEnumerable<Education> education, IEnumerable<Work> work,
-            IEnumerable<string> languages, IEnumerable<Interest> interests,
+            IEnumerable<Language> languages, IEnumerable<Interest> interests,
             bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail,
             string phoneNumber)
         {
@@ -87,14 +87,13 @@ namespace MiniSpace.Services.Students.Core.Entities
             BannerUrl = bannerUrl;
             Education = education ?? Enumerable.Empty<Education>();
             Work = work ?? Enumerable.Empty<Work>();
-            Languages = languages ?? Enumerable.Empty<string>();
+            Languages = languages ?? Enumerable.Empty<Language>();
             Interests = interests ?? Enumerable.Empty<Interest>();
             IsTwoFactorEnabled = isTwoFactorEnabled;
             TwoFactorSecret = twoFactorSecret;
             ContactEmail = contactEmail;
             PhoneNumber = phoneNumber;
         }
-
 
         public void SetIncomplete() => SetState(State.Incomplete);
         public void SetValid() => SetState(State.Valid);
@@ -173,9 +172,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             AddEvent(new StudentWorkUpdated(this));
         }
 
-        public void UpdateLanguages(IEnumerable<string> languages)
+        public void UpdateLanguages(IEnumerable<Language> languages)
         {
-            Languages = new HashSet<string>(languages ?? Enumerable.Empty<string>());
+            Languages = new HashSet<Language>(languages ?? Enumerable.Empty<Language>());
             AddEvent(new StudentLanguagesUpdated(this));
         }
 
@@ -306,4 +305,3 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
     }
 }
-
