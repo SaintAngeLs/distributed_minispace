@@ -110,7 +110,9 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeEvent<UserBanned>()
                 .SubscribeEvent<UserUnbanned>()
                 .SubscribeEvent<StudentImageUploaded>()
-                .SubscribeEvent<MediaFileDeleted>();
+                .SubscribeEvent<MediaFileDeleted>()
+                .SubscribeEvent<TwoFactorAuthenticationEnabled>()
+                .SubscribeEvent<TwoFactorAuthenticationDisabled>();
 
             return app;
         }
