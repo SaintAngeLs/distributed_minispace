@@ -31,7 +31,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.IsTwoFactorEnabled,
                 document.TwoFactorSecret,
                 document.ContactEmail,
-                document.PhoneNumber
+                document.PhoneNumber,
+                document.Country,
+                document.City
             );
 
         public static StudentDocument AsDocument(this Student entity)
@@ -73,6 +75,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 TwoFactorSecret = entity.TwoFactorSecret,
                 ContactEmail = entity.ContactEmail,
                 PhoneNumber = entity.PhoneNumber,
+                Country = entity.Country,
+                City = entity.City,
             };
 
         public static StudentDto AsDto(this StudentDocument document)
@@ -114,6 +118,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 TwoFactorSecret = document.TwoFactorSecret,
                 ContactEmail = document.ContactEmail,
                 PhoneNumber = document.PhoneNumber,
+                Country = document.Country,
+                City = document.City,
             };
 
         public static UserNotifications AsEntity(this UserNotificationsDocument document)
