@@ -132,7 +132,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
 
         public void Update(string firstName, string lastName, string description,
-            bool emailNotifications, string contactEmail, string phoneNumber, string country, string city)
+            bool emailNotifications, string contactEmail, string phoneNumber, string country, string city, DateTime? dateOfBirth)
         {
             CheckFullName(firstName, lastName);
             CheckDescription(description);
@@ -150,6 +150,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             PhoneNumber = phoneNumber;
             Country = country;
             City = city;
+            DateOfBirth = dateOfBirth;
 
             AddEvent(new StudentUpdated(this));
         }
