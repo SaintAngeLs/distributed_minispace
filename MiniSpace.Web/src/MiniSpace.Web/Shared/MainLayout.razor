@@ -19,7 +19,9 @@
                 }
                 else
                 {
-                    <MudButton Variant="Variant.Text" OnClick="@OpenDrawer">Menu</MudButton>
+                    <MudButton Variant="Variant.Text" OnClick="@ToggleDrawer">
+                        <img src="icons/menu-left.svg" alt="Menu" style="height: 24px; width: 24px;" />
+                    </MudButton>
                 }
                 <span class="ml-2">MiniSpace</span>
             </div>
@@ -53,9 +55,9 @@
     }
     else
     {
-        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Persistent : DrawerVariant.Responsive)">
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
             <MudDrawerHeader>
-                <MudText Typo="Typo.h6">Menu</MudText>
+                <MudText Typo="Typo.h6"> </MudText>
             </MudDrawerHeader>
             <MudNavMenu>
                 <MudNavLink Href="#home" OnClick="ScrollToHome" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
@@ -69,12 +71,11 @@
     @if (_isUserAuthenticated)
     {
         <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Temporary)" OpenMiniOnHover="true">
-            @if (!isPC)
-            {
+            
                 <MudDrawerHeader>
                     <MudText Typo="Typo.h6">Menu</MudText>
                 </MudDrawerHeader>
-            }
+            
             <MudNavMenu>
                 <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
                 <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
@@ -111,11 +112,11 @@
     }
 
     <MudMainContent>
-        <div style="flex: 1; display: flex; flex-direction: column; min-height: 100vh;">
+        <div style="flex: 1; display: flex; flex-direction: column;">
             <div style="flex: 1;">
                 <div style="flex: 1; display: flex; justify-content: center; background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);">
-                    <div class="main-content" style="flex-grow: 1; max-width: 1400px;">
-                        <div style="padding: 10px; margin: 20px;">
+                    <div  style="flex-grow: 1; max-width: 1400px;">
+                        <div style="padding: 10px; margin: 20px;  min-height: 100vh;">
                             @Body
                         </div>
                     </div>

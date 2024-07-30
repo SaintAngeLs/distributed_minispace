@@ -361,7 +361,7 @@ html, body {
   
     .left-side, .right-side {
         width: 100%;
-        flex: none !important;
+        /* flex: none !important; */
     }
 
     .left-side {
