@@ -30,7 +30,9 @@ namespace MiniSpace.Web.Areas.Students
             string twoFactorSecret,
             IEnumerable<EducationDto> education,
             IEnumerable<WorkDto> work,
-            string phoneNumber);
+            string phoneNumber,
+            string country,
+            string city);
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl,
             string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail);
         Task<string> GetStudentStateAsync(Guid studentId);

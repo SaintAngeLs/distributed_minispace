@@ -11,6 +11,9 @@ else
 {
     <MudStack>
         <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.PhoneNumber" Label="Phone Number" HelperText="Your phone number" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Country" Label="Country" HelperText="Your country" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.City" Label="City" HelperText="Your city" Variant="Variant.Outlined" Margin="Margin.Dense" />
     </MudStack>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveChangesAsync">Save privacy</MudButton>
 }

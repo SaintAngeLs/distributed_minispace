@@ -65,7 +65,9 @@ namespace MiniSpace.Web.Areas.Students
             string twoFactorSecret,
             IEnumerable<EducationDto> education,
             IEnumerable<WorkDto> work,
-            string phoneNumber)
+            string phoneNumber,
+            string country,
+            string city)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -79,14 +81,16 @@ namespace MiniSpace.Web.Areas.Students
                 description,
                 emailNotifications,
                 contactEmail,
-                languages = languages.Select(l => l.ToString()).ToList(),
-                interests = interests.Select(i => i.ToString()).ToList(),
+                languages = languages.ToList(),
+                interests = interests.ToList(),
                 enableTwoFactor,
                 disableTwoFactor,
                 twoFactorSecret,
                 education,
                 work,
-                phoneNumber
+                phoneNumber,
+                country,
+                city
             };
 
             var jsonData = JsonSerializer.Serialize(updateStudentData);
@@ -111,7 +115,6 @@ namespace MiniSpace.Web.Areas.Students
             return student != null ? student.State : "invalid";
         }
 
-        // Updated method for notification preferences
         public async Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto, bool emailNotifications)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
@@ -131,7 +134,6 @@ namespace MiniSpace.Web.Areas.Students
                 preferencesDto.FriendsNotifications
             };
 
-            // Serialize the data to JSON and log it
             var jsonData = JsonSerializer.Serialize(updatePreferencesData);
             Console.WriteLine($"Sending UpdateUserNotificationPreferences request: {jsonData}");
 
@@ -187,8 +189,8 @@ namespace MiniSpace.Web.Areas.Students
 
             var updateData = new
             {
-                languages = languages.Select(l => l.ToString()).ToList(),
-                interests = interests.Select(i => i.ToString()).ToList()
+                languages = languages.ToList(),
+                interests = interests.ToList()
             };
 
             var jsonData = JsonSerializer.Serialize(updateData);

@@ -22,7 +22,7 @@
     <MudContainer Class="account-container">
         <MudGrid>
             <MudItem xs="12" sm="4" md="3">
-                <MudNavMenu Elevation="1">
+                 <MudNavMenu Elevation="1">
                     <MudNavLink OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
@@ -269,6 +269,8 @@
                 studentDto.Education,
                 studentDto.Work,
                 studentDto.PhoneNumber,
+                studentDto.Country,
+                studentDto.City,
                 IsTwoFactorEnabled = isTwoFactorEnabled,
                 TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
             };
@@ -291,7 +293,9 @@
                 isTwoFactorEnabled ? twoFactorSecret : null,
                 studentDto.Education,
                 studentDto.Work,
-                studentDto.PhoneNumber
+                studentDto.PhoneNumber,
+                studentDto.Country,
+                studentDto.City
             );
 
             if (studentDto.EmailNotifications)
