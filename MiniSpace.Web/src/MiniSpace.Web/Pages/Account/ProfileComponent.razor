@@ -3,6 +3,7 @@
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 @using System.IO
 @using MudBlazor
 
@@ -25,6 +26,13 @@ else
                            Class="button-margins"
                            for="file-input">
                     Upload Image
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           Class="button-margins"
+                           OnClick="async () => await RemoveImage()">
+                    Remove Image
                 </MudButton>
             </div>
         </MudItem>
@@ -66,6 +74,7 @@ else
             </div>
             <div class="modal-body">
                 <div id="cropper-container" class="img-container"></div>
+                <div id="cropped-image-container" class="img-container"></div>
             </div>
             <div class="modal-footer">
                 <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
@@ -84,6 +93,7 @@ else
     [Parameter] public bool IsUploading { get; set; }
 
     private string base64Image = string.Empty;
+    private string croppedImage = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -131,11 +141,9 @@ else
     [JSInvokable]
     public void ReceiveCroppedImage(string base64Result)
     {
-        base64Image = base64Result
-            .Replace("data:image/png;base64,", "")
-            .Replace("data:image/jpeg;base64,", "")
-            .Replace(" ", "+"); // Handle any spaces in the base64 string
+        croppedImage = base64Result;
         StateHasChanged();
+        JSRuntime.InvokeVoidAsync("displayCroppedImage", croppedImage);
     }
 
     private bool IsBase64String(string base64)
@@ -171,12 +179,12 @@ else
                     $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_profile.png",
                     "image/png",
                     base64Image);
-
-               
-                    
-                    await SaveImageAsync.InvokeAsync(null);
                 
-                 
+                StateHasChanged();
+                await SaveImageAsync.InvokeAsync(null);
+
+                // Reload the page
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             }
             catch (FormatException)
             {
@@ -191,5 +199,28 @@ else
             StateHasChanged();
             CloseCropper();
         }
+    }
+
+    private async Task RemoveImage()
+    {
+        IsUploading = true;
+        StateHasChanged();
+
+        try
+        {
+            await MediaFilesService.DeleteMediaFileAsync(StudentWithGalleryImagesDto.Student.ProfileImageUrl);
+            StudentWithGalleryImagesDto.Student.ProfileImageUrl = null;
+            await SaveImageAsync.InvokeAsync(null);
+
+            // Reload the page
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred while removing the image: {ex.Message}");
+        }
+
+        IsUploading = false;
+        StateHasChanged();
     }
 }
