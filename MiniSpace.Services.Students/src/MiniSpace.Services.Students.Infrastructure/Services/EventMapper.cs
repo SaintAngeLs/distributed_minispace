@@ -45,7 +45,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
                         e.Student.Interests.Select(i => i.ToString()),
                         e.Student.ContactEmail,
                         e.Student.Country,
-                        e.Student.City);
+                        e.Student.City,
+                        e.Student.DateOfBirth);
                 case StudentStateChanged e:
                     return new Application.Events.StudentStateChanged(
                         e.Student.Id, 
