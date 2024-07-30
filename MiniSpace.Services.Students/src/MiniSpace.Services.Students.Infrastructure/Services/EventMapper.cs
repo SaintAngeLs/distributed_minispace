@@ -43,7 +43,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
                         }),
                         e.Student.Languages.Select(i => i.ToString()),
                         e.Student.Interests.Select(i => i.ToString()),
-                        e.Student.ContactEmail);
+                        e.Student.ContactEmail,
+                        e.Student.Country,
+                        e.Student.City);
                 case StudentStateChanged e:
                     return new Application.Events.StudentStateChanged(
                         e.Student.Id, 

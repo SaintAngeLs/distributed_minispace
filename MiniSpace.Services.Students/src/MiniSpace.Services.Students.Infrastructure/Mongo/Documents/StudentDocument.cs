@@ -31,5 +31,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public string TwoFactorSecret { get; set; }
         public string ContactEmail { get; set; }
         public string PhoneNumber { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
     }
 }
