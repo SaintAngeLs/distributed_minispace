@@ -29,6 +29,8 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string ContactEmail { get; private set; }
         public string BannerUrl { get; private set; }
         public string PhoneNumber { get; private set; }
+        public string Country { get; private set; }
+        public string City { get; private set; }
         public IEnumerable<Language> Languages
         {
             get => _languages;
@@ -69,7 +71,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             string bannerUrl, IEnumerable<Education> education, IEnumerable<Work> work,
             IEnumerable<Language> languages, IEnumerable<Interest> interests,
             bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail,
-            string phoneNumber)
+            string phoneNumber, string country, string city)
         {
             Id = id;
             Email = email;
@@ -93,6 +95,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             TwoFactorSecret = twoFactorSecret;
             ContactEmail = contactEmail;
             PhoneNumber = phoneNumber;
+            Country = country;
+            City = city;
         }
 
         public void SetIncomplete() => SetState(State.Incomplete);
@@ -128,7 +132,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         }
 
         public void Update(string firstName, string lastName, string description,
-            bool emailNotifications, string contactEmail, string phoneNumber)
+            bool emailNotifications, string contactEmail, string phoneNumber, string country, string city)
         {
             CheckFullName(firstName, lastName);
             CheckDescription(description);
@@ -144,6 +148,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             EmailNotifications = emailNotifications;
             ContactEmail = contactEmail;
             PhoneNumber = phoneNumber;
+            Country = country;
+            City = city;
 
             AddEvent(new StudentUpdated(this));
         }
