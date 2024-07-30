@@ -2,6 +2,8 @@
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
+@inject IJSRuntime JSRuntime
+@using System.IO
 @using MudBlazor
 
 <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
@@ -14,37 +16,23 @@ else
     <MudGrid>
         <MudItem xs="12" sm="6" md="4">
             <div class="image-upload-container">
-                <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
-                <MudFileUpload T="IBrowserFile" @bind-Files="File" Accept=".jpg,.jpeg,.png">
-                    <ButtonTemplate>
-                        <MudButton HtmlTag="label"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            StartIcon="@Icons.Material.Filled.CloudUpload"
-                            Class="button-margins"
-                            for="@context">
-                            Upload Image
-                        </MudButton>
-                    </ButtonTemplate>
-                    <SelectedTemplate>
-                        @if (File != null)
-                        {
-                            <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @File.Name </MudText>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveImageAsync">Save Image</MudButton>
-                        }
-                        else
-                        {
-                            <MudText><MudIcon Icon="@Icons.Material.Filled.Attachment" /> No Files Selected</MudText>
-                        }
-                    </SelectedTemplate>
-                </MudFileUpload>
+                <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;" />
+                <InputFile OnChange="OpenCropper" style="display: none;" id="file-input" />
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           Class="button-margins"
+                           for="file-input">
+                    Upload Image
+                </MudButton>
             </div>
         </MudItem>
         <MudItem xs="11" sm="11">
-            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense" />
         </MudItem>
         <MudItem xs="11" sm="11">
-            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense" />
         </MudItem>
         <MudItem xs="12" sm="11" md="11">
             <MudGrid>
@@ -52,19 +40,40 @@ else
                     <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="11">
-                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined" Lines="5" />
                 </MudItem>
             </MudGrid>
         </MudItem>
     </MudGrid>
     <MudStack>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveChangesAsync">Save profile</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveChangesAsync.InvokeAsync(null)">Save profile</MudButton>
         @if (IsUploading)
         {
             <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
         }
     </MudStack>
 }
+
+<!-- Bootstrap Modal for Cropper -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="cropper-container" class="img-container"></div>
+            </div>
+            <div class="modal-footer">
+                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter] public bool IsLoading { get; set; }
@@ -74,10 +83,55 @@ else
     [Parameter] public EventCallback SaveImageAsync { get; set; }
     [Parameter] public bool IsUploading { get; set; }
 
+    private string base64Image = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", DotNetObjectReference.Create(this));
+        }
+    }
+
     private string GetImage()
     {
         return !string.IsNullOrEmpty(StudentWithGalleryImagesDto.Student.ProfileImageUrl) 
             ? StudentWithGalleryImagesDto.Student.ProfileImageUrl 
             : "images/default_profile_image.webp";
+    }
+
+    private async Task OpenCropper(InputFileChangeEventArgs e)
+    {
+        var inputFile = e.File;
+        if (inputFile != null)
+        {
+            using var stream = inputFile.OpenReadStream();
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+            base64Image = Convert.ToBase64String(buffer);
+            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image);
+        }
+    }
+
+    private void CloseCropper()
+    {
+        JSRuntime.InvokeVoidAsync("hideCropperModal");
+    }
+
+    [JSInvokable]
+    public void ReceiveCroppedImage(string base64Result)
+    {
+        base64Image = base64Result;
+        StateHasChanged();
+    }
+
+    private async Task SaveCroppedImage()
+    {
+        if (!string.IsNullOrEmpty(base64Image))
+        {
+            // Implement the logic to save the cropped image to the server.
+            CloseCropper();
+        }
     }
 }

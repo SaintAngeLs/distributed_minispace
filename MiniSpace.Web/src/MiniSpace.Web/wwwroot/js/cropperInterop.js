@@ -1,4 +1,3 @@
-// Ensure GLOBAL is defined and accessible
 var GLOBAL = GLOBAL || {};
 
 var cropper = null;
@@ -10,7 +9,7 @@ GLOBAL.SetDotnetReference = function(dotNetReference) {
 
 // Function to display the selected image and initialize the cropper and buttons
 function displayImageAndInitializeCropper(base64String) {
-    var imageContainer = document.getElementById('image-container');
+    var imageContainer = document.getElementById('cropper-container');
     imageContainer.innerHTML = `
         <div style="">
         <img id="image-to-crop" src="data:image/jpeg;base64,${base64String}" style="max-width: 100%;" />
@@ -19,7 +18,14 @@ function displayImageAndInitializeCropper(base64String) {
         </div>
     `;
 
-    initializeCropper('image-to-crop', 16 / 9);
+    $('#cropperModal').modal('show');
+
+    $('#cropperModal').on('shown.bs.modal', function () {
+        var imageElement = document.getElementById('image-to-crop');
+        if (imageElement) {
+            initializeCropper('image-to-crop', 16 / 9);
+        }
+    });
 
     document.getElementById('crop-image').addEventListener('click', function() {
         getCroppedImage('ReceiveCroppedImage');
@@ -92,3 +98,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+window.showCropperModal = () => {
+    $('#cropperModal').modal('show');
+    $('#cropperModal').on('shown.bs.modal', function () {
+        var imageContainer = document.getElementById('cropper-container');
+        var img = imageContainer.querySelector('img');
+        if (img) {
+            initializeCropper('image-to-crop', 16 / 9);
+        }
+    });
+};
+
+window.hideCropperModal = () => {
+    $('#cropperModal').modal('hide');
+    destroyCropper();
+};
