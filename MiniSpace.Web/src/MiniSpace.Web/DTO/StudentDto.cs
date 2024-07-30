@@ -29,8 +29,10 @@ namespace MiniSpace.Web.DTO
         public string TwoFactorSecret { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }
-         public List<GalleryImageDto> GalleryOfImageUrls { get; set; } 
-
+        public List<GalleryImageDto> GalleryOfImageUrls { get; set; } 
+        public string Country { get; set; }
+        public string City { get; set; }
+        
         
         public bool IsInvitationPending { get; set; } 
         public bool InvitationSent { get; set; }
