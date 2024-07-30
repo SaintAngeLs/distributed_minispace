@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using MiniSpace.Services.Students.Core.Entities;
 
 namespace MiniSpace.Services.Students.Application.Dto
 {
@@ -22,7 +23,7 @@ namespace MiniSpace.Services.Students.Application.Dto
         public string BannerUrl { get; set; }
         public string PhoneNumber { get; set; }
         public IEnumerable<string> Languages { get; set; }
-        public IEnumerable<InterestDto> Interests { get; set; }
+        public IEnumerable<string> Interests { get; set; }
         public IEnumerable<EducationDto> Education { get; set; }
         public IEnumerable<WorkDto> Work { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
