@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Interests;
+using MiniSpace.Web.DTO.Languages;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -56,8 +59,8 @@ namespace MiniSpace.Web.Areas.Students
             string description, 
             bool emailNotifications, 
             string contactEmail, 
-            IEnumerable<string> languages, 
-            IEnumerable<InterestDto> interests, 
+            IEnumerable<Language> languages, 
+            IEnumerable<Interest> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
@@ -77,8 +80,8 @@ namespace MiniSpace.Web.Areas.Students
                 description,
                 emailNotifications,
                 contactEmail,
-                languages,
-                interests,
+                languages = languages.Select(l => l.ToString()).ToList(),
+                interests = interests.Select(i => i.ToString()).ToList(),
                 enableTwoFactor,
                 disableTwoFactor,
                 twoFactorSecret,
@@ -177,16 +180,16 @@ namespace MiniSpace.Web.Areas.Students
 
         public async Task UpdateStudentLanguagesAndInterestsAsync(
             Guid studentId, 
-            IEnumerable<string> languages, 
-            IEnumerable<InterestDto> interests)
+            IEnumerable<Language> languages, 
+            IEnumerable<Interest> interests)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
 
             var updateData = new
             {
-                languages,
-                interests
+                languages = languages.Select(l => l.ToString()).ToList(),
+                interests = interests.Select(i => i.ToString()).ToList()
             };
 
             var jsonData = JsonSerializer.Serialize(updateData);

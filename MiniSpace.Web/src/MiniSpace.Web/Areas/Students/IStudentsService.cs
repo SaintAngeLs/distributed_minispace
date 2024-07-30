@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Interests;
+using MiniSpace.Web.DTO.Languages;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -21,8 +23,8 @@ namespace MiniSpace.Web.Areas.Students
             string description, 
             bool emailNotifications, 
             string contactEmail, 
-            IEnumerable<string> languages, 
-            IEnumerable<InterestDto> interests, 
+            IEnumerable<Language> languages, 
+            IEnumerable<Interest> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
@@ -40,7 +42,8 @@ namespace MiniSpace.Web.Areas.Students
         Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId);
         Task UpdateStudentLanguagesAndInterestsAsync(
             Guid studentId, 
-            IEnumerable<string> languages, 
-            IEnumerable<InterestDto> interests);
+            IEnumerable<Language> languages, 
+            IEnumerable<Interest> interests);
+
     }
 }

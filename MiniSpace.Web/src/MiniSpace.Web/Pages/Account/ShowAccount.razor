@@ -29,7 +29,7 @@
                     <MudNavLink OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavMenu>
                 </MudNavMenu>
             </MudItem>
             <MudItem xs="12" sm="8" md="9">
@@ -52,7 +52,37 @@
                     }
                     else if (activeTabIndex == 4)
                     {
-                        <LanguagesAndInterestsComponent IsLoading="isLoading" AvailableLanguages="availableLanguages" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" />
+                        <MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
+                                    <MudSelect T="Language" @bind-SelectedValues="selectedLanguages" Label="Select Languages" Variant="Variant.Outlined" MultiSelection="true">
+                                        @foreach (var language in Enum.GetValues(typeof(Language)).Cast<Language>())
+                                        {
+                                            <MudSelectItem Value="@(language)">@language.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
+                                    <MudSelect T="Interest" @bind-SelectedValues="selectedInterests" Label="Select Interests" Variant="Variant.Outlined" MultiSelection="true">
+                                        @foreach (var interest in Enum.GetValues(typeof(Interest)).Cast<Interest>())
+                                        {
+                                            <MudSelectItem Value="@(interest)">@interest.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">Save Changes</MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        }
                     }
                     else if (activeTabIndex == 5)
                     {
@@ -102,13 +132,13 @@
     .image-upload-container {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        align-items: center.
+        justify-content: center.
         width: 100%.
     }
 
     .profile-image {
-        height: 150px;
+        height: 150px.
         width: 150px.
     }
 
@@ -131,20 +161,6 @@
         new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
     };
 
-    private List<string> availableLanguages = new List<string>
-    {
-        "English",
-        "Spanish",
-        "French",
-        "German",
-        "Chinese",
-        "Japanese",
-        "Korean",
-        "Italian",
-        "Russian",
-        "Portuguese"
-    };
-
     private int activeTabIndex = 0;
     private bool isTwoFactorEnabled;
     private string twoFactorSecret;
@@ -155,6 +171,9 @@
     private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
     private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
+
+    private HashSet<Language> selectedLanguages = new HashSet<Language>();
+    private HashSet<Interest> selectedInterests = new HashSet<Interest>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -180,6 +199,9 @@
                 twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
 
                 availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
+
+                selectedLanguages = new HashSet<Language>(studentDto.Languages);
+                selectedInterests = new HashSet<Interest>(studentDto.Interests);
             }
             else
             {
@@ -195,6 +217,24 @@
             isLoading = false;
             StateHasChanged();
         }
+    }
+
+    private async Task SaveChanges()
+    {
+        var studentDto = studentWithGalleryImagesDto.Student;
+        studentDto.Languages = selectedLanguages.ToList();
+        studentDto.Interests = selectedInterests.ToList();
+
+        // Save changes to the server
+        await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
+            studentDto.Id,
+            studentDto.Languages,
+            studentDto.Interests
+        );
+
+        // Update studentDto
+        await StudentsService.UpdateStudentDto(studentDto.Id);
+        StateHasChanged();
     }
 
     private async Task SaveChangesAsync()
@@ -385,4 +425,6 @@
             return ms.ToArray();
         }
     }
+
+
 }
