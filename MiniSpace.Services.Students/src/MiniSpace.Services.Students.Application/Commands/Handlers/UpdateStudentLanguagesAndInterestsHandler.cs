@@ -74,7 +74,9 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 }).ToList(),
                 student.Languages.Select(l => l.ToString()).ToList(),
                 student.Interests.Select(i => i.ToString()).ToList(),
-                student.ContactEmail
+                student.ContactEmail,
+                student.Country,
+                student.City
             );
 
             await _messageBroker.PublishAsync(studentUpdatedEvent);

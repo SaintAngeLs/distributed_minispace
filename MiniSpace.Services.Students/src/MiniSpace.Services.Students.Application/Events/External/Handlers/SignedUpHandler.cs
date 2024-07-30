@@ -65,7 +65,9 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 false, // IsTwoFactorEnabled
                 string.Empty, // TwoFactorSecret
                 string.Empty, // ContactEmail
-                string.Empty // PhoneNumber
+                string.Empty, // PhoneNumber,
+                string.Empty, // Country
+                string.Empty // City 
             );
 
             await _studentRepository.AddAsync(newStudent);

@@ -23,12 +23,14 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string TwoFactorSecret { get; }
         public string? ContactEmail { get; }
         public string PhoneNumber { get; }
+        public string Country { get; }
+        public string City { get; }
 
         public UpdateStudent(Guid studentId, string firstName, string lastName, string? description, bool emailNotifications,
             IEnumerable<EducationDto> education, IEnumerable<WorkDto> work, 
             IEnumerable<string> languages, IEnumerable<string> interests,
             bool enableTwoFactor, bool disableTwoFactor, string twoFactorSecret, string? contactEmail,
-            string phoneNumber)
+            string phoneNumber, string country, string city)
         {
             StudentId = studentId;
             FirstName = firstName;
@@ -44,6 +46,8 @@ namespace MiniSpace.Services.Students.Application.Commands
             TwoFactorSecret = twoFactorSecret;
             ContactEmail = contactEmail;
             PhoneNumber = phoneNumber;
+            Country = country;
+            City = city;
         }
     }
 }
