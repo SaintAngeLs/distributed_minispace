@@ -26,8 +26,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.BannerUrl,
                 document.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)),
                 document.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)),
-                document.Languages, // Directly use document.Languages
-                document.Interests,
+                document.Languages.Select(l => Enum.Parse<Language>(l.ToString())).ToList(), // Convert string to enum
+                document.Interests.Select(i => Enum.Parse<Interest>(i.ToString())).ToList(),
                 document.IsTwoFactorEnabled,
                 document.TwoFactorSecret,
                 document.ContactEmail,
@@ -67,8 +67,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     EndDate = w.EndDate,
                     Description = w.Description
                 }),
-                Languages = entity.Languages, // Directly use entity.Languages
-                Interests = entity.Interests,
+                Languages = entity.Languages.Select(l => l.ToString()),
+                Interests = entity.Interests.Select(i => i.ToString()), 
                 IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
                 TwoFactorSecret = entity.TwoFactorSecret,
                 ContactEmail = entity.ContactEmail,
@@ -108,8 +108,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     EndDate = w.EndDate,
                     Description = w.Description
                 }),
-                Languages = document.Languages.Select(l => l.ToString()), // Convert Language to string
-                Interests = document.Interests.Select(i => new InterestDto { Name = i.ToString() }),
+                Languages = document.Languages,
+                Interests = document.Interests,
                 IsTwoFactorEnabled = document.IsTwoFactorEnabled,
                 TwoFactorSecret = document.TwoFactorSecret,
                 ContactEmail = document.ContactEmail,
