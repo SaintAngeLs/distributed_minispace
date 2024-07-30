@@ -3,7 +3,7 @@
 @using MudBlazor
 
 <MudText Typo="Typo.h6" GutterBottom="true">User Settings</MudText>
-@if (isLoading)
+@if (IsLoading)
 {
     <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
 }
@@ -11,7 +11,7 @@ else
 {
     <MudGrid>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" Margin="Margin.Dense">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" Margin="Margin.Dense">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -19,7 +19,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility" Margin="Margin.Dense">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility" Margin="Margin.Dense">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -27,7 +27,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.InterestedInEventsVisibility" Label="Interested In Events Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.InterestedInEventsVisibility" Label="Interested In Events Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -35,7 +35,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.SignedUpEventsVisibility" Label="Signed Up Events Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.SignedUpEventsVisibility" Label="Signed Up Events Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -43,7 +43,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.EducationVisibility" Label="Education Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.EducationVisibility" Label="Education Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -51,7 +51,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.WorkPositionVisibility" Label="Work Position Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.WorkPositionVisibility" Label="Work Position Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -59,7 +59,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.LanguagesVisibility" Label="Languages Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.LanguagesVisibility" Label="Languages Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -67,7 +67,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.InterestsVisibility" Label="Interests Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.InterestsVisibility" Label="Interests Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -75,7 +75,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.ContactEmailVisibility" Label="Contact Email Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.ContactEmailVisibility" Label="Contact Email Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -83,7 +83,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="availableSettingsDto.PhoneNumberVisibility" Label="Phone Number Visibility">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.PhoneNumberVisibility" Label="Phone Number Visibility">
                 @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                 {
                     <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
@@ -91,7 +91,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="PreferredLanguage" @bind-Value="availableSettingsDto.PreferredLanguage" Label="Preferred Language" HelperText="Preferred language for the interface">
+            <MudSelect T="PreferredLanguage" @bind-Value="AvailableSettingsDto.PreferredLanguage" Label="Preferred Language" HelperText="Preferred language for the interface">
                 @foreach (PreferredLanguage language in Enum.GetValues(typeof(PreferredLanguage)))
                 {
                     <MudSelectItem Value="@language">@language</MudSelectItem>
@@ -99,7 +99,7 @@ else
             </MudSelect>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect T="FrontendVersion" @bind-Value="availableSettingsDto.FrontendVersion" Label="Frontend Version">
+            <MudSelect T="FrontendVersion" @bind-Value="AvailableSettingsDto.FrontendVersion" Label="Frontend Version">
                 @foreach (FrontendVersion version in Enum.GetValues(typeof(FrontendVersion)))
                 {
                     <MudSelectItem Value="@version">@version</MudSelectItem>
@@ -111,7 +111,7 @@ else
 }
 
 @code {
-    [Parameter] public bool isLoading { get; set; }
-    [Parameter] public AvailableSettingsDto availableSettingsDto { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public AvailableSettingsDto AvailableSettingsDto { get; set; }
     [Parameter] public EventCallback SaveUserSettingsAsync { get; set; }
 }
