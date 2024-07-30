@@ -54,7 +54,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                            command.ContactEmail, 
                            command.PhoneNumber,
                            command.Country,
-                           command.City);
+                           command.City,
+                           command.DateOfBirth);
 
             student.UpdateEducation(command.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)));
             student.UpdateWork(command.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)));
@@ -97,7 +98,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 student.Interests.Select(i => i.ToString()).ToList(),
                 student.ContactEmail,
                 student.Country,
-                student.City
+                student.City,
+                student.DateOfBirth
             );
 
             await _messageBroker.PublishAsync(studentUpdatedEvent);

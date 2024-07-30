@@ -76,7 +76,8 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 student.Interests.Select(i => i.ToString()).ToList(),
                 student.ContactEmail,
                 student.Country,
-                student.City
+                student.City,
+                student.DateOfBirth
             );
 
             await _messageBroker.PublishAsync(studentUpdatedEvent);

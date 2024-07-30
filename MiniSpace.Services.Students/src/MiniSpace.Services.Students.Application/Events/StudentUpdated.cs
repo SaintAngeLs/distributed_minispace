@@ -19,11 +19,12 @@ namespace MiniSpace.Services.Students.Application.Events
         public string ContactEmail { get; } 
         public string Country { get; }
         public string City { get; }
+        public DateTime? DateOfBirth { get; }
 
         public StudentUpdated(Guid studentId, string fullName, string description,
                               IEnumerable<EducationDto> education, IEnumerable<WorkDto> work,
                               IEnumerable<string> languages, IEnumerable<string> interests,
-                              string contactEmail, string country, string city)
+                              string contactEmail, string country, string city, DateTime? dateOfBirth)
         {
             StudentId = studentId;
             FullName = fullName;
@@ -35,6 +36,7 @@ namespace MiniSpace.Services.Students.Application.Events
             ContactEmail = contactEmail;
             Country = country;
             City = city;
+            DateOfBirth = dateOfBirth;
         }
     }
 }
