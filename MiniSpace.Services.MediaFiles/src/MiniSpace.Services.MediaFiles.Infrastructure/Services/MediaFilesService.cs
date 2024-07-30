@@ -9,6 +9,7 @@ using MiniSpace.Services.MediaFiles.Core.Entities;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -51,7 +52,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 throw new InvalidContextTypeException(command.SourceType);
             }
 
-             if (sourceType == ContextType.StudentProfileImage || 
+            if (sourceType == ContextType.StudentProfileImage || 
                 sourceType == ContextType.StudentBannerImage ||
                 sourceType == ContextType.OrganizationProfileImage ||
                 sourceType == ContextType.OrganizationBannerImage)
@@ -64,7 +65,6 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 }
             }
 
-
             byte[] bytes = Convert.FromBase64String(command.Base64Content);
             _fileValidator.ValidateFileSize(bytes.Length);
             _fileValidator.ValidateFileExtensions(bytes, command.FileContentType);
@@ -72,15 +72,23 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             using var inStream = new MemoryStream(bytes);
             using var myImage = await Image.LoadAsync(inStream);
             using var outStream = new MemoryStream();
-            await myImage.SaveAsync(outStream, new WebpEncoder { Quality = 75 });
-            inStream.Position = 0;
-            outStream.Position = 0;
+            myImage.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Mode = ResizeMode.Max,
+                Size = new Size(1024, 1024) // Adjust size for optimization
+            }));
+            await myImage.SaveAsync(outStream, new WebpEncoder { Quality = 50 });
 
             string originalFileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName);
             string webpFileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName, "webp");
 
-            var originalUrl = await _s3Service.UploadFileAsync("images", originalFileName, inStream);
-            var processedUrl = await _s3Service.UploadFileAsync("webps", webpFileName, outStream);
+            var originalUrlTask = _s3Service.UploadFileAsync("images", originalFileName, inStream);
+            var processedUrlTask = _s3Service.UploadFileAsync("webps", webpFileName, outStream);
+
+            await Task.WhenAll(originalUrlTask, processedUrlTask);
+
+            var originalUrl = await originalUrlTask;
+            var processedUrl = await processedUrlTask;
 
             var uploadDate = _dateTimeProvider.Now;
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
@@ -99,7 +107,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
             }
 
-             if (sourceType == ContextType.OrganizationProfileImage ||
+            if (sourceType == ContextType.OrganizationProfileImage ||
                 sourceType == ContextType.OrganizationBannerImage ||
                 sourceType == ContextType.OrganizationGalleryImage)
             {
