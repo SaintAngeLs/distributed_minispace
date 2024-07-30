@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
@@ -59,8 +58,8 @@ namespace MiniSpace.Web.Areas.Students
             string description, 
             bool emailNotifications, 
             string contactEmail, 
-            IEnumerable<Language> languages, 
-            IEnumerable<Interest> interests, 
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
@@ -180,8 +179,8 @@ namespace MiniSpace.Web.Areas.Students
 
         public async Task UpdateStudentLanguagesAndInterestsAsync(
             Guid studentId, 
-            IEnumerable<Language> languages, 
-            IEnumerable<Interest> interests)
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);

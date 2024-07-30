@@ -1,11 +1,11 @@
 @page "/account"
-@using System.Globalization
+@using System.Globalizationes
+@using MiniSpace.Web.Shared
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.MediaFiles
-@using MiniSpace.Web.DTO.Types
-@using MiniSpace.Web.Shared
+@using MiniSpace.Web.DTO.Typ
 @using MudBlazor
 @using System.IO
 @using System.Text.Json
@@ -29,7 +29,7 @@
                     <MudNavLink OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavMenu>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavLink>
                 </MudNavMenu>
             </MudItem>
             <MudItem xs="12" sm="8" md="9">
@@ -62,19 +62,19 @@
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
-                                    <MudSelect T="Language" @bind-SelectedValues="selectedLanguages" Label="Select Languages" Variant="Variant.Outlined" MultiSelection="true">
+                                    <MudSelect T="string" Label="Select Languages" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedLanguages" SelectedValuesChanged="OnSelectedLanguagesChanged">
                                         @foreach (var language in Enum.GetValues(typeof(Language)).Cast<Language>())
                                         {
-                                            <MudSelectItem Value="@(language)">@language.ToString()</MudSelectItem>
+                                            <MudSelectItem Value="@language.ToString()">@language.ToString()</MudSelectItem>
                                         }
                                     </MudSelect>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
-                                    <MudSelect T="Interest" @bind-SelectedValues="selectedInterests" Label="Select Interests" Variant="Variant.Outlined" MultiSelection="true">
+                                    <MudSelect T="string" Label="Select Interests" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedInterests" SelectedValuesChanged="OnSelectedInterestsChanged">
                                         @foreach (var interest in Enum.GetValues(typeof(Interest)).Cast<Interest>())
                                         {
-                                            <MudSelectItem Value="@(interest)">@interest.ToString()</MudSelectItem>
+                                            <MudSelectItem Value="@interest.ToString()">@interest.ToString()</MudSelectItem>
                                         }
                                     </MudSelect>
                                 </MudItem>
@@ -172,8 +172,8 @@
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
     private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
 
-    private HashSet<Language> selectedLanguages = new HashSet<Language>();
-    private HashSet<Interest> selectedInterests = new HashSet<Interest>();
+    private HashSet<string> selectedLanguages = new HashSet<string>();  // Changed to HashSet<string>
+    private HashSet<string> selectedInterests = new HashSet<string>();  // Changed to HashSet<string>
 
     protected override async Task OnInitializedAsync()
     {
@@ -190,6 +190,9 @@
                 studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
                 var studentDto = studentWithGalleryImagesDto.Student;
 
+                var studentDtoJson = JsonSerializer.Serialize(studentDto, new JsonSerializerOptions { WriteIndented = true });
+                Console.WriteLine($"StudentDto object: {studentDtoJson}");
+
                 if (studentDto.EmailNotifications)
                 {
                     notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
@@ -200,8 +203,8 @@
 
                 availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
 
-                selectedLanguages = new HashSet<Language>(studentDto.Languages);
-                selectedInterests = new HashSet<Interest>(studentDto.Interests);
+                selectedLanguages = new HashSet<string>(studentDto.Languages);  // Adjusted
+                selectedInterests = new HashSet<string>(studentDto.Interests);  // Adjusted
             }
             else
             {
@@ -219,11 +222,21 @@
         }
     }
 
+    private void OnSelectedLanguagesChanged(IEnumerable<string> languages)  // Adjusted
+    {
+        selectedLanguages = new HashSet<string>(languages);  // Adjusted
+    }
+
+    private void OnSelectedInterestsChanged(IEnumerable<string> interests)  // Adjusted
+    {
+        selectedInterests = new HashSet<string>(interests);  // Adjusted
+    }
+
     private async Task SaveChanges()
     {
         var studentDto = studentWithGalleryImagesDto.Student;
-        studentDto.Languages = selectedLanguages.ToList();
-        studentDto.Interests = selectedInterests.ToList();
+        studentDto.Languages = selectedLanguages.ToList();  // Adjusted
+        studentDto.Interests = selectedInterests.ToList();  // Adjusted
 
         // Save changes to the server
         await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
@@ -425,6 +438,4 @@
             return ms.ToArray();
         }
     }
-
-
 }

@@ -23,8 +23,8 @@ namespace MiniSpace.Web.Areas.Students
             string description, 
             bool emailNotifications, 
             string contactEmail, 
-            IEnumerable<Language> languages, 
-            IEnumerable<Interest> interests, 
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
@@ -42,8 +42,8 @@ namespace MiniSpace.Web.Areas.Students
         Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId);
         Task UpdateStudentLanguagesAndInterestsAsync(
             Guid studentId, 
-            IEnumerable<Language> languages, 
-            IEnumerable<Interest> interests);
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests);
 
     }
 }

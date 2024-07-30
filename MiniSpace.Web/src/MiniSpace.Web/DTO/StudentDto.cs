@@ -21,8 +21,8 @@ namespace MiniSpace.Web.DTO
         public string ContactEmail { get; set; }
         public string BannerUrl { get; set; }
         public string PhoneNumber { get; set; }
-        public IEnumerable<Language> Languages { get; set; }
-        public IEnumerable<Interest> Interests { get; set; }
+        public List<string> Languages { get; set; } 
+        public List<string> Interests { get; set; } 
         public IEnumerable<EducationDto> Education { get; set; }
         public IEnumerable<WorkDto> Work { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
