@@ -32,7 +32,8 @@ namespace MiniSpace.Web.Areas.Students
             IEnumerable<WorkDto> work,
             string phoneNumber,
             string country,
-            string city);
+            string city,
+            DateTime? dateOfBirth);
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl,
             string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail);
         Task<string> GetStudentStateAsync(Guid studentId);

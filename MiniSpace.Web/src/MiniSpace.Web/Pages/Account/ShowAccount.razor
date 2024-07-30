@@ -271,6 +271,7 @@
                 studentDto.PhoneNumber,
                 studentDto.Country,
                 studentDto.City,
+                studentDto.DateOfBirth,
                 IsTwoFactorEnabled = isTwoFactorEnabled,
                 TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
             };
@@ -295,7 +296,8 @@
                 studentDto.Work,
                 studentDto.PhoneNumber,
                 studentDto.Country,
-                studentDto.City
+                studentDto.City,
+                studentDto.DateOfBirth
             );
 
             if (studentDto.EmailNotifications)

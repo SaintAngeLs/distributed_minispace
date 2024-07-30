@@ -50,7 +50,7 @@ namespace MiniSpace.Web.Areas.Students
             return _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>("students");
         }
 
-        public async Task UpdateStudentAsync(
+         public async Task UpdateStudentAsync(
             Guid studentId, 
             string firstName, 
             string lastName, 
@@ -67,7 +67,8 @@ namespace MiniSpace.Web.Areas.Students
             IEnumerable<WorkDto> work,
             string phoneNumber,
             string country,
-            string city)
+            string city,
+            DateTime? dateOfBirth)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -90,7 +91,8 @@ namespace MiniSpace.Web.Areas.Students
                 work,
                 phoneNumber,
                 country,
-                city
+                city,
+                dateOfBirth
             };
 
             var jsonData = JsonSerializer.Serialize(updateStudentData);
