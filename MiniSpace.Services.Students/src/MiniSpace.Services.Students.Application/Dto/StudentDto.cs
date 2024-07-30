@@ -30,5 +30,7 @@ namespace MiniSpace.Services.Students.Application.Dto
         public string TwoFactorSecret { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
     }
 }
