@@ -22,18 +22,24 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             var fileTransferUtility = new TransferUtility(_s3Client);
             var key = $"{folderName}/{fileName}";
 
-            var request = new TransferUtilityUploadRequest
+            // If the file size is larger than a certain threshold, use multipart upload
+            if (fileStream.Length > 5 * 1024 * 1024) // 5 MB
             {
-                InputStream = fileStream,
-                Key = key,
-                BucketName = BucketName,
-                CannedACL = S3CannedACL.PublicRead,
-                StorageClass = S3StorageClass.Standard,
-                PartSize = 5 * 1024 * 1024, // 5 MB
-                ContentType = "image/webp"
-            };
-
-            await fileTransferUtility.UploadAsync(request);
+                var request = new TransferUtilityUploadRequest
+                {
+                    InputStream = fileStream,
+                    Key = key,
+                    BucketName = BucketName,
+                    StorageClass = S3StorageClass.Standard,
+                    PartSize = 5 * 1024 * 1024, // 5 MB
+                    ContentType = "image/webp"
+                };
+                await fileTransferUtility.UploadAsync(request);
+            }
+            else
+            {
+                await fileTransferUtility.UploadAsync(fileStream, BucketName, key);
+            }
             
             return $"https://{BucketName}.s3.amazonaws.com/{key}";
         }
