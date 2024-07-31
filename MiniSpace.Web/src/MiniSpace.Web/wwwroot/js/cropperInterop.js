@@ -14,7 +14,7 @@ function displayImageAndInitializeCropper(base64String) {
         console.error('Image container not found');
         return;
     }
-    
+
     imageContainer.innerHTML = `
         <div>
             <img id="image-to-crop" src="data:image/jpeg;base64,${base64String}" style="max-width: 100%;" />
@@ -27,7 +27,7 @@ function displayImageAndInitializeCropper(base64String) {
     $('#cropperModal').on('shown.bs.modal', function () {
         var imageElement = document.getElementById('image-to-crop');
         if (imageElement) {
-            initializeCropper('image-to-crop', 16 / 9);
+            initializeCropper('image-to-crop', 16 / 4); // Adjusted aspect ratio for the banner
         }
     });
 
