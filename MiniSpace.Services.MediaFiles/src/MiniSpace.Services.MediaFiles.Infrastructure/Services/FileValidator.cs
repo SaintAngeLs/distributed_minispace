@@ -1,4 +1,5 @@
-﻿using MiniSpace.Services.MediaFiles.Application.Exceptions;
+﻿using System.Globalization;
+using MiniSpace.Services.MediaFiles.Application.Exceptions;
 using MiniSpace.Services.MediaFiles.Application.Services;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
@@ -18,8 +19,10 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             { "47494638", "image/gif" }, 
             { "49492A00", "image/tiff" },
             { "4D4D002A", "image/tiff" },
-            { "52494646", "image/webp" },
-            { "57454250", "image/webp" }
+            { "52494646", "image/webp" }, // Some formats use the first 8 bytes, e.g., "52494646" + "57454250" for WEBP
+            { "57454250", "image/webp" },
+            { "00000100", "image/ico" },
+            { "00000200", "image/ico" }
         };
 
         public void ValidateFileSize(int size)
@@ -36,14 +39,32 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             {
                 throw new InvalidFileContentTypeException(contentType);
             }
-            
-            string hex = BitConverter.ToString(bytes, 0, 4).Replace("-", string.Empty);
-            _mimeTypes.TryGetValue(hex, out var mimeType);
-            if (mimeType != contentType)
+
+            string hex = BitConverter.ToString(bytes, 0, 4).Replace("-", string.Empty).ToUpper(CultureInfo.InvariantCulture);
+            if (bytes.Length >= 8)
             {
-                throw new FileTypeDoesNotMatchContentTypeException(mimeType, contentType);
+                // If available, try an 8-byte hex signature as well
+                string extendedHex = BitConverter.ToString(bytes, 0, 8).Replace("-", string.Empty).ToUpper(CultureInfo.InvariantCulture);
+                if (_mimeTypes.TryGetValue(extendedHex, out var extendedMimeType))
+                {
+                    if (extendedMimeType == contentType)
+                    {
+                        return; // Matched with 8-byte signature
+                    }
+                }
+            }
+
+            if (_mimeTypes.TryGetValue(hex, out var mimeType))
+            {
+                if (mimeType != contentType)
+                {
+                    throw new FileTypeDoesNotMatchContentTypeException(mimeType, contentType);
+                }
+            }
+            else
+            {
+                throw new InvalidFileContentTypeException(contentType);
             }
         }
-        
     }
 }
