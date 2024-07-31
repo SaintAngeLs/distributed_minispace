@@ -18,8 +18,8 @@ else
         <!-- Banner Image Section -->
         <MudItem xs="12">
             <div class="image-upload-container">
-                <MudAvatar Class="banner-image" Square="true" Image="@GetBanner()" Alt="Banner image" Style="height:200px; max-width: 100%; font-size:2rem;" />
-                <InputFile OnChange="@(async e => await OpenCropper(e, "banner"))" style="display: none;" id="file-input-banner" />
+                <MudImage Class="banner-image" Square="true" Src="@GetBanner()" Alt="Banner image" Style="height:200px; max-width: 100%; font-size:2rem;" />
+                <InputFile OnChange="@(async e => await OpenCropper(e, "banner"))" style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
                 <MudButton HtmlTag="label"
                            Variant="Variant.Filled"
                            Color="Color.Primary"
@@ -42,7 +42,7 @@ else
         <MudItem xs="12" md="4">
             <div class="image-upload-container" style="text-align: center;">
                 <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem; margin:auto;" />
-                <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" style="display: none;" id="file-input-profile" />
+                <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
                 <MudButton HtmlTag="label"
                            Variant="Variant.Filled"
                            Color="Color.Primary"
