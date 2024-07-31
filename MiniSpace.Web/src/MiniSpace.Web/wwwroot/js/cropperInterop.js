@@ -86,12 +86,25 @@ function getCroppedImage(callbackMethodName) {
     }
 
     var croppedCanvas = cropper.getCroppedCanvas();
+    if (!croppedCanvas) {
+        console.error('Failed to get cropped canvas.');
+        return;
+    }
+
     croppedCanvas.toBlob(function(blob) {
+        if (!blob) {
+            console.error('Blob is null or undefined.');
+            return;
+        }
+        
+        console.log(`Blob size: ${blob.size} bytes`);
+
         var reader = new FileReader();
         reader.onload = function() {
             if (GLOBAL.DotNetReference) {
+                console.log(`Base64 result length: ${reader.result.length}`);
                 GLOBAL.DotNetReference.invokeMethodAsync(callbackMethodName, reader.result);
-                displayCroppedImage(reader.result); // Display the cropped image in the modal
+                displayCroppedImage(reader.result);
             } else {
                 console.error('DotNet reference not set.');
             }
@@ -142,3 +155,11 @@ window.hideCropperModal = () => {
     $('#cropperModal').modal('hide');
     destroyCropper();
 };
+
+// Function to display loaded image in gallery
+window.displayImagePreview = function(base64Image) {
+    const imgContainer = document.getElementById('imagePreviewContainer');
+    if (imgContainer) {
+        imgContainer.innerHTML = `<img src="${base64Image}" style="max-height: 200px;" />`;
+    }
+}

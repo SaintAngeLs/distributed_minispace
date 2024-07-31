@@ -7,131 +7,192 @@
 @using System.IO
 @using MudBlazor
 
-<MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
-
+<MudText Typo="Typo.h6" GutterBottom="true">Student Gallery</MudText>
 @if (IsLoading)
 {
     <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
 }
 else
 {
-    <MudGrid GutterSize="16px">
+    <MudGrid>
         <MudItem xs="12">
-            <MudText Typo="Typo.body1">Add a new image to your gallery</MudText>
-
-            <MudFileUpload T="IBrowserFile" FilesChanged="OnFilesChanged" Accept=".png,.jpg,.jpeg">
-                <ActivatorContent>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary">
-                        Choose Image
-                    </MudButton>
-                </ActivatorContent>
-            </MudFileUpload>
-
-            @if (selectedFile != null)
-            {
-                <MudCardMedia Image="@previewImageUrl" Alt="Selected image preview" Height="200" />
-            }
-
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await UploadImage())" Disabled="@IsUploadButtonDisabled">
-                Upload Image
-            </MudButton>
-
-            @if (IsUploading)
-            {
-                <MudProgressLinear Indeterminate="true" />
-            }
-        </MudItem>
-
-        @if (StudentWithGalleryImagesDto?.GalleryImages != null && StudentWithGalleryImagesDto.GalleryImages.Any())
-        {
-            @foreach (var galleryImage in StudentWithGalleryImagesDto.GalleryImages)
-            {
-                <MudItem xs="12" sm="6" md="4" lg="3">
+            <MudGrid>
+                @foreach (var image in StudentWithGalleryImagesDto.GalleryImages)
+                {
+                    <MudItem xs="6" md="3">
+                        <MudCard>
+                            <MudCardMedia Image="@image.Url" Height="150px" />
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Filled" Color="Color.Secondary"
+                                           OnClick="@(async () => await RemoveImage(image.Id))">
+                                    Remove
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+                <MudItem xs="6" md="3">
                     <MudCard>
-                        <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
                         <MudCardContent>
-                            <MudText Typo="Typo.body2">Added on: @galleryImage.DateAdded.ToString("MMMM dd, yyyy")</MudText>
+                            <MudButton HtmlTag="label"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       for="file-input-gallery">
+                                Upload New Image
+                            </MudButton>
+                            <InputFile OnChange="@(async e => await OpenCropper(e, "gallery"))"
+                                       style="display: none;" id="file-input-gallery" accept=".jpeg,.png,.jpg" />
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
-            }
-        }
-        else
-        {
-            <MudItem xs="12">
-                <MudText Typo="Typo.body1">No images found in your gallery.</MudText>
-            </MudItem>
-        }
+            </MudGrid>
+        </MudItem>
     </MudGrid>
+
+    <!-- Bootstrap Modal for Cropper -->
+    <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="cropper-container" class="img-container"></div>
+                    <div id="cropped-image-container" class="img-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
     [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public IBrowserFile File { get; set; }
     [Parameter] public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }
+    [Parameter] public EventCallback SaveChangesAsync { get; set; }
+    [Parameter] public EventCallback SaveImageAsync { get; set; }
+    [Parameter] public bool IsUploading { get; set; }
 
-    private IBrowserFile selectedFile;
-    private string previewImageUrl;
-    private bool IsUploading = false;
+    private string base64Image = string.Empty;
+    private string croppedImage = string.Empty;
+    private string currentImageType = string.Empty; // "gallery"
 
-    // Computed property for button's Disabled state
-    private bool IsUploadButtonDisabled => IsUploading || selectedFile == null;
-
-    private void OnFilesChanged(IBrowserFile file)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        selectedFile = file;
-
-        // Generate a preview URL for the selected image
-        if (selectedFile != null)
+        if (firstRender)
         {
-            var buffer = new byte[selectedFile.Size];
-            using var stream = selectedFile.OpenReadStream();
-            stream.Read(buffer, 0, (int)selectedFile.Size);
-            previewImageUrl = $"data:{selectedFile.ContentType};base64,{Convert.ToBase64String(buffer)}";
+            await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", DotNetObjectReference.Create(this));
         }
     }
 
-    private async Task UploadImage()
+    private async Task OpenCropper(InputFileChangeEventArgs e, string imageType)
     {
-        if (selectedFile != null)
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var inputFile = e.File;
+        currentImageType = imageType;
+
+        if (inputFile != null)
         {
+            if (inputFile.Size > maxAllowedSize)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
+                return;
+            }
+
+            using var stream = inputFile.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+            base64Image = Convert.ToBase64String(buffer);
+            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image);
+        }
+    }
+
+    private void CloseCropper()
+    {
+        JSRuntime.InvokeVoidAsync("hideCropperModal");
+    }
+
+    [JSInvokable]
+    public void ReceiveCroppedImage(string base64Result)
+    {
+        croppedImage = base64Result;
+        StateHasChanged();
+        JSRuntime.InvokeVoidAsync("displayCroppedImage", croppedImage);
+    }
+
+    private async Task SaveCroppedImage()
+    {
+        if (!string.IsNullOrEmpty(base64Image))
+        {
+            if (!IsBase64String(base64Image))
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "The uploaded image is not a valid Base-64 string.");
+                return;
+            }
+
             IsUploading = true;
             StateHasChanged();
 
             try
             {
-                using var stream = selectedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10 MB max size
-                byte[] bytes = new byte[stream.Length];
-                await stream.ReadAsync(bytes);
-                var base64Image = Convert.ToBase64String(bytes);
-
                 var response = await MediaFilesService.UploadMediaFileAsync(
-                    sourceId: IdentityService.GetCurrentUserId(),
-                    sourceType: "StudentGalleryImage",
-                    uploaderId: IdentityService.GetCurrentUserId(),
-                    fileName: selectedFile.Name,
-                    fileContentType: selectedFile.ContentType,
-                    base64Content: base64Image
-                );
+                    StudentWithGalleryImagesDto.Student.Id,
+                    "StudentGalleryImage",
+                    IdentityService.GetCurrentUserId(),
+                    $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_gallery.png",
+                    "image/png",
+                    base64Image);
 
-                var newImageId = Guid.NewGuid();
-
-                StudentWithGalleryImagesDto.GalleryImages.Add(new GalleryImageDto(
-                    imageId: newImageId,
-                    imageUrl: response.Content.FileUrl,
-                    dateAdded: DateTime.UtcNow
-                ));
+                await SaveImageAsync.InvokeAsync(null);
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }
+            catch (FormatException)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "The uploaded file is not a valid Base-64 string.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error uploading image: {ex.Message}");
+                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
             }
-            finally
+
+            IsUploading = false;
+            StateHasChanged();
+            CloseCropper();
+        }
+    }
+
+    private async Task RemoveImage(int imageId)
+    {
+        IsUploading = true;
+        StateHasChanged();
+
+        try
+        {
+            var image = StudentWithGalleryImagesDto.GalleryImages.FirstOrDefault(img => img.Id == imageId);
+            if (image != null)
             {
-                IsUploading = false;
-                selectedFile = null; // Reset the selected file after upload
-                previewImageUrl = null; // Clear the preview
-                StateHasChanged();
+                await MediaFilesService.DeleteMediaFileAsync(image.Url);
+                StudentWithGalleryImagesDto.GalleryImages.Remove(image);
+                await SaveImageAsync.InvokeAsync(null);
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             }
         }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred while removing the image: {ex.Message}");
+        }
+
+        IsUploading = false;
+        StateHasChanged();
     }
 }
