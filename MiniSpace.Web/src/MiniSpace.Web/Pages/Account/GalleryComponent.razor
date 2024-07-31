@@ -1,24 +1,50 @@
 @page "/gallery"
 @inject IIdentityService IdentityService
+@inject IMediaFilesService MediaFilesService
+@inject IJSRuntime JSRuntime
 @using MiniSpace.Web.DTO
 
 <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
-@if (isLoading)
+
+@if (IsLoading)
 {
     <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
 }
 else
 {
     <MudGrid GutterSize="16px">
-        @if (studentWithGalleryImagesDto?.GalleryImages != null && studentWithGalleryImagesDto.GalleryImages.Any())
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudText Typo="Typo.body1">Add a new image to your gallery</MudText>
+                    
+                    <InputFile OnChange="@(async e => await LoadImage(e))" style="display: none;" id="fileInput" />
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await OpenFileDialog()">
+                        Choose Image
+                    </MudButton>
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await UploadImage())" Disabled="@IsUploading || selectedFile == null">
+                        Upload Image
+                    </MudButton>
+
+                    @if (IsUploading)
+                    {
+                        <MudProgressLinear Indeterminate="true" />
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        @if (StudentWithGalleryImagesDto?.GalleryImages != null && StudentWithGalleryImagesDto.GalleryImages.Any())
         {
-            @foreach (var galleryImage in studentWithGalleryImagesDto.GalleryImages)
+            @foreach (var galleryImage in StudentWithGalleryImagesDto.GalleryImages)
             {
                 <MudItem xs="12" sm="6" md="4" lg="3">
                     <MudCard>
                         <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
                         <MudCardContent>
-                            <MudText Typo="Typo.body2">@galleryImage.Description</MudText>
+                            <MudText Typo="Typo.body2">@galleryImage.DateAdded</MudText>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
@@ -34,6 +60,64 @@ else
 }
 
 @code {
-    [Parameter] public bool isLoading { get; set; }
-    [Parameter] public StudentWithGalleryImagesDto studentWithGalleryImagesDto { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }
+
+    private IBrowserFile selectedFile;
+    private bool IsUploading = false;
+
+    private async Task LoadImage(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    private async Task UploadImage()
+    {
+        if (selectedFile != null)
+        {
+            IsUploading = true;
+            StateHasChanged();
+
+            try
+            {
+                using var stream = selectedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10 MB max size
+                byte[] bytes = new byte[stream.Length];
+                await stream.ReadAsync(bytes);
+                var base64Image = Convert.ToBase64String(bytes);
+
+                var response = await MediaFilesService.UploadMediaFileAsync(
+                    sourceId: IdentityService.GetCurrentUserId(),
+                    sourceType: "StudentGalleryImage",
+                    uploaderId: IdentityService.GetCurrentUserId(),
+                    fileName: selectedFile.Name,
+                    fileContentType: selectedFile.ContentType,
+                    base64Content: base64Image
+                );
+
+                // Create a new ImageId for the GalleryImageDto
+                var newImageId = Guid.NewGuid();
+
+                // Refresh gallery after upload
+                StudentWithGalleryImagesDto.GalleryImages.Add(new GalleryImageDto(
+                    imageId: newImageId,
+                    imageUrl: response.Content.FileUrl,
+                    dateAdded: DateTime.UtcNow
+                ));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uploading image: {ex.Message}");
+            }
+            finally
+            {
+                IsUploading = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task OpenFileDialog()
+    {
+        await JSRuntime.InvokeVoidAsync("document.getElementById", "fileInput");
+    }
 }
