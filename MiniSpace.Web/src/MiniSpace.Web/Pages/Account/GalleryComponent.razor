@@ -3,6 +3,7 @@
 @inject IMediaFilesService MediaFilesService
 @inject IJSRuntime JSRuntime
 @using MiniSpace.Web.DTO
+@using MudBlazor
 
 <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
 
@@ -44,7 +45,7 @@ else
                     <MudCard>
                         <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
                         <MudCardContent>
-                            <MudText Typo="Typo.body2">@galleryImage.DateAdded</MudText>
+                            <MudText Typo="Typo.body2">Added on: @galleryImage.DateAdded.ToString("MMMM dd, yyyy")</MudText>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
@@ -94,10 +95,8 @@ else
                     base64Content: base64Image
                 );
 
-                // Create a new ImageId for the GalleryImageDto
                 var newImageId = Guid.NewGuid();
 
-                // Refresh gallery after upload
                 StudentWithGalleryImagesDto.GalleryImages.Add(new GalleryImageDto(
                     imageId: newImageId,
                     imageUrl: response.Content.FileUrl,
