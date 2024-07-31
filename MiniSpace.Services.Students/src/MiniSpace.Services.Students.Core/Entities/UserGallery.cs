@@ -21,10 +21,11 @@ namespace MiniSpace.Services.Students.Core.Entities
             UserId = userId;
         }
 
-        public void AddGalleryImage(Guid imageId, string imageUrl)
+        public void AddGalleryImage(Guid imageId, string imageUrl, string description)
         {
-            _galleryOfImages.Add(new GalleryImage(imageId, imageUrl, DateTime.UtcNow));
+            _galleryOfImages.Add(new GalleryImage(imageId, imageUrl, DateTime.UtcNow, description));
         }
+
 
         public void UpdateGalleryOfImages(IEnumerable<GalleryImage> galleryOfImages)
         {
