@@ -66,9 +66,16 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             }
 
             _fileValidator.ValidateFileSize(command.File.Length);
-            _fileValidator.ValidateFileExtensions(command.File.OpenReadStream(), command.FileContentType);
-
+            
+            // Extract the first 8 bytes for validation
             using var inStream = command.File.OpenReadStream();
+            byte[] buffer = new byte[8];
+            await inStream.ReadAsync(buffer, 0, 8);
+            _fileValidator.ValidateFileExtensions(buffer, command.FileContentType);
+
+            // Reset the stream position for further processing
+            inStream.Position = 0;
+
             using var myImage = await Image.LoadAsync(inStream);
             using var outStream = new MemoryStream();
             myImage.Mutate(x => x.Resize(new ResizeOptions
