@@ -65,18 +65,18 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 }
             }
 
-            _fileValidator.ValidateFileSize(command.File.Length);
+            _fileValidator.ValidateFileSize(command.FileData.Length);
             
             // Extract the first 8 bytes for validation
-            using var inStream = command.File.OpenReadStream();
             byte[] buffer = new byte[8];
-            await inStream.ReadAsync(buffer, 0, 8);
+            Array.Copy(command.FileData, 0, buffer, 0, Math.Min(buffer.Length, command.FileData.Length));
             _fileValidator.ValidateFileExtensions(buffer, command.FileContentType);
 
-            // Reset the stream position for further processing
-            inStream.Position = 0;
-
+            // Load the image from the byte array
+            using var inStream = new MemoryStream(command.FileData);
             using var myImage = await Image.LoadAsync(inStream);
+
+            // Process the image (e.g., resizing)
             using var outStream = new MemoryStream();
             myImage.Mutate(x => x.Resize(new ResizeOptions
             {
@@ -85,9 +85,11 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             }));
             await myImage.SaveAsync(outStream, new WebpEncoder { Quality = 50 });
 
+            // Generate unique file names
             string originalFileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName);
             string webpFileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName, "webp");
 
+            // Upload original and processed files to S3
             var originalUrlTask = _s3Service.UploadFileAsync("images", originalFileName, inStream);
             var processedUrlTask = _s3Service.UploadFileAsync("webps", webpFileName, outStream);
 
@@ -96,6 +98,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             var originalUrl = await originalUrlTask;
             var processedUrl = await processedUrlTask;
 
+            // Store file info in the repository
             var uploadDate = _dateTimeProvider.Now;
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
                 command.UploaderId, State.Associated, uploadDate, originalUrl, 
@@ -104,6 +107,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, originalFileName));
 
+            // Handle specific events based on the source type
             if (sourceType == ContextType.StudentProfileImage ||
                 sourceType == ContextType.StudentBannerImage ||
                 sourceType == ContextType.StudentGalleryImage)
