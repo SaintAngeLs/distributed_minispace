@@ -6,6 +6,7 @@
 @inject NavigationManager NavigationManager
 @using System.IO
 @using MudBlazor
+@using MiniSpace.Web.DTO
 
 <MudText Typo="Typo.h6" GutterBottom="true">Student Gallery</MudText>
 @if (IsLoading)
@@ -21,10 +22,10 @@ else
                 {
                     <MudItem xs="6" md="3">
                         <MudCard>
-                            <MudCardMedia Image="@image.Url" Height="150px" />
+                            <MudCardMedia Image="@image.ImageUrl" Height="150" />
                             <MudCardActions>
                                 <MudButton Variant="Variant.Filled" Color="Color.Secondary"
-                                           OnClick="@(async () => await RemoveImage(image.Id))">
+                                           OnClick="@(async () => await RemoveImage(image.ImageId))">
                                     Remove
                                 </MudButton>
                             </MudCardActions>
@@ -171,17 +172,17 @@ else
         }
     }
 
-    private async Task RemoveImage(int imageId)
+    private async Task RemoveImage(Guid imageId)
     {
         IsUploading = true;
         StateHasChanged();
 
         try
         {
-            var image = StudentWithGalleryImagesDto.GalleryImages.FirstOrDefault(img => img.Id == imageId);
+            var image = StudentWithGalleryImagesDto.GalleryImages.FirstOrDefault(img => img.ImageId == imageId);
             if (image != null)
             {
-                await MediaFilesService.DeleteMediaFileAsync(image.Url);
+                await MediaFilesService.DeleteMediaFileAsync(image.ImageUrl);
                 StudentWithGalleryImagesDto.GalleryImages.Remove(image);
                 await SaveImageAsync.InvokeAsync(null);
                 NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
@@ -194,5 +195,16 @@ else
 
         IsUploading = false;
         StateHasChanged();
+    }
+
+    private bool IsBase64String(string base64)
+    {
+        if (string.IsNullOrEmpty(base64))
+        {
+            return false;
+        }
+
+        Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+        return Convert.TryFromBase64String(base64, buffer, out _);
     }
 }
