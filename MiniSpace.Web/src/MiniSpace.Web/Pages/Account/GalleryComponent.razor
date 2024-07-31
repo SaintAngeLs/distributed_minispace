@@ -1,8 +1,10 @@
 @page "/gallery"
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject IJSRuntime JSRuntime
-@using MiniSpace.Web.DTO
+@inject NavigationManager NavigationManager
+@using System.IO
 @using MudBlazor
 
 <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
@@ -15,26 +17,29 @@ else
 {
     <MudGrid GutterSize="16px">
         <MudItem xs="12">
-            <MudCard>
-                <MudCardContent>
-                    <MudText Typo="Typo.body1">Add a new image to your gallery</MudText>
-                    
-                    <InputFile OnChange="@(async e => await LoadImage(e))" style="display: none;" id="fileInput" />
+            <MudText Typo="Typo.body1">Add a new image to your gallery</MudText>
 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await OpenFileDialog()">
+            <MudFileUpload T="IBrowserFile" FilesChanged="OnFilesChanged" Accept=".png,.jpg,.jpeg">
+                <ActivatorContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">
                         Choose Image
                     </MudButton>
+                </ActivatorContent>
+            </MudFileUpload>
 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await UploadImage())" Disabled="@IsUploading || selectedFile == null">
-                        Upload Image
-                    </MudButton>
+            @if (selectedFile != null)
+            {
+                <MudCardMedia Image="@previewImageUrl" Alt="Selected image preview" Height="200" />
+            }
 
-                    @if (IsUploading)
-                    {
-                        <MudProgressLinear Indeterminate="true" />
-                    }
-                </MudCardContent>
-            </MudCard>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await UploadImage())" Disabled="@IsUploadButtonDisabled">
+                Upload Image
+            </MudButton>
+
+            @if (IsUploading)
+            {
+                <MudProgressLinear Indeterminate="true" />
+            }
         </MudItem>
 
         @if (StudentWithGalleryImagesDto?.GalleryImages != null && StudentWithGalleryImagesDto.GalleryImages.Any())
@@ -65,11 +70,24 @@ else
     [Parameter] public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }
 
     private IBrowserFile selectedFile;
+    private string previewImageUrl;
     private bool IsUploading = false;
 
-    private async Task LoadImage(InputFileChangeEventArgs e)
+    // Computed property for button's Disabled state
+    private bool IsUploadButtonDisabled => IsUploading || selectedFile == null;
+
+    private void OnFilesChanged(IBrowserFile file)
     {
-        selectedFile = e.File;
+        selectedFile = file;
+
+        // Generate a preview URL for the selected image
+        if (selectedFile != null)
+        {
+            var buffer = new byte[selectedFile.Size];
+            using var stream = selectedFile.OpenReadStream();
+            stream.Read(buffer, 0, (int)selectedFile.Size);
+            previewImageUrl = $"data:{selectedFile.ContentType};base64,{Convert.ToBase64String(buffer)}";
+        }
     }
 
     private async Task UploadImage()
@@ -110,13 +128,10 @@ else
             finally
             {
                 IsUploading = false;
+                selectedFile = null; // Reset the selected file after upload
+                previewImageUrl = null; // Clear the preview
                 StateHasChanged();
             }
         }
-    }
-
-    private async Task OpenFileDialog()
-    {
-        await JSRuntime.InvokeVoidAsync("document.getElementById", "fileInput");
     }
 }
