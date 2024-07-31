@@ -9,6 +9,7 @@ GLOBAL.SetDotnetReference = function(dotNetReference) {
 
 // Function to display the selected image and initialize the cropper and buttons
 function displayImageAndInitializeCropper(base64String) {
+    console.log("Initializing cropper with image data");
     var imageContainer = document.getElementById('cropper-container');
     if (!imageContainer) {
         console.error('Image container not found');
@@ -28,12 +29,15 @@ function displayImageAndInitializeCropper(base64String) {
         var imageElement = document.getElementById('image-to-crop');
         if (imageElement) {
             initializeCropper('image-to-crop', 16 / 4); // Adjusted aspect ratio for the banner
+        } else {
+            console.error("Image element not found in modal");
         }
     });
 
     var cropImageButton = document.getElementById('crop-image');
     if (cropImageButton) {
         cropImageButton.addEventListener('click', function() {
+            console.log("Crop image button clicked");
             getCroppedImage('ReceiveCroppedImage');
         });
     }
@@ -80,6 +84,7 @@ function initializeCropper(imageId, aspectRatio) {
 
 // Function to get the cropped image and invoke a C# method asynchronously via JSInterop
 function getCroppedImage(callbackMethodName) {
+    console.log("Getting cropped image");
     if (!cropper) {
         console.error('Cropper instance not found');
         return;
@@ -96,22 +101,22 @@ function getCroppedImage(callbackMethodName) {
             console.error('Blob is null or undefined.');
             return;
         }
-        
-        console.log(`Blob size: ${blob.size} bytes`);
 
         var reader = new FileReader();
-        reader.onload = function() {
+        reader.onloadend = function() {
+            var base64data = reader.result.split(',')[1]; // Get the base64 string
             if (GLOBAL.DotNetReference) {
-                console.log(`Base64 result length: ${reader.result.length}`);
-                GLOBAL.DotNetReference.invokeMethodAsync(callbackMethodName, reader.result);
-                displayCroppedImage(reader.result);
+                console.log("Invoking C# method with cropped image data");
+                GLOBAL.DotNetReference.invokeMethodAsync(callbackMethodName, base64data);
             } else {
                 console.error('DotNet reference not set.');
             }
-        };
+        }
         reader.readAsDataURL(blob);
-    });
+    }, 'image/png'); // Specify the format here if needed
 }
+
+
 
 // Function to cleanly destroy the cropper instance
 function destroyCropper() {

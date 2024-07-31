@@ -4,6 +4,7 @@
 @inject IMediaFilesService MediaFilesService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@using MiniSpace.Web.Utilities
 @using System.IO
 @using MudBlazor
 
@@ -96,53 +97,58 @@ else
                 </MudItem>
             </MudGrid>
         </MudItem>
-    </MudGrid>
+     </MudGrid>
 
-    <!-- Styling for smaller buttons -->
-    <style>
-       
-        .button-margins {
-            margin-right: 8px;
-            margin-bottom: 8px;
+        <!-- Styling for smaller buttons -->
+        <style>
+            .button-margins {
+                margin-right: 8px;
+                margin-bottom: 8px;
+            }
+
+            .image-upload-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        </style>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" 
+                   OnClick="async () => await SaveChangesAsync.InvokeAsync(null)">Save profile</MudButton>
+        @if (IsUploading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
         }
-
-        .image-upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
-
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" 
-               OnClick="async () => await SaveChangesAsync.InvokeAsync(null)">Save profile</MudButton>
-    @if (IsUploading)
-    {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
     }
-}
 
-<!-- Bootstrap Modal for Cropper -->
-<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="cropper-container" class="img-container"></div>
-                <div id="cropped-image-container" class="img-container"></div>
-            </div>
-            <div class="modal-footer">
-                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" 
-                           OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+    <!-- Bootstrap Modal for Cropper -->
+    <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="cropper-container" class="img-container"></div>
+                    @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                    {
+                        <div id="cropped-image-container" class="img-container">
+                            <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                        </div>
+                    }
+                </div>
+
+                <div class="modal-footer">
+                    <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" 
+                               OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 @code {
     [Parameter] public bool IsLoading { get; set; }
@@ -151,9 +157,10 @@ else
     [Parameter] public EventCallback SaveChangesAsync { get; set; }
     [Parameter] public EventCallback SaveImageAsync { get; set; }
     [Parameter] public bool IsUploading { get; set; }
+    private string CroppedImageBase64 { get; set; }
 
-    private string base64Image = string.Empty;
-    private string croppedImage = string.Empty;
+
+    private IBrowserFile croppedImageFile;
     private string currentImageType = string.Empty; // "profile" or "banner"
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -197,7 +204,7 @@ else
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms);
             var buffer = ms.ToArray();
-            base64Image = Convert.ToBase64String(buffer);
+            var base64Image = Convert.ToBase64String(buffer);
             await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image);
         }
     }
@@ -207,69 +214,65 @@ else
         JSRuntime.InvokeVoidAsync("hideCropperModal");
     }
 
-    [JSInvokable]
-    public void ReceiveCroppedImage(string base64Result)
+[JSInvokable]
+public void ReceiveCroppedImage(string base64Image)
+{
+    if (!string.IsNullOrEmpty(base64Image))
     {
-        croppedImage = base64Result;
+        CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
+        var buffer = Convert.FromBase64String(base64Image);
+        var lastModified = DateTimeOffset.Now;  // Use the current time as a placeholder for lastModified
+        croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
         StateHasChanged();
-        JSRuntime.InvokeVoidAsync("displayCroppedImage", croppedImage);
     }
+}
 
-    private bool IsBase64String(string base64)
-    {
-        if (string.IsNullOrEmpty(base64))
-        {
-            return false;
-        }
-
-        Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
-        return Convert.TryFromBase64String(base64, buffer, out _);
-    }
 
     private async Task SaveCroppedImage()
+{
+    if (croppedImageFile != null)
     {
-        if (!string.IsNullOrEmpty(base64Image))
+        IsUploading = true;
+        StateHasChanged();
+
+        try
         {
-            if (!IsBase64String(base64Image))
+            // Convert IBrowserFile to byte[]
+            byte[] fileData;
+            using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+            using (var ms = new MemoryStream())
             {
-                await JSRuntime.InvokeVoidAsync("alert", "The uploaded image is not a valid Base-64 string.");
-                return;
+                await stream.CopyToAsync(ms);
+                fileData = ms.ToArray();
             }
 
-            IsUploading = true;
+            string imageType = currentImageType == "profile" ? "StudentProfileImage" : "StudentBannerImage";
+            var response = await MediaFilesService.UploadMediaFileAsync(
+                StudentWithGalleryImagesDto.Student.Id,
+                imageType,
+                IdentityService.GetCurrentUserId(),
+                $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_{currentImageType}.png",
+                croppedImageFile.ContentType,
+                fileData); // Pass the byte[] here
+
             StateHasChanged();
-            
-            try
-            {
-                string imageType = currentImageType == "profile" ? "StudentProfileImage" : "StudentBannerImage";
-                var response = await MediaFilesService.UploadMediaFileAsync(
-                    StudentWithGalleryImagesDto.Student.Id,
-                    imageType,
-                    IdentityService.GetCurrentUserId(),
-                    $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_{currentImageType}.png",
-                    currentImageType == "profile" ? "image/png" : "image/jpeg",
-                    base64Image);
-                
-                StateHasChanged();
-                await SaveImageAsync.InvokeAsync(null);
+            await SaveImageAsync.InvokeAsync(null);
 
-                // Reload the page
-                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-            }
-            catch (FormatException)
-            {
-                await JSRuntime.InvokeVoidAsync("alert", "The uploaded file is not a valid Base-64 string.");
-            }
-            catch (Exception ex)
-            {
-                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
-            }
-
-            IsUploading = false;
-            StateHasChanged();
-            CloseCropper();
+            // Reload the page
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
         }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
+        }
+
+        IsUploading = false;
+        StateHasChanged();
+        CloseCropper();
     }
+}
+
+
 
     private async Task RemoveImage(string imageType)
     {

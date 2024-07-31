@@ -83,9 +83,8 @@ else
     [Parameter] public EventCallback SaveImageAsync { get; set; }
     [Parameter] public bool IsUploading { get; set; }
 
-    private string base64Image = string.Empty;
-    private string croppedImage = string.Empty;
-    private string currentImageType = string.Empty; // "gallery"
+    private string currentImageType;
+    private IBrowserFile croppedImageFile;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -113,7 +112,7 @@ else
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms);
             var buffer = ms.ToArray();
-            base64Image = Convert.ToBase64String(buffer);
+            var base64Image = Convert.ToBase64String(buffer);
             await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image);
         }
     }
@@ -124,53 +123,56 @@ else
     }
 
     [JSInvokable]
-    public void ReceiveCroppedImage(string base64Result)
+    public void ReceiveCroppedImage(IBrowserFile file)
     {
-        croppedImage = base64Result;
-        StateHasChanged();
-        JSRuntime.InvokeVoidAsync("displayCroppedImage", croppedImage);
-    }
-
-    private async Task SaveCroppedImage()
-    {
-        if (!string.IsNullOrEmpty(base64Image))
+        // You can handle the received file (Blob) directly here.
+        if (file != null)
         {
-            if (!IsBase64String(base64Image))
-            {
-                await JSRuntime.InvokeVoidAsync("alert", "The uploaded image is not a valid Base-64 string.");
-                return;
-            }
-
-            IsUploading = true;
+            croppedImageFile = file; // Store the file for uploading
             StateHasChanged();
-
-            try
-            {
-                var response = await MediaFilesService.UploadMediaFileAsync(
-                    StudentWithGalleryImagesDto.Student.Id,
-                    "StudentGalleryImage",
-                    IdentityService.GetCurrentUserId(),
-                    $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_gallery.png",
-                    "image/png",
-                    base64Image);
-
-                await SaveImageAsync.InvokeAsync(null);
-                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-            }
-            catch (FormatException)
-            {
-                await JSRuntime.InvokeVoidAsync("alert", "The uploaded file is not a valid Base-64 string.");
-            }
-            catch (Exception ex)
-            {
-                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
-            }
-
-            IsUploading = false;
-            StateHasChanged();
-            CloseCropper();
         }
     }
+
+   private async Task SaveCroppedImage()
+{
+    if (croppedImageFile != null)
+    {
+        IsUploading = true;
+        StateHasChanged();
+
+        try
+        {
+            // Convert IBrowserFile to byte[]
+            byte[] fileData;
+            using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+            using (var ms = new MemoryStream())
+            {
+                await stream.CopyToAsync(ms);
+                fileData = ms.ToArray();
+            }
+
+            var response = await MediaFilesService.UploadMediaFileAsync(
+                StudentWithGalleryImagesDto.Student.Id,
+                "StudentGalleryImage",
+                IdentityService.GetCurrentUserId(),
+                $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_gallery.png",
+                croppedImageFile.ContentType,
+                fileData); // Pass the byte[] instead of IBrowserFile
+
+            await SaveImageAsync.InvokeAsync(null);
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
+        }
+
+        IsUploading = false;
+        StateHasChanged();
+        CloseCropper();
+    }
+}
+
 
     private async Task RemoveImage(Guid imageId)
     {
@@ -195,16 +197,5 @@ else
 
         IsUploading = false;
         StateHasChanged();
-    }
-
-    private bool IsBase64String(string base64)
-    {
-        if (string.IsNullOrEmpty(base64))
-        {
-            return false;
-        }
-
-        Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
-        return Convert.TryFromBase64String(base64, buffer, out _);
     }
 }
