@@ -15,30 +15,10 @@
 else
 {
     <MudGrid>
-        <MudItem xs="12" sm="6" >
+        <!-- Banner Image Section -->
+        <MudItem xs="12">
             <div class="image-upload-container">
-                <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;" />
-                <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" style="display: none;" id="file-input-profile" />
-                <MudButton HtmlTag="label"
-                           Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.CloudUpload"
-                           Class="button-margins"
-                           for="file-input-profile">
-                    Upload Profile Image
-                </MudButton>
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Secondary"
-                           StartIcon="@Icons.Material.Filled.Delete"
-                           Class="button-margins"
-                           OnClick="@(async () => await RemoveImage("profile"))">
-                    Remove Profile Image
-                </MudButton>
-            </div>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <div class="image-upload-container">
-                <MudAvatar Class="banner-image" Square="true" Image="@GetBanner()" Alt="Banner image" Style="height:200px; width: 100%; font-size:2rem;" />
+                <MudAvatar Class="banner-image" Square="true" Image="@GetBanner()" Alt="Banner image" Style="height:200px; max-width: 100%; font-size:2rem;" />
                 <InputFile OnChange="@(async e => await OpenCropper(e, "banner"))" style="display: none;" id="file-input-banner" />
                 <MudButton HtmlTag="label"
                            Variant="Variant.Filled"
@@ -57,14 +37,39 @@ else
                 </MudButton>
             </div>
         </MudItem>
-        <MudItem xs="12" sm="11">
-            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+
+        <!-- Profile Image Section -->
+        <MudItem xs="12" md="4">
+            <div class="image-upload-container" style="text-align: center;">
+                <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem; margin:auto;" />
+                <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" style="display: none;" id="file-input-profile" />
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           Class="button-margins"
+                           for="file-input-profile">
+                    Upload Profile Image
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           Class="button-margins"
+                           OnClick="@(async () => await RemoveImage("profile"))">
+                    Remove Profile Image
+                </MudButton>
+            </div>
         </MudItem>
-        <MudItem xs="12" sm="11">
-            <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense" />
-        </MudItem>
-        <MudItem xs="12" sm="1">
+
+        <!-- Form Section -->
+        <MudItem xs="12" md="8">
             <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
                 <MudItem xs="12">
                     <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
                 </MudItem>
@@ -74,6 +79,7 @@ else
             </MudGrid>
         </MudItem>
     </MudGrid>
+
     <MudStack>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveChangesAsync.InvokeAsync(null)">Save profile</MudButton>
         @if (IsUploading)
