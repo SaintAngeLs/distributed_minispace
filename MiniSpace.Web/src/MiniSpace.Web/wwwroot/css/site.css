@@ -749,3 +749,10 @@ div.connectionRejected {
         opacity: 1;
     }
 }
+
+
+@media (min-width: 600px) {
+    .profile-grid {
+        flex-direction: row;
+    }
+}
