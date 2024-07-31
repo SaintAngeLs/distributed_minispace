@@ -800,6 +800,10 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files
         auth: true
+        requestSizeLimit: 50_000_000  # Example: Limit to 50 MB
+        formLimits:
+          multipartBodyLengthLimit: 50_000_000  # Optional: Same as above to ensure large files are allowed
+
 
       - upstream: /{mediaFileId}
         method: GET
