@@ -4,6 +4,14 @@
 
 MiniSpace is a multifaceted application designed to enhance student life by providing a robust platform where students can explore, register, and participate in various events. These events range from cultural to educational and social, aiming to enrich the academic community's vibrant life.
 
+
+
+### Container Diagram
+Below is the C4 Container Diagram for the MiniSpace system:
+
+![Container Diagram for MiniSpace System](docs/container_diagram_for_minispace_system.png)
+
+
 ![Home](images/minispace-home.png)
 ![Events Dashboard View](images/minispace-events.png)
 
