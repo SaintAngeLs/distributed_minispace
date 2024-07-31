@@ -10,17 +10,34 @@
 else
 {
     <MudStack>
+        <MudCard Outlined="true">
+            <MudCardContent>
+                <!-- Brief instructions for 2FA -->
+                <MudText Typo="Typo.body1" GutterBottom="true">
+                    To enable Two-Factor Authentication (2FA), switch on the button below. Once activated, a button to generate a 2FA secret code will appear. 
+                    Click this button to generate your security code. After the code is generated, click the "Save 2FA Settings" button to enable 2FA on your account. 
+                    When logging in with 2FA enabled, you will be required to enter a code that you will receive via email after attempting to log in. 
+                    Input the code on the screen you will be redirected to after logging in.
+                </MudText>
+            </MudCardContent>
+        </MudCard>
+
         <MudSwitch @bind-Checked="IsTwoFactorEnabled" Label="Enable Two-Factor Authentication" Color="Color.Primary" />
         @if (IsTwoFactorEnabled)
         {
             @if (string.IsNullOrEmpty(TwoFactorSecret))
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@GenerateTwoFactorSecret">Generate Secret Token</MudButton>
+                 <div style="display: flex; justify-content: flex-start; margin-bottom: 1rem;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@GenerateTwoFactorSecret" Class="small-button">
+                        Generate Secret Token
+                    </MudButton>
+                </div>
+
             }
             else
             {
                 <MudTextField Value="@TwoFactorSecret" Label="Two-Factor Authentication Secret" ReadOnly="true" />
-                <MudText Typo="Typo.body1">Please save this secret to set up your two-factor authentication.</MudText>
+                <MudText Typo="Typo.body1">This secret will be used to set up your two-factor authentication.</MudText>
             }
         }
     </MudStack>

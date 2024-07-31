@@ -19,23 +19,25 @@ else
         <MudItem xs="12">
             <div class="image-upload-container">
                 <MudImage Class="banner-image" Src="@GetBanner()" Alt="Banner image" 
-                        Style="height:auto; width:100%; max-height:200px; object-fit:cover; font-size:2rem;" />
+                          Style="height:auto; width:100%; max-height:200px; object-fit:cover; font-size:2rem;" />
                 <InputFile OnChange="@(async e => await OpenCropper(e, "banner"))" 
-                        style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
-                <div style="display: inline-block; margin-top: 10px;">
+                           style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
+                
+                <!-- Centered Buttons Below the Banner -->
+                <div style="text-align: center; margin-top: 10px;">
                     <MudButton HtmlTag="label"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            StartIcon="@Icons.Material.Filled.CloudUpload"
-                            Class="small-button"
-                            for="file-input-banner">
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               Class="small-button"
+                               for="file-input-banner">
                         Upload Banner Image
                     </MudButton>
                     <MudButton Variant="Variant.Filled"
-                            Color="Color.Secondary"
-                            StartIcon="@Icons.Material.Filled.Delete"
-                            Class="small-button"
-                            OnClick="@(async () => await RemoveImage("banner"))">
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.Delete"
+                               Class="small-button"
+                               OnClick="@(async () => await RemoveImage("banner"))">
                         Remove Banner Image
                     </MudButton>
                 </div>
@@ -46,23 +48,23 @@ else
         <MudItem xs="12" md="4">
             <div class="image-upload-container" style="text-align: center;">
                 <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" 
-                        Style="height:200px; width: 200px; font-size:2rem; margin:auto;" />
+                           Style="height:200px; width: 200px; font-size:2rem; margin:auto;" />
                 <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" 
-                        style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
+                           style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
                 <div style="display: inline-block; margin-top: 10px;">
                     <MudButton HtmlTag="label"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            StartIcon="@Icons.Material.Filled.CloudUpload"
-                            Class="small-button"
-                            for="file-input-profile">
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               Class="small-button"
+                               for="file-input-profile">
                         Upload Profile Image
                     </MudButton>
                     <MudButton Variant="Variant.Filled"
-                            Color="Color.Secondary"
-                            StartIcon="@Icons.Material.Filled.Delete"
-                            Class="small-button"
-                            OnClick="@(async () => await RemoveImage("profile"))">
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.Delete"
+                               Class="small-button"
+                               OnClick="@(async () => await RemoveImage("profile"))">
                         Remove Profile Image
                     </MudButton>
                 </div>
@@ -74,51 +76,49 @@ else
             <MudGrid>
                 <MudItem xs="12" md="6">
                     <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.FirstName" 
-                                Label="First Name" HelperText="Your first name" 
-                                Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                  Label="First Name" HelperText="Your first name" 
+                                  Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.LastName" 
-                                Label="Last Name" HelperText="Your last name" 
-                                Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                  Label="Last Name" HelperText="Your last name" 
+                                  Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12">
                     <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Email" 
-                                Label="Email" HelperText="Your email address" 
-                                Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
+                                  Label="Email" HelperText="Your email address" 
+                                  Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12">
                     <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Description" 
-                                Label="Description" HelperText="A brief description about yourself" 
-                                Variant="Variant.Outlined" Lines="5" />
+                                  Label="Description" HelperText="A brief description about yourself" 
+                                  Variant="Variant.Outlined" Lines="5" />
                 </MudItem>
             </MudGrid>
         </MudItem>
-    
     </MudGrid>
 
     <!-- Styling for smaller buttons -->
     <style>
-        .small-button {
-            padding: 4px 8px; /* Smaller padding */
-            font-size: 0.75rem; /* Smaller font size */
-            min-width: auto; /* Remove default minimum width */
-        }
-
+       
         .button-margins {
             margin-right: 8px;
             margin-bottom: 8px;
         }
+
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 
-
-
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" 
-                   OnClick="async () => await SaveChangesAsync.InvokeAsync(null)">Save profile</MudButton>
-        @if (IsUploading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" 
+               OnClick="async () => await SaveChangesAsync.InvokeAsync(null)">Save profile</MudButton>
+    @if (IsUploading)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+    }
 }
 
 <!-- Bootstrap Modal for Cropper -->
@@ -143,12 +143,6 @@ else
         </div>
     </div>
 </div>
-
-@code {
-    // Your existing code logic remains the same, no changes needed in this section.
-    // This section now references the adjusted styling and cropper aspect ratio.
-}
-
 
 @code {
     [Parameter] public bool IsLoading { get; set; }

@@ -9,13 +9,25 @@
 }
 else
 {
-    <MudGrid>
-        @foreach (var galleryImage in studentWithGalleryImagesDto.GalleryImages)
+    <MudGrid GutterSize="16px">
+        @if (studentWithGalleryImagesDto?.GalleryImages != null && studentWithGalleryImagesDto.GalleryImages.Any())
         {
-            <MudItem xs="12" sm="6" md="4">
-                <MudCard>
-                    <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
-                </MudCard>
+            @foreach (var galleryImage in studentWithGalleryImagesDto.GalleryImages)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard>
+                        <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
+                        <MudCardContent>
+                            <MudText Typo="Typo.body2">@galleryImage.Description</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+        else
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.body1">No images found in your gallery.</MudText>
             </MudItem>
         }
     </MudGrid>
