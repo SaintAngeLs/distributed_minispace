@@ -2,7 +2,7 @@
 {
     public interface IFileValidator
     {
-        public void ValidateFileSize(int size);
-        public void ValidateFileExtensions(byte[] bytes, string contentType);
+        void ValidateFileSize(long size);
+        void ValidateFileExtensions(byte[] bytes, string contentType);
     }
 }

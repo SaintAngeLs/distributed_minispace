@@ -65,11 +65,10 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 }
             }
 
-            byte[] bytes = Convert.FromBase64String(command.Base64Content);
-            _fileValidator.ValidateFileSize(bytes.Length);
-            _fileValidator.ValidateFileExtensions(bytes, command.FileContentType);
+            _fileValidator.ValidateFileSize(command.File.Length);
+            _fileValidator.ValidateFileExtensions(command.File.OpenReadStream(), command.FileContentType);
 
-            using var inStream = new MemoryStream(bytes);
+            using var inStream = command.File.OpenReadStream();
             using var myImage = await Image.LoadAsync(inStream);
             using var outStream = new MemoryStream();
             myImage.Mutate(x => x.Resize(new ResizeOptions
