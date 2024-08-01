@@ -5,8 +5,11 @@
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@using MiniSpace.Web.Utilities
 @using MudBlazor
 @using System.IO
+@using MiniSpace.Web.Areas.Organizations.CommandsDto
+
 
 <MudText Typo="Typo.h5" GutterBottom="true">Create New Organization</MudText>
 
@@ -15,76 +18,22 @@
         <MudTextField @bind-Value="organizationModel.Name" Label="Organization Name" Required="true" />
         <MudTextField @bind-Value="organizationModel.Description" Label="Description" Required="false" />
 
-        <!-- Banner Image Section -->
-        <MudItem xs="12">
-            <div class="image-upload-container">
-                <MudImage Class="banner-image" Src="@GetBanner()" Alt="Banner image" 
-                          Style="height:auto; width:100%; max-height:200px; object-fit:cover; font-size:2rem;" />
-                <InputFile OnChange="@(async e => await OpenCropper(e, "banner"))" 
-                           style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
-                
-                <!-- Centered Buttons Below the Banner -->
-                <div style="text-align: center; margin-top: 10px;">
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               Class="small-button"
-                               for="file-input-banner">
-                        Upload Banner Image
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Secondary"
-                               StartIcon="@Icons.Material.Filled.Delete"
-                               Class="small-button"
-                               OnClick="@(async () => await RemoveImage("banner"))">
-                        Remove Banner Image
-                    </MudButton>
-                </div>
-            </div>
-        </MudItem>
-
-        <!-- Profile Image Section -->
-        <MudItem xs="12" md="4">
-            <div class="image-upload-container" style="text-align: center;">
-                <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" 
-                           Style="height:200px; width: 200px; font-size:2rem; margin:auto;" />
-                <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" 
-                           style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
-                <div style="display: inline-block; margin-top: 10px;">
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               Class="small-button"
-                               for="file-input-profile">
-                        Upload Profile Image
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Secondary"
-                               StartIcon="@Icons.Material.Filled.Delete"
-                               Class="small-button"
-                               OnClick="@(async () => await RemoveImage("profile"))">
-                        Remove Profile Image
-                    </MudButton>
-                </div>
-            </div>
-        </MudItem>
-
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForm">
             Create Organization
         </MudButton>
+
+        <!-- Back Button -->
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack" Style="margin-top: 10px;">
+            Back
+        </MudButton>
     </MudForm>
 </MudPaper>
+
 
 @code {
     private MudForm form;
     private CreateOrganizationDto organizationModel = new CreateOrganizationDto();
     private bool _isSubmitting = false;
-
-    private IBrowserFile croppedImageFile;
-    private string CroppedImageBase64 { get; set; }
-    private string currentImageType = string.Empty; // "profile" or "banner"
 
     private async Task SubmitForm()
     {
@@ -98,6 +47,10 @@
             {
                 organizationModel.OrganizationId = Guid.NewGuid();
                 organizationModel.OwnerId = IdentityService.GetCurrentUserId();
+
+                // Ensure ParentId and RootId are null for root organizations
+                organizationModel.ParentId = null; // These are now nullable, so null is valid
+                organizationModel.RootId = null;
 
                 var response = await OrganizationsService.CreateOrganizationAsync(organizationModel);
 
@@ -120,124 +73,8 @@
         }
     }
 
-    private async Task OpenCropper(InputFileChangeEventArgs e, string imageType)
+    private void GoBack()
     {
-        const long maxAllowedSize = 10 * 1024 * 1024;
-        var inputFile = e.File;
-        currentImageType = imageType;
-
-        if (inputFile != null)
-        {
-            if (inputFile.Size > maxAllowedSize)
-            {
-                // Handle file size error
-                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
-                return;
-            }
-
-            using var stream = inputFile.OpenReadStream(maxAllowedSize);
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
-            var buffer = ms.ToArray();
-            var base64Image = Convert.ToBase64String(buffer);
-            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image);
-        }
-    }
-
-    private async Task SaveCroppedImage()
-    {
-        if (croppedImageFile != null)
-        {
-            _isSubmitting = true;
-            StateHasChanged();
-
-            try
-            {
-                byte[] fileData;
-                using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
-                using (var ms = new MemoryStream())
-                {
-                    await stream.CopyToAsync(ms);
-                    fileData = ms.ToArray();
-                }
-
-                string imageType = currentImageType == "profile" ? "OrganizationProfileImage" : "OrganizationBannerImage";
-                var response = await MediaFilesService.UploadMediaFileAsync(
-                    organizationModel.OrganizationId,
-                    imageType,
-                    IdentityService.GetCurrentUserId(),
-                    $"{organizationModel.Name}_{currentImageType}.png",
-                    croppedImageFile.ContentType,
-                    fileData);
-
-                if (currentImageType == "profile")
-                {
-                    organizationModel.ImageUrl = response; // Assuming response contains the uploaded image URL
-                }
-                else
-                {
-                    organizationModel.BannerUrl = response; // Assuming response contains the uploaded banner URL
-                }
-
-                StateHasChanged();
-            }
-            catch (Exception ex)
-            {
-                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
-            }
-
-            _isSubmitting = false;
-            StateHasChanged();
-            CloseCropper();
-        }
-    }
-
-    private async Task RemoveImage(string imageType)
-    {
-        _isSubmitting = true;
-        StateHasChanged();
-
-        try
-        {
-            string imageUrl = imageType == "profile" ? organizationModel.ImageUrl : organizationModel.BannerUrl;
-            await MediaFilesService.DeleteMediaFileAsync(imageUrl);
-
-            if (imageType == "profile")
-            {
-                organizationModel.ImageUrl = null;
-            }
-            else
-            {
-                organizationModel.BannerUrl = null;
-            }
-
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred while removing the image: {ex.Message}");
-        }
-
-        _isSubmitting = false;
-        StateHasChanged();
-    }
-
-    private string GetImage()
-    {
-        return !string.IsNullOrEmpty(organizationModel.ImageUrl) 
-            ? organizationModel.ImageUrl 
-            : "images/default_profile_image.webp";
-    }
-
-    private string GetBanner()
-    {
-        return !string.IsNullOrEmpty(organizationModel.BannerUrl) 
-            ? organizationModel.BannerUrl 
-            : "images/default_banner_image.png";
-    }
-
-    private void CloseCropper()
-    {
-        JSRuntime.InvokeVoidAsync("hideCropperModal");
+        NavigationManager.NavigateTo("/organizations/my");
     }
 }
