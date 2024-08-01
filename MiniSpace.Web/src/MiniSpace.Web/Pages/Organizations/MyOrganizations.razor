@@ -23,7 +23,7 @@
             {
                 <MudItem xs="12" sm="6" md="4">
                     <MudCard Class="ma-2">
-                        <MudCardMedia Image="@organization.LogoUrl" Height="140" />
+                        <MudCardMedia Image="@organization.ImageUrl" Height="140" />
                         <MudCardContent>
                             <MudText Typo="Typo.h6">@organization.Name</MudText>
                             <MudText Typo="Typo.body2">@organization.Description</MudText>
@@ -59,7 +59,7 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Failed to load organizations: " + ex.Message, Severity.Error);
+            Snackbar.Add($"Failed to load organizations: {ex.Message}", Severity.Error);
         }
 
         _isLoading = false;
