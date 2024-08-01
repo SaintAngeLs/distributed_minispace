@@ -1,6 +1,6 @@
 using System;
 
-namespace MiniSpace.Web.DTO
+namespace MiniSpace.Web.DTO.Organizations
 {
     public class InvitationDto
     {

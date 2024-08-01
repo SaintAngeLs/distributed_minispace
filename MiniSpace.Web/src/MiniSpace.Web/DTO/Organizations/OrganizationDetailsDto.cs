@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MiniSpace.Web.DTO
+namespace MiniSpace.Web.DTO.Organizations
 {
     public class OrganizationDetailsDto
     {

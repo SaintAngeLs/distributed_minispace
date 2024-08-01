@@ -1,4 +1,4 @@
-namespace MiniSpace.Web.DTO
+namespace MiniSpace.Web.DTO.Organizations
 {
     public class OrganizationSettingsDto
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MiniSpace.Web.DTO.Enums;
 
-namespace MiniSpace.Web.DTO
+namespace MiniSpace.Web.DTO.Organizations
 {
     public class RoleDto
     {
