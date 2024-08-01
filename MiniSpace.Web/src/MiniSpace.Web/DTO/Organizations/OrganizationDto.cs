@@ -10,5 +10,6 @@ namespace MiniSpace.Web.DTO.Organizations
         public string BannerUrl { get; set; }
         public string ImageUrl { get; set; }
         public Guid OwnerId { get; set; }
+        public Guid? RootId { get; set; } 
     }    
 }

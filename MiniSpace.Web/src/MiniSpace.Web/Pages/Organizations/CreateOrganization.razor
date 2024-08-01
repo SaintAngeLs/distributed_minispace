@@ -10,13 +10,20 @@
 @using System.IO
 @using MiniSpace.Web.Areas.Organizations.CommandsDto
 
-
 <MudText Typo="Typo.h5" GutterBottom="true">Create New Organization</MudText>
 
 <MudPaper Elevation="1" Class="pa-4">
     <MudForm Model="organizationModel" @ref="form" Validated="OnValidSubmit">
         <MudTextField @bind-Value="organizationModel.Name" Label="Organization Name" Required="true" />
         <MudTextField @bind-Value="organizationModel.Description" Label="Description" Required="false" />
+        
+        <MudSelect Guid? @bind-Value="organizationModel.ParentId" Label="Parent Organization">
+            <MudSelectItem Value="null">None (Root Organization)</MudSelectItem>
+            @foreach (var org in _parentOrganizations)
+            {
+                <MudSelectItem Value="@(org.Id)">@org.Name</MudSelectItem>
+            }
+        </MudSelect>
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForm">
             Create Organization
@@ -29,11 +36,25 @@
     </MudForm>
 </MudPaper>
 
-
 @code {
     private MudForm form;
     private CreateOrganizationDto organizationModel = new CreateOrganizationDto();
     private bool _isSubmitting = false;
+    private List<OrganizationDto> _parentOrganizations = new List<OrganizationDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Fetch root organizations to be selectable as parents
+            var userId = IdentityService.GetCurrentUserId();
+            _parentOrganizations = (await OrganizationsService.GetUserOrganizationsAsync(userId)).ToList();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load organizations: {ex.Message}", Severity.Error);
+        }
+    }
 
     private async Task SubmitForm()
     {
@@ -48,9 +69,16 @@
                 organizationModel.OrganizationId = Guid.NewGuid();
                 organizationModel.OwnerId = IdentityService.GetCurrentUserId();
 
-                // Ensure ParentId and RootId are null for root organizations
-                organizationModel.ParentId = null; // These are now nullable, so null is valid
-                organizationModel.RootId = null;
+                // Set RootId and ParentId appropriately based on selection
+                if (organizationModel.ParentId != null)
+                {
+                    var parentOrg = _parentOrganizations.FirstOrDefault(o => o.Id == organizationModel.ParentId);
+                    organizationModel.RootId = parentOrg?.RootId ?? parentOrg?.Id;
+                }
+                else
+                {
+                    organizationModel.RootId = null;
+                }
 
                 var response = await OrganizationsService.CreateOrganizationAsync(organizationModel);
 
