@@ -7,7 +7,16 @@ namespace MiniSpace.Web.DTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Guid RootId { get; set; }
-        public IEnumerable<Guid> Organizers { get; set; }
+        public string Description { get; set; }
+        public string BannerUrl { get; set; }
+        public string ImageUrl { get; set; }
+        public Guid OwnerId { get; set; }
+        public Guid? ParentOrganizationId { get; set; }
+        public IEnumerable<SubOrganizationDto> SubOrganizations { get; set; }
+        public IEnumerable<InvitationDto> Invitations { get; set; }
+        public IEnumerable<UserDto> Users { get; set; }
+        public IEnumerable<RoleDto> Roles { get; set; }
+        public IEnumerable<GalleryImageDto> Gallery { get; set; }
+        public OrganizationSettingsDto Settings { get; set; }
     }
 }
