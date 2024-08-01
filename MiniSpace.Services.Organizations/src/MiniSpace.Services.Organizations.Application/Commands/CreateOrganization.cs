@@ -8,8 +8,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands
         public Guid OrganizationId { get; }
         public string Name { get; }
         public string Description { get; }
-        public Guid RootId { get; }
-        public Guid ParentId { get; }
+        public Guid? RootId { get; }  // Nullable
+        public Guid? ParentId { get; }  // Nullable
         public Guid OwnerId { get; }
         public OrganizationSettings Settings { get; }
         public string BannerUrl { get; }
@@ -20,13 +20,12 @@ namespace MiniSpace.Services.Organizations.Application.Commands
             OrganizationId = organizationId == Guid.Empty ? Guid.NewGuid() : organizationId;
             Name = name;
             Description = description;
-            RootId = rootId ?? Guid.Empty; 
-            ParentId = parentId ?? Guid.Empty; 
+            RootId = rootId; 
+            ParentId = parentId; 
             OwnerId = ownerId;
             Settings = settings;
             BannerUrl = bannerUrl;
             ImageUrl = imageUrl;
         }
     }
-
 }

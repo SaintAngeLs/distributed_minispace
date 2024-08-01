@@ -31,10 +31,12 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new UnauthorizedAccessException("User is not authenticated.");
             }
 
-            if (command.ParentId == Guid.Empty)
+            Organization organization;
+
+            if (command.ParentId == null)
             {
                 // Create as a root organization
-                var organization = new Organization(
+                organization = new Organization(
                     command.OrganizationId,
                     command.Name,
                     command.Description,
@@ -51,26 +53,26 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     organization.Name,
                     organization.Description,
                     organization.Id, // Root ID is the organization's own ID
-                    Guid.Empty, // No parent ID
+                    null, // No parent ID
                     command.OwnerId,
                     DateTime.UtcNow));
             }
             else
             {
                 // Handle creation of a sub-organization
-                var root = await _organizationRepository.GetAsync(command.RootId);
+                var root = await _organizationRepository.GetAsync(command.RootId.Value);
                 if (root == null)
                 {
-                    throw new RootOrganizationNotFoundException(command.RootId);
+                    throw new RootOrganizationNotFoundException(command.RootId.Value);
                 }
 
-                var parent = root.GetSubOrganization(command.ParentId);
+                var parent = root.GetSubOrganization(command.ParentId.Value);
                 if (parent == null)
                 {
-                    throw new ParentOrganizationNotFoundException(command.ParentId);
+                    throw new ParentOrganizationNotFoundException(command.ParentId.Value);
                 }
 
-                var organization = new Organization(
+                organization = new Organization(
                     command.OrganizationId,
                     command.Name,
                     command.Description,
@@ -78,7 +80,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     command.OwnerId,
                     command.BannerUrl,
                     command.ImageUrl,
-                    command.ParentId
+                    command.ParentId.Value
                 );
 
                 parent.AddSubOrganization(organization);
@@ -87,12 +89,11 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     organization.Id,
                     organization.Name,
                     organization.Description,
-                    command.RootId,
-                    command.ParentId,
+                    command.RootId.Value,
+                    command.ParentId.Value,
                     command.OwnerId,
                     DateTime.UtcNow));
             }
         }
-
     }
 }
