@@ -85,13 +85,25 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
             }
         }
 
-        public async Task RemoveGalleryImageAsync(Guid userId, Guid imageId)
+         public async Task RemoveGalleryImageAsync(Guid userId, Guid imageId)
         {
             var userGalleryDocument = await _repository.GetAsync(x => x.UserId == userId);
 
             if (userGalleryDocument != null)
             {
                 var galleryImages = userGalleryDocument.GalleryOfImages.Where(g => g.ImageId != imageId).ToList();
+                userGalleryDocument.GalleryOfImages = galleryImages;
+                await _repository.UpdateAsync(userGalleryDocument);
+            }
+        }
+
+        public async Task RemoveGalleryImageByUrlAsync(Guid userId, string imageUrl)
+        {
+            var userGalleryDocument = await _repository.GetAsync(x => x.UserId == userId);
+
+            if (userGalleryDocument != null)
+            {
+                var galleryImages = userGalleryDocument.GalleryOfImages.Where(g => g.ImageUrl != imageUrl).ToList();
                 userGalleryDocument.GalleryOfImages = galleryImages;
                 await _repository.UpdateAsync(userGalleryDocument);
             }
