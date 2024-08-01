@@ -135,6 +135,11 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             string hashedFileName = HashFileName(originalFileName);
             string fileExtension = extension ?? Path.GetExtension(originalFileName);
 
+            if (!fileExtension.StartsWith("."))
+            {
+                fileExtension = "." + fileExtension;
+            }
+
             return $"{contextType}_{uploaderId}_{timestamp}_{hashedFileName}{fileExtension}";
         }
 
