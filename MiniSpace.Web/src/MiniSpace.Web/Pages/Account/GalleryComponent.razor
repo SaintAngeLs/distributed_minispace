@@ -14,86 +14,63 @@
 }
 else
 {
-    <MudGrid>
+    <!-- Single button to upload new images -->
+    <div class="upload-button-container">
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   Class="upload-button"
+                   for="file-input">
+            Upload New Image
+        </MudButton>
+        <InputFile id="file-input" OnChange="@(async e => await OpenCropper(e, Guid.NewGuid()))" style="display: none;" accept=".jpeg,.png,.jpg" />
+    </div>
+
+    <!-- Responsive grid for displaying gallery images -->
+    <div class="gallery-grid">
         @foreach (var image in StudentWithGalleryImagesDto.GalleryImages)
         {
-            var fileInputId = $"file-input-{image.ImageId}"; <!-- Define the ID string -->
-            <MudItem xs="12" md="4">
-                <div class="image-upload-container" style="text-align: center;">
-                    <MudImage Class="gallery-image" Src="@image.ImageUrl" Alt="Gallery image" 
-                              Style="height:200px; width: 100%; font-size:2rem; object-fit: cover;" />
-                    <InputFile OnChange="@(async e => await OpenCropper(e, image.ImageId))" 
-                               style="display: none;" id="@fileInputId" accept=".jpeg,.png,.jpg" />
-                    <div style="display: inline-block; margin-top: 10px;">
-                        <MudButton HtmlTag="label"
-                                   Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                                   Class="small-button"
-                                   for="@fileInputId"> <!-- Use the defined string variable here -->
-                            Upload New Image
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled"
-                                   Color="Color.Secondary"
-                                   StartIcon="@Icons.Material.Filled.Delete"
-                                   Class="small-button"
-                                   OnClick="@(async () => await RemoveImage(image.ImageId))">
-                            Remove Image
-                        </MudButton>
+            <div class="gallery-item">
+                <MudImage Class="gallery-image" Src="@image.ImageUrl" Alt="Gallery image" />
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           Class="delete-button"
+                           OnClick="@(async () => await RemoveImage(image.ImageId))">
+                    Remove
+                </MudButton>
+            </div>
+        }
+    </div>
+}
+
+<!-- Modal for image cropping -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="cropper-container" class="img-container"></div>
+                @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                {
+                    <div id="cropped-image-container" class="img-container">
+                        <img src="@CroppedImageBase64" style="max-width: 100%;" />
                     </div>
-                </div>
-            </MudItem>
-        }
-    </MudGrid>
-
-    <!-- Styling for smaller buttons -->
-    <style>
-        .button-margins {
-            margin-right: 8px;
-            margin-bottom: 8px;
-        }
-
-        .image-upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
-
-    @if (IsUploading)
-    {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-    }
-
-    <!-- Bootstrap Modal for Cropper -->
-    <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="cropper-container" class="img-container"></div>
-                    @if (!string.IsNullOrEmpty(CroppedImageBase64))
-                    {
-                        <div id="cropped-image-container" class="img-container">
-                            <img src="@CroppedImageBase64" style="max-width: 100%;" />
-                        </div>
-                    }
-                </div>
-
-                <div class="modal-footer">
-                    <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" 
-                               OnClick="async () => await SaveCroppedImage()">Save</MudButton>
-                </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
             </div>
         </div>
     </div>
-}
+</div>
 
 @code {
     [Parameter] public bool IsLoading { get; set; }

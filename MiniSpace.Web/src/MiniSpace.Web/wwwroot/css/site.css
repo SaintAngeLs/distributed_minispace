@@ -766,3 +766,39 @@ div.connectionRejected {
     margin-right: 8px;
     margin-bottom: 8px;
 }
+
+.upload-button-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.upload-button {
+    width: 100%;
+    max-width: 300px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.gallery-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gallery-image {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.delete-button {
+    margin-top: 8px;
+    width: 100%;
+}
