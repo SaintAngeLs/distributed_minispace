@@ -31,42 +31,68 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new UnauthorizedAccessException("User is not authenticated.");
             }
 
-            var root = await _organizationRepository.GetAsync(command.RootId);
-            if (root == null)
+            if (command.ParentId == Guid.Empty)
             {
-                throw new RootOrganizationNotFoundException(command.RootId);
-            }
+                // Create as a root organization
+                var organization = new Organization(
+                    command.OrganizationId,
+                    command.Name,
+                    command.Description,
+                    command.Settings,
+                    command.OwnerId,
+                    command.BannerUrl,
+                    command.ImageUrl,
+                    null // No parent organization
+                );
 
-            var parent = root.GetSubOrganization(command.ParentId);
-            if (parent == null)
+                await _organizationRepository.AddAsync(organization);
+                await _messageBroker.PublishAsync(new OrganizationCreated(
+                    organization.Id,
+                    organization.Name,
+                    organization.Description,
+                    organization.Id, // Root ID is the organization's own ID
+                    Guid.Empty, // No parent ID
+                    command.OwnerId,
+                    DateTime.UtcNow));
+            }
+            else
             {
-                throw new ParentOrganizationNotFoundException(command.ParentId);
-            }
+                // Handle creation of a sub-organization
+                var root = await _organizationRepository.GetAsync(command.RootId);
+                if (root == null)
+                {
+                    throw new RootOrganizationNotFoundException(command.RootId);
+                }
 
-            if (string.IsNullOrWhiteSpace(command.Name))
-            {
-                throw new InvalidOrganizationNameException(command.Name);
-            }
+                var parent = root.GetSubOrganization(command.ParentId);
+                if (parent == null)
+                {
+                    throw new ParentOrganizationNotFoundException(command.ParentId);
+                }
 
-            var organization = new Organization(
-                command.OrganizationId, 
-                command.Name, 
-                command.Description, 
-                command.Settings, 
-                command.OwnerId, 
-                command.BannerUrl, 
-                command.ImageUrl);
-            
-            parent.AddSubOrganization(organization);
-            await _organizationRepository.UpdateAsync(root);
-            await _messageBroker.PublishAsync(new OrganizationCreated(
-                organization.Id, 
-                organization.Name, 
-                organization.Description, 
-                command.RootId, 
-                command.ParentId, 
-                command.OwnerId, 
-                DateTime.UtcNow));
+                var organization = new Organization(
+                    command.OrganizationId,
+                    command.Name,
+                    command.Description,
+                    command.Settings,
+                    command.OwnerId,
+                    command.BannerUrl,
+                    command.ImageUrl,
+                    command.ParentId
+                );
+
+                parent.AddSubOrganization(organization);
+                await _organizationRepository.UpdateAsync(root);
+                await _messageBroker.PublishAsync(new OrganizationCreated(
+                    organization.Id,
+                    organization.Name,
+                    organization.Description,
+                    command.RootId,
+                    command.ParentId,
+                    command.OwnerId,
+                    DateTime.UtcNow));
+            }
         }
+
     }
 }
