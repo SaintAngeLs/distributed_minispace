@@ -1,25 +1,30 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MiniSpace.Web.DTO;
-using MiniSpace.Web.DTO.Wrappers;
+using MiniSpace.Web.Areas.Organizations.CommandsDto;
+using MiniSpace.Web.DTO.Organizations;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Organizations
 {
     public interface IOrganizationsService
     {
-        Task<OrganizationDto> GetOrganizationAsync(Guid organizationId, Guid rootId);
-        Task<OrganizationDetailsDto> GetOrganizationDetailsAsync(Guid organizationId, Guid rootId);
-        Task<IEnumerable<OrganizationDto>> GetOrganizerOrganizationsAsync(Guid organizerId);
+        Task<OrganizationDto> GetOrganizationAsync(Guid organizationId);
+        Task<OrganizationDetailsDto> GetOrganizationDetailsAsync(Guid organizationId);
         Task<IEnumerable<OrganizationDto>> GetRootOrganizationsAsync();
-        Task<IEnumerable<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId, Guid rootId);
-        Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId, Guid rootId);
-        Task<HttpResponse<object>> CreateOrganizationAsync(Guid organizationId, string name, Guid rootId, Guid parentId);
-        Task<HttpResponse<object>> CreateRootOrganizationAsync(Guid organizationId, string name);
-        Task DeleteOrganizationAsync(Guid organizationId, Guid rootId);
-        Task AddOrganizerToOrganizationAsync(Guid rootOrganizationId, Guid organizationId, Guid organizerId);
-        Task RemoveOrganizerFromOrganizationAsync(Guid rootOrganizationId, Guid organizationId, Guid organizerId);
-    }    
+        Task<IEnumerable<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId);
+        Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId);
+        Task<HttpResponse<object>> CreateOrganizationAsync(CreateOrganizationDto command);
+        Task<HttpResponse<object>> CreateSubOrganizationAsync(Guid parentOrganizationId, CreateSubOrganizationCommand command);
+        Task DeleteOrganizationAsync(Guid organizationId);
+        Task<HttpResponse<object>> CreateOrganizationRoleAsync(Guid organizationId, CreateOrganizationRoleCommand command);
+        Task InviteUserToOrganizationAsync(Guid organizationId, InviteUserToOrganizationCommand command);
+        Task AssignRoleToMemberAsync(Guid organizationId, Guid memberId, AssignRoleToMemberCommand command);
+        Task UpdateRolePermissionsAsync(Guid organizationId, Guid roleId, UpdateRolePermissionsCommand command);
+        Task SetOrganizationPrivacyAsync(Guid organizationId, SetOrganizationPrivacyCommand command);
+        Task UpdateOrganizationSettingsAsync(Guid organizationId, UpdateOrganizationSettingsCommand command);
+        Task SetOrganizationVisibilityAsync(Guid organizationId, SetOrganizationVisibilityCommand command);
+        Task ManageFeedAsync(Guid organizationId, ManageFeedCommand command);
+        Task<HttpResponse<object>> UpdateOrganizationAsync(Guid organizationId, UpdateOrganizationCommand command);
+    }
 }
