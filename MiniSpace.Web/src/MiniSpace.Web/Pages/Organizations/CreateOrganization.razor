@@ -22,12 +22,22 @@
             <label for="parentOrganization">Parent Organization</label>
             <select class="form-control" id="parentOrganization" @bind="selectedParentId">
                 <option value="">No Parent</option>
-                @foreach (var org in _parentOrganizations)
+                @if (_parentOrganizations != null)
                 {
-                    <option value="@org.Id">@org.Name</option>
+                    @foreach (var org in _parentOrganizations)
+                    {
+                        <option value="@org.Id">@org.Name</option>
+                    }
                 }
             </select>
         </div>
+
+        <!-- Organization Visibility and Privacy Settings -->
+        @if (organizationModel.Settings != null)
+        {
+            <MudSwitch @bind-Value="organizationModel.Settings.IsPrivate" Color="Color.Primary">Private Organization</MudSwitch>
+            <MudSwitch @bind-Value="organizationModel.Settings.IsVisible" Color="Color.Secondary">Visible to Public</MudSwitch>
+        }
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForm">
             Create Organization
@@ -52,14 +62,20 @@
         try
         {
             var userId = IdentityService.GetCurrentUserId();
-            _parentOrganizations = (await OrganizationsService.GetUserOrganizationsAsync(userId)).ToList();
+            var organizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
+            _parentOrganizations = organizations.ToList(); // Explicitly convert IEnumerable to List
             selectedParentId = organizationModel.ParentId?.ToString();
+            if (organizationModel.Settings == null)
+            {
+                organizationModel.Settings = new OrganizationSettingsDto(); // Ensure settings are initialized
+            }
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Failed to load organizations: {ex.Message}", Severity.Error);
         }
     }
+
 
     private async Task SubmitForm()
     {

@@ -5,6 +5,7 @@
 @inject IIdentityService IdentityService
 @using MudBlazor
 
+<AuthWrapper>
 <MudText Typo="Typo.h5" GutterBottom="true">My Organizations</MudText>
 
 <MudPaper Elevation="1" Class="pa-4">
@@ -43,6 +44,7 @@
         }
     </MudGrid>
 </MudPaper>
+</AuthWrapper>
 
 @code {
     private bool _isLoading = true;
