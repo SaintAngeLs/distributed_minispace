@@ -17,7 +17,6 @@
         <MudTextField @bind-Value="organizationModel.Name" Label="Organization Name" Required="true" />
         <MudTextField @bind-Value="organizationModel.Description" Label="Description" Required="false" />
 
-        <!-- Bootstrap dropdown for selecting parent organization -->
         <div class="form-group">
             <label for="parentOrganization">Parent Organization</label>
             <select class="form-control" id="parentOrganization" @bind="selectedParentId">
@@ -32,7 +31,6 @@
             </select>
         </div>
 
-        <!-- Organization Visibility and Privacy Settings -->
         @if (organizationModel.Settings != null)
         {
             <MudSwitch @bind-Value="organizationModel.Settings.IsPrivate" Color="Color.Primary">Private Organization</MudSwitch>
@@ -63,11 +61,11 @@
         {
             var userId = IdentityService.GetCurrentUserId();
             var organizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
-            _parentOrganizations = organizations.ToList(); // Explicitly convert IEnumerable to List
+            _parentOrganizations = organizations.ToList();
             selectedParentId = organizationModel.ParentId?.ToString();
             if (organizationModel.Settings == null)
             {
-                organizationModel.Settings = new OrganizationSettingsDto(); // Ensure settings are initialized
+                organizationModel.Settings = new OrganizationSettingsDto(); 
             }
         }
         catch (Exception ex)
@@ -91,7 +89,6 @@
                 organizationModel.OwnerId = IdentityService.GetCurrentUserId();
                 organizationModel.ParentId = string.IsNullOrEmpty(selectedParentId) ? null : new Guid?(new Guid(selectedParentId));
 
-                // Set RootId and ParentId based on selection
                 if (organizationModel.ParentId.HasValue)
                 {
                     var parentOrg = _parentOrganizations.FirstOrDefault(o => o.Id == organizationModel.ParentId);
@@ -99,7 +96,7 @@
                 }
                 else
                 {
-                    organizationModel.RootId = organizationModel.OrganizationId;  // This organization is its own root
+                    organizationModel.RootId = organizationModel.OrganizationId; 
                 }
 
                 var response = await OrganizationsService.CreateOrganizationAsync(organizationModel);

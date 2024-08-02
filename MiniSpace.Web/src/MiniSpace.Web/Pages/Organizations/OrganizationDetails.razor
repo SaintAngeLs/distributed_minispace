@@ -1,0 +1,77 @@
+@page "/organizations/details/{OrganizationId:guid}"
+@inject IOrganizationsService OrganizationsService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.DTO.Organizations
+@using System.Linq
+@using MudBlazor
+
+<MudText Typo="Typo.h4" GutterBottom="true">Organization Details</MudText>
+
+@if (organizationDetails == null)
+{
+    <MudText> Loading... </MudText>
+}
+else
+{
+    <MudPaper Class="pa-4 my-2">
+        <MudText Typo="Typo.h5">@organizationDetails.Name</MudText>
+        <MudText Typo="Typo.body1">@organizationDetails.Description</MudText>
+        <MudAvatar Src="@organizationDetails.ImageUrl" Size="Size.Large" />
+
+        @if (isAdmin)
+        {
+            <AdminView />
+        }
+        else
+        {
+            <UserView />
+        }
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    private OrganizationDetailsDto organizationDetails;
+    private bool isAdmin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        organizationDetails = await OrganizationsService.GetOrganizationDetailsAsync(OrganizationId);
+        isAdmin = CheckIfUserIsAdmin();
+    }
+
+    private bool CheckIfUserIsAdmin()
+    {
+        // Implement your logic to determine if the user is an administrator
+        return IdentityService.GetCurrentUserId() == organizationDetails.OwnerId;
+    }
+
+    private RenderFragment AdminView() => builder =>
+    {
+        builder.OpenComponent(0, typeof(MudButton));
+        builder.AddAttribute(1, "Color", Color.Primary);
+        builder.AddAttribute(2, "ChildContent", (RenderFragment)((innerBuilder) =>
+        {
+            innerBuilder.AddContent(3, "Edit Organization");
+        }));
+        builder.CloseComponent();
+
+        builder.OpenComponent(4, typeof(MudButton));
+        builder.AddAttribute(5, "Color", Color.Error);
+        builder.AddAttribute(6, "ChildContent", (RenderFragment)((innerBuilder) =>
+        {
+            innerBuilder.AddContent(7, "Delete Organization");
+        }));
+        builder.CloseComponent();
+    };
+
+    private RenderFragment UserView() => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddContent(1, "View Only Mode");
+        builder.CloseElement();
+    };
+}

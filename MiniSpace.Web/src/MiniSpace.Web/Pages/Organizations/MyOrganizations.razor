@@ -56,8 +56,8 @@
 
         try
         {
-            var userId = IdentityService.GetCurrentUserId(); // Use the existing method
-            _organizations = (await OrganizationService.GetRootOrganizationsAsync()).ToList(); // Example of fetching organizations
+            var userId = IdentityService.GetCurrentUserId(); 
+            _organizations = (await OrganizationService.GetRootOrganizationsAsync()).ToList(); 
         }
         catch (Exception ex)
         {
