@@ -8,16 +8,41 @@
 
 <MudText Typo="Typo.h4" GutterBottom="true">Organization Details</MudText>
 
-@if (organizationDetails == null)
+@if (organizationGalleryUsers == null)
 {
     <MudText> Loading... </MudText>
 }
 else
 {
     <MudPaper Class="pa-4 my-2">
-        <MudText Typo="Typo.h5">@organizationDetails.Name</MudText>
-        <MudText Typo="Typo.body1">@organizationDetails.Description</MudText>
-        <MudAvatar Src="@organizationDetails.ImageUrl" Size="Size.Large" />
+        <MudText Typo="Typo.h5">@organizationGalleryUsers.OrganizationDetails.Name</MudText>
+        <MudText Typo="Typo.body1">@organizationGalleryUsers.OrganizationDetails.Description</MudText>
+        <MudAvatar Src="@organizationGalleryUsers.OrganizationDetails.ImageUrl" Size="Size.Large" />
+
+        <!-- Displaying users -->
+        <MudText Typo="Typo.h6" GutterBottom="true">Members</MudText>
+        <MudList>
+            @foreach (var user in organizationGalleryUsers.Users)
+            {
+                <MudListItem>
+                    <MudAvatar Src="@user.AvatarUrl" Size="Size.Medium" />
+                    <MudText Typo="Typo.body1">@user.Name</MudText>
+                </MudListItem>
+            }
+        </MudList>
+
+        <!-- Displaying gallery -->
+        <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
+        <MudGrid>
+            @foreach (var image in organizationGalleryUsers.Gallery)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard>
+                        <MudCardMedia Src="@image.Url" Title="@image.Description" />
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
 
         @if (isAdmin)
         {
@@ -34,19 +59,19 @@ else
     [Parameter]
     public Guid OrganizationId { get; set; }
 
-    private OrganizationDetailsDto organizationDetails;
+    private OrganizationGalleryUsersDto organizationGalleryUsers;
     private bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
-        organizationDetails = await OrganizationsService.GetOrganizationDetailsAsync(OrganizationId);
+        organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
         isAdmin = CheckIfUserIsAdmin();
     }
 
     private bool CheckIfUserIsAdmin()
     {
         // Implement your logic to determine if the user is an administrator
-        return IdentityService.GetCurrentUserId() == organizationDetails.OwnerId;
+        return IdentityService.GetCurrentUserId() == organizationGalleryUsers.OrganizationDetails.OwnerId;
     }
 
     private RenderFragment AdminView() => builder =>
