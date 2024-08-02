@@ -26,5 +26,6 @@ namespace MiniSpace.Web.Areas.Organizations
         Task SetOrganizationVisibilityAsync(Guid organizationId, SetOrganizationVisibilityCommand command);
         Task ManageFeedAsync(Guid organizationId, ManageFeedCommand command);
         Task<HttpResponse<object>> UpdateOrganizationAsync(Guid organizationId, UpdateOrganizationCommand command);
+        Task<IEnumerable<OrganizationDto>> GetUserOrganizationsAsync(Guid userId);
     }
 }

@@ -172,8 +172,8 @@
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
     private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
 
-    private HashSet<string> selectedLanguages = new HashSet<string>();  // Changed to HashSet<string>
-    private HashSet<string> selectedInterests = new HashSet<string>();  // Changed to HashSet<string>
+    private HashSet<string> selectedLanguages = new HashSet<string>();
+    private HashSet<string> selectedInterests = new HashSet<string>(); 
 
     protected override async Task OnInitializedAsync()
     {
@@ -203,8 +203,8 @@
 
                 availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
 
-                selectedLanguages = new HashSet<string>(studentDto.Languages);  // Adjusted
-                selectedInterests = new HashSet<string>(studentDto.Interests);  // Adjusted
+                selectedLanguages = new HashSet<string>(studentDto.Languages); 
+                selectedInterests = new HashSet<string>(studentDto.Interests);
             }
             else
             {
@@ -222,30 +222,28 @@
         }
     }
 
-    private void OnSelectedLanguagesChanged(IEnumerable<string> languages)  // Adjusted
+    private void OnSelectedLanguagesChanged(IEnumerable<string> languages)
     {
-        selectedLanguages = new HashSet<string>(languages);  // Adjusted
+        selectedLanguages = new HashSet<string>(languages);
     }
 
-    private void OnSelectedInterestsChanged(IEnumerable<string> interests)  // Adjusted
+    private void OnSelectedInterestsChanged(IEnumerable<string> interests) 
     {
-        selectedInterests = new HashSet<string>(interests);  // Adjusted
+        selectedInterests = new HashSet<string>(interests);
     }
 
     private async Task SaveChanges()
     {
         var studentDto = studentWithGalleryImagesDto.Student;
-        studentDto.Languages = selectedLanguages.ToList();  // Adjusted
-        studentDto.Interests = selectedInterests.ToList();  // Adjusted
+        studentDto.Languages = selectedLanguages.ToList(); 
+        studentDto.Interests = selectedInterests.ToList();
 
-        // Save changes to the server
         await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
             studentDto.Id,
             studentDto.Languages,
             studentDto.Interests
         );
 
-        // Update studentDto
         await StudentsService.UpdateStudentDto(studentDto.Id);
         StateHasChanged();
     }
