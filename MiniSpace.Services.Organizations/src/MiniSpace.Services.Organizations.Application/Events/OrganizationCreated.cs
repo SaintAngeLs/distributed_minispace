@@ -8,8 +8,8 @@ namespace MiniSpace.Services.Organizations.Application.Events
         public Guid OrganizationId { get; }
         public string Name { get; }
         public string Description { get; }
-        public Guid? RootId { get; }  // Nullable RootId
-        public Guid? ParentId { get; }  // Nullable ParentId
+        public Guid? RootId { get; }  
+        public Guid? ParentId { get; }  
         public Guid OwnerId { get; }
         public DateTime CreatedAt { get; }
 
