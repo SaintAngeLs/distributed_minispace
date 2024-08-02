@@ -9,13 +9,13 @@ namespace MiniSpace.Services.Organizations.Application.DTO
     [ExcludeFromCodeCoverage]
     public class OrganizationGalleryUsersDto
     {
-        public OrganizationDto Organization { get; set; }
+        public OrganizationDetailsDto OrganizationDetails { get; set; }
         public IEnumerable<GalleryImageDto> Gallery { get; set; }
         public IEnumerable<UserDto> Users { get; set; }
 
         public OrganizationGalleryUsersDto(Organization organization, IEnumerable<GalleryImage> gallery, IEnumerable<User> users)
         {
-            Organization = new OrganizationDto(organization);
+            OrganizationDetails = new OrganizationDetailsDto(organization);
             Gallery = gallery.Select(g => new GalleryImageDto(g)).ToList();
             Users = users.Select(u => new UserDto(u)).ToList();
         }
