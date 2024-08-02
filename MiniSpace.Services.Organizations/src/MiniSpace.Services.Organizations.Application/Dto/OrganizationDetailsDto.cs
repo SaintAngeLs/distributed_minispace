@@ -36,12 +36,12 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             ImageUrl = organization.ImageUrl;
             OwnerId = organization.OwnerId;
             ParentOrganizationId = organization.ParentOrganizationId;
-            SubOrganizations = organization.SubOrganizations.Select(o => new SubOrganizationDto(o)).ToList();
-            Invitations = organization.Invitations.Select(i => new InvitationDto(i)).ToList();
-            Users = organization.Users.Select(u => new UserDto(u)).ToList();
-            Roles = organization.Roles.Select(r => new RoleDto(r)).ToList();
-            Gallery = organization.Gallery.Select(g => new GalleryImageDto(g)).ToList();
-            Settings = new OrganizationSettingsDto(organization.Settings);
+            SubOrganizations = organization.SubOrganizations?.Select(o => new SubOrganizationDto(o)).ToList();
+            Invitations = organization.Invitations?.Select(i => new InvitationDto(i)).ToList();
+            Users = organization.Users?.Select(u => new UserDto(u)).ToList();
+            Roles = organization.Roles?.Select(r => new RoleDto(r)).ToList();
+            Gallery = organization.Gallery?.Select(g => new GalleryImageDto(g)).ToList();
+            Settings = organization.Settings != null ? new OrganizationSettingsDto(organization.Settings) : null;
         }
     }
 }
