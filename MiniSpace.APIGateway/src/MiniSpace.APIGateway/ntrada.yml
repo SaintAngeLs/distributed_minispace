@@ -862,6 +862,14 @@ modules:
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children/all
 
+      - upstream: /users/{userId}/organizations
+        method: GET
+        use: downstream
+        downstream: organizations-service/users/{userId}/organizations
+        auth: true
+        bind:
+          - userId: {userId}
+
       - upstream: /{organizationId}
         method: DELETE
         use: downstream
