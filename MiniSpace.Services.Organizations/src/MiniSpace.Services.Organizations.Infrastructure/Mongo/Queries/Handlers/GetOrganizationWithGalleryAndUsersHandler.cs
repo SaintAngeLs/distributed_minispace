@@ -36,9 +36,10 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
             var organization = organizationDocument.AsEntity();
             var galleryDocument = await _galleryRepository.FindAsync(g => g.OrganizationId == organization.Id);
-            var gallery = galleryDocument.SelectMany(doc => doc.Gallery).Select(g => g.AsEntity());
+            var gallery = galleryDocument?.SelectMany(doc => doc.Gallery).Select(g => g.AsEntity()) ?? Enumerable.Empty<GalleryImage>();
 
             return new OrganizationGalleryUsersDto(organization, gallery, organization.Users);
         }
+
     }
 }
