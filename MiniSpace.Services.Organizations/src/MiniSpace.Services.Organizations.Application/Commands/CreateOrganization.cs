@@ -8,8 +8,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands
         public Guid OrganizationId { get; }
         public string Name { get; }
         public string Description { get; }
-        public Guid? RootId { get; }  // Nullable
-        public Guid? ParentId { get; }  // Nullable
+        public Guid? RootId { get; } 
+        public Guid? ParentId { get; }  
         public Guid OwnerId { get; }
         public OrganizationSettings Settings { get; }
         public string BannerUrl { get; }
