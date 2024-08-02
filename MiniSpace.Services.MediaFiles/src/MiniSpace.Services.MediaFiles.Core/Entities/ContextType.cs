@@ -6,6 +6,9 @@
         Post,
         StudentProfileImage,
         StudentBannerImage,
-        StudentGalleryImage
+        StudentGalleryImage,
+        OrganizationProfileImage,
+        OrganizationBannerImage,
+        OrganizationGalleryImage
     }
 }

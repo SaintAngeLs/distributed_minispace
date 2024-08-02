@@ -394,6 +394,14 @@ modules:
         downstream: students-service/students/{studentId}/notifications
         auth: true
 
+      - upstream: /{studentId}/languages-and-interests
+        method: PUT
+        use: downstream
+        downstream: students-service/students/{studentId}/languages-and-interests
+        bind:
+          - studentId:{studentId}
+        auth: true
+
     services:
       students-service:
         localUrl: localhost:5007
@@ -792,6 +800,10 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files
         auth: true
+        requestSizeLimit: 50_000_000  # Example: Limit to 50 MB
+        formLimits:
+          multipartBodyLengthLimit: 50_000_000  # Optional: Same as above to ensure large files are allowed
+
 
       - upstream: /{mediaFileId}
         method: GET
@@ -826,6 +838,47 @@ modules:
         auth: true
 
       - upstream: /{organizationId}
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}
+
+      - upstream: /{organizationId}/details
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/details
+
+      - upstream: /root
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/root
+
+      - upstream: /{organizationId}/children
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children
+
+      - upstream: /{organizationId}/children/all
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/children/all
+
+      - upstream: /users/{userId}/organizations
+        method: GET
+        use: downstream
+        downstream: organizations-service/users/{userId}/organizations
+        auth: true
+        bind:
+          - userId: {userId}
+      
+      - upstream: /{organizationId}/details/gallery-users
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/details/gallery-users
+        bind:
+          - organizationId: {organizationId}
+
+
+      - upstream: /{organizationId}
         method: DELETE
         use: downstream
         downstream: organizations-service/organizations/{organizationId}
@@ -836,52 +889,64 @@ modules:
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/children
         auth: true
-        
-      - upstream: /{organizationId}/organizer
+
+      - upstream: /{organizationId}/roles
         method: POST
         use: downstream
-        downstream: organizations-service/organizations/{organizationId}/organizer
+        downstream: organizations-service/organizations/{organizationId}/roles
         auth: true
-        
-      - upstream: /{organizationId}/organizer/{organizerId}
-        method: DELETE
+
+      - upstream: /{organizationId}/roles/{roleId}/permissions
+        method: PUT
         use: downstream
-        downstream: organizations-service/organizations/{organizationId}/organizer/{organizerId}
+        downstream: organizations-service/organizations/{organizationId}/roles/{roleId}/permissions
         auth: true
-        
+
+      - upstream: /{organizationId}/invite
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/invite
+        auth: true
+
+      - upstream: /{organizationId}/roles/{memberId}
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/roles/{memberId}
+        auth: true
+
+      - upstream: /{organizationId}/privacy
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/privacy
+        auth: true
+
+      - upstream: /{organizationId}/settings
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/settings
+        auth: true
+
+      - upstream: /{organizationId}/visibility
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/visibility
+        auth: true
+
+      - upstream: /{organizationId}/feed
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/feed
+        auth: true
+
       - upstream: /{organizationId}
-        method: GET
+        method: PUT
         use: downstream
         downstream: organizations-service/organizations/{organizationId}
-        
-      - upstream: /{organizationId}/details
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/{organizationId}/details
-
-      - upstream: /root
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/root
-        
-      - upstream: /{organizationId}/children
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/{organizationId}/children  
-
-      - upstream: /{organizationId}/children/all
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/{organizationId}/children/all  
-
-      - upstream: /organizer/{organizerId}
-        method: GET
-        use: downstream
-        downstream: organizations-service/organizations/organizer/{organizerId}
         auth: true
 
     services:
       organizations-service:
         localUrl: localhost:5015
         url: organizations-service
+
 

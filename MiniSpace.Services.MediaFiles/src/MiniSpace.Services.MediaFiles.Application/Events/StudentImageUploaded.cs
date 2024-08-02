@@ -1,7 +1,7 @@
 using Convey.CQRS.Events;
 using System;
 
-namespace MiniSpace.Services.MediaFiles.Application.Events.External
+namespace MiniSpace.Services.MediaFiles.Application.Events
 {
     public class StudentImageUploaded : IEvent
     {

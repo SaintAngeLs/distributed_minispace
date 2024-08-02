@@ -9,6 +9,7 @@ using MiniSpace.Services.MediaFiles.Core.Entities;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -51,7 +52,10 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 throw new InvalidContextTypeException(command.SourceType);
             }
 
-            if (sourceType == ContextType.StudentProfileImage || sourceType == ContextType.StudentBannerImage)
+            if (sourceType == ContextType.StudentProfileImage || 
+                sourceType == ContextType.StudentBannerImage ||
+                sourceType == ContextType.OrganizationProfileImage ||
+                sourceType == ContextType.OrganizationBannerImage)
             {
                 var existingFiles = await _fileSourceInfoRepository.FindByUploaderIdAndSourceTypeAsync(command.UploaderId, sourceType);
                 foreach (var existingFile in existingFiles)
@@ -61,23 +65,40 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 }
             }
 
-            byte[] bytes = Convert.FromBase64String(command.Base64Content);
-            _fileValidator.ValidateFileSize(bytes.Length);
-            _fileValidator.ValidateFileExtensions(bytes, command.FileContentType);
+            _fileValidator.ValidateFileSize(command.FileData.Length);
+            
+            // Extract the first 8 bytes for validation
+            byte[] buffer = new byte[8];
+            Array.Copy(command.FileData, 0, buffer, 0, Math.Min(buffer.Length, command.FileData.Length));
+            _fileValidator.ValidateFileExtensions(buffer, command.FileContentType);
 
-            using var inStream = new MemoryStream(bytes);
+            // Load the image from the byte array
+            using var inStream = new MemoryStream(command.FileData);
             using var myImage = await Image.LoadAsync(inStream);
-            using var outStream = new MemoryStream();
-            await myImage.SaveAsync(outStream, new WebpEncoder { Quality = 75 });
-            inStream.Position = 0;
-            outStream.Position = 0;
 
+            // Process the image (e.g., resizing)
+            using var outStream = new MemoryStream();
+            myImage.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Mode = ResizeMode.Max,
+                Size = new Size(1024, 1024) // Adjust size for optimization
+            }));
+            await myImage.SaveAsync(outStream, new WebpEncoder { Quality = 50 });
+
+            // Generate unique file names
             string originalFileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName);
             string webpFileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName, "webp");
 
-            var originalUrl = await _s3Service.UploadFileAsync("images", originalFileName, inStream);
-            var processedUrl = await _s3Service.UploadFileAsync("webps", webpFileName, outStream);
+            // Upload original and processed files to S3
+            var originalUrlTask = _s3Service.UploadFileAsync("images", originalFileName, inStream);
+            var processedUrlTask = _s3Service.UploadFileAsync("webps", webpFileName, outStream);
 
+            await Task.WhenAll(originalUrlTask, processedUrlTask);
+
+            var originalUrl = await originalUrlTask;
+            var processedUrl = await processedUrlTask;
+
+            // Store file info in the repository
             var uploadDate = _dateTimeProvider.Now;
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
                 command.UploaderId, State.Associated, uploadDate, originalUrl, 
@@ -86,6 +107,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, originalFileName));
 
+            // Handle specific events based on the source type
             if (sourceType == ContextType.StudentProfileImage ||
                 sourceType == ContextType.StudentBannerImage ||
                 sourceType == ContextType.StudentGalleryImage)
@@ -93,6 +115,15 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 var imageType = sourceType.ToString();
                 var studentImageUploadedEvent = new StudentImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
+            }
+
+            if (sourceType == ContextType.OrganizationProfileImage ||
+                sourceType == ContextType.OrganizationBannerImage ||
+                sourceType == ContextType.OrganizationGalleryImage)
+            {
+                var imageType = sourceType.ToString();
+                var organizationImageUploadedEvent = new OrganizationImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
+                await _messageBroker.PublishAsync(organizationImageUploadedEvent);
             }
 
             return new FileUploadResponseDto(fileSourceInfo.Id);
@@ -103,6 +134,11 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             string timestamp = _dateTimeProvider.Now.ToString("yyyyMMddHHmmssfff");
             string hashedFileName = HashFileName(originalFileName);
             string fileExtension = extension ?? Path.GetExtension(originalFileName);
+
+            if (!fileExtension.StartsWith("."))
+            {
+                fileExtension = "." + fileExtension;
+            }
 
             return $"{contextType}_{uploaderId}_{timestamp}_{hashedFileName}{fileExtension}";
         }

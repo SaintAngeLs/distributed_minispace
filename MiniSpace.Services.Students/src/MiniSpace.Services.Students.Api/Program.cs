@@ -44,6 +44,7 @@ namespace MiniSpace.Services.Students.Api
                         .Put<UpdateUserSettings>("students/{studentId}/settings")
                         .Put<ChangeStudentState>("students/{studentId}/state/{state}",
                             afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Put<UpdateStudentLanguagesAndInterests>("students/{studentId}/languages-and-interests")
 
                         .Delete<DeleteStudent>("students/{studentId}")
 

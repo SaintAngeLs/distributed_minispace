@@ -26,10 +26,12 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public IEnumerable<EducationDocument> Education { get; set; }
         public IEnumerable<WorkDocument> Work { get; set; }
         public IEnumerable<string> Languages { get; set; }
-        public IEnumerable<Interest> Interests { get; set; }
+        public IEnumerable<string> Interests { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
         public string ContactEmail { get; set; }
         public string PhoneNumber { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
     }
 }

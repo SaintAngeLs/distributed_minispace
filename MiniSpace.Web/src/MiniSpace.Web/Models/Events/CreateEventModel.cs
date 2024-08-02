@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Organizations;
 
 namespace MiniSpace.Web.Models.Events
 {

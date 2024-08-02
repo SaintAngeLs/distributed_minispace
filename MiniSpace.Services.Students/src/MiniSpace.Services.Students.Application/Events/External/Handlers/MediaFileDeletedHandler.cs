@@ -2,6 +2,7 @@
 using MiniSpace.Services.Students.Core.Repositories;
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,45 +23,63 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
         {
             Console.WriteLine($"Received MediaFileDeleted event: {@event.MediaFileUrl}");
 
-            var student = await _studentRepository.GetAsync(@event.SourceId);
-            if (student != null)
+            // Fetch the student data
+            var student = await _studentRepository.GetAsync(@event.UploaderId);
+            if (student == null)
             {
-                bool updated = false;
-
-                // Check and remove profile image
-                if (@event.Source.ToLowerInvariant() == "studentprofileimage" && student.ProfileImageUrl == @event.MediaFileUrl)
-                {
-                    student.RemoveProfileImage();
-                    updated = true;
-                    Console.WriteLine("Removed profile image.");
-                }
-
-                // Check and remove banner image
-                if (@event.Source.ToLowerInvariant() == "studentbannerimage" && student.BannerUrl == @event.MediaFileUrl)
-                {
-                    student.RemoveBannerImage();
-                    updated = true;
-                    Console.WriteLine("Removed banner image.");
-                }
-
-                if (updated)
-                {
-                    await _studentRepository.UpdateAsync(student);
-                    Console.WriteLine("Updated student repository.");
-                }
+                Console.WriteLine($"Student with ID {@event.UploaderId} not found.");
+                return;
             }
 
-            // Check and remove gallery images
-            var userGallery = await _userGalleryRepository.GetAsync(@event.SourceId);
+            // Fetch the user gallery using the student's ID
+            var userGallery = await _userGalleryRepository.GetAsync(student.Id);
+            Console.WriteLine($"Fetched student and user gallery data. {JsonSerializer.Serialize(userGallery, new JsonSerializerOptions { WriteIndented = true })}");
+
+            bool studentUpdated = false;
+            bool galleryUpdated = false;
+
+            // Handle profile image deletion
+            if (@event.Source.ToLowerInvariant() == "studentprofileimage" && student.ProfileImageUrl == @event.MediaFileUrl)
+            {
+                student.RemoveProfileImage();
+                studentUpdated = true;
+                Console.WriteLine("Removed profile image.");
+            }
+
+            // Handle banner image deletion
+            if (@event.Source.ToLowerInvariant() == "studentbannerimage" && student.BannerUrl == @event.MediaFileUrl)
+            {
+                student.RemoveBannerImage();
+                studentUpdated = true;
+                Console.WriteLine("Removed banner image.");
+            }
+
+            // Handle gallery image deletion
             if (userGallery != null)
             {
+                Console.WriteLine("User gallery is not null");
                 var galleryImage = userGallery.GalleryOfImages.FirstOrDefault(img => img.ImageUrl == @event.MediaFileUrl);
                 if (galleryImage != null)
                 {
+                    Console.WriteLine("Gallery image found is not null");
                     userGallery.RemoveGalleryImage(galleryImage.ImageId);
-                    await _userGalleryRepository.UpdateAsync(userGallery);
+                    galleryUpdated = true;
                     Console.WriteLine("Removed gallery image.");
                 }
+            }
+
+            // Update the student repository if necessary
+            if (studentUpdated)
+            {
+                await _studentRepository.UpdateAsync(student);
+                Console.WriteLine("Updated student repository.");
+            }
+
+            // Update the user gallery repository if necessary
+            if (galleryUpdated)
+            {
+                await _userGalleryRepository.UpdateAsync(userGallery);
+                Console.WriteLine("Updated user gallery repository.");
             }
         }
     }

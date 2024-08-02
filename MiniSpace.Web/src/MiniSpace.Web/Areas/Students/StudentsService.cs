@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Interests;
+using MiniSpace.Web.DTO.Languages;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -48,7 +50,7 @@ namespace MiniSpace.Web.Areas.Students
             return _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>("students");
         }
 
-        public async Task UpdateStudentAsync(
+         public async Task UpdateStudentAsync(
             Guid studentId, 
             string firstName, 
             string lastName, 
@@ -57,13 +59,16 @@ namespace MiniSpace.Web.Areas.Students
             bool emailNotifications, 
             string contactEmail, 
             IEnumerable<string> languages, 
-            IEnumerable<InterestDto> interests, 
+            IEnumerable<string> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
             IEnumerable<EducationDto> education,
             IEnumerable<WorkDto> work,
-            string phoneNumber)
+            string phoneNumber,
+            string country,
+            string city,
+            DateTime? dateOfBirth)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -77,20 +82,30 @@ namespace MiniSpace.Web.Areas.Students
                 description,
                 emailNotifications,
                 contactEmail,
-                languages,
-                interests,
+                languages = languages.ToList(),
+                interests = interests.ToList(),
                 enableTwoFactor,
                 disableTwoFactor,
                 twoFactorSecret,
                 education,
                 work,
-                phoneNumber
+                phoneNumber,
+                country,
+                city,
+                dateOfBirth
             };
 
             var jsonData = JsonSerializer.Serialize(updateStudentData);
             Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
 
             await _httpClient.PutAsync($"students/{studentId}", updateStudentData);
+        }
+
+        public async Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<NotificationPreferencesDto>($"students/{studentId}/notifications");
         }
 
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl, string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail)
@@ -102,15 +117,7 @@ namespace MiniSpace.Web.Areas.Students
             return student != null ? student.State : "invalid";
         }
 
-        // New methods for notification preferences
-        public async Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId)
-        {
-            var accessToken = await _identityService.GetAccessTokenAsync();
-            _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<NotificationPreferencesDto>($"students/{studentId}/notifications");
-        }
-
-        public async Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto)
+        public async Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto, bool emailNotifications)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -118,6 +125,7 @@ namespace MiniSpace.Web.Areas.Students
             var updatePreferencesData = new
             {
                 studentId,
+                emailNotifications,
                 preferencesDto.AccountChanges,
                 preferencesDto.SystemLogin,
                 preferencesDto.NewEvent,
@@ -128,7 +136,6 @@ namespace MiniSpace.Web.Areas.Students
                 preferencesDto.FriendsNotifications
             };
 
-            // Serialize the data to JSON and log it
             var jsonData = JsonSerializer.Serialize(updatePreferencesData);
             Console.WriteLine($"Sending UpdateUserNotificationPreferences request: {jsonData}");
 
@@ -165,8 +172,6 @@ namespace MiniSpace.Web.Areas.Students
             };
 
             await _httpClient.PutAsync($"students/{studentId}/settings", updateUserSettingsData);
-            
-
         }
 
         public async Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId)
@@ -176,6 +181,24 @@ namespace MiniSpace.Web.Areas.Students
             return await _httpClient.GetAsync<AvailableSettingsDto>($"students/{studentId}/settings");
         }
 
+        public async Task UpdateStudentLanguagesAndInterestsAsync(
+            Guid studentId, 
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
 
+            var updateData = new
+            {
+                languages = languages.ToList(),
+                interests = interests.ToList()
+            };
+
+            var jsonData = JsonSerializer.Serialize(updateData);
+            Console.WriteLine($"Sending UpdateStudentLanguagesAndInterests request: {jsonData}");
+
+            await _httpClient.PutAsync($"students/{studentId}/languages-and-interests", updateData);
+        }
     }
 }

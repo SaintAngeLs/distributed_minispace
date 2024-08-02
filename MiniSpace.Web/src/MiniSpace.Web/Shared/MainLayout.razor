@@ -9,6 +9,8 @@
 @inject AuthenticationStateProvider authenticationStateProvider
 
 <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="4">
         <div class="container-fluid d-flex">
@@ -16,6 +18,12 @@
                 @if (_isUserAuthenticated)
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Text" OnClick="@ToggleDrawer">
+                        <img src="icons/menu-left.svg" alt="Menu" style="height: 24px; width: 24px;" />
+                    </MudButton>
                 }
                 <span class="ml-2">MiniSpace</span>
             </div>
@@ -49,13 +57,10 @@
     }
     else
     {
-        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
-            @if (!isPC)
-            {
-                <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">Menu</MudText>
-                </MudDrawerHeader>
-            }
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6"> </MudText>
+            </MudDrawerHeader>
             <MudNavMenu>
                 <MudNavLink Href="#home" OnClick="ScrollToHome" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
                 <MudNavLink Href="#about" OnClick="ScrollToAbout" Icon="@Icons.Material.Filled.Info">About App</MudNavLink>
@@ -67,13 +72,12 @@
     }
     @if (_isUserAuthenticated)
     {
-        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true" Width="250px">
-            @if (!isPC)
-            {
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Temporary)" OpenMiniOnHover="true">
+            
                 <MudDrawerHeader>
                     <MudText Typo="Typo.h6">Menu</MudText>
                 </MudDrawerHeader>
-            }
+            
             <MudNavMenu>
                 <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
                 <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
@@ -85,12 +89,19 @@
                         <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
                     }
                 </MudNavGroup>
-                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true"  ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
                     <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
                     <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
                     <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
                 </MudNavGroup>
+                
+                <MudNavGroup Title="Organizations" Icon="@Icons.Material.Filled.Business" Expanded="true">
+                    <MudNavLink Href="organizations/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
+                    <MudNavLink Href="organizations/my" Icon="@Icons.Material.Filled.Home">My Organizations</MudNavLink>
+                    <MudNavLink Href="organizations/following" Icon="@Icons.Material.Filled.Group">Organizations I Follow</MudNavLink>
+                </MudNavGroup>
+
                 <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
                     <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
                     <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
@@ -110,11 +121,11 @@
     }
 
     <MudMainContent>
-        <div style="flex: 1; display: flex; flex-direction: column; min-height: 100vh;">
+        <div style="flex: 1; display: flex; flex-direction: column;">
             <div style="flex: 1;">
                 <div style="flex: 1; display: flex; justify-content: center; background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);">
-                    <div class="main-content" style="flex-grow: 1; max-width: 1400px;">
-                        <div style="padding: 10px; margin: 20px;">
+                    <div  style="flex-grow: 1; max-width: 1400px;">
+                        <div style="padding: 10px; margin: 20px;  min-height: 100vh;">
                             @Body
                         </div>
                     </div>
@@ -197,6 +208,11 @@
     private void ToggleDrawer()
     {
         _sidebarExpanded = !_sidebarExpanded;
+    }
+
+    private void OpenDrawer()
+    {
+        _sidebarExpanded = true;
     }
 
     private void ToggleUserDrawer()

@@ -48,14 +48,18 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             }
 
             student.Update(command.FirstName, 
-            command.LastName, 
-            command.Description, 
-            command.EmailNotifications, 
-            command.ContactEmail, 
-            command.PhoneNumber);
+                           command.LastName, 
+                           command.Description, 
+                           command.EmailNotifications, 
+                           command.ContactEmail, 
+                           command.PhoneNumber,
+                           command.Country,
+                           command.City,
+                           command.DateOfBirth);
+
             student.UpdateEducation(command.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)));
             student.UpdateWork(command.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)));
-            student.UpdateLanguages(command.Languages);
+            student.UpdateLanguages(command.Languages.Select(l => (Language)Enum.Parse(typeof(Language), l)));
             student.UpdateInterests(command.Interests.Select(i => (Interest)Enum.Parse(typeof(Interest), i)));
 
             if (command.EnableTwoFactor)
@@ -90,9 +94,12 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                     EndDate = w.EndDate,
                     Description = w.Description
                 }).ToList(),
-                student.Languages,
+                student.Languages.Select(l => l.ToString()).ToList(),
                 student.Interests.Select(i => i.ToString()).ToList(),
-                student.ContactEmail
+                student.ContactEmail,
+                student.Country,
+                student.City,
+                student.DateOfBirth
             );
 
             await _messageBroker.PublishAsync(studentUpdatedEvent);

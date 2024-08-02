@@ -26,12 +26,14 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.BannerUrl,
                 document.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)),
                 document.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)),
-                document.Languages,
-                document.Interests,
+                document.Languages.Select(l => Enum.Parse<Language>(l.ToString())).ToList(), // Convert string to enum
+                document.Interests.Select(i => Enum.Parse<Interest>(i.ToString())).ToList(),
                 document.IsTwoFactorEnabled,
                 document.TwoFactorSecret,
                 document.ContactEmail,
-                document.PhoneNumber
+                document.PhoneNumber,
+                document.Country,
+                document.City
             );
 
         public static StudentDocument AsDocument(this Student entity)
@@ -67,12 +69,14 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     EndDate = w.EndDate,
                     Description = w.Description
                 }),
-                Languages = entity.Languages,
-                Interests = entity.Interests,
+                Languages = entity.Languages.Select(l => l.ToString()),
+                Interests = entity.Interests.Select(i => i.ToString()), 
                 IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
                 TwoFactorSecret = entity.TwoFactorSecret,
                 ContactEmail = entity.ContactEmail,
                 PhoneNumber = entity.PhoneNumber,
+                Country = entity.Country,
+                City = entity.City,
             };
 
         public static StudentDto AsDto(this StudentDocument document)
@@ -109,11 +113,13 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     Description = w.Description
                 }),
                 Languages = document.Languages,
-                Interests = document.Interests.Select(i => new InterestDto { Name = i.ToString() }),
+                Interests = document.Interests,
                 IsTwoFactorEnabled = document.IsTwoFactorEnabled,
                 TwoFactorSecret = document.TwoFactorSecret,
                 ContactEmail = document.ContactEmail,
                 PhoneNumber = document.PhoneNumber,
+                Country = document.Country,
+                City = document.City,
             };
 
         public static UserNotifications AsEntity(this UserNotificationsDocument document)

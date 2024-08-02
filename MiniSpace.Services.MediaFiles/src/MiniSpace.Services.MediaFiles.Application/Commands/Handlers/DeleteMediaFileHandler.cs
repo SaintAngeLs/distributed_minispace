@@ -46,8 +46,11 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
             await _s3Service.DeleteFileAsync(fileSourceInfo.OriginalFileUrl);
             await _s3Service.DeleteFileAsync(fileSourceInfo.FileUrl);
             await _fileSourceInfoRepository.DeleteAsync(decodedUrl);
-            await _messageBroker.PublishAsync(new MediaFileDeleted(decodedUrl, 
-                fileSourceInfo.SourceId, fileSourceInfo.SourceType.ToString()));
+            await _messageBroker.PublishAsync(new MediaFileDeleted(
+                decodedUrl, 
+                fileSourceInfo.SourceId, 
+                fileSourceInfo.SourceType.ToString(), 
+                fileSourceInfo.UploaderId));
         }
     }
 }

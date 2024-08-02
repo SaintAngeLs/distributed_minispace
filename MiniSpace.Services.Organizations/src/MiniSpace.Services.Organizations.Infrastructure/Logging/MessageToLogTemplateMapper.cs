@@ -1,6 +1,7 @@
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Organizations.Application.Commands;
-using MiniSpace.Services.Organizations.Application.Events.External;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Logging
@@ -12,45 +13,69 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(CreateRootOrganization),  new HandlerLogTemplate
+                    typeof(CreateOrganization), new HandlerLogTemplate
                     {
-                        After = "Created a new root organization with id: {OrganizationId}."
+                        After = "Added a new organization with id: {OrganizationId}, name: {Name}."
                     }
                 },
                 {
-                    typeof(CreateOrganization),  new HandlerLogTemplate
-                    {
-                        After = "Added a new child organization with id: {OrganizationId} for parent with id: {ParentId}."
-                    }
-                },
-                {
-                    typeof(DeleteOrganization),  new HandlerLogTemplate
+                    typeof(DeleteOrganization), new HandlerLogTemplate
                     {
                         After = "Deleted an organization with id: {OrganizationId} and its children."
                     }
                 },
                 {
-                    typeof(AddOrganizerToOrganization), new HandlerLogTemplate
+                    typeof(AssignRoleToMember), new HandlerLogTemplate
                     {
-                        After = "Added an organizer with id: {OrganizerId} to the organization with id: {OrganizationId}."
+                        After = "Assigned role '{Role}' to member with id: {MemberId} in organization with id: {OrganizationId}."
                     }
                 },
                 {
-                    typeof(RemoveOrganizerFromOrganization), new HandlerLogTemplate
+                    typeof(CreateOrganizationRole), new HandlerLogTemplate
                     {
-                        After = "Removed an organizer with id: {OrganizerId} from the organization with id: {OrganizationId}."
+                        After = "Created a new role '{RoleName}' in organization with id: {OrganizationId}."
                     }
                 },
                 {
-                    typeof(OrganizerRightsGranted), new HandlerLogTemplate
+                    typeof(CreateSubOrganization), new HandlerLogTemplate
                     {
-                        After = "Created an organizer with id: {UserId}."
+                        After = "Created a new sub-organization with id: {SubOrganizationId} under parent organization with id: {ParentId}."
                     }
                 },
                 {
-                    typeof(OrganizerRightsRevoked), new HandlerLogTemplate
+                    typeof(InviteUserToOrganization), new HandlerLogTemplate
                     {
-                        After = "Deleted an organizer with id: {UserId}."
+                        After = "Invited user with id: {UserId} to organization with id: {OrganizationId}."
+                    }
+                },
+                {
+                    typeof(ManageFeed), new HandlerLogTemplate
+                    {
+                        After = "Performed '{Action}' action on the feed content in organization with id: {OrganizationId}."
+                    }
+                },
+                {
+                    typeof(SetOrganizationPrivacy), new HandlerLogTemplate
+                    {
+                        After = "Set privacy of organization with id: {OrganizationId} to '{IsPrivate}'."
+                    }
+                },
+                {
+                    typeof(SetOrganizationVisibility), new HandlerLogTemplate
+                    {
+                        After = "Set visibility of organization with id: {OrganizationId} to '{IsVisible}'."
+                    }
+                },
+                {
+                    typeof(UpdateOrganizationSettings), new HandlerLogTemplate
+                    {
+                        After = "Updated settings of organization with id: {OrganizationId}."
+                    }
+                },
+                {
+                    typeof(UpdateRolePermissions), new HandlerLogTemplate
+                    {
+                        After = "Updated permissions for role with id: {RoleId} in organization with id: {OrganizationId}."
                     }
                 }
             };

@@ -29,6 +29,8 @@ namespace MiniSpace.Web.DTO.Enums
         ReportResolved,
         ReportReviewStarted,
         ReportCancelled,
-        Other
+        Other,
+        EmailVerified,
+        TwoFactorCodeGenerated,
     }
 }

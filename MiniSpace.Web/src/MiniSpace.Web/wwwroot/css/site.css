@@ -361,7 +361,7 @@ html, body {
   
     .left-side, .right-side {
         width: 100%;
-        flex: none !important;
+        /* flex: none !important; */
     }
 
     .left-side {
@@ -587,15 +587,7 @@ html, body {
     }
 }
 
-@media (max-width: 600px) {
-    .small-button {
-        padding: 0.15rem 0.3rem !important;
-        font-size: 0.65rem !important;
-    }
-    .button-text {
-        display: none !important;
-    }
-}
+
 
 
 .center-container {
@@ -748,4 +740,65 @@ div.connectionRejected {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+
+@media (min-width: 600px) {
+    .profile-grid {
+        flex-direction: row;
+    }
+}
+
+.small-button {
+    padding: 0.15rem 0.8rem !important;
+    font-size: 0.65rem !important;
+    min-width: auto;
+    display: inline-block;
+}
+
+@media (max-width: 600px) {
+    .small-button {
+        
+    }
+}
+
+.button-margins {
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.upload-button-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.upload-button {
+    width: 100%;
+    max-width: 300px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.gallery-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gallery-image {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.delete-button {
+    margin-top: 8px;
+    width: 100%;
 }

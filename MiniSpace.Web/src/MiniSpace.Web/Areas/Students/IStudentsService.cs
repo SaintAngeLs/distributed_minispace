@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Interests;
+using MiniSpace.Web.DTO.Languages;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -22,21 +24,29 @@ namespace MiniSpace.Web.Areas.Students
             bool emailNotifications, 
             string contactEmail, 
             IEnumerable<string> languages, 
-            IEnumerable<InterestDto> interests, 
+            IEnumerable<string> interests, 
             bool enableTwoFactor, 
             bool disableTwoFactor, 
             string twoFactorSecret,
             IEnumerable<EducationDto> education,
             IEnumerable<WorkDto> work,
-            string phoneNumber);
+            string phoneNumber,
+            string country,
+            string city,
+            DateTime? dateOfBirth);
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl,
             string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail);
         Task<string> GetStudentStateAsync(Guid studentId);
 
         Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId);
-        Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto);
+        Task UpdateUserNotificationPreferencesAsync(Guid studentId, NotificationPreferencesDto preferencesDto, bool emailNotifications);
         Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId);
         Task UpdateUserSettingsAsync(Guid studentId, AvailableSettingsDto availableSettings);
         Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId);
+        Task UpdateStudentLanguagesAndInterestsAsync(
+            Guid studentId, 
+            IEnumerable<string> languages, 
+            IEnumerable<string> interests);
+
     }
 }

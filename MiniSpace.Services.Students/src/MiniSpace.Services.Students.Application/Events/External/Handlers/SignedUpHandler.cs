@@ -60,12 +60,14 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 string.Empty, // BannerUrl
                 new List<Education>(), // Education
                 new List<Work>(), // Work
-                new List<string>(), // Languages
+                new List<Language>(), // Languages
                 new List<Interest>(), // Interests
                 false, // IsTwoFactorEnabled
                 string.Empty, // TwoFactorSecret
                 string.Empty, // ContactEmail
-                string.Empty // PhoneNumber
+                string.Empty, // PhoneNumber,
+                string.Empty, // Country
+                string.Empty // City 
             );
 
             await _studentRepository.AddAsync(newStudent);

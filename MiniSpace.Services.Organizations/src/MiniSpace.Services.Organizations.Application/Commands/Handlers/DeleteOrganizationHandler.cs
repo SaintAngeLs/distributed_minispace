@@ -22,9 +22,9 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
         public async Task HandleAsync(DeleteOrganization command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
-            if(identity.IsAuthenticated && !identity.IsAdmin)
+            if(!identity.IsAuthenticated)
             {
-                throw new Exceptions.UnauthorizedAccessException("admin");
+                throw new UserUnauthorizedAccessException("user");
             }
             
             var root = await _organizationRepository.GetAsync(command.RootId);

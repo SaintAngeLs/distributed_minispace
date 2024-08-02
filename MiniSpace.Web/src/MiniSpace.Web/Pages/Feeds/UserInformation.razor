@@ -86,11 +86,11 @@
                         <MudCardContent>
                             @if (student.Languages != null && student.Languages.Any())
                             {
-                                <MudText Typo="Typo.body2">Languages: @string.Join(", ", student.Languages)</MudText>
+                                <MudText Typo="Typo.body2">Languages: @string.Join(", ", student.Languages.Select(l => l.ToString()))</MudText>
                             }
                             @if (student.Interests != null && student.Interests.Any())
                             {
-                                <MudText Typo="Typo.body2">Interests: @string.Join(", ", student.Interests.Select(i => i.Name))</MudText>
+                                <MudText Typo="Typo.body2">Interests: @string.Join(", ", student.Interests.Select(i => i.ToString()))</MudText>
                             }
                         </MudCardContent>
                     </MudCard>
@@ -148,7 +148,7 @@
 
     private void NavigateToProfileSettings()
     {
-        NavigationManager.NavigateTo("/showaccount");
+        NavigationManager.NavigateTo("/account");
     }
 }
 

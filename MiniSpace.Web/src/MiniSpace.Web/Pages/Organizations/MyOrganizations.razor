@@ -1,0 +1,90 @@
+@page "/organizations/my"
+@inject IOrganizationsService OrganizationService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IIdentityService IdentityService
+@using MudBlazor
+
+<AuthWrapper>
+    <MudText Typo="Typo.h5" GutterBottom="true">My Organizations</MudText>
+
+    <MudPaper Elevation="1" Class="pa-4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="CreateOrganization">
+            Create Organization
+        </MudButton>
+
+        <MudGrid Class="mt-4">
+            @if (_isLoading)
+            {
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            }
+            else if (_organizations != null && _organizations.Any())
+            {
+                @foreach (var organization in _organizations)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Class="ma-2">
+                            <MudCardMedia Image="@organization.ImageUrl" Height="140" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.h6">@organization.Name</MudText>
+                                <MudText Typo="Typo.body2">@organization.Description</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Outlined" OnClick="() => NavigateToOrganization(organization.Id)">
+                                    View
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            }
+            else
+            {
+                <MudText>No organizations found.</MudText>
+            }
+        </MudGrid>
+    </MudPaper>
+</AuthWrapper>
+
+@code {
+    private bool _isLoading = true;
+    private List<OrganizationDto> _organizations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoading = true;
+
+        try
+        {
+            // Ensure the authentication state is initialized
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                var userId = IdentityService.GetCurrentUserId();
+                _organizations = (await OrganizationService.GetRootOrganizationsAsync()).ToList();
+            }
+            else
+            {
+                // If the user is not authenticated, navigate to the sign-in page
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load organizations: {ex.Message}", Severity.Error);
+        }
+
+        _isLoading = false;
+    }
+
+    private void CreateOrganization()
+    {
+        NavigationManager.NavigateTo("/organizations/create");
+    }
+
+    private void NavigateToOrganization(Guid organizationId)
+    {
+        NavigationManager.NavigateTo($"/organizations/details/{organizationId}");
+    }
+}

@@ -101,6 +101,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeCommand<CompleteStudentRegistration>()
                 .SubscribeCommand<ChangeStudentState>()
                 .SubscribeCommand<UpdateUserSettings>()
+                .SubscribeCommand<UpdateStudentLanguagesAndInterests>()
                 .SubscribeEvent<SignedUp>()
                 .SubscribeEvent<EmailVerified>()
                 .SubscribeEvent<StudentShowedInterestInEvent>()
@@ -110,7 +111,9 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeEvent<UserBanned>()
                 .SubscribeEvent<UserUnbanned>()
                 .SubscribeEvent<StudentImageUploaded>()
-                .SubscribeEvent<MediaFileDeleted>();
+                .SubscribeEvent<MediaFileDeleted>()
+                .SubscribeEvent<TwoFactorAuthenticationEnabled>()
+                .SubscribeEvent<TwoFactorAuthenticationDisabled>();
 
             return app;
         }
