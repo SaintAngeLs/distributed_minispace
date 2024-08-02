@@ -34,13 +34,11 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 return null;
             }
 
-            var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == query.OrganizationId);
-            var gallery = galleryDocument?.Gallery.Select(g => g.AsEntity()) ?? Enumerable.Empty<GalleryImage>();
-
             var organization = organizationDocument.AsEntity();
-            var users = organization.Users;
+            var galleryDocument = await _galleryRepository.FindAsync(g => g.OrganizationId == organization.Id);
+            var gallery = galleryDocument.SelectMany(doc => doc.Gallery).Select(g => g.AsEntity());
 
-            return new OrganizationGalleryUsersDto(organization, gallery, users);
+            return new OrganizationGalleryUsersDto(organization, gallery, organization.Users);
         }
     }
 }
