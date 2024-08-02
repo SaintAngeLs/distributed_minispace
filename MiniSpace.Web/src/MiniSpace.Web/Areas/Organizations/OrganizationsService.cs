@@ -49,6 +49,12 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.GetAsync<IEnumerable<Guid>>($"organizations/{organizationId}/children/all");
         }
 
+        public Task<OrganizationGalleryUsersDto> GetOrganizationWithGalleryAndUsersAsync(Guid organizationId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.GetAsync<OrganizationGalleryUsersDto>($"organizations/{organizationId}/details/gallery-users");
+        }
+
         public Task<HttpResponse<object>> CreateOrganizationAsync(CreateOrganizationDto command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
