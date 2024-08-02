@@ -7,6 +7,7 @@
 @using MiniSpace.Web.DTO.Enums
 @using MudBlazor
 
+<AuthWrapper>
 <MudContainer Class="pa-0">
     @if (isLoading)
     {
@@ -26,12 +27,15 @@
                 Style="width: 100%; height: 200px; object-fit: cover;" 
             />
            <MudStack Row="true">
-               <MudImage 
-                    Src="@GetProfileImageUrl()" 
-                    Alt="Profile Image" 
-                    Style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc;" 
-                    Class="organization-avatar" 
-                />
+                <MudAvatar Size="Size.Large">
+                <MudImage 
+                        Src="@GetProfileImageUrl()" 
+                        Alt="Profile Image" 
+                        
+                        Class="organization-avatar" 
+                    />
+                </MudAvatar>
+                <MudText Typo="Typo.h6" Class="ml-4">@organizationGalleryUsers.OrganizationDetails.Name</MudText>
             </MudStack>
             <MudStack Row="true">
                 <MudSpacer />
@@ -89,7 +93,7 @@
         </MudGrid>
     }
 </MudContainer>
-
+</AuthWrapper>
 @code {
     [Parameter]
     public Guid OrganizationId { get; set; }
@@ -135,13 +139,11 @@
     {
         var currentUserId = IdentityService.GetCurrentUserId();
 
-        // Check if the current user is the owner of the organization
         if (organizationGalleryUsers?.OrganizationDetails?.OwnerId == currentUserId)
         {
             return true;
         }
 
-        // Check if the user is a member of the organization with the required permissions
         var currentUserRole = organizationGalleryUsers?.Users?
             .FirstOrDefault(u => u.Id == currentUserId)?.Role;
 
