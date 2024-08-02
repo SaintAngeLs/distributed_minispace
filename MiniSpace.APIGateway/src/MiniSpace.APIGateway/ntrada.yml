@@ -869,6 +869,14 @@ modules:
         auth: true
         bind:
           - userId: {userId}
+      
+      - upstream: /{organizationId}/details/gallery-users
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/details/gallery-users
+        bind:
+          - organizationId: {organizationId}
+
 
       - upstream: /{organizationId}
         method: DELETE
