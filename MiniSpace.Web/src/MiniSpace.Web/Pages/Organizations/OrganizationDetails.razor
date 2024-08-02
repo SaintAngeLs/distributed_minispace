@@ -4,57 +4,78 @@
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @using MiniSpace.Web.DTO.Organizations
-@using System.Linq
 @using MudBlazor
 
-<MudText Typo="Typo.h4" GutterBottom="true">Organization Details</MudText>
+<MudContainer Class="pa-0">
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Class="my-4" />
+    }
+    else if (organizationGalleryUsers == null)
+    {
+        <MudText Color="Color.Error">Failed to load organization details.</MudText>
+    }
+    else
+    {
+        <!-- Banner and Profile Image Section -->
+        <MudPaper Class="pa-0">
+            <MudImage 
+                Src="@GetBannerUrl()" 
+                Alt="Banner" 
+                Style="width: 100%; height: 200px; object-fit: cover;" 
+            />
+            <MudAvatar 
+                Src="@GetProfileImageUrl()" 
+                Size="Size.Large" 
+                Class="organization-avatar" 
+            />
+        </MudPaper>
 
-@if (organizationGalleryUsers == null)
-{
-    <MudText> Loading... </MudText>
-}
-else
-{
-    <MudPaper Class="pa-4 my-2">
-        <MudText Typo="Typo.h5">@organizationGalleryUsers.OrganizationDetails.Name</MudText>
-        <MudText Typo="Typo.body1">@organizationGalleryUsers.OrganizationDetails.Description</MudText>
-        <MudAvatar Src="@organizationGalleryUsers.OrganizationDetails.ImageUrl" Size="Size.Large" />
+        <MudGrid Class="mt-4">
+            <!-- Menu on the Left -->
+            <MudItem xs="12" md="3">
+                <MudNavMenu>
+                    <MudNavLink Href="#" @onclick="() => LoadTabContent(0)" Match="NavLinkMatch.All">Overview</MudNavLink>
+                    <MudNavLink Href="#" @onclick="() => LoadTabContent(1)" Match="NavLinkMatch.All">Feed</MudNavLink>
+                    <MudNavLink Href="#" @onclick="() => LoadTabContent(2)" Match="NavLinkMatch.All">Posts</MudNavLink>
+                    <MudNavLink Href="#" @onclick="() => LoadTabContent(3)" Match="NavLinkMatch.All">Events</MudNavLink>
+                    <MudNavLink Href="#" @onclick="() => LoadTabContent(4)" Match="NavLinkMatch.All">Members</MudNavLink>
+                    <MudNavLink Href="#" @onclick="() => LoadTabContent(5)" Match="NavLinkMatch.All">Suborganizations</MudNavLink>
+                </MudNavMenu>
+            </MudItem>
 
-        <!-- Displaying users -->
-        <MudText Typo="Typo.h6" GutterBottom="true">Members</MudText>
-        <MudList>
-            @foreach (var user in organizationGalleryUsers.Users)
-            {
-                <MudListItem>
-                    <MudAvatar Src="@GetUserAvatarUrl(user.Id)" Size="Size.Medium" />
-                    <MudText Typo="Typo.body1">@GetUserName(user.Id)</MudText>
-                </MudListItem>
-            }
-        </MudList>
-
-        <!-- Displaying gallery -->
-        <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
-        <MudGrid>
-            @foreach (var image in organizationGalleryUsers.Gallery)
-            {
-                <MudItem xs="12" sm="6" md="4">
-                    <MudCard>
-                        <MudCardMedia Src="@image.ImageUrl" Title="@image.DateAdded.ToString("MMMM dd, yyyy")" />
-                    </MudCard>
-                </MudItem>
-            }
+            <!-- Content on the Right -->
+            <MudItem xs="12" md="9">
+                <MudPaper Class="pa-4">
+                    @if (selectedTabIndex == 0)
+                    {
+                        <OverviewComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 1)
+                    {
+                        <FeedComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 2)
+                    {
+                        <PostsComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 3)
+                    {
+                        <EventsComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 4)
+                    {
+                        <MembersComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 5)
+                    {
+                        <SubOrganizationsComponent OrganizationId="@OrganizationId" />
+                    }
+                </MudPaper>
+            </MudItem>
         </MudGrid>
-
-        @if (isAdmin)
-        {
-            <AdminView />
-        }
-        else
-        {
-            <UserView />
-        }
-    </MudPaper>
-}
+    }
+</MudContainer>
 
 @code {
     [Parameter]
@@ -62,53 +83,62 @@ else
 
     private OrganizationGalleryUsersDto organizationGalleryUsers;
     private bool isAdmin;
+    private bool isLoading = true;
+    private int selectedTabIndex = 0;
+
+    private string defaultBannerImage = "/images/default_banner_image.png";
+    private string defaultProfileImage = "/images/default_organization_profile_image.png";
 
     protected override async Task OnInitializedAsync()
     {
-        organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
-        isAdmin = CheckIfUserIsAdmin();
+        isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+                isAdmin = CheckIfUserIsAdmin();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            organizationGalleryUsers = null; 
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private bool CheckIfUserIsAdmin()
     {
-        return IdentityService.GetCurrentUserId() == organizationGalleryUsers.OrganizationDetails.OwnerId;
+        return IdentityService.GetCurrentUserId() == organizationGalleryUsers?.OrganizationDetails?.OwnerId;
     }
 
-    private async Task<string> GetUserAvatarUrl(Guid userId)
+    private string GetBannerUrl()
     {
-        var student = await StudentsService.GetStudentAsync(userId);
-        return student?.ProfileImageUrl;
+        return !string.IsNullOrWhiteSpace(organizationGalleryUsers?.OrganizationDetails?.BannerUrl) 
+            ? organizationGalleryUsers.OrganizationDetails.BannerUrl 
+            : defaultBannerImage;
     }
 
-    private async Task<string> GetUserName(Guid userId)
+    private string GetProfileImageUrl()
     {
-        var student = await StudentsService.GetStudentAsync(userId);
-        return $"{student?.FirstName} {student?.LastName}";
+        return !string.IsNullOrWhiteSpace(organizationGalleryUsers?.OrganizationDetails?.ImageUrl) 
+            ? organizationGalleryUsers.OrganizationDetails.ImageUrl 
+            : defaultProfileImage;
     }
 
-    private RenderFragment AdminView() => builder =>
+    private void LoadTabContent(int index)
     {
-        builder.OpenComponent(0, typeof(MudButton));
-        builder.AddAttribute(1, "Color", Color.Primary);
-        builder.AddAttribute(2, "ChildContent", (RenderFragment)((innerBuilder) =>
-        {
-            innerBuilder.AddContent(3, "Edit Organization");
-        }));
-        builder.CloseComponent();
-
-        builder.OpenComponent(4, typeof(MudButton));
-        builder.AddAttribute(5, "Color", Color.Error);
-        builder.AddAttribute(6, "ChildContent", (RenderFragment)((innerBuilder) =>
-        {
-            innerBuilder.AddContent(7, "Delete Organization");
-        }));
-        builder.CloseComponent();
-    };
-
-    private RenderFragment UserView() => builder =>
-    {
-        builder.OpenElement(0, "div");
-        builder.AddContent(1, "View Only Mode");
-        builder.CloseElement();
-    };
+        selectedTabIndex = index;
+    }
 }

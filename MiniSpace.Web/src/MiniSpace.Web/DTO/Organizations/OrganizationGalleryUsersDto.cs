@@ -8,6 +8,6 @@ namespace MiniSpace.Web.DTO.Organizations
     {
         public OrganizationDetailsDto OrganizationDetails { get; set; }
         public IEnumerable<GalleryImageDto> Gallery { get; set; }
-        public IEnumerable<UserDto> Users { get; set; }
+        public IEnumerable<OrganizationUserDto> Users { get; set; }
     }
 }
