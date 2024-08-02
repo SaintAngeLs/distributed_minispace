@@ -14,7 +14,7 @@ namespace MiniSpace.Web.DTO.Organizations
         public Guid? ParentOrganizationId { get; set; }
         public IEnumerable<SubOrganizationDto> SubOrganizations { get; set; }
         public IEnumerable<InvitationDto> Invitations { get; set; }
-        public IEnumerable<UserDto> Users { get; set; }
+        public IEnumerable<OrganizationUserDto> Users { get; set; }
         public IEnumerable<RoleDto> Roles { get; set; }
         public IEnumerable<GalleryImageDto> Gallery { get; set; }
         public OrganizationSettingsDto Settings { get; set; }

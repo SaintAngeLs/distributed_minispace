@@ -1,5 +1,6 @@
 @page "/organizations/details/{OrganizationId:guid}"
 @inject IOrganizationsService OrganizationsService
+@inject IStudentsService StudentsService
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @using MiniSpace.Web.DTO.Organizations
@@ -25,8 +26,8 @@ else
             @foreach (var user in organizationGalleryUsers.Users)
             {
                 <MudListItem>
-                    <MudAvatar Src="@user.AvatarUrl" Size="Size.Medium" />
-                    <MudText Typo="Typo.body1">@user.Name</MudText>
+                    <MudAvatar Src="@GetUserAvatarUrl(user.Id)" Size="Size.Medium" />
+                    <MudText Typo="Typo.body1">@GetUserName(user.Id)</MudText>
                 </MudListItem>
             }
         </MudList>
@@ -38,7 +39,7 @@ else
             {
                 <MudItem xs="12" sm="6" md="4">
                     <MudCard>
-                        <MudCardMedia Src="@image.Url" Title="@image.Description" />
+                        <MudCardMedia Src="@image.ImageUrl" Title="@image.DateAdded.ToString("MMMM dd, yyyy")" />
                     </MudCard>
                 </MudItem>
             }
@@ -70,8 +71,19 @@ else
 
     private bool CheckIfUserIsAdmin()
     {
-        // Implement your logic to determine if the user is an administrator
         return IdentityService.GetCurrentUserId() == organizationGalleryUsers.OrganizationDetails.OwnerId;
+    }
+
+    private async Task<string> GetUserAvatarUrl(Guid userId)
+    {
+        var student = await StudentsService.GetStudentAsync(userId);
+        return student?.ProfileImageUrl;
+    }
+
+    private async Task<string> GetUserName(Guid userId)
+    {
+        var student = await StudentsService.GetStudentAsync(userId);
+        return $"{student?.FirstName} {student?.LastName}";
     }
 
     private RenderFragment AdminView() => builder =>
