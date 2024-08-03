@@ -44,7 +44,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             if (rolesDocument != null)
             {
                 var roles = rolesDocument.Roles.ToList();
-                roles.Add(role.AsDocument());
+                roles.Add(RoleEntry.FromEntity(role));
                 rolesDocument.Roles = roles;
                 await _rolesRepository.UpdateAsync(rolesDocument);
             }
@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 {
                     Id = Guid.NewGuid(),
                     OrganizationId = organizationId,
-                    Roles = new List<RoleEntry> { role.AsDocument() }
+                    Roles = new List<RoleEntry> { RoleEntry.FromEntity(role) }
                 };
                 await _rolesRepository.AddAsync(newDocument);
             }
