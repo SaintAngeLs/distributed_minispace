@@ -101,20 +101,30 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             => document.Invitations.Select(i => i.AsEntity());
 
         public static Role AsEntity(this RoleEntry document)
-            => new Role(
+        {
+            return new Role(
+                document.Id,
                 document.Name,
                 document.Description,
-                document.Permissions
+                document.Permissions.ToDictionary(
+                    kvp => Enum.Parse<Permission>(kvp.Key), 
+                    kvp => kvp.Value)
             );
+        }
 
         public static RoleEntry AsDocument(this Role entity)
-            => new RoleEntry
+        {
+            return new RoleEntry
             {
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
-                Permissions = entity.Permissions
+                Permissions = entity.Permissions.ToDictionary(
+                    kvp => kvp.Key.ToString(), 
+                    kvp => kvp.Value)
             };
+        }
+
 
         public static OrganizationRolesDocument AsRoleDocument(this IEnumerable<Role> entities, Guid organizationId)
             => new OrganizationRolesDocument
@@ -141,7 +151,18 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 
        
         public static User AsEntity(this UserEntry document)
-            => new User(document.UserId, new Role(document.Role.RoleName));
+        {
+            return new User(
+                document.UserId, 
+                new Role(
+                    document.Role.RoleId, 
+                    document.Role.RoleName, 
+                    string.Empty, 
+                    new Dictionary<Permission, bool>() 
+                )
+            );
+        }
+
 
         public static UserEntry AsDocument(this User entity)
             => new UserEntry

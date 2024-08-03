@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class Role
@@ -36,10 +39,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public void UpdateDescription(string description)
         {
             Description = description;
-        }
-        public Role(string name)
-        {
-            Name = name;
         }
     }
 }

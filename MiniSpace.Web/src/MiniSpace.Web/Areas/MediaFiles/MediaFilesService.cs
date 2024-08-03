@@ -28,7 +28,7 @@ namespace MiniSpace.Web.Areas.MediaFiles
             return _httpClient.GetAsync<FileDto>($"media-files/{fileId}/original");
         }
 
-         public Task<HttpResponse<FileUploadResponseDto>> UploadMediaFileAsync(
+        public Task<HttpResponse<FileUploadResponseDto>> UploadMediaFileAsync(
             Guid sourceId, 
             string sourceType, 
             Guid uploaderId, 
@@ -52,12 +52,35 @@ namespace MiniSpace.Web.Areas.MediaFiles
             return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
         }
         
-       public Task DeleteMediaFileAsync(string fileUrl)
+        public Task DeleteMediaFileAsync(string fileUrl)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", new { MediaFileUrl = fileUrl });
+            return _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", 
+            new { MediaFileUrl = fileUrl });
         }
 
-        
+        public Task<HttpResponse<FileUploadResponseDto>> UploadOrganizationImageAsync(
+            Guid organizationId,
+            string sourceType,
+            Guid uploaderId,
+            string fileName,
+            string fileContentType,
+            byte[] fileData)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+
+            var requestBody = new
+            {
+                OrganizationId = organizationId,
+                MediaFileId = Guid.NewGuid(),
+                SourceType = sourceType,
+                UploaderId = uploaderId,
+                FileName = fileName,
+                FileContentType = fileContentType,
+                FileData = fileData
+            };
+
+            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
+        }
     }
 }

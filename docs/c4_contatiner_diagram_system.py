@@ -3,8 +3,8 @@ from diagrams.c4 import Person, Container, Database, System, SystemBoundary, Rel
 
 graph_attr = {
     "splines": "spline",
-    "nodesep": "1.0",  # Increase space between nodes
-    "ranksep": "1.0"   # Increase space between ranks
+    "nodesep": "4.0",  # Increase space between nodes
+    "ranksep": "4.0"   # Increase space between ranks
 }
 
 with Diagram("Container Diagram for MiniSpace System", direction="TB", graph_attr=graph_attr):

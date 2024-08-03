@@ -87,5 +87,21 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 }
             }
         }
+
+        public async Task RemoveImageAsync(Guid organizationId, string mediaFileUrl)
+        {
+            var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == organizationId);
+            if (galleryDocument != null)
+            {
+                var gallery = galleryDocument.Gallery.ToList();
+                var imageDocument = gallery.FirstOrDefault(g => g.Url == mediaFileUrl);
+                if (imageDocument != null)
+                {
+                    gallery.Remove(imageDocument);
+                    galleryDocument.Gallery = gallery;
+                    await _galleryRepository.UpdateAsync(galleryDocument);
+                }
+            }
+        }
     }
 }

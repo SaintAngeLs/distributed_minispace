@@ -12,5 +12,6 @@ namespace MiniSpace.Services.Organizations.Core.Repositories
         Task AddImageAsync(Guid organizationId, GalleryImage image);
         Task UpdateImageAsync(Guid organizationId, GalleryImage image);
         Task DeleteImageAsync(Guid organizationId, Guid imageId);
+        Task RemoveImageAsync(Guid organizationId, string mediaFileUrl);
     }
 }

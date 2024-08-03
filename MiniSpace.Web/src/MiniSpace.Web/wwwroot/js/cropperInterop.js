@@ -8,7 +8,7 @@ GLOBAL.SetDotnetReference = function(dotNetReference) {
 };
 
 // Function to display the selected image and initialize the cropper and buttons
-function displayImageAndInitializeCropper(base64String) {
+function displayImageAndInitializeCropper(base64String, imageType) {
     console.log("Initializing cropper with image data");
     var imageContainer = document.getElementById('cropper-container');
     if (!imageContainer) {
@@ -28,7 +28,8 @@ function displayImageAndInitializeCropper(base64String) {
     $('#cropperModal').on('shown.bs.modal', function () {
         var imageElement = document.getElementById('image-to-crop');
         if (imageElement) {
-            initializeCropper('image-to-crop', 16 / 4); // Adjusted aspect ratio for the banner
+            var aspectRatio = imageType === "profile" ? 1 : 16 / 9; // 1:1 for profile, 16:9 for banner
+            initializeCropper('image-to-crop', aspectRatio);
         } else {
             console.error("Image element not found in modal");
         }

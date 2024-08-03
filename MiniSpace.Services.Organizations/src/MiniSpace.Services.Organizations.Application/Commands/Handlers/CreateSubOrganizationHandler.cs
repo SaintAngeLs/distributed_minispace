@@ -13,12 +13,18 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
     public class CreateSubOrganizationHandler : ICommandHandler<CreateSubOrganization>
     {
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationRolesRepository _organizationRolesRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
 
-        public CreateSubOrganizationHandler(IOrganizationRepository organizationRepository, IAppContext appContext, IMessageBroker messageBroker)
+        public CreateSubOrganizationHandler(
+            IOrganizationRepository organizationRepository, 
+            IOrganizationRolesRepository organizationRolesRepository,
+            IAppContext appContext, 
+            IMessageBroker messageBroker)
         {
             _organizationRepository = organizationRepository;
+            _organizationRolesRepository = organizationRolesRepository;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
@@ -41,6 +47,19 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             if (parent == null)
             {
                 throw new ParentOrganizationNotFoundException(command.ParentId);
+            }
+
+            var user = await _organizationRepository.GetMemberAsync(root.Id, identity.Id);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User is not a member of the organization.");
+            }
+
+            var role = await _organizationRolesRepository.GetRoleByNameAsync(root.Id, user.Role.Name);
+
+            if (role == null || !(role.Permissions.ContainsKey(Permission.CreateSubGroups) && role.Permissions[Permission.CreateSubGroups]))
+            {
+                throw new UnauthorizedAccessException("User does not have permission to create sub-organizations.");
             }
 
             if (string.IsNullOrWhiteSpace(command.Name))

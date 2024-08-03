@@ -19,7 +19,6 @@
     }
     else
     {
-        <!-- Banner and Profile Image Section -->
         <MudPaper Class="pa-0">
             <MudImage 
                 Src="@GetBannerUrl()" 
@@ -58,10 +57,9 @@
                     <MudNavLink Href="#" @onclick="() => LoadTabContent(3)" Match="NavLinkMatch.All">Events</MudNavLink>
                     <MudNavLink Href="#" @onclick="() => LoadTabContent(4)" Match="NavLinkMatch.All">Members</MudNavLink>
                     <MudNavLink Href="#" @onclick="() => LoadTabContent(5)" Match="NavLinkMatch.All">Suborganizations</MudNavLink>
+                    <MudNavLink Href="#" @onclick="() => LoadTabContent(6)" Match="NavLinkMatch.All">Gallery</MudNavLink>
                 </MudNavMenu>
             </MudItem>
-
-            <!-- Content on the Right -->
             <MudItem xs="12" md="9">
                 <MudPaper Class="pa-4">
                     @if (selectedTabIndex == 0)
@@ -87,6 +85,10 @@
                     else if (selectedTabIndex == 5)
                     {
                         <SubOrganizationsComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 6)
+                    {
+                        <OrganizationGalleryComponent OrganizationId="@OrganizationId" />
                     }
                 </MudPaper>
             </MudItem>

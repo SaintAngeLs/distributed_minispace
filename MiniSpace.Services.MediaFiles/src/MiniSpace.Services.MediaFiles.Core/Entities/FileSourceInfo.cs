@@ -13,9 +13,11 @@ namespace MiniSpace.Services.MediaFiles.Core.Entities
         public string OriginalFileContentType { get; set; }
         public string FileUrl { get; set; }
         public string FileName { get; set; }
-        
+        public Guid? OrganizationId { get; set; }
+
         public FileSourceInfo(Guid id, Guid sourceId, ContextType sourceType, Guid uploaderId, State state,
-            DateTime createdAt, string originalFileUrl, string originalFileContentType, string fileUrl, string fileName)
+            DateTime createdAt, string originalFileUrl, string originalFileContentType, string fileUrl, string fileName,
+            Guid? organizationId = null)
         {
             Id = id;
             SourceId = sourceId;
@@ -27,13 +29,15 @@ namespace MiniSpace.Services.MediaFiles.Core.Entities
             OriginalFileContentType = originalFileContentType;
             FileUrl = fileUrl;
             FileName = fileName;
+            OrganizationId = organizationId;
         }
-        
+
+
         public void Associate()
         {
             State = State.Associated;
         }
-        
+
         public void Unassociate()
         {
             State = State.Unassociated;

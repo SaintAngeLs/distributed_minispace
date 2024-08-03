@@ -103,10 +103,10 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.PostAsync($"organizations/{organizationId}/privacy", command);
         }
 
-        public Task UpdateOrganizationSettingsAsync(Guid organizationId, UpdateOrganizationSettingsCommand command)
+        public Task<HttpResponse<object>> UpdateOrganizationSettingsAsync(Guid organizationId, UpdateOrganizationSettingsCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync($"organizations/{organizationId}/settings", command);
+            return _httpClient.PutAsync<UpdateOrganizationSettingsCommand, object>($"organizations/{organizationId}/settings", command);
         }
 
         public Task SetOrganizationVisibilityAsync(Guid organizationId, SetOrganizationVisibilityCommand command)

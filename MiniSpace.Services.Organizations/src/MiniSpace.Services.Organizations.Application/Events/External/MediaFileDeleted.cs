@@ -1,8 +1,10 @@
-﻿using Convey.CQRS.Events;
+using Convey.CQRS.Events;
+using Convey.MessageBrokers;
 using System;
 
-namespace MiniSpace.Services.MediaFiles.Application.Events
+namespace MiniSpace.Services.Organizations.Application.Events.External
 {
+    [Message("mediafiles")]
     public class MediaFileDeleted : IEvent
     {
         public string MediaFileUrl { get; }

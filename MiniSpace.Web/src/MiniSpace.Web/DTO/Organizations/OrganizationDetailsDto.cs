@@ -12,11 +12,11 @@ namespace MiniSpace.Web.DTO.Organizations
         public string ImageUrl { get; set; }
         public Guid OwnerId { get; set; }
         public Guid? ParentOrganizationId { get; set; }
-        public IEnumerable<SubOrganizationDto> SubOrganizations { get; set; }
-        public IEnumerable<InvitationDto> Invitations { get; set; }
-        public IEnumerable<OrganizationUserDto> Users { get; set; }
-        public IEnumerable<RoleDto> Roles { get; set; }
-        public IEnumerable<GalleryImageDto> Gallery { get; set; }
+        public IEnumerable<SubOrganizationDto> SubOrganizations { get; set; } = new List<SubOrganizationDto>();
+        public IEnumerable<InvitationDto> Invitations { get; set; } = new List<InvitationDto>();
+        public IEnumerable<OrganizationUserDto> Users { get; set; } = new List<OrganizationUserDto>();
+        public IEnumerable<RoleDto> Roles { get; set; } = new List<RoleDto>();
+        public IEnumerable<GalleryImageDto> Gallery { get; set; } = new List<GalleryImageDto>();
         public OrganizationSettingsDto Settings { get; set; }
     }
 }

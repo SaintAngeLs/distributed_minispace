@@ -17,5 +17,6 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents
         public string OriginalFileContentType { get; set; }
         public string FileUrl { get; set; }
         public string FileName { get; set; }
+        public Guid? OrganizationId { get; set; } 
     }
 }
