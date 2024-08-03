@@ -14,5 +14,6 @@ namespace MiniSpace.Services.MediaFiles.Core.Repositories
         Task<IEnumerable<FileSourceInfo>> FindByUploaderIdAndSourceTypeAsync(Guid uploaderId, ContextType sourceType);
         Task<IEnumerable<FileSourceInfo>> GetAllAsync(string url);
         Task DeleteAllAsync(string url);
+        Task<IEnumerable<FileSourceInfo>> FindByOrganizationIdAsync(Guid organizationId);
     }    
 }
