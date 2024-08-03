@@ -27,8 +27,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Organizations.Application;
+using MiniSpace.Services.Organizations.Application.Events.External;
 using MiniSpace.Services.Organizations.Application.Commands;
-
 using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using MiniSpace.Services.Organizations.Infrastructure.Contexts;
@@ -105,7 +105,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .SubscribeCommand<UpdateOrganizationSettings>()
                 .SubscribeCommand<SetOrganizationVisibility>()
                 .SubscribeCommand<UpdateOrganization>()
-                .SubscribeCommand<ManageFeed>();
+                .SubscribeCommand<ManageFeed>()
+                .SubscribeEvent<OrganizationImageUploaded>();
 
             return app;
         }
