@@ -42,10 +42,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new UnauthorizedAccessException("User is not a member of the organization.");
             }
 
-            // Retrieve the user's role with permissions from the roles repository
             var role = await _organizationRolesRepository.GetRoleByNameAsync(organization.Id, user.Role.Name);
 
-            // Check if the role has the necessary permission to create roles
             if (role == null || !(role.Permissions.ContainsKey(Permission.EditPermissions) && role.Permissions[Permission.EditPermissions])
                             && !(role.Permissions.ContainsKey(Permission.AssignRoles) && role.Permissions[Permission.AssignRoles]))
             {
@@ -68,7 +66,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             var newRole = new Role(command.RoleName, "Default role description", permissions);
             organization.AddRole(newRole);
 
-            // Corrected the method call by passing both organizationId and role
             await _organizationRolesRepository.AddRoleAsync(command.OrganizationId, newRole);
             await _organizationRepository.UpdateAsync(organization);
         }
