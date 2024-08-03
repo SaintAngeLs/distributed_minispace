@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class Role
@@ -12,7 +15,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             Id = id;
             Name = name;
             Description = description;
-            Permissions = permissions ?? new Dictionary<Permission, bool>();
+            Permissions = permissions;
         }
 
         public Role(string name, string description, Dictionary<Permission, bool> permissions)
@@ -20,14 +23,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             Id = Guid.NewGuid();
             Name = name;
             Description = description;
-            Permissions = permissions ?? new Dictionary<Permission, bool>();
-        }
-
-        public Role(string name)
-        {
-            Id = Guid.NewGuid();
-            Name = name;
-            Permissions = new Dictionary<Permission, bool>();
+            Permissions = permissions;
         }
 
         public void UpdatePermissions(Dictionary<Permission, bool> permissions)
