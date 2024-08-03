@@ -1,5 +1,6 @@
 using Convey.CQRS.Events;
 using MiniSpace.Services.Organizations.Core.Repositories;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,6 +21,9 @@ namespace MiniSpace.Services.Organizations.Application.Events.External.Handlers
 
         public async Task HandleAsync(MediaFileDeleted @event, CancellationToken cancellationToken)
         {
+            var eventJson = JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Received MediaFileDeleted event: " + eventJson);
+
             if (@event.OrganizationId == null)
             {
                 return; // If there's no OrganizationId, this event is not relevant to the organization service.
