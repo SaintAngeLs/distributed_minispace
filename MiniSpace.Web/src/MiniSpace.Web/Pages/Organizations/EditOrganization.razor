@@ -10,6 +10,7 @@
 @using MudBlazor
 @using System.IO
 @using MiniSpace.Web.Utilities
+@using System.Text.Json
 
 <AuthWrapper>
 <MudContainer Class="pa-0">
@@ -99,12 +100,13 @@
         </MudPaper>
 
         <MudGrid Class="mt-4">
-            <!-- Menu on the Left -->
             <MudItem xs="12" md="3">
                 <MudNavMenu>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(0)" Match="NavLinkMatch.All">Overview</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(1)" Match="NavLinkMatch.All">Settings</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(2)" Match="NavLinkMatch.All">Members</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(0)" Match="NavLinkMatch.All">Overview</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(1)" Match="NavLinkMatch.All">Settings</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(2)" Match="NavLinkMatch.All">Members</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(3)" Match="NavLinkMatch.All">Roles</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(4)" Match="NavLinkMatch.All">Gallery</MudNavLink>
                 </MudNavMenu>
             </MudItem>
             <MudItem xs="12" md="9">
@@ -118,13 +120,14 @@
                     else if (selectedTabIndex == 1)
                     {
                         <MudText Typo="Typo.h6">Organization Settings</MudText>
-                        <MudForm>
-                            <MudSwitch @bind-Checked="organizationGalleryUsers.OrganizationDetails.Settings.IsVisible" Label="Is Visible" />
-                            <MudSwitch @bind-Checked="organizationGalleryUsers.OrganizationDetails.Settings.IsPublic" Label="Is Public" />
-                            <MudSwitch @bind-Checked="organizationGalleryUsers.OrganizationDetails.Settings.CanAddComments" Label="Allow Comments" />
-                            <MudSwitch @bind-Checked="organizationGalleryUsers.OrganizationDetails.Settings.CanAddReactions" Label="Allow Reactions" />
-                            <!-- Add other settings fields as necessary -->
-                        </MudForm>
+                        @if (organizationGalleryUsers?.OrganizationDetails?.Settings != null)
+                        {
+                            <OrganizationSettings Settings="organizationGalleryUsers.OrganizationDetails.Settings" />
+                        }
+                        else
+                        {
+                            <MudText Color="Color.Error">Settings are not available.</MudText>
+                        }
                     }
                     else if (selectedTabIndex == 2)
                     {
@@ -203,6 +206,7 @@
             if (IdentityService.IsAuthenticated)
             {
                 organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+                Console.WriteLine(JsonSerializer.Serialize(organizationGalleryUsers));
             }
             else
             {

@@ -1,0 +1,22 @@
+@using MiniSpace.Web.DTO.Organizations
+@using MudBlazor
+
+@if (Settings != null)
+{
+    <MudForm>
+        <MudSwitch @bind-Checked="Settings.IsVisible" Label="Is Visible" />
+        <MudSwitch @bind-Checked="Settings.IsPublic" Label="Is Public" />
+        <MudSwitch @bind-Checked="Settings.CanAddComments" Label="Allow Comments" />
+        <MudSwitch @bind-Checked="Settings.CanAddReactions" Label="Allow Reactions" />
+        <!-- Add other settings fields as necessary -->
+    </MudForm>
+}
+else
+{
+    <MudText Color="Color.Error">Settings are not available.</MudText>
+}
+
+@code {
+    [Parameter]
+    public OrganizationSettingsDto Settings { get; set; }
+}
