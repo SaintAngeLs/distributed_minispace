@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
@@ -41,6 +42,21 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
 
         public async Task<FileUploadResponseDto> UploadAsync(UploadMediaFile command)
         {
+             var commandWithoutFileData = new UploadMediaFile(
+        command.MediaFileId,
+        command.SourceId,
+        command.SourceType,
+        command.OrganizationId,
+        command.UploaderId,
+        command.FileName,
+        command.FileContentType,
+        null // Exclude the FileData
+    );
+
+    // Serialize the modified command to JSON and write to the console
+    var commandJson = JsonSerializer.Serialize(commandWithoutFileData, new JsonSerializerOptions { WriteIndented = true });
+    Console.WriteLine("Received UploadMediaFile command (excluding FileData): " + commandJson);
+
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != command.UploaderId)
             {
@@ -103,7 +119,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             var uploadDate = _dateTimeProvider.Now;
             var fileSourceInfo = new FileSourceInfo(command.MediaFileId, command.SourceId, sourceType, 
                 command.UploaderId, State.Associated, uploadDate, originalUrl, 
-                command.FileContentType, processedUrl, originalFileName);
+                command.FileContentType, processedUrl, originalFileName, command.OrganizationId);
 
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, originalFileName));
