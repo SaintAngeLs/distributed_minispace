@@ -19,7 +19,6 @@
     }
     else
     {
-        <!-- Banner and Profile Image Section -->
         <MudPaper Class="pa-0">
             <MudImage 
                 Src="@GetBannerUrl()" 
@@ -60,8 +59,6 @@
                     <MudNavLink Href="#" @onclick="() => LoadTabContent(5)" Match="NavLinkMatch.All">Suborganizations</MudNavLink>
                 </MudNavMenu>
             </MudItem>
-
-            <!-- Content on the Right -->
             <MudItem xs="12" md="9">
                 <MudPaper Class="pa-4">
                     @if (selectedTabIndex == 0)
