@@ -9,8 +9,8 @@ namespace MiniSpace.Services.Organizations.Core.Repositories
     {
         Task<Role> GetRoleAsync(Guid organizationId, Guid roleId);
         Task<IEnumerable<Role>> GetRolesAsync(Guid organizationId);
-        Task<Role> GetRoleByNameAsync(string roleName);
-        Task AddRoleAsync(Role role);
+        Task<Role> GetRoleByNameAsync(Guid organizationId, string roleName);
+        Task AddRoleAsync(Guid organizationId, Role role);
         Task UpdateRoleAsync(Role role);
         Task DeleteRoleAsync(Guid roleId);
     }
