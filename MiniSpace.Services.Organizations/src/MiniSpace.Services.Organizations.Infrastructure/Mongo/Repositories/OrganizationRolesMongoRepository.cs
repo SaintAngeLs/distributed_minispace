@@ -32,15 +32,15 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             return rolesDocument?.Roles.Select(r => r.AsEntity());
         }
 
-        public async Task<Role> GetRoleByNameAsync(string roleName)
+        public async Task<Role> GetRoleByNameAsync(Guid organizationId, string roleName)
         {
-            var rolesDocument = await _rolesRepository.FindAsync(r => r.Roles.Any(role => role.Name == roleName));
-            return rolesDocument?.SelectMany(r => r.Roles).FirstOrDefault(r => r.Name == roleName)?.AsEntity();
+            var rolesDocument = await _rolesRepository.GetAsync(r => r.OrganizationId == organizationId && r.Roles.Any(role => role.Name == roleName));
+            return rolesDocument?.Roles.FirstOrDefault(r => r.Name == roleName)?.AsEntity();
         }
 
-        public async Task AddRoleAsync(Role role)
+        public async Task AddRoleAsync(Guid organizationId, Role role)
         {
-            var rolesDocument = await _rolesRepository.GetAsync(r => r.OrganizationId == role.Id);
+            var rolesDocument = await _rolesRepository.GetAsync(r => r.OrganizationId == organizationId);
             if (rolesDocument != null)
             {
                 var roles = rolesDocument.Roles.ToList();
@@ -53,7 +53,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 var newDocument = new OrganizationRolesDocument
                 {
                     Id = Guid.NewGuid(),
-                    OrganizationId = role.Id,
+                    OrganizationId = organizationId,
                     Roles = new List<RoleEntry> { role.AsDocument() }
                 };
                 await _rolesRepository.AddAsync(newDocument);
