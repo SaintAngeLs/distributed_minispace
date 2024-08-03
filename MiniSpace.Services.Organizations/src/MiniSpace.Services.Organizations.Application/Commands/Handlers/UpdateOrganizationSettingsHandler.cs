@@ -13,15 +13,18 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
     public class UpdateOrganizationSettingsHandler : ICommandHandler<UpdateOrganizationSettings>
     {
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationRolesRepository _organizationRolesRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
 
         public UpdateOrganizationSettingsHandler(
             IOrganizationRepository organizationRepository,
+            IOrganizationRolesRepository organizationRolesRepository,
             IAppContext appContext,
             IMessageBroker messageBroker)
         {
             _organizationRepository = organizationRepository;
+            _organizationRolesRepository = organizationRolesRepository;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
@@ -41,7 +44,14 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             }
 
             var user = await _organizationRepository.GetMemberAsync(organization.Id, identity.Id);
-            if (user == null || !user.HasPermission(Permission.EditOrganizationDetails))
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User does not have permission to update organization settings.");
+            }
+
+            var role = await _organizationRolesRepository.GetRoleByNameAsync(organization.Id, user.Role.Name);
+
+            if (role == null || !role.Permissions.ContainsKey(Permission.EditOrganizationDetails) || !role.Permissions[Permission.EditOrganizationDetails])
             {
                 throw new UnauthorizedAccessException("User does not have permission to update organization settings.");
             }
