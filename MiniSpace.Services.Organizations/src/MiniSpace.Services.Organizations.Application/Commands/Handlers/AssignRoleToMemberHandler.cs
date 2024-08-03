@@ -52,8 +52,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new MemberNotFoundException(command.MemberId);
             }
 
-            // Fetch the role by its name
-            var existingRole = await _organizationRolesRepository.GetRoleByNameAsync(command.Role);
+            // Fetch the role by its name using the correct method signature
+            var existingRole = await _organizationRolesRepository.GetRoleByNameAsync(command.OrganizationId, command.Role);
             if (existingRole == null)
             {
                 throw new RoleNotFoundException(command.Role);
