@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class User
@@ -12,17 +8,17 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public User(Guid id, Role role)
         {
             Id = id;
-            Role = role;
+            Role = role ?? throw new ArgumentNullException(nameof(role));
         }
 
         public bool HasPermission(Permission permission)
         {
-            return Role.Permissions.ContainsKey(permission) && Role.Permissions[permission];
+            return Role?.Permissions != null && Role.Permissions.ContainsKey(permission) && Role.Permissions[permission];
         }
 
         public void AssignRole(Role role)
         {
-            Role = role;
+            Role = role ?? throw new ArgumentNullException(nameof(role));
         }
     }
 }
