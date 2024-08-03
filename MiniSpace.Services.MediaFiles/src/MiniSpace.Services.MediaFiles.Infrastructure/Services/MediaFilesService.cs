@@ -52,6 +52,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 throw new InvalidContextTypeException(command.SourceType);
             }
 
+            // Handle previous files if necessary
             if (sourceType == ContextType.StudentProfileImage || 
                 sourceType == ContextType.StudentBannerImage ||
                 sourceType == ContextType.OrganizationProfileImage ||
@@ -107,23 +108,20 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, originalFileName));
 
-            // Handle specific events based on the source type
-            if (sourceType == ContextType.StudentProfileImage ||
-                sourceType == ContextType.StudentBannerImage ||
-                sourceType == ContextType.StudentGalleryImage)
+            // Handle specific events based on the source type and organization
+            if (command.OrganizationId.HasValue)
+            {
+                var imageType = sourceType.ToString();
+                var organizationImageUploadedEvent = new OrganizationImageUploaded(command.OrganizationId.Value, processedUrl, imageType, uploadDate);
+                await _messageBroker.PublishAsync(organizationImageUploadedEvent);
+            }
+            else if (sourceType == ContextType.StudentProfileImage ||
+                     sourceType == ContextType.StudentBannerImage ||
+                     sourceType == ContextType.StudentGalleryImage)
             {
                 var imageType = sourceType.ToString();
                 var studentImageUploadedEvent = new StudentImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
-            }
-
-            if (sourceType == ContextType.OrganizationProfileImage ||
-                sourceType == ContextType.OrganizationBannerImage ||
-                sourceType == ContextType.OrganizationGalleryImage)
-            {
-                var imageType = sourceType.ToString();
-                var organizationImageUploadedEvent = new OrganizationImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
-                await _messageBroker.PublishAsync(organizationImageUploadedEvent);
             }
 
             return new FileUploadResponseDto(fileSourceInfo.Id);
