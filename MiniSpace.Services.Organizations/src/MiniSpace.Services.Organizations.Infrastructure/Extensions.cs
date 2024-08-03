@@ -51,6 +51,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
             builder.Services.AddTransient<IOrganizationGalleryRepository, OrganizationGalleryMongoRepository>();
             builder.Services.AddTransient<IOrganizationMembersRepository, OrganizationMembersMongoRepository>();
             builder.Services.AddTransient<IUserInvitationsRepository, UserInvitationsMongoRepository>();
+            builder.Services.AddTransient<IOrganizationRolesRepository, OrganizationRolesMongoRepository>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
