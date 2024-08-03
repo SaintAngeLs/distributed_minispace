@@ -195,7 +195,6 @@ else
         {
             if (inputFile.Size > maxAllowedSize)
             {
-                // Handle file size error
                 await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
                 return;
             }
