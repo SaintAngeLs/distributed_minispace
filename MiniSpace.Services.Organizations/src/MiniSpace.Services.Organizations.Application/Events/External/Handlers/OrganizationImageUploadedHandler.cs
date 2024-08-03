@@ -24,7 +24,6 @@ namespace MiniSpace.Services.Organizations.Application.Events.External.Handlers
             var organization = await _organizationRepository.GetAsync(@event.OrganizationId);
             if (organization == null)
             {
-                // Handle the case where the organization is not found
                 return;
             }
 
