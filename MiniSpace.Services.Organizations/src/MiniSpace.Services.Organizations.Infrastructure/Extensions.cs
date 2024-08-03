@@ -79,6 +79,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .AddMongoRepository<OrganizationGalleryImageDocument, Guid>("organization_gallery_images")
                 .AddMongoRepository<OrganizationMembersDocument, Guid>("organization_members")
                 .AddMongoRepository<OrganizationInvitationDocument, Guid>("organization_invitations")
+                .AddMongoRepository<OrganizationRolesDocument, Guid>("organization_roles")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
