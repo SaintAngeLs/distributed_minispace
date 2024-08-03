@@ -13,19 +13,43 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
     {
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizationRolesRepository _organizationRolesRepository;
+        private readonly IAppContext _appContext;
 
-        public CreateOrganizationRoleHandler(IOrganizationRepository organizationRepository, IOrganizationRolesRepository organizationRolesRepository)
+        public CreateOrganizationRoleHandler(IOrganizationRepository organizationRepository, IOrganizationRolesRepository organizationRolesRepository, IAppContext appContext)
         {
             _organizationRepository = organizationRepository;
             _organizationRolesRepository = organizationRolesRepository;
+            _appContext = appContext;
         }
 
         public async Task HandleAsync(CreateOrganizationRole command, CancellationToken cancellationToken)
         {
+            var identity = _appContext.Identity;
+            if (!identity.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
             var organization = await _organizationRepository.GetAsync(command.OrganizationId);
             if (organization == null)
             {
                 throw new OrganizationNotFoundException(command.OrganizationId);
+            }
+
+            var user = await _organizationRepository.GetMemberAsync(command.OrganizationId, identity.Id);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User is not a member of the organization.");
+            }
+
+            // Retrieve the user's role with permissions from the roles repository
+            var role = await _organizationRolesRepository.GetRoleByNameAsync(organization.Id, user.Role.Name);
+
+            // Check if the role has the necessary permission to create roles
+            if (role == null || !(role.Permissions.ContainsKey(Permission.EditPermissions) && role.Permissions[Permission.EditPermissions])
+                            && !(role.Permissions.ContainsKey(Permission.AssignRoles) && role.Permissions[Permission.AssignRoles]))
+            {
+                throw new UnauthorizedAccessException("User does not have permission to create roles.");
             }
 
             var permissions = new Dictionary<Permission, bool>();
@@ -41,11 +65,11 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 }
             }
 
-            var role = new Role(command.RoleName, "Default role description", permissions);
-            organization.AddRole(role);
+            var newRole = new Role(command.RoleName, "Default role description", permissions);
+            organization.AddRole(newRole);
 
             // Corrected the method call by passing both organizationId and role
-            await _organizationRolesRepository.AddRoleAsync(command.OrganizationId, role);
+            await _organizationRolesRepository.AddRoleAsync(command.OrganizationId, newRole);
             await _organizationRepository.UpdateAsync(organization);
         }
     }
