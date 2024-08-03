@@ -5,6 +5,7 @@ using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,12 +14,21 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
     public class CreateOrganizationHandler : ICommandHandler<CreateOrganization>
     {
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationMembersRepository _organizationMembersRepository;
+        private readonly IOrganizationGalleryRepository _organizationGalleryRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
 
-        public CreateOrganizationHandler(IOrganizationRepository organizationRepository, IAppContext appContext, IMessageBroker messageBroker)
+        public CreateOrganizationHandler(
+            IOrganizationRepository organizationRepository,
+            IOrganizationMembersRepository organizationMembersRepository,
+            IOrganizationGalleryRepository organizationGalleryRepository,
+            IAppContext appContext,
+            IMessageBroker messageBroker)
         {
             _organizationRepository = organizationRepository;
+            _organizationMembersRepository = organizationMembersRepository;
+            _organizationGalleryRepository = organizationGalleryRepository;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
@@ -48,6 +58,20 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 );
 
                 await _organizationRepository.AddAsync(organization);
+
+                // Initialize an empty gallery for the organization
+                await _organizationGalleryRepository.AddImageAsync(organization.Id, new GalleryImage(Guid.NewGuid(), "Default Image URL", DateTime.UtcNow));
+
+                // Add the creator as a member with the "Creator" role
+                var creatorRole = organization.Roles.SingleOrDefault(r => r.Name == "Creator");
+                if (creatorRole == null)
+                {
+                    throw new RoleNotFoundException("Creator");
+                }
+
+                var creatorMember = new User(identity.Id, creatorRole);
+                await _organizationMembersRepository.AddMemberAsync(organization.Id, creatorMember);
+
                 await _messageBroker.PublishAsync(new OrganizationCreated(
                     organization.Id,
                     organization.Name,
@@ -85,6 +109,20 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 
                 parent.AddSubOrganization(organization);
                 await _organizationRepository.UpdateAsync(root);
+
+                // Initialize an empty gallery for the sub-organization
+                await _organizationGalleryRepository.AddImageAsync(organization.Id, new GalleryImage(Guid.NewGuid(), "Default Image URL", DateTime.UtcNow));
+
+                // Add the creator as a member with the "Creator" role
+                var creatorRole = organization.Roles.SingleOrDefault(r => r.Name == "Creator");
+                if (creatorRole == null)
+                {
+                    throw new RoleNotFoundException("Creator");
+                }
+
+                var creatorMember = new User(identity.Id, creatorRole);
+                await _organizationMembersRepository.AddMemberAsync(organization.Id, creatorMember);
+
                 await _messageBroker.PublishAsync(new OrganizationCreated(
                     organization.Id,
                     organization.Name,
