@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Web.DTO
 {
@@ -12,7 +11,7 @@ namespace MiniSpace.Web.DTO
         public GalleryImageDto(Guid imageId, string imageUrl, DateTime dateAdded)
         {
             ImageId = imageId;
-            ImageUrl = imageUrl ?? throw new ArgumentNullException(nameof(imageUrl));
+            ImageUrl = !string.IsNullOrWhiteSpace(imageUrl) ? imageUrl : "/images/default_image.png";  
             DateAdded = dateAdded;
         }
     }

@@ -27,7 +27,6 @@
     }
     else
     {
-
         <MudPaper Class="pa-0">
             <div class="image-upload-container">
                 <MudImage 
@@ -88,7 +87,6 @@
                     </div>
                 </div>
 
-                @* <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Name" Label="Organization Name" Variant="Variant.Outlined" Class="ml-4" /> *@
                 <MudText Typo="Typo.h6" Class="ml-4">@organizationGalleryUsers.OrganizationDetails.Name</MudText>
             </MudStack>
             <MudStack Row="true">
@@ -119,10 +117,10 @@
                     }
                     else if (selectedTabIndex == 1)
                     {
-                        <MudText Typo="Typo.h6">Organization Settings</MudText>
+                       <MudText Typo="Typo.h6">Organization Settings</MudText>
                         @if (organizationGalleryUsers?.OrganizationDetails?.Settings != null)
                         {
-                            <OrganizationSettings Settings="organizationGalleryUsers.OrganizationDetails.Settings" />
+                            <OrganizationSettings Settings="organizationGalleryUsers.OrganizationDetails.Settings" OnSave="HandleSaveSettings" />
                         }
                         else
                         {
@@ -407,6 +405,22 @@
         else
         {
             Snackbar.Add("Failed to update organization. Please try again.", Severity.Error);
+        }
+    }
+
+    private async Task HandleSaveSettings(OrganizationSettingsDto settings)
+    {
+        var updateCommand = new UpdateOrganizationSettingsCommand(OrganizationId, settings);
+
+        var response = await OrganizationsService.UpdateOrganizationSettingsAsync(OrganizationId, updateCommand);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Settings updated successfully.", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("Failed to update settings. Please try again.", Severity.Error);
         }
     }
 }
