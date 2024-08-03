@@ -283,68 +283,69 @@
 
 
     private async Task SaveCroppedImage()
-{
-    if (croppedImageFile != null)
     {
-        IsUploading = true;
-        StateHasChanged(); // Trigger UI update to show the overlay
-
-        try
+        if (croppedImageFile != null)
         {
-            // Convert IBrowserFile to byte[]
-            byte[] fileData;
-            using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
-            using (var ms = new MemoryStream())
-            {
-                await stream.CopyToAsync(ms);
-                fileData = ms.ToArray();
-            }
+            IsUploading = true;
+            StateHasChanged(); // Trigger UI update to show the overlay
 
-            string imageType = currentImageType == "profile" ? "OrganizationProfileImage" : "OrganizationBannerImage";
-            var response = await MediaFilesService.UploadMediaFileAsync(
-                OrganizationId,
-                imageType,
-                IdentityService.GetCurrentUserId(),
-                $"{organizationGalleryUsers.OrganizationDetails.Name}_{currentImageType}.png",
-                croppedImageFile.ContentType,
-                fileData);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var uploadedFile = response.Content;
-                if (uploadedFile != null)
+                // Convert IBrowserFile to byte[]
+                byte[] fileData;
+                using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+                using (var ms = new MemoryStream())
                 {
-                    if (currentImageType == "profile")
-                    {
-                        organizationGalleryUsers.OrganizationDetails.ImageUrl = uploadedFile.FileUrl;
-                    }
-                    else
-                    {
-                        organizationGalleryUsers.OrganizationDetails.BannerUrl = uploadedFile.FileUrl;
-                    }
+                    await stream.CopyToAsync(ms);
+                    fileData = ms.ToArray();
+                }
 
-                    StateHasChanged();
-                    NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+                string imageType = currentImageType == "profile" ? "OrganizationProfileImage" : "OrganizationBannerImage";
+                var response = await MediaFilesService.UploadOrganizationImageAsync(
+                    OrganizationId,
+                    imageType,
+                    IdentityService.GetCurrentUserId(),
+                    $"{organizationGalleryUsers.OrganizationDetails.Name}_{currentImageType}.png",
+                    croppedImageFile.ContentType,
+                    fileData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var uploadedFile = response.Content;
+                    if (uploadedFile != null)
+                    {
+                        if (currentImageType == "profile")
+                        {
+                            organizationGalleryUsers.OrganizationDetails.ImageUrl = uploadedFile.FileUrl;
+                        }
+                        else
+                        {
+                            organizationGalleryUsers.OrganizationDetails.BannerUrl = uploadedFile.FileUrl;
+                        }
+
+                        StateHasChanged();
+                        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+                    }
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Failed to upload the image.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                await JSRuntime.InvokeVoidAsync("alert", "Failed to upload the image.");
+                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
             }
-        }
-        catch (Exception ex)
-        {
-            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
-        }
-        finally
-        {
-            IsUploading = false; // Hide the loading overlay
-            StateHasChanged();
-        }
+            finally
+            {
+                IsUploading = false; // Hide the loading overlay
+                StateHasChanged();
+            }
 
-        CloseCropper();
+            CloseCropper();
+        }
     }
-}
+
 
 
 
