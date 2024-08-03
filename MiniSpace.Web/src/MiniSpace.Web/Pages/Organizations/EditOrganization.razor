@@ -258,9 +258,10 @@
             await stream.CopyToAsync(ms);
             var buffer = ms.ToArray();
             var base64Image = Convert.ToBase64String(buffer);
-            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image);
+            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image, imageType);
         }
     }
+
 
     private void CloseCropper()
     {
