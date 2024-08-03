@@ -58,6 +58,31 @@ namespace MiniSpace.Web.Areas.MediaFiles
             return _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", new { MediaFileUrl = fileUrl });
         }
 
+          public Task<HttpResponse<FileUploadResponseDto>> UploadOrganizationImageAsync(
+            Guid organizationId,
+            string sourceType,
+            Guid uploaderId,
+            string fileName,
+            string fileContentType,
+            byte[] fileData)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+
+            var requestBody = new
+            {
+                OrganizationId = organizationId,
+                MediaFileId = Guid.NewGuid(),
+                SourceType = sourceType,
+                UploaderId = uploaderId,
+                FileName = fileName,
+                FileContentType = fileContentType,
+                FileData = fileData
+            };
+
+            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files/upload-organization-image", requestBody);
+        }
+
+
         
     }
 }
