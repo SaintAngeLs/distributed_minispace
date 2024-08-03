@@ -28,18 +28,33 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<OrganizationGalleryUsersDto> HandleAsync(GetOrganizationWithGalleryAndUsers query, CancellationToken cancellationToken)
         {
+            // Fetch the organization document from the repository
             var organizationDocument = await _organizationRepository.GetAsync(o => o.Id == query.OrganizationId);
             if (organizationDocument == null)
             {
                 return null;
             }
 
+            // Convert the document to the entity
             var organization = organizationDocument.AsEntity();
+
+            // Fetch gallery documents and convert them to entities
             var galleryDocument = await _galleryRepository.FindAsync(g => g.OrganizationId == organization.Id);
             var gallery = galleryDocument?.SelectMany(doc => doc.Gallery).Select(g => g.AsEntity()) ?? Enumerable.Empty<GalleryImage>();
 
-            return new OrganizationGalleryUsersDto(organization, gallery, organization.Users);
-        }
+            // Check if settings are null and handle accordingly
+            var settingsDto = organization.Settings != null 
+                ? new OrganizationSettingsDto(organization.Settings) 
+                : new OrganizationSettingsDto(); // Create a default settings DTO if null
 
+            // Construct and return the DTO
+            return new OrganizationGalleryUsersDto(organization, gallery, organization.Users)
+            {
+                OrganizationDetails = new OrganizationDetailsDto(organization)
+                {
+                    Settings = settingsDto
+                }
+            };
+        }
     }
 }
