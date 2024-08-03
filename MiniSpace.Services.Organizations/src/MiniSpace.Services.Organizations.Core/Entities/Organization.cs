@@ -487,5 +487,15 @@ namespace MiniSpace.Services.Organizations.Core.Entities
                 AddEvent(new OrganizationImageUrlUpdated(Id, ImageUrl, DateTime.UtcNow));
             }
         }
+
+        public void SetProfileImage(string imageUrl)
+        {
+            ImageUrl = imageUrl;
+        }
+
+        public void SetBannerImage(string imageUrl)
+        {
+            BannerUrl = imageUrl;
+        }
     }
 }
