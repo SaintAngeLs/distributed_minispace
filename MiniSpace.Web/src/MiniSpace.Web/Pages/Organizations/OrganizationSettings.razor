@@ -6,9 +6,17 @@
     <MudForm>
         <MudSwitch @bind-Checked="Settings.IsVisible" Label="Is Visible" />
         <MudSwitch @bind-Checked="Settings.IsPublic" Label="Is Public" />
+        <MudSwitch @bind-Checked="Settings.IsPrivate" Label="Is Private" />
         <MudSwitch @bind-Checked="Settings.CanAddComments" Label="Allow Comments" />
         <MudSwitch @bind-Checked="Settings.CanAddReactions" Label="Allow Reactions" />
-        <!-- Add other settings fields as necessary -->
+        <MudSwitch @bind-Checked="Settings.CanPostPosts" Label="Can Post Posts" />
+        <MudSwitch @bind-Checked="Settings.CanPostEvents" Label="Can Post Events" />
+        <MudSwitch @bind-Checked="Settings.CanMakeReposts" Label="Can Make Reposts" />
+        <MudSwitch @bind-Checked="Settings.CanAddCommentsToPosts" Label="Allow Comments on Posts" />
+        <MudSwitch @bind-Checked="Settings.CanAddReactionsToPosts" Label="Allow Reactions on Posts" />
+        <MudSwitch @bind-Checked="Settings.CanAddCommentsToEvents" Label="Allow Comments on Events" />
+        <MudSwitch @bind-Checked="Settings.CanAddReactionsToEvents" Label="Allow Reactions on Events" />
+        <MudSwitch @bind-Checked="Settings.DisplayFeedInMainOrganization" Label="Display Feed in Main Organization" />
     </MudForm>
 }
 else
