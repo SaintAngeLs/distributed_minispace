@@ -55,7 +55,8 @@ namespace MiniSpace.Web.Areas.MediaFiles
        public Task DeleteMediaFileAsync(string fileUrl)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", new { MediaFileUrl = fileUrl });
+            return _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", 
+            new { MediaFileUrl = fileUrl });
         }
 
           public Task<HttpResponse<FileUploadResponseDto>> UploadOrganizationImageAsync(
@@ -79,7 +80,7 @@ namespace MiniSpace.Web.Areas.MediaFiles
                 FileData = fileData
             };
 
-            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files/upload-organization-image", requestBody);
+            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
         }
 
 
