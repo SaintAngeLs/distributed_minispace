@@ -13,7 +13,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 
         public bool HasPermission(Permission permission)
         {
-            // Check if the user's role has the specific permission and it is set to true
             return Role?.Permissions != null && Role.Permissions.ContainsKey(permission) && Role.Permissions[permission];
         }
 
