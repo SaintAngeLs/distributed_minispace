@@ -32,6 +32,7 @@ namespace MiniSpace.Services.MediaFiles.Core.Entities
             OrganizationId = organizationId;
         }
 
+
         public void Associate()
         {
             State = State.Associated;
