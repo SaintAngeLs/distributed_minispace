@@ -113,7 +113,7 @@
         {
             var allChildren = await OrganizationsService.GetAllChildrenOrganizationsAsync(organization.Id);
             organization.SubOrganizations = allChildren.Select(id => new UserOrganizationsDto { Id = id }).ToList();
-            StateHasChanged(); // Re-render the component to display the loaded sub-organizations
+            StateHasChanged(); 
         }
     }
 

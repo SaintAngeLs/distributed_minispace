@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Organizations.CommandsDto;
+using MiniSpace.Web.Areas.PagedResult;
 using MiniSpace.Web.DTO.Organizations;
 using MiniSpace.Web.HttpClients;
 
@@ -29,5 +30,6 @@ namespace MiniSpace.Web.Areas.Organizations
         Task<HttpResponse<object>> UpdateOrganizationAsync(Guid organizationId, UpdateOrganizationCommand command);
         Task<IEnumerable<UserOrganizationsDto>> GetUserOrganizationsAsync(Guid userId);
         Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId);
+        Task<PagedResult<OrganizationDto>> GetPaginatedOrganizationsAsync(int page, int pageSize, string search = null);
     }
 }
