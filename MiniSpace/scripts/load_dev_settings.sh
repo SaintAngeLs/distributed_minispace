@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# Define repository URLs and directories
-SOURCE_REPO_URL="https://gitlab.com/distributed-asp-net-core-blazor-social-app/events_apsettings_dev.git"
-TARGET_REPO_URL="https://github.com/SaintAngeLs/distributed_minispace.git"
-SOURCE_REPO_DIR="events_apsettings_dev"
-TARGET_REPO_DIR="distributed_minispace"
 
-# Define directories mapping from source to target
+SOURCE_REPO_URL="https://gitlab.com/distributed-asp-net-core-blazor-social-app/events_apsettings_dev.git"
+TARGET_REPO_DIR="../../.."
+SOURCE_REPO_DIR="./events_apsettings_dev"
+
 declare -A DIR_MAP
 DIR_MAP["APIGateway"]="MiniSpace.APIGateway/src/MiniSpace.APIGateway"
 DIR_MAP["Services.Comments"]="MiniSpace.Services.Comments/src/MiniSpace.Services.Comments.Api"
@@ -23,29 +21,23 @@ DIR_MAP["Services.Reports"]="MiniSpace.Services.Reports/src/MiniSpace.Services.R
 DIR_MAP["Services.Students"]="MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api"
 DIR_MAP["Web"]="MiniSpace.Web/src/MiniSpace.Web"
 
-# Clone the source repository
-git clone $SOURCE_REPO_URL
+
+git clone $SOURCE_REPO_URL $SOURCE_REPO_DIR
 cd $SOURCE_REPO_DIR || exit 1
 
-# Clone the target repository
-git clone $TARGET_REPO_URL ../$TARGET_REPO_DIR
-cd ../$TARGET_REPO_DIR || exit 1
-
-# Copy appsettings files to the corresponding directories
 for src_dir in "${!DIR_MAP[@]}"; do
-  target_dir=${DIR_MAP[$src_dir]}
-  mkdir -p "$target_dir"
-  cp -v "../$SOURCE_REPO_DIR/$src_dir/appsettings*" "$target_dir/"
+  target_dir=$TARGET_REPO_DIR/${DIR_MAP[$src_dir]}
+  if [ -d "$target_dir" ]; then
+    mkdir -p "$target_dir"
+    cp -v "$src_dir/appsettings"* "$target_dir/"
+  else
+    ls -la
+    echo "Target directory $target_dir does not exist. Skipping..."
+  fi
 done
 
-# Commit and push changes to the target repository
-git add .
-git commit -m "Update appsettings files from $SOURCE_REPO_URL"
-git push
 
-# Clean up
 cd ..
 rm -rf $SOURCE_REPO_DIR
-rm -rf $TARGET_REPO_DIR
 
 echo "Appsettings files have been updated successfully."

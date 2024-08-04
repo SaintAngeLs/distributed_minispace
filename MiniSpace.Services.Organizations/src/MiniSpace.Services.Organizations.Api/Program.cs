@@ -34,19 +34,29 @@ namespace MiniSpace.Services.Organizations.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
                         .Get<GetOrganizationDetails, OrganizationDetailsDto>("organizations/{organizationId}/details")
-                        .Get<GetOrganizerOrganizations, IEnumerable<OrganizationDto>>("organizations/organizer/{organizerId}")
                         .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
                         .Get<GetChildrenOrganizations, IEnumerable<OrganizationDto>>("organizations/{organizationId}/children")
                         .Get<GetAllChildrenOrganizations, IEnumerable<Guid>>("organizations/{organizationId}/children/all")
-                        .Post<CreateRootOrganization>("organizations",
-                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/root"))
-                        .Post<CreateOrganization>("organizations/{organizationId}/children",
+                        .Get<GetUserOrganizations, IEnumerable<OrganizationDto>>("users/{userId}/organizations")
+                        .Get<GetOrganizationWithGalleryAndUsers, OrganizationGalleryUsersDto>("organizations/{organizationId}/details/gallery-users")
+                         .Get<GetOrganizationRoles, IEnumerable<RoleDto>>("organizations/{organizationId}/roles")
+                         
+                        .Post<CreateOrganization>("organizations",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}"))
+                        .Post<CreateSubOrganization>("organizations/{organizationId}/children",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.SubOrganizationId}"))
+                        .Post<CreateOrganizationRole>("organizations/{organizationId}/roles",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}/roles/{cmd.RoleName}"))
                         .Delete<DeleteOrganization>("organizations/{organizationId}")
-                        .Post<AddOrganizerToOrganization>("organizations/{organizationId}/organizer")
-                        .Delete<RemoveOrganizerFromOrganization>("organizations/{organizationId}/organizer/{organizerId}")
                         .Post<InviteUserToOrganization>("organizations/{organizationId}/invite")
+                        .Post<AssignRoleToMember>("organizations/{organizationId}/roles/{memberId}")
+                        .Put<UpdateRolePermissions>("organizations/{organizationId}/roles/{roleId}/permissions")
                         .Post<SetOrganizationPrivacy>("organizations/{organizationId}/privacy")
+                        .Put<UpdateOrganizationSettings>("organizations/{organizationId}/settings")
+                        .Put<SetOrganizationVisibility>("organizations/{organizationId}/visibility")
+                        .Put<ManageFeed>("organizations/{organizationId}/feed")
+                        .Put<UpdateOrganization>("organizations/{organizationId}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}"))
                         ))
                 .UseLogging()
                 .Build()

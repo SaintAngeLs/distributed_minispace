@@ -1,193 +1,159 @@
-﻿@using Radzen
+﻿@using MudBlazor
 @using MiniSpace.Web.Areas.Students
 @inherits LayoutComponentBase
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
-@* @inject Microsoft.JSInterop.IJSRuntime JSRuntime *@
 @using Blazored.LocalStorage
 @inject ILocalStorageService localStorage
 @inject AuthenticationStateProvider authenticationStateProvider
 
-<RadzenLayout style="width: 100%; min-height: 100vh; text-align: center;" id="radzen-layout">
-    <header>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="width: 100%;">
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                <div class="logo-container" @onclick="NavigateToHome">
-                    <RadzenLabel Text="MiniSpace" />
-                </div>
-            </RadzenStack>
-            <RadzenMenu Class="rz-menu">
-                <div class="rz-menu-stack">
-                    @if (_isUserAuthenticated)
-                    {
-                        <div class="rz-text-align-center" style="">
-                            <RadzenProfileMenu>
-                                <Template>
-                                    <div style="padding: 10px; font-size: 16px;">
-                                        Hello, @_userName
-                                    </div>
-                                </Template>
-                                <ChildContent>
-                                    <RadzenProfileMenuItem Text="Account settings" Path="/account" Icon="settings"></RadzenProfileMenuItem>
-                                    <RadzenProfileMenuItem Text="Notifications" Path="/notifications/all" Icon="notifications"></RadzenProfileMenuItem>
-                                </ChildContent>
-                            </RadzenProfileMenu>
-                        </div>
-                        <RadzenMenuItem Text="Sign Out" Class="rz-menu-item" Click=@SignOut Icon="exit_to_app"/>
-                    }
-                    else
-                    {
-                        <RadzenMenuItem Text="Home" Class="rz-menu-item" Click="@(() => ScrollToSection("home"))" />
-                        <RadzenMenuItem Text="About App" Class="rz-menu-item" Click="@(() => ScrollToSection("about"))" />
-                        <RadzenMenuItem Text="Connect" Class="rz-menu-item" Click="@(() => ScrollToSection("connect"))" />
-                        <RadzenMenuItem Text="Sign In" Class="rz-menu-item" Path="signin" Icon="exit_to_app"/>
-                        <RadzenMenuItem Text="Sign Up" Class="rz-menu-item" Path="signup" Icon="assignment_ind"/>
-                    }
-                </div>
-            </RadzenMenu>
-        </RadzenStack>
-    </header>
+<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudAppBar Elevation="4">
+        <div class="container-fluid d-flex">
+            <div class="d-flex align-items-center">
+                @if (_isUserAuthenticated)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Text" OnClick="@ToggleDrawer">
+                        <img src="icons/menu-left.svg" alt="Menu" style="height: 24px; width: 24px;" />
+                    </MudButton>
+                }
+                <span class="ml-2">MiniSpace</span>
+            </div>
+            <MudSpacer />
+            <div class="d-flex justify-content-end">
+                @if (_isUserAuthenticated)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@ToggleUserDrawer" />
+                }
+            </div>
+        </div>
+    </MudAppBar>
 
-    @if (_isUserAuthenticated && _studentState == "valid")
+    @if (_isUserAuthenticated)
     {
-        <header class="header-services">
-            <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
-        </header>
+        <MudDrawer @bind-Open="_userDrawerOpen" Elevation="1" Anchor="Anchor.Right" Variant="DrawerVariant.Temporary">
+            <MudDrawerHeader>
+                <div class="d-flex flex-column align-items-center">
+                    <MudAvatar Image="@_userAvatar" Size="Size.Large" />
+                    <MudText Typo="Typo.h6" Class="mt-2">@_userName</MudText>
+                </div>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Href="/profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+                <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+                <MudNavLink Href="/account" Icon="@Icons.Material.Filled.AccountBox">Account settings</MudNavLink>
+                <MudNavLink Href="/notifications/all" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+                <MudNavLink OnClick="SignOut" Icon="@Icons.Material.Filled.ExitToApp">Sign Out</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+    }
+    else
+    {
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6"> </MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Href="#home" OnClick="ScrollToHome" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+                <MudNavLink Href="#about" OnClick="ScrollToAbout" Icon="@Icons.Material.Filled.Info">About App</MudNavLink>
+                <MudNavLink Href="#connect" OnClick="ScrollToConnect" Icon="@Icons.Material.Filled.ConnectWithoutContact">Connect</MudNavLink>
+                <MudNavLink Href="signin" Icon="@Icons.Material.Filled.Login">Sign In</MudNavLink>
+                <MudNavLink Href="signup" Icon="@Icons.Material.Filled.HowToReg">Sign Up</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+    }
+    @if (_isUserAuthenticated)
+    {
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Temporary)" OpenMiniOnHover="true">
+            
+                <MudDrawerHeader>
+                    <MudText Typo="Typo.h6">Menu</MudText>
+                </MudDrawerHeader>
+            
+            <MudNavMenu>
+                <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+                <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
+                <MudNavGroup Title="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
+                    <MudNavLink Href="events/follow" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
+                    <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
+                    @if (IdentityService.GetCurrentUserRole() == "organizer")
+                    {
+                        <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
+                    }
+                </MudNavGroup>
+                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                    <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
+                    <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
+                    <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
+                    <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
+                </MudNavGroup>
+                
+                <MudNavGroup Title="Organizations" Icon="@Icons.Material.Filled.Business" Expanded="true">
+                    <MudNavLink Href="organizations/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
+                    <MudNavLink Href="organizations/my" Icon="@Icons.Material.Filled.Home">My Organizations</MudNavLink>
+                    <MudNavLink Href="organizations/following" Icon="@Icons.Material.Filled.Group">Organizations I Follow</MudNavLink>
+                </MudNavGroup>
+
+                <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
+                    <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
+                    <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
+                    <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
+                @if (IdentityService.GetCurrentUserRole() == "admin")
+                {
+                    <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true">
+                        <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
+                        <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
+                        <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
+                    </MudNavGroup>
+                }
+            </MudNavMenu>
+        </MudDrawer>
     }
 
-    <div style="display: flex; flex: 1; flex-direction: row;" class="main-content-container">
-        @if (_isUserAuthenticated && _studentState == "valid")
-        {
-            @if (isPC)
-            {
-                <RadzenSidebar Responsive="false" style="transition: 0.5s; width: max-content;" Class="desktop-sidebar">
-                    <RadzenPanelMenu DisplayStyle="@(_sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)" style="transition: 0.5s;">
-                        <RadzenPanelMenuItem Text="Home" Icon="home" Click="@(() => NavigationManager.NavigateTo("home"))" />
-                        <RadzenPanelMenuItem Text="Account" Icon="account_box" Click="@(() => NavigationManager.NavigateTo("account"))" />
-                        <RadzenPanelMenuItem Text="Events" Icon="event">
-                            <RadzenPanelMenuItem Text="Follow" Icon="bookmark" Click="@(() => NavigationManager.NavigateTo("events/follow"))"/>
-                            <RadzenPanelMenuItem Text="Search" Icon="find_in_page" Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
-                            @if (IdentityService.GetCurrentUserRole() == "organizer")
-                            {
-                                <RadzenPanelMenuItem Text="Organize" Icon="assignment" Click="@(() => NavigationManager.NavigateTo("events/organize"))"/>
-                            }
-                        </RadzenPanelMenuItem>
-                        <RadzenPanelMenuItem Text="Friends" Icon="group">
-                            <RadzenPanelMenuItem Text="Search" Icon="search" Click="@(() => NavigationManager.NavigateTo("friends/search"))" />
-                            <RadzenPanelMenuItem Text="Friends" Icon="group" Click="@(() => NavigationManager.NavigateTo("friends"))" />
-                            <RadzenPanelMenuItem Text="Requests" Icon="mail_outline" Click="@(() => NavigationManager.NavigateTo("friends/requests"))" />
-                            <RadzenPanelMenuItem Text="Sent Requests" Icon="compare_arrows" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
-                        </RadzenPanelMenuItem>
-                        <RadzenPanelMenuItem Text="Notifications" Icon="send">
-                            <RadzenPanelMenuItem Text="All" Icon="accessibility" Click="@(() => NavigationManager.NavigateTo("notifications/all"))" />
-                            <RadzenPanelMenuItem Text="New" Icon="send" Click="@(() => NavigationManager.NavigateTo("notifications/new"))" />
-                            <RadzenPanelMenuItem Text="History" Icon="history" Click="@(() => NavigationManager.NavigateTo("notifications/history"))" />
-                        </RadzenPanelMenuItem>
-                        <RadzenPanelMenuItem Text="Reports" Icon="assignment_late" Click="@(() => NavigationManager.NavigateTo("reports"))" />
-                        @if (IdentityService.GetCurrentUserRole() == "admin")
-                        {
-                            <RadzenPanelMenuItem Text="Admin" Icon="build">
-                                <RadzenPanelMenuItem Text="Students" Icon="account_circle" Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
-                                <RadzenPanelMenuItem Text="Organizations" Icon="assignment" Click="@(() => NavigationManager.NavigateTo("admin/organizations"))" />
-                                <RadzenPanelMenuItem Text="Reports" Icon="assignment_late" Click="@(() => NavigationManager.NavigateTo("admin/reports"))" />
-                            </RadzenPanelMenuItem>
-                        }
-                    </RadzenPanelMenu>
-                </RadzenSidebar>
-            }
-            else
-            {
-                <RadzenSidebar Responsive="false" @bind-Expanded="@_sidebarExpanded" style="position: absolute; z-index: 3" Class="mobile-sidebar">
-                    <RadzenStack AlignItems="AlignItems.End" Class="rz-p-2">
-                        <RadzenButton Icon="west" Variant="Variant.Text" ButtonStyle="ButtonStyle.Secondary" Click="@(() => _sidebarExpanded = false)" />
-                    </RadzenStack>
-                    <RadzenPanelMenu>
-                         <RadzenPanelMenuItem Text="Home" Icon="home" Click="@(() => NavigationManager.NavigateTo("home"))" />
-                        <RadzenPanelMenuItem Text="Account" Icon="account_box" Click="@(() => NavigationManager.NavigateTo("account"))" />
-                        <RadzenPanelMenuItem Text="Events" Icon="event">
-                            <RadzenPanelMenuItem Text="Follow" Icon="bookmark" Click="@(() => NavigationManager.NavigateTo("events/follow"))"/>
-                            <RadzenPanelMenuItem Text="Search" Icon="find_in_page" Click="@(() => NavigationManager.NavigateTo("events/search"))"/>
-                            @if (IdentityService.GetCurrentUserRole() == "organizer")
-                            {
-                                <RadzenPanelMenuItem Text="Organize" Icon="assignment" Click="@(() => NavigationManager.NavigateTo("events/organize"))"/>
-                            }
-                        </RadzenPanelMenuItem>
-                        <RadzenPanelMenuItem Text="Friends" Icon="group">
-                            <RadzenPanelMenuItem Text="Search" Icon="search" Click="@(() => NavigationManager.NavigateTo("friends/search"))" />
-                            <RadzenPanelMenuItem Text="Friends" Icon="group" Click="@(() => NavigationManager.NavigateTo("friends"))" />
-                            <RadzenPanelMenuItem Text="Requests" Icon="mail_outline" Click="@(() => NavigationManager.NavigateTo("friends/requests"))" />
-                            <RadzenPanelMenuItem Text="Sent Requests" Icon="compare_arrows" Click="@(() => NavigationManager.NavigateTo("friends/sent-requests"))" />
-                        </RadzenPanelMenuItem>
-                        <RadzenPanelMenuItem Text="Notifications" Icon="send">
-                            <RadzenPanelMenuItem Text="All" Icon="accessibility" Click="@(() => NavigationManager.NavigateTo("notifications/all"))" />
-                            <RadzenPanelMenuItem Text="New" Icon="send" Click="@(() => NavigationManager.NavigateTo("notifications/new"))" />
-                            <RadzenPanelMenuItem Text="History" Icon="history" Click="@(() => NavigationManager.NavigateTo("notifications/history"))" />
-                        </RadzenPanelMenuItem>
-                        <RadzenPanelMenuItem Text="Reports" Icon="assignment_late" Click="@(() => NavigationManager.NavigateTo("reports"))" />
-                        @if (IdentityService.GetCurrentUserRole() == "admin")
-                        {
-                            <RadzenPanelMenuItem Text="Admin" Icon="build">
-                                <RadzenPanelMenuItem Text="Students" Icon="account_circle" Click="@(() => NavigationManager.NavigateTo("admin/students"))" />
-                                <RadzenPanelMenuItem Text="Organizations" Icon="assignment" Click="@(() => NavigationManager.NavigateTo("admin/organizations"))" />
-                                <RadzenPanelMenuItem Text="Reports" Icon="assignment_late" Click="@(() => NavigationManager.NavigateTo("admin/reports"))" />
-                            </RadzenPanelMenuItem>
-                        }
-                    </RadzenPanelMenu>
-                </RadzenSidebar>
-                @if (_sidebarExpanded)
-                {
-                    <div @onclick="@(() => _sidebarExpanded = false)" class="rz-dialog-mask" style="position: absolute; z-index: 2"></div>
-                }
-            }
-        }
-
-        <div style="flex: 1; display: flex; 
-        @* margin-left: @(_isUserAuthenticated && isPC ? "200px" : "0px");  *@
-        background: linear-gradient(to bottom, #f5f7fa, #c3cfe2)">
-            <div style="flex: 1; display: flex; justify-content: center;">
-                <div class="main-content" style="flex-grow: 1; max-width: 1400px;">
-                    @* <div style="flex: 1; display: flex; justify-content: flex-end;">
-                        <div class="main-content" style="flex-grow: 1; max-width: 960px;">
-                            <DynamicContentComponent Route="@currentRoute" />
+    <MudMainContent>
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            <div style="flex: 1;">
+                <div style="flex: 1; display: flex; justify-content: center; background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);">
+                    <div  style="flex-grow: 1; max-width: 1400px;">
+                        <div style="padding: 10px; margin: 20px;  min-height: 100vh;">
+                            @Body
                         </div>
-                    </div> *@
-                    <div style="
-                    @* background-color: #fff;  *@
-                    @* box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.15);  *@
-                    padding: 10px; 
-                    @* border-radius: 5px;  *@
-                    margin: 20px;"
-                    >
-                        @Body
                     </div>
+                    @if (_isUserAuthenticated)
+                    {
+                        <div style="max-width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
+                            <NotificationComponent />
+                        </div>
+                    }
                 </div>
             </div>
-            @if (_isUserAuthenticated && _studentState == "valid")
-            {
-                <div style="nax-width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
-                    <NotificationComponent />
-                </div>
-            }
+            <FooterComponent />
         </div>
-    </div>
+    </MudMainContent>
+</MudLayout>
 
-    <CustomRadzenFooter />
-</RadzenLayout>
-
-<RadzenDialog />
+<MudDialog />
 
 @code {
     private bool _sidebarExpanded = false;
+    private bool _userDrawerOpen = false;
     private bool isPC = true;
-    private bool isLoading = true;
-    private bool firstRender = true;
     private bool _isUserAuthenticated;
     private string _userName;
     private string _userEmail;
     private Guid _studentId;
     private string _studentState;
-    private string currentRoute;
+    private string _userAvatar;
 
     [Inject] IJSRuntime JSRuntime { get; set; }
 
@@ -208,6 +174,7 @@
                     if (studentDto != null)
                     {
                         _studentState = studentDto.State;
+                        _userAvatar = studentDto.ProfileImageUrl; 
                     }
                 }
             }
@@ -220,7 +187,7 @@
     public async Task UpdateScreenSize()
     {
         var screenSize = await JSRuntime.InvokeAsync<ScreenSize>("getScreenSize");
-        isPC = screenSize.Width > 868; // Adjust this width based on your breakpoint preference
+        isPC = screenSize.Width > 868;
         StateHasChanged();
     }
 
@@ -238,11 +205,42 @@
 
     public bool IsUserAuthenticated => _isUserAuthenticated;
 
+    private void ToggleDrawer()
+    {
+        _sidebarExpanded = !_sidebarExpanded;
+    }
+
+    private void OpenDrawer()
+    {
+        _sidebarExpanded = true;
+    }
+
+    private void ToggleUserDrawer()
+    {
+        _userDrawerOpen = !_userDrawerOpen;
+    }
+
     async Task SignOut()
     {
         await localStorage.ClearAsync();
+        await IdentityService.Logout();
         StateHasChanged();
         NavigationManager.NavigateTo("signin", forceLoad: true);
+    }
+
+    private async Task ScrollToHome(MouseEventArgs e)
+    {
+        await ScrollToSection("home");
+    }
+
+    private async Task ScrollToAbout(MouseEventArgs e)
+    {
+        await ScrollToSection("about");
+    }
+
+    private async Task ScrollToConnect(MouseEventArgs e)
+    {
+        await ScrollToSection("connect");
     }
 
     async Task ScrollToSection(string sectionId)
@@ -253,7 +251,7 @@
         }
         while (NavigationManager.Uri != NavigationManager.BaseUri)
         {
-            await Task.Delay(100); // Check every 100ms
+            await Task.Delay(100);
         }
         await JSRuntime.InvokeVoidAsync("scrollToSection", sectionId);
     }

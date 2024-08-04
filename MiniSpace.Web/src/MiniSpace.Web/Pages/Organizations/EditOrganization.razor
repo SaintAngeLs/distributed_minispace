@@ -1,0 +1,450 @@
+@page "/organizations/edit/{OrganizationId:guid}"
+@inject IOrganizationsService OrganizationsService
+@inject IIdentityService IdentityService
+@inject IMediaFilesService MediaFilesService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
+@using MiniSpace.Web.DTO.Organizations
+@using MiniSpace.Web.DTO.Enums
+@using MudBlazor
+@using System.IO
+@using MiniSpace.Web.Utilities
+@using System.Text.Json
+
+<AuthWrapper>
+<MudContainer Class="pa-0">
+    @if (isLoading || IsUploading)
+    {
+        <div class="loading-overlay">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Uploading Image, please wait...</MudText>
+        </div>
+    }
+    else if (organizationGalleryUsers == null)
+    {
+        <MudText Color="Color.Error">Failed to load organization details.</MudText>
+    }
+    else
+    {
+        <MudPaper Class="pa-0">
+            <!-- Banner Image with Upload and Delete Option -->
+            <div class="image-upload-container" style="position: relative;">
+                <MudImage 
+                    Src="@GetBannerUrl()" 
+                    Alt="Banner" 
+                    Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" 
+                />
+                <InputFile OnChange="@(async e => await OpenCropper(e, "banner"))" 
+                           style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
+                <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
+                               Color="Color.Primary" 
+                               Size="Size.Large" 
+                               HtmlTag="label" 
+                               for="file-input-banner" 
+                               Style="position: absolute; top: 10px; right: 60px;" 
+                               Title="Upload Banner Image" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Secondary" 
+                               Size="Size.Large" 
+                               OnClick="@(async () => await RemoveImage("banner"))" 
+                               Style="position: absolute; top: 10px; right: 10px;" 
+                               Title="Delete Banner Image" />
+            </div>
+
+            <!-- Profile Image Overlaying Banner with Upload and Delete Option -->
+            <div style="position: relative; text-align: center; margin-top: -60px;">
+                <MudImage 
+                    Src="@GetProfileImageUrl()" 
+                    Alt="Profile Image" 
+                    Style="height: 120px; width: 120px; object-fit: cover; 
+                           border-radius: 50%; 
+                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+                           border: 4px solid white;" 
+                />
+                <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" 
+                           style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
+                <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
+                               Color="Color.Primary" 
+                               Size="Size.Small" 
+                               HtmlTag="label" 
+                               for="file-input-profile" 
+                               Style="position: absolute; bottom: -10px; right: 45%; transform: translateX(70%); 
+                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
+                               Title="Upload Profile Image" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Secondary" 
+                               Size="Size.Small" 
+                               OnClick="@(async () => await RemoveImage("profile"))" 
+                               Style="position: absolute; bottom: -10px; right: 40%; transform: translateX(30%); 
+                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
+                               Title="Delete Profile Image" />
+            </div>
+
+            <!-- Organization Name -->
+            <MudText Typo="Typo.h6" Class="mt-3" Align="Align.Center">
+                @organizationGalleryUsers.OrganizationDetails.Name
+            </MudText>
+            
+            <!-- Save Button -->
+            <MudStack Row="true" Style="margin-top: 20px;">
+                <MudSpacer />
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Primary" 
+                           StartIcon="@Icons.Material.Filled.Save" 
+                           OnClick="SaveOrganization" 
+                           Size="Size.Medium">
+                    Save
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+
+        <!-- Navigation and Content -->
+        <MudGrid Class="mt-4">
+            <MudItem xs="12" md="3">
+                <MudNavMenu>
+                    <MudNavLink @onclick="() => LoadTabContent(0)" Match="NavLinkMatch.All">Overview</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(1)" Match="NavLinkMatch.All">Settings</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(2)" Match="NavLinkMatch.All">Members</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(3)" Match="NavLinkMatch.All">Roles</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(4)" Match="NavLinkMatch.All">Gallery</MudNavLink>
+                </MudNavMenu>
+            </MudItem>
+            <MudItem xs="12" md="9">
+                <MudPaper Class="pa-4">
+                    @if (selectedTabIndex == 0)
+                    {
+                        <MudText Typo="Typo.h6">Edit Overview</MudText>
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Name" Label="Organization Name" Variant="Variant.Outlined" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Description" Label="Description" Variant="Variant.Outlined" Class="mt-3" />
+                         <MudSelect @bind-Value="organizationGalleryUsers.OrganizationDetails.DefaultRoleName" Label="Default Role Name" Variant="Variant.Outlined" Class="mt-3">
+                            @foreach (var role in organizationGalleryUsers.OrganizationDetails.Roles)
+                            {
+                                <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    else if (selectedTabIndex == 1)
+                    {
+                       <MudText Typo="Typo.h6">Organization Settings</MudText>
+                        @if (organizationGalleryUsers?.OrganizationDetails?.Settings != null)
+                        {
+                            <OrganizationSettings Settings="organizationGalleryUsers.OrganizationDetails.Settings" OnSave="HandleSaveSettings" />
+                        }
+                        else
+                        {
+                            <MudText Color="Color.Error">Settings are not available.</MudText>
+                        }
+                    }
+                    else if (selectedTabIndex == 2)
+                    {
+                        <MudText Typo="Typo.h6">Manage Members</MudText>
+                        <!-- Include members management UI here -->
+                    }
+                    else if (selectedTabIndex == 3)
+                    {
+                        <MudText Typo="Typo.h6">Manage Roles</MudText>
+                        <RolesComponent OrganizationId="OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 4)
+                    {
+                        <MudText Typo="Typo.h6">Manage Organiztion Galler</MudText>
+                        <OrganizationGallery OrganizationId="OrganizationId" />
+                    }
+
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+</AuthWrapper>
+
+
+
+
+<!-- Bootstrap Modal for Cropper -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="cropper-container" class="img-container"></div>
+                @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                {
+                    <div id="cropped-image-container" class="img-container">
+                        <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                    </div>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" 
+                           OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    private OrganizationGalleryUsersDto organizationGalleryUsers;
+    private bool isLoading = true;
+    private bool IsUploading { get; set; } = false;
+
+    private int selectedTabIndex = 0;
+    private string CroppedImageBase64 { get; set; }
+
+    private IBrowserFile croppedImageFile;
+    private string currentImageType = string.Empty; // "profile" or "banner"
+
+    private string defaultBannerImage = "/images/default_banner_image.png";
+    private string defaultProfileImage = "/images/default_organization_profile_image.png";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", DotNetObjectReference.Create(this));
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+                Console.WriteLine(JsonSerializer.Serialize(organizationGalleryUsers));
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            organizationGalleryUsers = null;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetBannerUrl()
+    {
+        return !string.IsNullOrWhiteSpace(organizationGalleryUsers?.OrganizationDetails?.BannerUrl) 
+            ? organizationGalleryUsers.OrganizationDetails.BannerUrl 
+            : defaultBannerImage;
+    }
+
+    private string GetProfileImageUrl()
+    {
+        return !string.IsNullOrWhiteSpace(organizationGalleryUsers?.OrganizationDetails?.ImageUrl) 
+            ? organizationGalleryUsers.OrganizationDetails.ImageUrl 
+            : defaultProfileImage;
+    }
+
+    private void LoadTabContent(int index)
+    {
+        selectedTabIndex = index;
+    }
+
+    private async Task OpenCropper(InputFileChangeEventArgs e, string imageType)
+    {
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var inputFile = e.File;
+        currentImageType = imageType;
+
+        if (inputFile != null)
+        {
+            if (inputFile.Size > maxAllowedSize)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
+                return;
+            }
+
+            using var stream = inputFile.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+            var base64Image = Convert.ToBase64String(buffer);
+            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image, imageType);
+        }
+    }
+
+
+    private void CloseCropper()
+    {
+        JSRuntime.InvokeVoidAsync("hideCropperModal");
+    }
+
+    [JSInvokable]
+    public void ReceiveCroppedImage(string base64Image)
+    {
+        if (!string.IsNullOrEmpty(base64Image))
+        {
+            CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
+            var buffer = Convert.FromBase64String(base64Image);
+            var lastModified = DateTimeOffset.Now;  // Use the current time as a placeholder for lastModified
+            croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
+            StateHasChanged();
+        }
+    }
+
+
+
+    private async Task SaveCroppedImage()
+    {
+        if (croppedImageFile != null)
+        {
+            IsUploading = true;
+            StateHasChanged(); // Trigger UI update to show the overlay
+
+            try
+            {
+                // Convert IBrowserFile to byte[]
+                byte[] fileData;
+                using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+                using (var ms = new MemoryStream())
+                {
+                    await stream.CopyToAsync(ms);
+                    fileData = ms.ToArray();
+                }
+
+                string imageType = currentImageType == "profile" ? "OrganizationProfileImage" : "OrganizationBannerImage";
+                var response = await MediaFilesService.UploadOrganizationImageAsync(
+                    OrganizationId,
+                    imageType,
+                    IdentityService.GetCurrentUserId(),
+                    $"{organizationGalleryUsers.OrganizationDetails.Name}_{currentImageType}.png",
+                    croppedImageFile.ContentType,
+                    fileData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var uploadedFile = response.Content;
+                    if (uploadedFile != null)
+                    {
+                        if (currentImageType == "profile")
+                        {
+                            organizationGalleryUsers.OrganizationDetails.ImageUrl = uploadedFile.FileUrl;
+                        }
+                        else
+                        {
+                            organizationGalleryUsers.OrganizationDetails.BannerUrl = uploadedFile.FileUrl;
+                        }
+
+                        StateHasChanged();
+                        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+                    }
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Failed to upload the image.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                IsUploading = false; // Hide the loading overlay
+                StateHasChanged();
+            }
+
+            CloseCropper();
+        }
+    }
+
+
+
+
+    private async Task RemoveImage(string imageType)
+    {
+        try
+        {
+            string imageUrl = imageType == "profile" ? organizationGalleryUsers.OrganizationDetails.ImageUrl : organizationGalleryUsers.OrganizationDetails.BannerUrl;
+            await MediaFilesService.DeleteMediaFileAsync(imageUrl);
+
+            if (imageType == "profile")
+            {
+                organizationGalleryUsers.OrganizationDetails.ImageUrl = null;
+            }
+            else
+            {
+                organizationGalleryUsers.OrganizationDetails.BannerUrl = null;
+            }
+
+            StateHasChanged();
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred while removing the image: {ex.Message}");
+        }
+    }
+
+    private async Task SaveOrganization()
+    {
+        var organizationDetails = organizationGalleryUsers.OrganizationDetails;
+
+        var parentId = organizationDetails.ParentOrganizationId ?? Guid.Empty;
+
+        var updateCommand = new UpdateOrganizationCommand(
+            OrganizationId,
+            organizationDetails.Name,
+            organizationDetails.Description,
+            Guid.Empty,
+            parentId,
+            organizationDetails.OwnerId,
+            organizationDetails.Settings,
+            organizationDetails.BannerUrl,
+            organizationDetails.ImageUrl,
+            organizationDetails.DefaultRoleName
+        );
+
+        var response = await OrganizationsService.UpdateOrganizationAsync(OrganizationId, updateCommand);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Organization updated successfully.", Severity.Success);
+            NavigationManager.NavigateTo($"/organizations/details/{OrganizationId}");
+        }
+        else
+        {
+            Snackbar.Add("Failed to update organization. Please try again.", Severity.Error);
+        }
+    }
+
+    private async Task HandleSaveSettings(OrganizationSettingsDto settings)
+    {
+        var updateCommand = new UpdateOrganizationSettingsCommand(OrganizationId, settings);
+
+        var response = await OrganizationsService.UpdateOrganizationSettingsAsync(OrganizationId, updateCommand);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Settings updated successfully.", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("Failed to update settings. Please try again.", Severity.Error);
+        }
+    }
+}

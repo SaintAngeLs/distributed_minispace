@@ -10,8 +10,10 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
     internal static class Extensions
     {
         public static User AsEntity(this UserDocument document)
-            => new User(document.Id, document.Name, document.Email, document.Password, document.Role, document.CreatedAt,
-                document.Permissions)
+            => new User(document.Id, document.Name, document.Email, document.Password, 
+                Enum.Parse<Role>(document.Role, true), document.CreatedAt,
+                document.Permissions
+            )
             {
                 IsEmailVerified = document.IsEmailVerified,
                 EmailVerificationToken = document.EmailVerificationToken,
@@ -27,7 +29,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 Name = entity.Name,
                 Email = entity.Email,
                 Password = entity.Password,
-                Role = entity.Role,
+                Role = entity.Role.ToString(),
                 CreatedAt = entity.CreatedAt,
                 Permissions = entity.Permissions ?? Enumerable.Empty<string>(),
                 IsEmailVerified = entity.IsEmailVerified,
@@ -43,7 +45,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 Id = document.Id,
                 Name = document.Name,
                 Email = document.Email,
-                Role = document.Role,
+                Role = Enum.Parse<Role>(document.Role, true),
                 CreatedAt = document.CreatedAt,
                 Permissions = document.Permissions ?? Enumerable.Empty<string>(),
                 IsEmailVerified = document.IsEmailVerified,

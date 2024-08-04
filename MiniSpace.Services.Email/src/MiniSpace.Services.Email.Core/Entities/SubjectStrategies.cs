@@ -134,11 +134,21 @@ namespace MiniSpace.Services.Email.Core.Entities
         public string GenerateSubject(string details) => "You're invited to a new event!";
     }
 
+    public class EmailVerifiedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Your email has been verified!";
+    }
+
     public class ReportCancelledSubject : IEmailSubjectStrategy
     {
         public string GenerateSubject(string details)
         {
             return $"A report has been cancelled!";
         }
+    }
+
+    public class TwoFactorCodeGeneratedSubject : IEmailSubjectStrategy
+    {
+        public string GenerateSubject(string details) => "Your Two-Factor Authentication Code";
     }
 }

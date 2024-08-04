@@ -104,7 +104,7 @@
                     <RadzenRow Size="12">
                         <RadzenColumn Size="6">
                             <RadzenText TextStyle="TextStyle.Body2" class="rz-display-flex rz-mt-3 rz-my-0">Date of birth</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6"><b>@(studentDto.DateOfBirth.ToLocalTime().ToString(shortDateFormat))</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.H6"><b>@(studentDto.DateOfBirth.HasValue ? studentDto.DateOfBirth.Value.ToLocalTime().ToString(shortDateFormat) : "N/A")</b></RadzenText>
                         </RadzenColumn>
 
                         <RadzenColumn Size="6">

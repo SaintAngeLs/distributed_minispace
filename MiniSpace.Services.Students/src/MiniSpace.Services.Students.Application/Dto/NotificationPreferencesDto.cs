@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Dto
 {
+    [ExcludeFromCodeCoverage]
     public class NotificationPreferencesDto
     {
         public Guid StudentId { get; set; }

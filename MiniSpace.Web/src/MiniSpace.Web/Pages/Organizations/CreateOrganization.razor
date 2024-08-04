@@ -1,0 +1,127 @@
+@page "/organizations/create"
+@inject IOrganizationsService OrganizationsService
+@inject ISnackbar Snackbar
+@inject IIdentityService IdentityService
+@inject IMediaFilesService MediaFilesService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@using MiniSpace.Web.Utilities
+@using System.IO
+@using MiniSpace.Web.Areas.Organizations.CommandsDto
+@using MudBlazor
+
+<MudText Typo="Typo.h5" GutterBottom="true">Create New Organization</MudText>
+
+<MudPaper Elevation="1" Class="pa-4">
+    <MudForm Model="organizationModel" @ref="form" Validated="OnValidSubmit">
+        <MudTextField @bind-Value="organizationModel.Name" Label="Organization Name" Required="true" />
+        <MudTextField @bind-Value="organizationModel.Description" Label="Description" Required="false" />
+
+        <div class="form-group">
+            <label for="parentOrganization">Parent Organization</label>
+            <select class="form-control" id="parentOrganization" @bind="selectedParentId">
+                <option value="">No Parent</option>
+                @if (_parentOrganizations != null)
+                {
+                    @foreach (var org in _parentOrganizations)
+                    {
+                        <option value="@org.Id">@org.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        @if (organizationModel.Settings != null)
+        {
+            <MudSwitch @bind-Value="organizationModel.Settings.IsPrivate" Color="Color.Primary">Private Organization</MudSwitch>
+            <MudSwitch @bind-Value="organizationModel.Settings.IsVisible" Color="Color.Secondary">Visible to Public</MudSwitch>
+        }
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForm">
+            Create Organization
+        </MudButton>
+
+        <!-- Back Button -->
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack" Style="margin-top: 10px;">
+            Back
+        </MudButton>
+    </MudForm>
+</MudPaper>
+
+@code {
+    private MudForm form;
+    private CreateOrganizationDto organizationModel = new CreateOrganizationDto();
+    private bool _isSubmitting = false;
+    private List<OrganizationDto> _parentOrganizations = new List<OrganizationDto>();
+    private string selectedParentId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var userId = IdentityService.GetCurrentUserId();
+            var organizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
+            _parentOrganizations = organizations.ToList();
+            selectedParentId = organizationModel.ParentId?.ToString();
+            if (organizationModel.Settings == null)
+            {
+                organizationModel.Settings = new OrganizationSettingsDto(); 
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load organizations: {ex.Message}", Severity.Error);
+        }
+    }
+
+
+    private async Task SubmitForm()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            _isSubmitting = true;
+
+            try
+            {
+                organizationModel.OrganizationId = Guid.NewGuid();
+                organizationModel.OwnerId = IdentityService.GetCurrentUserId();
+                organizationModel.ParentId = string.IsNullOrEmpty(selectedParentId) ? null : new Guid?(new Guid(selectedParentId));
+
+                if (organizationModel.ParentId.HasValue)
+                {
+                    var parentOrg = _parentOrganizations.FirstOrDefault(o => o.Id == organizationModel.ParentId);
+                    organizationModel.RootId = parentOrg?.RootId ?? parentOrg?.Id;
+                }
+                else
+                {
+                    organizationModel.RootId = organizationModel.OrganizationId; 
+                }
+
+                var response = await OrganizationsService.CreateOrganizationAsync(organizationModel);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Organization created successfully.", Severity.Success);
+                    NavigationManager.NavigateTo($"/organizations/details/{organizationModel.OrganizationId}");
+                }
+                else
+                {
+                    Snackbar.Add("Failed to create organization.", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+            }
+
+            _isSubmitting = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/organizations/my");
+    }
+}

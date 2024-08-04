@@ -27,9 +27,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Organizations.Application;
-using MiniSpace.Services.Organizations.Application.Commands;
 using MiniSpace.Services.Organizations.Application.Events.External;
-using MiniSpace.Services.Organizations.Application.Events.External.Handlers;
+using MiniSpace.Services.Organizations.Application.Commands;
 using MiniSpace.Services.Organizations.Application.Services;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using MiniSpace.Services.Organizations.Infrastructure.Contexts;
@@ -49,7 +48,11 @@ namespace MiniSpace.Services.Organizations.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IOrganizationRepository, OrganizationMongoRepository>();
-            builder.Services.AddTransient<IOrganizerRepository, OrganizerMongoRepository>();
+            builder.Services.AddTransient<IOrganizationGalleryRepository, OrganizationGalleryMongoRepository>();
+            builder.Services.AddTransient<IOrganizationMembersRepository, OrganizationMembersMongoRepository>();
+            builder.Services.AddTransient<IUserInvitationsRepository, UserInvitationsMongoRepository>();
+            builder.Services.AddTransient<IOrganizationRolesRepository, OrganizationRolesMongoRepository>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -74,7 +77,10 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<OrganizationDocument, Guid>("organizations")
-                .AddMongoRepository<OrganizerDocument, Guid>("organizers")
+                .AddMongoRepository<OrganizationGalleryImageDocument, Guid>("organization_gallery_images")
+                .AddMongoRepository<OrganizationMembersDocument, Guid>("organization_members")
+                .AddMongoRepository<OrganizationInvitationDocument, Guid>("organization_invitations")
+                .AddMongoRepository<OrganizationRolesDocument, Guid>("organization_roles")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -91,11 +97,19 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
                 .SubscribeCommand<CreateOrganization>()
+                .SubscribeCommand<CreateSubOrganization>()
+                .SubscribeCommand<CreateOrganizationRole>()
                 .SubscribeCommand<DeleteOrganization>()
-                .SubscribeCommand<AddOrganizerToOrganization>()
-                .SubscribeCommand<RemoveOrganizerFromOrganization>()
-                .SubscribeEvent<OrganizerRightsGranted>()
-                .SubscribeEvent<OrganizerRightsRevoked>();
+                .SubscribeCommand<InviteUserToOrganization>()
+                .SubscribeCommand<AssignRoleToMember>()
+                .SubscribeCommand<UpdateRolePermissions>()
+                .SubscribeCommand<SetOrganizationPrivacy>()
+                .SubscribeCommand<UpdateOrganizationSettings>()
+                .SubscribeCommand<SetOrganizationVisibility>()
+                .SubscribeCommand<UpdateOrganization>()
+                .SubscribeCommand<ManageFeed>()
+                .SubscribeEvent<OrganizationImageUploaded>()
+                .SubscribeEvent<MediaFileDeleted>();
 
             return app;
         }

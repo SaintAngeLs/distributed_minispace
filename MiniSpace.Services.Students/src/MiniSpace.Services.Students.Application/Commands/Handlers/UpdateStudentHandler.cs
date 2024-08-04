@@ -1,7 +1,9 @@
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Events;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Services;
+using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using System;
 using System.Linq;
@@ -45,14 +47,20 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
             }
 
-            student.Update(command.FirstName, command.LastName, command.ProfileImageUrl, command.Description, command.EmailNotifications, command.ContactEmail);
-            student.UpdateBannerUrl(command.BannerUrl);
-            student.UpdateGalleryOfImageUrls(command.GalleryOfImageUrls);
-            student.UpdateEducation(command.Education);
-            student.UpdateWorkPosition(command.WorkPosition);
-            student.UpdateCompany(command.Company);
-            student.UpdateLanguages(command.Languages);
-            student.UpdateInterests(command.Interests);
+            student.Update(command.FirstName, 
+                           command.LastName, 
+                           command.Description, 
+                           command.EmailNotifications, 
+                           command.ContactEmail, 
+                           command.PhoneNumber,
+                           command.Country,
+                           command.City,
+                           command.DateOfBirth);
+
+            student.UpdateEducation(command.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)));
+            student.UpdateWork(command.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)));
+            student.UpdateLanguages(command.Languages.Select(l => (Language)Enum.Parse(typeof(Language), l)));
+            student.UpdateInterests(command.Interests.Select(i => (Interest)Enum.Parse(typeof(Interest), i)));
 
             if (command.EnableTwoFactor)
             {
@@ -69,15 +77,29 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var studentUpdatedEvent = new StudentUpdated(
                 student.Id,
                 student.FullName,
-                student.ProfileImageUrl,
-                student.BannerUrl,
-                student.GalleryOfImageUrls,
-                student.Education,
-                student.WorkPosition,
-                student.Company,
-                student.Languages,
-                student.Interests,
-                student.ContactEmail 
+                student.Description,
+                student.Education.Select(e => new EducationDto
+                {
+                    InstitutionName = e.InstitutionName,
+                    Degree = e.Degree,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate,
+                    Description = e.Description
+                }).ToList(),
+                student.Work.Select(w => new WorkDto
+                {
+                    Company = w.Company,
+                    Position = w.Position,
+                    StartDate = w.StartDate,
+                    EndDate = w.EndDate,
+                    Description = w.Description
+                }).ToList(),
+                student.Languages.Select(l => l.ToString()).ToList(),
+                student.Interests.Select(i => i.ToString()).ToList(),
+                student.ContactEmail,
+                student.Country,
+                student.City,
+                student.DateOfBirth
             );
 
             await _messageBroker.PublishAsync(studentUpdatedEvent);

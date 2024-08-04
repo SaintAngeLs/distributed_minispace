@@ -1,11 +1,11 @@
 @page "/account"
 @using System.Globalization
+@using MiniSpace.Web.Shared
 @using MiniSpace.Web.Areas.Students
 @using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.DTO.Types
-@using MiniSpace.Web.Shared
 @using MudBlazor
 @using System.IO
 @using System.Text.Json
@@ -15,7 +15,6 @@
 @inject NavigationManager NavigationManager
 
 <AuthWrapper>
-    <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
     <div class="breadcrumbs-container">
         <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
     </div>
@@ -30,33 +29,68 @@
                     <MudNavLink OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavLink>
                 </MudNavMenu>
             </MudItem>
             <MudItem xs="12" sm="8" md="9">
                 <MudPaper Elevation="1" Class="content-panel">
                     @if (activeTabIndex == 0)
                     {
-                        @ProfileContent()
+                        <ProfileComponent IsLoading="isLoading" File="file" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync"  IsUploading="isUploading" />
                     }
                     else if (activeTabIndex == 1)
                     {
-                        @SecurityContent()
+                        <SecurityComponent IsLoading="isLoading" IsTwoFactorEnabled="isTwoFactorEnabled" TwoFactorSecret="@(string.IsNullOrEmpty(twoFactorSecret) || twoFactorSecret == "twoFactorSecret" ? null : twoFactorSecret)" ToggleTwoFactor="ToggleTwoFactor" />
                     }
                     else if (activeTabIndex == 2)
                     {
-                        @NotificationsContent()
+                        <NotificationsComponent IsLoading="isLoading" NotificationPreferencesDto="notificationPreferencesDto" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" />
                     }
                     else if (activeTabIndex == 3)
                     {
-                        @PrivacyContent()
+                        <PrivacyComponent IsLoading="isLoading" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync" />
                     }
                     else if (activeTabIndex == 4)
                     {
-                        @LanguagesAndInterestsContent()
+                        <MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
+                                    <MudSelect T="string" Label="Select Languages" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedLanguages" SelectedValuesChanged="OnSelectedLanguagesChanged">
+                                        @foreach (var language in Enum.GetValues(typeof(Language)).Cast<Language>())
+                                        {
+                                            <MudSelectItem Value="@language.ToString()">@language.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
+                                    <MudSelect T="string" Label="Select Interests" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedInterests" SelectedValuesChanged="OnSelectedInterestsChanged">
+                                        @foreach (var interest in Enum.GetValues(typeof(Interest)).Cast<Interest>())
+                                        {
+                                            <MudSelectItem Value="@interest.ToString()">@interest.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">Save Changes</MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        }
                     }
                     else if (activeTabIndex == 5)
                     {
-                         <MiniSpace.Web.Pages.Account.Components.GalleryComponent />
+                        <GalleryComponent IsLoading="@isLoading" StudentWithGalleryImagesDto="@studentWithGalleryImagesDto" />
+                    }
+                    else if (activeTabIndex == 6)
+                    {
+                        <UserSettingsComponent IsLoading="isLoading" AvailableSettingsDto="availableSettingsDto" SaveUserSettingsAsync="SaveUserSettingsAsync" />
                     }
                 </MudPaper>
             </MudItem>
@@ -92,31 +126,31 @@
     }
 
     .mud-switch {
-        margin-bottom: 10px;
+        margin-bottom: 10px.
     }
 
     .image-upload-container {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
+        align-items: center.
+        justify-content: center.
+        width: 100%.
     }
 
     .profile-image {
-        height: 150px;
-        width: 150px;
+        height: 150px.
+        width: 150px.
     }
 
     textarea.mud-input-slot.mud-input-root.mud-input-root-outlined {
-        padding: 10px !important;
+        padding: 10px !important.
     }
     .mud-input>input.mud-input-root {
-        padding: 10px !important;
+        padding: 10px !important.
     }
 
     .button-margins {
-        margin: 10px 0 !important;
+        margin: 10px 0 !important.
     }
 </style>
 
@@ -127,30 +161,19 @@
         new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
     };
 
-    private List<string> availableLanguages = new List<string>
-    {
-        "English",
-        "Spanish",
-        "French",
-        "German",
-        "Chinese",
-        "Japanese",
-        "Korean",
-        "Italian",
-        "Russian",
-        "Portuguese"
-    };
-
     private int activeTabIndex = 0;
     private bool isTwoFactorEnabled;
     private string twoFactorSecret;
     private bool isLoading = true;
-    private string profileImage = string.Empty;
     private bool isUploading = false;
     private IBrowserFile file;
     private long maxFileSize = 10 * 1024 * 1024;
-    private StudentDto studentDto = new();
+    private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
+    private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
+
+    private HashSet<string> selectedLanguages = new HashSet<string>();
+    private HashSet<string> selectedInterests = new HashSet<string>(); 
 
     protected override async Task OnInitializedAsync()
     {
@@ -164,14 +187,24 @@
             if (IdentityService.IsAuthenticated)
             {
                 var studentId = IdentityService.GetCurrentUserId();
-                studentDto = await StudentsService.GetStudentAsync(studentId);
+                studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+                var studentDto = studentWithGalleryImagesDto.Student;
+
+                var studentDtoJson = JsonSerializer.Serialize(studentDto, new JsonSerializerOptions { WriteIndented = true });
+                Console.WriteLine($"StudentDto object: {studentDtoJson}");
+
                 if (studentDto.EmailNotifications)
                 {
                     notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
+                    Console.WriteLine(JsonSerializer.Serialize(notificationPreferencesDto));
                 }
-                profileImage = studentDto.ProfileImageUrl;
                 isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
                 twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
+
+                availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
+
+                selectedLanguages = new HashSet<string>(studentDto.Languages); 
+                selectedInterests = new HashSet<string>(studentDto.Interests);
             }
             else
             {
@@ -189,210 +222,98 @@
         }
     }
 
-    private async Task SaveChangesAsync()
-{
-    try
+    private void OnSelectedLanguagesChanged(IEnumerable<string> languages)
     {
-        var updateStudentData = new
-        {
-            studentDto.Id,
-            studentDto.FirstName,
-            studentDto.LastName,
-            studentDto.ProfileImageUrl,
-            studentDto.Description,
-            studentDto.EmailNotifications,
-            studentDto.ContactEmail,
-            studentDto.Languages,
-            studentDto.Interests,
-            studentDto.Education,
-            studentDto.WorkPosition,
-            studentDto.Company,
-            IsTwoFactorEnabled = isTwoFactorEnabled, 
-            TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null 
-        };
+        selectedLanguages = new HashSet<string>(languages);
+    }
 
-        var jsonData = JsonSerializer.Serialize(updateStudentData);
-        Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
+    private void OnSelectedInterestsChanged(IEnumerable<string> interests) 
+    {
+        selectedInterests = new HashSet<string>(interests);
+    }
 
-        await StudentsService.UpdateStudentAsync(
+    private async Task SaveChanges()
+    {
+        var studentDto = studentWithGalleryImagesDto.Student;
+        studentDto.Languages = selectedLanguages.ToList(); 
+        studentDto.Interests = selectedInterests.ToList();
+
+        await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
             studentDto.Id,
-            studentDto.FirstName,
-            studentDto.LastName,
-            studentDto.ProfileImageUrl,
-            studentDto.Description,
-            studentDto.EmailNotifications,
-            studentDto.ContactEmail,
             studentDto.Languages,
-            studentDto.Interests,
-            isTwoFactorEnabled,
-            !isTwoFactorEnabled,
-            isTwoFactorEnabled ? twoFactorSecret : null,
-            studentDto.Education,
-            studentDto.WorkPosition,
-            studentDto.Company
+            studentDto.Interests
         );
 
-        if (studentDto.EmailNotifications)
-        {
-            await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto);
-        }
+        await StudentsService.UpdateStudentDto(studentDto.Id);
+        StateHasChanged();
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex.Message);
-    }
-}
 
-
-private async Task SaveImageAsync()
-{
-    try
+    private async Task SaveChangesAsync()
     {
-        if (file != null)
+        try
         {
-            isUploading = true;
-            StateHasChanged();
-
-            try
+            var studentDto = studentWithGalleryImagesDto.Student;
+            var updateStudentData = new
             {
-                var stream = file.OpenReadStream(maxFileSize);
-                byte[] bytes = await ReadFully(stream);
-                var base64Content = Convert.ToBase64String(bytes);
-                var response = await MediaFilesService.UploadMediaFileAsync(IdentityService.UserDto.Id,
-                    MediaFileContextType.StudentProfileImage.ToString(), IdentityService.UserDto.Id,
-                    file.Name, file.ContentType, base64Content);
-               
-                studentDto.ProfileImageUrl = response.Content.FileUrl;
-                profileImage = response.Content.FileUrl;
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                studentDto.Education,
+                studentDto.Work,
+                studentDto.PhoneNumber,
+                studentDto.Country,
+                studentDto.City,
+                studentDto.DateOfBirth,
+                IsTwoFactorEnabled = isTwoFactorEnabled,
+                TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
+            };
 
-                stream.Close();
-            }
-            catch (Exception ex)
+            var jsonData = JsonSerializer.Serialize(updateStudentData);
+            Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
+
+            await StudentsService.UpdateStudentAsync(
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                isTwoFactorEnabled,
+                !isTwoFactorEnabled,
+                isTwoFactorEnabled ? twoFactorSecret : null,
+                studentDto.Education,
+                studentDto.Work,
+                studentDto.PhoneNumber,
+                studentDto.Country,
+                studentDto.City,
+                studentDto.DateOfBirth
+            );
+
+            if (studentDto.EmailNotifications)
             {
-                Console.WriteLine($"Error uploading image: {ex.Message}");
+                await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto, studentDto.EmailNotifications);
             }
-            finally
-            {
-                isUploading = false;
-                StateHasChanged();
-            }
+
+            await StudentsService.UpdateUserSettingsAsync(studentDto.Id, availableSettingsDto);
         }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex.Message);
-    }
-}
-
-
-
-    private RenderFragment ProfileContent() => @<div>
-    <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
-    @if (isLoading)
-    {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-    }
-    else
-    {
-        <MudGrid>
-            <MudItem xs="12" sm="6" md="4">
-                <div class="image-upload-container">
-                    <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" Style="height:200px; width: 200px; font-size:2rem;"/>
-                    <MudFileUpload T="IBrowserFile" @bind-Files="file" Accept=".jpg,.jpeg,.png">
-                        <ButtonTemplate>
-                            <MudButton HtmlTag="label"
-                                    Variant="Variant.Filled"
-                                    Color="Color.Primary"
-                                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                                    Class="button-margins"
-                                    for="@context">
-                                Upload Image
-                            </MudButton>
-                        </ButtonTemplate>
-                        <SelectedTemplate>
-                            @if (file != null)
-                            {
-                                <MudText> <MudIcon Icon="@Icons.Material.Filled.Attachment" /> @file.Name </MudText>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveImageAsync">Save Image</MudButton>
-                            }
-                            else
-                            {
-                                <MudText><MudIcon Icon="@Icons.Material.Filled.Attachment" /> No Files Selected</MudText>
-                            }
-                        </SelectedTemplate>
-                    </MudFileUpload>
-                </div>
-            </MudItem>
-            <MudItem xs="12" sm="11" md="7">
-                <MudGrid>
-                    <MudItem xs="11" sm="11">
-                        <MudTextField @bind-Value="studentDto.FirstName" Label="First Name" HelperText="Your first name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-                    </MudItem>
-                    <MudItem xs="11" sm="11">
-                        <MudTextField @bind-Value="studentDto.LastName" Label="Last Name" HelperText="Your last name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="12" sm="11" md="11">
-                <MudGrid>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Email" Label="Email" HelperText="Your email address" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Education" Label="Education" HelperText="Your education background" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.WorkPosition" Label="Work Position" HelperText="Your current work position" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Company" Label="Company" HelperText="Your current company" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                    </MudItem>
-                    <MudItem xs="11">
-                        <MudTextField @bind-Value="studentDto.Description" Label="Description" HelperText="A brief description about yourself" Variant="Variant.Outlined"  Lines="5"/>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-        </MudGrid>
-        <MudStack>
-             
-        </MudStack>
-
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save profile</MudButton>
-
-        @if (isUploading)
+        catch (Exception ex)
         {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            Console.WriteLine(ex.Message);
         }
     }
-</div>;
+
+ 
 
 
-    private RenderFragment SecurityContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Security</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudStack>
-                <MudSwitch @bind-Checked="isTwoFactorEnabled" Label="Enable Two-Factor Authentication" OnChange="ToggleTwoFactor" Color="Color.Primary"/>
-                @if (isTwoFactorEnabled)
-                {
-                    @if (string.IsNullOrEmpty(twoFactorSecret))
-                    {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GenerateTwoFactorSecret">Generate Secret Token</MudButton>
-                    }
-                    else
-                    {
-                        <MudTextField @bind-Value="twoFactorSecret" Label="Two-Factor Authentication Secret" ReadOnly="true" />
-                    }
-                }
-                
-            </MudStack>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTwoFactorSettingsAsync" Disabled="@(!isTwoFactorEnabled || (isTwoFactorEnabled && string.IsNullOrEmpty(twoFactorSecret)))" Class="button-margins">Save 2FA Settings</MudButton>
-        }
-    </div>;
 
     private async Task SaveTwoFactorSettingsAsync()
     {
@@ -418,7 +339,6 @@ private async Task SaveImageAsync()
         }
     }
 
-
     private async Task ToggleTwoFactor(bool enabled)
     {
         isTwoFactorEnabled = enabled;
@@ -430,7 +350,6 @@ private async Task SaveImageAsync()
         else
         {
             twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
-            await IdentityService.EnableTwoFactorAsync(IdentityService.GetCurrentUserId(), twoFactorSecret);
         }
         StateHasChanged();
     }
@@ -442,99 +361,37 @@ private async Task SaveImageAsync()
         StateHasChanged();
     }
 
-    private RenderFragment NotificationsContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Notifications</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudStack>
-                <MudSwitch @bind-Checked="studentDto.EmailNotifications" Label="Email Notifications" />
-                @if (studentDto.EmailNotifications)
-                {
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.SystemLogin" Label="System Login" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.NewEvent" Label="New Event" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.EventNotifications" Label="Event Notifications" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.PostsNotifications" Label="Posts Notifications" Color="Color.Primary"/>
-                    <MudSwitch @bind-Checked="notificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary"/>
-                }
-                
-            </MudStack>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save preferences</MudButton>
-        }
-    </div>;
-
-    private RenderFragment PrivacyContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Privacy</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudStack>
-                <MudTextField @bind-Value="studentDto.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                
-            </MudStack>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChangesAsync">Save privacy</MudButton>
-        }
-    </div>;
-
-    private RenderFragment LanguagesAndInterestsContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudGrid>
-                <MudItem xs="12">
-                    <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
-                    <MudSelect @bind-SelectedValues="studentDto.Languages" Label="Select Languages" Variant="Variant.Outlined" T="string" MultiSelection="true">
-                        @foreach (var language in availableLanguages)
-                        {
-                            <MudSelectItem Value="@language">@language</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
-                    <MudTextField @bind-Value="studentDto.Interests" Label="Interests" HelperText="Your interests" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-            </MudGrid>
-        }
-    </div>;
-
-    private RenderFragment GalleryContent() => @<div>
-        <MudText Typo="Typo.h6" GutterBottom="true">Gallery</MudText>
-        @if (isLoading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
-        else
-        {
-            <MudGrid>
-                @foreach (var imageUrl in studentDto.GalleryOfImageUrls)
-                {
-                    <MudItem xs="12" sm="6" md="4">
-                        <MudCard>
-                            <MudCardMedia Image="@imageUrl" Alt="Gallery image" />
-                        </MudCard>
-                    </MudItem>
-                }
-            </MudGrid>
-        }
-    </div>;
-
-    private string GetImage()
+    private async Task SaveNotificationPreferencesAsync()
     {
-        return !string.IsNullOrEmpty(profileImage) ? profileImage : "images/default_profile_image.webp";
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, notificationPreferencesDto, studentWithGalleryImagesDto.Student.EmailNotifications);
+            Console.WriteLine("Notification preferences updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving notification preferences: {ex.Message}");
+        }
+    }
+
+    private async Task SaveUserSettingsAsync()
+    {
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
+            Console.WriteLine("Student settings updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving user settings: {ex.Message}");
+        }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
     }
 
     private static async Task<byte[]> ReadFully(Stream input)
@@ -549,10 +406,5 @@ private async Task SaveImageAsync()
             }
             return ms.ToArray();
         }
-    }
-
-    private void SetActiveTabIndex(int index)
-    {
-        activeTabIndex = index;
     }
 }

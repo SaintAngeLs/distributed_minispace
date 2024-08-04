@@ -17,7 +17,8 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents
                 document.OriginalFileUrl,
                 document.OriginalFileContentType,
                 document.FileUrl,
-                document.FileName
+                document.FileName,
+                document.OrganizationId 
             );
 
         public static FileSourceInfoDocument AsDocument(this FileSourceInfo entity)
@@ -32,7 +33,9 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents
                 OriginalFileUrl = entity.OriginalFileUrl,
                 OriginalFileContentType = entity.OriginalFileContentType,
                 FileUrl = entity.FileUrl,
-                FileName = entity.FileName
+                FileName = entity.FileName,
+                OrganizationId = entity.OrganizationId
             };
+
     }
 }

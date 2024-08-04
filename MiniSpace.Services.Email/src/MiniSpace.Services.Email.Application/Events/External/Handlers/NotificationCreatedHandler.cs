@@ -40,7 +40,6 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
             string jsonEvent = JsonSerializer.Serialize(@event);
             _logger.LogInformation($"Received Event: {jsonEvent}");
 
-
             var student = await _studentsServiceClient.GetAsync(@event.UserId);
             if (student == null)
             {
@@ -76,12 +75,22 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
             await _messageBroker.PublishAsync(new EmailQueued(emailNotification.EmailNotificationId, @event.UserId));
         }
 
-
         private async Task<string> LoadHtmlTemplate(string filePath, NotificationCreated eventDetails, StudentDto student)
         {
             string htmlContent = await System.IO.File.ReadAllTextAsync(filePath);
-            htmlContent = htmlContent.Replace("{Message}", eventDetails.Message);
-            htmlContent = htmlContent.Replace("{Details}", eventDetails.Details ?? "No details provided");
+            var eventType = (NotificationEventType)Enum.Parse(typeof(NotificationEventType), eventDetails.EventType);
+            htmlContent = htmlContent.Replace("{Message}", EmailContentFactory.CreateContent(eventType, eventDetails.Details));
+
+            // Replace {Details} with empty string if eventType is TwoFactorCodeGenerated
+            if (eventType == NotificationEventType.TwoFactorCodeGenerated)
+            {
+                htmlContent = htmlContent.Replace("{Details}", string.Empty);
+            }
+            else
+            {
+                htmlContent = htmlContent.Replace("{Details}", eventDetails.Details ?? "No details provided");
+            }
+
             htmlContent = htmlContent.Replace("{CreatedAt}", eventDetails.CreatedAt.ToString("dddd, dd MMMM yyyy"));
 
             var eventTypeDescription = EmailSubjectFactory.CreateSubject(
@@ -102,9 +111,7 @@ namespace MiniSpace.Services.Email.Application.Events.External.Handlers
 
             htmlContent = htmlContent.Replace("{UserEmailConsent}", userEmailConsentMessage);
 
-
             return htmlContent;
         }
-
     }
 }

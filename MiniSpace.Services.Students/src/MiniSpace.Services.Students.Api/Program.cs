@@ -34,15 +34,25 @@ namespace MiniSpace.Services.Students.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetStudents, Application.Queries.PagedResult<StudentDto>>("students")
                         .Get<GetStudent, StudentDto>("students/{studentId}")
-                        .Put<UpdateStudent>("students/{studentId}")
-                        .Delete<DeleteStudent>("students/{studentId}")
-                        .Post<CompleteStudentRegistration>("students",
-                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))
-                        .Put<ChangeStudentState>("students/{studentId}/state/{state}",
-                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Get<GetUserSettings, UserSettingsDto>("students/{studentId}/settings")
+                        .Get<GetStudentWithGalleryImages, StudentWithGalleryImagesDto>("students/{studentId}/gallery")
+                        .Get<GetStudentWithVisibilitySettings, StudentWithVisibilitySettingsDto>("students/{studentId}/visibility-settings")
                         .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")
                         .Get<GetUserNotificationPreferences, NotificationPreferencesDto>("students/{studentId}/notifications")
-                        .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")))
+
+                        .Put<UpdateStudent>("students/{studentId}")
+                        .Put<UpdateUserSettings>("students/{studentId}/settings")
+                        .Put<ChangeStudentState>("students/{studentId}/state/{state}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Put<UpdateStudentLanguagesAndInterests>("students/{studentId}/languages-and-interests")
+
+                        .Delete<DeleteStudent>("students/{studentId}")
+
+                        .Post<CompleteStudentRegistration>("students",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))  
+                        .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")
+                        
+                        ))
                 .UseLogging()
                 .Build()
                 .RunAsync();
