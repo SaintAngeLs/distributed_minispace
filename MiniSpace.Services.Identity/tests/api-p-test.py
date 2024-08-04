@@ -4,7 +4,7 @@ import os
 class UserBehavior(TaskSet):
     @task(1)
     def sign_in(self):
-        self.client.post("/sign-in", json={"email": "austineccentric@gmail.com", "password": "testtest"})
+        self.client.post("/sign-in", json={"email": "austineccentric@gmail.com", "password": ""})
 
 class WebsiteUser(HttpUser):
     tasks = [UserBehavior]
