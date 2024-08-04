@@ -193,17 +193,16 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 
         public static GalleryImage AsEntity(this GalleryImageEntry document)
         {
-            return new GalleryImage(document.Id, document.Url, document.CreatedAt, document.Description);
+            return new GalleryImage(document.ImageId, document.ImageUrl, document.DateAdded);
         }
 
         public static GalleryImageEntry AsDocument(this GalleryImage entity)
         {
             return new GalleryImageEntry
             {
-                Id = entity.Id,
-                Url = entity.Url,
-                Description = entity.Description,
-                CreatedAt = entity.CreatedAt
+                ImageId = entity.ImageId,
+                ImageUrl = entity.ImageUrl,
+                DateAdded = entity.DateAdded
             };
         }
     }

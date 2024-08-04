@@ -1,28 +1,24 @@
 using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Application.Queries;
-using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Organizations.Core.Repositories;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics.CodeAnalysis;
-using MiniSpace.Services.Organizations.Core.Entities;
-using MiniSpace.Services.Organizations.Core.Repositories;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
-    [ExcludeFromCodeCoverage]
     public class GetOrganizationWithGalleryAndUsersHandler : IQueryHandler<GetOrganizationWithGalleryAndUsers, OrganizationGalleryUsersDto>
     {
-        private readonly IMongoRepository<OrganizationDocument, Guid> _organizationRepository;
-        private readonly IMongoRepository<OrganizationGalleryImageDocument, Guid> _galleryRepository;
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationGalleryRepository _galleryRepository;
         private readonly IOrganizationRolesRepository _organizationRolesRepository;
 
         public GetOrganizationWithGalleryAndUsersHandler(
-            IMongoRepository<OrganizationDocument, Guid> organizationRepository,
-            IMongoRepository<OrganizationGalleryImageDocument, Guid> galleryRepository,
+            IOrganizationRepository organizationRepository,
+            IOrganizationGalleryRepository galleryRepository,
             IOrganizationRolesRepository organizationRolesRepository)
         {
             _organizationRepository = organizationRepository;
@@ -32,32 +28,47 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<OrganizationGalleryUsersDto> HandleAsync(GetOrganizationWithGalleryAndUsers query, CancellationToken cancellationToken)
         {
-            // Fetch the organization document from the repository
-            var organizationDocument = await _organizationRepository.GetAsync(o => o.Id == query.OrganizationId);
-            if (organizationDocument == null)
+            // Fetch the organization entity from the repository
+            var organization = await _organizationRepository.GetAsync(query.OrganizationId);
+            if (organization == null)
             {
                 return null;
             }
 
-            var organization = organizationDocument.AsEntity();
+            // Fetch gallery images associated with the organization
+            var galleryImages = await _galleryRepository.GetGalleryAsync(organization.Id);
+            var gallery = galleryImages?.Select(g => new GalleryImageDto(g)).ToList() 
+                          ?? new List<GalleryImageDto>();
 
-            var galleryDocument = await _galleryRepository.FindAsync(g => g.OrganizationId == organization.Id);
-            var gallery = galleryDocument?.SelectMany(doc => doc.Gallery).Select(g => g.AsEntity()) ?? Enumerable.Empty<GalleryImage>();
+            // Log gallery images
+            Console.WriteLine("Gallery Images Retrieved:");
+            Console.WriteLine(JsonSerializer.Serialize(galleryImages, new JsonSerializerOptions { WriteIndented = true }));
 
+            // Fetch roles associated with the organization
             var roles = await _organizationRolesRepository.GetRolesAsync(organization.Id);
 
+            // Convert organization settings to DTO
             var settingsDto = organization.Settings != null 
                 ? new OrganizationSettingsDto(organization.Settings) 
                 : new OrganizationSettingsDto();
 
-            return new OrganizationGalleryUsersDto(organization, gallery, organization.Users)
+            // Create the final DTO to return
+            var result = new OrganizationGalleryUsersDto(organization, galleryImages, organization.Users)
             {
                 OrganizationDetails = new OrganizationDetailsDto(organization)
                 {
                     Settings = settingsDto,
                     Roles = roles?.Select(r => new RoleDto(r)).ToList() ?? new List<RoleDto>()
-                }
+                },
+                Gallery = gallery,  // Set the gallery images here
+                Users = organization.Users?.Select(u => new UserDto(u)).ToList() ?? new List<UserDto>()
             };
+
+            // Log the result
+            Console.WriteLine("Final Result Returned:");
+            Console.WriteLine(JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true }));
+
+            return result;
         }
     }
 }

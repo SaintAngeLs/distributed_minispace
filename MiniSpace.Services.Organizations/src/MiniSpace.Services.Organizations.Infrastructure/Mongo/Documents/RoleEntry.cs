@@ -15,7 +15,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
         [BsonDictionaryOptions(MongoDB.Bson.Serialization.Options.DictionaryRepresentation.Document)]
         public Dictionary<string, bool> Permissions { get; set; }
 
-        // Ensure the enum values are converted to strings
         public static RoleEntry FromEntity(Role role)
         {
             return new RoleEntry

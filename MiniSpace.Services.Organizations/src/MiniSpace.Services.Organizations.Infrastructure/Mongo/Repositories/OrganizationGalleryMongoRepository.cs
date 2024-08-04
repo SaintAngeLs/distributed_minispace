@@ -23,7 +23,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
         public async Task<GalleryImage> GetImageAsync(Guid organizationId, Guid imageId)
         {
             var galleryDocument = await _galleryRepository.GetAsync(g => g.OrganizationId == organizationId);
-            var imageDocument = galleryDocument?.Gallery.FirstOrDefault(i => i.Id == imageId);
+            var imageDocument = galleryDocument?.Gallery.FirstOrDefault(i => i.ImageId == imageId);
             return imageDocument?.AsEntity();
         }
 
@@ -61,7 +61,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             if (galleryDocument != null)
             {
                 var gallery = galleryDocument.Gallery.ToList();
-                var imageDocument = gallery.FirstOrDefault(g => g.Id == image.Id);
+                var imageDocument = gallery.FirstOrDefault(g => g.ImageId == image.ImageId);
                 if (imageDocument != null)
                 {
                     gallery.Remove(imageDocument);
@@ -78,7 +78,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             if (galleryDocument != null)
             {
                 var gallery = galleryDocument.Gallery.ToList();
-                var imageDocument = gallery.FirstOrDefault(g => g.Id == imageId);
+                var imageDocument = gallery.FirstOrDefault(g => g.ImageId == imageId);
                 if (imageDocument != null)
                 {
                     gallery.Remove(imageDocument);
@@ -94,7 +94,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             if (galleryDocument != null)
             {
                 var gallery = galleryDocument.Gallery.ToList();
-                var imageDocument = gallery.FirstOrDefault(g => g.Url == mediaFileUrl);
+                var imageDocument = gallery.FirstOrDefault(g => g.ImageUrl == mediaFileUrl);
                 if (imageDocument != null)
                 {
                     gallery.Remove(imageDocument);
