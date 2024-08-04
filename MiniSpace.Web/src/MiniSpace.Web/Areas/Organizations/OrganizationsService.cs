@@ -127,10 +127,10 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.PutAsync<UpdateOrganizationCommand, object>($"organizations/{organizationId}", command);
         }
 
-        public Task<IEnumerable<OrganizationDto>> GetUserOrganizationsAsync(Guid userId)
+        public Task<IEnumerable<UserOrganizationsDto>> GetUserOrganizationsAsync(Guid userId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<OrganizationDto>>($"organizations/users/{userId}/organizations");
+            return _httpClient.GetAsync<IEnumerable<UserOrganizationsDto>>($"organizations/users/{userId}/organizations");
         }
 
         public Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId)
