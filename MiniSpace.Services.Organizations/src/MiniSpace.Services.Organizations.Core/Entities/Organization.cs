@@ -53,15 +53,16 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _gallery = new HashSet<GalleryImage>(value);
         }
 
-        public Organization(Guid id, 
-        string name, 
-        string description, 
-        OrganizationSettings settings, 
-        Guid ownerId, 
-        string bannerUrl = null, 
-        string imageUrl = null, 
-        Guid? parentOrganizationId = null, 
-        IEnumerable<Organization> organizations = null)
+         public Organization(Guid id, 
+                        string name, 
+                        string description, 
+                        OrganizationSettings settings, 
+                        Guid ownerId, 
+                        string bannerUrl = null, 
+                        string imageUrl = null, 
+                        Guid? parentOrganizationId = null, 
+                        IEnumerable<Organization> organizations = null, 
+                        string defaultRoleName = "User")
         {
             Id = id;
             Name = name;
@@ -72,9 +73,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             OwnerId = ownerId;
             ParentOrganizationId = parentOrganizationId;
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
+            DefaultRoleName = defaultRoleName;
             AddEvent(new OrganizationCreated(Id, Name, Description, id, ParentOrganizationId ?? Guid.Empty, OwnerId, DateTime.UtcNow));
             InitializeDefaultRoles();
         }
+
 
         private void InitializeDefaultRoles()
         {
@@ -498,7 +501,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         {
             BannerUrl = imageUrl;
         }
-        
+
         public void UpdateDefaultRole(string roleName)
         {
             DefaultRoleName = roleName;
