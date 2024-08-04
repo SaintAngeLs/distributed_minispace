@@ -7,10 +7,9 @@ namespace MiniSpace.Services.Organizations.Application.DTO
     [ExcludeFromCodeCoverage]
     public class GalleryImageDto
     {
-        public Guid Id { get; set; }
-        public string Url { get; set; }
-        public string Description { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public Guid ImageId { get; set; }
+        public string ImageUrl { get; set; }
+        public DateTime DateAdded { get; set; }
 
         public GalleryImageDto()
         {
@@ -19,10 +18,16 @@ namespace MiniSpace.Services.Organizations.Application.DTO
 
         public GalleryImageDto(GalleryImage galleryImage)
         {
-            Id = galleryImage.Id;
-            Url = galleryImage.Url;
-            Description = galleryImage.Description;
-            CreatedAt = galleryImage.CreatedAt;
+            ImageId = galleryImage.ImageId;
+            ImageUrl = galleryImage.ImageUrl;
+            DateAdded = galleryImage.DateAdded;
+        }
+
+        public GalleryImageDto(Guid imageId, string imageUrl, DateTime dateAdded)
+        {
+            ImageId = imageId;
+            ImageUrl = imageUrl;
+            DateAdded = dateAdded;
         }
     }
 }

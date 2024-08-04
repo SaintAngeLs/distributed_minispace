@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public OrganizationDetailsDto OrganizationDetails { get; set; }
         public IEnumerable<GalleryImageDto> Gallery { get; set; }
         public IEnumerable<UserDto> Users { get; set; }
-
+        public OrganizationGalleryUsersDto() {}
         public OrganizationGalleryUsersDto(Organization organization, IEnumerable<GalleryImage> gallery, IEnumerable<User> users)
         {
             OrganizationDetails = new OrganizationDetailsDto(organization);
