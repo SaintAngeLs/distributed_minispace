@@ -29,14 +29,12 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<OrganizationGalleryUsersDto> HandleAsync(GetOrganizationWithGalleryAndUsers query, CancellationToken cancellationToken)
         {
-            // Fetch the organization entity from the repository
             var organization = await _organizationRepository.GetAsync(query.OrganizationId);
             if (organization == null)
             {
                 return null;
             }
 
-            // Fetch gallery images associated with the organization
             var galleryImages = await _galleryRepository.GetGalleryAsync(organization.Id);
 
             if (galleryImages == null)
@@ -50,15 +48,12 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 Console.WriteLine(JsonSerializer.Serialize(galleryImages, new JsonSerializerOptions { WriteIndented = true }));
             }
 
-            // Fetch roles associated with the organization
             var roles = await _organizationRolesRepository.GetRolesAsync(organization.Id);
 
-            // Convert organization settings to DTO
             var settingsDto = organization.Settings != null 
                 ? new OrganizationSettingsDto(organization.Settings) 
                 : new OrganizationSettingsDto();
 
-            // Create the final DTO to return
             var result = new OrganizationGalleryUsersDto(organization, galleryImages, organization.Users)
             {
                 OrganizationDetails = new OrganizationDetailsDto(organization)
@@ -66,13 +61,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                     Settings = settingsDto,
                     Roles = roles?.Select(r => new RoleDto(r)).ToList() ?? new List<RoleDto>()
                 },
-                Gallery = galleryImages.Select(g => new GalleryImageDto(g)).ToList(),  // Set the gallery images here
+                Gallery = galleryImages.Select(g => new GalleryImageDto(g)).ToList(),
                 Users = organization.Users?.Select(u => new UserDto(u)).ToList() ?? new List<UserDto>()
             };
-
-            // Log the result
-            Console.WriteLine("Final Result Returned:");
-            Console.WriteLine(JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true }));
 
             return result;
         }
