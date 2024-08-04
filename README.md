@@ -116,7 +116,7 @@ The Complex System Diagram offers a detailed view of MiniSpace's infrastructure 
 
 
 ## 🎨 Frontend
-- **Framework**: [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - A powerful single-page application framework within the .NET ecosystem.
+- **Framework**: [Blazor Server](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - A powerful single-page application framework within the .NET ecosystem.
 - **Components**: [MudBlazor](https://mudblazor.com/) - Enhances the user interface with modern and responsive design elements.
 
 ## 💻 Backend
