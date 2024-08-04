@@ -20,23 +20,31 @@
     else
     {
         <MudPaper Class="pa-0">
+            <!-- Banner Image -->
             <MudImage 
                 Src="@GetBannerUrl()" 
                 Alt="Banner" 
-                Style="width: 100%; height: 200px; object-fit: cover;" 
+                Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" 
             />
-           <MudStack Row="true">
-                <MudAvatar Size="Size.Large">
+
+            <!-- Profile Image and Organization Name -->
+            <div style="position: relative; text-align: center; margin-top: -60px;">
                 <MudImage 
-                        Src="@GetProfileImageUrl()" 
-                        Alt="Profile Image" 
-                        
-                        Class="organization-avatar" 
-                    />
-                </MudAvatar>
-                <MudText Typo="Typo.h6" Class="ml-4">@organizationGalleryUsers.OrganizationDetails.Name</MudText>
-            </MudStack>
-            <MudStack Row="true">
+                    Src="@GetProfileImageUrl()" 
+                    Alt="Profile Image" 
+                    Style="height: 120px; width: 120px; object-fit: cover; 
+                           border-radius: 50%; 
+                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+                           border: 4px solid white;" 
+                />
+            </div>
+
+            <MudText Typo="Typo.h6" Class="mt-3" Align="Align.Center">
+                @organizationGalleryUsers.OrganizationDetails.Name
+            </MudText>
+            
+            <!-- Edit Button (Visible to Admins Only) -->
+            <MudStack Row="true" Style="margin-top: 20px;">
                 <MudSpacer />
                 @if (isAdmin)
                 {
@@ -46,7 +54,8 @@
                 }
             </MudStack>
         </MudPaper>
-       
+
+        <!-- Navigation and Content -->
         <MudGrid Class="mt-4">
             <!-- Menu on the Left -->
             <MudItem xs="12" md="3">
@@ -60,6 +69,8 @@
                     <MudNavLink Href="#" @onclick="() => LoadTabContent(6)" Match="NavLinkMatch.All">Gallery</MudNavLink>
                 </MudNavMenu>
             </MudItem>
+
+            <!-- Content on the Right -->
             <MudItem xs="12" md="9">
                 <MudPaper Class="pa-4">
                     @if (selectedTabIndex == 0)
@@ -96,6 +107,7 @@
     }
 </MudContainer>
 </AuthWrapper>
+
 @code {
     [Parameter]
     public Guid OrganizationId { get; set; }
