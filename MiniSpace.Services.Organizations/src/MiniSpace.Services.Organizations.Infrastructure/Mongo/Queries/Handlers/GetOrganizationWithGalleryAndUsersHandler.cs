@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Organizations.Core.Entities;
+using MiniSpace.Services.Organizations.Core.Repositories;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
@@ -17,13 +18,16 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
     {
         private readonly IMongoRepository<OrganizationDocument, Guid> _organizationRepository;
         private readonly IMongoRepository<OrganizationGalleryImageDocument, Guid> _galleryRepository;
+        private readonly IOrganizationRolesRepository _organizationRolesRepository;
 
         public GetOrganizationWithGalleryAndUsersHandler(
             IMongoRepository<OrganizationDocument, Guid> organizationRepository,
-            IMongoRepository<OrganizationGalleryImageDocument, Guid> galleryRepository)
+            IMongoRepository<OrganizationGalleryImageDocument, Guid> galleryRepository,
+            IOrganizationRolesRepository organizationRolesRepository)
         {
             _organizationRepository = organizationRepository;
             _galleryRepository = galleryRepository;
+            _organizationRolesRepository = organizationRolesRepository;
         }
 
         public async Task<OrganizationGalleryUsersDto> HandleAsync(GetOrganizationWithGalleryAndUsers query, CancellationToken cancellationToken)
@@ -35,24 +39,23 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 return null;
             }
 
-            // Convert the document to the entity
             var organization = organizationDocument.AsEntity();
 
-            // Fetch gallery documents and convert them to entities
             var galleryDocument = await _galleryRepository.FindAsync(g => g.OrganizationId == organization.Id);
             var gallery = galleryDocument?.SelectMany(doc => doc.Gallery).Select(g => g.AsEntity()) ?? Enumerable.Empty<GalleryImage>();
 
-            // Check if settings are null and handle accordingly
+            var roles = await _organizationRolesRepository.GetRolesAsync(organization.Id);
+
             var settingsDto = organization.Settings != null 
                 ? new OrganizationSettingsDto(organization.Settings) 
-                : new OrganizationSettingsDto(); // Create a default settings DTO if null
+                : new OrganizationSettingsDto();
 
-            // Construct and return the DTO
             return new OrganizationGalleryUsersDto(organization, gallery, organization.Users)
             {
                 OrganizationDetails = new OrganizationDetailsDto(organization)
                 {
-                    Settings = settingsDto
+                    Settings = settingsDto,
+                    Roles = roles?.Select(r => new RoleDto(r)).ToList() ?? new List<RoleDto>()
                 }
             };
         }
