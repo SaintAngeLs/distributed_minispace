@@ -117,6 +117,12 @@
                         <MudText Typo="Typo.h6">Edit Overview</MudText>
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Name" Label="Organization Name" Variant="Variant.Outlined" />
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Description" Label="Description" Variant="Variant.Outlined" Class="mt-3" />
+                         <MudSelect @bind-Value="organizationGalleryUsers.OrganizationDetails.DefaultRoleName" Label="Default Role Name" Variant="Variant.Outlined" Class="mt-3">
+                            @foreach (var role in organizationGalleryUsers.OrganizationDetails.Roles)
+                            {
+                                <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
+                            }
+                        </MudSelect>
                     }
                     else if (selectedTabIndex == 1)
                     {
@@ -135,6 +141,12 @@
                         <MudText Typo="Typo.h6">Manage Members</MudText>
                         <!-- Include members management UI here -->
                     }
+                    else if (selectedTabIndex == 3)
+                    {
+                        <MudText Typo="Typo.h6">Manage Roles</MudText>
+                        <RolesComponent OrganizationId="OrganizationId" />
+                    }
+
                 </MudPaper>
             </MudItem>
         </MudGrid>
@@ -398,7 +410,8 @@
             organizationDetails.OwnerId,
             organizationDetails.Settings,
             organizationDetails.BannerUrl,
-            organizationDetails.ImageUrl
+            organizationDetails.ImageUrl,
+            organizationDetails.DefaultRoleName
         );
 
         var response = await OrganizationsService.UpdateOrganizationAsync(OrganizationId, updateCommand);

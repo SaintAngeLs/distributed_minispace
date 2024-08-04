@@ -743,6 +743,73 @@ div.connectionRejected {
 }
 
 
+.loading-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+.circle {
+    width: 15px;
+    height: 15px;
+    margin: 5px;
+    background-color: #3498db; /* You can change the color to fit your theme */
+    border-radius: 50%;
+    animation: bounce 1.5s infinite ease-in-out;
+}
+
+.circle:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.circle:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.circle:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.circle:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+.circle:nth-child(6) {
+    animation-delay: 0.5s;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.overlay-content {
+    text-align: center;
+    padding: 20px;
+}
+
+.overlay-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.overlay-button:hover {
+    background-color: #2980b9;
+}
+
+
+
 @media (min-width: 600px) {
     .profile-grid {
         flex-direction: row;

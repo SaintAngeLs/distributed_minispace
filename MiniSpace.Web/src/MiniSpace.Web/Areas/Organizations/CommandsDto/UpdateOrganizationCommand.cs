@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using MiniSpace.Web.DTO.Organizations;
 
 namespace MiniSpace.Web.Areas.Organizations.CommandsDto
@@ -15,8 +14,11 @@ namespace MiniSpace.Web.Areas.Organizations.CommandsDto
         public OrganizationSettingsDto Settings { get; }
         public string BannerUrl { get; }
         public string ImageUrl { get; }
+        public string DefaultRoleName { get; }
 
-        public UpdateOrganizationCommand(Guid organizationId, string name, string description, Guid rootId, Guid parentId, Guid ownerId, OrganizationSettingsDto settings, string bannerUrl, string imageUrl)
+        public UpdateOrganizationCommand(Guid organizationId, string name, string description, 
+            Guid rootId, Guid parentId, Guid ownerId, OrganizationSettingsDto settings, 
+            string bannerUrl, string imageUrl, string defaultRoleName)
         {
             OrganizationId = organizationId == Guid.Empty ? Guid.NewGuid() : organizationId;
             Name = name;
@@ -27,6 +29,7 @@ namespace MiniSpace.Web.Areas.Organizations.CommandsDto
             Settings = settings;
             BannerUrl = bannerUrl;
             ImageUrl = imageUrl;
+            DefaultRoleName = defaultRoleName; 
         }
     }
 }
