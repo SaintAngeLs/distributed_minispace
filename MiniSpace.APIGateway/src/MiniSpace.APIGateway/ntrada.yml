@@ -884,6 +884,11 @@ modules:
         auth: true
         bind:
           - organizationId: {organizationId}
+        
+      - upstream: /paginated
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/paginated
 
       - upstream: /{organizationId}
         method: DELETE
