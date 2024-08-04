@@ -13,7 +13,7 @@ using MongoDB.Driver.Linq;
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
 {
     [ExcludeFromCodeCoverage]
-    public class OrganizationMongoRepository : IOrganizationRepository
+    public class OrganizationMongoRepository : IOrganizationRepository, IOrganizationReadOnlyRepository
     {
         private readonly IMongoRepository<OrganizationDocument, Guid> _organizationRepository;
         private readonly IMongoRepository<OrganizationMembersDocument, Guid> _membersRepository;
@@ -147,9 +147,15 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             }
         }
 
-        public IQueryable<Organization> GetAll()
+        // Implementation of the GetAll method from IOrganizationReadOnlyRepository
+        public IMongoQueryable<OrganizationDocument> GetAll()
         {
-            return _organizationCollection.AsQueryable().Select(doc => doc.AsEntity());
+            var queryable = _organizationCollection.AsQueryable();
+            Console.WriteLine($"Querying {queryable.Count()} documents in the collection.");
+            return queryable;  // Return the collection as IMongoQueryable<OrganizationDocument>
         }
+
+
+
     }
 }

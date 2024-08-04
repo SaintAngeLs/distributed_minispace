@@ -48,6 +48,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IOrganizationRepository, OrganizationMongoRepository>();
+            builder.Services.AddScoped<IOrganizationReadOnlyRepository, OrganizationMongoRepository>();
             builder.Services.AddTransient<IOrganizationGalleryRepository, OrganizationGalleryMongoRepository>();
             builder.Services.AddTransient<IOrganizationMembersRepository, OrganizationMembersMongoRepository>();
             builder.Services.AddTransient<IUserInvitationsRepository, UserInvitationsMongoRepository>();
