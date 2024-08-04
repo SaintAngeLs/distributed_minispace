@@ -123,7 +123,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 organization.Id,
                 organization.Name,
                 organization.Description,
-                command.RootId ?? organization.Id, // Root ID is the organization's own ID or the provided root ID
+                command.RootId ?? organization.Id,
                 command.ParentId,
                 command.OwnerId,
                 DateTime.UtcNow));

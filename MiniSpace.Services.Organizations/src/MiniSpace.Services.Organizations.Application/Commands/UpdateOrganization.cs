@@ -14,8 +14,11 @@ namespace MiniSpace.Services.Organizations.Application.Commands
         public OrganizationSettings Settings { get; }
         public string BannerUrl { get; }
         public string ImageUrl { get; }
+        public string DefaultRoleName { get; } 
 
-        public UpdateOrganization(Guid organizationId, string name, string description, Guid rootId, Guid parentId, Guid ownerId, OrganizationSettings settings, string bannerUrl, string imageUrl)
+        public UpdateOrganization(Guid organizationId, string name, string description, 
+            Guid rootId, Guid parentId, Guid ownerId, OrganizationSettings settings, 
+            string bannerUrl, string imageUrl, string defaultRoleName)
         {
             OrganizationId = organizationId == Guid.Empty ? Guid.NewGuid() : organizationId;
             Name = name;
@@ -26,6 +29,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands
             Settings = settings;
             BannerUrl = bannerUrl;
             ImageUrl = imageUrl;
+            DefaultRoleName = defaultRoleName;
         }
     }
 }
