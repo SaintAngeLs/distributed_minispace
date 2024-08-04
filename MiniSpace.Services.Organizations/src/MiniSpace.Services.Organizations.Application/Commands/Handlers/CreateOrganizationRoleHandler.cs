@@ -63,7 +63,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 }
             }
 
-            var newRole = new Role(command.RoleName, "Default role description", permissions);
+            var newRole = new Role(command.RoleName, command.Description, permissions);
             organization.AddRole(newRole);
 
             await _organizationRolesRepository.AddRoleAsync(command.OrganizationId, newRole);

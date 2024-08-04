@@ -8,12 +8,14 @@ namespace MiniSpace.Services.Organizations.Application.Commands
     {
         public Guid OrganizationId { get; }
         public string RoleName { get; }
+        public string Description { get; }
         public Dictionary<string, bool> Permissions { get; }
 
-        public CreateOrganizationRole(Guid organizationId, string roleName, Dictionary<string, bool> permissions)
+        public CreateOrganizationRole(Guid organizationId, string roleName, string description, Dictionary<string, bool> permissions)
         {
             OrganizationId = organizationId;
             RoleName = roleName;
+            Description = description;
             Permissions = permissions;
         }
     }
