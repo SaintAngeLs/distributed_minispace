@@ -4,6 +4,8 @@ using MiniSpace.Services.Organizations.Core.Entities;
 using System;
 using System.Threading.Tasks;
 using MiniSpace.Services.Organizations.Application.Exceptions;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 {
@@ -34,6 +36,10 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new RoleNotFoundException(command.RoleId);
             }
 
+            // Update role properties
+            role.UpdateName(command.RoleName);
+            role.UpdateDescription(command.Description);
+
             // Update role permissions
             var permissions = new Dictionary<Permission, bool>();
             foreach (var permission in command.Permissions)
@@ -47,7 +53,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     throw new InvalidPermissionException(permission.Key);
                 }
             }
-            organization.UpdateRolePermissions(role.Id, permissions);
+            role.UpdatePermissions(permissions);
 
             // Save changes
             await _rolesRepository.UpdateRoleAsync(role);
