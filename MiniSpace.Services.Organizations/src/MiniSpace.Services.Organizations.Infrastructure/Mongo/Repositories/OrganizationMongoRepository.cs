@@ -114,5 +114,31 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 }
             }
         }
+
+        public async Task<IEnumerable<Organization>> GetOrganizationsByUserAsync(Guid userId)
+        {
+            var rootOrganizations = await _organizationRepository.FindAsync(o => o.OwnerId == userId);
+            var userOrganizations = new List<Organization>();
+
+            foreach (var organization in rootOrganizations)
+            {
+                userOrganizations.Add(organization.AsEntity());
+                await AddSubOrganizationsAsync(organization.Id, userOrganizations);
+            }
+
+            return userOrganizations;
+        }
+
+        public async Task AddSubOrganizationsAsync(Guid parentId, List<Organization> organizations)
+        {
+            var subOrganizations = await _organizationRepository.FindAsync(o => o.ParentOrganizationId == parentId);
+
+            foreach (var subOrganization in subOrganizations)
+            {
+                var organizationEntity = subOrganization.AsEntity();
+                organizations.Add(organizationEntity);
+                await AddSubOrganizationsAsync(organizationEntity.Id, organizations);
+            }
+        }
     }
 }
