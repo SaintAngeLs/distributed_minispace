@@ -38,7 +38,6 @@
                     organizationRoles = organizationData.OrganizationDetails.Roles.ToList();
                 }
 
-                // Initialize permissions using correct enum values
                 foreach (Permission permission in Enum.GetValues(typeof(Permission)))
                 {
                     newRole.Permissions.Add(permission, false);
@@ -56,7 +55,6 @@
         catch (Exception ex)
         {
             Snackbar.Add("Failed to load organization roles.", Severity.Error);
-            Console.Error.WriteLine($"Exception: {ex}");
         }
         finally
         {
@@ -184,7 +182,7 @@ else
                 <MudTd>
                     @foreach (var permission in context.Permissions)
                     {
-                        <MudChip T="string" Color="@(permission.Value ? Color.Success : Color.Default)" >@permission.Key.ToString()</MudChip>
+                        <MudChip T="string" Color="@(permission.Value ? Color.Success : Color.Default)" Variant="Variant.Outlined" >@permission.Key.ToString()</MudChip>
                     }
                 </MudTd>
                 <MudTd>

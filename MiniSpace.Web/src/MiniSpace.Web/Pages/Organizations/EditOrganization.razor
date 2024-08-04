@@ -146,6 +146,11 @@
                         <MudText Typo="Typo.h6">Manage Roles</MudText>
                         <RolesComponent OrganizationId="OrganizationId" />
                     }
+                    else if (selectedTabIndex == 4)
+                    {
+                        <MudText Typo="Typo.h6">Manage Organiztion Galler</MudText>
+                        <OrganizationGallery OrganizationId="OrganizationId" />
+                    }
 
                 </MudPaper>
             </MudItem>
