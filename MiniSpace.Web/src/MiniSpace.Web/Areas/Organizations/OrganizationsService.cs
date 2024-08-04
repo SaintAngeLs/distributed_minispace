@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.Areas.Organizations.CommandsDto;
+using MiniSpace.Web.Areas.PagedResult;
 using MiniSpace.Web.DTO.Organizations;
 using MiniSpace.Web.HttpClients;
 
@@ -127,16 +128,23 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.PutAsync<UpdateOrganizationCommand, object>($"organizations/{organizationId}", command);
         }
 
-        public Task<IEnumerable<OrganizationDto>> GetUserOrganizationsAsync(Guid userId)
+        public Task<IEnumerable<UserOrganizationsDto>> GetUserOrganizationsAsync(Guid userId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<OrganizationDto>>($"organizations/users/{userId}/organizations");
+            return _httpClient.GetAsync<IEnumerable<UserOrganizationsDto>>($"organizations/users/{userId}/organizations");
         }
 
         public Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<IEnumerable<RoleDto>>($"organizations/{organizationId}/roles");
+        }
+
+        public Task<PagedResult<OrganizationDto>> GetPaginatedOrganizationsAsync(int page, int pageSize, string search = null)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var queryString = $"organizations/paginated?page={page}&pageSize={pageSize}&search={search}";
+            return _httpClient.GetAsync<PagedResult<OrganizationDto>>(queryString);
         }
     }
 }
