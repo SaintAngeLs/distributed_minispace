@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
+using MiniSpace.Services.Organizations.Core.Entities;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
@@ -37,12 +38,17 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
             // Fetch gallery images associated with the organization
             var galleryImages = await _galleryRepository.GetGalleryAsync(organization.Id);
-            var gallery = galleryImages?.Select(g => new GalleryImageDto(g)).ToList() 
-                          ?? new List<GalleryImageDto>();
 
-            // Log gallery images
-            Console.WriteLine("Gallery Images Retrieved:");
-            Console.WriteLine(JsonSerializer.Serialize(galleryImages, new JsonSerializerOptions { WriteIndented = true }));
+            if (galleryImages == null)
+            {
+                Console.WriteLine("Gallery Images Retrieved: null");
+                galleryImages = Enumerable.Empty<GalleryImage>();
+            }
+            else
+            {
+                Console.WriteLine("Gallery Images Retrieved:");
+                Console.WriteLine(JsonSerializer.Serialize(galleryImages, new JsonSerializerOptions { WriteIndented = true }));
+            }
 
             // Fetch roles associated with the organization
             var roles = await _organizationRolesRepository.GetRolesAsync(organization.Id);
@@ -60,7 +66,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                     Settings = settingsDto,
                     Roles = roles?.Select(r => new RoleDto(r)).ToList() ?? new List<RoleDto>()
                 },
-                Gallery = gallery,  // Set the gallery images here
+                Gallery = galleryImages.Select(g => new GalleryImageDto(g)).ToList(),  // Set the gallery images here
                 Users = organization.Users?.Select(u => new UserDto(u)).ToList() ?? new List<UserDto>()
             };
 
