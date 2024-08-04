@@ -22,29 +22,26 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateRolePermissions command, CancellationToken cancellationToken)
         {
-            // Retrieve the organization
             var organization = await _organizationRepository.GetAsync(command.OrganizationId);
             if (organization == null)
             {
                 throw new OrganizationNotFoundException(command.OrganizationId);
             }
 
-            // Retrieve the role
-            var role = await _rolesRepository.GetRoleAsync(command.OrganizationId, command.RoleId);
+            var role = await _rolesRepository.GetRoleByNameAsync(command.OrganizationId, command.RoleName);
             if (role == null)
             {
-                throw new RoleNotFoundException(command.RoleId);
+                throw new RoleNotFoundException(command.RoleName);
             }
 
-            // Update role properties
             role.UpdateName(command.RoleName);
             role.UpdateDescription(command.Description);
 
-            // Update role permissions
             var permissions = new Dictionary<Permission, bool>();
             foreach (var permission in command.Permissions)
             {
-                if (Enum.TryParse<Permission>(permission.Key, out var parsedPermission))
+                // Convert the string key to match enum case sensitivity
+                if (Enum.TryParse<Permission>(permission.Key, true, out var parsedPermission))
                 {
                     permissions[parsedPermission] = permission.Value;
                 }
@@ -55,7 +52,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             }
             role.UpdatePermissions(permissions);
 
-            // Save changes
             await _rolesRepository.UpdateRoleAsync(role);
             await _organizationRepository.UpdateAsync(organization);
         }

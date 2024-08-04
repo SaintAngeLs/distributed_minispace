@@ -12,6 +12,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public string BannerUrl { get; set; }
         public string ImageUrl { get; set; }
         public Guid OwnerId { get; set; }
+        public string DefaultRoleName { get; set; }
 
         public OrganizationDto()
         {
@@ -26,6 +27,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             BannerUrl = organization.BannerUrl;
             ImageUrl = organization.ImageUrl;
             OwnerId = organization.OwnerId;
+            DefaultRoleName = organization.DefaultRoleName;
         }
     }
 }
