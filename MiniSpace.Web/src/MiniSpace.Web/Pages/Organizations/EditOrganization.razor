@@ -28,75 +28,78 @@
     else
     {
         <MudPaper Class="pa-0">
-            <div class="image-upload-container">
+            <!-- Banner Image with Upload and Delete Option -->
+            <div class="image-upload-container" style="position: relative;">
                 <MudImage 
                     Src="@GetBannerUrl()" 
                     Alt="Banner" 
-                    Style="width: 100%; height: 200px; object-fit: cover;" 
+                    Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" 
                 />
                 <InputFile OnChange="@(async e => await OpenCropper(e, "banner"))" 
                            style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
-                <div style="text-align: center; margin-top: 10px;">
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Outlined"
-                               Color="Color.Primary"
-                               Size="Size.Small"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               for="file-input-banner">
-                        Upload Banner Image
-                    </MudButton>
-                    <MudButton Variant="Variant.Outlined"
-                               Color="Color.Secondary"
-                               Size="Size.Small"
-                               StartIcon="@Icons.Material.Filled.Delete"
-                               OnClick="@(async () => await RemoveImage("banner"))">
-                        Remove Banner Image
-                    </MudButton>
-                </div>
+                <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
+                               Color="Color.Primary" 
+                               Size="Size.Large" 
+                               HtmlTag="label" 
+                               for="file-input-banner" 
+                               Style="position: absolute; top: 10px; right: 60px;" 
+                               Title="Upload Banner Image" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Secondary" 
+                               Size="Size.Large" 
+                               OnClick="@(async () => await RemoveImage("banner"))" 
+                               Style="position: absolute; top: 10px; right: 10px;" 
+                               Title="Delete Banner Image" />
             </div>
 
-            <MudStack Row="true">
-                <div class="image-upload-container" style="text-align: center;">
-                    <MudAvatar Size="Size.Large" Square="true">
-                        <MudImage 
-                            Src="@GetProfileImageUrl()" 
-                            Alt="Profile Image" 
-                            Class="organization-avatar" 
-                            Style="height:200px; width: 200px; object-fit: cover;" 
-                        />
-                    </MudAvatar>
-                    <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" 
-                               style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
-                    <div style="display: flex; flex-direction: column; align-items: center; margin: 10px 20px;">
-                        <MudButton HtmlTag="label"
-                                Variant="Variant.Outlined"
-                                Color="Color.Primary"
-                                Size="Size.Small"
-                                StartIcon="@Icons.Material.Filled.CloudUpload"
-                                for="file-input-profile"
-                                style="margin-bottom: 10px;">
-                            Upload Profile Image
-                        </MudButton>
-                        <MudButton Variant="Variant.Outlined"
-                                Color="Color.Secondary"
-                                Size="Size.Small"
-                                StartIcon="@Icons.Material.Filled.Delete"
-                                OnClick="@(async () => await RemoveImage("profile"))">
-                            Remove Profile Image
-                        </MudButton>
-                    </div>
-                </div>
+            <!-- Profile Image Overlaying Banner with Upload and Delete Option -->
+            <div style="position: relative; text-align: center; margin-top: -60px;">
+                <MudImage 
+                    Src="@GetProfileImageUrl()" 
+                    Alt="Profile Image" 
+                    Style="height: 120px; width: 120px; object-fit: cover; 
+                           border-radius: 50%; 
+                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+                           border: 4px solid white;" 
+                />
+                <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" 
+                           style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
+                <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
+                               Color="Color.Primary" 
+                               Size="Size.Small" 
+                               HtmlTag="label" 
+                               for="file-input-profile" 
+                               Style="position: absolute; bottom: -10px; right: 45%; transform: translateX(70%); 
+                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
+                               Title="Upload Profile Image" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Secondary" 
+                               Size="Size.Small" 
+                               OnClick="@(async () => await RemoveImage("profile"))" 
+                               Style="position: absolute; bottom: -10px; right: 40%; transform: translateX(30%); 
+                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
+                               Title="Delete Profile Image" />
+            </div>
 
-                <MudText Typo="Typo.h6" Class="ml-4">@organizationGalleryUsers.OrganizationDetails.Name</MudText>
-            </MudStack>
-            <MudStack Row="true">
+            <!-- Organization Name -->
+            <MudText Typo="Typo.h6" Class="mt-3" Align="Align.Center">
+                @organizationGalleryUsers.OrganizationDetails.Name
+            </MudText>
+            
+            <!-- Save Button -->
+            <MudStack Row="true" Style="margin-top: 20px;">
                 <MudSpacer />
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveOrganization" Size="Size.Small">
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Primary" 
+                           StartIcon="@Icons.Material.Filled.Save" 
+                           OnClick="SaveOrganization" 
+                           Size="Size.Medium">
                     Save
                 </MudButton>
             </MudStack>
         </MudPaper>
 
+        <!-- Navigation and Content -->
         <MudGrid Class="mt-4">
             <MudItem xs="12" md="3">
                 <MudNavMenu>
@@ -114,6 +117,12 @@
                         <MudText Typo="Typo.h6">Edit Overview</MudText>
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Name" Label="Organization Name" Variant="Variant.Outlined" />
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Description" Label="Description" Variant="Variant.Outlined" Class="mt-3" />
+                         <MudSelect @bind-Value="organizationGalleryUsers.OrganizationDetails.DefaultRoleName" Label="Default Role Name" Variant="Variant.Outlined" Class="mt-3">
+                            @foreach (var role in organizationGalleryUsers.OrganizationDetails.Roles)
+                            {
+                                <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
+                            }
+                        </MudSelect>
                     }
                     else if (selectedTabIndex == 1)
                     {
@@ -132,12 +141,26 @@
                         <MudText Typo="Typo.h6">Manage Members</MudText>
                         <!-- Include members management UI here -->
                     }
+                    else if (selectedTabIndex == 3)
+                    {
+                        <MudText Typo="Typo.h6">Manage Roles</MudText>
+                        <RolesComponent OrganizationId="OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 4)
+                    {
+                        <MudText Typo="Typo.h6">Manage Organiztion Galler</MudText>
+                        <OrganizationGallery OrganizationId="OrganizationId" />
+                    }
+
                 </MudPaper>
             </MudItem>
         </MudGrid>
     }
 </MudContainer>
 </AuthWrapper>
+
+
+
 
 <!-- Bootstrap Modal for Cropper -->
 <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
@@ -392,7 +415,8 @@
             organizationDetails.OwnerId,
             organizationDetails.Settings,
             organizationDetails.BannerUrl,
-            organizationDetails.ImageUrl
+            organizationDetails.ImageUrl,
+            organizationDetails.DefaultRoleName
         );
 
         var response = await OrganizationsService.UpdateOrganizationAsync(OrganizationId, updateCommand);

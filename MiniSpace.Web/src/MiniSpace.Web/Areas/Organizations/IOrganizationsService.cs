@@ -21,12 +21,13 @@ namespace MiniSpace.Web.Areas.Organizations
         Task<HttpResponse<object>> CreateOrganizationRoleAsync(Guid organizationId, CreateOrganizationRoleCommand command);
         Task InviteUserToOrganizationAsync(Guid organizationId, InviteUserToOrganizationCommand command);
         Task AssignRoleToMemberAsync(Guid organizationId, Guid memberId, AssignRoleToMemberCommand command);
-        Task UpdateRolePermissionsAsync(Guid organizationId, Guid roleId, UpdateRolePermissionsCommand command);
+        Task<HttpResponse<object>>  UpdateRolePermissionsAsync(Guid organizationId, Guid roleId, UpdateRolePermissionsCommand command);
         Task SetOrganizationPrivacyAsync(Guid organizationId, SetOrganizationPrivacyCommand command);
         Task<HttpResponse<object>> UpdateOrganizationSettingsAsync(Guid organizationId, UpdateOrganizationSettingsCommand command);
         Task SetOrganizationVisibilityAsync(Guid organizationId, SetOrganizationVisibilityCommand command);
         Task ManageFeedAsync(Guid organizationId, ManageFeedCommand command);
         Task<HttpResponse<object>> UpdateOrganizationAsync(Guid organizationId, UpdateOrganizationCommand command);
         Task<IEnumerable<OrganizationDto>> GetUserOrganizationsAsync(Guid userId);
+        Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId);
     }
 }

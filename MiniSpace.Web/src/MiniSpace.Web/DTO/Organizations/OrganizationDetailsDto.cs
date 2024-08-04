@@ -18,5 +18,6 @@ namespace MiniSpace.Web.DTO.Organizations
         public IEnumerable<RoleDto> Roles { get; set; } = new List<RoleDto>();
         public IEnumerable<GalleryImageDto> Gallery { get; set; } = new List<GalleryImageDto>();
         public OrganizationSettingsDto Settings { get; set; }
+        public string DefaultRoleName { get; set; }
     }
 }

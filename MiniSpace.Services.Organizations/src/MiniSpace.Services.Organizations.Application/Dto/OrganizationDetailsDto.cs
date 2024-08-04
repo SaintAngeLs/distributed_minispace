@@ -22,6 +22,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public IEnumerable<RoleDto> Roles { get; set; }
         public IEnumerable<GalleryImageDto> Gallery { get; set; }
         public OrganizationSettingsDto Settings { get; set; }
+        public string DefaultRoleName { get; set; }
 
         public OrganizationDetailsDto()
         {
@@ -42,6 +43,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             Roles = organization.Roles?.Select(r => new RoleDto(r)).ToList();
             Gallery = organization.Gallery?.Select(g => new GalleryImageDto(g)).ToList();
             Settings = organization.Settings != null ? new OrganizationSettingsDto(organization.Settings) : null;
+            DefaultRoleName = organization.DefaultRoleName;  
         }
     }
 }

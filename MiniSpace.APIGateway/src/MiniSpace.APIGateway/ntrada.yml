@@ -877,6 +877,13 @@ modules:
         bind:
           - organizationId: {organizationId}
 
+      - upstream: /{organizationId}/roles
+        method: GET                            
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/roles
+        auth: true
+        bind:
+          - organizationId: {organizationId}
 
       - upstream: /{organizationId}
         method: DELETE

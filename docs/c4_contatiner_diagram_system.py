@@ -1,16 +1,18 @@
 from diagrams import Diagram
+from diagrams.aws.storage import S3
 from diagrams.c4 import Person, Container, Database, System, SystemBoundary, Relationship
 
 graph_attr = {
     "splines": "spline",
-    "nodesep": "4.0",  # Increase space between nodes
-    "ranksep": "4.0"   # Increase space between ranks
+    "nodesep": "1.0",  # Decrease space between nodes
+    "ranksep": "2.0"   # Decrease space between ranks to encourage vertical alignment
 }
 
 with Diagram("Container Diagram for MiniSpace System", direction="TB", graph_attr=graph_attr):
     user = Person(name="MiniSpace User", description="User interacting with the MiniSpace system.")
     
     with SystemBoundary("MiniSpace System"):
+        # Grouping related services together to encourage vertical growth
         api_gateway = Container(
             name="API Gateway Interface",
             technology="Spring Boot",
@@ -22,7 +24,8 @@ with Diagram("Container Diagram for MiniSpace System", direction="TB", graph_att
             technology="HAProxy",
             description="Balances the load among HTTP clients using Consul."
         )
-        
+
+        # Monitoring and Event Handling
         event_bus = Container(
             name="Event Bus",
             technology="RabbitMQ",
@@ -46,152 +49,145 @@ with Diagram("Container Diagram for MiniSpace System", direction="TB", graph_att
             technology="Seq",
             description="Centralized logging for monitoring and alerting."
         )
+
+        prometheus = Container(
+            name="Prometheus",
+            technology="Prometheus",
+            description="Monitoring and alerting toolkit."
+        )
         
-        # Define Services
+        grafana = Container(
+            name="Grafana",
+            technology="Grafana",
+            description="Analytics and monitoring dashboard."
+        )
+        
+        # Services - Aligned Vertically
         comments_service = Container(
             name="Comments Service",
             technology=".NET",
             description="Manages comments on posts."
         )
-        
         email_service = Container(
             name="Email Service",
             technology=".NET",
             description="Handles email notifications and communication."
         )
-        
         events_service = Container(
             name="Events Service",
             technology=".NET",
             description="Manages event-related data and services."
         )
-        
         friends_service = Container(
             name="Friends Service",
             technology=".NET",
             description="Manages friend relationships and connections."
         )
-        
         identity_service = Container(
             name="Identity Service",
             technology=".NET",
             description="Handles user identity and authentication."
         )
-        
         media_files_service = Container(
             name="Media Files Service",
             technology=".NET",
             description="Manages media files uploaded by users."
         )
-        
         notifications_service = Container(
             name="Notifications Service",
             technology=".NET",
             description="Manages notifications to users."
         )
-        
         organizations_service = Container(
             name="Organizations Service",
             technology=".NET",
             description="Manages organization-related data."
         )
-        
         posts_service = Container(
             name="Posts Service",
             technology=".NET",
             description="Manages user posts and related data."
         )
-        
         reactions_service = Container(
             name="Reactions Service",
             technology=".NET",
             description="Handles reactions (likes, dislikes) on posts."
         )
-        
         reports_service = Container(
             name="Reports Service",
             technology=".NET",
             description="Manages user reports on content or behavior."
         )
-        
         students_service = Container(
             name="Students Service",
             technology=".NET",
             description="Handles student-specific data and operations."
         )
         
-        # Define Databases
+        # Databases - Aligned Vertically
         comments_db = Database(
             name="Comments Database",
             technology="MongoDB",
             description="Stores comment-related data."
         )
-        
         email_db = Database(
             name="Email Database",
             technology="MongoDB",
             description="Stores email-related data."
         )
-        
         events_db = Database(
             name="Events Database",
             technology="MongoDB",
             description="Stores event-related data."
         )
-        
         friends_db = Database(
             name="Friends Database",
             technology="MongoDB",
             description="Stores friend relationship data."
         )
-        
         identity_db = Database(
             name="Identity Database",
             technology="MongoDB",
             description="Stores identity and authentication data."
         )
-        
         media_files_db = Database(
             name="Media Files Database",
             technology="MongoDB",
             description="Stores media file data."
         )
-        
         notifications_db = Database(
             name="Notifications Database",
             technology="MongoDB",
             description="Stores notification data."
         )
-        
         organizations_db = Database(
             name="Organizations Database",
             technology="MongoDB",
             description="Stores organization-related data."
         )
-        
         posts_db = Database(
             name="Posts Database",
             technology="MongoDB",
             description="Stores post-related data."
         )
-        
         reactions_db = Database(
             name="Reactions Database",
             technology="MongoDB",
             description="Stores reaction-related data."
         )
-        
         reports_db = Database(
             name="Reports Database",
             technology="MongoDB",
             description="Stores report-related data."
         )
-        
         students_db = Database(
             name="Students Database",
             technology="MongoDB",
             description="Stores student-related data."
         )
+
+        # AWS S3 Bucket connected to Media Files Service
+        s3_bucket = S3("S3 Replication Bucket")
         
     # Define Relationships
     user >> Relationship("Uses") >> api_gateway
@@ -229,11 +225,11 @@ with Diagram("Container Diagram for MiniSpace System", direction="TB", graph_att
     [comments_service, email_service, events_service, friends_service, identity_service, media_files_service,
      notifications_service, organizations_service, posts_service, reactions_service, reports_service, students_service] >> Relationship("Registers with") >> consul
     
-    [comments_service, email_service, events_service, friends_service, identity_service, media_files_service,
-     notifications_service, organizations_service, posts_service, reactions_service, reports_service, students_service] >> Relationship("Sends tracing data to") >> jaeger
-    
-    [comments_service, email_service, events_service, friends_service, identity_service, media_files_service,
-     notifications_service, organizations_service, posts_service, reactions_service, reports_service, students_service] >> Relationship("Sends logs to") >> seq
+    # API Gateway connects to Jaeger, Seq, Prometheus, and Grafana directly
+    api_gateway >> Relationship("Sends tracing data to") >> jaeger
+    api_gateway >> Relationship("Sends logs to") >> seq
+    api_gateway >> Relationship("Sends metrics to") >> prometheus
+    prometheus >> Relationship("Visualizes metrics in") >> grafana
     
     # Services sending events to Event Bus
     comments_service >> Relationship("Sends: CommentAddedEvent, CommentUpdatedEvent") >> event_bus
@@ -262,3 +258,9 @@ with Diagram("Container Diagram for MiniSpace System", direction="TB", graph_att
     reactions_service << Relationship("Consumes: ReactionAddedEvent, ReactionRemovedEvent") << event_bus
     reports_service << Relationship("Consumes: ReportFiledEvent, ReportReviewedEvent") << event_bus
     students_service << Relationship("Consumes: StudentEnrolledEvent, StudentUpdatedEvent") << event_bus
+    
+    # Direct connection from Notifications Service to the User application
+    notifications_service >> Relationship("Pushes notifications to") >> user
+
+    # Connection from Media Files Service to S3 Replication Bucket
+    media_files_service >> Relationship("Stores media in") >> s3_bucket

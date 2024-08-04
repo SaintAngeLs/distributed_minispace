@@ -91,10 +91,10 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.PostAsync($"organizations/{organizationId}/roles/{memberId}", command);
         }
 
-        public Task UpdateRolePermissionsAsync(Guid organizationId, Guid roleId, UpdateRolePermissionsCommand command)
+        public Task<HttpResponse<object>> UpdateRolePermissionsAsync(Guid organizationId, Guid roleId, UpdateRolePermissionsCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync($"organizations/{organizationId}/roles/{roleId}/permissions", command);
+            return _httpClient.PutAsync<UpdateRolePermissionsCommand, object>($"organizations/{organizationId}/roles/{roleId}/permissions", command);
         }
 
         public Task SetOrganizationPrivacyAsync(Guid organizationId, SetOrganizationPrivacyCommand command)
@@ -131,6 +131,12 @@ namespace MiniSpace.Web.Areas.Organizations
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<IEnumerable<OrganizationDto>>($"organizations/users/{userId}/organizations");
+        }
+
+        public Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.GetAsync<IEnumerable<RoleDto>>($"organizations/{organizationId}/roles");
         }
     }
 }

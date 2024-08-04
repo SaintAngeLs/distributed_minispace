@@ -20,7 +20,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 document.BannerUrl,
                 document.ImageUrl,
                 document.ParentOrganizationId,
-                document.SubOrganizations?.Select(o => o.AsEntity())
+                document.SubOrganizations?.Select(o => o.AsEntity()),
+                document.DefaultRoleName 
             );
 
         public static OrganizationDocument AsDocument(this Organization entity)
@@ -34,7 +35,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 ImageUrl = entity.ImageUrl,
                 OwnerId = entity.OwnerId,
                 ParentOrganizationId = entity.ParentOrganizationId,
-                SubOrganizations = entity.SubOrganizations?.Select(o => o.AsDocument()).ToList()
+                SubOrganizations = entity.SubOrganizations?.Select(o => o.AsDocument()).ToList(),
+                DefaultRoleName = entity.DefaultRoleName
             };
 
         public static OrganizationDto AsDto(this OrganizationDocument document)
@@ -45,7 +47,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 Description = document.Description,
                 BannerUrl = document.BannerUrl,
                 ImageUrl = document.ImageUrl,
-                OwnerId = document.OwnerId
+                OwnerId = document.OwnerId,
+                DefaultRoleName = document.DefaultRoleName
             };
 
         public static OrganizationDetailsDto AsDetailsDto(this OrganizationDocument document)
@@ -67,6 +70,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                     ImageUrl = o.ImageUrl,
                     OwnerId = o.OwnerId
                 }).ToList(),
+                DefaultRoleName = document.DefaultRoleName
             };
 
         public static OrganizationDto AsSubDto(this OrganizationDocument document)
@@ -77,7 +81,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 Description = document.Description,
                 BannerUrl = document.BannerUrl,
                 ImageUrl = document.ImageUrl,
-                OwnerId = document.OwnerId
+                OwnerId = document.OwnerId,
+                DefaultRoleName = document.DefaultRoleName
             };
 
         public static Invitation AsEntity(this InvitationEntry document)
@@ -188,17 +193,16 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 
         public static GalleryImage AsEntity(this GalleryImageEntry document)
         {
-            return new GalleryImage(document.Id, document.Url, document.CreatedAt, document.Description);
+            return new GalleryImage(document.ImageId, document.ImageUrl, document.DateAdded);
         }
 
         public static GalleryImageEntry AsDocument(this GalleryImage entity)
         {
             return new GalleryImageEntry
             {
-                Id = entity.Id,
-                Url = entity.Url,
-                Description = entity.Description,
-                CreatedAt = entity.CreatedAt
+                ImageId = entity.ImageId,
+                ImageUrl = entity.ImageUrl,
+                DateAdded = entity.DateAdded
             };
         }
     }

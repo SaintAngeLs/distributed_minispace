@@ -111,11 +111,19 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             var creatorMember = new User(identity.Id, creatorRole);
             await _organizationMembersRepository.AddMemberAsync(organization.Id, creatorMember);
 
+            var userRole = defaultRoles.SingleOrDefault(r => r.Name == "User");
+            if (userRole == null)
+            {
+                throw new RoleNotFoundException("User");
+            }
+            organization.UpdateDefaultRole(userRole.Name);
+
+
             await _messageBroker.PublishAsync(new OrganizationCreated(
                 organization.Id,
                 organization.Name,
                 organization.Description,
-                command.RootId ?? organization.Id, // Root ID is the organization's own ID or the provided root ID
+                command.RootId ?? organization.Id,
                 command.ParentId,
                 command.OwnerId,
                 DateTime.UtcNow));
