@@ -10,9 +10,14 @@
 @using System.Threading.Tasks
 
 <AuthWrapper>
-    <MudText Typo="Typo.h5" GutterBottom="true">Organization Tree View</MudText>
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.h5" GutterBottom="true">Organization Tree View</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.List" OnClick="NavigateToAllOrganizations">
+            View All Organizations
+        </MudButton>
+    </MudStack>
 
-    <MudPaper Elevation="1" Class="pa-4">
+    <MudPaper Elevation="1" Class="pa-4 mt-2">
         @if (_isLoading)
         {
             <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
@@ -21,7 +26,7 @@
         {
             @foreach (var org in _userOrganizations)
             {
-                <MudExpansionPanel Text="@org.Name" Expanded="@org.IsExpanded" OnExpandChanged="@(async (bool expanded) => await OnExpandChanged(expanded, org))">
+                <MudExpansionPanel Text="@org.Name" Expanded="@org.IsExpanded" OnExpandChanged="@(EventCallback.Factory.Create<bool>(this, async (expanded) => await OnExpandChanged(expanded, org)))">
                     <MudItem xs="12" sm="6" md="4">
                         <MudCard Class="ma-2">
                             <MudCardMedia Image="@org.ImageUrl" Height="140" />
@@ -42,7 +47,7 @@
                             @foreach (var subOrg in org.SubOrganizations)
                             {
                                 <MudListItem>
-                                    <MudExpansionPanel Text="@subOrg.Name" Expanded="@subOrg.IsExpanded" OnExpandChanged="@(async (bool expanded) => await OnExpandChanged(expanded, subOrg))">
+                                    <MudExpansionPanel Text="@subOrg.Name" Expanded="@subOrg.IsExpanded" OnExpandChanged="@(EventCallback.Factory.Create<bool>(this, async (expanded) => await OnExpandChanged(expanded, subOrg)))">
                                         <MudCard Class="ma-2">
                                             <MudCardMedia Image="@subOrg.ImageUrl" Height="140" />
                                             <MudCardContent>
@@ -115,5 +120,10 @@
     private void NavigateToOrganization(Guid organizationId)
     {
         NavigationManager.NavigateTo($"/organizations/details/{organizationId}");
+    }
+
+    private void NavigateToAllOrganizations()
+    {
+        NavigationManager.NavigateTo("/organizations/my");
     }
 }
