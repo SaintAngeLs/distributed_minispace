@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
 {
@@ -15,6 +17,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
     {
         private readonly IMongoRepository<OrganizationDocument, Guid> _organizationRepository;
         private readonly IMongoRepository<OrganizationMembersDocument, Guid> _membersRepository;
+        private readonly IMongoCollection<OrganizationDocument> _organizationCollection;
 
         public OrganizationMongoRepository(
             IMongoRepository<OrganizationDocument, Guid> organizationRepository,
@@ -22,6 +25,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
         {
             _organizationRepository = organizationRepository;
             _membersRepository = membersRepository;
+
+            // Direct access to the MongoDB collection
+            _organizationCollection = _organizationRepository.Collection;
         }
 
         public async Task<Organization> GetAsync(Guid id)
@@ -139,6 +145,11 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 organizations.Add(organizationEntity);
                 await AddSubOrganizationsAsync(organizationEntity.Id, organizations);
             }
+        }
+
+        public IQueryable<Organization> GetAll()
+        {
+            return _organizationCollection.AsQueryable().Select(doc => doc.AsEntity());
         }
     }
 }
