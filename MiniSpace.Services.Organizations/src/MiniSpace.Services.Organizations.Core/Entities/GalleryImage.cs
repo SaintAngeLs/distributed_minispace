@@ -4,22 +4,15 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class GalleryImage
     {
-        public Guid Id { get; private set; }
-        public string Url { get; private set; }
-        public string Description { get; private set; }
-        public DateTime CreatedAt { get; private set; }
+        public Guid ImageId { get; private set; }
+        public string ImageUrl { get; private set; }
+        public DateTime DateAdded { get; private set; }
 
-        public GalleryImage(Guid id, string url, DateTime createdAt, string description = null)
+        public GalleryImage(Guid imageId, string imageUrl, DateTime dateAdded)
         {
-            Id = id;
-            Url = url;
-            CreatedAt = createdAt;
-            Description = description;
-        }
-
-        public void UpdateDescription(string description)
-        {
-            Description = description;
+            ImageId = imageId;
+            ImageUrl = imageUrl ?? throw new ArgumentNullException(nameof(imageUrl));
+            DateAdded = dateAdded;
         }
     }
 }

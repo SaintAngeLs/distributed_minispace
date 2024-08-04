@@ -365,12 +365,12 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public void AddGalleryImage(GalleryImage image)
         {
             _gallery.Add(image);
-            AddEvent(new GalleryImageAdded(Id, image.Id, image.Url, DateTime.UtcNow));
+            AddEvent(new GalleryImageAdded(Id, image.ImageId, image.ImageUrl, DateTime.UtcNow));
         }
 
         public void RemoveGalleryImage(Guid imageId)
         {
-            var image = _gallery.SingleOrDefault(g => g.Id == imageId);
+            var image = _gallery.SingleOrDefault(g => g.ImageId == imageId);
             if (image == null)
             {
                 throw new GalleryImageNotFoundException(imageId);
