@@ -18,5 +18,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
         public Guid OwnerId { get; set; }
         public Guid? ParentOrganizationId { get; set; }
         public IEnumerable<OrganizationDocument> SubOrganizations { get; set; }
+        public string DefaultRoleName { get; set; }
     }
 }

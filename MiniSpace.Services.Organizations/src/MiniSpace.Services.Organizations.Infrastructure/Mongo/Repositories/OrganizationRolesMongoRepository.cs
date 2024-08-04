@@ -25,6 +25,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             var rolesDocument = await _rolesRepository.GetAsync(r => r.OrganizationId == organizationId);
             return rolesDocument?.Roles.FirstOrDefault(r => r.Id == roleId)?.AsEntity();
         }
+        
 
         public async Task<IEnumerable<Role>> GetRolesAsync(Guid organizationId)
         {
