@@ -1,3 +1,5 @@
+## Project is under intensive work, large scale refactoring for production preperation
+
 
 # MiniSpace - ✨ Student Life Activity App
 

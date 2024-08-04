@@ -60,26 +60,23 @@
             <!-- Menu on the Left -->
             <MudItem xs="12" md="3">
                 <MudNavMenu>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(0)" Match="NavLinkMatch.All">Overview</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(1)" Match="NavLinkMatch.All">Feed</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(2)" Match="NavLinkMatch.All">Posts</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(3)" Match="NavLinkMatch.All">Events</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(4)" Match="NavLinkMatch.All">Members</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(5)" Match="NavLinkMatch.All">Suborganizations</MudNavLink>
-                    <MudNavLink Href="#" @onclick="() => LoadTabContent(6)" Match="NavLinkMatch.All">Gallery</MudNavLink>
+                    <MudNavLink @onclick="() => NavigateToFeed()" Match="NavLinkMatch.All">Feed</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(1)" Match="NavLinkMatch.All">Overview</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(2)" Match="NavLinkMatch.All">Posts</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(3)" Match="NavLinkMatch.All">Events</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(4)" Match="NavLinkMatch.All">Members</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(5)" Match="NavLinkMatch.All">Suborganizations</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(6)" Match="NavLinkMatch.All">Gallery</MudNavLink>
                 </MudNavMenu>
             </MudItem>
 
             <!-- Content on the Right -->
             <MudItem xs="12" md="9">
                 <MudPaper Class="pa-4">
-                    @if (selectedTabIndex == 0)
+                    @if (selectedTabIndex == 1)
                     {
+                        
                         <OverviewComponent OrganizationId="@OrganizationId" />
-                    }
-                    else if (selectedTabIndex == 1)
-                    {
-                        <FeedComponent OrganizationId="@OrganizationId" />
                     }
                     else if (selectedTabIndex == 2)
                     {
@@ -189,6 +186,10 @@
         selectedTabIndex = index;
     }
 
+    private void NavigateToFeed()
+    {
+        NavigationManager.NavigateTo($"/organizations/{OrganizationId}/feed");
+    }
     private void EditOrganization()
     {
         NavigationManager.NavigateTo($"/organizations/edit/{OrganizationId}");
