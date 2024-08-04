@@ -21,6 +21,7 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public string ImageUrl { get; private set; }
         public Guid OwnerId { get; private set; }
         public Guid? ParentOrganizationId { get; private set; }
+        public string DefaultRoleName { get; private set; }
 
         public IEnumerable<Organization> SubOrganizations
         {
@@ -496,6 +497,11 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public void SetBannerImage(string imageUrl)
         {
             BannerUrl = imageUrl;
+        }
+        
+        public void UpdateDefaultRole(string roleName)
+        {
+            DefaultRoleName = roleName;
         }
     }
 }
