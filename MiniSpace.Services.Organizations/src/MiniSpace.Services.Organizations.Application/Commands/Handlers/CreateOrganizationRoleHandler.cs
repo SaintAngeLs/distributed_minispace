@@ -4,6 +4,7 @@ using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +25,13 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 
         public async Task HandleAsync(CreateOrganizationRole command, CancellationToken cancellationToken)
         {
+            // Log the entire command to the console
+            Console.WriteLine($"Handling CreateOrganizationRole Command:\n" +
+                              $"OrganizationId: {command.OrganizationId}\n" +
+                              $"RoleName: {command.RoleName}\n" +
+                              $"Description: {command.Description}\n" +
+                              $"Permissions: {string.Join(", ", command.Permissions.Select(p => $"{p.Key}: {p.Value}"))}");
+
             var identity = _appContext.Identity;
             if (!identity.IsAuthenticated)
             {
@@ -53,7 +61,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             var permissions = new Dictionary<Permission, bool>();
             foreach (var permission in command.Permissions)
             {
-                if (Enum.TryParse<Permission>(permission.Key, out var parsedPermission))
+                if (Enum.TryParse<Permission>(permission.Key, true, out var parsedPermission)) // Case-insensitive parsing
                 {
                     permissions[parsedPermission] = permission.Value;
                 }
