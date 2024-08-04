@@ -20,8 +20,8 @@ with Diagram("Complex System Diagram", direction="TB", graph_attr=graph_attr):
         # API and Gateway Services
         nginx = Nginx("NGINX")
         api_gateway = Container(
-            name="API Gateway",
-            technology="Spring Boot",
+            name="API Gateway (Entrance) ",
+            technology=".NET",
             description="Entry point for API requests"
         )
         nginx >> api_gateway
