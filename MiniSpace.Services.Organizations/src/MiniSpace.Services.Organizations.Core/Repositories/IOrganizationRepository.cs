@@ -22,5 +22,7 @@ namespace MiniSpace.Services.Organizations.Core.Repositories
 
         Task<IEnumerable<Organization>> GetOrganizationsByUserAsync(Guid userId);
         Task AddSubOrganizationsAsync(Guid parentId, List<Organization> organizations);
+
+        IQueryable<Organization> GetAll();
     }
 }
