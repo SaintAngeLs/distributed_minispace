@@ -6,7 +6,8 @@
         string buildingNumber,
         string apartmentNumber,
         string city,
-        string zipCode)
+        string zipCode,
+        string country) 
     {
         public string BuildingName { get; set; } = buildingName;
         public string Street { get; set; } = street;
@@ -14,9 +15,10 @@
         public string ApartmentNumber { get; set; } = apartmentNumber;
         public string City { get; set; } = city;
         public string ZipCode { get; set; } = zipCode;
+        public string Country { get; set; } = country; 
 
         public Address Update(string buildingName, string street, string buildingNumber, string apartmentNumber,
-            string city, string zipCode)
+            string city, string zipCode, string country) 
         {
             BuildingName = buildingName == string.Empty ? BuildingName : buildingName;
             Street = street == string.Empty ? Street : street;
@@ -24,6 +26,7 @@
             ApartmentNumber = apartmentNumber == string.Empty ? ApartmentNumber : apartmentNumber;
             City = city == string.Empty ? City : city;
             ZipCode = zipCode == string.Empty ? ZipCode : zipCode;
+            Country = country == string.Empty ? Country : country; // Update Country if provided
             return this;
         }
     }
