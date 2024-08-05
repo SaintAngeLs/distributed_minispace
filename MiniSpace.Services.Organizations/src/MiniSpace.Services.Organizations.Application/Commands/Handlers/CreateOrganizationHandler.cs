@@ -57,7 +57,12 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     command.OwnerId,
                     command.BannerUrl,
                     command.ImageUrl,
-                    null // No parent organization
+                    null, // No parent organization
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email
                 );
 
                 await _organizationRepository.AddAsync(organization);
@@ -85,7 +90,12 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     command.OwnerId,
                     command.BannerUrl,
                     command.ImageUrl,
-                    command.ParentId.Value
+                    command.ParentId.Value,
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email
                 );
 
                 parent.AddSubOrganization(organization);
@@ -117,7 +127,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new RoleNotFoundException("User");
             }
             organization.UpdateDefaultRole(userRole.Name);
-
 
             await _messageBroker.PublishAsync(new OrganizationCreated(
                 organization.Id,
