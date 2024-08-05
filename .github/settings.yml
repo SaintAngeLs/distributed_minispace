@@ -8,7 +8,7 @@ repository:
   name: distributed_minispace
 
   # A short description of the repository that will show up on GitHub
-  description: "Microservices-based social network built with .NET8 and ASP .NET Core Blazor Server, following DDD principles.  Provides a scalable solution for social media applications, utilizing CQRS, SignalR, .NET ML and event-driven architecture. Features include Choreographical-Orchestrated Saga patterns, asynchronous messaging communication and distributed event sourcing."
+  description: "Microservices-based social network built with .NET8 and ASP .NET Core Blazor Server, following DDD principles. Provides a scalable solution for social media applications, utilizing CQRS, SignalR, .NET ML and event-driven architecture. Features include Choreographical Saga patterns, asynchronous messaging and distributed event sourcing."
 
   # A URL with more information about the repository
   homepage: https://minispace.itsharppro.com
