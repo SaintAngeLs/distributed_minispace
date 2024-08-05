@@ -30,10 +30,62 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
             _organizationCollection = _organizationRepository.Collection;
         }
 
+        // public async Task<Organization> GetAsync(Guid id)
+        // {
+        //     var organization = await _organizationRepository.GetAsync(o => o.Id == id);
+        //     return organization?.AsEntity();
+        // }
+
         public async Task<Organization> GetAsync(Guid id)
         {
+            // Try to find the organization directly by its Id
             var organization = await _organizationRepository.GetAsync(o => o.Id == id);
+
+            if (organization == null)
+            {
+                // If not found, search recursively within sub-organizations
+                organization = await FindOrganizationInSubOrganizationsAsync(id);
+            }
+
             return organization?.AsEntity();
+        }
+
+        private async Task<OrganizationDocument> FindOrganizationInSubOrganizationsAsync(Guid id)
+        {
+            // Start with all root organizations
+            var rootOrganizations = await _organizationRepository.FindAsync(o => o.ParentOrganizationId == null);
+
+            foreach (var rootOrganization in rootOrganizations)
+            {
+                // Search recursively in the hierarchy of sub-organizations
+                var foundOrganization = await SearchSubOrganizationsRecursiveAsync(rootOrganization, id);
+                if (foundOrganization != null)
+                {
+                    return foundOrganization;
+                }
+            }
+
+            return null;
+        }
+
+        private async Task<OrganizationDocument> SearchSubOrganizationsRecursiveAsync(OrganizationDocument parentOrganization, Guid id)
+        {
+            foreach (var subOrganization in parentOrganization.SubOrganizations)
+            {
+                if (subOrganization.Id == id)
+                {
+                    return subOrganization;
+                }
+
+                // Recursively search in the sub-organization's children
+                var foundOrganization = await SearchSubOrganizationsRecursiveAsync(subOrganization, id);
+                if (foundOrganization != null)
+                {
+                    return foundOrganization;
+                }
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<Organization>> GetOrganizerOrganizationsAsync(Guid organizerId)
