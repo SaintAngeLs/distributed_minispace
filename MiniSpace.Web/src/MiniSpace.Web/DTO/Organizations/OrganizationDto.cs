@@ -12,5 +12,11 @@ namespace MiniSpace.Web.DTO.Organizations
         public Guid OwnerId { get; set; }
         public Guid? RootId { get; set; } 
         public string DefaultRoleName { get; set; } 
+        
+        public string Address { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
+        public string Telephone { get; set; }
+        public string Email { get; set; }
     }    
 }
