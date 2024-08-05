@@ -20,8 +20,13 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 document.BannerUrl,
                 document.ImageUrl,
                 document.ParentOrganizationId,
-                document.SubOrganizations?.Select(o => o.AsEntity()),
-                document.DefaultRoleName 
+                document.DefaultRoleName,
+                document.Address,       // New fields
+                document.Country,
+                document.City,
+                document.Telephone,
+                document.Email,
+                document.SubOrganizations?.Select(o => o.AsEntity())
             );
 
         public static OrganizationDocument AsDocument(this Organization entity)
@@ -36,7 +41,12 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 OwnerId = entity.OwnerId,
                 ParentOrganizationId = entity.ParentOrganizationId,
                 SubOrganizations = entity.SubOrganizations?.Select(o => o.AsDocument()).ToList(),
-                DefaultRoleName = entity.DefaultRoleName
+                DefaultRoleName = entity.DefaultRoleName,
+                Address = entity.Address,       // New fields
+                Country = entity.Country,
+                City = entity.City,
+                Telephone = entity.Telephone,
+                Email = entity.Email
             };
 
         public static OrganizationDto AsDto(this OrganizationDocument document)
