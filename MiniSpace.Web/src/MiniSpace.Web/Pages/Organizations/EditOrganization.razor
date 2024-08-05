@@ -117,7 +117,12 @@
                         <MudText Typo="Typo.h6">Edit Overview</MudText>
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Name" Label="Organization Name" Variant="Variant.Outlined" />
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Description" Label="Description" Variant="Variant.Outlined" Class="mt-3" />
-                         <MudSelect @bind-Value="organizationGalleryUsers.OrganizationDetails.DefaultRoleName" Label="Default Role Name" Variant="Variant.Outlined" Class="mt-3">
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Address" Label="Address" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Country" Label="Country" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.City" Label="City" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Telephone" Label="Telephone" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Email" Label="Email" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudSelect @bind-Value="organizationGalleryUsers.OrganizationDetails.DefaultRoleName" Label="Default Role Name" Variant="Variant.Outlined" Class="mt-3">
                             @foreach (var role in organizationGalleryUsers.OrganizationDetails.Roles)
                             {
                                 <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
@@ -126,7 +131,7 @@
                     }
                     else if (selectedTabIndex == 1)
                     {
-                       <MudText Typo="Typo.h6">Organization Settings</MudText>
+                        <MudText Typo="Typo.h6">Organization Settings</MudText>
                         @if (organizationGalleryUsers?.OrganizationDetails?.Settings != null)
                         {
                             <OrganizationSettings Settings="organizationGalleryUsers.OrganizationDetails.Settings" OnSave="HandleSaveSettings" />
@@ -148,7 +153,7 @@
                     }
                     else if (selectedTabIndex == 4)
                     {
-                        <MudText Typo="Typo.h6">Manage Organiztion Galler</MudText>
+                        <MudText Typo="Typo.h6">Manage Organization Gallery</MudText>
                         <OrganizationGallery OrganizationId="OrganizationId" />
                     }
 
@@ -158,9 +163,6 @@
     }
 </MudContainer>
 </AuthWrapper>
-
-
-
 
 <!-- Bootstrap Modal for Cropper -->
 <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
@@ -287,7 +289,6 @@
         }
     }
 
-
     private void CloseCropper()
     {
         JSRuntime.InvokeVoidAsync("hideCropperModal");
@@ -305,8 +306,6 @@
             StateHasChanged();
         }
     }
-
-
 
     private async Task SaveCroppedImage()
     {
@@ -372,9 +371,6 @@
         }
     }
 
-
-
-
     private async Task RemoveImage(string imageType)
     {
         try
@@ -416,7 +412,12 @@
             organizationDetails.Settings,
             organizationDetails.BannerUrl,
             organizationDetails.ImageUrl,
-            organizationDetails.DefaultRoleName
+            organizationDetails.DefaultRoleName,
+            organizationDetails.Address,   // New fields
+            organizationDetails.Country,
+            organizationDetails.City,
+            organizationDetails.Telephone,
+            organizationDetails.Email
         );
 
         var response = await OrganizationsService.UpdateOrganizationAsync(OrganizationId, updateCommand);
