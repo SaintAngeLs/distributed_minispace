@@ -12,7 +12,7 @@ using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
 {
-    public class CreateEventHandler: ICommandHandler<CreateEvent>
+    public class CreateEventHandler : ICommandHandler<CreateEvent>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMessageBroker _messageBroker;
@@ -38,7 +38,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             var identity = _appContext.Identity;
             if (!identity.IsOrganizer)
                 throw new AuthorizedUserIsNotAnOrganizerException(identity.Id);
-            if(identity.Id != command.OrganizerId)
+            if (identity.Id != command.OrganizerId)
                 throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
 
             if (command.EventId == Guid.Empty || await _eventRepository.ExistsAsync(command.EventId))
@@ -69,26 +69,52 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 state = State.ToBePublished;
             }
             
-            var organization = await _organizationsServiceClient.GetAsync(command.OrganizationId, command.RootOrganizationId);
-            if (organization == null)
+            Organizer organizer;
+            if (command.OrganizerType == OrganizerType.Organization)
             {
-                throw new OrganizationNotFoundException(command.OrganizationId);
-            }
-            
-            if (!organization.Organizers.Contains(command.OrganizerId))
-            {
-                throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
-            }
-            
+                var organization = await _organizationsServiceClient.GetAsync(command.OrganizationId, command.RootOrganizationId);
+                if (organization == null)
+                {
+                    throw new OrganizationNotFoundException(command.OrganizationId);
+                }
                 
-            var @event = Event.Create(command.EventId, command.Name, command.Description, command.OrganizerType, command.OrganizerId, startDate, endDate, 
-                address, command.MediaFilesUrl.ToList(), command.BannerUrl, command.Capacity, command.Fee, 
-                category, state, publishDate, now, command.Visibility, command.Settings);
-            
+                if (!organization.Organizers.Contains(command.OrganizerId))
+                {
+                    throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
+                }
 
-            
+                organizer = new Organizer(command.OrganizationId, OrganizerType.Organization, organizationId: command.OrganizationId);
+            }
+            else
+            {
+                organizer = new Organizer(command.OrganizerId, OrganizerType.User, userId: command.OrganizerId);
+            }
+                
+            var @event = Event.Create(
+                command.EventId, 
+                command.Name, 
+                command.Description, 
+                organizer, 
+                startDate, 
+                endDate, 
+                address, 
+                command.MediaFilesUrl.ToList(), 
+                command.BannerUrl, 
+                command.Capacity, 
+                command.Fee, 
+                category, 
+                state, 
+                publishDate, 
+                now, 
+                command.Visibility, 
+                command.Settings);
+
             await _eventRepository.AddAsync(@event);
-            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.OrganizerType, @event.OrganizerId, @event.MediaFiles));
+            await _messageBroker.PublishAsync(new EventCreated(
+                @event.Id, 
+                @event.Organizer.OrganizerType, 
+                @event.Organizer.Id, 
+                @event.MediaFiles));
         }
     }
 }

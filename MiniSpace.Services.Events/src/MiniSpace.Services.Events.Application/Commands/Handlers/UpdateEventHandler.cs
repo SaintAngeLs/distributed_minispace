@@ -37,7 +37,11 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             }
             
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && !@event.IsOrganizer(identity.Id) && !identity.IsAdmin)
+            var isOrganizer = @event.Organizer.OrganizerType == OrganizerType.User 
+                ? @event.Organizer.UserId == identity.Id 
+                : @event.Organizer.OrganizationId == identity.Id;
+
+            if (identity.IsAuthenticated && !isOrganizer && !identity.IsAdmin)
             {
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }
@@ -90,9 +94,9 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 @event.Id, 
                 _dateTimeProvider.Now, 
                 identity.Id, 
-                @event.OrganizerType, 
-                @event.MediaFiles)
-            );
+                @event.Organizer.OrganizerType,  // Include OrganizerType
+                @event.MediaFiles                 // Include MediaFiles
+            ));
         }
     }
 }

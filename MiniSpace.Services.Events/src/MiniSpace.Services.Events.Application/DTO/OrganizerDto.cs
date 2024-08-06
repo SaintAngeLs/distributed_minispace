@@ -7,23 +7,31 @@ namespace MiniSpace.Services.Events.Application.DTO
     [ExcludeFromCodeCoverage]
     public class OrganizerDto
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public Guid OrganizationId { get; set; }
-        public string OrganizationName { get; set; }
-        
+        public Guid Id { get; set; } 
+        public Guid? UserId { get; set; } 
+        public Guid? OrganizationId { get; set; } 
+        public OrganizerType OrganizerType { get; set; } 
+
         public OrganizerDto()
         {
         }
-        
+
         public OrganizerDto(Organizer organizer)
         {
-            Id = organizer.Id;
-            Name = organizer.Name;
-            Email = organizer.Email;
-            OrganizationId = organizer.OrganizationId;
-            OrganizationName = organizer.OrganizationName;
+            OrganizerType = organizer.OrganizerType;
+
+            if (organizer.OrganizerType == OrganizerType.User)
+            {
+                Id = organizer.Id; 
+                UserId = organizer.Id;
+                OrganizationId = null;
+            }
+            else if (organizer.OrganizerType == OrganizerType.Organization)
+            {
+                Id = organizer.OrganizationId ?? Guid.Empty; 
+                UserId = null;
+                OrganizationId = organizer.OrganizationId;
+            }
         }
     }
 }

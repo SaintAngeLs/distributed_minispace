@@ -10,12 +10,12 @@ using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
 {
-    public class AddEventParticipantHandler: ICommandHandler<AddEventParticipant>
+    public class AddEventParticipantHandler : ICommandHandler<AddEventParticipant>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IAppContext _appContext;
-        private IMessageBroker _messageBroker;
+        private readonly IMessageBroker _messageBroker;
         
         public AddEventParticipantHandler(IEventRepository eventRepository, IStudentRepository studentRepository,
             IAppContext appContext, IMessageBroker messageBroker)
@@ -29,19 +29,23 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         public async Task HandleAsync(AddEventParticipant command, CancellationToken cancellationToken)
         {
             var @event = await _eventRepository.GetAsync(command.EventId);
-            if(@event is null)
+            if (@event is null)
             {
                 throw new EventNotFoundException(command.EventId);
             }
             
             var student = await _studentRepository.GetAsync(command.StudentId);
-            if(student is null)
+            if (student is null)
             {
                 throw new StudentNotFoundException(command.StudentId);
             }
             
             var identity = _appContext.Identity;
-            if(identity.IsAuthenticated && @event.OrganizerId != identity.Id && !identity.IsAdmin)
+            var organizerIdMatches = @event.Organizer.OrganizerType == OrganizerType.User 
+                ? @event.Organizer.UserId == identity.Id 
+                : @event.Organizer.OrganizationId == identity.Id;
+
+            if (identity.IsAuthenticated && !organizerIdMatches && !identity.IsAdmin)
             {
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }
@@ -51,6 +55,5 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             await _messageBroker.PublishAsync(new EventParticipantAdded(@event.Id, 
                 command.StudentId, command.StudentName));
         }
-        
     }
 }

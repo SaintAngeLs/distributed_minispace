@@ -5,6 +5,7 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
@@ -31,7 +32,11 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             }
             
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != @event.OrganizerId && !identity.IsAdmin)
+            var isOrganizer = @event.Organizer.OrganizerType == OrganizerType.User 
+                ? @event.Organizer.UserId == identity.Id 
+                : @event.Organizer.OrganizationId == identity.Id;
+
+            if (identity.IsAuthenticated && !isOrganizer && !identity.IsAdmin)
             {
                 throw new UnauthorizedEventAccessException(command.EventId, identity.Id);
             }
