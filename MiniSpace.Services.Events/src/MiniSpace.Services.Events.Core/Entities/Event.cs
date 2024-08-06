@@ -14,8 +14,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public string Name { get; private set; }
         public string Description { get; private set; }
-        public OrganizerType OrganizerType { get; private set; }
-        public Guid OrganizerId { get; private set; } 
+        public Organizer Organizer { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public Address Location { get; private set; }
@@ -48,7 +47,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             private set => _ratings = new HashSet<Rating>(value);
         }
 
-        public Event(AggregateId id, string name, string description, OrganizerType organizerType, Guid organizerId,
+        public Event(AggregateId id, string name, string description, Organizer organizer,
             DateTime startDate, DateTime endDate, Address location, IList<string> mediaFiles, string bannerUrl, 
             int capacity, decimal fee, Category category, State state, DateTime publishDate, DateTime updatedAt, 
             Visibility visibility, EventSettings settings, IEnumerable<Participant> interestedParticipants = null, 
@@ -57,8 +56,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             Id = id;
             Name = name;
             Description = description;
-            OrganizerType = organizerType; // Set organizer type
-            OrganizerId = organizerId; // Set organizer ID
+            Organizer = organizer;
             StartDate = startDate;
             EndDate = endDate;
             Location = location;
@@ -77,12 +75,12 @@ namespace MiniSpace.Services.Events.Core.Entities
             Ratings = ratings ?? Enumerable.Empty<Rating>();
         }
 
-        public static Event Create(AggregateId id, string name, string description, OrganizerType organizerType, Guid organizerId,
+        public static Event Create(AggregateId id, string name, string description, Organizer organizer,
             DateTime startDate, DateTime endDate, Address location, IList<string> mediaFiles, string bannerUrl, 
             int capacity, decimal fee, Category category, State state, DateTime publishDate, DateTime now, 
             Visibility visibility, EventSettings settings)
         {
-            return new Event(id, name, description, organizerType, organizerId, startDate, endDate, location, mediaFiles, 
+            return new Event(id, name, description, organizer, startDate, endDate, location, mediaFiles, 
                 bannerUrl, capacity, fee, category, state, publishDate, now, visibility, settings);
         }
 
@@ -128,9 +126,9 @@ namespace MiniSpace.Services.Events.Core.Entities
                 throw new EventCapacityExceededException(Id, Capacity);
             }
 
-            if (participant.StudentId == OrganizerId && OrganizerType == OrganizerType.User)
+            if (participant.StudentId == Organizer.UserId && Organizer.OrganizerType == OrganizerType.User)
             {
-                throw new OrganizerCannotSignUpForOwnEventException(OrganizerId, Id);
+                throw new OrganizerCannotSignUpForOwnEventException(Organizer.UserId.Value, Id);
             }
 
             _signedUpParticipants.Add(participant);
@@ -154,6 +152,28 @@ namespace MiniSpace.Services.Events.Core.Entities
             }
 
             _signedUpParticipants.Remove(participant);
+        }
+
+        public void UpdateBannerUrl(string newBannerUrl)
+        {
+            if (string.IsNullOrWhiteSpace(newBannerUrl))
+            {
+                throw new InvalidBannerUrlException(newBannerUrl);
+            }
+
+            BannerUrl = newBannerUrl;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void AddGalleryImage(string newImageUrl)
+        {
+            if (string.IsNullOrWhiteSpace(newImageUrl))
+            {
+                throw new InvalidGalleryImageUrlException(newImageUrl);
+            }
+
+            MediaFiles.Add(newImageUrl);
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void ShowParticipantInterest(Participant participant)
@@ -253,6 +273,6 @@ namespace MiniSpace.Services.Events.Core.Entities
         }
 
         public bool IsOrganizer(Guid organizerId)
-            => OrganizerId == organizerId && OrganizerType == OrganizerType.User;
+            => Organizer.UserId == organizerId && Organizer.OrganizerType == OrganizerType.User;
     }
 }
