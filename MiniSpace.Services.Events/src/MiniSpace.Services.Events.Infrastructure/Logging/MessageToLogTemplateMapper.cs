@@ -78,21 +78,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Logging
                         After = "Removed participant with id: {ParticipantId} from event with id: {EventId}."
                     }
                 },
-                {
-                    typeof(StudentCreated),     
-                    new HandlerLogTemplate
-                    {
-                        After = "Added a student with id: {StudentId}",
-                        OnError = new Dictionary<Type, string>
-                        {
-                            {
-                                typeof(StudentAlreadyAddedException), 
-                                "Student with id: {StudentId} was already added."
-                                
-                            }
-                        }
-                    }
-                },
             };
         
         public HandlerLogTemplate Map<TMessage>(TMessage message) where TMessage : class

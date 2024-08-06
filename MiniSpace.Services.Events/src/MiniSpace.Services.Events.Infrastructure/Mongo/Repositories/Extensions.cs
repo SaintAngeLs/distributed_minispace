@@ -89,17 +89,19 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
-        public static FilterDefinition<EventDocument> AddOrganizerNameFilter (
+       public static FilterDefinition<EventDocument> AddOrganizerNameFilter(
             this FilterDefinition<EventDocument> filterDefinition, string organizer)
         {
+            // Assuming there is no organization name and using OrganizationId instead
             if (!string.IsNullOrWhiteSpace(organizer))
-            {   
-                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Organizer.OrganizationName, 
+            {
+                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Organizer.OrganizationId.ToString(),
                     new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
             }
 
             return filterDefinition;
         }
+
         
         public static FilterDefinition<EventDocument> AddOrganizerIdFilter (this FilterDefinition<EventDocument> filterDefinition, Guid organizerId)
         {
@@ -172,11 +174,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             var organizations = organizationsEnumerable.ToList();
             if (organizations.Count > 0)
             {
-                filterDefinition &= FilterDefinitionBuilder.In(x => x.Organizer.OrganizationId, organizations);
+                filterDefinition &= FilterDefinitionBuilder.In(nameof(EventDocument.Organizer) + "." + nameof(OrganizerDocument.OrganizationId), organizations);
             }
 
             return filterDefinition;
         }
+
         
         public static FilterDefinition<EventDocument> AddEventIdFilter(this FilterDefinition<EventDocument> filterDefinition,
             IEnumerable<Guid> eventIds)
