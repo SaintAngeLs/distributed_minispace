@@ -41,7 +41,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             }
             
             var identity = _appContext.Identity;
-            if(identity.IsAuthenticated && @event.Organizer.Id != identity.Id && !identity.IsAdmin)
+            if(identity.IsAuthenticated && @event.OrganizerId != identity.Id && !identity.IsAdmin)
             {
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }

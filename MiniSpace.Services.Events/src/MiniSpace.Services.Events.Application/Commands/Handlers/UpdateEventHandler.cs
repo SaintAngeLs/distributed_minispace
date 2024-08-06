@@ -42,24 +42,20 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }
             
-            var name = command.Name == string.Empty ? @event.Name : command.Name;
-            var description = command.Description == string.Empty ? @event.Description : command.Description;
-            var category = command.Category == string.Empty ? @event.Category : _eventValidator.ParseCategory(command.Category);
-            var startDate = command.StartDate == string.Empty ? @event.StartDate 
-                : _eventValidator.ParseDate(command.StartDate, "event_start_date");
-            var endDate = command.EndDate == string.Empty ? @event.EndDate 
-                : _eventValidator.ParseDate(command.EndDate, "event_end_date");
+            // Validate and update event properties
+            _eventValidator.ValidateName(command.Name);
+            _eventValidator.ValidateDescription(command.Description);
+            var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
+            var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
             var now = _dateTimeProvider.Now;
             _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
             
             var address = @event.Location.Update(command.BuildingName, command.Street, command.BuildingNumber, 
-                command.ApartmentNumber, command.City, command.ZipCode);
-            _eventValidator.ValidateMediaFiles(command.MediaFiles.ToList());
-            var capacity = command.Capacity == 0 ? @event.Capacity : command.Capacity;
-            _eventValidator.ValidateUpdatedCapacity(capacity, @event.Capacity);
-            var fee = command.Fee == 0 ? @event.Fee : command.Fee;
-            _eventValidator.ValidateUpdatedFee(fee, @event.Fee);
+                command.ApartmentNumber, command.City, command.ZipCode, command.Country);
+            _eventValidator.ValidateCapacity(command.Capacity);
+            _eventValidator.ValidateFee(command.Fee);
+            var category = _eventValidator.ParseCategory(command.Category);
             
             var publishDate = @event.PublishDate;
             var state = @event.State;
@@ -71,10 +67,32 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 state = State.ToBePublished;
             }
             
-            @event.Update(name, description, startDate, endDate, address, capacity, fee, category, state, publishDate, now);
+            @event.Update(
+                command.Name, 
+                command.Description, 
+                startDate, 
+                endDate, 
+                address, 
+                command.MediaFilesUrl.ToList(), 
+                command.BannerUrl, 
+                command.Capacity, 
+                command.Fee, 
+                category, 
+                state, 
+                publishDate, 
+                now, 
+                command.Visibility, 
+                command.Settings
+            );
+
             await _eventRepository.UpdateAsync(@event);
-            await _messageBroker.PublishAsync(new EventUpdated(@event.Id, _dateTimeProvider.Now, 
-                identity.Id, @event.MediaFiles));
+            await _messageBroker.PublishAsync(new EventUpdated(
+                @event.Id, 
+                _dateTimeProvider.Now, 
+                identity.Id, 
+                @event.OrganizerType, 
+                @event.MediaFiles)
+            );
         }
     }
 }

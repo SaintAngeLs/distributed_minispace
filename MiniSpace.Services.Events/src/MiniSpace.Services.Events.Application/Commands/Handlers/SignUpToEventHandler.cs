@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             }
 
             var participant = new Participant(student.Id, identity.Name);
-            @event.SignUpStudent(participant);
+            @event.SignUpParticipant(participant);
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new StudentSignedUpToEvent(@event.Id, student.Id));
         }
