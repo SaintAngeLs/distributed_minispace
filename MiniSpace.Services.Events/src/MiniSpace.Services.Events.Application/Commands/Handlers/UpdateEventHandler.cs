@@ -94,8 +94,8 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 @event.Id, 
                 _dateTimeProvider.Now, 
                 identity.Id, 
-                @event.Organizer.OrganizerType,  // Include OrganizerType
-                @event.MediaFiles                 // Include MediaFiles
+                @event.Organizer.OrganizerType,  
+                @event.MediaFiles 
             ));
         }
     }

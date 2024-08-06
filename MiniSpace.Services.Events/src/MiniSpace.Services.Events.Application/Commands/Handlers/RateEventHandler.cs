@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Exceptions;
+using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
@@ -9,12 +10,12 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
     public class RateEventHandler : ICommandHandler<RateEvent>
     {
         private readonly IEventRepository _eventRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
 
-        public RateEventHandler(IEventRepository eventRepository, IStudentRepository studentRepository)
+        public RateEventHandler(IEventRepository eventRepository, IStudentsServiceClient studentsServiceClient)
         {
             _eventRepository = eventRepository;
-            _studentRepository = studentRepository;
+            _studentsServiceClient = studentsServiceClient;
         }
 
         public async Task HandleAsync(RateEvent command, CancellationToken cancellationToken)
@@ -25,8 +26,8 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new EventNotFoundException(command.EventId);
             }
 
-            var student = await _studentRepository.GetAsync(command.StudentId);
-            if (student is null)
+            var studentExists = await _studentsServiceClient.StudentExistsAsync(command.StudentId);
+            if (!studentExists)
             {
                 throw new StudentNotFoundException(command.StudentId);
             }

@@ -36,8 +36,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         public async Task HandleAsync(CreateEvent command, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
-            if (!identity.IsOrganizer)
-                throw new AuthorizedUserIsNotAnOrganizerException(identity.Id);
+            
             if (identity.Id != command.OrganizerId)
                 throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
 
