@@ -54,8 +54,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
             var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
-                command.ApartmentNumber, command.City, command.ZipCode);
-            _eventValidator.ValidateMediaFiles(command.MediaFiles.ToList());
+                command.ApartmentNumber, command.City, command.ZipCode, command.Country);
             _eventValidator.ValidateCapacity(command.Capacity);
             _eventValidator.ValidateFee(command.Fee);
             var category = _eventValidator.ParseCategory(command.Category);
@@ -81,12 +80,15 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
             }
             
-            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizationId, organization.Name);
-            var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
-                address, command.MediaFiles, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
+                
+            var @event = Event.Create(command.EventId, command.Name, command.Description, command.OrganizerType, command.OrganizerId, startDate, endDate, 
+                address, command.MediaFilesUrl.ToList(), command.BannerUrl, command.Capacity, command.Fee, 
+                category, state, publishDate, now, command.Visibility, command.Settings);
+            
+
             
             await _eventRepository.AddAsync(@event);
-            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id, @event.MediaFiles));
+            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.OrganizerType, @event.OrganizerId, @event.MediaFiles));
         }
     }
 }
