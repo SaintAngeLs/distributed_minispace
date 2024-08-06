@@ -17,13 +17,14 @@ namespace MiniSpace.Services.Events.Application.DTO
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public AddressDto Location { get; set; }
-        public IEnumerable<string> MediaFilesUrl { get; set; }
+        public IList<string> MediaFilesUrl { get; set; }
+        public string BannerUrl { get; set; } 
         public int InterestedStudents { get; set; }
         public int SignedUpStudents { get; set; }
         public int Capacity { get; set; }
         public decimal Fee { get; set; }
         public string Category { get; set; }
-        public string Status { get; set; }
+        public string State { get; set; } 
         public DateTime PublishDate { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsSignedUp { get; set; }
@@ -31,7 +32,9 @@ namespace MiniSpace.Services.Events.Application.DTO
         public int? StudentRating { get; set; }
         public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
         public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
-        
+        public Visibility Visibility { get; set; } 
+        public EventSettingsDto Settings { get; set; } 
+
         public EventDto()
         {
         }
@@ -46,13 +49,17 @@ namespace MiniSpace.Services.Events.Application.DTO
             EndDate = @event.EndDate;
             Location = new AddressDto(@event.Location);
             MediaFilesUrl = @event.MediaFiles;
+            BannerUrl = @event.BannerUrl; 
             InterestedStudents = @event.InterestedParticipants.Count();
             SignedUpStudents = @event.SignedUpParticipants.Count();
             Capacity = @event.Capacity;
             Fee = @event.Fee;
             Category = @event.Category.ToString();
-            Status = @event.State.ToString();
+            State = @event.State.ToString();
             PublishDate = @event.PublishDate;
+            UpdatedAt = @event.UpdatedAt; 
+            Visibility = @event.Visibility; 
+            Settings = new EventSettingsDto(@event.Settings);
             IsSignedUp = @event.SignedUpParticipants.Any(x => x.StudentId == studentId);
             IsInterested = @event.InterestedParticipants.Any(x => x.StudentId == studentId);
             StudentRating = @event.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value;

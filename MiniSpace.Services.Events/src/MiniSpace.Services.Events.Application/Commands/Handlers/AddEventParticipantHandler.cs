@@ -51,7 +51,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new UnauthorizedEventAccessException(@event.Id, identity.Id);
             }
             
-            @event.AddParticipant(new Participant(command.StudentId, command.StudentName));
+            @event.AddParticipant(new Participant(command.StudentId));
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new EventParticipantAdded(@event.Id, 
                 command.StudentId, command.StudentName));
