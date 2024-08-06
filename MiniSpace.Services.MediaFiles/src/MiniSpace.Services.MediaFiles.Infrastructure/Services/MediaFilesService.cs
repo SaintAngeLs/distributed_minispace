@@ -2,7 +2,6 @@
 using MiniSpace.Services.MediaFiles.Application.Commands;
 using MiniSpace.Services.MediaFiles.Application.Dto;
 using MiniSpace.Services.MediaFiles.Application.Events;
-using MiniSpace.Services.MediaFiles.Application.Events.External;
 using MiniSpace.Services.MediaFiles.Application.Exceptions;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Core.Entities;
@@ -42,20 +41,20 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
 
         public async Task<FileUploadResponseDto> UploadAsync(UploadMediaFile command)
         {
-             var commandWithoutFileData = new UploadMediaFile(
-        command.MediaFileId,
-        command.SourceId,
-        command.SourceType,
-        command.OrganizationId,
-        command.UploaderId,
-        command.FileName,
-        command.FileContentType,
-        null // Exclude the FileData
-    );
+            var commandWithoutFileData = new UploadMediaFile(
+                command.MediaFileId,
+                command.SourceId,
+                command.SourceType,
+                command.OrganizationId,
+                command.UploaderId,
+                command.FileName,
+                command.FileContentType,
+                null // Exclude the FileData
+            );
 
-    // Serialize the modified command to JSON and write to the console
-    var commandJson = JsonSerializer.Serialize(commandWithoutFileData, new JsonSerializerOptions { WriteIndented = true });
-    Console.WriteLine("Received UploadMediaFile command (excluding FileData): " + commandJson);
+            // Serialize the modified command to JSON and write to the console
+            var commandJson = JsonSerializer.Serialize(commandWithoutFileData, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Received UploadMediaFile command (excluding FileData): " + commandJson);
 
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != command.UploaderId)
@@ -72,7 +71,8 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             if (sourceType == ContextType.StudentProfileImage || 
                 sourceType == ContextType.StudentBannerImage ||
                 sourceType == ContextType.OrganizationProfileImage ||
-                sourceType == ContextType.OrganizationBannerImage)
+                sourceType == ContextType.OrganizationBannerImage ||
+                sourceType == ContextType.EventBanner)
             {
                 var existingFiles = await _fileSourceInfoRepository.FindByUploaderIdAndSourceTypeAsync(command.UploaderId, sourceType);
                 foreach (var existingFile in existingFiles)
@@ -124,7 +124,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
             await _messageBroker.PublishAsync(new MediaFileUploaded(command.MediaFileId, originalFileName));
 
-            // Handle specific events based on the source type and organization
+            // Handle specific events based on the source type
             if (command.OrganizationId.HasValue)
             {
                 var imageType = sourceType.ToString();
@@ -138,6 +138,13 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 var imageType = sourceType.ToString();
                 var studentImageUploadedEvent = new StudentImageUploaded(command.UploaderId, processedUrl, imageType, uploadDate);
                 await _messageBroker.PublishAsync(studentImageUploadedEvent);
+            }
+            else if (sourceType == ContextType.EventBanner || 
+                     sourceType == ContextType.EventGalleryImage)
+            {
+                var imageType = sourceType.ToString();
+                var eventImageUploadedEvent = new EventImageUploaded(command.SourceId, processedUrl, imageType, uploadDate);
+                await _messageBroker.PublishAsync(eventImageUploadedEvent);
             }
 
             return new FileUploadResponseDto(fileSourceInfo.Id);
