@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public bool EnableChat { get; set; }
         public bool AllowComments { get; set; }
         public bool RequiresPayment { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
+        public string PaymentMethod { get; set; }
         public string PaymentReceiverDetails { get; set; }
         public string PaymentGateway { get; set; }
         public bool IssueTickets { get; set; }
@@ -42,7 +42,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             EnableChat = settings.EnableChat;
             AllowComments = settings.AllowComments;
             RequiresPayment = settings.RequiresPayment;
-            PaymentMethod = settings.PaymentMethod;
+            PaymentMethod = settings.PaymentMethod.ToString();;
             PaymentReceiverDetails = settings.PaymentReceiverDetails;
             PaymentGateway = settings.PaymentGateway;
             IssueTickets = settings.IssueTickets;
@@ -50,7 +50,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             TicketPrice = settings.TicketPrice;
             RecordEvent = settings.RecordEvent;
             CustomTermsAndConditions = settings.CustomTermsAndConditions;
-            CustomFields = settings.CustomFields;
+            CustomFields = settings.CustomFields ?? new Dictionary<string, string>();
         }
     }
 }
