@@ -98,7 +98,6 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UseSwaggerDocs()
                 .UseJaeger()
                 .UseConvey()
-                //.UseMongo()
                 .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseAuthentication()

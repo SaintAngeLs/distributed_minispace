@@ -26,13 +26,21 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
 
         public DateTime ParseDate(string dateString, string fieldName)
         {
-            if (!DateTime.TryParseExact(dateString, _expectedFormat, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out DateTime date))
+            var formats = new[]
+            {
+                "yyyy-MM-ddTHH:mm:ssZ",
+                "yyyy-MM-ddTHH:mm:ss.fffZ",
+                "yyyy-MM-ddTHH:mm:ss",
+                "yyyy-MM-ddTHH:mm:ss.fff"
+            };
+
+            if (!DateTime.TryParseExact(dateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTime date))
             {
                 throw new InvalidEventDateTimeException(fieldName, dateString);
             }
             return date;
         }
+
         
         public State ParseState(string stateString)
         {
