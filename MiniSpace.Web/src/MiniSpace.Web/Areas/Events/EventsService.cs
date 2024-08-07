@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
-using MiniSpace.Web.Data.Events;
-using MiniSpace.Web.DTO.Wrappers;
+using MiniSpace.Web.Areas.Events.CommandsDto;
 using MiniSpace.Web.HttpClients;
+using MiniSpace.Web.DTO.Wrappers;
 
 namespace MiniSpace.Web.Areas.Events
 {
-    public class EventsService: IEventsService
+    public class EventsService : IEventsService
     {
         private readonly IHttpClient _httpClient;
         private readonly IIdentityService _identityService;
@@ -20,42 +20,22 @@ namespace MiniSpace.Web.Areas.Events
             _identityService = identityService;
         }
         
-        public Task<EventDto> GetEventAsync(Guid eventId, bool isAuthenticated)
+        public Task<EventDto> GetEventAsync(Guid eventId)
         {
-            if (isAuthenticated)
-            {
-                _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            }
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<EventDto>($"events/{eventId}");
         }
 
-        public Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
-            string engagementType, int page, int numberOfResults)
+        public Task<HttpResponse<object>> CreateEventAsync(CreateEventCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<PagedResponseDto<IEnumerable<EventDto>>>(
-                $"events/student/{studentId}?engagementType={engagementType}&page={page}&numberOfResults={numberOfResults}");
+            return _httpClient.PostAsync<CreateEventCommand, object>("events", command);
         }
 
-        public Task<HttpResponse<object>> CreateEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
-            Guid rootOrganizationId, string startDate, string endDate, string buildingName, string street,
-            string buildingNumber, string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles,
-            string description, int capacity, decimal fee, string category, string publishDate)
+        public Task<HttpResponse<object>> UpdateEventAsync(UpdateEventCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object,object>("events", new {eventId, name, organizerId, organizationId,
-                rootOrganizationId, startDate, endDate, buildingName, street, buildingNumber, apartmentNumber, city,
-                zipCode, mediaFiles, description, capacity, fee, category, publishDate});
-        }
-
-        public Task<HttpResponse<object>> UpdateEventAsync(Guid eventId, string name, Guid organizerId, string startDate, string endDate,
-            string buildingName, string street, string buildingNumber, string apartmentNumber, string city, string zipCode,
-            IEnumerable<Guid> mediaFiles, string description, int capacity, decimal fee, string category, string publishDate)
-        {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"events/{eventId}", new {eventId, name, organizerId,
-                startDate, endDate, buildingName, street, buildingNumber, apartmentNumber, city, zipCode, mediaFiles,
-                description, capacity, fee, category, publishDate});
+            return _httpClient.PutAsync<UpdateEventCommand, object>($"events/{command.EventId}", command);
         }
 
         public Task DeleteEventAsync(Guid eventId)
@@ -73,9 +53,9 @@ namespace MiniSpace.Web.Areas.Events
         public Task CancelSignUpToEventAsync(Guid eventId, Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{eventId}/sign-up?studentId={studentId}");
+            return _httpClient.DeleteAsync($"events/{eventId}/sign-up", new {studentId});
         }
-        
+
         public Task ShowInterestInEventAsync(Guid eventId, Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
@@ -85,43 +65,34 @@ namespace MiniSpace.Web.Areas.Events
         public Task CancelInterestInEventAsync(Guid eventId, Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{eventId}/show-interest?studentId={studentId}");
+            return _httpClient.DeleteAsync($"events/{eventId}/show-interest", new {studentId});
         }
-        
+
         public Task RateEventAsync(Guid eventId, int rating, Guid studentId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync($"events/{eventId}/rate", new {eventId, rating, studentId});
         }
-        
-        public Task CancelRateEventAsync(Guid eventId, Guid studentId)
-        {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{eventId}/rate?studentId={studentId}");
-        }
-        
+
         public Task<EventRatingDto> GetEventRatingAsync(Guid eventId)
         {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.GetAsync<EventRatingDto>($"events/{eventId}/rating");
         }
-        
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer,
-            Guid organizationId, Guid rootOrganizationId, string category, string state, IEnumerable<Guid> friends,
-            string friendsEngagementType, string dateFrom, string dateTo, PageableDto pageable)
-        {
-            return _httpClient.PostAsync<SearchEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search", 
-                new (name, organizer, organizationId, rootOrganizationId, category, state, friends,
-                    friendsEngagementType, dateFrom, dateTo, pageable));
-        }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(Guid organizerId,
-            string name, string state, string dateFrom, string dateTo, PageableDto pageable)
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(SearchEvents command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<SearchOrganizerEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search/organizer", 
-                new (name, organizerId, dateFrom, dateTo, state, pageable));
+            return _httpClient.PostAsync<SearchEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search", command);
         }
 
+        public Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(SearchOrganizerEvents command)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.PostAsync<SearchOrganizerEvents, PagedResponseDto<IEnumerable<EventDto>>>("events/search/organizer", command);
+        }
+
+        // Implementations for participant-related methods
         public Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);

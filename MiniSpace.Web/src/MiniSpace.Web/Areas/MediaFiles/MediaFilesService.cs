@@ -82,5 +82,7 @@ namespace MiniSpace.Web.Areas.MediaFiles
 
             return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
         }
+
+      
     }
 }

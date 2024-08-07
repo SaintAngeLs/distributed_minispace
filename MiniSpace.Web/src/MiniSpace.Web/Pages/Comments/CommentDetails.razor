@@ -102,7 +102,7 @@
             StateHasChanged();
             return;
         }
-        var ev = await EventsService.GetEventAsync(post.EventId, IdentityService.IsAuthenticated);
+        var ev = await EventsService.GetEventAsync(post.EventId);
         if (ev == null)
         {
             errorMessage = "Event above reported comment not found! Probably has been deleted!";

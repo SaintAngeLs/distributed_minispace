@@ -341,11 +341,11 @@
                     {
                         if (currentImageType == "profile")
                         {
-                            organizationGalleryUsers.OrganizationDetails.ImageUrl = uploadedFile.FileUrl;
+                            organizationGalleryUsers.OrganizationDetails.ImageUrl = uploadedFile.ProcessedUrl;
                         }
                         else
                         {
-                            organizationGalleryUsers.OrganizationDetails.BannerUrl = uploadedFile.FileUrl;
+                            organizationGalleryUsers.OrganizationDetails.BannerUrl = uploadedFile.ProcessedUrl;
                         }
 
                         StateHasChanged();

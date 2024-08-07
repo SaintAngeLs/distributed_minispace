@@ -1,0 +1,401 @@
+@page "/events/organize"
+@using MiniSpace.Web.Areas.Events
+@using MiniSpace.Web.Areas.Events.CommandsDto
+@using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Utilities
+@inject IEventsService EventsService
+@inject ISnackbar Snackbar
+@inject IMediaFilesService MediaFilesService
+@inject IIdentityService IdentityService
+@inject IJSRuntime JSRuntime
+@using MudBlazor
+@using System.IO
+@using System.Text.Json;
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h5">Organize Event</MudText>
+
+    @if (IsUploading)
+    {
+        <div class="loading-overlay">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Uploading Image, please wait...</MudText>
+        </div>
+    }
+    else
+    {
+        <MudForm Model="newEvent" @ref="form">
+
+            <!-- Basic Information Section -->
+            <MudDivider Class="mb-4">Basic Information</MudDivider>
+            <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
+            <MudTextField Label="Description" @bind-Value="newEvent.Description" FullWidth Required="true" Multiline="true" />
+
+            <!-- Date and Time Section -->
+            <MudDivider Class="mb-4">Date and Time</MudDivider>
+            <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
+            <MudDatePicker Label="End Date" @bind-Date="endDateTemp" Required="true" />
+
+            <!-- Category and Capacity Section -->
+            <MudDivider Class="mb-4">Category and Capacity</MudDivider>
+            <MudSelect T="string" Label="Category" @bind-Value="newEvent.Category" Required="true">
+                @foreach (var category in Enum.GetNames(typeof(Category)))
+                {
+                    <MudSelectItem T="string" Value="category">@category</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField Label="Capacity" @bind-Value="newEvent.Capacity" Type="number" Required="true" />
+            <MudTextField Label="Fee" @bind-Value="newEvent.Fee" Type="number" />
+
+            <!-- Location Section -->
+            <MudDivider Class="mb-4">Location</MudDivider>
+            <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
+            <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
+            <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
+            <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
+            <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
+            <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
+            <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+
+            <!-- Media and Visibility Section -->
+            <MudDivider Class="mb-4">Media and Visibility</MudDivider>
+
+            <!-- Banner Upload -->
+            <MudText Label="Banner Image" />
+            <MudImage Src="@GetBannerUrl()" Alt="Banner Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
+            <InputFile id="fileInputBanner" OnChange="@(async e => await OpenCropper(e, "banner"))" style="display: none;" accept=".jpeg,.png,.jpg" />
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadBannerClick">
+                Upload Banner Image
+            </MudButton>
+
+            <!-- Media Files Upload -->
+            <MudText Label="Media Files" />
+            <MudImage Src="@GetMediaFilesPreviewUrl()" Alt="Media Files Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
+            <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg" />
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadMediaFilesClick">
+                Upload Media Files
+            </MudButton>
+
+            <MudSelect T="string" Label="Visibility" @bind-Value="newEvent.Visibility" Required="true">
+                @foreach (var visibility in Enum.GetNames(typeof(EventVisibility)))
+                {
+                    <MudSelectItem T="string" Value="visibility">@visibility</MudSelectItem>
+                }
+            </MudSelect>
+
+            <!-- Submission Section -->
+            <MudDivider Class="mb-4">Submit</MudDivider>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateEvent">Create Event</MudButton>
+
+        </MudForm>
+    }
+</MudPaper>
+
+<MudSnackbarProvider />
+
+<!-- Bootstrap Modal for Cropper -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="cropper-container" class="img-container"></div>
+                @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                {
+                    <div id="cropped-image-container" class="img-container">
+                        <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                    </div>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CreateEventCommand newEvent = new CreateEventCommand();
+    private MudForm form;
+
+    private string bannerPreviewUrl;
+    private string mediaFilesPreviewUrl;
+    private string CroppedImageBase64; // Store the base64 image data
+
+    private IBrowserFile croppedImageFile;
+    private IReadOnlyList<IBrowserFile> mediaFiles;
+    private bool IsUploading { get; set; } = false;
+    private string currentImageType = string.Empty;
+
+    private string defaultBannerImage = "/images/default_banner_image.png";
+    private string defaultMediaFileImage = "/images/default_media_file_image.png";
+
+    private DateTime? startDateTemp;
+    private DateTime? endDateTemp;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", DotNetObjectReference.Create(this));
+        }
+    }
+
+    private async Task UploadBannerClick()
+    {
+        // Ensure the element is available in the DOM before triggering the click
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputBanner').click()");
+    }
+
+    private async Task UploadMediaFilesClick()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputMediaFiles').click()");
+    }
+
+    private async Task OpenCropper(InputFileChangeEventArgs e, string imageType)
+    {
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var inputFile = e.File;
+        currentImageType = imageType;
+
+        if (inputFile != null)
+        {
+            if (inputFile.Size > maxAllowedSize)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
+                return;
+            }
+
+            using var stream = inputFile.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+            var base64Image = Convert.ToBase64String(buffer);
+            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image, imageType);
+        }
+    }
+
+    private void CloseCropper()
+    {
+        JSRuntime.InvokeVoidAsync("hideCropperModal");
+    }
+
+    [JSInvokable]
+    public void ReceiveCroppedImage(string base64Image)
+    {
+        if (!string.IsNullOrEmpty(base64Image))
+        {
+            CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
+            var buffer = Convert.FromBase64String(base64Image);
+            var lastModified = DateTimeOffset.Now;
+            croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
+            StateHasChanged();
+        }
+    }
+
+    private async Task SaveCroppedImage()
+    {
+        if (croppedImageFile != null)
+        {
+            IsUploading = true;
+            StateHasChanged();
+
+            try
+            {
+                byte[] fileData;
+                using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+                using (var ms = new MemoryStream())
+                {
+                    await stream.CopyToAsync(ms);
+                    fileData = ms.ToArray();
+                }
+
+                string imageType = currentImageType == "banner" ? "EventBanner" : "EventGalleryImage";
+                var response = await MediaFilesService.UploadMediaFileAsync(
+                    sourceId: newEvent.EventId,
+                    sourceType: imageType,
+                    uploaderId: IdentityService.GetCurrentUserId(),
+                    fileName: $"{newEvent.Name}_{currentImageType}.png",
+                    fileContentType: croppedImageFile.ContentType,
+                    fileData: fileData
+                );
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (currentImageType == "banner")
+                    {
+                        bannerPreviewUrl = CroppedImageBase64;
+                    }
+                    else
+                    {
+                        mediaFilesPreviewUrl = CroppedImageBase64;
+                    }
+                    StateHasChanged();
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Failed to upload the image.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                IsUploading = false;
+                StateHasChanged();
+            }
+
+            CloseCropper();
+        }
+    }
+
+    private async Task UploadMediaFiles(InputFileChangeEventArgs e)
+    {
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        mediaFiles = e.GetMultipleFiles();
+
+        foreach (var file in mediaFiles)
+        {
+            if (file.Size > maxAllowedSize)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
+                return;
+            }
+        }
+
+        if (mediaFiles.Count > 0)
+        {
+            var file = mediaFiles[0];
+            using var stream = file.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+            mediaFilesPreviewUrl = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+            StateHasChanged();
+        }
+    }
+
+    private async Task CreateEvent()
+    {
+        // Set the OrganizerId to the current user's ID
+        newEvent.OrganizerId = IdentityService.GetCurrentUserId();
+
+        // Ensure dates are formatted as strings
+        newEvent.StartDate = startDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
+        newEvent.EndDate = endDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
+        newEvent.OrganizerType = "User";
+        newEvent.Settings.PaymentMethod = "Online"; 
+
+
+        // Ensure required enum values are not null or empty
+        if (string.IsNullOrEmpty(newEvent.OrganizerType))
+        {
+            Snackbar.Add("Organizer type is required.", Severity.Error);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(newEvent.Category))
+        {
+            Snackbar.Add("Category is required.", Severity.Error);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(newEvent.Visibility))
+        {
+            Snackbar.Add("Visibility is required.", Severity.Error);
+            return;
+        }
+
+        @* if (croppedImageFile != null)
+        {
+            await UploadImage(croppedImageFile, "EventBanner");
+        }
+
+        if (mediaFiles != null && mediaFiles.Count > 0)
+        {
+            foreach (var file in mediaFiles)
+            {
+                await UploadImage(file, "EventGalleryImage");
+            }
+        } *@
+
+        await form.Validate();
+        if (form.IsValid)
+        {
+            var options = new JsonSerializerOptions
+{
+    WriteIndented = true
+};
+var formDataJson = JsonSerializer.Serialize(newEvent, options);
+Console.WriteLine("Form data to be sent:");
+Console.WriteLine(formDataJson);
+
+
+
+            var response = await EventsService.CreateEventAsync(newEvent);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Event created successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Failed to create event. Please try again.", Severity.Error);
+            }
+        }
+    }
+
+    private async Task UploadImage(IBrowserFile file, string sourceType)
+    {
+        try
+        {
+            byte[] fileData;
+            using (var stream = file.OpenReadStream(file.Size))
+            using (var ms = new MemoryStream())
+            {
+                await stream.CopyToAsync(ms);
+                fileData = ms.ToArray();
+            }
+
+            var response = await MediaFilesService.UploadMediaFileAsync(
+                sourceId: newEvent.EventId,
+                sourceType: sourceType,
+                uploaderId: IdentityService.GetCurrentUserId(),
+                fileName: $"{newEvent.Name}_{sourceType}.png",
+                fileContentType: file.ContentType,
+                fileData: fileData
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"{sourceType} uploaded successfully.", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to upload {sourceType}.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while uploading {sourceType}: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string GetBannerUrl()
+    {
+        return !string.IsNullOrWhiteSpace(bannerPreviewUrl) ? bannerPreviewUrl : defaultBannerImage;
+    }
+
+    private string GetMediaFilesPreviewUrl()
+    {
+        return !string.IsNullOrWhiteSpace(mediaFilesPreviewUrl) ? mediaFilesPreviewUrl : defaultMediaFileImage;
+    }
+}
