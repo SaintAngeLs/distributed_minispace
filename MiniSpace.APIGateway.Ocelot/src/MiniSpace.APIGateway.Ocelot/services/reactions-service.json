@@ -1,0 +1,47 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/reactions",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5010
+          }
+        ],
+        "UpstreamPathTemplate": "/reactions",
+        "UpstreamHttpMethod": [ "POST", "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reactions/{reactionId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5010
+          }
+        ],
+        "UpstreamPathTemplate": "/reactions/{reactionId}",
+        "UpstreamHttpMethod": [ "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reactions/summary",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5010
+          }
+        ],
+        "UpstreamPathTemplate": "/reactions/summary",
+        "UpstreamHttpMethod": [ "GET" ]
+      }
+    ]
+  }
+  

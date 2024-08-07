@@ -1,0 +1,87 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/friends",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5012
+          }
+        ],
+        "UpstreamPathTemplate": "/friends",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/friends/{userId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5012
+          }
+        ],
+        "UpstreamPathTemplate": "/friends/{userId}",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/friends/{userId}/invite",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5012
+          }
+        ],
+        "UpstreamPathTemplate": "/friends/{userId}/invite",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        },
+        "EventOptions": {
+          "Event": {
+            "Use": "publish",
+            "Target": "notifications-service/events",
+            "RoutingKey": "friend_request_created"
+          }
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/friends/requests/{userId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5012
+          }
+        ],
+        "UpstreamPathTemplate": "/friends/requests/{userId}",
+        "UpstreamHttpMethod": [ "GET", "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/friends/requests/{userId}/accept",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5012
+          }
+        ],
+        "UpstreamPathTemplate": "/friends/requests/{userId}/accept",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      }
+    ]
+  }
+  
