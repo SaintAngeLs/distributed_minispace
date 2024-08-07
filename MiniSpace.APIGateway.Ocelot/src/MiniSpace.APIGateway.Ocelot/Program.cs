@@ -1,16 +1,24 @@
+using System;
+using System.Text;
+using System.Threading.Tasks;
 using Convey;
+using Convey.Auth;
 using Convey.Logging;
-using Convey.Metrics.AppMetrics;
+using Convey.MessageBrokers.RabbitMQ;
+using Convey.Tracing.Jaeger;
 using Convey.Security;
+using Convey.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using System.Text;
-using System.Threading.Tasks;
+using Ocelot.Provider.Polly;
+using MiniSpace.APIGateway.Ocelot.Infrastructure;
 
 namespace MiniSpace.APIGateway.Ocelot
 {
@@ -21,27 +29,36 @@ namespace MiniSpace.APIGateway.Ocelot
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
+                          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                          .AddJsonFile("general-ocelot.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/identity-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/reports-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/notifications-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/students-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/events-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/comments-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/reactions-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/friends-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/posts-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/mediafiles-service.json", optional: false, reloadOnChange: true)
+                          .AddJsonFile($"services/organizations-service.json", optional: false, reloadOnChange: true)
+                          .AddEnvironmentVariables();
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureAppConfiguration((hostingContext, config) =>
-                    {
-                        config.AddJsonFile("general-ocelot.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/identity-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/reports-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/notifications-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/students-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/events-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/comments-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/reactions-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/friends-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/posts-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/mediafiles-service.json", optional: false, reloadOnChange: true);
-                        config.AddJsonFile("services/organizations-service.json", optional: false, reloadOnChange: true);
-                    });
-
                     webBuilder.ConfigureServices((context, services) =>
                     {
-                        var key = Encoding.ASCII.GetBytes("Gtn9vBDB5RCDLJSMqZQQmN75J8hgzbQwWkcD8jMIXnvCLAmlL0QVacUAbyootWihMrPIz");
+                        var keyString = context.Configuration["jwt:issuerSigningKey"];
+                        if (string.IsNullOrEmpty(keyString))
+                        {
+                            throw new InvalidOperationException("JWT Key is not configured properly.");
+                        }
+                        var key = Encoding.ASCII.GetBytes(keyString);
+
                         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             .AddJwtBearer(options =>
                             {
@@ -51,30 +68,36 @@ namespace MiniSpace.APIGateway.Ocelot
                                     ValidateAudience = false,
                                     ValidateLifetime = true,
                                     ValidateIssuerSigningKey = true,
-                                    ValidIssuer = "minispace",
+                                    ValidIssuer = context.Configuration["jwt:validIssuer"],
                                     IssuerSigningKey = new SymmetricSecurityKey(key)
                                 };
                             });
 
                         services.AddEndpointsApiExplorer();
-                        services.AddSwaggerGen(c =>
-                        {
-                            c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "MiniSpace API Gateway", Version = "v1" });
-                        });
+                        services.AddSwaggerGen();
+                        services.AddOcelot().AddPolly();
 
-                        services.AddOcelot();
-                        services.AddLogging();
-                        services.AddConvey()
-                            .AddMetrics()
-                            .AddSecurity();
+                        services
+                            .AddConvey()
+                            .AddErrorHandler<ExceptionToResponseMapper>()
+                            .AddSecurity()
+                            .AddJaeger()
+                            // .AddMessageBrokers()
+                            .AddRabbitMq()
+                            .AddWebApi();
+
+                        services.AddSingleton<IPayloadBuilder, PayloadBuilder>();
+                        services.AddSingleton<ICorrelationContextBuilder, CorrelationContextBuilder>();
+                        services.AddSingleton<IAnonymousRouteValidator, AnonymousRouteValidator>();
+                        services.AddTransient<AsyncRoutesMiddleware>();
+                        services.AddTransient<ResourceIdGeneratorMiddleware>();
                     });
 
                     webBuilder.Configure(app =>
                     {
                         var logger = app.ApplicationServices.GetRequiredService<ILoggerFactory>().CreateLogger("DiscoveredRoutesLogger");
-                        var ocelotConfig = app.ApplicationServices.GetRequiredService<IConfiguration>();
+                        var configRoot = app.ApplicationServices.GetService<IConfiguration>() as IConfigurationRoot;
 
-                        var configRoot = ocelotConfig as IConfigurationRoot;
                         if (configRoot != null)
                         {
                             logger.LogInformation("Loaded Ocelot Configuration: {Config}", configRoot.GetDebugView());
@@ -84,30 +107,24 @@ namespace MiniSpace.APIGateway.Ocelot
                             logger.LogWarning("Unable to cast IConfiguration to IConfigurationRoot.");
                         }
 
-                        LogDiscoveredRoutes(ocelotConfig, logger);
-                        
+                        LogDiscoveredRoutes(configRoot, logger);
+
                         app.UseSwagger();
-                        app.UseSwaggerUI(c =>
-                        {
-                            c.SwaggerEndpoint("/swagger/v1/swagger.json", "MiniSpace API Gateway V1");
-                            c.RoutePrefix = string.Empty;
-                        });
+                        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MiniSpace API Gateway V1"));
 
-                        app.UseRouting(); // Ensure UseRouting is called when using authentication and authorization.
+                        app.UseRouting();
                         app.UseAuthentication();
-                        app.UseAuthorization(); // Add UseAuthorization if you have authorization policies.
+                        app.UseAuthorization();
 
-                        app.UseEndpoints(endpoints =>
-                        {
-                            endpoints.MapControllers(); // Ensure controllers are mapped if you use MVC controllers.
-                        });
+                        app.UseEndpoints(endpoints => endpoints.MapControllers());
 
+                        app.UseMiddleware<AsyncRoutesMiddleware>();
                         app.UseOcelot().Wait();
-                    });
-                })
-                .UseLogging();
+                    })
+                    .UseLogging();
+                });
 
-        private static void LogDiscoveredRoutes(IConfiguration configuration, ILogger logger)
+        private static void LogDiscoveredRoutes(IConfigurationRoot configuration, ILogger logger)
         {
             var routes = configuration.GetSection("Routes").GetChildren();
             foreach (var route in routes)
