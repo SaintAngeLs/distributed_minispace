@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MiniSpace.Services.Events.Application.Queries
 {
-    public class GetPaginatedEvents : IQuery<DTO.PagedResult<EventDto>>
+    public class GetPaginatedEvents : IQuery<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
     {
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
