@@ -422,11 +422,17 @@ modules:
         downstream: events-service/events/{eventId}
         auth: true
 
-      - upstream: /{eventId}
+      - upstream: /events
         method: GET
         use: downstream
-        downstream: events-service/events/{eventId}
+        downstream: events-service/events/paginated
         
+      - upstream: /student/{studentId}
+        method: GET
+        use: downstream
+        downstream: events-service/events/student/{studentId}
+        auth: true
+
       - upstream: /student/{studentId}
         method: GET
         use: downstream
