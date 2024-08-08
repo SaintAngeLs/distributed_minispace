@@ -147,8 +147,82 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 await _messageBroker.PublishAsync(eventImageUploadedEvent);
             }
 
-            return new FileUploadResponseDto(fileSourceInfo.Id);
+           return new FileUploadResponseDto(fileSourceInfo.Id, originalUrl, processedUrl);
         }
+
+        public async Task<GeneralFileUploadResponseDto> UploadFileAsync(UploadFile command)
+        {
+            var identity = _appContext.Identity;
+            if (identity.IsAuthenticated && identity.Id != command.UploaderId)
+            {
+                throw new UnauthorizedMediaFileUploadException(identity.Id, command.UploaderId);
+            }
+
+            if (!Enum.TryParse(command.SourceType, out ContextType sourceType))
+            {
+                throw new InvalidContextTypeException(command.SourceType);
+            }
+
+            _fileValidator.ValidateFileSize(command.FileData.Length);
+
+            byte[] buffer = new byte[8];
+            Array.Copy(command.FileData, 0, buffer, 0, Math.Min(buffer.Length, command.FileData.Length));
+            _fileValidator.ValidateFileExtensions(buffer, command.FileContentType);
+
+            using var fileStream = new MemoryStream(command.FileData);
+            string fileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName);
+            string fileUrl = await _s3Service.UploadFileAsync("files", fileName, fileStream);
+
+            var uploadDate = _dateTimeProvider.Now;
+            var fileSourceInfo = new FileSourceInfo(command.FileId, command.SourceId, sourceType, 
+                command.UploaderId, State.Associated, uploadDate, fileUrl, 
+                command.FileContentType, fileUrl, command.FileName, command.OrganizationId);
+
+            await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
+
+            // Publish specific events based on the context type
+            if (sourceType == ContextType.EventBanner || sourceType == ContextType.EventGalleryImage)
+            {
+                await _messageBroker.PublishAsync(new EventFileUploaded(
+                    command.FileId,
+                    command.SourceId,
+                    command.FileName,
+                    fileUrl,
+                    command.FileContentType,
+                    uploadDate,
+                    command.UploaderId
+                ));
+            }
+            else if (sourceType == ContextType.PostFile)
+            {
+                await _messageBroker.PublishAsync(new PostFileUploaded(
+                    command.FileId,
+                    command.SourceId,
+                    command.FileName,
+                    fileUrl,
+                    command.FileContentType,
+                    uploadDate,
+                    command.UploaderId
+                ));
+            }
+            else
+            {
+                // Handle other general file uploads or throw an exception if not supported
+                await _messageBroker.PublishAsync(new GeneralFileUploaded(
+                    command.FileId,
+                    command.FileName,
+                    fileUrl,
+                    Path.GetExtension(command.FileName)?.ToLower(),
+                    command.FileContentType,
+                    uploadDate,
+                    command.OrganizationId,
+                    command.UploaderId
+                ));
+            }
+
+            return new GeneralFileUploadResponseDto(fileSourceInfo.Id, fileUrl);
+        }
+
 
         private string GenerateUniqueFileName(string contextType, Guid uploaderId, string originalFileName, string extension = null)
         {

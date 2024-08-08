@@ -4,7 +4,7 @@
     {
         EventBanner,           
         EventGalleryImage,
-        Post,
+        PostFile,
         StudentProfileImage,
         StudentBannerImage,
         StudentGalleryImage,
