@@ -2,7 +2,8 @@
 {
     public enum ContextType
     {
-        EventBanner,           
+        EventBanner,
+        EventFile,       
         EventGalleryImage,
         PostFile,
         StudentProfileImage,
