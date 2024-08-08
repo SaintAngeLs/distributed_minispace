@@ -73,8 +73,6 @@ modules:
         use: return_value
         returnValue: Welcome to MiniSpace API!
           
-    
-
   identity:
     path: /identity
     routes:
@@ -800,10 +798,18 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files
         auth: true
-        requestSizeLimit: 50_000_000  # Example: Limit to 50 MB
+        requestSizeLimit: 50_000_000  
         formLimits:
-          multipartBodyLengthLimit: 50_000_000  # Optional: Same as above to ensure large files are allowed
+          multipartBodyLengthLimit: 50_000_000  
 
+      - upstream: /files
+        method: POST
+        use: downstream
+        downstream: mediafiles-service/files
+        auth: true
+        requestSizeLimit: 50_000_000  
+        formLimits:
+          multipartBodyLengthLimit: 50_000_000  
 
       - upstream: /{mediaFileId}
         method: GET
