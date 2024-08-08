@@ -24,70 +24,118 @@
     }
     else
     {
+        <MudItem xs="12" md="8" Class="my-auto">
         <MudForm Model="newEvent" @ref="form">
+            <MudTimeline  TimelinePosition="TimelinePosition.Start" >
+                <!-- General Information Section -->
+                <MudTimelineItem Icon="@Icons.Material.Filled.Info" Title="General Information" Color="Color.Primary">
+                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">General Information</MudText>
+                        <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
+                        <MudTextField Label="Description" @bind-Value="newEvent.Description" FullWidth Required="true" Multiline="true" />
+                        <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
+                        <MudDatePicker Label="End Date" @bind-Date="endDateTemp" Required="true" />
+                        <MudSelect T="string" Label="Category" @bind-Value="newEvent.Category" Required="true">
+                            @foreach (var category in Enum.GetNames(typeof(Category)))
+                            {
+                                <MudSelectItem T="string" Value="category">@category</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Capacity" @bind-Value="newEvent.Capacity" Type="number" Required="true" />
+                        
+                        <MudSelect T="string" Label="Organizer Type" @bind-Value="newEvent.OrganizerType" Required="true">
+                            @foreach (var organizerType in Enum.GetNames(typeof(OrganizerType)))
+                            {
+                                <MudSelectItem T="string" Value="organizerType">@organizerType</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Publish Date" @bind-Value="newEvent.PublishDate" FullWidth Required="true" />
+                
+                </MudTimelineItem>
 
-            <!-- Basic Information Section -->
-            <MudDivider Class="mb-4">Basic Information</MudDivider>
-            <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
-            <MudTextField Label="Description" @bind-Value="newEvent.Description" FullWidth Required="true" Multiline="true" />
+                <!-- Address Section -->
+                <MudTimelineItem Icon="@Icons.Material.Filled.LocationOn" Title="Location" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
+                    <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Location</MudText>
+                    <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
+                    <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
+                    <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
+                    <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
+                    <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
+                    <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
+                    <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                </MudTimelineItem>
 
-            <!-- Date and Time Section -->
-            <MudDivider Class="mb-4">Date and Time</MudDivider>
-            <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
-            <MudDatePicker Label="End Date" @bind-Date="endDateTemp" Required="true" />
+                <!-- Payment Section -->
+                <MudTimelineItem Icon="@Icons.Material.Filled.Payment" Title="Payment" Color="Color.Primary">
+                    <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Payment</MudText>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.RequiresPayment">Requires Payment</MudCheckBox>
+                    
+                    @if (newEvent.Settings.RequiresPayment)
+                    {
+                        <MudTextField Label="Fee" @bind-Value="newEvent.Fee" Type="number" />
+                        <MudSelect T="string" Label="Payment Method" @bind-Value="newEvent.Settings.PaymentMethod" FullWidth>
+                            @foreach (var method in Enum.GetNames(typeof(PaymentMethod)))
+                            {
+                                <MudSelectItem T="string" Value="method">@method</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Payment Receiver Details" @bind-Value="newEvent.Settings.PaymentReceiverDetails" FullWidth />
+                        <MudTextField Label="Payment Gateway" @bind-Value="newEvent.Settings.PaymentGateway" FullWidth />
+                        <MudTextField Label="Max Tickets Per Person" @bind-Value="newEvent.Settings.MaxTicketsPerPerson" Type="number" />
+                        <MudTextField Label="Ticket Price" @bind-Value="newEvent.Settings.TicketPrice" Type="number" />
+                    }
+                </MudTimelineItem>
 
-            <!-- Category and Capacity Section -->
-            <MudDivider Class="mb-4">Category and Capacity</MudDivider>
-            <MudSelect T="string" Label="Category" @bind-Value="newEvent.Category" Required="true">
-                @foreach (var category in Enum.GetNames(typeof(Category)))
-                {
-                    <MudSelectItem T="string" Value="category">@category</MudSelectItem>
-                }
-            </MudSelect>
-            <MudTextField Label="Capacity" @bind-Value="newEvent.Capacity" Type="number" Required="true" />
-            <MudTextField Label="Fee" @bind-Value="newEvent.Fee" Type="number" />
+                <!-- Media and Visibility Section -->
+                <MudTimelineItem Icon="@Icons.Material.Filled.Photo" Title="Media and Visibility" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
+                    <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Media and Visibility</MudText>
+                    <MudText Label="Banner Image" />
+                    <MudImage Src="@GetBannerUrl()" Alt="Banner Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
+                    <InputFile id="fileInputBanner" OnChange="@(async e => await OpenCropper(e, "banner"))" style="display: none;" accept=".jpeg,.png,.jpg" />
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadBannerClick">
+                        Upload Banner Image
+                    </MudButton>
 
-            <!-- Location Section -->
-            <MudDivider Class="mb-4">Location</MudDivider>
-            <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
-            <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
-            <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
-            <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
-            <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
-            <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
-            <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                    <MudText Label="Media Files" />
+                    <MudImage Src="@GetMediaFilesPreviewUrl()" Alt="Media Files Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
+                    <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadMediaFilesClick">
+                        Upload Media Files
+                    </MudButton>
 
-            <!-- Media and Visibility Section -->
-            <MudDivider Class="mb-4">Media and Visibility</MudDivider>
+                    <MudSelect T="string" Label="Visibility" @bind-Value="newEvent.Visibility" Required="true">
+                        @foreach (var visibility in Enum.GetNames(typeof(EventVisibility)))
+                        {
+                            <MudSelectItem T="string" Value="visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudTimelineItem>
 
-            <!-- Banner Upload -->
-            <MudText Label="Banner Image" />
-            <MudImage Src="@GetBannerUrl()" Alt="Banner Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
-            <InputFile id="fileInputBanner" OnChange="@(async e => await OpenCropper(e, "banner"))" style="display: none;" accept=".jpeg,.png,.jpg" />
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadBannerClick">
-                Upload Banner Image
-            </MudButton>
+                <!-- Additional Settings Section -->
+                <MudTimelineItem Icon="@Icons.Material.Filled.Settings" Title="Additional Settings" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
+                    <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Additional Setting</MudText>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.RequiresApproval">Requires Approval</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.IsOnlineEvent">Is Online Event</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.IsPrivate">Is Private</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.RequiresRSVP">Requires RSVP</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.AllowsGuests">Allows Guests</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.ShowAttendeesPublicly">Show Attendees Publicly</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.SendReminders">Send Reminders</MudCheckBox>
+                    <MudTextField Label="Reminder Days Before" @bind-Value="newEvent.Settings.ReminderDaysBefore" Type="number" />
+                    <MudCheckBox @bind-Checked="newEvent.Settings.EnableChat">Enable Chat</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.AllowComments">Allow Comments</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.IssueTickets">Issue Tickets</MudCheckBox>
+                    <MudCheckBox @bind-Checked="newEvent.Settings.RecordEvent">Record Event</MudCheckBox>
+                    <MudTextField Label="Custom Terms and Conditions" @bind-Value="newEvent.Settings.CustomTermsAndConditions" FullWidth Multiline="true" />
+                </MudTimelineItem>
 
-            <!-- Media Files Upload -->
-            <MudText Label="Media Files" />
-            <MudImage Src="@GetMediaFilesPreviewUrl()" Alt="Media Files Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
-            <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg" />
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadMediaFilesClick">
-                Upload Media Files
-            </MudButton>
-
-            <MudSelect T="string" Label="Visibility" @bind-Value="newEvent.Visibility" Required="true">
-                @foreach (var visibility in Enum.GetNames(typeof(EventVisibility)))
-                {
-                    <MudSelectItem T="string" Value="visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
+            </MudTimeline>
 
             <!-- Submission Section -->
             <MudDivider Class="mb-4">Submit</MudDivider>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateEvent">Create Event</MudButton>
 
         </MudForm>
+        </MudItem>
     }
 </MudPaper>
 
@@ -293,53 +341,21 @@
         newEvent.StartDate = startDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
         newEvent.EndDate = endDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
         newEvent.OrganizerType = "User";
-        newEvent.Settings.PaymentMethod = "Online"; 
+        newEvent.Settings.PaymentMethod = "Online";
 
+        newEvent.Settings.PaymentMethod = newEvent.Settings.PaymentMethod;
 
-        // Ensure required enum values are not null or empty
-        if (string.IsNullOrEmpty(newEvent.OrganizerType))
-        {
-            Snackbar.Add("Organizer type is required.", Severity.Error);
-            return;
-        }
-
-        if (string.IsNullOrEmpty(newEvent.Category))
-        {
-            Snackbar.Add("Category is required.", Severity.Error);
-            return;
-        }
-
-        if (string.IsNullOrEmpty(newEvent.Visibility))
-        {
-            Snackbar.Add("Visibility is required.", Severity.Error);
-            return;
-        }
-
-        @* if (croppedImageFile != null)
-        {
-            await UploadImage(croppedImageFile, "EventBanner");
-        }
-
-        if (mediaFiles != null && mediaFiles.Count > 0)
-        {
-            foreach (var file in mediaFiles)
-            {
-                await UploadImage(file, "EventGalleryImage");
-            }
-        } *@
 
         await form.Validate();
         if (form.IsValid)
         {
             var options = new JsonSerializerOptions
-{
-    WriteIndented = true
-};
-var formDataJson = JsonSerializer.Serialize(newEvent, options);
-Console.WriteLine("Form data to be sent:");
-Console.WriteLine(formDataJson);
-
-
+            {
+                WriteIndented = true
+            };
+            var formDataJson = JsonSerializer.Serialize(newEvent, options);
+            Console.WriteLine("Form data to be sent:");
+            Console.WriteLine(formDataJson);
 
             var response = await EventsService.CreateEventAsync(newEvent);
             if (response.IsSuccessStatusCode)
@@ -350,42 +366,6 @@ Console.WriteLine(formDataJson);
             {
                 Snackbar.Add("Failed to create event. Please try again.", Severity.Error);
             }
-        }
-    }
-
-    private async Task UploadImage(IBrowserFile file, string sourceType)
-    {
-        try
-        {
-            byte[] fileData;
-            using (var stream = file.OpenReadStream(file.Size))
-            using (var ms = new MemoryStream())
-            {
-                await stream.CopyToAsync(ms);
-                fileData = ms.ToArray();
-            }
-
-            var response = await MediaFilesService.UploadMediaFileAsync(
-                sourceId: newEvent.EventId,
-                sourceType: sourceType,
-                uploaderId: IdentityService.GetCurrentUserId(),
-                fileName: $"{newEvent.Name}_{sourceType}.png",
-                fileContentType: file.ContentType,
-                fileData: fileData
-            );
-
-            if (response.IsSuccessStatusCode)
-            {
-                Snackbar.Add($"{sourceType} uploaded successfully.", Severity.Success);
-            }
-            else
-            {
-                Snackbar.Add($"Failed to upload {sourceType}.", Severity.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"An error occurred while uploading {sourceType}: {ex.Message}", Severity.Error);
         }
     }
 
