@@ -40,12 +40,12 @@ namespace MiniSpace.Services.Identity.Api
                     // .UseMiddleware<ExceptionHandlingMiddleware>() 
                     .UseInfrastructure()
                     .UseEndpoints(endpoints => endpoints
-                        .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Post<SearchEvents>("events/search", async (cmd, ctx) =>
-                        {
-                            var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseEventsAsync(cmd);
-                            await ctx.Response.WriteJsonAsync(pagedResult);
-                        })
+                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        // .Post<SearchEvents>("events/search", async (cmd, ctx) =>
+                        // {
+                        //     var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseEventsAsync(cmd);
+                        //     await ctx.Response.WriteJsonAsync(pagedResult);
+                        // })
                         .Post<SearchOrganizerEvents>("events/search/organizer", async (cmd, ctx) =>
                         {
                             var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseOrganizerEventsAsync(cmd);
@@ -53,12 +53,12 @@ namespace MiniSpace.Services.Identity.Api
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get<GetEvent, EventDto>("events/{eventId}")
-
                         .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
                         .Get<GetEventParticipants, EventParticipantsDto>("events/{eventId}/participants")
                         .Get<GetEventRating, EventRatingDto>("events/{eventId}/rating")
                         .Get<GetPaginatedEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/paginated")
                         .Get<GetPaginatedOrganizerEvents, PagedResult<EventDto>>("events/organizer/{organizerId}/paginated")
+                        .Get<GetSearchEvents,  MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/search")
 
                         .Put<UpdateEvent>("events/{eventId}")
                         .Post<CreateEvent>("events",
@@ -70,7 +70,6 @@ namespace MiniSpace.Services.Identity.Api
                         .Delete<CancelInterestInEvent>("events/{eventId}/show-interest")
                         .Post<RateEvent>("events/{eventId}/rate")
                         .Delete<CancelRateEvent>("events/{eventId}/rate")
-                        
                         .Post<AddEventParticipant>("events/{eventId}/participants")
                         .Delete<RemoveEventParticipant>("events/{eventId}/participants")
                     )

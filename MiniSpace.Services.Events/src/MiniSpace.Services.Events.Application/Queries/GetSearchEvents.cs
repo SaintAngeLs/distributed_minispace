@@ -1,21 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Convey.CQRS.Commands;
+using Convey.CQRS.Queries;
 using MiniSpace.Services.Events.Application.DTO;
 
-namespace MiniSpace.Services.Events.Application.Commands
+namespace MiniSpace.Services.Events.Application.Queries
 {
-    public class SearchEvents : ICommand
+    public class GetSearchEvents : IQuery<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
     {
         public string Name { get; set; }
         public string Organizer { get; set; }
-        public Guid OrganizationId { get; set; }
+        public Guid? OrganizationId { get; set; }
         public string Category { get; set; }
         public string State { get; set; }
         public IEnumerable<Guid> Friends { get; set; }
         public string FriendsEngagementType { get; set; }
-        public string DateFrom { get; set; }
-        public string DateTo { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
         public PageableDto Pageable { get; set; }
     }
 }

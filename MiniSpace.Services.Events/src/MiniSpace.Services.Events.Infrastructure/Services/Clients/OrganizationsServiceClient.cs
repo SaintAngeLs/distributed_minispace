@@ -23,8 +23,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
         public Task<OrganizationDto> GetAsync(Guid organizationId)
             => _httpClient.GetAsync<OrganizationDto>($"{_url}/organizations/{organizationId}/details");
 
-        public Task<IEnumerable<Guid>> GetAllChildrenOrganizations(Guid organizationId, Guid rootId)
-            => _httpClient.GetAsync<IEnumerable<Guid>>($"{_url}/organizations/{organizationId}/children/all?rootId={rootId}");
+        public Task<IEnumerable<Guid>> GetAllChildrenOrganizations(Guid organizationId)
+            => _httpClient.GetAsync<IEnumerable<Guid>>($"{_url}/organizations/{organizationId}/children/all");
 
     }
 }

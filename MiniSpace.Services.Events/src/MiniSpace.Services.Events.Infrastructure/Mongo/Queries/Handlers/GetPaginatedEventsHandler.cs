@@ -24,27 +24,28 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>> HandleAsync(GetPaginatedEvents query, CancellationToken cancellationToken)
         {
+            // Fetch the paginated events from the repository
             var (events, pageNumber, pageSize, totalPages, totalElements) = await _eventRepository.BrowseEventsAsync(
                 pageNumber: query.Page,
                 pageSize: query.PageSize,
-                name: string.Empty,
-                organizer: string.Empty,
-                dateFrom: default,
-                dateTo: default,
-                category: null,
-                state: null,
-                organizations: Enumerable.Empty<Guid>(),
-                friends: Enumerable.Empty<Guid>(),
-                friendsEngagementType: null,
-                sortBy: Enumerable.Empty<string>(),
-                direction: string.Empty
+                name: string.Empty, // Assuming no filtering by name
+                organizer: string.Empty, // Assuming no filtering by organizer
+                dateFrom: default, // Assuming no date filter
+                dateTo: default, // Assuming no date filter
+                category: null, // Assuming no category filter
+                state: null, // Assuming no state filter
+                organizations: Enumerable.Empty<Guid>(), // Assuming no organization filter
+                friends: Enumerable.Empty<Guid>(), // Assuming no friends filter
+                friendsEngagementType: null, // Assuming no engagement type filter
+                sortBy: Enumerable.Empty<string>(), // Assuming no sorting
+                direction: string.Empty // Assuming no sorting direction
             );
 
             var studentId = _appContext.Identity.Id;
             var eventDtos = events.Select(e => e.AsDto(studentId)).ToList();
 
+            // Return a paged result with the fetched data
             return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(eventDtos, pageNumber, pageSize, totalElements);
         }
     }
 }
-

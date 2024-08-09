@@ -61,10 +61,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             {
                 friendsEngagementType = _eventValidator.ParseEngagementType(command.FriendsEngagementType);
             }
-            if (command.OrganizationId != Guid.Empty && command.RootOrganizationId != Guid.Empty)
+            if (command.OrganizationId != Guid.Empty)
             {
                 organizations = await _organizationsServiceClient
-                    .GetAllChildrenOrganizations(command.OrganizationId, command.RootOrganizationId) ?? new List<Guid>();
+                    .GetAllChildrenOrganizations(command.OrganizationId) ?? new List<Guid>();
             }
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
             
