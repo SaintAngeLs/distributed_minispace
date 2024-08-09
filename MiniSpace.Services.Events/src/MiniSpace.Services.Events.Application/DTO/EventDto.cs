@@ -66,5 +66,7 @@ namespace MiniSpace.Services.Events.Application.DTO
             FriendsInterestedIn = Enumerable.Empty<ParticipantDto>();
             FriendsSignedUp = Enumerable.Empty<ParticipantDto>();
         }
+
+        
     }
 }
