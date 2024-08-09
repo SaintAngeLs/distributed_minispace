@@ -39,6 +39,66 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 FriendsSignedUp = Enumerable.Empty<ParticipantDto>()
             };
 
+        public static EventDto AsDto(this Event @event, Guid studentId)
+        {
+             return new EventDto
+            {
+                Id = @event.Id,
+                Name = @event.Name,
+                Description = @event.Description,
+                Organizer = @event.Organizer.AsDto(),  // Assuming an AsDto method exists for Organizer
+                StartDate = @event.StartDate,
+                EndDate = @event.EndDate,
+                Location = @event.Location.AsDto(),  // Assuming an AsDto method exists for Address
+                MediaFilesUrl = @event.MediaFiles?.ToList(),  // Converting MediaFiles to a list of URLs
+                BannerUrl = @event.BannerUrl,
+                InterestedStudents = @event.InterestedParticipants.Count(),
+                SignedUpStudents = @event.SignedUpParticipants.Count(),
+                Capacity = @event.Capacity,
+                Fee = @event.Fee,
+                Category = @event.Category.ToString(),
+                State = @event.State.ToString(),
+                PublishDate = @event.PublishDate,
+                UpdatedAt = @event.UpdatedAt,
+                Visibility = @event.Visibility,
+                Settings = new EventSettingsDto(@event.Settings), // Assuming an AsDto method exists for EventSettings
+                IsSignedUp = @event.SignedUpParticipants.Any(x => x.StudentId == studentId),
+                IsInterested = @event.InterestedParticipants.Any(x => x.StudentId == studentId),
+                StudentRating = @event.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value,
+                FriendsInterestedIn = Enumerable.Empty<ParticipantDto>(),  // Placeholder, customize as needed
+                FriendsSignedUp = Enumerable.Empty<ParticipantDto>()  // Placeholder, customize as needed
+            };
+        }
+
+        public static OrganizerDto AsDto(this Organizer organizer)
+        {
+            return new OrganizerDto
+            {
+                Id = organizer.Id,
+                UserId = organizer.UserId,
+                OrganizationId = organizer.OrganizationId,
+                OrganizerType = organizer.OrganizerType
+            };
+        }
+
+        public static AddressDto AsDto(this Address address)
+        {
+            return new AddressDto
+            {
+                BuildingName = address.BuildingName,
+                Street = address.Street,
+                BuildingNumber = address.BuildingNumber,
+                ApartmentNumber = address.ApartmentNumber,
+                City = address.City,
+                ZipCode = address.ZipCode,
+                Country = address.Country
+            };
+        }
+
+         public static EventSettingsDto AsDto(this EventSettings settings)
+        {
+            return new EventSettingsDto(settings);
+        }
         public static EventDto AsDtoWithFriends(this EventDocument document, Guid studentId, IEnumerable<FriendDto> friends)
         {
             var eventDto = document.AsDto(studentId);
