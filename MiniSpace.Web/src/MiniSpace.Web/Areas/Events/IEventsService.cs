@@ -5,6 +5,7 @@ using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.Areas.Events.CommandsDto;
 using MiniSpace.Web.HttpClients;
+using MiniSpace.Web.Areas.PagedResult;
 
 namespace MiniSpace.Web.Areas.Events
 {
@@ -20,10 +21,12 @@ namespace MiniSpace.Web.Areas.Events
         Task CancelInterestInEventAsync(Guid eventId, Guid studentId);
         Task RateEventAsync(Guid eventId, int rating, Guid studentId);
         Task<EventRatingDto> GetEventRatingAsync(Guid eventId);
-        Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(SearchEvents command);
-        Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(SearchOrganizerEvents command);
+        Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchEventsAsync(SearchEvents command);
+        Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(SearchOrganizerEvents command);
         Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId);
         Task AddEventParticipantAsync(Guid eventId, Guid studentId, string studentName);
         Task RemoveEventParticipantAsync(Guid eventId, Guid participantId);
+        Task<PagedResult<EventDto>> GetPaginatedEventsAsync(int page, int pageSize);
+        Task<PagedResult<EventDto>> GetMyEventsAsync(Guid organizerId, int page, int pageSize); 
     }
 }

@@ -26,5 +26,8 @@ namespace MiniSpace.Web.DTO
         public int? StudentRating { get; set; }
         public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
         public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
+        public string BannerUrl { get; set; }
+
+        public EventDto() { }
     }
 }
