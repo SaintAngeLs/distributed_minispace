@@ -452,8 +452,14 @@ modules:
         downstream: events-service/events/{eventId}
         auth: true
 
+      # - upstream: /search
+      #   method: POST
+      #   use: downstream
+      #   downstream: events-service/events/search
+      # tesotwy with  get
+
       - upstream: /search
-        method: POST
+        method: GET
         use: downstream
         downstream: events-service/events/search
         
