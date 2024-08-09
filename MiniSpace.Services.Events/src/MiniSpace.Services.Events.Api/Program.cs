@@ -57,7 +57,8 @@ namespace MiniSpace.Services.Identity.Api
                         .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
                         .Get<GetEventParticipants, EventParticipantsDto>("events/{eventId}/participants")
                         .Get<GetEventRating, EventRatingDto>("events/{eventId}/rating")
-                        .Get<GetPaginatedEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/paginated") 
+                        .Get<GetPaginatedEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/paginated")
+                        .Get<GetPaginatedOrganizerEvents, PagedResult<EventDto>>("events/organizer/{organizerId}/paginated")
 
                         .Put<UpdateEvent>("events/{eventId}")
                         .Post<CreateEvent>("events",
