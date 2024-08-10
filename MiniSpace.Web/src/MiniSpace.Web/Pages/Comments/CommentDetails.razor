@@ -110,7 +110,7 @@
             StateHasChanged();
             return;
         }
-        var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+        var authorName = "Author unknown";
         NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
     }
 }
