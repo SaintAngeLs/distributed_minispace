@@ -422,6 +422,12 @@ modules:
         downstream: events-service/events/{eventId}
         auth: true
 
+      - upstream: /{eventId}
+        method: GET
+        use: downstream
+        downstream: events-service/events/{eventId}
+        auth: true
+
       - upstream: /paginated
         method: GET
         use: downstream
