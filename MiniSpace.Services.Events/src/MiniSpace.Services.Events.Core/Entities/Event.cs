@@ -125,11 +125,13 @@ namespace MiniSpace.Services.Events.Core.Entities
             {
                 throw new EventCapacityExceededException(Id, Capacity);
             }
-
-            if (participant.StudentId == Organizer.UserId && Organizer.OrganizerType == OrganizerType.User)
-            {
-                throw new OrganizerCannotSignUpForOwnEventException(Organizer.UserId.Value, Id);
-            }
+            // Theoretically here the assumption is that no matter if the user is organize or not, 
+            // they may not sign-up or show interest to evnet, so theoretically, I should be able to 
+            // add user who was the organizer to the event.
+            // if (participant.StudentId == Organizer.UserId && Organizer.OrganizerType == OrganizerType.User)
+            // {
+            //     throw new OrganizerCannotSignUpForOwnEventException(Organizer.UserId.Value, Id);
+            // }
 
             _signedUpParticipants.Add(participant);
         }
