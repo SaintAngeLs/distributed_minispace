@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Events.Application.DTO
         public int Page { get; }
         public int PageSize { get; }
         public int TotalItems { get; }
-        public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / PageSize);
+        public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((decimal)TotalItems / PageSize) : 0;
 
         public int? NextPage => Page < TotalPages ? Page + 1 : (int?)null;
         public int? PreviousPage => Page > 1 ? Page - 1 : (int?)null;
