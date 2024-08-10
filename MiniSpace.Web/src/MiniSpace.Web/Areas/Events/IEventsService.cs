@@ -15,11 +15,11 @@ namespace MiniSpace.Web.Areas.Events
         Task<HttpResponse<object>> CreateEventAsync(CreateEventCommand command);
         Task<HttpResponse<object>> UpdateEventAsync(UpdateEventCommand command);
         Task DeleteEventAsync(Guid eventId);
-        Task SignUpToEventAsync(Guid eventId, Guid studentId);
-        Task CancelSignUpToEventAsync(Guid eventId, Guid studentId);
-        Task ShowInterestInEventAsync(Guid eventId, Guid studentId);
-        Task CancelInterestInEventAsync(Guid eventId, Guid studentId);
-        Task RateEventAsync(Guid eventId, int rating, Guid studentId);
+        Task SignUpToEventAsync(SignUpToEventCommand command);
+        Task CancelSignUpToEventAsync(CancelSignUpToEventCommand command);
+        Task ShowInterestInEventAsync(ShowInterestInEventCommand command);
+        Task CancelInterestInEventAsync(CancelInterestInEventCommand command);
+        Task RateEventAsync(RateEventCommand command);
         Task<EventRatingDto> GetEventRatingAsync(Guid eventId);
         Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchEventsAsync(SearchEvents command);
         Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(SearchOrganizerEvents command);

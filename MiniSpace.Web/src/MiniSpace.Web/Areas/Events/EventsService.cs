@@ -47,34 +47,34 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.DeleteAsync($"events/{eventId}");
         }
 
-        public Task SignUpToEventAsync(Guid eventId, Guid studentId)
+        public Task SignUpToEventAsync(SignUpToEventCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync($"events/{eventId}/sign-up", new {eventId, studentId});
+            return _httpClient.PostAsync($"events/{command.EventId}/sign-up", command);
         }
 
-        public Task CancelSignUpToEventAsync(Guid eventId, Guid studentId)
+        public Task CancelSignUpToEventAsync(CancelSignUpToEventCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{eventId}/sign-up", new {studentId});
+            return _httpClient.DeleteAsync($"events/{command.EventId}/sign-up", command);
         }
 
-        public Task ShowInterestInEventAsync(Guid eventId, Guid studentId)
+        public Task ShowInterestInEventAsync(ShowInterestInEventCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync($"events/{eventId}/show-interest", new {eventId, studentId});
+            return _httpClient.PostAsync($"events/{command.EventId}/show-interest", command);
         }
 
-        public Task CancelInterestInEventAsync(Guid eventId, Guid studentId)
+        public Task CancelInterestInEventAsync(CancelInterestInEventCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{eventId}/show-interest", new {studentId});
+            return _httpClient.DeleteAsync($"events/{command.EventId}/show-interest", command);
         }
 
-        public Task RateEventAsync(Guid eventId, int rating, Guid studentId)
+        public Task RateEventAsync(RateEventCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync($"events/{eventId}/rate", new {eventId, rating, studentId});
+            return _httpClient.PostAsync($"events/{command.EventId}/rate", command);
         }
 
         public Task<EventRatingDto> GetEventRatingAsync(Guid eventId)
@@ -93,7 +93,6 @@ namespace MiniSpace.Web.Areas.Events
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
 
-            // Build the query string manually to handle nested objects and nullable values
             var queryParams = new List<string>();
 
             if (!string.IsNullOrEmpty(command.Name)) queryParams.Add($"Name={HttpUtility.UrlEncode(command.Name)}");
@@ -106,7 +105,6 @@ namespace MiniSpace.Web.Areas.Events
             if (!string.IsNullOrEmpty(command.DateFrom)) queryParams.Add($"DateFrom={HttpUtility.UrlEncode(command.DateFrom)}");
             if (!string.IsNullOrEmpty(command.DateTo)) queryParams.Add($"DateTo={HttpUtility.UrlEncode(command.DateTo)}");
 
-            // Handle PageableDto separately
             if (command.Pageable != null)
             {
                 queryParams.Add($"Page={command.Pageable.Page}");
