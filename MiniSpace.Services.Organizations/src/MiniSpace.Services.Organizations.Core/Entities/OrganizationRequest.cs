@@ -5,22 +5,20 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 {
     public class OrganizationRequest : AggregateRoot
     {
-        public Guid OrganizationId { get; private set; }
         public Guid UserId { get; private set; }
         public DateTime RequestDate { get; private set; }
         public RequestState State { get; private set; }
         public string Reason { get; private set; }
 
-        public OrganizationRequest(Guid organizationId, Guid userId, string reason)
+        public OrganizationRequest(Guid userId, string reason)
         {
             Id = Guid.NewGuid();
-            OrganizationId = organizationId;
             UserId = userId;
             RequestDate = DateTime.UtcNow;
             State = RequestState.Pending; 
             Reason = reason;
 
-            AddEvent(new OrganizationRequestCreated(Id, OrganizationId, UserId, RequestDate));
+            // Note: The OrganizationId is not passed here, it's handled by the OrganizationRequests class.
         }
 
         public void Approve()
@@ -31,7 +29,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
 
             State = RequestState.Approved;
-            AddEvent(new OrganizationRequestApproved(Id, OrganizationId, UserId, DateTime.UtcNow));
         }
 
         public void Reject(string rejectionReason)
@@ -43,7 +40,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
 
             State = RequestState.Rejected;
             Reason = rejectionReason;
-            AddEvent(new OrganizationRequestRejected(Id, OrganizationId, UserId, DateTime.UtcNow, rejectionReason));
         }
 
         public void Cancel()
@@ -54,7 +50,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
 
             State = RequestState.Canceled;
-            AddEvent(new OrganizationRequestCanceled(Id, OrganizationId, UserId, DateTime.UtcNow));
         }
 
         public void UpdateReason(string newReason)
@@ -65,8 +60,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             }
 
             Reason = newReason;
-            AddEvent(new OrganizationRequestUpdated(Id, OrganizationId, UserId, DateTime.UtcNow, newReason));
         }
     }
-
 }
