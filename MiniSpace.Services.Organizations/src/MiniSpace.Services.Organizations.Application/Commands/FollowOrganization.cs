@@ -5,8 +5,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands
 {
     public class FollowOrganization : ICommand
     {
-        public Guid UserId { get; }
-        public Guid OrganizationId { get; }
+        public Guid UserId { get; set; }
+        public Guid OrganizationId { get; set; }
 
         public FollowOrganization(Guid userId, Guid organizationId)
         {
