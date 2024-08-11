@@ -53,6 +53,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
             builder.Services.AddTransient<IOrganizationMembersRepository, OrganizationMembersMongoRepository>();
             builder.Services.AddTransient<IUserInvitationsRepository, UserInvitationsMongoRepository>();
             builder.Services.AddTransient<IOrganizationRolesRepository, OrganizationRolesMongoRepository>();
+            builder.Services.AddTransient<IOrganizationRequestsRepository, OrganizationRequestsMongoRepository>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
@@ -84,6 +85,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .AddMongoRepository<OrganizationMembersDocument, Guid>("organization_members")
                 .AddMongoRepository<OrganizationInvitationDocument, Guid>("organization_invitations")
                 .AddMongoRepository<OrganizationRolesDocument, Guid>("organization_roles")
+                .AddMongoRepository<OrganizationRequestsDocument, Guid>("organization_requests")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
