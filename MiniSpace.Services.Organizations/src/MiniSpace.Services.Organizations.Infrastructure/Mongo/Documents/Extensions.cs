@@ -218,7 +218,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
 
          public static OrganizationRequest AsEntity(this RequestDocument document)
         {
-            // Assuming OrganizationRequest has a constructor or factory method that sets these properties
             return OrganizationRequest.CreateExisting(
                 document.RequestId,
                 document.UserId,
@@ -228,7 +227,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             );
         }
 
-        // Convert OrganizationRequest to RequestDocument
         public static RequestDocument AsDocument(this OrganizationRequest entity)
         {
             return new RequestDocument
@@ -241,7 +239,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             };
         }
 
-        // Convert OrganizationRequestsDocument to OrganizationRequests
         public static OrganizationRequests AsEntity(this OrganizationRequestsDocument document)
         {
             var requests = document.Requests?.Select(r => r.AsEntity()).ToList();
@@ -252,7 +249,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
             );
         }
 
-        // Convert OrganizationRequests to OrganizationRequestsDocument
         public static OrganizationRequestsDocument AsDocument(this OrganizationRequests entity)
         {
             return new OrganizationRequestsDocument
@@ -260,6 +256,26 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 Id = entity.Id,
                 OrganizationId = entity.OrganizationId,
                 Requests = entity.Requests.Select(r => r.AsDocument()).ToList()
+            };
+        }
+
+        public static UserOrganizations AsEntity(this UserOrganizationsDocument document)
+        {
+            var organizations = document.Organizations?.Select(o => new UserOrganizationEntry(o.OrganizationId, o.JoinDate)).ToList();
+            return UserOrganizations.CreateExisting(document.Id, document.UserId, organizations);
+        }
+
+        public static UserOrganizationsDocument AsDocument(this UserOrganizations entity)
+        {
+            return new UserOrganizationsDocument
+            {
+                Id = entity.Id,
+                UserId = entity.UserId,
+                Organizations = entity.Organizations.Select(o => new UserOrganizationEntryDocument
+                {
+                    OrganizationId = o.OrganizationId,
+                    JoinDate = o.JoinDate
+                }).ToList()
             };
         }
     }
