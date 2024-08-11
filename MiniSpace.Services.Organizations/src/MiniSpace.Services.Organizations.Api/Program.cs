@@ -37,7 +37,10 @@ namespace MiniSpace.Services.Organizations.Api
                         .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
                         .Get<GetChildrenOrganizations, PagedResult<OrganizationDto>>("organizations/{organizationId}/children")
                         .Get<GetAllChildrenOrganizations, IEnumerable<Guid>>("organizations/{organizationId}/children/all")
+                        // the organizations users is the organizer
                         .Get<GetUserOrganizations, IEnumerable<UserOrganizationsDto>>("users/{userId}/organizations")
+                        // organizations, user is a part of
+                        .Get<GetUserFollowOrganizations, IEnumerable<OrganizationGalleryUsersDto>>("users/{userId}/organizations/follow")
                         .Get<GetOrganizationWithGalleryAndUsers, OrganizationGalleryUsersDto>("organizations/{organizationId}/details/gallery-users")
                         .Get<GetOrganizationRoles, IEnumerable<RoleDto>>("organizations/{organizationId}/roles")
                         .Get<GetPaginatedOrganizations, PagedResult<OrganizationDto>>("organizations/paginated")
