@@ -16,6 +16,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
         private readonly IOrganizationRequestsRepository _organizationRequestsRepository;
         private readonly IOrganizationMembersRepository _organizationMembersRepository;
         private readonly IOrganizationRolesRepository _organizationRolesRepository;
+        private readonly IUserOrganizationsRepository _userOrganizationsRepository;
         private readonly IEventDispatcher _eventDispatcher;
 
         public FollowOrganizationHandler(
@@ -23,12 +24,14 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             IOrganizationRequestsRepository organizationRequestsRepository,
             IOrganizationMembersRepository organizationMembersRepository,
             IOrganizationRolesRepository organizationRolesRepository,
+            IUserOrganizationsRepository userOrganizationsRepository,
             IEventDispatcher eventDispatcher)
         {
             _organizationRepository = organizationRepository;
             _organizationRequestsRepository = organizationRequestsRepository;
             _organizationMembersRepository = organizationMembersRepository;
             _organizationRolesRepository = organizationRolesRepository;
+            _userOrganizationsRepository = userOrganizationsRepository;
             _eventDispatcher = eventDispatcher;
         }
 
@@ -72,9 +75,13 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 var newUser = new User(command.UserId, defaultRole);
                 await _organizationMembersRepository.AddMemberAsync(command.OrganizationId, newUser);
 
+                // Add the organization to the user's list of organizations
+                await _userOrganizationsRepository.AddOrganizationToUserAsync(command.UserId, command.OrganizationId);
+
                 // Publish event
                 await _eventDispatcher.PublishAsync(new UserAddedToOrganization(command.OrganizationId, command.UserId, DateTime.UtcNow));
             }
         }
     }
+
 }

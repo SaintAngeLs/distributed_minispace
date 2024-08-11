@@ -15,6 +15,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
         private readonly IOrganizationMembersRepository _organizationMembersRepository;
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizationRolesRepository _organizationRolesRepository;
+        private readonly IUserOrganizationsRepository _userOrganizationsRepository;
         private readonly IEventDispatcher _eventDispatcher;
 
         public AcceptFollowRequestHandler(
@@ -22,12 +23,14 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             IOrganizationMembersRepository organizationMembersRepository,
             IOrganizationRepository organizationRepository,
             IOrganizationRolesRepository organizationRolesRepository,
+            IUserOrganizationsRepository userOrganizationsRepository,
             IEventDispatcher eventDispatcher)
         {
             _organizationRequestsRepository = organizationRequestsRepository;
             _organizationMembersRepository = organizationMembersRepository;
             _organizationRepository = organizationRepository;
             _organizationRolesRepository = organizationRolesRepository;
+            _userOrganizationsRepository = userOrganizationsRepository;
             _eventDispatcher = eventDispatcher;
         }
 
@@ -66,8 +69,12 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             var newUser = new User(request.UserId, defaultRole);
             await _organizationMembersRepository.AddMemberAsync(command.OrganizationId, newUser);
 
+            // Add the organization to the user's list of organizations
+            await _userOrganizationsRepository.AddOrganizationToUserAsync(request.UserId, command.OrganizationId);
+
             // Publish event
             await _eventDispatcher.PublishAsync(new UserAddedToOrganization(command.OrganizationId, request.UserId, DateTime.UtcNow));
         }
     }
+
 }
