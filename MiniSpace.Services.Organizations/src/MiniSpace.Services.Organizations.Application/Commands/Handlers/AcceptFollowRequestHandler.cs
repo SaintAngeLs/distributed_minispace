@@ -11,13 +11,19 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
     {
         private readonly IOrganizationRequestsRepository _organizationRequestsRepository;
         private readonly IOrganizationMembersRepository _organizationMembersRepository;
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationRolesRepository _organizationRolesRepository;
 
         public AcceptFollowRequestHandler(
             IOrganizationRequestsRepository organizationRequestsRepository,
-            IOrganizationMembersRepository organizationMembersRepository)
+            IOrganizationMembersRepository organizationMembersRepository,
+            IOrganizationRepository organizationRepository,
+            IOrganizationRolesRepository organizationRolesRepository)
         {
             _organizationRequestsRepository = organizationRequestsRepository;
             _organizationMembersRepository = organizationMembersRepository;
+            _organizationRepository = organizationRepository;
+            _organizationRolesRepository = organizationRolesRepository;
         }
 
         public async Task HandleAsync(AcceptFollowRequest command, CancellationToken cancellationToken)
@@ -37,8 +43,22 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             request.Approve();
             await _organizationRequestsRepository.UpdateRequestAsync(command.OrganizationId, request);
 
-            // Add the user as a member of the organization
-            var newUser = new User(request.UserId, new Role("User", "Default role for organization members", new Dictionary<Permission, bool>()));
+            // Retrieve the organization
+            var organization = await _organizationRepository.GetAsync(command.OrganizationId);
+            if (organization == null)
+            {
+                throw new OrganizationNotFoundException(command.OrganizationId);
+            }
+
+            // Retrieve the default role from the organization
+            var defaultRole = await _organizationRolesRepository.GetRoleByNameAsync(command.OrganizationId, organization.DefaultRoleName);
+            if (defaultRole == null)
+            {
+                throw new RoleNotFoundException(organization.DefaultRoleName);
+            }
+
+            // Add the user as a member of the organization with the default role
+            var newUser = new User(request.UserId, defaultRole);
             await _organizationMembersRepository.AddMemberAsync(command.OrganizationId, newUser);
         }
     }
