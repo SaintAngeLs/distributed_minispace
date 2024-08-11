@@ -116,6 +116,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .SubscribeCommand<AcceptFollowRequest>()
                 .SubscribeCommand<RejectFollowRequest>()
                 .SubscribeCommand<ManageFeed>()
+                .SubscribeCommand<LeaveOrganization>()
                 .SubscribeEvent<OrganizationImageUploaded>()
                 .SubscribeEvent<MediaFileDeleted>();
 
