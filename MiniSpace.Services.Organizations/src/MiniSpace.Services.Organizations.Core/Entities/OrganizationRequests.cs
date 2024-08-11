@@ -16,9 +16,21 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _requests = new HashSet<OrganizationRequest>(value);
         }
 
-        public OrganizationRequests(Guid organizationId, IEnumerable<OrganizationRequest> requests = null)
+        // Factory method to create a new OrganizationRequests aggregate
+        public static OrganizationRequests CreateNew(Guid organizationId)
         {
-            Id = Guid.NewGuid();
+            return new OrganizationRequests(Guid.NewGuid(), organizationId, new HashSet<OrganizationRequest>());
+        }
+
+        // Factory method to create an existing OrganizationRequests aggregate (e.g., when loading from a database)
+        public static OrganizationRequests CreateExisting(Guid id, Guid organizationId, IEnumerable<OrganizationRequest> requests)
+        {
+            return new OrganizationRequests(id, organizationId, requests);
+        }
+
+        private OrganizationRequests(Guid id, Guid organizationId, IEnumerable<OrganizationRequest> requests)
+        {
+            Id = id;
             OrganizationId = organizationId;
             Requests = requests ?? new HashSet<OrganizationRequest>();
         }

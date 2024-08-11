@@ -10,15 +10,25 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public RequestState State { get; private set; }
         public string Reason { get; private set; }
 
-        public OrganizationRequest(Guid userId, string reason)
+        // Factory method to create a new request
+        public static OrganizationRequest CreateNew(Guid userId, string reason)
         {
-            Id = Guid.NewGuid();
-            UserId = userId;
-            RequestDate = DateTime.UtcNow;
-            State = RequestState.Pending; 
-            Reason = reason;
+            return new OrganizationRequest(Guid.NewGuid(), userId, DateTime.UtcNow, RequestState.Pending, reason);
+        }
 
-            // Note: The OrganizationId is not passed here, it's handled by the OrganizationRequests class.
+        // Factory method to create an existing request (e.g., when loading from a database)
+        public static OrganizationRequest CreateExisting(Guid requestId, Guid userId, DateTime requestDate, RequestState state, string reason)
+        {
+            return new OrganizationRequest(requestId, userId, requestDate, state, reason);
+        }
+
+        private OrganizationRequest(Guid requestId, Guid userId, DateTime requestDate, RequestState state, string reason)
+        {
+            Id = requestId;
+            UserId = userId;
+            RequestDate = requestDate;
+            State = state;
+            Reason = reason;
         }
 
         public void Approve()
