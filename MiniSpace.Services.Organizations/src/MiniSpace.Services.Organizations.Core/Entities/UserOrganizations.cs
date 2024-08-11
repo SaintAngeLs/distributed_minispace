@@ -16,7 +16,6 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             private set => _organizations = new HashSet<UserOrganizationEntry>(value);
         }
 
-        // Factory method to create a new UserOrganizations aggregate
         public static UserOrganizations CreateNew(Guid userId)
         {
             return new UserOrganizations(Guid.NewGuid(), userId, new HashSet<UserOrganizationEntry>());
