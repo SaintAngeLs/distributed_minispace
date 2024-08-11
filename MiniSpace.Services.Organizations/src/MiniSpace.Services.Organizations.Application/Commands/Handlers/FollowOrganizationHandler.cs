@@ -14,15 +14,18 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizationRequestsRepository _organizationRequestsRepository;
         private readonly IOrganizationMembersRepository _organizationMembersRepository;
+        private readonly IOrganizationRolesRepository _organizationRolesRepository;
 
         public FollowOrganizationHandler(
             IOrganizationRepository organizationRepository,
             IOrganizationRequestsRepository organizationRequestsRepository,
-            IOrganizationMembersRepository organizationMembersRepository)
+            IOrganizationMembersRepository organizationMembersRepository,
+            IOrganizationRolesRepository organizationRolesRepository)
         {
             _organizationRepository = organizationRepository;
             _organizationRequestsRepository = organizationRequestsRepository;
             _organizationMembersRepository = organizationMembersRepository;
+            _organizationRolesRepository = organizationRolesRepository;
         }
 
         public async Task HandleAsync(FollowOrganization command, CancellationToken cancellationToken)
@@ -54,7 +57,15 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             }
             else
             {
-                var newUser = new User(command.UserId, new Role("User", "Default role for organization members", new Dictionary<Permission, bool>()));
+                // Retrieve the default role from the organization
+                var defaultRole = await _organizationRolesRepository.GetRoleByNameAsync(command.OrganizationId, organization.DefaultRoleName);
+                
+                if (defaultRole == null)
+                {
+                    throw new RoleNotFoundException(organization.DefaultRoleName);
+                }
+
+                var newUser = new User(command.UserId, defaultRole);
                 await _organizationMembersRepository.AddMemberAsync(command.OrganizationId, newUser);
             }
         }
