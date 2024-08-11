@@ -1,5 +1,6 @@
 using MiniSpace.Services.Organizations.Core.Entities;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace MiniSpace.Services.Organizations.Application.DTO
 {
@@ -21,6 +22,8 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public string Telephone { get; set; }
         public string Email { get; set; }
 
+        public IEnumerable<UserDto> Users { get; set; }
+
         public OrganizationDto()
         {
         }
@@ -41,6 +44,9 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             City = organization.City;
             Telephone = organization.Telephone;
             Email = organization.Email;
+
+            // Convert each User entity to a UserDto
+            Users = organization.Users?.Select(user => new UserDto(user)).ToList();
         }
     }
 }

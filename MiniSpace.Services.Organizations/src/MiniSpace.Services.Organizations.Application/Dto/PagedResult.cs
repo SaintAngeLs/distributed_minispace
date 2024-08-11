@@ -20,5 +20,9 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             PageSize = pageSize;
             TotalItems = totalItems;
         }
+        public static PagedResult<T> Empty(int page, int pageSize)
+        {
+            return new PagedResult<T>(new List<T>(), page, pageSize, 0);
+        }
     }
 }
