@@ -52,6 +52,8 @@ namespace MiniSpace.Services.Organizations.Api
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}/follow"))
                         .Put<AcceptFollowRequest>("organizations/{organizationId}/requests/{requestId}/accept", 
                             afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Post<LeaveOrganization>("organizations/{organizationId}/leave", 
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
                         .Put<RejectFollowRequest>("organizations/{organizationId}/requests/{requestId}/reject")
                         .Delete<DeleteOrganization>("organizations/{organizationId}")
                         .Post<InviteUserToOrganization>("organizations/{organizationId}/invite")
