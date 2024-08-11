@@ -33,7 +33,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 throw new OrganizationNotFoundException(command.OrganizationId);
             }
 
-            // Check if the user is already a member
             var existingMember = await _organizationMembersRepository.GetMemberAsync(command.OrganizationId, command.UserId);
             if (existingMember != null)
             {
@@ -42,7 +41,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 
             if (organization.Settings.IsPrivate)
             {
-                // If the organization is private, check if the user has already requested access
                 var existingRequests = await _organizationRequestsRepository.GetRequestsAsync(command.OrganizationId);
                 var userRequest = existingRequests.FirstOrDefault(r => r.UserId == command.UserId && r.State == RequestState.Pending);
                 
@@ -51,13 +49,11 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     throw new UserAlreadyRequestedException(command.UserId, command.OrganizationId);
                 }
 
-                // Create a new request to join the organization
                 var request = OrganizationRequest.CreateNew(command.UserId, "Request to follow organization");
                 await _organizationRequestsRepository.AddRequestAsync(command.OrganizationId, request);
             }
             else
             {
-                // If the organization is public, add the user as a member directly
                 var newUser = new User(command.UserId, new Role("User", "Default role for organization members", new Dictionary<Permission, bool>()));
                 await _organizationMembersRepository.AddMemberAsync(command.OrganizationId, newUser);
             }
