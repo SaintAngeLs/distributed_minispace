@@ -112,6 +112,9 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .SubscribeCommand<UpdateOrganizationSettings>()
                 .SubscribeCommand<SetOrganizationVisibility>()
                 .SubscribeCommand<UpdateOrganization>()
+                .SubscribeCommand<FollowOrganization>()
+                .SubscribeCommand<AcceptFollowRequest>()
+                .SubscribeCommand<RejectFollowRequest>()
                 .SubscribeCommand<ManageFeed>()
                 .SubscribeEvent<OrganizationImageUploaded>()
                 .SubscribeEvent<MediaFileDeleted>();
