@@ -900,6 +900,14 @@ modules:
         auth: true
         bind:
           - userId: {userId}
+
+      - upstream: /{organizationId}/follow
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/follow
+        auth: true
+        bind:
+          - organizationId: {organizationId}
       
       - upstream: /{organizationId}/details/gallery-users
         method: GET
