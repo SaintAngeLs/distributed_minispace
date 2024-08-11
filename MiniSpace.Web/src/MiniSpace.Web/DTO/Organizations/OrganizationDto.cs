@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq; 
 
 namespace MiniSpace.Web.DTO.Organizations
 {
@@ -18,5 +21,8 @@ namespace MiniSpace.Web.DTO.Organizations
         public string City { get; set; }
         public string Telephone { get; set; }
         public string Email { get; set; }
+
+        public IEnumerable<OrganizationUserDto> Users { get; set; } = new List<OrganizationUserDto>();
+        public int UserCount => Users?.Count() ?? 0;  
     }    
 }

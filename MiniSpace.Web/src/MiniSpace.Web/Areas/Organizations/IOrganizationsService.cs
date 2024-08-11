@@ -13,7 +13,7 @@ namespace MiniSpace.Web.Areas.Organizations
         Task<OrganizationDto> GetOrganizationAsync(Guid organizationId);
         Task<OrganizationDetailsDto> GetOrganizationDetailsAsync(Guid organizationId);
         Task<IEnumerable<OrganizationDto>> GetRootOrganizationsAsync();
-        Task<IEnumerable<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId);
+        Task<PagedResult<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId, int page, int pageSize);
         Task<OrganizationGalleryUsersDto> GetOrganizationWithGalleryAndUsersAsync(Guid organizationId);
         Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId);
         Task<HttpResponse<object>> CreateOrganizationAsync(CreateOrganizationDto command);

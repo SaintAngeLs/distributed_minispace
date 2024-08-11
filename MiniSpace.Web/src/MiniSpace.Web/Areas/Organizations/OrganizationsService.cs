@@ -38,11 +38,13 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.GetAsync<IEnumerable<OrganizationDto>>("organizations/root");
         }
 
-        public Task<IEnumerable<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId)
-        {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<OrganizationDto>>($"organizations/{organizationId}/children");
-        }
+        public async Task<PagedResult<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId, int page, int pageSize)
+    {
+        _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+        var queryString = $"organizations/{organizationId}/children?page={page}&pageSize={pageSize}";
+        return await _httpClient.GetAsync<PagedResult<OrganizationDto>>(queryString);
+    }
+
 
         public Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId)
         {
