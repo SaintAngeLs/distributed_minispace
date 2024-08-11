@@ -182,5 +182,11 @@ namespace MiniSpace.Web.Areas.Organizations
             };
             return _httpClient.PutAsync($"organizations/{organizationId}/requests/{requestId}/reject", command);
         }
+
+        public Task<IEnumerable<OrganizationGalleryUsersDto>> GetUserFollowedOrganizationsAsync(Guid userId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.GetAsync<IEnumerable<OrganizationGalleryUsersDto>>($"users/{userId}/organizations/follow");
+        }
     }
 }
