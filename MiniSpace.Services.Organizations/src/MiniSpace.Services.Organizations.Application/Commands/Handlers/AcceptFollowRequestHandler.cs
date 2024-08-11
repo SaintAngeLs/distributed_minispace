@@ -1,7 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
+using Convey.CQRS.Events;
 using MiniSpace.Services.Organizations.Application.Exceptions;
+using MiniSpace.Services.Organizations.Application.Events;
 using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
 
@@ -13,17 +15,20 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
         private readonly IOrganizationMembersRepository _organizationMembersRepository;
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizationRolesRepository _organizationRolesRepository;
+        private readonly IEventDispatcher _eventDispatcher;
 
         public AcceptFollowRequestHandler(
             IOrganizationRequestsRepository organizationRequestsRepository,
             IOrganizationMembersRepository organizationMembersRepository,
             IOrganizationRepository organizationRepository,
-            IOrganizationRolesRepository organizationRolesRepository)
+            IOrganizationRolesRepository organizationRolesRepository,
+            IEventDispatcher eventDispatcher)
         {
             _organizationRequestsRepository = organizationRequestsRepository;
             _organizationMembersRepository = organizationMembersRepository;
             _organizationRepository = organizationRepository;
             _organizationRolesRepository = organizationRolesRepository;
+            _eventDispatcher = eventDispatcher;
         }
 
         public async Task HandleAsync(AcceptFollowRequest command, CancellationToken cancellationToken)
@@ -60,6 +65,9 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             // Add the user as a member of the organization with the default role
             var newUser = new User(request.UserId, defaultRole);
             await _organizationMembersRepository.AddMemberAsync(command.OrganizationId, newUser);
+
+            // Publish event
+            await _eventDispatcher.PublishAsync(new UserAddedToOrganization(command.OrganizationId, request.UserId, DateTime.UtcNow));
         }
     }
 }
