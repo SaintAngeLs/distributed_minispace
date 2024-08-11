@@ -939,6 +939,32 @@ modules:
         downstream: organizations-service/organizations/{organizationId}/roles
         auth: true
 
+      - upstream: /{organizationId}/follow
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/follow
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+
+      - upstream: /{organizationId}/requests/{requestId}/accept
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/requests/{requestId}/accept
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+          - requestId: {requestId}
+
+      - upstream: /{organizationId}/requests/{requestId}/reject
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/requests/{requestId}/reject
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+          - requestId: {requestId}
+
       - upstream: /{organizationId}/roles/{roleId}/permissions
         method: PUT
         use: downstream
