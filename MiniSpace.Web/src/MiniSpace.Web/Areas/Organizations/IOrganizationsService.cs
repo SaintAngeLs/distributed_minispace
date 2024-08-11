@@ -31,5 +31,8 @@ namespace MiniSpace.Web.Areas.Organizations
         Task<IEnumerable<UserOrganizationsDto>> GetUserOrganizationsAsync(Guid userId);
         Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId);
         Task<PagedResult<OrganizationDto>> GetPaginatedOrganizationsAsync(int page, int pageSize, string search = null);
+        Task FollowOrganizationAsync(Guid organizationId);
+        Task AcceptFollowRequestAsync(Guid organizationId, Guid requestId);
+        Task RejectFollowRequestAsync(Guid organizationId, Guid requestId, string reason);
     }
 }

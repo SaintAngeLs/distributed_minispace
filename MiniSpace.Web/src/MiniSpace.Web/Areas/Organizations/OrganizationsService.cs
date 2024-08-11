@@ -39,11 +39,11 @@ namespace MiniSpace.Web.Areas.Organizations
         }
 
         public async Task<PagedResult<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId, int page, int pageSize)
-    {
-        _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-        var queryString = $"organizations/{organizationId}/children?page={page}&pageSize={pageSize}";
-        return await _httpClient.GetAsync<PagedResult<OrganizationDto>>(queryString);
-    }
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var queryString = $"organizations/{organizationId}/children?page={page}&pageSize={pageSize}";
+            return await _httpClient.GetAsync<PagedResult<OrganizationDto>>(queryString);
+        }
 
 
         public Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId)
@@ -147,6 +147,40 @@ namespace MiniSpace.Web.Areas.Organizations
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             var queryString = $"organizations/paginated?page={page}&pageSize={pageSize}&search={search}";
             return _httpClient.GetAsync<PagedResult<OrganizationDto>>(queryString);
+        }
+
+        public Task FollowOrganizationAsync(Guid organizationId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var command = new FollowOrganizationDto
+            {
+                UserId = _identityService.UserDto.Id,
+                OrganizationId = organizationId
+            };
+            return _httpClient.PostAsync($"organizations/{organizationId}/follow", command);
+        }
+
+        public Task AcceptFollowRequestAsync(Guid organizationId, Guid requestId)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var command = new AcceptFollowRequestDto
+            {
+                OrganizationId = organizationId,
+                RequestId = requestId
+            };
+            return _httpClient.PutAsync($"organizations/{organizationId}/requests/{requestId}/accept", command);
+        }
+
+        public Task RejectFollowRequestAsync(Guid organizationId, Guid requestId, string reason)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var command = new RejectFollowRequestDto
+            {
+                OrganizationId = organizationId,
+                RequestId = requestId,
+                Reason = reason
+            };
+            return _httpClient.PutAsync($"organizations/{organizationId}/requests/{requestId}/reject", command);
         }
     }
 }
