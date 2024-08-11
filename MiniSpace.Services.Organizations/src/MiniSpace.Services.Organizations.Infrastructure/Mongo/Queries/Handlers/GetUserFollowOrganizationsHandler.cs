@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetUsersOrganizationsHandler : IQueryHandler<GetUsersOrganizations, IEnumerable<OrganizationGalleryUsersDto>>
+    public class GetUserFollowOrganizationsHandler : IQueryHandler<GetUserFollowOrganizations, IEnumerable<OrganizationGalleryUsersDto>>
     {
         private readonly IUserOrganizationsRepository _userOrganizationsRepository;
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizationGalleryRepository _galleryRepository;
         private readonly IOrganizationRolesRepository _organizationRolesRepository;
 
-        public GetUsersOrganizationsHandler(
+        public GetUserFollowOrganizationsHandler(
             IUserOrganizationsRepository userOrganizationsRepository,
             IOrganizationRepository organizationRepository,
             IOrganizationGalleryRepository galleryRepository,
@@ -29,7 +29,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
             _organizationRolesRepository = organizationRolesRepository;
         }
 
-        public async Task<IEnumerable<OrganizationGalleryUsersDto>> HandleAsync(GetUsersOrganizations query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<OrganizationGalleryUsersDto>> HandleAsync(GetUserFollowOrganizations query, CancellationToken cancellationToken)
         {
             var organizationIds = await _userOrganizationsRepository.GetUserOrganizationsAsync(query.UserId);
             var organizationDetailsList = new List<OrganizationGalleryUsersDto>();
