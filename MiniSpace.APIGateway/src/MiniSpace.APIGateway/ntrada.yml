@@ -947,6 +947,14 @@ modules:
         bind:
           - organizationId: {organizationId}
 
+      - upstream: /{organizationId}/leave
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/leave
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+
       - upstream: /{organizationId}/requests/{requestId}/accept
         method: PUT
         use: downstream
