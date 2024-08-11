@@ -215,5 +215,52 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 DateAdded = entity.DateAdded
             };
         }
+
+         public static OrganizationRequest AsEntity(this RequestDocument document)
+        {
+            // Assuming OrganizationRequest has a constructor or factory method that sets these properties
+            return OrganizationRequest.CreateExisting(
+                document.RequestId,
+                document.UserId,
+                document.RequestDate,
+                Enum.Parse<RequestState>(document.State),
+                document.Reason
+            );
+        }
+
+        // Convert OrganizationRequest to RequestDocument
+        public static RequestDocument AsDocument(this OrganizationRequest entity)
+        {
+            return new RequestDocument
+            {
+                RequestId = entity.Id,
+                UserId = entity.UserId,
+                RequestDate = entity.RequestDate,
+                State = entity.State.ToString(),
+                Reason = entity.Reason
+            };
+        }
+
+        // Convert OrganizationRequestsDocument to OrganizationRequests
+        public static OrganizationRequests AsEntity(this OrganizationRequestsDocument document)
+        {
+            var requests = document.Requests?.Select(r => r.AsEntity()).ToList();
+            return OrganizationRequests.CreateExisting(
+                document.Id,
+                document.OrganizationId,
+                requests
+            );
+        }
+
+        // Convert OrganizationRequests to OrganizationRequestsDocument
+        public static OrganizationRequestsDocument AsDocument(this OrganizationRequests entity)
+        {
+            return new OrganizationRequestsDocument
+            {
+                Id = entity.Id,
+                OrganizationId = entity.OrganizationId,
+                Requests = entity.Requests.Select(r => r.AsDocument()).ToList()
+            };
+        }
     }
 }
