@@ -16,12 +16,13 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public string BannerUrl { get; set; }
         public string ImageUrl { get; set; }
         public IEnumerable<UserOrganizationsDto> SubOrganizations { get; set; }
+        public IEnumerable<UserDto> Users { get; set; } 
 
         public UserOrganizationsDto()
         {
         }
 
-        public UserOrganizationsDto(Organization organization)
+        public UserOrganizationsDto(Organization organization, IEnumerable<User> users = null)
         {
             Id = organization.Id;
             Name = organization.Name;
@@ -30,6 +31,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             BannerUrl = organization.BannerUrl;
             ImageUrl = organization.ImageUrl;
             SubOrganizations = organization.SubOrganizations?.Select(o => new UserOrganizationsDto(o)).ToList();
+            Users = users?.Select(u => new UserDto(u)).ToList();
         }
     }
 }
