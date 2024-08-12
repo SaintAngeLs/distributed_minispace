@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MiniSpace.Services.Reactions.Core.Events;
 using MiniSpace.Services.Reactions.Core.Exceptions;
 
@@ -6,12 +7,11 @@ namespace MiniSpace.Services.Reactions.Core.Entities
 {
     public class Reaction : AggregateRoot
     {
-        public Guid StudentId { get; private set; }
-        public string StudentFullName { get; private set; }
+        public Guid UserId { get; private set; }  
         public ReactionType ReactionType { get; private set; }
         public Guid ContentId { get; private set; }
         public ReactionContentType ContentType { get; private set; }
-        public ReactionTargetType TargetType { get; private set; } 
+        public ReactionTargetType TargetType { get; private set; }
 
         private List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
 
@@ -27,24 +27,23 @@ namespace MiniSpace.Services.Reactions.Core.Entities
             _domainEvents.Clear();
         }
 
-        private Reaction(Guid reactionId, Guid studentId, string studentFullName, ReactionType reactionType,
-            Guid contentId, ReactionContentType contentType, ReactionTargetType targetType) 
+        private Reaction(Guid reactionId, Guid userId, ReactionType reactionType, Guid contentId, 
+                         ReactionContentType contentType, ReactionTargetType targetType) 
         {
             Id = reactionId;
-            StudentId = studentId;
-            StudentFullName = studentFullName;
+            UserId = userId;
             ReactionType = reactionType;
             ContentId = contentId;
             ContentType = contentType;
-            TargetType = targetType; 
+            TargetType = targetType;
 
-            AddDomainEvent(new ReactionCreatedEvent(reactionId, studentId, studentFullName, reactionType, contentId, contentType, targetType));
+            AddDomainEvent(new ReactionCreatedEvent(reactionId, userId, reactionType, contentId, contentType, targetType));
         }
 
-        public static Reaction Create(Guid reactionId, Guid studentId, string studentFullName, ReactionType reactionType,
-            Guid contentId, ReactionContentType contentType, ReactionTargetType targetType)
+        public static Reaction Create(Guid reactionId, Guid userId, ReactionType reactionType, Guid contentId, 
+                                        ReactionContentType contentType, ReactionTargetType targetType)
         {
-            return new Reaction(reactionId, studentId, studentFullName, reactionType, contentId, contentType, targetType);
+            return new Reaction(reactionId, userId, reactionType, contentId, contentType, targetType);
         }
 
         public void UpdateReactionType(ReactionType newReactionType)
