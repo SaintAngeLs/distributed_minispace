@@ -375,18 +375,26 @@
     }
 
     private async Task SaveUserSettingsAsync()
+{
+    try
     {
-        try
-        {
-            var studentId = IdentityService.GetCurrentUserId();
-            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
-            Console.WriteLine("Student settings updated successfully.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error saving user settings: {ex.Message}");
-        }
+        var studentId = IdentityService.GetCurrentUserId();
+        
+        @* var jsonSettings = JsonSerializer.Serialize(availableSettingsDto, new JsonSerializerOptions { WriteIndented = true });
+
+        Console.WriteLine("Sending the following settings to the student service:");
+        Console.WriteLine(jsonSettings); *@
+
+        await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
+
+        Console.WriteLine("Student settings updated successfully.");
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error saving user settings: {ex.Message}");
+    }
+}
+
 
     private void SetActiveTabIndex(int index)
     {

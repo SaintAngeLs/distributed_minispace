@@ -90,6 +90,32 @@ else
                 }
             </MudSelect>
         </MudItem>
+
+         <MudItem xs="12" sm="6">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.ProfileImageVisibility" Label="Profile Image Visibility">
+                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                {
+                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.BannerImageVisibility" Label="Banner Image Visibility">
+                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                {
+                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.GalleryVisibility" Label="Gallery Visibility">
+                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                {
+                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        
         <MudItem xs="12" sm="6">
             <MudSelect T="PreferredLanguage" @bind-Value="AvailableSettingsDto.PreferredLanguage" Label="Preferred Language" HelperText="Preferred language for the interface">
                 @foreach (PreferredLanguage language in Enum.GetValues(typeof(PreferredLanguage)))
