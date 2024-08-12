@@ -53,7 +53,7 @@ namespace MiniSpace.Services.Identity.Api
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get<GetEvent, EventDto>("events/{eventId}")
-                        .Get<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>("events/student/{studentId}")
+                        .Get<GetUserEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/users/{userId}")
                         .Get<GetEventParticipants, EventParticipantsDto>("events/{eventId}/participants")
                         .Get<GetEventRating, EventRatingDto>("events/{eventId}/rating")
                         .Get<GetPaginatedEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/paginated")
