@@ -5,28 +5,25 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Services.Clients;
-using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
-using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 {
     [ExcludeFromCodeCoverage]
-    public class GetStudentEventsHandler : IQueryHandler<GetStudentEvents, PagedResponse<IEnumerable<EventDto>>>
+    public class GetUserEventsHandler : IQueryHandler<GetUserEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
     {
         private readonly IEventRepository _eventRepository;
-        private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IStudentsServiceClient _studentsServiceClient; // Keeping it as StudentsServiceClient
         private readonly IEventValidator _eventValidator;
         private readonly IAppContext _appContext;
-        
-        public GetStudentEventsHandler(IEventRepository eventRepository, 
+
+        public GetUserEventsHandler(IEventRepository eventRepository, 
             IStudentsServiceClient studentsServiceClient, IEventValidator eventValidator, IAppContext appContext)
         {
             _eventRepository = eventRepository;
@@ -35,30 +32,36 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             _appContext = appContext;
         }
 
-        public async Task<PagedResponse<IEnumerable<EventDto>>> HandleAsync(GetStudentEvents query, CancellationToken cancellationToken)
+        public async Task<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>> HandleAsync(GetUserEvents query, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != query.StudentId)
+            if (identity.IsAuthenticated && identity.Id != query.UserId)
             {
-                return new PagedResponse<IEnumerable<EventDto>>(Enumerable.Empty<EventDto>(),
-                    1, query.NumberOfResults, 0, 0);
+                return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(Enumerable.Empty<EventDto>(), 1, query.NumberOfResults, 0);
             }
-            
+
+            // Assuming EventEngagementType is an enum, ensure you have the correct using directive
             var engagementType = _eventValidator.ParseEngagementType(query.EngagementType);
-            
-            var studentEvents = await _studentsServiceClient.GetAsync(query.StudentId);
+
+            // Fetching events related to the user (treated as student for now)
+            var studentEvents = await _studentsServiceClient.GetAsync(query.UserId);
             var studentEventIds = engagementType switch
             {
                 EventEngagementType.SignedUp => studentEvents.SignedUpEvents.ToList(),
                 EventEngagementType.InterestedIn => studentEvents.InterestedInEvents.ToList(),
-                _ => []
+                _ => new List<Guid>()
             };
-            
+
+            // Adjusting the call to BrowseStudentEventsAsync
             var result = await _eventRepository.BrowseStudentEventsAsync(query.Page, 
                 query.NumberOfResults, studentEventIds, Enumerable.Empty<string>(), "asc");
 
-            return new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, identity.Id)), 
-                result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
+            // Corrected the type to pass the actual IEnumerable<EventDto> instead of IEnumerable<IEnumerable<EventDto>>
+            return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(
+                result.events.Select(e => new EventDto(e, identity.Id)),
+                result.pageNumber,
+                result.pageSize,
+                result.totalElements);
         }
     }
 }
