@@ -1,10 +1,10 @@
 namespace MiniSpace.Services.Reactions.Core.Entities
 {
-    public class Student
+    public class User
     {
         public Guid Id { get; private set; }
 
-        public Student(Guid id)
+        public User(Guid id)
         {
             Id = id;
         }
