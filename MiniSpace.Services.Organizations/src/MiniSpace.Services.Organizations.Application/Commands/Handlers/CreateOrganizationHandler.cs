@@ -57,7 +57,13 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     command.OwnerId,
                     command.BannerUrl,
                     command.ImageUrl,
-                    null // No parent organization
+                    null, // No parent organization
+                    "User", // Set default role to "User"
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email
                 );
 
                 await _organizationRepository.AddAsync(organization);
@@ -85,7 +91,13 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     command.OwnerId,
                     command.BannerUrl,
                     command.ImageUrl,
-                    command.ParentId.Value
+                    command.ParentId.Value,
+                    "User", // Set default role to "User"
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email
                 );
 
                 parent.AddSubOrganization(organization);
@@ -111,13 +123,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             var creatorMember = new User(identity.Id, creatorRole);
             await _organizationMembersRepository.AddMemberAsync(organization.Id, creatorMember);
 
-            var userRole = defaultRoles.SingleOrDefault(r => r.Name == "User");
-            if (userRole == null)
-            {
-                throw new RoleNotFoundException("User");
-            }
-            organization.UpdateDefaultRole(userRole.Name);
-
+            // The default role is already set to "User" during the organization creation.
 
             await _messageBroker.PublishAsync(new OrganizationCreated(
                 organization.Id,

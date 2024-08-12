@@ -20,8 +20,13 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 document.BannerUrl,
                 document.ImageUrl,
                 document.ParentOrganizationId,
-                document.SubOrganizations?.Select(o => o.AsEntity()),
-                document.DefaultRoleName 
+                document.DefaultRoleName,
+                document.Address,       // New fields
+                document.Country,
+                document.City,
+                document.Telephone,
+                document.Email,
+                document.SubOrganizations?.Select(o => o.AsEntity())
             );
 
         public static OrganizationDocument AsDocument(this Organization entity)
@@ -36,7 +41,12 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 OwnerId = entity.OwnerId,
                 ParentOrganizationId = entity.ParentOrganizationId,
                 SubOrganizations = entity.SubOrganizations?.Select(o => o.AsDocument()).ToList(),
-                DefaultRoleName = entity.DefaultRoleName
+                DefaultRoleName = entity.DefaultRoleName,
+                Address = entity.Address,       // New fields
+                Country = entity.Country,
+                City = entity.City,
+                Telephone = entity.Telephone,
+                Email = entity.Email
             };
 
         public static OrganizationDto AsDto(this OrganizationDocument document)
@@ -203,6 +213,69 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents
                 ImageId = entity.ImageId,
                 ImageUrl = entity.ImageUrl,
                 DateAdded = entity.DateAdded
+            };
+        }
+
+         public static OrganizationRequest AsEntity(this RequestDocument document)
+        {
+            return OrganizationRequest.CreateExisting(
+                document.RequestId,
+                document.UserId,
+                document.RequestDate,
+                Enum.Parse<RequestState>(document.State),
+                document.Reason
+            );
+        }
+
+        public static RequestDocument AsDocument(this OrganizationRequest entity)
+        {
+            return new RequestDocument
+            {
+                RequestId = entity.Id,
+                UserId = entity.UserId,
+                RequestDate = entity.RequestDate,
+                State = entity.State.ToString(),
+                Reason = entity.Reason
+            };
+        }
+
+        public static OrganizationRequests AsEntity(this OrganizationRequestsDocument document)
+        {
+            var requests = document.Requests?.Select(r => r.AsEntity()).ToList();
+            return OrganizationRequests.CreateExisting(
+                document.Id,
+                document.OrganizationId,
+                requests
+            );
+        }
+
+        public static OrganizationRequestsDocument AsDocument(this OrganizationRequests entity)
+        {
+            return new OrganizationRequestsDocument
+            {
+                Id = entity.Id,
+                OrganizationId = entity.OrganizationId,
+                Requests = entity.Requests.Select(r => r.AsDocument()).ToList()
+            };
+        }
+
+        public static UserOrganizations AsEntity(this UserOrganizationsDocument document)
+        {
+            var organizations = document.Organizations?.Select(o => new UserOrganizationEntry(o.OrganizationId, o.JoinDate)).ToList();
+            return UserOrganizations.CreateExisting(document.Id, document.UserId, organizations);
+        }
+
+        public static UserOrganizationsDocument AsDocument(this UserOrganizations entity)
+        {
+            return new UserOrganizationsDocument
+            {
+                Id = entity.Id,
+                UserId = entity.UserId,
+                Organizations = entity.Organizations.Select(o => new UserOrganizationEntryDocument
+                {
+                    OrganizationId = o.OrganizationId,
+                    JoinDate = o.JoinDate
+                }).ToList()
             };
         }
     }

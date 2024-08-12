@@ -167,6 +167,9 @@ namespace MiniSpace.Web.Areas.Students
                 InterestsVisibility = availableSettings.InterestsVisibility.ToString(),
                 ContactEmailVisibility = availableSettings.ContactEmailVisibility.ToString(),
                 PhoneNumberVisibility = availableSettings.PhoneNumberVisibility.ToString(),
+                ProfileImageVisibility = availableSettings.ProfileImageVisibility.ToString(),  
+                BannerImageVisibility = availableSettings.BannerImageVisibility.ToString(),    
+                GalleryVisibility = availableSettings.GalleryVisibility.ToString(),          
                 PreferredLanguage = availableSettings.PreferredLanguage.ToString(),
                 FrontendVersion = availableSettings.FrontendVersion.ToString()
             };

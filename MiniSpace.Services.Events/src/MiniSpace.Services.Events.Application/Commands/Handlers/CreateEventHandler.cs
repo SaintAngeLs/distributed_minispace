@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
@@ -9,10 +10,11 @@ using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
+using MiniSpace.Services.Events.Application.DTO;
 
 namespace MiniSpace.Services.Events.Application.Commands.Handlers
 {
-    public class CreateEventHandler: ICommandHandler<CreateEvent>
+    public class CreateEventHandler : ICommandHandler<CreateEvent>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMessageBroker _messageBroker;
@@ -20,9 +22,9 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IEventValidator _eventValidator;
         private readonly IAppContext _appContext;
-        
-        public CreateEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker, 
-            IOrganizationsServiceClient organizationsServiceClient, IDateTimeProvider dateTimeProvider, 
+
+        public CreateEventHandler(IEventRepository eventRepository, IMessageBroker messageBroker,
+            IOrganizationsServiceClient organizationsServiceClient, IDateTimeProvider dateTimeProvider,
             IEventValidator eventValidator, IAppContext appContext)
         {
             _eventRepository = eventRepository;
@@ -32,61 +34,159 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator = eventValidator;
             _appContext = appContext;
         }
-        
-        public async Task HandleAsync(CreateEvent command, CancellationToken cancellationToken)
-        {
-            var identity = _appContext.Identity;
-            if (!identity.IsOrganizer)
-                throw new AuthorizedUserIsNotAnOrganizerException(identity.Id);
-            if(identity.Id != command.OrganizerId)
-                throw new OrganizerCannotAddEventForAnotherOrganizerException(identity.Id, command.OrganizerId);
 
-            if (command.EventId == Guid.Empty || await _eventRepository.ExistsAsync(command.EventId))
+        public async Task HandleAsync(CreateEvent command, CancellationToken cancellationToken)
+{
+    try
+    {
+        Console.WriteLine("--------------------------------------------");
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+        var commandJson = JsonSerializer.Serialize(command, options);
+        Console.WriteLine("Received CreateEvent command: ");
+        Console.WriteLine(commandJson);
+
+        var identity = _appContext.Identity;
+
+        if (command.EventId == Guid.Empty || await _eventRepository.ExistsAsync(command.EventId))
+        {
+            throw new InvalidEventIdException(command.EventId);
+        }
+
+        if (!Enum.TryParse<OrganizerType>(command.OrganizerType, true, out var organizerType))
+        {
+            throw new ArgumentException($"Invalid OrganizerType value: {command.OrganizerType}");
+        }
+
+        if (!Enum.TryParse<Visibility>(command.Visibility, true, out var visibility))
+        {
+            throw new ArgumentException($"Invalid Visibility value: {command.Visibility}");
+        }
+
+        PaymentMethod? paymentMethod = null;
+        if (command.Settings != null)
+        {
+            if (!Enum.TryParse<PaymentMethod>(command.Settings.PaymentMethod, true, out var parsedPaymentMethod))
             {
-                throw new InvalidEventIdException(command.EventId);
+                throw new ArgumentException($"Invalid PaymentMethod value: {command.Settings.PaymentMethod}");
             }
-            
-            _eventValidator.ValidateName(command.Name);
-            _eventValidator.ValidateDescription(command.Description);
-            var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
-            var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
-            var now = _dateTimeProvider.Now;
-            _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
-            _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
-            var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, 
-                command.ApartmentNumber, command.City, command.ZipCode);
-            _eventValidator.ValidateMediaFiles(command.MediaFiles.ToList());
-            _eventValidator.ValidateCapacity(command.Capacity);
-            _eventValidator.ValidateFee(command.Fee);
-            var category = _eventValidator.ParseCategory(command.Category);
-            
-            var publishDate = now;
-            var state = State.Published;
-            if (command.PublishDate != string.Empty)
+            paymentMethod = parsedPaymentMethod;
+        }
+
+        _eventValidator.ValidateName(command.Name);
+        _eventValidator.ValidateDescription(command.Description);
+        var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
+        var endDate = _eventValidator.ParseDate(command.EndDate, "event_end_date");
+        var now = _dateTimeProvider.Now;
+        _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
+        _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
+        var address = new Address(command.BuildingName, command.Street, command.BuildingNumber,
+            command.ApartmentNumber, command.City, command.ZipCode, command.Country);
+        _eventValidator.ValidateCapacity(command.Capacity);
+        _eventValidator.ValidateFee(command.Fee);
+        var category = _eventValidator.ParseCategory(command.Category);
+
+        var publishDate = now;
+        var state = State.Published;
+        if (!string.IsNullOrEmpty(command.PublishDate))
+        {
+            publishDate = _eventValidator.ParseDate(command.PublishDate, "event_publish_date");
+            _eventValidator.ValidateDates(now, publishDate, "now", "event_publish_date");
+            _eventValidator.ValidateDates(publishDate, startDate, "event_publish_date", "event_start_date");
+            state = State.ToBePublished;
+        }
+
+        Organizer organizer;
+        if (organizerType == OrganizerType.Organization)
+        {
+            if (command.OrganizationId == null)
             {
-                publishDate = _eventValidator.ParseDate(command.PublishDate, "event_publish_date");
-                _eventValidator.ValidateDates(now, publishDate, "now", "event_publish_date");
-                _eventValidator.ValidateDates(publishDate, startDate, "event_publish_date", "event_start_date");
-                state = State.ToBePublished;
+                throw new ArgumentNullException(nameof(command.OrganizationId), "OrganizationId cannot be null for Organization-type events.");
             }
-            
-            var organization = await _organizationsServiceClient.GetAsync(command.OrganizationId, command.RootOrganizationId);
+
+            var organization = await _organizationsServiceClient.GetAsync(command.OrganizationId.Value);
             if (organization == null)
             {
-                throw new OrganizationNotFoundException(command.OrganizationId);
+                throw new OrganizationNotFoundException(command.OrganizationId.Value);
             }
-            
+
             if (!organization.Organizers.Contains(command.OrganizerId))
             {
-                throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId);
+                throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId.Value);
             }
-            
-            var organizer = new Organizer(command.OrganizerId, identity.Name, identity.Email, command.OrganizationId, organization.Name);
-            var @event = Event.Create(command.EventId, command.Name, command.Description, startDate, endDate, 
-                address, command.MediaFiles, command.Capacity, command.Fee, category, state, publishDate, organizer, now);
-            
-            await _eventRepository.AddAsync(@event);
-            await _messageBroker.PublishAsync(new EventCreated(@event.Id, @event.Organizer.Id, @event.MediaFiles));
+
+            organizer = new Organizer(command.OrganizationId.Value, OrganizerType.Organization, organizationId: command.OrganizationId.Value);
         }
+        else
+        {
+            organizer = new Organizer(command.OrganizerId, OrganizerType.User, userId: command.OrganizerId);
+        }
+
+        var settings = command.Settings != null
+            ? new EventSettings
+            {
+                RequiresApproval = command.Settings.RequiresApproval,
+                IsOnlineEvent = command.Settings.IsOnlineEvent,
+                IsPrivate = command.Settings.IsPrivate,
+                RequiresRSVP = command.Settings.RequiresRSVP,
+                AllowsGuests = command.Settings.AllowsGuests,
+                ShowAttendeesPublicly = command.Settings.ShowAttendeesPublicly,
+                SendReminders = command.Settings.SendReminders,
+                ReminderDaysBefore = command.Settings.ReminderDaysBefore,
+                EnableChat = command.Settings.EnableChat,
+                AllowComments = command.Settings.AllowComments,
+                RequiresPayment = command.Settings.RequiresPayment,
+                PaymentMethod = paymentMethod ?? PaymentMethod.Offline,  // Use the parsed PaymentMethod
+                PaymentReceiverDetails = command.Settings.PaymentReceiverDetails,
+                PaymentGateway = command.Settings.PaymentGateway,
+                IssueTickets = command.Settings.IssueTickets,
+                MaxTicketsPerPerson = command.Settings.MaxTicketsPerPerson,
+                TicketPrice = command.Settings.TicketPrice,
+                RecordEvent = command.Settings.RecordEvent,
+                CustomTermsAndConditions = command.Settings.CustomTermsAndConditions,
+                CustomFields = command.Settings.CustomFields
+            }
+            : new EventSettings(); // or set to null if EventSettings can be optional
+
+        var @event = Event.Create(
+            command.EventId,
+            command.Name,
+            command.Description,
+            organizer,
+            startDate,
+            endDate,
+            address,
+            command.MediaFilesUrl.ToList(),
+            command.BannerUrl,
+            command.Capacity,
+            command.Fee,
+            category,
+            state,
+            publishDate,
+            now,
+            visibility,
+            settings);
+
+        await _eventRepository.AddAsync(@event);
+        await _messageBroker.PublishAsync(new EventCreated(
+            @event.Id,
+            @event.Organizer.OrganizerType,
+            @event.Organizer.Id,
+            @event.MediaFiles));
     }
+    catch (ArgumentException argEx)
+    {
+        Console.WriteLine($"Validation error: {argEx.Message}");
+        throw;  // Re-throw to be handled by middleware
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Unhandled exception: {ex.Message}");
+        throw;  // Re-throw to be handled by middleware
+    }
+}
+    }
+
 }

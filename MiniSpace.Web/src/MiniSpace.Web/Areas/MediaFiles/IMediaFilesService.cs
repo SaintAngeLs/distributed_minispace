@@ -18,7 +18,15 @@ namespace MiniSpace.Web.Areas.MediaFiles
             string fileName,
             string fileContentType, 
             byte[] fileData);
-
+        
+        Task<HttpResponse<GeneralFileUploadResponseDto>> UploadFileAsync(
+            Guid sourceId, 
+            string sourceType, 
+            Guid uploaderId, 
+            string fileName,
+            string fileContentType, 
+            byte[] fileData);
+            
         public Task<HttpResponse<FileUploadResponseDto>> UploadOrganizationImageAsync(
             Guid organizationId, 
             string sourceType, 
@@ -27,5 +35,7 @@ namespace MiniSpace.Web.Areas.MediaFiles
             string fileContentType, 
             byte[] fileData);
         public Task DeleteMediaFileAsync(string fileUrl);
+
+        
     }
 }

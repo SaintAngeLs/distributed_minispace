@@ -1,0 +1,125 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/reports",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reports/{reportId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports/{reportId}",
+        "UpstreamHttpMethod": [ "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reports/search",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports/search",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reports/{reportId}/cancel",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports/{reportId}/cancel",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reports/{reportId}/start-review",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports/{reportId}/start-review",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reports/{reportId}/resolve",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports/{reportId}/resolve",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reports/{reportId}/reject",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports/{reportId}/reject",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/reports/students/{studentId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5005
+          }
+        ],
+        "UpstreamPathTemplate": "/reports/students/{studentId}",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      }
+    ]
+  }
+  

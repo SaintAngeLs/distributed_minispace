@@ -58,16 +58,21 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 }
 
                 var newOrganization = new Organization(
-                    command.OrganizationId, 
-                    command.Name, 
-                    command.Description, 
-                    command.Settings, 
-                    command.OwnerId, 
-                    command.BannerUrl, 
+                    command.OrganizationId,
+                    command.Name,
+                    command.Description,
+                    command.Settings,
+                    command.OwnerId,
+                    command.BannerUrl,
                     command.ImageUrl,
                     command.ParentId,
-                    null,
-                    command.DefaultRoleName
+                    command.DefaultRoleName,
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email,
+                    null // Sub-organizations, initialized later if needed
                 );
 
                 parent.AddSubOrganization(newOrganization);
@@ -87,14 +92,26 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     throw new UnauthorizedAccessException("User does not have permission to update the organization.");
                 }
 
-                existingOrganization.UpdateDetails(command.Name, command.Description, command.Settings, command.BannerUrl, command.ImageUrl);
+                existingOrganization.UpdateDetails(
+                    command.Name, 
+                    command.Description, 
+                    command.Settings, 
+                    command.BannerUrl, 
+                    command.ImageUrl,
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email
+                );
+
                 existingOrganization.UpdateDefaultRole(command.DefaultRoleName);
                 await _organizationRepository.UpdateAsync(existingOrganization);
             }
 
             await _messageBroker.PublishAsync(new OrganizationUpserted(
-                command.OrganizationId, 
-                existingOrganization != null, 
+                command.OrganizationId,
+                existingOrganization != null,
                 DateTime.UtcNow));
         }
     }

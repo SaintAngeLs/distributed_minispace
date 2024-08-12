@@ -1,0 +1,80 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/students",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5007
+          }
+        ],
+        "UpstreamPathTemplate": "/students",
+        "UpstreamHttpMethod": [ "GET", "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/students/{studentId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5007
+          }
+        ],
+        "UpstreamPathTemplate": "/students/{studentId}",
+        "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/students/{studentId}/settings",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5007
+          }
+        ],
+        "UpstreamPathTemplate": "/students/{studentId}/settings",
+        "UpstreamHttpMethod": [ "GET", "PUT" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/students/{studentId}/gallery",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5007
+          }
+        ],
+        "UpstreamPathTemplate": "/students/{studentId}/gallery",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/students/{studentId}/notifications",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5007
+          }
+        ],
+        "UpstreamPathTemplate": "/students/{studentId}/notifications",
+        "UpstreamHttpMethod": [ "GET", "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      }
+    ]
+  }
+  

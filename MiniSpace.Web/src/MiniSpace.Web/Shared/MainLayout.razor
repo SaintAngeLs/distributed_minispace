@@ -82,12 +82,11 @@
                 <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
                 <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
                 <MudNavGroup Title="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
-                    <MudNavLink Href="events/follow" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
+                    <MudNavLink Href="events/following" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
                     <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
-                    @if (IdentityService.GetCurrentUserRole() == "organizer")
-                    {
-                        <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
-                    }
+                    <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
+                    <MudNavLink Href="events/my-events" Icon="@Icons.Material.Filled.Assignment">My events</MudNavLink>
+                    <MudNavLink Href="events/recommended-events" Icon="@Icons.Material.Filled.Assignment">Recommended Events</MudNavLink>
                 </MudNavGroup>
                 <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>

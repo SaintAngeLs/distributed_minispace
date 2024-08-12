@@ -9,7 +9,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
     {
         private const long MaxFileSize = 5_000_000;
 
-        private readonly Dictionary<string, string> _mimeTypes = new Dictionary<string, string>()
+         private readonly Dictionary<string, string> _mimeTypes = new Dictionary<string, string>()
         {
             { "FFD8FFDB", "image/jpeg" },
             { "FFD8FFE0", "image/jpeg" },
@@ -23,8 +23,15 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
             { "52494646", "image/webp" },
             { "57454250", "image/webp" },
             { "00000100", "image/ico" },
-            { "00000200", "image/ico" }
+            { "00000200", "image/ico" },
+            { "25504446", "application/pdf" }, 
+            { "504B0304", "application/zip" }, 
+            { "00000018", "video/mp4" },
+            { "00000020", "video/mp4" }, 
+            { "1A45DFA3", "video/webm" },
+            { "000001BA", "video/mpeg" }, 
         };
+
 
         public void ValidateFileSize(long size)
         {
@@ -44,7 +51,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 {
                     if (AreMimeTypesCompatible(extendedMimeType, contentType))
                     {
-                        return; // Matched with 8-byte signature
+                        return; 
                     }
                 }
             }

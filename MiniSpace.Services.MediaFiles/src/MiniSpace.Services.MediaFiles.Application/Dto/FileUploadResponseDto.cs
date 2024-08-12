@@ -2,11 +2,15 @@
 {
     public class FileUploadResponseDto
     {
-        public Guid FileId { get; set; }
+        public Guid Id { get; }
+        public string OriginalUrl { get; }
+        public string ProcessedUrl { get; }
 
-        public FileUploadResponseDto(Guid fileId)
+        public FileUploadResponseDto(Guid id, string originalUrl, string processedUrl)
         {
-            FileId = fileId;
+            Id = id;
+            OriginalUrl = originalUrl;
+            ProcessedUrl = processedUrl;
         }
     }
 }

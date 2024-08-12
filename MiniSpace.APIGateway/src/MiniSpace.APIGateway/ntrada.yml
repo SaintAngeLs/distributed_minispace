@@ -73,8 +73,6 @@ modules:
         use: return_value
         returnValue: Welcome to MiniSpace API!
           
-    
-
   identity:
     path: /identity
     routes:
@@ -342,7 +340,7 @@ modules:
       - upstream: /{studentId}/events
         method: GET
         use: downstream
-        downstream: students-service/students/{studentId}/events
+        downstream: students-service/students/{studentId}/events   
         auth: true
 
       - upstream: /{studentId}/notifications
@@ -428,7 +426,28 @@ modules:
         method: GET
         use: downstream
         downstream: events-service/events/{eventId}
+        auth: true
+
+      - upstream: /paginated
+        method: GET
+        use: downstream
+        downstream: events-service/events/paginated
+
+      - upstream: /organizer/{organizerId}/paginated
+        method: GET
+        use: downstream
+        downstream: events-service/events/organizer/{organizerId}/paginated
+        bind:
+          - organizerId:{organizerId}
         
+      - upstream: /users/{userId}
+        method: GET
+        use: downstream
+        downstream: events-service/events/users/{userId}  
+        auth: true
+        bind:
+          - userId:{userId}
+
       - upstream: /student/{studentId}
         method: GET
         use: downstream
@@ -441,8 +460,14 @@ modules:
         downstream: events-service/events/{eventId}
         auth: true
 
+      # - upstream: /search
+      #   method: POST
+      #   use: downstream
+      #   downstream: events-service/events/search
+      # tesotwy with  get
+
       - upstream: /search
-        method: POST
+        method: GET
         use: downstream
         downstream: events-service/events/search
         
@@ -800,10 +825,18 @@ modules:
         use: downstream
         downstream: mediafiles-service/media-files
         auth: true
-        requestSizeLimit: 50_000_000  # Example: Limit to 50 MB
+        requestSizeLimit: 50_000_000  
         formLimits:
-          multipartBodyLengthLimit: 50_000_000  # Optional: Same as above to ensure large files are allowed
+          multipartBodyLengthLimit: 50_000_000  
 
+      - upstream: /files
+        method: POST
+        use: downstream
+        downstream: mediafiles-service/files
+        auth: true
+        requestSizeLimit: 50_000_000  
+        formLimits:
+          multipartBodyLengthLimit: 50_000_000  
 
       - upstream: /{mediaFileId}
         method: GET
@@ -869,6 +902,14 @@ modules:
         auth: true
         bind:
           - userId: {userId}
+
+      - upstream: /{organizationId}/follow
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/follow
+        auth: true
+        bind:
+          - organizationId: {organizationId}
       
       - upstream: /{organizationId}/details/gallery-users
         method: GET
@@ -884,6 +925,11 @@ modules:
         auth: true
         bind:
           - organizationId: {organizationId}
+        
+      - upstream: /paginated
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/paginated
 
       - upstream: /{organizationId}
         method: DELETE
@@ -902,6 +948,40 @@ modules:
         use: downstream
         downstream: organizations-service/organizations/{organizationId}/roles
         auth: true
+
+      - upstream: /{organizationId}/follow
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/follow
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+
+      - upstream: /{organizationId}/leave
+        method: POST
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/leave
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+
+      - upstream: /{organizationId}/requests/{requestId}/accept
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/requests/{requestId}/accept
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+          - requestId: {requestId}
+
+      - upstream: /{organizationId}/requests/{requestId}/reject
+        method: PUT
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/requests/{requestId}/reject
+        auth: true
+        bind:
+          - organizationId: {organizationId}
+          - requestId: {requestId}
 
       - upstream: /{organizationId}/roles/{roleId}/permissions
         method: PUT

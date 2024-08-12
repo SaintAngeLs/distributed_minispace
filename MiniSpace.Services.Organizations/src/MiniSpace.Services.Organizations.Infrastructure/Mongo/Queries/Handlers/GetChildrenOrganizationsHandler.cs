@@ -1,35 +1,65 @@
 ﻿using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Application.Queries;
-using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Organizations.Core.Entities;
+using MiniSpace.Services.Organizations.Core.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
-    [ExcludeFromCodeCoverage]
-    public class GetChildrenOrganizationsHandler : IQueryHandler<GetChildrenOrganizations, IEnumerable<OrganizationDto>>
+    public class GetChildrenOrganizationsHandler : IQueryHandler<GetChildrenOrganizations, MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>>
     {
-        private readonly IMongoRepository<OrganizationDocument, Guid> _repository;
+        private readonly IOrganizationRepository _organizationRepository;
 
-        public GetChildrenOrganizationsHandler(IMongoRepository<OrganizationDocument, Guid> repository)
-            => _repository = repository;
-
-        public async Task<IEnumerable<OrganizationDto>> HandleAsync(GetChildrenOrganizations query, CancellationToken cancellationToken)
+        public GetChildrenOrganizationsHandler(IOrganizationRepository organizationRepository)
         {
-            var root = await _repository.GetAsync(o => o.Id == query.RootId);
-            if (root == null)
+            _organizationRepository = organizationRepository;
+        }
+
+        public async Task<MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>> HandleAsync(GetChildrenOrganizations query, CancellationToken cancellationToken)
+        {
+            // Fetch the root organization
+            var rootOrganization = await _organizationRepository.GetAsync(query.OrganizationId);
+            if (rootOrganization == null)
             {
-                return Enumerable.Empty<OrganizationDto>();
+                return MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>.Empty(query.Page, query.PageSize);
             }
 
-            var parent = root.AsEntity().GetSubOrganization(query.OrganizationId);
-            return parent == null ? Enumerable.Empty<OrganizationDto>() 
-                : parent.SubOrganizations.Select(o => new OrganizationDto(o));
+            // Recursively fetch all sub-organizations
+            var childOrganizations = GetChildOrganizations(rootOrganization);
+
+            // Convert to DTOs
+            var childOrganizationDtos = childOrganizations.Select(o => new OrganizationDto(o)).ToList();
+
+            // Apply pagination
+            var totalItems = childOrganizationDtos.Count;
+            var paginatedOrganizations = childOrganizationDtos
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToList();
+
+            return new MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>(paginatedOrganizations, query.Page, query.PageSize, totalItems);
+        }
+
+        private IEnumerable<Organization> GetChildOrganizations(Organization parent)
+        {
+            var organizations = new List<Organization>();
+
+            if (parent.SubOrganizations != null && parent.SubOrganizations.Any())
+            {
+                organizations.AddRange(parent.SubOrganizations);
+
+                foreach (var subOrganization in parent.SubOrganizations)
+                {
+                    organizations.AddRange(GetChildOrganizations(subOrganization));
+                }
+            }
+
+            return organizations;
         }
     }
 }

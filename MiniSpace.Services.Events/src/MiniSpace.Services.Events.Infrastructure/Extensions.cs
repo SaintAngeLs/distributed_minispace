@@ -62,7 +62,6 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddSingleton<IEventValidator, EventValidator>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
@@ -89,7 +88,6 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<EventDocument, Guid>("events")
-                .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
                 .AddSecurity();
         }
@@ -100,7 +98,6 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .UseSwaggerDocs()
                 .UseJaeger()
                 .UseConvey()
-                //.UseMongo()
                 .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseAuthentication()
@@ -115,7 +112,8 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .SubscribeCommand<CancelSignUpToEvent>()
                 .SubscribeCommand<AddEventParticipant>()
                 .SubscribeCommand<RemoveEventParticipant>()
-                .SubscribeEvent<StudentCreated>();
+                .SubscribeEvent<MediaFileDeleted>()
+                .SubscribeEvent<EventImageUploaded>();
 
             return app;
         }

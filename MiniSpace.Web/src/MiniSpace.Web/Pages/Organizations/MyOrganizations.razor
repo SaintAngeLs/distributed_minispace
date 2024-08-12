@@ -1,9 +1,13 @@
 @page "/organizations/my"
-@inject IOrganizationsService OrganizationService
+@inject IOrganizationsService OrganizationsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @inject IIdentityService IdentityService
 @using MudBlazor
+@using MiniSpace.Web.DTO.Organizations
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
 
 <AuthWrapper>
     <MudText Typo="Typo.h5" GutterBottom="true">My Organizations</MudText>
@@ -11,6 +15,9 @@
     <MudPaper Elevation="1" Class="pa-4">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="CreateOrganization">
             Create Organization
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.AccountTree" OnClick="ViewTree">
+            View Tree
         </MudButton>
 
         <MudGrid Class="mt-4">
@@ -62,7 +69,10 @@
             if (IdentityService.IsAuthenticated)
             {
                 var userId = IdentityService.GetCurrentUserId();
-                _organizations = (await OrganizationService.GetRootOrganizationsAsync()).ToList();
+                var userOrganizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
+
+                // Flatten the hierarchy of organizations
+                _organizations = FlattenOrganizations(userOrganizations).ToList();
             }
             else
             {
@@ -78,6 +88,30 @@
         _isLoading = false;
     }
 
+    private IEnumerable<OrganizationDto> FlattenOrganizations(IEnumerable<UserOrganizationsDto> userOrganizations)
+    {
+        foreach (var userOrg in userOrganizations)
+        {
+            yield return new OrganizationDto
+            {
+                Id = userOrg.Id,
+                Name = userOrg.Name,
+                Description = userOrg.Description,
+                OwnerId = userOrg.OwnerId,
+                ImageUrl = userOrg.ImageUrl,
+                BannerUrl = userOrg.BannerUrl
+            };
+
+            if (userOrg.SubOrganizations != null)
+            {
+                foreach (var subOrg in FlattenOrganizations(userOrg.SubOrganizations))
+                {
+                    yield return subOrg;
+                }
+            }
+        }
+    }
+
     private void CreateOrganization()
     {
         NavigationManager.NavigateTo("/organizations/create");
@@ -86,5 +120,10 @@
     private void NavigateToOrganization(Guid organizationId)
     {
         NavigationManager.NavigateTo($"/organizations/details/{organizationId}");
+    }
+
+    private void ViewTree()
+    {
+        NavigationManager.NavigateTo("/organizations/tree");
     }
 }

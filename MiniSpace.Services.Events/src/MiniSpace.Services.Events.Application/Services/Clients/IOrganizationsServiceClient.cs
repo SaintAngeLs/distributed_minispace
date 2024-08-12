@@ -7,7 +7,7 @@ namespace MiniSpace.Services.Events.Application.Services.Clients
 {
     public interface IOrganizationsServiceClient
     {
-        Task<OrganizationDto> GetAsync(Guid organizationId, Guid rootId);
-        Task<IEnumerable<Guid>> GetAllChildrenOrganizations(Guid organizationId, Guid rootId);
+        Task<OrganizationDto> GetAsync(Guid organizationId);
+        Task<IEnumerable<Guid>> GetAllChildrenOrganizations(Guid organizationId);
     }
 }

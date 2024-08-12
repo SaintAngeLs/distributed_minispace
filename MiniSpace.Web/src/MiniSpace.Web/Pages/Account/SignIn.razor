@@ -212,7 +212,7 @@
         catch (Exception ex)
         {
             showError = true;
-            errorMessage = $"Error during sign in: {ex.Message}";
+            errorMessage = $"An unexpected error occurred: {ex.Message} or User not found in our database.";
             StateHasChanged();
         }
     }

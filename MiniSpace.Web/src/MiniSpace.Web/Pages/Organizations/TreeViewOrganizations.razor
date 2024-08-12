@@ -1,0 +1,129 @@
+@page "/organizations/tree"
+@inject IOrganizationsService OrganizationsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IIdentityService IdentityService
+@using MudBlazor
+@using MiniSpace.Web.DTO.Organizations
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
+
+<AuthWrapper>
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.h5" GutterBottom="true">Organization Tree View</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.List" OnClick="NavigateToAllOrganizations">
+            View All Organizations
+        </MudButton>
+    </MudStack>
+
+    <MudPaper Elevation="1" Class="pa-4 mt-2">
+        @if (_isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        }
+        else if (_userOrganizations != null && _userOrganizations.Any())
+        {
+            @foreach (var org in _userOrganizations)
+            {
+                <MudExpansionPanel Text="@org.Name" Expanded="@org.IsExpanded" OnExpandChanged="@(EventCallback.Factory.Create<bool>(this, async (expanded) => await OnExpandChanged(expanded, org)))">
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Class="ma-2">
+                            <MudCardMedia Image="@org.ImageUrl" Height="140" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.h6">@org.Name</MudText>
+                                <MudText Typo="Typo.body2">@org.Description</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Outlined" OnClick="() => NavigateToOrganization(org.Id)">
+                                    View
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                    @if (org.SubOrganizations != null && org.SubOrganizations.Any())
+                    {
+                        <MudList>
+                            @foreach (var subOrg in org.SubOrganizations)
+                            {
+                                <MudListItem>
+                                    <MudExpansionPanel Text="@subOrg.Name" Expanded="@subOrg.IsExpanded" OnExpandChanged="@(EventCallback.Factory.Create<bool>(this, async (expanded) => await OnExpandChanged(expanded, subOrg)))">
+                                        <MudCard Class="ma-2">
+                                            <MudCardMedia Image="@subOrg.ImageUrl" Height="140" />
+                                            <MudCardContent>
+                                                <MudText Typo="Typo.h6">@subOrg.Name</MudText>
+                                                <MudText Typo="Typo.body2">@subOrg.Description</MudText>
+                                            </MudCardContent>
+                                            <MudCardActions>
+                                                <MudButton Variant="Variant.Outlined" OnClick="() => NavigateToOrganization(subOrg.Id)">
+                                                    View
+                                                </MudButton>
+                                            </MudCardActions>
+                                        </MudCard>
+                                    </MudExpansionPanel>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                </MudExpansionPanel>
+            }
+        }
+        else
+        {
+            <MudText>No organizations found.</MudText>
+        }
+    </MudPaper>
+</AuthWrapper>
+
+@code {
+    private bool _isLoading = true;
+    private List<UserOrganizationsDto> _userOrganizations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                var userId = IdentityService.GetCurrentUserId();
+                _userOrganizations = (await OrganizationsService.GetUserOrganizationsAsync(userId)).ToList();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load organizations: {ex.Message}", Severity.Error);
+        }
+
+        _isLoading = false;
+    }
+
+    private async Task OnExpandChanged(bool expanded, UserOrganizationsDto organization)
+    {
+        organization.IsExpanded = expanded;
+
+        if (expanded && !organization.SubOrganizations.Any() && organization.HasSubOrganizations)
+        {
+            var allChildren = await OrganizationsService.GetAllChildrenOrganizationsAsync(organization.Id);
+            organization.SubOrganizations = allChildren.Select(id => new UserOrganizationsDto { Id = id }).ToList();
+            StateHasChanged(); 
+        }
+    }
+
+    private void NavigateToOrganization(Guid organizationId)
+    {
+        NavigationManager.NavigateTo($"/organizations/details/{organizationId}");
+    }
+
+    private void NavigateToAllOrganizations()
+    {
+        NavigationManager.NavigateTo("/organizations/my");
+    }
+}

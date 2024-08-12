@@ -28,7 +28,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.MediaFiles.Application;
 using MiniSpace.Services.MediaFiles.Application.Commands;
-using MiniSpace.Services.MediaFiles.Application.Events.External;
+
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Contexts;
@@ -117,11 +117,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<UploadMediaFile>()
                 .SubscribeCommand<DeleteMediaFile>()
-                .SubscribeCommand<CleanupUnassociatedFiles>()
-                .SubscribeEvent<StudentCreated>()
-                // .SubscribeEvent<StudentUpdated>()
-                .SubscribeEvent<PostCreated>()
-                .SubscribeEvent<EventCreated>();
+                .SubscribeCommand<CleanupUnassociatedFiles>();
 
             return app;
         }

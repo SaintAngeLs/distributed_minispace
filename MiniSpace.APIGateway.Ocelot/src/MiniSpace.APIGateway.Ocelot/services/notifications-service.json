@@ -1,0 +1,77 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/notifications",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5006
+          }
+        ],
+        "UpstreamPathTemplate": "/notifications",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/notifications/{userId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5006
+          }
+        ],
+        "UpstreamPathTemplate": "/notifications/{userId}",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/notifications/notification/{notificationId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5006
+          }
+        ],
+        "UpstreamPathTemplate": "/notifications/notification/{notificationId}",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/notifications/notification/{userId}/{notificationId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5006
+          }
+        ],
+        "UpstreamPathTemplate": "/notifications/notification/{userId}/{notificationId}",
+        "UpstreamHttpMethod": [ "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/notificationHub/negotiate",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5006
+          }
+        ],
+        "UpstreamPathTemplate": "/notificationHub/negotiate",
+        "UpstreamHttpMethod": [ "POST" ]
+      }
+    ]
+  }
+  

@@ -1,0 +1,77 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/events",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5008
+          }
+        ],
+        "UpstreamPathTemplate": "/events",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/events/{eventId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5008
+          }
+        ],
+        "UpstreamPathTemplate": "/events/{eventId}",
+        "UpstreamHttpMethod": [ "PUT", "GET", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/events/student/{studentId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5008
+          }
+        ],
+        "UpstreamPathTemplate": "/events/student/{studentId}",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/events/search",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5008
+          }
+        ],
+        "UpstreamPathTemplate": "/events/search",
+        "UpstreamHttpMethod": [ "POST" ]
+      },
+      {
+        "DownstreamPathTemplate": "/events/{eventId}/participants",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5008
+          }
+        ],
+        "UpstreamPathTemplate": "/events/{eventId}/participants",
+        "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      }
+    ]
+  }
+  

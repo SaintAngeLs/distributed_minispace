@@ -102,7 +102,7 @@
             StateHasChanged();
             return;
         }
-        var ev = await EventsService.GetEventAsync(post.EventId, IdentityService.IsAuthenticated);
+        var ev = await EventsService.GetEventAsync(post.EventId);
         if (ev == null)
         {
             errorMessage = "Event above reported comment not found! Probably has been deleted!";
@@ -110,7 +110,7 @@
             StateHasChanged();
             return;
         }
-        var authorName = post.OrganizerId == ev.Organizer.Id ? ev.Organizer.Name : "Author unknown";
+        var authorName = "Author unknown";
         NavigationManager.NavigateTo($"/events/{ev.Id}/posts/{post.Id}/author/{authorName}");
     }
 }

@@ -1,0 +1,65 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/posts",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5013
+          }
+        ],
+        "UpstreamPathTemplate": "/posts",
+        "UpstreamHttpMethod": [ "POST", "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/posts/search",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5013
+          }
+        ],
+        "UpstreamPathTemplate": "/posts/search",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/posts/{postId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5013
+          }
+        ],
+        "UpstreamPathTemplate": "/posts/{postId}",
+        "UpstreamHttpMethod": [ "PUT", "GET", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/posts/{postId}/state/{state}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5013
+          }
+        ],
+        "UpstreamPathTemplate": "/posts/{postId}/state/{state}",
+        "UpstreamHttpMethod": [ "PUT" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      }
+    ]
+  }
+  
