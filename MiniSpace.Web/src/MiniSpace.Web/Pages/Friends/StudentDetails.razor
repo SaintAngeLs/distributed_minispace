@@ -32,17 +32,23 @@
     {
         <div class="card">
             <div class="banner">
-                @if (IsValidImageUrl(student.BannerUrl))
+                @if (ShouldDisplayBannerImage(student.UserSettings.BannerImageVisibility))
                 {
-                    <img src="@student.BannerUrl" alt="Banner Image" class="banner-image" />
-                }
-                else
-                {
-                    <div class="banner-placeholder"></div>
+                    @if (IsValidImageUrl(student.BannerUrl))
+                    {
+                        <img src="@student.BannerUrl" alt="Banner Image" class="banner-image" />
+                    }
+                    else
+                    {
+                        <div class="banner-placeholder"></div>
+                    }
                 }
             </div>
             <div class="card-header">
-                <img src="@GetProfileImageUrl(student.ProfileImageUrl)" alt="Profile Image" class="profile-image" />
+                @if (ShouldDisplayProfileImage(student.UserSettings.ProfileImageVisibility))
+                {
+                    <img src="@GetProfileImageUrl(student.ProfileImageUrl)" alt="Profile Image" class="profile-image" />
+                }
                 <h3>@student.FirstName @student.LastName</h3>
                 <p>@student.Email</p>
             </div>
@@ -83,30 +89,33 @@
                 </MudButton>
             }
         </div>
-        
-        <h4>Gallery</h4>
-        <MudItem xs="12">
-            <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
-            <MudGrid class="spotlight-group" Spacing="3">
-                @if (student.GalleryOfImageUrls != null && student.GalleryOfImageUrls.Any(img => IsValidImageUrl(img.ImageUrl)))
-                {
-                    @foreach (var galleryImage in student.GalleryOfImageUrls.Where(img => IsValidImageUrl(img.ImageUrl)))
+
+        @if (ShouldDisplayGallery(student.UserSettings.GalleryVisibility))
+        {
+            <h4>Gallery</h4>
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6" GutterBottom="true">Gallery Images</MudText>
+                <MudGrid class="spotlight-group" Spacing="3">
+                    @if (student.GalleryOfImageUrls != null && student.GalleryOfImageUrls.Any(img => IsValidImageUrl(img.ImageUrl)))
                     {
-                        <MudItem xs="12" sm="6" md="4">
-                            <a class="spotlight" href="@galleryImage.ImageUrl">
-                                <MudCard>
-                                    <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
-                                </MudCard>
-                            </a>
-                        </MudItem>
+                        @foreach (var galleryImage in student.GalleryOfImageUrls.Where(img => IsValidImageUrl(img.ImageUrl)))
+                        {
+                            <MudItem xs="12" sm="4" md="3">
+                                <a class="spotlight" href="@galleryImage.ImageUrl">
+                                    <MudCard>
+                                        <MudCardMedia Image="@galleryImage.ImageUrl" Alt="Gallery image" />
+                                    </MudCard>
+                                </a>
+                            </MudItem>
+                        }
                     }
-                }
-                else
-                {
-                    <MudText>No gallery images available.</MudText>
-                }
-            </MudGrid>
-        </MudItem>
+                    else
+                    {
+                        <MudText>No gallery images available.</MudText>
+                    }
+                </MudGrid>
+            </MudItem>
+        }
     }
 </div> 
 </AuthWrapper>
@@ -203,6 +212,12 @@
                 studentNotFound = true;
                 return;
             }
+             var studentJson = System.Text.Json.JsonSerializer.Serialize(student, new System.Text.Json.JsonSerializerOptions
+            {
+                WriteIndented = true // This will format the JSON output with indents for readability
+            });
+            Console.WriteLine("Student Object JSON:");
+            Console.WriteLine(studentJson);
         }
         else
         {
@@ -242,5 +257,27 @@
                 Width = "700px", Height = "350px", Resizable = true, Draggable = true,
                 AutoFocusFirstElement = false
             });
+    }
+
+    private bool ShouldDisplayGallery(Visibility galleryVisibility)
+    {
+        return galleryVisibility == Visibility.Everyone || (galleryVisibility == Visibility.Connections && IsFriend());
+    }
+
+    private bool ShouldDisplayProfileImage(Visibility profileImageVisibility)
+    {
+        return profileImageVisibility == Visibility.Everyone || (profileImageVisibility == Visibility.Connections && IsFriend());
+    }
+
+    private bool ShouldDisplayBannerImage(Visibility bannerImageVisibility)
+    {
+        return bannerImageVisibility == Visibility.Everyone || (bannerImageVisibility == Visibility.Connections && IsFriend());
+    }
+
+    private bool IsFriend()
+    {
+        // Implement logic to determine if the current user is a friend
+        // For now, returning true for demonstration purposes
+        return true;
     }
 }
