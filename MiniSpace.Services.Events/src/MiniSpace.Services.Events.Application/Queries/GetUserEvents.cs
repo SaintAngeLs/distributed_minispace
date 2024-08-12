@@ -8,9 +8,9 @@ using MiniSpace.Services.Events.Application.Wrappers;
 namespace MiniSpace.Services.Events.Application.Queries
 {
     [ExcludeFromCodeCoverage]
-    public class GetStudentEvents : IQuery<PagedResponse<IEnumerable<EventDto>>>
+    public class GetUserEvents : IQuery<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public string EngagementType { get; set; }
         public int Page { get; set; }
         public int NumberOfResults { get; set; }
