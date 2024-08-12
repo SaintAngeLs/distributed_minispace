@@ -2,9 +2,11 @@
 @inject IEventsService EventsService
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 @using MudBlazor
 @using MiniSpace.Web.DTO.Events
 @using System.Threading.Tasks
+@using MiniSpace.Web.Areas.Events.CommandsDto
 
 <AuthWrapper>
     <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
@@ -25,11 +27,23 @@
                                         <MudText Typo="Typo.body2" Color="Color.Secondary">@eventDto.Category</MudText>
                                         <MudText Typo="Typo.body2">Starts: @eventDto.StartDate.ToString("MMMM dd, yyyy")</MudText>
                                         <MudText Typo="Typo.body2">Ends: @eventDto.EndDate.ToString("MMMM dd, yyyy")</MudText>
+                                        <MudText Typo="Typo.body2">
+                                            <MudIcon Icon="@Icons.Material.Filled.HowToReg"  Style="font-size: 1rem;" />
+                                            Signed Up: @eventDto.SignedUpStudents
+                                        </MudText>
+                                        <MudText Typo="Typo.body2">
+                                            <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"  Style="font-size: 1rem;" />
+                                            Interested: @eventDto.InterestedStudents
+                                        </MudText>
                                     </MudCardContent>
                                     <MudCardActions>
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
                                             <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" /> 
                                             View Details
+                                        </MudButton>
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                                            <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" Style="font-size: 1rem;" />
+                                            Signed Up
                                         </MudButton>
                                     </MudCardActions>
                                 </MudCard>
@@ -57,11 +71,23 @@
                                         <MudText Typo="Typo.body2" Color="Color.Secondary">@eventDto.Category</MudText>
                                         <MudText Typo="Typo.body2">Starts: @eventDto.StartDate.ToString("MMMM dd, yyyy")</MudText>
                                         <MudText Typo="Typo.body2">Ends: @eventDto.EndDate.ToString("MMMM dd, yyyy")</MudText>
+                                        <MudText Typo="Typo.body2">
+                                            <MudIcon Icon="@Icons.Material.Filled.HowToReg"  Style="font-size: 1rem;" />
+                                            Signed Up: @eventDto.SignedUpStudents
+                                        </MudText>
+                                        <MudText Typo="Typo.body2">
+                                            <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"  Style="font-size: 1rem;" />
+                                            Interested: @eventDto.InterestedStudents
+                                        </MudText>
                                     </MudCardContent>
                                     <MudCardActions>
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
                                             <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" /> 
                                             View Details
+                                        </MudButton>
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                                            <MudIcon Icon="@Icons.Material.Filled.ThumbUpAlt" Style="font-size: 1rem;" />
+                                            Interested
                                         </MudButton>
                                     </MudCardActions>
                                 </MudCard>
@@ -121,6 +147,60 @@
     private void ViewEvent(Guid eventId)
     {
         NavigationManager.NavigateTo($"/events/event/{eventId}");
+    }
+
+    private async Task SignUpToEvent(Guid eventId)
+    {
+        if (!_isAuthenticated)
+        {
+            Snackbar.Add("Please sign in to sign up for events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new SignUpToEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.SignUpToEventAsync(command);
+            Snackbar.Add("Successfully signed up for the event.", Severity.Success);
+            await LoadUserEvents(); // Refresh events to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while signing up: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ShowInterestInEvent(Guid eventId)
+    {
+        if (!_isAuthenticated)
+        {
+            Snackbar.Add("Please sign in to show interest in events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new ShowInterestInEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.ShowInterestInEventAsync(command);
+            Snackbar.Add("Your interest in the event has been noted.", Severity.Info);
+            await LoadUserEvents(); // Refresh events to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while showing interest: {ex.Message}", Severity.Error);
+        }
     }
 
     private string GetBannerUrl(EventDto eventDto)

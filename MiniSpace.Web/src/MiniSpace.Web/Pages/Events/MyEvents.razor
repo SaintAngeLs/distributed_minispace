@@ -21,6 +21,14 @@
                             <MudText Typo="Typo.body2" Color="Color.Secondary">@eventDto.Category</MudText>
                             <MudText Typo="Typo.body2">Starts: @eventDto.StartDate.ToString("MMMM dd, yyyy")</MudText>
                             <MudText Typo="Typo.body2">Ends: @eventDto.EndDate.ToString("MMMM dd, yyyy")</MudText>
+                            <MudText Typo="Typo.body2">
+                                <MudIcon Icon="@Icons.Material.Filled.HowToReg"  Style="font-size: 1rem;" />
+                                Signed Up: @eventDto.SignedUpStudents
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"  Style="font-size: 1rem;" />
+                                Interested: @eventDto.InterestedStudents
+                            </MudText>
                         </MudCardContent>
                         <MudCardActions>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
