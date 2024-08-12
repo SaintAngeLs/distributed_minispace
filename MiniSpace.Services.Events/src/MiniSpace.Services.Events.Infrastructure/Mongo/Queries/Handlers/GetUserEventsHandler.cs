@@ -40,10 +40,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(Enumerable.Empty<EventDto>(), 1, query.NumberOfResults, 0);
             }
 
-            // Assuming EventEngagementType is an enum, ensure you have the correct using directive
+            int pageSize = query.NumberOfResults > 0 ? query.NumberOfResults : 10;
+
             var engagementType = _eventValidator.ParseEngagementType(query.EngagementType);
 
-            // Fetching events related to the user (treated as student for now)
             var studentEvents = await _studentsServiceClient.GetAsync(query.UserId);
             var studentEventIds = engagementType switch
             {
@@ -52,11 +52,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 _ => new List<Guid>()
             };
 
-            // Adjusting the call to BrowseStudentEventsAsync
             var result = await _eventRepository.BrowseStudentEventsAsync(query.Page, 
-                query.NumberOfResults, studentEventIds, Enumerable.Empty<string>(), "asc");
+                pageSize, studentEventIds, Enumerable.Empty<string>(), "asc");
 
-            // Corrected the type to pass the actual IEnumerable<EventDto> instead of IEnumerable<IEnumerable<EventDto>>
             return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(
                 result.events.Select(e => new EventDto(e, identity.Id)),
                 result.pageNumber,
