@@ -5,7 +5,7 @@ using MiniSpace.Services.Reactions.Core.Entities;
 
 namespace MiniSpace.Services.Reactions.Core.Repositories
 {
-    public interface IEventRepository
+    public interface IReactionsUserEventRepository
     {
         Task<bool> ExistsAsync(Guid id);
         Task AddAsync(Event @event);
