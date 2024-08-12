@@ -4,6 +4,7 @@ using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,6 +34,11 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateUserSettings command, CancellationToken cancellationToken = default)
         {
+            var commandJson = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Received UpdateUserSettings command:");
+            Console.WriteLine(commandJson);
+
+
             var student = await _studentRepository.GetAsync(command.StudentId);
             if (student == null)
             {
