@@ -201,6 +201,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     document.AvailableSettings.InterestsVisibility,
                     document.AvailableSettings.ContactEmailVisibility,
                     document.AvailableSettings.PhoneNumberVisibility,
+                    document.AvailableSettings.ProfileImageVisibility,  
+                    document.AvailableSettings.BannerImageVisibility, 
+                    document.AvailableSettings.GalleryVisibility,  
                     document.AvailableSettings.FrontendVersion,
                     document.AvailableSettings.PreferredLanguage
                 )
@@ -223,6 +226,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     InterestsVisibility = entity.AvailableSettings.InterestsVisibility,
                     ContactEmailVisibility = entity.AvailableSettings.ContactEmailVisibility,
                     PhoneNumberVisibility = entity.AvailableSettings.PhoneNumberVisibility,
+                    ProfileImageVisibility = entity.AvailableSettings.ProfileImageVisibility, 
+                    BannerImageVisibility = entity.AvailableSettings.BannerImageVisibility,   
+                    GalleryVisibility = entity.AvailableSettings.GalleryVisibility,           
                     FrontendVersion = entity.AvailableSettings.FrontendVersion,
                     PreferredLanguage = entity.AvailableSettings.PreferredLanguage
                 }

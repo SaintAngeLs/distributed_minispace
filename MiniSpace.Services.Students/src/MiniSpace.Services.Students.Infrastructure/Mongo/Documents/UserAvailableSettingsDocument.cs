@@ -16,6 +16,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public Visibility InterestsVisibility { get; set; }
         public Visibility ContactEmailVisibility { get; set; }
         public Visibility PhoneNumberVisibility { get; set; }
+        public Visibility ProfileImageVisibility { get; set; }
+        public Visibility BannerImageVisibility { get; set; }
+        public Visibility GalleryVisibility { get; set; }
         public FrontendVersion FrontendVersion { get; set; }
         public PreferredLanguage PreferredLanguage { get; set; }
     }
