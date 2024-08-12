@@ -4,7 +4,6 @@ using MiniSpace.Services.Students.Application.Services;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,7 +33,6 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateUserSettings command, CancellationToken cancellationToken = default)
         {
-   
             var student = await _studentRepository.GetAsync(command.StudentId);
             if (student == null)
             {
@@ -47,7 +45,6 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new UserSettingsNotFoundException(command.StudentId);
             }
 
-          
             var availableSettings = new UserAvailableSettings(
                 Enum.Parse<Visibility>(command.CreatedAtVisibility, true),
                 Enum.Parse<Visibility>(command.DateOfBirthVisibility, true),
@@ -59,6 +56,9 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 Enum.Parse<Visibility>(command.InterestsVisibility, true),
                 Enum.Parse<Visibility>(command.ContactEmailVisibility, true),
                 Enum.Parse<Visibility>(command.PhoneNumberVisibility, true),
+                Enum.Parse<Visibility>(command.ProfileImageVisibility, true),
+                Enum.Parse<Visibility>(command.BannerImageVisibility, true),
+                Enum.Parse<Visibility>(command.GalleryVisibility, true),
                 Enum.Parse<FrontendVersion>(command.FrontendVersion, true),
                 Enum.Parse<PreferredLanguage>(command.PreferredLanguage, true)
             );
@@ -68,7 +68,6 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
             var events = _eventMapper.MapAll(userSettings.Events);
             await _messageBroker.PublishAsync(events);
-            
         }
     }
 }

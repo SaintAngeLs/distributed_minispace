@@ -5,7 +5,7 @@ namespace MiniSpace.Services.Students.Application.Commands
 {
     public class UpdateUserSettings : ICommand
     {
-        public Guid StudentId { get; set;}
+        public Guid StudentId { get; set; }
         public string CreatedAtVisibility { get; set; }
         public string DateOfBirthVisibility { get; set; }
         public string InterestedInEventsVisibility { get; set; }
@@ -16,6 +16,9 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string InterestsVisibility { get; set; }
         public string ContactEmailVisibility { get; set; }
         public string PhoneNumberVisibility { get; set; }
+        public string ProfileImageVisibility { get; set; }
+        public string BannerImageVisibility { get; set; }
+        public string GalleryVisibility { get; set; }
         public string PreferredLanguage { get; set; }
         public string FrontendVersion { get; set; }
 
@@ -24,7 +27,8 @@ namespace MiniSpace.Services.Students.Application.Commands
                                   string educationVisibility, string workPositionVisibility, 
                                   string languagesVisibility, string interestsVisibility, 
                                   string contactEmailVisibility, string phoneNumberVisibility, 
-                                  string preferredLanguage, string frontendVersion)
+                                  string profileImageVisibility, string bannerImageVisibility, 
+                                  string galleryVisibility, string preferredLanguage, string frontendVersion)
         {
             StudentId = studentId;
             CreatedAtVisibility = createdAtVisibility;
@@ -37,6 +41,9 @@ namespace MiniSpace.Services.Students.Application.Commands
             InterestsVisibility = interestsVisibility;
             ContactEmailVisibility = contactEmailVisibility;
             PhoneNumberVisibility = phoneNumberVisibility;
+            ProfileImageVisibility = profileImageVisibility;
+            BannerImageVisibility = bannerImageVisibility;
+            GalleryVisibility = galleryVisibility;
             PreferredLanguage = preferredLanguage;
             FrontendVersion = frontendVersion;
         }
