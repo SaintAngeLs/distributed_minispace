@@ -23,12 +23,24 @@
                             <MudCardContent>
                                 <MudText Typo="Typo.h6">@organization.Name</MudText>
                                 <MudText Typo="Typo.body2" Class="mb-2">@organization.Description</MudText>
-                                <MudText Typo="Typo.caption" Color="Color.Primary">Users: @organization.Users.Count()</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Primary">Users: @organization.UserCount</MudText>
                             </MudCardContent>
                             <MudCardActions>
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToOrganization(organization.Id)">
                                     View
                                 </MudButton>
+                                @if (IsUserMemberOfOrganization(organization))
+                                {
+                                    <MudButton Variant="Variant.Text" Disabled="true">
+                                        Member
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => FollowOrganization(organization.Id)">
+                                        Follow
+                                    </MudButton>
+                                }
                             </MudCardActions>
                         </MudCard>
                     </MudItem>
@@ -62,8 +74,10 @@
     private int _pageSize = 10;
     private int _totalPages;
     private int _totalItems;
-    private readonly int[] pageSizeOptions = { 6, 10, 15, 20 };
     private bool _isLoading = true;
+
+    // Define pageSizeOptions array
+    private readonly int[] pageSizeOptions = { 6, 10, 15, 20 };
 
     protected override async Task OnInitializedAsync()
     {
@@ -119,5 +133,23 @@
     private void NavigateToOrganization(Guid organizationId)
     {
         NavigationManager.NavigateTo($"/organizations/details/{organizationId}");
+    }
+
+    private async Task FollowOrganization(Guid organizationId)
+    {
+        try
+        {
+            await OrganizationsService.FollowOrganizationAsync(organizationId);
+            await SearchOrganizations(); // Refresh the list or update UI to reflect the follow status
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error following organization: {ex.Message}");
+        }
+    }
+
+    private bool IsUserMemberOfOrganization(OrganizationDto organization)
+    {
+        return organization.Users.Any(user => user.Id == IdentityService.UserDto.Id);
     }
 }

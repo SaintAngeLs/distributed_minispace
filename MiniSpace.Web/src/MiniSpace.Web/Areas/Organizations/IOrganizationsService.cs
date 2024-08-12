@@ -34,6 +34,6 @@ namespace MiniSpace.Web.Areas.Organizations
         Task FollowOrganizationAsync(Guid organizationId);
         Task AcceptFollowRequestAsync(Guid organizationId, Guid requestId);
         Task RejectFollowRequestAsync(Guid organizationId, Guid requestId, string reason);
-        Task<IEnumerable<OrganizationGalleryUsersDto>> GetUserFollowedOrganizationsAsync(Guid userId)
+        Task<IEnumerable<OrganizationGalleryUsersDto>> GetUserFollowedOrganizationsAsync(Guid userId);
     }
 }
