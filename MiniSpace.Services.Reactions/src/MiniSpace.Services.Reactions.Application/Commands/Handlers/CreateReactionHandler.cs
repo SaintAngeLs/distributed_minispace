@@ -24,6 +24,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
 
+
         public CreateReactionHandler(IReactionRepository reactionRepository,
                                      IReactionsOrganizationsEventRepository orgEventRepository,
                                      IReactionsOrganizationsPostRepository orgPostRepository,
