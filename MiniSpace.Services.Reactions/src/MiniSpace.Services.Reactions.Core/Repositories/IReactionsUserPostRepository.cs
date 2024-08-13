@@ -7,9 +7,9 @@ namespace MiniSpace.Services.Reactions.Core.Repositories
     public interface IReactionsUserPostRepository
     {
         Task<bool> ExistsAsync(Guid id);
-        Task<Post> GetByIdAsync(Guid id); 
-        Task AddAsync(Post post);
-        Task UpdateAsync(Post post); 
+        Task<Reaction> GetByIdAsync(Guid id); 
+        Task AddAsync(Reaction reaction);
+        Task UpdateAsync(Reaction reaction); 
         Task DeleteAsync(Guid id); 
     }
 }
