@@ -40,7 +40,7 @@ using MiniSpace.Services.Reactions.Infrastructure.Services;
 using MiniSpace.Services.Reactions.Application.Queries;
 using Convey.Logging.CQRS;
 using MiniSpace.Services.Reactions.Application.Events;
-using MiniSpace.Services.Reactions.Application.Events.External;
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Reactions.Infrastructure
@@ -50,11 +50,11 @@ namespace MiniSpace.Services.Reactions.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            // add repositories
             builder.Services.AddTransient<IReactionRepository, ReactionMongoRepository>();
             builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
             builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
@@ -63,8 +63,6 @@ namespace MiniSpace.Services.Reactions.Infrastructure
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-
-            // background workers: none
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -82,9 +80,10 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<ReactionDocument, Guid>("reactions")
-                .AddMongoRepository<PostDocument, Guid>("posts")
-                .AddMongoRepository<EventDocument, Guid>("events")
-                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<OrganizationPostReactionDocument, Guid>("organization_posts")
+                .AddMongoRepository<OrganizationEventReactionDocument, Guid>("organization_events")
+                .AddMongoRepository<UserPostReactionDocument, Guid>("user_posts")
+                .AddMongoRepository<UserEventReactionDocument, Guid>("user_events")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -101,10 +100,7 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
                 .SubscribeCommand<CreateReaction>()
-                .SubscribeCommand<DeleteReaction>()
-                .SubscribeEvent<EventCreated>()
-                .SubscribeEvent<PostCreated>()
-                .SubscribeEvent<StudentCreated>();
+                .SubscribeCommand<DeleteReaction>();
 
             return app;
         }
