@@ -11,5 +11,10 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents
         public Guid UserEventId { get; set; } 
         public Guid UserId { get; set; } 
         public List<ReactionDocument> Reactions { get; set; } = new List<ReactionDocument>();
+
+        internal bool Set(Func<object, object> value, ReactionDocument reactionDocument)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

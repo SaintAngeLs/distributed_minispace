@@ -51,10 +51,10 @@ namespace MiniSpace.Services.Reactions.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IReactionRepository, ReactionMongoRepository>();
-            builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
-            builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
-            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
+            builder.Services.AddTransient<IReactionsOrganizationsEventRepository, ReactionsOrganizationsEventMongoRepository>();
+            builder.Services.AddTransient<IReactionsOrganizationsPostRepository, ReactionsOrganizationsPostMongoRepository>();
+            builder.Services.AddTransient<IReactionsUserEventRepository, ReactionsUserEventMongoRepository>();
+            builder.Services.AddTransient<IReactionsUserPostRepository, ReactionsUserPostMongoRepository>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
