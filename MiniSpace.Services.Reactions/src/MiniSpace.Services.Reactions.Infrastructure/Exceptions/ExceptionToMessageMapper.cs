@@ -2,8 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Convey.MessageBrokers.RabbitMQ;
 using MiniSpace.Services.Reactions.Application.Commands;
 using MiniSpace.Services.Reactions.Application.Events.Rejected;
-
-//using MiniSpace.Services.Reactions.Application.Events.Rejected;
 using MiniSpace.Services.Reactions.Application.Exceptions;
 using MiniSpace.Services.Reactions.Core.Exceptions;
 
