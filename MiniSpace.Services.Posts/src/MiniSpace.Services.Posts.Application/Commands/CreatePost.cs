@@ -1,27 +1,34 @@
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Posts.Core.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace MiniSpace.Services.Posts.Application.Commands
 {
     public class CreatePost : ICommand
     {
         public Guid PostId { get; }
-        public Guid EventId { get; }
-        public Guid OrganizerId { get; }
+        public Guid? UserId { get; }
+        public Guid? OrganizationId { get; }
+        public Guid? EventId { get; }
         public string TextContent { get; }
-        public IEnumerable<Guid> MediaFiles { get; }
+        public IEnumerable<string> MediaFiles { get; }
         public string State { get; }
         public DateTime? PublishDate { get; }
+        public PostContext Context { get; }
 
-        public CreatePost(Guid postId, Guid eventId, Guid organizerId, string textContent,
-            IEnumerable<Guid> mediaFiles, string state, DateTime? publishDate)
+        public CreatePost(Guid postId, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
+            IEnumerable<string> mediaFiles, string state, DateTime? publishDate, PostContext context)
         {
             PostId = postId;
+            UserId = userId;
+            OrganizationId = organizationId;
             EventId = eventId;
-            OrganizerId = organizerId;
             TextContent = textContent;
             MediaFiles = mediaFiles;
             State = state;
             PublishDate = publishDate;
+            Context = context;
         }
-    }    
+    }
 }
