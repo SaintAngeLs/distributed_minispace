@@ -231,9 +231,9 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 {
                     await _messageBroker.PublishAsync(new PostFileUploaded(
                         command.FileId,
-                        command.SourceId,
+                        command.PostId ?? Guid.Empty,  // Passing the PostId, defaulting to empty Guid if null
                         command.OrganizationId,
-                        command.EventId, // Adding EventId to the event
+                        command.EventId,  // Adding EventId to the event
                         command.FileName,
                         fileUrl,
                         command.FileContentType,
@@ -268,6 +268,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
                 throw;
             }
         }
+
 
 
 
