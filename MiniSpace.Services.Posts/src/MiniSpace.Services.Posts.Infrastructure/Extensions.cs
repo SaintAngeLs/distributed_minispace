@@ -56,6 +56,10 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IPostsService, PostsService>();
+            builder.Services.AddTransient<IOrganizationEventPostRepository, OrganizationEventPostMongoRepository>();
+            builder.Services.AddTransient<IOrganizationPostRepository, OrganizationPostMongoRepository>();
+            builder.Services.AddTransient<IUserEventPostRepository, UserEventPostMongoRepository>();
+            builder.Services.AddTransient<IUserPostRepository, UserPostMongoRepository>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
