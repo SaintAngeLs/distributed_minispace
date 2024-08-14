@@ -10,6 +10,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
     public static class Extensions
     {
         private static readonly FilterDefinitionBuilder<PostDocument> FilterDefinitionBuilder = Builders<PostDocument>.Filter;
+
         public static async Task<(int totalPages, int totalElements, IReadOnlyList<TDocument> data)> AggregateByPage<TDocument>(
             this IMongoCollection<TDocument> collection,
             FilterDefinition<TDocument> filterDefinition,
@@ -30,7 +31,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
                     PipelineStageDefinitionBuilder.Skip<TDocument>((page - 1) * pageSize),
                     PipelineStageDefinitionBuilder.Limit<TDocument>(pageSize),
                 }));
-
 
             var aggregation = await collection.Aggregate()
                 .Match(filterDefinition)
@@ -60,7 +60,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
         {
             var filterDefinition = FilterDefinitionBuilder.Empty;
 
-            filterDefinition &= FilterDefinitionBuilder.In(p => p.EventId, eventsIds);
+            filterDefinition &= FilterDefinitionBuilder.In("EventId", eventsIds); 
             filterDefinition &= FilterDefinitionBuilder.Eq(p => p.State, State.Published);
 
             return filterDefinition;
@@ -69,7 +69,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
         public static SortDefinition<PostDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
         {
             var sort = sortByArguments.ToList();
-            if(sort.Count == 0)
+            if (sort.Count == 0)
             {
                 sort.Add("PublishDate");
             }

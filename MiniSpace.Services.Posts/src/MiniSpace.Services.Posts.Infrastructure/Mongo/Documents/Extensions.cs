@@ -17,9 +17,9 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
             document.MediaFiles,
             document.CreatedAt,
             document.State,
-            document.Context,  // Ensure Context is passed correctly          
+            document.Context,  
             document.PublishDate,
-            document.UpdatedAt); // Ensure only these 10 arguments are passed
+            document.UpdatedAt); 
 
 
         public static PostDocument AsDocument(this Post entity)
@@ -35,7 +35,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 UpdatedAt = entity.UpdatedAt,
                 State = entity.State,
                 PublishDate = entity.PublishDate,
-                Context = entity.Context  // Ensure Context is included
+                Context = entity.Context  
             };
 
         public static PostDto AsDto(this PostDocument document)

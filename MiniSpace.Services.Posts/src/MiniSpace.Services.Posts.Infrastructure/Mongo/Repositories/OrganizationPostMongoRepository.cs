@@ -58,7 +58,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
                 Builders<OrganizationPostDocument>.Filter.Eq(o => o.OrganizationId, post.OrganizationId),
                 Builders<OrganizationPostDocument>.Filter.ElemMatch(o => o.OrganizationPosts, p => p.Id == post.Id));
 
-            var update = Builders<OrganizationPostDocument>.Update.Set(o => o.OrganizationPosts[-1], post.AsDocument());
+            var update = Builders<OrganizationPostDocument>.Update.Set("OrganizationPosts.$", post.AsDocument());
 
             return _repository.Collection.UpdateOneAsync(filter, update);
         }
@@ -90,9 +90,9 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
         {
             var filterDefinition = Builders<OrganizationPostDocument>.Filter.Where(o => o.OrganizationId == request.OrganizationId);
 
-            var sortDefinition = Extensions.ToSortDefinition(request.SortBy, request.Direction);
+            var sortDefinition = OrganizationPostExtensions.ToSortDefinition(request.SortBy, request.Direction);
 
-            var pagedEvents = await _repository.Collection.AggregateByPage(filterDefinition, sortDefinition, request.PageNumber, request.PageSize);
+            var pagedEvents = await _repository.Collection.AggregateByPage<OrganizationPostDocument>(filterDefinition, sortDefinition, request.PageNumber, request.PageSize);
 
             var posts = pagedEvents.data.SelectMany(o => o.OrganizationPosts).ToList();
 
