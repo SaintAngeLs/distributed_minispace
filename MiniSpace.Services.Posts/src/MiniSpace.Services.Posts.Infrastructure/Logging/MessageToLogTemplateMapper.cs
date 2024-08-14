@@ -37,12 +37,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Logging
                     }
                 },
                 {
-                    typeof(EventCreated), new HandlerLogTemplate
-                    {
-                        After = "Created a new event with id: {EventId}."
-                    }
-                },
-                {
                     typeof(EventDeleted), new HandlerLogTemplate
                     {
                         After = "Deleted an event with id: {EventId}."

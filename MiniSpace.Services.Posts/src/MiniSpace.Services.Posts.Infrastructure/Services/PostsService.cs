@@ -1,5 +1,4 @@
 ﻿using MiniSpace.Services.Posts.Application;
-using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Exceptions;
 using MiniSpace.Services.Posts.Application.Services;
@@ -8,50 +7,73 @@ using MiniSpace.Services.Posts.Core.Wrappers;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Exceptions;
 using MiniSpace.Services.Posts.Core.Repositories;
+using MiniSpace.Services.Posts.Core.Requests;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Services
 {
     public class PostsService : IPostsService
     {
-        private readonly IPostRepository _postRepository;
-        private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IOrganizationPostRepository _organizationPostRepository;
+        private readonly IOrganizationEventPostRepository _organizationEventPostRepository;
+        private readonly IUserPostRepository _userPostRepository;
+        private readonly IUserEventPostRepository _userEventPostRepository;
         private readonly IAppContext _appContext;
 
-        public PostsService(IPostRepository postRepository, IStudentsServiceClient studentsServiceClient, 
+        public PostsService(
+            IOrganizationPostRepository organizationPostRepository,
+            IOrganizationEventPostRepository organizationEventPostRepository,
+            IUserPostRepository userPostRepository,
+            IUserEventPostRepository userEventPostRepository,
             IAppContext appContext)
         {
-            _postRepository = postRepository;
-            _studentsServiceClient = studentsServiceClient;
+            _organizationPostRepository = organizationPostRepository;
+            _organizationEventPostRepository = organizationEventPostRepository;
+            _userPostRepository = userPostRepository;
+            _userEventPostRepository = userEventPostRepository;
             _appContext = appContext;
         }
 
-        public async Task<PagedResponse<IEnumerable<PostDto>>> BrowsePostsAsync(SearchPosts command)
+        public async Task<PagedResponse<PostDto>> BrowsePostsAsync(BrowseRequest request)
         {
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != command.StudentId)
+
+            if (request.UserId.HasValue && identity.IsAuthenticated && identity.Id != request.UserId.Value)
             {
-                throw new UnauthorizedPostSearchException(command.StudentId, identity.Id);
+                throw new UnauthorizedPostSearchException(request.UserId.Value, identity.Id);
             }
 
-            var studentEvents = await _studentsServiceClient.GetAsync(command.StudentId);
-            if (studentEvents is null)
+            PagedResponse<Post> pagedResponse = null;
+
+            if (request.OrganizationId.HasValue && request.EventId.HasValue)
             {
-                throw new InvalidStudentServiceClientResponseException(command.StudentId);
+                // Browsing posts by organization event
+                pagedResponse = await _organizationEventPostRepository.BrowseOrganizationEventPostsAsync(request);
+            }
+            else if (request.OrganizationId.HasValue)
+            {
+                // Browsing posts by organization
+                pagedResponse = await _organizationPostRepository.BrowseOrganizationPostsAsync(request);
+            }
+            else if (request.UserId.HasValue && request.EventId.HasValue)
+            {
+                // Browsing posts by user event
+                pagedResponse = await _userEventPostRepository.BrowseUserEventPostsAsync(request);
+            }
+            else if (request.UserId.HasValue)
+            {
+                // Browsing posts by user
+                pagedResponse = await _userPostRepository.BrowseUserPostsAsync(request);
+            }
+            else
+            {
+                throw new InvalidBrowseRequestException("Request must contain either UserId or OrganizationId");
             }
 
-            var eventsIds = studentEvents.InterestedInEvents.Union(studentEvents.SignedUpEvents).ToList();
-
-            var pageNumber = command.Pageable.Page < 1 ? 1 : command.Pageable.Page;
-            var pageSize = command.Pageable.Size > 10 ? 10 : command.Pageable.Size;
-
-            var result = await _postRepository.BrowseCommentsAsync(
-                pageNumber, pageSize, eventsIds, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
-
-            var pagedEvents = new PagedResponse<IEnumerable<PostDto>>(
-                result.posts.Select(p => new PostDto(p)),
-                result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
-
-            return pagedEvents;
+            return new PagedResponse<PostDto>(
+                pagedResponse.Items.Select(p => new PostDto(p)),
+                pagedResponse.Page, 
+                pagedResponse.PageSize, 
+                pagedResponse.TotalItems);
         }
     }
 }

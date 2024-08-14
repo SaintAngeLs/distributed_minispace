@@ -50,7 +50,6 @@ namespace MiniSpace.Services.Posts.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
             builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
@@ -78,7 +77,10 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<EventDocument, Guid>("events")
+                .AddMongoRepository<OrganizationEventPostDocument, Guid>("organization_events_posts")
+                .AddMongoRepository<OrganizationPostDocument, Guid>("organization_posts")
+                .AddMongoRepository<UserEventPostDocument, Guid>("user_events_posts")
+                .AddMongoRepository<UserPostDocument, Guid>("user_posts")
                 .AddMongoRepository<PostDocument, Guid>("posts")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
@@ -100,8 +102,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .SubscribeCommand<CreatePost>()
                 .SubscribeCommand<UpdatePostsState>()
                 .SubscribeCommand<ChangePostState>()
-                .SubscribeEvent<EventCreated>()
-                .SubscribeEvent<EventDeleted>();
+                .SubscribeEvent<MediaFileDeleted>();
 
             return app;
         }
