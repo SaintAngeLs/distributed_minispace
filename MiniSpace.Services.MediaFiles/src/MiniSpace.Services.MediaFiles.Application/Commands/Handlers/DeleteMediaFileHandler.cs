@@ -66,7 +66,10 @@ namespace MiniSpace.Services.MediaFiles.Application.Commands.Handlers
                 fileSourceInfo.SourceId, 
                 fileSourceInfo.SourceType.ToString(), 
                 fileSourceInfo.UploaderId,
-                fileSourceInfo.OrganizationId));
+                fileSourceInfo.OrganizationId,
+                fileSourceInfo.EventId,  
+                fileSourceInfo.PostId      
+            ));
         }
     }
 }
