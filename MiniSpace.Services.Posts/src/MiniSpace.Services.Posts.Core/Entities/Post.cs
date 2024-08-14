@@ -12,16 +12,17 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public Guid? OrganizationId { get; private set; }
         public Guid? EventId { get; private set; }
         public string TextContent { get; private set; }
-        public IEnumerable<string> MediaFiles { get; private set; }  // Kept as IEnumerable
+        public IEnumerable<string> MediaFiles { get; private set; } 
         public State State { get; private set; }
         public DateTime? PublishDate { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public PostContext Context { get; private set; }
 
-        private Post(Guid id, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
+        public Post(Guid id, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
             IEnumerable<string> mediaFiles, DateTime createdAt, State state, PostContext context, DateTime? publishDate,
             DateTime? updatedAt = null)
+
         {
             Id = id;
             UserId = userId;
@@ -37,6 +38,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
 
             AddEvent(new PostCreatedEvent(Id));
         }
+        
 
         public void SetToBePublished(DateTime publishDate, DateTime now)
         {
