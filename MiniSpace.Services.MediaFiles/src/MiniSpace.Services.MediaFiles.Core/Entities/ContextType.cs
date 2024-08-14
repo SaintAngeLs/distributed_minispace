@@ -3,7 +3,10 @@
     public enum ContextType
     {
         EventBanner,
-        EventFile,       
+         PostFileUserEvent,
+        PostFileUser,
+        PostFileOrganizationEvent,
+        PostFileOrganization,      
         EventGalleryImage,
         PostFile,
         StudentProfileImage,
