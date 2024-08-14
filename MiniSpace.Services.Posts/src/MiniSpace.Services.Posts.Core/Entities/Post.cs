@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public Guid? OrganizationId { get; private set; }
         public Guid? EventId { get; private set; }
         public string TextContent { get; private set; }
-        public IEnumerable<string> MediaFiles { get; private set; }
+        public IEnumerable<string> MediaFiles { get; private set; }  // Kept as IEnumerable
         public State State { get; private set; }
         public DateTime? PublishDate { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
             OrganizationId = organizationId;
             EventId = eventId;
             TextContent = textContent;
-            MediaFiles = mediaFiles;
+            MediaFiles = mediaFiles ?? new List<string>();
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
             State = state;
@@ -54,7 +54,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
             PublishDate = now;
             UpdatedAt = now;
 
-            // Raise the PostPublishedEvent when the post is published
             AddEvent(new PostPublishedEvent(Id));
         }
 
@@ -63,8 +62,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
             State = State.InDraft;
             PublishDate = null;
             UpdatedAt = now;
-
-            // Raise an event if necessary (e.g., PostDraftedEvent)
         }
 
         public void SetReported(DateTime now)
@@ -72,8 +69,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
             State = State.Reported;
             PublishDate = null;
             UpdatedAt = now;
-
-            // Raise an event if necessary (e.g., PostReportedEvent)
         }
 
         public bool UpdateState(DateTime now)
