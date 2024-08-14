@@ -87,6 +87,30 @@ namespace MiniSpace.Services.Posts.Core.Entities
             return false;
         }
 
+        public void ChangeState(State newState, DateTime? publishDate, DateTime now)
+        {
+            if (newState == State.ToBePublished && publishDate.HasValue)
+            {
+                SetToBePublished(publishDate.Value, now);
+            }
+            else if (newState == State.Published)
+            {
+                SetPublished(now);
+            }
+            else if (newState == State.InDraft)
+            {
+                SetInDraft(now);
+            }
+            else if (newState == State.Reported)
+            {
+                SetReported(now);
+            }
+            else
+            {
+                throw new InvalidPostStateException(newState.ToString());
+            }
+        }
+
         public static Post CreateForUser(Guid id, Guid userId, string textContent,
             IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate)
         {
