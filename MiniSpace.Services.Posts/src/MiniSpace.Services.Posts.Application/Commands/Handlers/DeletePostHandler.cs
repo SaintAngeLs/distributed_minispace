@@ -40,7 +40,6 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
         {
             Post post = null;
 
-            // Fetch the correct post based on the context provided as a string
             switch (command.Context.ToLowerInvariant())
             {
                 case "userpage":
@@ -77,7 +76,6 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new UnauthorizedPostOperationException(command.PostId, identity.Id);
             }
 
-            // Delete the post using the correct repository based on the context
             switch (command.Context.ToLowerInvariant())
             {
                 case "userpage":
