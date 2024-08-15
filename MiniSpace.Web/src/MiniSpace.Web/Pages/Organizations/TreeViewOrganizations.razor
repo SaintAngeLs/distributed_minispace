@@ -10,6 +10,7 @@
 @using System.Threading.Tasks
 
 <AuthWrapper>
+    <MudContainer>
     <MudStack Spacing="2">
         <MudText Typo="Typo.h5" GutterBottom="true">Organization Tree View</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.List" OnClick="NavigateToAllOrganizations">
@@ -73,6 +74,7 @@
             <MudText>No organizations found.</MudText>
         }
     </MudPaper>
+    </MudContainer>
 </AuthWrapper>
 
 @code {

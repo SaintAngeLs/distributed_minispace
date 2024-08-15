@@ -7,6 +7,7 @@
 @using System.Threading.Tasks
 
 <AuthWrapper>
+    <MudContainer>
     <MudPaper Class="pa-4">
         <MudText Typo="Typo.h4" GutterBottom="true">Discover Organizations</MudText>
 
@@ -65,6 +66,7 @@
             Page @_currentPage of @_totalPages
         </MudText>
     </MudPaper>
+    </MudContainer>
 </AuthWrapper>
 
 @code {
