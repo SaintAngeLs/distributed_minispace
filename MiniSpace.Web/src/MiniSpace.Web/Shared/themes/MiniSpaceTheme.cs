@@ -14,7 +14,7 @@ public static class MiniSpaceTheme
             Surface = "#FFFFFF",
             DrawerBackground = Colors.Grey.Lighten3,
             DrawerText = Colors.Grey.Darken3,
-            TextPrimary = Colors.Grey.Darken3,
+            TextPrimary = Colors.Shades.Black,
             TextSecondary = Colors.Grey.Darken2,
             ActionDefault = Colors.Indigo.Lighten1,
             ActionDisabled = Colors.Grey.Lighten2,

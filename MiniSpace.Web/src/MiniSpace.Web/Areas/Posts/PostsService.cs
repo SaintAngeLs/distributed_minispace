@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Web;
 using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.Areas.Posts.CommandsDto;
 using MiniSpace.Web.Data.Events;
 using MiniSpace.Web.Data.Posts;
 using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Enums.Posts;
 using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
@@ -33,19 +36,51 @@ namespace MiniSpace.Web.Areas.Posts
             return _httpClient.PutAsync($"posts/{postId}/state/{state}", new {postId, state, publishDate});
         }
         
-        public Task<HttpResponse<object>> CreatePostAsync(Guid postId, Guid eventId, Guid organizerId, string textContent,
-            IEnumerable<Guid> mediaFiles, string state, DateTime? publishDate)
+        public Task<HttpResponse<object>> CreatePostAsync(CreatePostCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("posts", new {postId, eventId, organizerId, textContent,
-                mediaFiles, state, publishDate});
+            return _httpClient.PostAsync<CreatePostCommand, object>("posts", command);
         }
         
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<PostDto>>>> SearchPostsAsync(SearchPosts searchPosts)
+        public async Task<HttpResponse<PagedResponseDto<PostDto>>> SearchPostsAsync(SearchPosts searchPosts)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<SearchPosts, PagedResponseDto<IEnumerable<PostDto>>>("posts/search", searchPosts);
+
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            if (searchPosts.UserId.HasValue)
+                query["UserId"] = searchPosts.UserId.ToString();
+            if (searchPosts.OrganizationId.HasValue)
+                query["OrganizationId"] = searchPosts.OrganizationId.ToString();
+            if (searchPosts.EventId.HasValue)
+                query["EventId"] = searchPosts.EventId.ToString();
+
+            query["PageNumber"] = searchPosts.Pageable.Page.ToString();
+            query["PageSize"] = searchPosts.Pageable.Size.ToString();
+            if (searchPosts.Pageable.Sort?.SortBy != null)
+                query["SortBy"] = string.Join(",", searchPosts.Pageable.Sort.SortBy);
+            query["Direction"] = searchPosts.Pageable.Sort?.Direction;
+
+            string queryString = query.ToString();
+            string url = $"posts/search?{queryString}";
+
+            try
+            {
+                var result = await _httpClient.GetAsync<PagedResponseDto<PostDto>>(url);
+                return new HttpResponse<PagedResponseDto<PostDto>>(result);
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponse<PagedResponseDto<PostDto>>(new ErrorMessage
+                {
+                    Code = ex.Message,
+                    Reason = ex.Message
+                });
+            }
         }
+
+
+
+
 
         public Task DeletePostAsync(Guid postId)
         {
