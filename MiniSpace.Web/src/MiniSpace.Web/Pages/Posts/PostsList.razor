@@ -1,0 +1,106 @@
+@page "/posts/search"
+@inject IPostsService PostsService
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.DTO.Wrappers
+@using MiniSpace.Web.Data.Posts
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">All Posts</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            @if (posts != null && posts.Any())
+            {
+                @foreach (var post in posts)
+                {
+                    <div class="post-item mb-4">
+                        <h3>@post.TextContent</h3>
+                        <p><strong>State:</strong> @post.State</p>
+                        <p><strong>Visibility:</strong> @post.Visibility</p>
+                        <p><strong>Created At:</strong> @post.CreatedAt.ToString("g")</p>
+                        <MudButton Variant="Variant.Text" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
+                        <hr />
+                    </div>
+                }
+            }
+            else
+            {
+                <MudText>No posts available.</MudText>
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
+        </MudCardActions>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private List<PostDto> posts = new();
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalItems = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPostsAsync();
+    }
+
+    private async Task LoadPostsAsync()
+{
+    var searchParams = new SearchPosts
+    {
+        Pageable = new PageableDto
+        {
+            Page = currentPage,
+            Size = pageSize,
+            Sort = new SortDto
+            {
+                SortBy = new[] { "CreatedAt" },
+                Direction = "desc"
+            }
+        }
+    };
+
+    var response = await PostsService.SearchPostsAsync(searchParams);
+
+    // Log the full response for debugging
+    var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+    Console.WriteLine("Full Response JSON: " + jsonResponse);
+
+    if (response != null && response.IsSuccessStatusCode)
+    {
+        var result = response.Content;
+
+        if (result != null && result.Items != null)
+        {
+            posts = result.Items.ToList();
+            totalItems = result.TotalItems;
+        }
+        else
+        {
+            Console.WriteLine("Result or Result.Items is null.");
+            posts = new List<PostDto>();
+        }
+    }
+    else
+    {
+        Console.WriteLine($"Failed to load posts: {response?.ErrorMessage?.Reason}");
+    }
+}
+
+
+
+    private async Task OnPageChanged(int newPage)
+    {
+        currentPage = newPage;
+        await LoadPostsAsync();
+    }
+
+    private void NavigateToPostDetails(Guid postId)
+    {
+        NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+}

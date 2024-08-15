@@ -15,5 +15,10 @@ namespace MiniSpace.Web.DTO.Wrappers
         public bool Empty { get; }
         public int? NextPage => Page < TotalPages ? Page + 1 : (int?)null;
         public int? PreviousPage => Page > 1 ? Page - 1 : (int?)null;
+
+         public PagedResponseDto()
+        {
+            Items = new List<T>();
+        }
     }
 }
