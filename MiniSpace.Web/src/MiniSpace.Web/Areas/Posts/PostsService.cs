@@ -78,10 +78,6 @@ namespace MiniSpace.Web.Areas.Posts
             }
         }
 
-
-
-
-
         public Task DeletePostAsync(Guid postId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
