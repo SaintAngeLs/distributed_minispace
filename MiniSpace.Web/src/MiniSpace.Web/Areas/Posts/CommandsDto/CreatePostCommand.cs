@@ -15,5 +15,6 @@ namespace MiniSpace.Web.Areas.Posts.CommandsDto
         public string State { get; set; }
         public DateTime? PublishDate { get; set; }
         public PostContext Context { get; set; }
+        public string Visibility { get; set; }
     }
 }

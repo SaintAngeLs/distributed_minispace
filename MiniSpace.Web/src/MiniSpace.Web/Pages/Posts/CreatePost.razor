@@ -1,184 +1,191 @@
-    @page "/posts/create"
-    @inject IPostsService PostsService
-    @inject IEventsService EventsService
-    @inject IIdentityService IdentityService
-    @inject IMediaFilesService MediaFilesService
-    @inject NavigationManager NavigationManager
-    @inject IJSRuntime JSRuntime
-    @using MiniSpace.Web.Areas.Posts.CommandsDto
-    @using MiniSpace.Web.DTO.Enums.Posts
-    @using MudBlazor
-    @using System.IO
-    @using Microsoft.AspNetCore.Components.Forms
+@page "/posts/create"
+@inject IPostsService PostsService
+@inject IEventsService EventsService
+@inject IIdentityService IdentityService
+@inject IMediaFilesService MediaFilesService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@using MiniSpace.Web.Areas.Posts.CommandsDto
+@using MiniSpace.Web.DTO.Enums.Posts
+@using MudBlazor
+@using System.IO
+@using Microsoft.AspNetCore.Components.Forms
 
-    <MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
-        <MudCard>
-            <MudCardHeader>
-                <MudText Typo="Typo.h5">Create a New Post</MudText>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudForm @ref="form" @onsubmit="HandleSubmit">
-                    <MudTextField @bind-Value="textContent" Label="Text Content" Required="true" />
+<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">Create a New Post</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudForm @ref="form" @onsubmit="HandleSubmit">
+                <MudTextField @bind-Value="textContent" Label="Text Content" Required="true" />
 
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UploadMediaFilesClick">
-                        Upload Media Files
-                    </MudButton>
-                    <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UploadMediaFilesClick">
+                    Upload Media Files
+                </MudButton>
+                <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
 
-                    @if (mediaFilesPreviews.Any())
-                    {
-                        <div class="mt-4">
-                            <MudText Typo="Typo.h6">Uploaded Files Preview</MudText>
-                            <MudGrid>
-                                @foreach (var filePreview in mediaFilesPreviews)
-                                {
-                                    <MudItem xs="12" sm="6">
-                                        <MudCard>
-                                            @if (filePreview.IsImage)
-                                            {
-                                                <MudCardMedia ImageSource="@filePreview.Url" Title="Media Preview" />
-                                            }
-                                            else if (filePreview.IsVideo)
-                                            {
-                                                <video width="100%" height="200" controls>
-                                                    <source src="@filePreview.Url" type="@filePreview.ContentType">
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            }
-                                            else if (filePreview.IsPdf)
-                                            {
-                                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
-                                                    View PDF
-                                                </MudButton>
-                                            }
-                                        </MudCard>
-                                    </MudItem>
-                                }
-                            </MudGrid>
-                        </div>
-                    }
+                @if (mediaFilesPreviews.Any())
+                {
+                    <div class="mt-4">
+                        <MudText Typo="Typo.h6">Uploaded Files Preview</MudText>
+                        <MudGrid>
+                            @foreach (var filePreview in mediaFilesPreviews)
+                            {
+                                <MudItem xs="12" sm="6">
+                                    <MudCard>
+                                        @if (filePreview.IsImage)
+                                        {
+                                            <MudCardMedia ImageSource="@filePreview.Url" Title="Media Preview" />
+                                        }
+                                        else if (filePreview.IsVideo)
+                                        {
+                                            <video width="100%" height="200" controls>
+                                                <source src="@filePreview.Url" type="@filePreview.ContentType">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        }
+                                        else if (filePreview.IsPdf)
+                                        {
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
+                                                View PDF
+                                            </MudButton>
+                                        }
+                                    </MudCard>
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    </div>
+                }
 
-                    <MudSelect T="string" @bind-Value="state" Label="State" Required="true">
-                        <MudSelectItem T="string" Value="@("InDraft")">Draft</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("Published")">Published</MudSelectItem>
-                    </MudSelect>
+                <MudSelect T="string" @bind-Value="state" Label="State" Required="true">
+                    <MudSelectItem T="string" Value="@("InDraft")">Draft</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Published")">Published</MudSelectItem>
+                </MudSelect>
 
-                    <MudDatePicker @bind-Date="publishDate" Label="Publish Date" />
+                <!-- Add MudSelect for Visibility -->
+                <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true">
+                    <MudSelectItem T="string" Value="@("Visible")">Visible</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Invisible")">Invisible</MudSelectItem>
+                </MudSelect>
 
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(async () => await HandleSubmit())">Create Post</MudButton>
-                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel">Cancel</MudButton>
-                </MudForm>
-            </MudCardContent>
-        </MudCard>
-    </MudContainer>
+                <MudDatePicker @bind-Date="publishDate" Label="Publish Date" />
 
-    @code {
-        private MudForm form;
-        private string textContent;
-        private List<FilePreview> mediaFilesPreviews = new();
-        private List<string> uploadedMediaUrls = new List<string>();
-        private string state = "Draft";
-        private DateTime? publishDate = DateTime.Now;
-        private bool isUploading = false;
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(async () => await HandleSubmit())">Create Post</MudButton>
+                <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel">Cancel</MudButton>
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
 
-        private async Task UploadMediaFilesClick()
+@code {
+    private MudForm form;
+    private string textContent;
+    private List<FilePreview> mediaFilesPreviews = new();
+    private List<string> uploadedMediaUrls = new List<string>();
+    private string state = "InDraft";
+    private string visibility = "Visible"; // Add visibility field
+    private DateTime? publishDate = DateTime.Now;
+    private bool isUploading = false;
+
+    private async Task UploadMediaFilesClick()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputMediaFiles').click()");
+    }
+
+    private async Task UploadMediaFiles(InputFileChangeEventArgs e)
+    {
+        isUploading = true;
+        StateHasChanged();
+
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in files)
         {
-            await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputMediaFiles').click()");
-        }
-
-
-        private async Task UploadMediaFiles(InputFileChangeEventArgs e)
-        {
-            isUploading = true;
-            StateHasChanged();
-
-            const long maxAllowedSize = 10 * 1024 * 1024;
-            var files = e.GetMultipleFiles();
-
-            foreach (var file in files)
+            if (file.Size > maxAllowedSize)
             {
-                if (file.Size > maxAllowedSize)
-                {
-                    Console.WriteLine($"File {file.Name} exceeds the allowed size limit.");
-                    continue;
-                }
-
-                using var stream = file.OpenReadStream(maxAllowedSize);
-                using var ms = new MemoryStream();
-                await stream.CopyToAsync(ms);
-                var buffer = ms.ToArray();
-
-                var response = await MediaFilesService.UploadFileAsync(
-                    sourceId: Guid.NewGuid(),
-                    sourceType: "PostFileUser",
-                    uploaderId: IdentityService.GetCurrentUserId(),
-                    fileName: file.Name,
-                    fileContentType: file.ContentType,
-                    fileData: buffer);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var uploadedUrl = response.Content.FileUrl;
-                    uploadedMediaUrls.Add(uploadedUrl);
-
-                    mediaFilesPreviews.Add(new FilePreview
-                    {
-                        Url = uploadedUrl,
-                        ContentType = file.ContentType,
-                        IsImage = file.ContentType.StartsWith("image/"),
-                        IsVideo = file.ContentType.StartsWith("video/"),
-                        IsPdf = file.ContentType.EndsWith("pdf")
-                    });
-                }
-                else
-                {
-                    Console.WriteLine($"Failed to upload file {file.Name}: {response.ErrorMessage?.Reason}");
-                }
+                Console.WriteLine($"File {file.Name} exceeds the allowed size limit.");
+                continue;
             }
 
-            isUploading = false;
-            StateHasChanged();
-        }
+            using var stream = file.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
 
-        private async Task HandleSubmit()
-        {
-            if (form.IsValid)
+            var response = await MediaFilesService.UploadFileAsync(
+                sourceId: Guid.NewGuid(),
+                sourceType: "PostFileUser",
+                uploaderId: IdentityService.GetCurrentUserId(),
+                fileName: file.Name,
+                fileContentType: file.ContentType,
+                fileData: buffer);
+
+            if (response.IsSuccessStatusCode)
             {
-                var command = new CreatePostCommand
-                {
-                    PostId = Guid.NewGuid(),
-                    UserId = IdentityService.GetCurrentUserId(),
-                    TextContent = textContent,
-                    MediaFiles = uploadedMediaUrls.ToArray(),
-                    State = state,
-                    PublishDate = publishDate,
-                    Context = PostContext.UserPage
-                };
+                var uploadedUrl = response.Content.FileUrl;
+                uploadedMediaUrls.Add(uploadedUrl);
 
-                var response = await PostsService.CreatePostAsync(command);
-
-                if (response.IsSuccessStatusCode)
+                mediaFilesPreviews.Add(new FilePreview
                 {
-                    NavigationManager.NavigateTo("/posts/my");
-                }
-                else
-                {
-                    Console.WriteLine("Failed to create post: " + response.ErrorMessage?.Reason);
-                }
+                    Url = uploadedUrl,
+                    ContentType = file.ContentType,
+                    IsImage = file.ContentType.StartsWith("image/"),
+                    IsVideo = file.ContentType.StartsWith("video/"),
+                    IsPdf = file.ContentType.EndsWith("pdf")
+                });
+            }
+            else
+            {
+                Console.WriteLine($"Failed to upload file {file.Name}: {response.ErrorMessage?.Reason}");
             }
         }
 
-        private void HandleCancel()
-        {
-            NavigationManager.NavigateTo("/posts/my");
-        }
+        isUploading = false;
+        StateHasChanged();
+    }
 
-        private class FilePreview
+    private async Task HandleSubmit()
+    {
+        if (form.IsValid)
         {
-            public string Url { get; set; }
-            public string ContentType { get; set; }
-            public bool IsImage { get; set; }
-            public bool IsVideo { get; set; }
-            public bool IsPdf { get; set; }
+            var command = new CreatePostCommand
+            {
+                PostId = Guid.NewGuid(),
+                UserId = IdentityService.GetCurrentUserId(),
+                TextContent = textContent,
+                MediaFiles = uploadedMediaUrls.ToArray(),
+                State = state,
+                Visibility = visibility, // Add visibility to the command
+                PublishDate = publishDate,
+                Context = PostContext.UserPage
+            };
+
+            var response = await PostsService.CreatePostAsync(command);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/posts/my");
+            }
+            else
+            {
+                Console.WriteLine("Failed to create post: " + response.ErrorMessage?.Reason);
+            }
         }
     }
+
+    private void HandleCancel()
+    {
+        NavigationManager.NavigateTo("/posts/my");
+    }
+
+    private class FilePreview
+    {
+        public string Url { get; set; }
+        public string ContentType { get; set; }
+        public bool IsImage { get; set; }
+        public bool IsVideo { get; set; }
+        public bool IsPdf { get; set; }
+    }
+}
