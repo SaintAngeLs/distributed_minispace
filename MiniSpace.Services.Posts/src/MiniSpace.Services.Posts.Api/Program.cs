@@ -34,11 +34,11 @@ namespace MiniSpace.Services.Posts.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseEndpoints(endpoints => endpoints
-                        .Get<GetPosts, PagedResponse<PostDto>>("posts/search"))
+            
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetPost, PostDto>("posts/{postId}")
+                        .Get<GetPosts, PagedResponse<PostDto>>("posts/search")
                         .Get<GetOrganizerPosts, IEnumerable<PostDto>>("posts/organizer/{organizerId}")
                         .Put<UpdatePost>("posts/{postId}")
                         .Delete<DeletePost>("posts/{postId}")
