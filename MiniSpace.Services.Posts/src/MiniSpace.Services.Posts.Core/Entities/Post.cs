@@ -18,11 +18,11 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public PostContext Context { get; private set; }
+        public VisibilityStatus Visibility { get; private set; } // New visibility status property
 
         public Post(Guid id, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
             IEnumerable<string> mediaFiles, DateTime createdAt, State state, PostContext context, DateTime? publishDate,
-            DateTime? updatedAt = null)
-
+            VisibilityStatus visibility = VisibilityStatus.Visible, DateTime? updatedAt = null)
         {
             Id = id;
             UserId = userId;
@@ -35,10 +35,10 @@ namespace MiniSpace.Services.Posts.Core.Entities
             State = state;
             PublishDate = publishDate;
             Context = context;
+            Visibility = visibility;
 
             AddEvent(new PostCreatedEvent(Id));
         }
-        
 
         public void SetToBePublished(DateTime publishDate, DateTime now)
         {
@@ -72,6 +72,15 @@ namespace MiniSpace.Services.Posts.Core.Entities
             PublishDate = null;
             UpdatedAt = now;
         }
+
+        public void SetVisibility(VisibilityStatus visibility, DateTime now)
+        {
+            Visibility = visibility;
+            UpdatedAt = now;
+
+            AddEvent(new PostVisibilityChangedEvent(Id, visibility, now));
+        }
+
 
         public bool UpdateState(DateTime now)
         {
@@ -109,30 +118,30 @@ namespace MiniSpace.Services.Posts.Core.Entities
         }
 
         public static Post CreateForUser(Guid id, Guid userId, string textContent,
-            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate)
+            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
         {
             CheckTextContent(id, textContent);
 
             return new Post(id, userId, null, null, textContent, mediaFiles, createdAt, state, PostContext.UserPage,
-                publishDate ?? createdAt);
+                publishDate ?? createdAt, visibility);
         }
 
         public static Post CreateForOrganization(Guid id, Guid organizationId, string textContent,
-            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate)
+            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
         {
             CheckTextContent(id, textContent);
 
             return new Post(id, null, organizationId, null, textContent, mediaFiles, createdAt, state, PostContext.OrganizationPage,
-                publishDate ?? createdAt);
+                publishDate ?? createdAt, visibility);
         }
 
         public static Post CreateForEvent(Guid id, Guid eventId, Guid? userId, Guid? organizationId, string textContent,
-            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate)
+            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
         {
             CheckTextContent(id, textContent);
 
             return new Post(id, userId, organizationId, eventId, textContent, mediaFiles, createdAt, state, PostContext.EventPage,
-                publishDate ?? createdAt);
+                publishDate ?? createdAt, visibility);
         }
 
         public void Update(string textContent, IEnumerable<string> mediaFiles, DateTime now)
