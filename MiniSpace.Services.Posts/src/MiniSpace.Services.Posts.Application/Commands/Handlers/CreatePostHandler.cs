@@ -61,6 +61,11 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new InvalidPostStateException(command.State);
             }
 
+            if (!Enum.TryParse<VisibilityStatus>(command.Visibility, true, out var visibilityStatus))
+            {
+                throw new InvalidVisibilityStatusException(command.Visibility);
+            }
+
             var mediaFiles = command.MediaFiles.ToList();
             if (mediaFiles.Count > 3)
             {
@@ -80,13 +85,13 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             if (command.Context == PostContext.UserPage)
             {
                 post = Post.CreateForUser(command.PostId, command.UserId.Value, command.TextContent, command.MediaFiles,
-                    _dateTimeProvider.Now, newState, command.PublishDate);
+                    _dateTimeProvider.Now, newState, command.PublishDate, visibilityStatus);
                 await _userPostRepository.AddAsync(post);
             }
             else if (command.Context == PostContext.OrganizationPage)
             {
                 post = Post.CreateForOrganization(command.PostId, command.OrganizationId.Value, command.TextContent, command.MediaFiles,
-                    _dateTimeProvider.Now, newState, command.PublishDate);
+                    _dateTimeProvider.Now, newState, command.PublishDate, visibilityStatus);
                 await _organizationPostRepository.AddAsync(post);
             }
             else if (command.Context == PostContext.EventPage)
@@ -94,13 +99,13 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 if (command.UserId.HasValue)
                 {
                     post = Post.CreateForEvent(command.PostId, command.EventId.Value, command.UserId, command.OrganizationId, command.TextContent,
-                        command.MediaFiles, _dateTimeProvider.Now, newState, command.PublishDate);
+                        command.MediaFiles, _dateTimeProvider.Now, newState, command.PublishDate, visibilityStatus);
                     await _userEventPostRepository.AddAsync(post);
                 }
                 else
                 {
                     post = Post.CreateForEvent(command.PostId, command.EventId.Value, null, command.OrganizationId, command.TextContent,
-                        command.MediaFiles, _dateTimeProvider.Now, newState, command.PublishDate);
+                        command.MediaFiles, _dateTimeProvider.Now, newState, command.PublishDate, visibilityStatus);
                     await _organizationEventPostRepository.AddAsync(post);
                 }
             }

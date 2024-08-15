@@ -74,6 +74,17 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 newState = parsedState;
             }
 
+            // Validate the visibility if provided
+            VisibilityStatus? newVisibility = null;
+            if (!string.IsNullOrWhiteSpace(command.Visibility))
+            {
+                if (!Enum.TryParse<VisibilityStatus>(command.Visibility, true, out var parsedVisibility))
+                {
+                    throw new InvalidVisibilityStatusException(command.Visibility);
+                }
+                newVisibility = parsedVisibility;
+            }
+
             // Validate the media files count
             var mediaFiles = command.MediaFiles.ToList();
             if (mediaFiles.Count > 12)
@@ -87,6 +98,11 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             if (newState.HasValue)
             {
                 post.ChangeState(newState.Value, command.PublishDate, _dateTimeProvider.Now);
+            }
+
+            if (newVisibility.HasValue)
+            {
+                post.SetVisibility(newVisibility.Value, _dateTimeProvider.Now);
             }
 
             await _postRepository.UpdateAsync(post);

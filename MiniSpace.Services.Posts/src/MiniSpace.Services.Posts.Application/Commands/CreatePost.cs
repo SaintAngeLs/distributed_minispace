@@ -16,9 +16,10 @@ namespace MiniSpace.Services.Posts.Application.Commands
         public string State { get; }
         public DateTime? PublishDate { get; }
         public PostContext Context { get; }
+        public string Visibility { get; }  
 
         public CreatePost(Guid postId, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
-            IEnumerable<string> mediaFiles, string state, DateTime? publishDate, PostContext context)
+            IEnumerable<string> mediaFiles, string state, DateTime? publishDate, PostContext context, string visibility)
         {
             PostId = postId;
             UserId = userId;
@@ -29,6 +30,7 @@ namespace MiniSpace.Services.Posts.Application.Commands
             State = state;
             PublishDate = publishDate;
             Context = context;
+            Visibility = visibility; 
         }
     }
 }
