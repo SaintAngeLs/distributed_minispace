@@ -7,27 +7,27 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
     [ExcludeFromCodeCoverage]
     public static class Extensions
     {
-       public static Post AsEntity(this PostDocument document)
+        public static Post AsEntity(this PostDocument document)
         => new Post(
             document.Id,
-            document.UserId,             
-            document.OrganizationId,      
+            document.UserId,
+            document.OrganizationId,
             document.EventId,
             document.TextContent,
             document.MediaFiles,
             document.CreatedAt,
             document.State,
-            document.Context,  
+            document.Context,
             document.PublishDate,
-            document.UpdatedAt); 
-
+            document.Visibility,  
+            document.UpdatedAt);
 
         public static PostDocument AsDocument(this Post entity)
             => new PostDocument()
             {
                 Id = entity.Id,
-                UserId = entity.UserId,          
-                OrganizationId = entity.OrganizationId,  
+                UserId = entity.UserId,
+                OrganizationId = entity.OrganizationId,
                 EventId = entity.EventId,
                 TextContent = entity.TextContent,
                 MediaFiles = entity.MediaFiles,
@@ -35,7 +35,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 UpdatedAt = entity.UpdatedAt,
                 State = entity.State,
                 PublishDate = entity.PublishDate,
-                Context = entity.Context  
+                Context = entity.Context,
+                Visibility = entity.Visibility 
             };
 
         public static PostDto AsDto(this PostDocument document)
@@ -50,7 +51,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 CreatedAt = document.CreatedAt,
                 UpdatedAt = document.UpdatedAt,
                 State = document.State.ToString().ToLowerInvariant(),
-                PublishDate = document.PublishDate
+                PublishDate = document.PublishDate,
+                Visibility = document.Visibility.ToString().ToLowerInvariant() 
             };
     }
 }

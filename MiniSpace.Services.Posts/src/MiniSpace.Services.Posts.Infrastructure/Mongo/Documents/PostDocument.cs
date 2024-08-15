@@ -19,5 +19,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public PostContext Context { get; set; } 
+        public VisibilityStatus Visibility { get; set; } 
     }
 }
