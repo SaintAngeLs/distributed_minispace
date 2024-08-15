@@ -90,6 +90,30 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
             return _repository.ExistsAsync(o => o.UserEventPosts.Any(p => p.Id == id));
         }
 
+        public async Task<PagedResponse<Post>> BrowsePostsAsync(BrowseRequest request)
+        {
+            var filterDefinition = Builders<UserEventPostDocument>.Filter.Empty;
+
+            if (request.UserId.HasValue)
+            {
+                filterDefinition &= Builders<UserEventPostDocument>.Filter.Eq(o => o.UserId, request.UserId.Value);
+            }
+
+            if (request.EventId.HasValue)
+            {
+                filterDefinition &= Builders<UserEventPostDocument>.Filter.ElemMatch(o => o.UserEventPosts, p => p.EventId == request.EventId.Value);
+            }
+
+            var sortDefinition = UserEventPostExtensions.ToSortDefinition(request.SortBy, request.Direction);
+
+            var pagedPosts = await _repository.Collection.AggregateByPage<UserEventPostDocument>(filterDefinition, sortDefinition, request.PageNumber, request.PageSize);
+
+            var posts = pagedPosts.data.SelectMany(o => o.UserEventPosts).ToList();
+
+            return new PagedResponse<Post>(posts.Select(p => p.AsEntity()), request.PageNumber, request.PageSize, pagedPosts.totalElements);
+        }
+        
+
         public async Task<PagedResponse<Post>> BrowseUserEventPostsAsync(BrowseRequest request)
         {
             var filterDefinition = Builders<UserEventPostDocument>.Filter.Where(

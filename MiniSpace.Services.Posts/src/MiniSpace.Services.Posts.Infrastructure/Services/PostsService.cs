@@ -3,11 +3,13 @@ using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Exceptions;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Application.Services.Clients;
-using MiniSpace.Services.Posts.Core.Wrappers;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Exceptions;
 using MiniSpace.Services.Posts.Core.Repositories;
 using MiniSpace.Services.Posts.Core.Requests;
+using MiniSpace.Services.Posts.Core.Wrappers;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Services
 {
@@ -17,6 +19,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
         private readonly IOrganizationEventPostRepository _organizationEventPostRepository;
         private readonly IUserPostRepository _userPostRepository;
         private readonly IUserEventPostRepository _userEventPostRepository;
+        private readonly IPostRepository _postRepository; // Add this to access all posts
         private readonly IAppContext _appContext;
 
         public PostsService(
@@ -24,12 +27,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
             IOrganizationEventPostRepository organizationEventPostRepository,
             IUserPostRepository userPostRepository,
             IUserEventPostRepository userEventPostRepository,
+            IPostRepository postRepository, // Inject the IPostRepository here
             IAppContext appContext)
         {
             _organizationPostRepository = organizationPostRepository;
             _organizationEventPostRepository = organizationEventPostRepository;
             _userPostRepository = userPostRepository;
             _userEventPostRepository = userEventPostRepository;
+            _postRepository = postRepository; // Initialize the IPostRepository
             _appContext = appContext;
         }
 
@@ -66,7 +71,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
             }
             else
             {
-                throw new InvalidBrowseRequestException("Request must contain either UserId or OrganizationId");
+                // If neither UserId nor OrganizationId is provided, return all posts
+                pagedResponse = await _postRepository.BrowsePostsAsync(request);
             }
 
             return new PagedResponse<PostDto>(

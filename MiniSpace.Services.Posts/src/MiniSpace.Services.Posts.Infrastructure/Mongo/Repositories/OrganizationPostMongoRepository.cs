@@ -86,6 +86,24 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
             return posts.Select(p => p.AsEntity());
         }
 
+        public async Task<PagedResponse<Post>> BrowsePostsAsync(BrowseRequest request)
+        {
+            var filterDefinition = Builders<OrganizationPostDocument>.Filter.Empty;
+
+            if (request.OrganizationId.HasValue)
+            {
+                filterDefinition &= Builders<OrganizationPostDocument>.Filter.Eq(o => o.OrganizationId, request.OrganizationId.Value);
+            }
+
+            var sortDefinition = OrganizationPostExtensions.ToSortDefinition(request.SortBy, request.Direction);
+
+            var pagedPosts = await _repository.Collection.AggregateByPage<OrganizationPostDocument>(filterDefinition, sortDefinition, request.PageNumber, request.PageSize);
+
+            var posts = pagedPosts.data.SelectMany(o => o.OrganizationPosts).ToList();
+
+            return new PagedResponse<Post>(posts.Select(p => p.AsEntity()), request.PageNumber, request.PageSize, pagedPosts.totalElements);
+        }
+
         public async Task<PagedResponse<Post>> BrowseOrganizationPostsAsync(BrowseRequest request)
         {
             var filterDefinition = Builders<OrganizationPostDocument>.Filter.Where(o => o.OrganizationId == request.OrganizationId);
