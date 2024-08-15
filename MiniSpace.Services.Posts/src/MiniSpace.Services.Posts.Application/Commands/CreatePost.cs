@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Posts.Application.Commands
         public string State { get; }
         public DateTime? PublishDate { get; }
         public PostContext Context { get; }
-        public string Visibility { get; }  
+        public string Visibility { get; set; }  
 
         public CreatePost(Guid postId, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
             IEnumerable<string> mediaFiles, string state, DateTime? publishDate, PostContext context, string visibility)
