@@ -1,6 +1,7 @@
 @page "/posts/search"
 @inject IPostsService PostsService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Data.Posts
@@ -49,49 +50,47 @@
     }
 
     private async Task LoadPostsAsync()
-{
-    var searchParams = new SearchPosts
     {
-        Pageable = new PageableDto
+        var searchParams = new SearchPosts
         {
-            Page = currentPage,
-            Size = pageSize,
-            Sort = new SortDto
+            Pageable = new PageableDto
             {
-                SortBy = new[] { "CreatedAt" },
-                Direction = "desc"
+                Page = currentPage,
+                Size = pageSize,
+                Sort = new SortDto
+                {
+                    SortBy = new[] { "CreatedAt" },
+                    Direction = "desc"
+                }
             }
-        }
-    };
+        };
 
-    var response = await PostsService.SearchPostsAsync(searchParams);
+        var response = await PostsService.SearchPostsAsync(searchParams);
 
-    // Log the full response for debugging
-    var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-    Console.WriteLine("Full Response JSON: " + jsonResponse);
+        // Log the full response for debugging
+        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+        Snackbar.Add("Full Response JSON: " + jsonResponse, Severity.Info);
 
-    if (response != null && response.IsSuccessStatusCode)
-    {
-        var result = response.Content;
-
-        if (result != null && result.Items != null)
+        if (response != null && response.IsSuccessStatusCode)
         {
-            posts = result.Items.ToList();
-            totalItems = result.TotalItems;
+            var result = response.Content;
+
+            if (result != null && result.Items != null)
+            {
+                posts = result.Items.ToList();
+                totalItems = result.TotalItems;
+            }
+            else
+            {
+                Snackbar.Add("Result or Result.Items is null.", Severity.Warning);
+                posts = new List<PostDto>();
+            }
         }
         else
         {
-            Console.WriteLine("Result or Result.Items is null.");
-            posts = new List<PostDto>();
+            Snackbar.Add($"Failed to load posts: {response?.ErrorMessage?.Reason}", Severity.Error);
         }
     }
-    else
-    {
-        Console.WriteLine($"Failed to load posts: {response?.ErrorMessage?.Reason}");
-    }
-}
-
-
 
     private async Task OnPageChanged(int newPage)
     {
