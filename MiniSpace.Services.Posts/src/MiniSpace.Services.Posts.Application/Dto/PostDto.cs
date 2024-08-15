@@ -19,6 +19,7 @@ namespace MiniSpace.Services.Posts.Application.Dto
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string Context { get; set; }
+        public string Visibility { get; set; }
 
         public PostDto()
         {
@@ -37,6 +38,7 @@ namespace MiniSpace.Services.Posts.Application.Dto
             CreatedAt = post.CreatedAt;
             UpdatedAt = post.UpdatedAt;
             Context = post.Context.ToString();
+            Visibility = post.Visibility.ToString(); 
         }
     }
 }
