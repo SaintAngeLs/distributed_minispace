@@ -772,7 +772,7 @@ modules:
         auth: true
 
       - upstream: /search
-        method: POST
+        method: GET
         use: downstream
         downstream: posts-service/posts/search
         auth: true
