@@ -1,4 +1,6 @@
 using MiniSpace.Services.Posts.Core.Entities;
+using MiniSpace.Services.Posts.Core.Requests;
+using MiniSpace.Services.Posts.Core.Wrappers;
 
 namespace MiniSpace.Services.Posts.Core.Repositories
 {
@@ -11,5 +13,6 @@ namespace MiniSpace.Services.Posts.Core.Repositories
         Task UpdateAsync(Post post);
         Task DeleteAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
+        Task<PagedResponse<Post>> BrowsePostsAsync(BrowseRequest request);
     }    
 }
