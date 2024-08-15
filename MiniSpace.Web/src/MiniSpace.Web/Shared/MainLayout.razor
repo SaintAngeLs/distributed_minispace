@@ -8,7 +8,7 @@
 @inject ILocalStorageService localStorage
 @inject AuthenticationStateProvider authenticationStateProvider
 
-<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" />
+<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" @bind-IsDarkMode="@_isDarkMode"/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
@@ -52,6 +52,7 @@
                 <MudNavLink Href="/account" Icon="@Icons.Material.Filled.AccountBox">Account settings</MudNavLink>
                 <MudNavLink Href="/notifications/all" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
                 <MudNavLink OnClick="SignOut" Icon="@Icons.Material.Filled.ExitToApp">Sign Out</MudNavLink>
+                <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
             </MudNavMenu>
         </MudDrawer>
     }
@@ -67,6 +68,14 @@
                 <MudNavLink Href="#connect" OnClick="ScrollToConnect" Icon="@Icons.Material.Filled.ConnectWithoutContact">Connect</MudNavLink>
                 <MudNavLink Href="signin" Icon="@Icons.Material.Filled.Login">Sign In</MudNavLink>
                 <MudNavLink Href="signup" Icon="@Icons.Material.Filled.HowToReg">Sign Up</MudNavLink>
+               @* <MudSelect T="string" Value="_themeName" ValueChanged="OnThemeChanged">
+                    <MudSelectItem T="string" Value="@light">Light Theme</MudSelectItem>
+                    <MudSelectItem T="string" Value="@dark">Dark Theme</MudSelectItem>
+                    <MudSelectItem T="string" Value="@system">System Theme</MudSelectItem>
+                </MudSelect> *@
+                <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
+
+
             </MudNavMenu>
         </MudDrawer>
     }
@@ -121,21 +130,17 @@
 
     <MudMainContent>
         <div style="flex: 1; display: flex; flex-direction: column;">
-            <div style="flex: 1;">
-                <div style="flex: 1; display: flex; justify-content: center; background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);">
-                    <div  style="flex-grow: 1; max-width: 1400px;">
-                        <div style="padding: 10px; margin: 20px;  min-height: 100vh;">
+           
+                
                             @Body
-                        </div>
-                    </div>
+                        
                     @if (_isUserAuthenticated)
                     {
                         <div style="max-width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
                             <NotificationComponent />
                         </div>
                     }
-                </div>
-            </div>
+               
             <FooterComponent />
         </div>
     </MudMainContent>
@@ -259,4 +264,13 @@
     {
         NavigationManager.NavigateTo("/");
     }
+
+    private string _themeName = "light";
+    private string light = "light";
+    private string dark = "dark";
+    private string system = "system";
+    private MudTheme _currentTheme;
+    private bool _isDarkMode;
+   
+    
 }

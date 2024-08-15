@@ -8,8 +8,12 @@
     --primary-btn-border: #1861ac;
 }
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "Nunito Sans", sans-serif;
 }
+.mud-input-label-outlined {
+    /* background-color: inherit; */
+}
+
 * {
     
 }
@@ -190,9 +194,7 @@ html, body {
     height: 100%;
 }
 
-.radzen-body {
-    flex: 1;
-}
+
 
 
 .logo-container {
@@ -217,106 +219,6 @@ html, body {
     }
 }
 
-.rz-menu .rz-profile-menu .rz-navigation-item-link {
-    margin-top: -10px !important;
-}
-
-.rz-navigation-menu {
-    background-color: var(--header-color) !important;
-    color: #fff !important;
-    transition: background-color 0.3s ease; 
-}
-
-.rz-navigation-item-text {
-    color: #fff !important;
-    transition: color 0.3s ease;
-}
-
-.rz-navigation-menu a {
-    display: block;
-    text-decoration: none; 
-    color: #fff; 
-    transition: background-color 0.3s ease, color 0.3s ease; 
-}
-
-.rz-navigation-menu a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #98d1ff; 
-    text-decoration: none;
-}
-
-.rz-navigation-menu a:active,
-.rz-navigation-menu a:focus {
-    background-color: rgba(255, 255, 255, 0.2); 
-    color: #aad4ff; 
-}
-
-.rz-navigation-menua a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
-
-.rz-menu {
-    z-index: 100 !important;
-    background-color: var(--header-color) !important;
-    color: #fff !important;
-    height: 50px;
-}
-
-
-.rz-menu-stack {
-    display: flex;
-    flex-direction: row;
-    padding-left: 0;
-
-}
-.rz-navigation-item-link {
-    color: #fff !important;
-}
-
-.rz-navigation-item-link :hover {
-    color: #98d1ff !important;
-}
-.rz-navigation-item-icon {
-    color: #fff !important;
-}
-
-.rz-menu-item {
-    padding: 10px;
-    cursor: pointer;
-    text-align: center;
-    border: none; 
-    background: none;
-    color: #000 !important;
-}
-
-@media (max-width: 767.98px) {
-    .rz-menu-stack {
-        flex-direction: column;
-        align-items: center;
-        width: 100% !important;
-       
-        background-color: var(--header-color) !important;
-    }
-
-    .rz-menu-item {
-        width: 100%!important;
-        padding: 8px 0;
-    }
-
-    .rz-navigation-item-link {
-        width: 100% !important;
-    }
-
-    /*.rz-display-flex {*/
-    /*    display: block !important;*/
-    /*}*/
-}
-
-.RadzenStack {
-    width: 100%;
-    justify-content: space-between;
-}
 
 @media (max-width: 767.98px) {
     header {
@@ -537,24 +439,6 @@ html, body {
 }
 
 
-
-/* .notification-panel {
-    position: fixed;
-    top: 10%;
-    right: 0;
-    width: 300px;
-    max-height: 80vh;
-    overflow-y: auto;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    z-index: 1000;
-    transition: transform 0.3s ease-in-out;
-}
-
-.notification-panel.hidden {
-    transform: translateX(100%);
-} */
 
 
 .friend-img {
@@ -882,4 +766,8 @@ div.connectionRejected {
     align-items: center;
     z-index: 100000;
     backdrop-filter: blur(10px); 
+}
+
+.mud-drawer-content .mud-input-label {
+    background-color: var(--mud-palette-primary-text) !important;
 }
