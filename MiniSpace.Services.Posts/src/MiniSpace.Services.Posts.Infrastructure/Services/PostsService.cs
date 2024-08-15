@@ -2,12 +2,12 @@
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Exceptions;
 using MiniSpace.Services.Posts.Application.Services;
-using MiniSpace.Services.Posts.Application.Services.Clients;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Exceptions;
 using MiniSpace.Services.Posts.Core.Repositories;
 using MiniSpace.Services.Posts.Core.Requests;
 using MiniSpace.Services.Posts.Core.Wrappers;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
         private readonly IOrganizationEventPostRepository _organizationEventPostRepository;
         private readonly IUserPostRepository _userPostRepository;
         private readonly IUserEventPostRepository _userEventPostRepository;
-        private readonly IPostRepository _postRepository; // Add this to access all posts
+        private readonly IPostRepository _postRepository;
         private readonly IAppContext _appContext;
 
         public PostsService(
@@ -27,14 +27,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
             IOrganizationEventPostRepository organizationEventPostRepository,
             IUserPostRepository userPostRepository,
             IUserEventPostRepository userEventPostRepository,
-            IPostRepository postRepository, // Inject the IPostRepository here
+            IPostRepository postRepository,
             IAppContext appContext)
         {
             _organizationPostRepository = organizationPostRepository;
             _organizationEventPostRepository = organizationEventPostRepository;
             _userPostRepository = userPostRepository;
             _userEventPostRepository = userEventPostRepository;
-            _postRepository = postRepository; // Initialize the IPostRepository
+            _postRepository = postRepository;
             _appContext = appContext;
         }
 
@@ -71,15 +71,35 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
             }
             else
             {
-                // If neither UserId nor OrganizationId is provided, return all posts
-                pagedResponse = await _postRepository.BrowsePostsAsync(request);
+                // Return posts from all repositories
+                var orgEventPosts = await _organizationEventPostRepository.BrowsePostsAsync(request);
+                var orgPosts = await _organizationPostRepository.BrowsePostsAsync(request);
+                var userEventPosts = await _userEventPostRepository.BrowsePostsAsync(request);
+                var userPosts = await _userPostRepository.BrowsePostsAsync(request);
+
+                var allPosts = orgEventPosts.Items
+                    .Concat(orgPosts.Items)
+                    .Concat(userEventPosts.Items)
+                    .Concat(userPosts.Items)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .ToList();
+
+                pagedResponse = new PagedResponse<Post>(
+                    allPosts,
+                    request.PageNumber,
+                    request.PageSize,
+                    orgEventPosts.TotalItems + orgPosts.TotalItems + userEventPosts.TotalItems + userPosts.TotalItems
+                );
             }
 
             return new PagedResponse<PostDto>(
                 pagedResponse.Items.Select(p => new PostDto(p)),
-                pagedResponse.Page, 
-                pagedResponse.PageSize, 
-                pagedResponse.TotalItems);
+                pagedResponse.Page,
+                pagedResponse.PageSize,
+                pagedResponse.TotalItems
+            );
         }
     }
 }
