@@ -14,6 +14,7 @@
 @using System.Linq
 @using System.Threading.Tasks
 
+<MudContainer>
 <MudText Typo="Typo.h5" GutterBottom="true">Create New Organization</MudText>
 
 <MudPaper Elevation="1" Class="pa-4">
@@ -45,12 +46,12 @@
             Create Organization
         </MudButton>
 
-        <!-- Back Button -->
         <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack" Style="margin-top: 10px;">
             Back
         </MudButton>
     </MudForm>
 </MudPaper>
+</MudContainer>
 
 @code {
     private MudForm form;
