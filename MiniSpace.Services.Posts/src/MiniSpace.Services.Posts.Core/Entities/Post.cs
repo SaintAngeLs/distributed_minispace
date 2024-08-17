@@ -126,12 +126,12 @@ namespace MiniSpace.Services.Posts.Core.Entities
                 publishDate ?? createdAt, visibility);
         }
 
-        public static Post CreateForOrganization(Guid id, Guid organizationId, string textContent,
+        public static Post CreateForOrganization(Guid id, Guid organizationId, Guid? userId, string textContent,
             IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
         {
             CheckTextContent(id, textContent);
 
-            return new Post(id, null, organizationId, null, textContent, mediaFiles, createdAt, state, PostContext.OrganizationPage,
+            return new Post(id, userId, organizationId, null, textContent, mediaFiles, createdAt, state, PostContext.OrganizationPage,
                 publishDate ?? createdAt, visibility);
         }
 
@@ -143,6 +143,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
             return new Post(id, userId, organizationId, eventId, textContent, mediaFiles, createdAt, state, PostContext.EventPage,
                 publishDate ?? createdAt, visibility);
         }
+
 
         public void Update(string textContent, IEnumerable<string> mediaFiles, DateTime now)
         {
