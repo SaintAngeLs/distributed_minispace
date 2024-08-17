@@ -64,11 +64,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 .AddRestrictedStateFilter(state)
                 .AddFriendsFilter(friends, friendsEngagementType)
                 .AddOrganizationsIdFilter(organizations); 
+
+                
             
             var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
             
             var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
-            
+
             return (pagedEvents.data.Select(e => e.AsEntity()), pageNumber, pageSize,
                 pagedEvents.totalPages, pagedEvents.totalElements);
         }
