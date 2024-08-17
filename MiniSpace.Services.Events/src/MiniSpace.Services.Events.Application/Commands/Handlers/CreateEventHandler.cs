@@ -118,12 +118,8 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                         throw new OrganizationNotFoundException(command.OrganizationId.Value);
                     }
 
-                    if (organization.Users == null || !organization.Users.Any(u => u.Id == command.OrganizerId))
-                    {
-                        throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId.Value);
-                    }
-
-                    organizer = new Organizer(command.OrganizationId.Value, OrganizerType.Organization, organizationId: command.OrganizationId.Value);
+                    // Store both organization ID and the user ID creating the event
+                    organizer = new Organizer(command.OrganizationId.Value, OrganizerType.Organization, userId: command.OrganizerId, organizationId: command.OrganizationId.Value);
                 }
                 else
                 {
