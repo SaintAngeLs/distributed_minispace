@@ -220,24 +220,24 @@
                 editEvent = new UpdateEventCommand
                 {
                     EventId = eventDto.Id,
-                    Name = eventDto.Name,
-                    Description = eventDto.Description,
+                    Name = eventDto.Name ?? string.Empty,
+                    Description = eventDto.Description ?? string.Empty,
                     StartDate = eventDto.StartDate.ToString("yyyy-MM-ddTHH:mm:ss"),
                     EndDate = eventDto.EndDate.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    Category = eventDto.Category, // Category is now Enum type
+                    Category = eventDto.Category, 
                     Capacity = eventDto.Capacity,
                     PublishDate = eventDto.PublishDate.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    Visibility = Enum.Parse<EventVisibility>(eventDto.Status), // Assuming Status is of type EventVisibility
-                    BannerUrl = eventDto.BannerUrl,
-                    Settings = eventDto.Settings,
-                    MediaFilesUrl = eventDto.MediaFilesUrl.ToList(),
-                    BuildingName = eventDto.Location?.BuildingName,
-                    Street = eventDto.Location?.Street,
-                    BuildingNumber = eventDto.Location?.BuildingNumber,
-                    ApartmentNumber = eventDto.Location?.ApartmentNumber,
-                    City = eventDto.Location?.City,
-                    ZipCode = eventDto.Location?.ZipCode,
-                    Country = eventDto.Location?.Country,
+                    Visibility = Enum.Parse<EventVisibility>(eventDto.Status ?? EventVisibility.Public.ToString()),
+                    BannerUrl = eventDto.BannerUrl ?? string.Empty,
+                    Settings = eventDto.Settings ?? new EventSettings(),
+                    MediaFilesUrl = eventDto.MediaFilesUrl?.ToList() ?? new List<string>(),
+                    BuildingName = eventDto.Location?.BuildingName ?? string.Empty,
+                    Street = eventDto.Location?.Street ?? string.Empty,
+                    BuildingNumber = eventDto.Location?.BuildingNumber ?? string.Empty,
+                    ApartmentNumber = eventDto.Location?.ApartmentNumber ?? string.Empty,
+                    City = eventDto.Location?.City ?? string.Empty,
+                    ZipCode = eventDto.Location?.ZipCode ?? string.Empty,
+                    Country = eventDto.Location?.Country ?? string.Empty,
                     Fee = eventDto.Fee,
                     OrganizerId = eventDto.Organizer?.Id ?? Guid.Empty,
                     OrganizationId = eventDto.Organizer?.OrganizationId ?? Guid.Empty
@@ -248,13 +248,13 @@
                 publishDateTemp = eventDto.PublishDate;
 
                 bannerPreviewUrl = editEvent.BannerUrl;
-                mediaFilesPreviews = eventDto.MediaFilesUrl.Select(url => new FilePreview
+                mediaFilesPreviews = eventDto.MediaFilesUrl?.Select(url => new FilePreview
                 {
                     Url = url,
                     IsImage = url.EndsWith(".jpg") || url.EndsWith(".png"),
                     IsVideo = url.EndsWith(".mp4"),
                     IsPdf = url.EndsWith(".pdf")
-                }).ToList();
+                }).ToList() ?? new List<FilePreview>();
             }
         }
         catch (Exception ex)
@@ -266,6 +266,7 @@
             IsLoading = false;
         }
     }
+
 
     private async Task UploadBannerClick()
     {
