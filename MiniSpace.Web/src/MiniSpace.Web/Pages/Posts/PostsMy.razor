@@ -1,0 +1,195 @@
+@page "/posts/my"
+@inject IPostsService PostsService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IIdentityService IdentityService
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.DTO.Wrappers
+@using MiniSpace.Web.Data.Posts
+@using MudBlazor
+@using System.Security.Claims
+
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="12">
+            <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">My Posts</MudText>
+        </MudItem>
+
+        @if (posts != null && posts.Any())
+        {
+            @foreach (var post in posts)
+            {
+                <MudItem xs="12">
+                    <MudCard Class="post-card mb-4" Elevation="2">
+                        <MudCardContent>
+                            <MudGrid justify-start AlignItems="AlignItems.Center">
+                                <MudItem xs="1" Class="pr-2">
+                                    <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId.Value)" />
+                                </MudItem>
+                                <MudItem xs="11">
+                                    <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId.Value)</MudText>
+                                    <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
+                                </MudItem>
+                            </MudGrid>
+
+                            <MudText Typo="Typo.body1" Class="mt-2">@post.TextContent</MudText>
+
+                            @if (post.MediaFiles != null && post.MediaFiles.Any())
+                            {
+                                <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
+                            }
+                        </MudCardContent>
+                        <MudCardActions Class="justify-between">
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Like</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+        else
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.body1" Align="Align.Center">You have no posts yet.</MudText>
+            </MudItem>
+        }
+    </MudGrid>
+    <MudGrid Justify="Justify.Center" Class="mt-4">
+        <MudItem>
+            <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private List<PostDto> posts = new();
+    private Dictionary<Guid, StudentDto> studentsCache = new();
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalItems = 0;
+    private Guid? currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (IdentityService.IsAuthenticated)
+            {
+                currentUserId = IdentityService.GetCurrentUserId();
+
+                if (currentUserId.HasValue)
+                {
+                    await LoadPostsAsync();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Failed to retrieve the current user ID.");
+                }
+            }
+            else
+            {
+                Snackbar.Add("You need to be logged in to view your posts.", Severity.Warning);
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error initializing page: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task LoadPostsAsync()
+    {
+        if (!currentUserId.HasValue)
+            return;
+
+        var searchParams = new SearchPosts
+        {
+            Pageable = new PageableDto
+            {
+                Page = currentPage,
+                Size = pageSize,
+                Sort = new SortDto
+                {
+                    SortBy = new[] { "CreatedAt" },
+                    Direction = "desc"
+                }
+            },
+            UserId = currentUserId.Value
+        };
+
+        try
+        {
+            var response = await PostsService.SearchPostsAsync(searchParams);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content;
+
+                if (result != null && result.Items != null)
+                {
+                    posts = result.Items.ToList();
+                    totalItems = result.TotalItems;
+
+                    // Load student data for posts with UserId
+                    foreach (var post in posts.Where(p => p.UserId.HasValue))
+                    {
+                        if (!studentsCache.ContainsKey(post.UserId.Value))
+                        {
+                            var student = await StudentsService.GetStudentAsync(post.UserId.Value);
+                            if (student != null)
+                            {
+                                studentsCache[post.UserId.Value] = student;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Snackbar.Add("No posts found.", Severity.Warning);
+                    posts = new List<PostDto>();
+                }
+            }
+            else
+            {
+                Snackbar.Add($"Failed to load posts: {response.ErrorMessage?.Reason}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading posts: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string GetUserAvatar(Guid userId)
+    {
+        if (studentsCache.ContainsKey(userId))
+        {
+            return studentsCache[userId].ProfileImageUrl ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    private string GetUserName(Guid userId)
+    {
+        if (studentsCache.ContainsKey(userId))
+        {
+            return $"{studentsCache[userId].FirstName} {studentsCache[userId].LastName}";
+        }
+        return "Unknown User";
+    }
+
+    private async Task OnPageChanged(int newPage)
+    {
+        currentPage = newPage;
+        await LoadPostsAsync();
+    }
+
+    private void NavigateToPostDetails(Guid postId)
+    {
+        NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+}

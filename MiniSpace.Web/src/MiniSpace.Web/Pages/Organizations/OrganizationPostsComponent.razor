@@ -23,52 +23,67 @@
         {
             <MudText Typo="Typo.body1" Align="Align.Center">No posts available for this organization.</MudText>
         }
-        <MudGrid Justify="Justify.Center">
-            @if (canCreatePosts)
-            {
-                <MudItem xs="12">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateNewPost" StartIcon="@Icons.Material.Filled.Add">
-                        Create New Post
-                    </MudButton>
+        else
+        {
+            <MudGrid Justify="Justify.Center">
+                @if (canCreatePosts)
+                {
+                    <MudItem xs="12">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateNewPost" StartIcon="@Icons.Material.Filled.Add">
+                            Create New Post
+                        </MudButton>
+                    </MudItem>
+                }
+
+                @foreach (var post in posts)
+                {
+                    <MudItem xs="12">
+                        <MudCard Class="post-card mb-4" Elevation="2">
+                            <MudCardContent>
+                                <MudGrid justify-start  AlignItems="AlignItems.Center">
+                                    <MudItem xs="1" Class="pr-2">
+                                        @if (post.UserId.HasValue)
+                                        {
+                                            <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId.Value)" />
+                                        }
+                                    </MudItem>
+                                    <MudItem xs="11">
+                                        <MudText Typo="Typo.subtitle1" Class="mb-1">
+                                            @if (post.UserId.HasValue)
+                                            {
+                                                @GetUserName(post.UserId.Value)
+                                            }
+                                            else
+                                            {
+                                                @("Unknown User")
+                                            }
+                                        </MudText>
+                                        <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
+                                    </MudItem>
+                                </MudGrid>
+
+                                <MudText Typo="Typo.body1" Class="mt-2">@post.TextContent</MudText>
+
+                                @if (post.MediaFiles != null && post.MediaFiles.Any())
+                                {
+                                    <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
+                                }
+                            </MudCardContent>
+                            <MudCardActions Class="justify-between">
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary">Like</MudButton>
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+            <MudGrid Justify="Justify.Center" Class="mt-4">
+                <MudItem>
+                    <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
                 </MudItem>
-            }
-
-            @foreach (var post in posts)
-            {
-                <MudItem xs="12">
-                    <MudCard Class="post-card mb-4" Elevation="2">
-                        <MudCardContent>
-                            <MudGrid justify-start  AlignItems="AlignItems.Center">
-                                <MudItem xs="1" Class="pr-2">
-                                    <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId.Value)" />
-                                </MudItem>
-                                <MudItem xs="11">
-                                    <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId.Value)</MudText>
-                                    <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
-                                </MudItem>
-                            </MudGrid>
-
-                            <MudText Typo="Typo.body1" Class="mt-2">@post.TextContent</MudText>
-
-                            @if (post.MediaFiles != null && post.MediaFiles.Any())
-                            {
-                                <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
-                            }
-                        </MudCardContent>
-                        <MudCardActions Class="justify-between">
-                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Like</MudButton>
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-            }
-        </MudGrid>
-        <MudGrid Justify="Justify.Center" Class="mt-4">
-            <MudItem>
-                <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
-            </MudItem>
-        </MudGrid>
+            </MudGrid>
+        }
     }
 </MudContainer>
 
@@ -155,7 +170,7 @@
         }
     }
 
-     private async Task CheckUserPermissionsAsync()
+    private async Task CheckUserPermissionsAsync()
     {
         try
         {
@@ -163,15 +178,11 @@
 
             var organizationDetails = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
 
-            var organizationDetailsJson = System.Text.Json.JsonSerializer.Serialize(organizationDetails, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-            Console.WriteLine("Organization Details: " + organizationDetailsJson);
-
             if (organizationDetails == null || organizationDetails.OrganizationDetails == null)
             {
                 Snackbar.Add("Failed to load organization details.", Severity.Error);
                 return;
             }
-
 
             if (organizationDetails.Users == null || !organizationDetails.Users.Any())
             {
@@ -214,11 +225,6 @@
             Console.WriteLine($"Exception in CheckUserPermissionsAsync: {ex.Message}");
         }
     }
-
-
-
-
-
 
     private string GetUserAvatar(Guid userId)
     {
