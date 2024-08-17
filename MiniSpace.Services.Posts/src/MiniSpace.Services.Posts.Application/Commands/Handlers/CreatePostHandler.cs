@@ -67,7 +67,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             }
 
             var mediaFiles = command.MediaFiles.ToList();
-            if (mediaFiles.Count > 3)
+            if (mediaFiles.Count > 12)
             {
                 throw new InvalidNumberOfPostMediaFilesException(command.PostId, mediaFiles.Count);
             }
