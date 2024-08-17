@@ -7,10 +7,10 @@ namespace MiniSpace.Services.Events.Application.DTO
     [ExcludeFromCodeCoverage]
     public class OrganizerDto
     {
-        public Guid Id { get; set; } 
-        public Guid? UserId { get; set; } 
-        public Guid? OrganizationId { get; set; } 
-        public OrganizerType OrganizerType { get; set; } 
+        public Guid Id { get; set; }
+        public Guid? UserId { get; set; }
+        public Guid? OrganizationId { get; set; }
+        public OrganizerType OrganizerType { get; set; }
 
         public OrganizerDto()
         {
@@ -22,14 +22,14 @@ namespace MiniSpace.Services.Events.Application.DTO
 
             if (organizer.OrganizerType == OrganizerType.User)
             {
-                Id = organizer.Id; 
-                UserId = organizer.Id;
+                Id = organizer.Id;
+                UserId = organizer.UserId;
                 OrganizationId = null;
             }
             else if (organizer.OrganizerType == OrganizerType.Organization)
             {
-                Id = organizer.OrganizationId ?? Guid.Empty; 
-                UserId = null;
+                Id = organizer.OrganizationId ?? Guid.Empty;
+                UserId = organizer.UserId;
                 OrganizationId = organizer.OrganizationId;
             }
         }
