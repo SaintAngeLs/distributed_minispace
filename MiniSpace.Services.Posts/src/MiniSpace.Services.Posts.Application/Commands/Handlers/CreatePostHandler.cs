@@ -90,7 +90,7 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
             }
             else if (command.Context == PostContext.OrganizationPage)
             {
-                post = Post.CreateForOrganization(command.PostId, command.OrganizationId.Value, command.TextContent, command.MediaFiles,
+                post = Post.CreateForOrganization(command.PostId, command.OrganizationId.Value, command.UserId, command.TextContent, command.MediaFiles,
                     _dateTimeProvider.Now, newState, command.PublishDate, visibilityStatus);
                 await _organizationPostRepository.AddAsync(post);
             }
@@ -116,5 +116,6 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
 
             await _messageBroker.PublishAsync(new PostCreated(command.PostId, post.MediaFiles));
         }
+
     }
 }
