@@ -162,8 +162,8 @@
                 State = state,
                 Visibility = visibility,
                 PublishDate = publishDate,
-                OrganizationId = OrganizationId,  // Set the OrganizationId for the post
-                Context = PostContext.OrganizationPage  // Context set for organization
+                OrganizationId = OrganizationId,  
+                Context = PostContext.OrganizationPage 
             };
 
             var response = await PostsService.CreatePostAsync(command);

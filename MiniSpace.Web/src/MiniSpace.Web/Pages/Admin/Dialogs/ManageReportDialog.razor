@@ -203,7 +203,7 @@
     private async void GoToReporterProfile(ReportDto reportDto)
     {
         await LocalStorage.SetItemAsync("reportDto", reportDto);
-        NavigationManager.NavigateTo($"/student-details/{ReportDto.IssuerId}");
+        NavigationManager.NavigateTo($"/user-details/{ReportDto.IssuerId}");
     }
     
     private async void StartReportReview(ReportDto reportDto)
