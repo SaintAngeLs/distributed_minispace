@@ -39,34 +39,36 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
 {
     try
     {
+        // Logging the received command
         Console.WriteLine("--------------------------------------------");
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true
-        };
+        var options = new JsonSerializerOptions { WriteIndented = true };
         var commandJson = JsonSerializer.Serialize(command, options);
         Console.WriteLine("Received CreateEvent command: ");
         Console.WriteLine(commandJson);
 
         var identity = _appContext.Identity;
 
+        // Validate Event ID
         if (command.EventId == Guid.Empty || await _eventRepository.ExistsAsync(command.EventId))
         {
             throw new InvalidEventIdException(command.EventId);
         }
 
+        // Validate Organizer Type
         if (!Enum.TryParse<OrganizerType>(command.OrganizerType, true, out var organizerType))
         {
             throw new ArgumentException($"Invalid OrganizerType value: {command.OrganizerType}");
         }
 
+        // Validate Visibility
         if (!Enum.TryParse<Visibility>(command.Visibility, true, out var visibility))
         {
             throw new ArgumentException($"Invalid Visibility value: {command.Visibility}");
         }
 
+        // Validate and Parse Payment Method if necessary
         PaymentMethod? paymentMethod = null;
-        if (command.Settings != null)
+        if (command.Settings != null && command.Settings.RequiresPayment && !string.IsNullOrWhiteSpace(command.Settings.PaymentMethod))
         {
             if (!Enum.TryParse<PaymentMethod>(command.Settings.PaymentMethod, true, out var parsedPaymentMethod))
             {
@@ -75,6 +77,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             paymentMethod = parsedPaymentMethod;
         }
 
+        // Validate and Parse Event Dates
         _eventValidator.ValidateName(command.Name);
         _eventValidator.ValidateDescription(command.Description);
         var startDate = _eventValidator.ParseDate(command.StartDate, "event_start_date");
@@ -82,12 +85,18 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         var now = _dateTimeProvider.Now;
         _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
         _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
-        var address = new Address(command.BuildingName, command.Street, command.BuildingNumber,
-            command.ApartmentNumber, command.City, command.ZipCode, command.Country);
+
+        // Create Address object
+        var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, command.ApartmentNumber, command.City, command.ZipCode, command.Country);
+        
+        // Validate Capacity and Fee
         _eventValidator.ValidateCapacity(command.Capacity);
         _eventValidator.ValidateFee(command.Fee);
+
+        // Parse and Validate Category
         var category = _eventValidator.ParseCategory(command.Category);
 
+        // Determine Publish Date and State
         var publishDate = now;
         var state = State.Published;
         if (!string.IsNullOrEmpty(command.PublishDate))
@@ -98,6 +107,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             state = State.ToBePublished;
         }
 
+        // Determine Organizer
         Organizer organizer;
         if (organizerType == OrganizerType.Organization)
         {
@@ -112,7 +122,8 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new OrganizationNotFoundException(command.OrganizationId.Value);
             }
 
-            if (!organization.Organizers.Contains(command.OrganizerId))
+            // Ensure organization has a list of organizers before checking
+            if (organization.Organizers == null || !organization.Organizers.Contains(command.OrganizerId))
             {
                 throw new OrganizerDoesNotBelongToOrganizationException(command.OrganizerId, command.OrganizationId.Value);
             }
@@ -124,6 +135,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             organizer = new Organizer(command.OrganizerId, OrganizerType.User, userId: command.OrganizerId);
         }
 
+        // Create Event Settings object
         var settings = command.Settings != null
             ? new EventSettings
             {
@@ -138,7 +150,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 EnableChat = command.Settings.EnableChat,
                 AllowComments = command.Settings.AllowComments,
                 RequiresPayment = command.Settings.RequiresPayment,
-                PaymentMethod = paymentMethod ?? PaymentMethod.Offline,  // Use the parsed PaymentMethod
+                PaymentMethod = paymentMethod ?? PaymentMethod.Offline, // Use Offline as default if payment is required
                 PaymentReceiverDetails = command.Settings.PaymentReceiverDetails,
                 PaymentGateway = command.Settings.PaymentGateway,
                 IssueTickets = command.Settings.IssueTickets,
@@ -148,8 +160,9 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 CustomTermsAndConditions = command.Settings.CustomTermsAndConditions,
                 CustomFields = command.Settings.CustomFields
             }
-            : new EventSettings(); // or set to null if EventSettings can be optional
+            : null; // Set to null if settings are not provided
 
+        // Create the event entity
         var @event = Event.Create(
             command.EventId,
             command.Name,
@@ -169,6 +182,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             visibility,
             settings);
 
+        // Add the event to the repository and publish an event created message
         await _eventRepository.AddAsync(@event);
         await _messageBroker.PublishAsync(new EventCreated(
             @event.Id,
@@ -187,6 +201,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
         throw;  // Re-throw to be handled by middleware
     }
 }
+}
+
     }
 
-}

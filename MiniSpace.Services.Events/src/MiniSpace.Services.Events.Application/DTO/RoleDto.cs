@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application.DTO
 {
     [ExcludeFromCodeCoverage]
-    public class OrganizationDto
+    public class RoleDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Guid> Organizers { get; set; }
+        public string Description { get; set; }
     }
 }
