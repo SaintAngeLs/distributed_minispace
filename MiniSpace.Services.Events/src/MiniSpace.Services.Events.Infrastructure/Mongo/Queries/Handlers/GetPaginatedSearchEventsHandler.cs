@@ -64,13 +64,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 dateTo: query.DateTo ?? default(DateTime),
                 category: category,
                 state: state,
-                organizations: query.OrganizationId.HasValue ? new List<Guid> { query.OrganizationId.Value } : Enumerable.Empty<Guid>(),
+                organizations: query.OrganizationId.HasValue ? new List<Guid> { query.OrganizationId.Value } : Enumerable.Empty<Guid>(), // Filter by OrganizationId
                 friends: query.Friends ?? Enumerable.Empty<Guid>(),
                 friendsEngagementType: engagementType,
                 sortBy: sortBy,
                 direction: sortDirection
             );
-
 
             // Map events to DTOs
             var studentId = _appContext.Identity.Id;
