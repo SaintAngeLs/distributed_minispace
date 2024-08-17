@@ -12,7 +12,6 @@ namespace MiniSpace.Web.Areas.Events.CommandsDto
         public Guid EventId { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
         public string OrganizerType { get; set; }
-        
         public Guid OrganizerId { get; set; }
         public Guid? OrganizationId { get; set; } 
         public string StartDate { get; set; }
