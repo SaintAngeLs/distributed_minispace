@@ -19,7 +19,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
     public class GetUserEventsHandler : IQueryHandler<GetUserEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
     {
         private readonly IEventRepository _eventRepository;
-        private readonly IStudentsServiceClient _studentsServiceClient; // Keeping it as StudentsServiceClient
+        private readonly IStudentsServiceClient _studentsServiceClient; 
         private readonly IEventValidator _eventValidator;
         private readonly IAppContext _appContext;
 
