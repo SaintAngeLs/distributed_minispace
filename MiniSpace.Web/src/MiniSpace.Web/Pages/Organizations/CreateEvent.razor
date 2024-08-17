@@ -210,9 +210,11 @@
 
     protected override void OnInitialized()
     {
-        newEvent.OrganizerId = OrganizationId; // Set the OrganizerId to the OrganizationId
-        newEvent.OrganizerType = OrganizerType.Organization.ToString(); // Set the OrganizerType to "Organization"
+        newEvent.OrganizerId = IdentityService.GetCurrentUserId(); 
+        newEvent.OrganizerType = OrganizerType.Organization.ToString(); 
+        newEvent.OrganizationId = OrganizationId; 
     }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -408,6 +410,7 @@
         newEvent.StartDate = startDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
         newEvent.EndDate = endDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
         newEvent.PublishDate = publishDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
+        newEvent.OrganizationId = OrganizationId;
 
         await form.Validate();
         if (form.IsValid)
@@ -417,6 +420,7 @@
             Console.WriteLine(formDataJson);
 
             var response = await EventsService.CreateEventAsync(newEvent);
+
             if (response.IsSuccessStatusCode)
             {
                 Snackbar.Add("Event created successfully!", Severity.Success);
@@ -424,10 +428,18 @@
             }
             else
             {
-                Snackbar.Add("Failed to create event. Please try again.", Severity.Error);
+                // Extract error message from the response
+                var errorMessage = "Failed to create event. Please try again.";
+                if (response.ErrorMessage != null)
+                {
+                    errorMessage = $"Error: {response.ErrorMessage.Reason}";
+                }
+
+                Snackbar.Add(errorMessage, Severity.Error);
             }
         }
     }
+
 
     private string GetBannerUrl()
     {
