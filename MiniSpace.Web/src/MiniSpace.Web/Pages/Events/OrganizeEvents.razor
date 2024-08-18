@@ -32,8 +32,12 @@
                     <MudTimelineItem Icon="@Icons.Material.Filled.Info" Title="General Information" Color="Color.Primary">
                         <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">General Information</MudText>
                         <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
-                        <MudTextField Label="Description" @bind-Value="newEvent.Description" FullWidth Required="true" Multiline="true" />
 
+                        <MudText Typo="Typo.body2">Event Description</MudText>
+                        <MudTextField @bind-Value="newEvent.Description" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+
+                        <!-- Markdown Preview -->
+                        <MudMarkdown Value="@newEvent.Description" />
                         <!-- Start Date and Time -->
                         <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
                         <MudTimePicker Label="Start Time" @bind-Time="startTimeTemp" Required="true" MinuteSelectionStep="5" />
