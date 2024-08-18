@@ -33,8 +33,15 @@
                     <!-- General Information Section -->
                     <MudTimelineItem Icon="@Icons.Material.Filled.Info" Title="General Information" Color="Color.Primary">
                         <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">General Information</MudText>
+
                         <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
-                        <MudTextField Label="Description" @bind-Value="newEvent.Description" FullWidth Required="true" Multiline="true" />
+
+                       <!-- Markdown Editor and Preview -->
+                        <MudText Typo="Typo.body2">Event Description</MudText>
+                        <MudTextField @bind-Value="newEvent.Description" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+
+                        <!-- Markdown Preview -->
+                        <MudMarkdown Value="@newEvent.Description" />
 
                         <!-- Start Date and Time -->
                         <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
@@ -64,9 +71,9 @@
                         <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
                         <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
                         <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
-                        <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
-                        <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
-                        <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                        <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth  />
+                        <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth />
+                        <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth />
                     </MudTimelineItem>
 
                     <!-- Payment Section -->
