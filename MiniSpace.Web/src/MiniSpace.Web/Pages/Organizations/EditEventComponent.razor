@@ -34,8 +34,15 @@
                         <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">General Information</MudText>
                         <MudTextField Label="Event Name" @bind-Value="editEvent.Name" FullWidth Required="true" />
                         <MudTextField Label="Description" @bind-Value="editEvent.Description" FullWidth Required="true" Multiline="true" />
+                        
+                        <!-- Start Date and Time -->
                         <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
+                        <MudTimePicker Label="Start Time" @bind-Time="startTimeTemp" Required="true" MinuteSelectionStep="5" />
+                        
+                        <!-- End Date and Time -->
                         <MudDatePicker Label="End Date" @bind-Date="endDateTemp" Required="true" />
+                        <MudTimePicker Label="End Time" @bind-Time="endTimeTemp" Required="true" MinuteSelectionStep="5" />
+                        
                         <MudSelect T="Category" Label="Category" @bind-Value="editEvent.Category" Required="true">
                             @foreach (Category category in Enum.GetValues(typeof(Category)))
                             {
@@ -43,7 +50,10 @@
                             }
                         </MudSelect>
                         <MudTextField Label="Capacity" @bind-Value="editEvent.Capacity" Type="number" Required="true" />
+                        
+                        <!-- Publish Date and Time -->
                         <MudDatePicker Label="Publish Date" @bind-Date="publishDateTemp" FullWidth />
+                        <MudTimePicker Label="Publish Time" @bind-Time="publishTimeTemp" MinuteSelectionStep="5" />
                     </MudTimelineItem>
 
                     <!-- Location Section -->
@@ -206,8 +216,11 @@
     private string defaultBannerImage = "/images/default_banner_image.png";
 
     private DateTime? startDateTemp;
+    private TimeSpan? startTimeTemp;
     private DateTime? endDateTemp;
+    private TimeSpan? endTimeTemp;
     private DateTime? publishDateTemp;
+    private TimeSpan? publishTimeTemp;
 
     protected override async Task OnInitializedAsync()
     {
@@ -244,8 +257,11 @@
                 };
 
                 startDateTemp = eventDto.StartDate;
+                startTimeTemp = eventDto.StartDate.TimeOfDay;
                 endDateTemp = eventDto.EndDate;
+                endTimeTemp = eventDto.EndDate.TimeOfDay;
                 publishDateTemp = eventDto.PublishDate;
+                publishTimeTemp = eventDto.PublishDate.TimeOfDay;
 
                 bannerPreviewUrl = editEvent.BannerUrl;
                 mediaFilesPreviews = eventDto.MediaFilesUrl?.Select(url => new FilePreview
@@ -266,7 +282,6 @@
             IsLoading = false;
         }
     }
-
 
     private async Task UploadBannerClick()
     {
@@ -444,9 +459,21 @@
 
     private async Task SubmitEvent()
     {
-        editEvent.StartDate = startDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
-        editEvent.EndDate = endDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
-        editEvent.PublishDate = publishDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
+        if (startDateTemp.HasValue && startTimeTemp.HasValue)
+        {
+            editEvent.StartDate = (startDateTemp.Value.Date + startTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (endDateTemp.HasValue && endTimeTemp.HasValue)
+        {
+            editEvent.EndDate = (endDateTemp.Value.Date + endTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (publishDateTemp.HasValue && publishTimeTemp.HasValue)
+        {
+            editEvent.PublishDate = (publishDateTemp.Value.Date + publishTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
 
         await form.Validate();
         if (form.IsValid)

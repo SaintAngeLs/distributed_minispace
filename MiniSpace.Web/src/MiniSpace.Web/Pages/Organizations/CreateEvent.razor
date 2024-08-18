@@ -34,8 +34,15 @@
                         <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">General Information</MudText>
                         <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
                         <MudTextField Label="Description" @bind-Value="newEvent.Description" FullWidth Required="true" Multiline="true" />
+
+                        <!-- Start Date and Time -->
                         <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
+                        <MudTimePicker Label="Start Time" @bind-Time="startTimeTemp" Required="true" MinuteSelectionStep="5" />
+
+                        <!-- End Date and Time -->
                         <MudDatePicker Label="End Date" @bind-Date="endDateTemp" Required="true" />
+                        <MudTimePicker Label="End Time" @bind-Time="endTimeTemp" Required="true" MinuteSelectionStep="5" />
+
                         <MudSelect T="string" Label="Category" @bind-Value="newEvent.Category" Required="true">
                             @foreach (var category in Enum.GetNames(typeof(Category)))
                             {
@@ -43,7 +50,10 @@
                             }
                         </MudSelect>
                         <MudTextField Label="Capacity" @bind-Value="newEvent.Capacity" Type="number" Required="true" />
-                        <MudDatePicker Label="Publish Date" @bind-Date="publishDateTemp" FullWidth Required="false" />
+
+                        <!-- Publish Date and Time -->
+                        <MudDatePicker Label="Publish Date" @bind-Date="publishDateTemp" FullWidth />
+                        <MudTimePicker Label="Publish Time" @bind-Time="publishTimeTemp" MinuteSelectionStep="5"  />
                     </MudTimelineItem>
 
                     <!-- Address Section -->
@@ -205,8 +215,11 @@
     private string defaultMediaFileImage = "/images/default_media_file_image.png";
 
     private DateTime? startDateTemp;
+    private TimeSpan? startTimeTemp;
     private DateTime? endDateTemp;
+    private TimeSpan? endTimeTemp;
     private DateTime? publishDateTemp;
+    private TimeSpan? publishTimeTemp;
 
     protected override void OnInitialized()
     {
@@ -214,7 +227,6 @@
         newEvent.OrganizerType = OrganizerType.Organization.ToString(); 
         newEvent.OrganizationId = OrganizationId; 
     }
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -407,9 +419,21 @@
 
     private async Task SubmitEvent()
     {
-        newEvent.StartDate = startDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
-        newEvent.EndDate = endDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
-        newEvent.PublishDate = publishDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
+        if (startDateTemp.HasValue && startTimeTemp.HasValue)
+        {
+            newEvent.StartDate = (startDateTemp.Value.Date + startTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (endDateTemp.HasValue && endTimeTemp.HasValue)
+        {
+            newEvent.EndDate = (endDateTemp.Value.Date + endTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (publishDateTemp.HasValue && publishTimeTemp.HasValue)
+        {
+            newEvent.PublishDate = (publishDateTemp.Value.Date + publishTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
         newEvent.OrganizationId = OrganizationId;
 
         await form.Validate();
@@ -439,7 +463,6 @@
             }
         }
     }
-
 
     private string GetBannerUrl()
     {

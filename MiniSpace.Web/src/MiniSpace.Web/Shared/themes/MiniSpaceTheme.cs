@@ -26,7 +26,7 @@ public static class MiniSpaceTheme
         PaletteDark = new PaletteDark()
         {
             // Dark Mode Colors
-            Primary = Colors.Indigo.Darken4,
+            Primary = Colors.Indigo.Darken1,
             Secondary = Colors.Blue.Darken4,
             AppbarBackground = "#1F1F1F", // Dark app bar
             Background = "#0d0f17", // Very dark background
