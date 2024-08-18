@@ -1,6 +1,7 @@
 @page "/posts/search"
 @inject IPostsService PostsService
 @inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @using MiniSpace.Web.DTO
@@ -8,58 +9,62 @@
 @using MiniSpace.Web.Data.Posts
 @using MudBlazor
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
-    <MudGrid Justify="Justify.Center">
-        <MudItem xs="12">
-            <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Latest Posts</MudText>
-        </MudItem>
-
-        @if (posts != null && posts.Any())
+<AuthWrapper>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+        @if (isLoading)
         {
-            @foreach (var post in posts)
-            {
-                <MudItem xs="12">
-                    <MudCard Class="post-card mb-4" Elevation="2">
-                        <MudCardContent>
-                            <MudGrid justify-start  AlignItems="AlignItems.Center">
-                                <MudItem xs="1" Class="pr-2">
-                                    <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId.Value)" />
-                                </MudItem>
-                                <MudItem xs="11">
-                                    <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId.Value)</MudText>
-                                    <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
-                                </MudItem>
-                            </MudGrid>
-
-                            <MudText Typo="Typo.body1" Class="mt-2">@post.TextContent</MudText>
-
-                            @if (post.MediaFiles != null && post.MediaFiles.Any())
-                            {
-                                <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
-                            }
-                        </MudCardContent>
-                        <MudCardActions Class="justify-between">
-                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Like</MudButton>
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-            }
+            <MudProgressCircular Indeterminate="true" Class="my-4" />
+        }
+        else if (posts == null || !posts.Any())
+        {
+            <MudText Typo="Typo.body1" Align="Align.Center">No posts available.</MudText>
         }
         else
         {
-            <MudItem xs="12">
-                <MudText Typo="Typo.body1" Align="Align.Center">No posts available.</MudText>
-            </MudItem>
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Latest Posts</MudText>
+                </MudItem>
+
+                @foreach (var post in posts)
+                {
+                    <MudItem xs="12">
+                        <MudCard Class="post-card mb-4" Elevation="2">
+                            <MudCardContent>
+                                <MudGrid justify-start AlignItems="AlignItems.Center">
+                                    <MudItem xs="1" Class="pr-2">
+                                        <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId)" />
+                                    </MudItem>
+                                    <MudItem xs="11">
+                                        <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId)</MudText>
+                                        <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
+                                    </MudItem>
+                                </MudGrid>
+
+                                <MudText Typo="Typo.body1" Class="mt-2">@post.TextContent</MudText>
+
+                                @if (post.MediaFiles != null && post.MediaFiles.Any())
+                                {
+                                    <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
+                                }
+                            </MudCardContent>
+                            <MudCardActions Class="justify-between">
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary">Like</MudButton>
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+            <MudGrid Justify="Justify.Center" Class="mt-4">
+                <MudItem>
+                    <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
+                </MudItem>
+            </MudGrid>
         }
-    </MudGrid>
-    <MudGrid Justify="Justify.Center" Class="mt-4">
-        <MudItem>
-            <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
-        </MudItem>
-    </MudGrid>
-</MudContainer>
+    </MudContainer>
+</AuthWrapper>
 
 @code {
     private List<PostDto> posts = new();
@@ -67,10 +72,34 @@
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalItems = 0;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadPostsAsync();
+        isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                await LoadPostsAsync();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add($"Failed to load posts: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private async Task LoadPostsAsync()
@@ -100,10 +129,9 @@
                 posts = result.Items.ToList();
                 totalItems = result.TotalItems;
 
-                // Load student data for posts with UserId
                 foreach (var post in posts.Where(p => p.UserId.HasValue))
                 {
-                    if (!studentsCache.ContainsKey(post.UserId.Value))
+                    if (post.UserId.HasValue && !studentsCache.ContainsKey(post.UserId.Value))
                     {
                         var student = await StudentsService.GetStudentAsync(post.UserId.Value);
                         if (student != null)
@@ -125,20 +153,20 @@
         }
     }
 
-    private string GetUserAvatar(Guid userId)
+    private string GetUserAvatar(Guid? userId)
     {
-        if (studentsCache.ContainsKey(userId))
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
         {
-            return studentsCache[userId].ProfileImageUrl ?? string.Empty;
+            return studentsCache[userId.Value].ProfileImageUrl ?? string.Empty;
         }
         return string.Empty;
     }
 
-    private string GetUserName(Guid userId)
+    private string GetUserName(Guid? userId)
     {
-        if (studentsCache.ContainsKey(userId))
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
         {
-            return $"{studentsCache[userId].FirstName} {studentsCache[userId].LastName}";
+            return $"{studentsCache[userId.Value].FirstName} {studentsCache[userId.Value].LastName}";
         }
         return "Unknown User";
     }
