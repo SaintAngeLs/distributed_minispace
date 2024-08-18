@@ -48,7 +48,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 
             if (command.ParentId == null)
             {
-                // Create as a root organization
                 organization = new Organization(
                     command.OrganizationId,
                     command.Name,
@@ -70,7 +69,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             }
             else
             {
-                // Handle creation of a sub-organization
                 var root = await _organizationRepository.GetAsync(command.RootId.Value);
                 if (root == null)
                 {
@@ -110,8 +108,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 await _organizationRolesRepository.AddRoleAsync(organization.Id, role);
             }
 
-            // Initialize an empty gallery for the organization
-            await _organizationGalleryRepository.AddImageAsync(organization.Id, new GalleryImage(Guid.NewGuid(), "Default Image URL", DateTime.UtcNow));
+            // We do not have to initialize gallery in the momentum organization is created
+            // await _organizationGalleryRepository.AddImageAsync(organization.Id, new GalleryImage(Guid.NewGuid(), "Default Image URL", DateTime.UtcNow));
 
             // Add the creator as a member with the "Creator" role
             var creatorRole = defaultRoles.SingleOrDefault(r => r.Name == "Creator");
