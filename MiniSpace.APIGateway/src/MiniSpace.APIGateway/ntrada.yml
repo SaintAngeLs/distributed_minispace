@@ -163,19 +163,19 @@ modules:
         method: POST
         use: downstream
         downstream: identity-service/access-tokens/revoke
-        auth: true
+        auth: false
 
       - upstream: /refresh-tokens/use
         method: POST
         use: downstream
         downstream: identity-service/refresh-tokens/use
-        auth: true
+        auth: false
 
       - upstream: /refresh-tokens/revoke
         method: POST
         use: downstream
         downstream: identity-service/refresh-tokens/revoke
-        auth: true
+        auth: false
 
     services:
       identity-service:
