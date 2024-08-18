@@ -9,6 +9,7 @@
 @inject IMediaFilesService MediaFilesService
 @inject IIdentityService IdentityService
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 @using MudBlazor
 @using System.IO
 @using System.Text.Json;
@@ -227,6 +228,36 @@
     private TimeSpan? endTimeTemp;
     private DateTime? publishDateTemp;
     private TimeSpan? publishTimeTemp;
+    private bool IsLoading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                newEvent.OrganizerId = IdentityService.GetCurrentUserId();
+                newEvent.OrganizerType = "User"; // OrganizerType is set to "User" by default
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add($"Failed to initialize authentication state: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -305,7 +336,6 @@
                     fileData = ms.ToArray();
                 }
 
-                // Ensure we only upload the cropped image for the banner
                 string imageType = "EventBanner";
                 var response = await MediaFilesService.UploadMediaFileAsync(
                     sourceId: newEvent.EventId,
@@ -320,9 +350,6 @@
 
                 if (response.IsSuccessStatusCode && responseDto != null)
                 {
-                    Console.WriteLine($"Response DTO: {JsonSerializer.Serialize(responseDto)}");
-
-                    // Use only the processed (cropped) image URL
                     var uploadedUrl = responseDto.ProcessedUrl;
                     if (!string.IsNullOrWhiteSpace(uploadedUrl))
                     {
@@ -388,8 +415,6 @@
 
             if (response.IsSuccessStatusCode && responseDto != null)
             {
-                Console.WriteLine($"Response DTO: {JsonSerializer.Serialize(responseDto)}");
-
                 var uploadedUrl = responseDto.FileUrl;
                 if (!string.IsNullOrWhiteSpace(uploadedUrl))
                 {
@@ -435,7 +460,6 @@
         {
             newEvent.PublishDate = (publishDateTemp.Value.Date + publishTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
         }
-
 
         newEvent.OrganizerType = "User";
 
