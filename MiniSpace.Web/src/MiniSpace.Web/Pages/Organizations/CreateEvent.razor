@@ -229,12 +229,36 @@
     private TimeSpan? endTimeTemp;
     private DateTime? publishDateTemp;
     private TimeSpan? publishTimeTemp;
+    private bool IsLoading { get; set; } = true;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        newEvent.OrganizerId = IdentityService.GetCurrentUserId(); 
-        newEvent.OrganizerType = OrganizerType.Organization.ToString(); 
-        newEvent.OrganizationId = OrganizationId; 
+        IsLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                newEvent.OrganizerId = IdentityService.GetCurrentUserId();
+                newEvent.OrganizerType = OrganizerType.Organization.ToString();
+                newEvent.OrganizationId = OrganizationId;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add($"Failed to initialize authentication state: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -247,7 +271,6 @@
 
     private async Task UploadBannerClick()
     {
-        // Ensure the element is available in the DOM before triggering the click
         await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputBanner').click()");
     }
 
@@ -314,7 +337,6 @@
                     fileData = ms.ToArray();
                 }
 
-                // Ensure we only upload the cropped image for the banner
                 string imageType = "EventBanner";
                 var response = await MediaFilesService.UploadMediaFileAsync(
                     sourceId: newEvent.EventId,
@@ -329,9 +351,6 @@
 
                 if (response.IsSuccessStatusCode && responseDto != null)
                 {
-                    Console.WriteLine($"Response DTO: {JsonSerializer.Serialize(responseDto)}");
-
-                    // Use only the processed (cropped) image URL
                     var uploadedUrl = responseDto.ProcessedUrl;
                     if (!string.IsNullOrWhiteSpace(uploadedUrl))
                     {
@@ -397,8 +416,6 @@
 
             if (response.IsSuccessStatusCode && responseDto != null)
             {
-                Console.WriteLine($"Response DTO: {JsonSerializer.Serialize(responseDto)}");
-
                 var uploadedUrl = responseDto.FileUrl;
                 if (!string.IsNullOrWhiteSpace(uploadedUrl))
                 {
@@ -461,7 +478,6 @@
             }
             else
             {
-                // Extract error message from the response
                 var errorMessage = "Failed to create event. Please try again.";
                 if (response.ErrorMessage != null)
                 {
