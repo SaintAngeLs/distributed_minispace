@@ -25,22 +25,20 @@ else
                            style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
                 
                 <!-- Centered Buttons Below the Banner -->
-                <div style="text-align: center; margin-top: 10px;">
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               Class="small-button"
-                               for="file-input-banner">
-                        Upload Banner Image
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Secondary"
-                               StartIcon="@Icons.Material.Filled.Delete"
-                               Class="small-button"
-                               OnClick="@(async () => await RemoveImage("banner"))">
-                        Remove Banner Image
-                    </MudButton>
+                <div style="text-align: center; margin-top: 5px;">
+                     <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
+                               Color="Color.Primary" 
+                               Size="Size.Small" 
+                               HtmlTag="label" 
+                               for="file-input-banner" 
+                               Style=" top: 5px; right: 60px;" 
+                               Title="Upload Banner Image" />
+                     <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Secondary" 
+                               Size="Size.Small" 
+                               OnClick="@(async () => await RemoveImage("banner"))" 
+                               Style=" top: 5px; right: 10px;" 
+                               Title="Delete Banner Image" />
                 </div>
             </div>
         </MudItem>
@@ -53,21 +51,21 @@ else
                 <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" 
                            style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
                 <div style="display: inline-block; margin-top: 10px;">
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               Class="small-button"
-                               for="file-input-profile">
-                        Upload Profile Image
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Secondary"
-                               StartIcon="@Icons.Material.Filled.Delete"
-                               Class="small-button"
-                               OnClick="@(async () => await RemoveImage("profile"))">
-                        Remove Profile Image
-                    </MudButton>
+                     <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
+                               Color="Color.Primary" 
+                               Size="Size.Small" 
+                               HtmlTag="label" 
+                               for="file-input-profile" 
+                               Style="bottom: -10px; right: 55%; transform: translateX(70%); 
+                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
+                               Title="Upload Profile Image" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Secondary" 
+                               Size="Size.Small" 
+                               OnClick="@(async () => await RemoveImage("profile"))" 
+                               Style="bottom: -10px; right: 35%; transform: translateX(30%); 
+                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
+                               Title="Delete Profile Image" />
                 </div>
             </div>
         </MudItem>

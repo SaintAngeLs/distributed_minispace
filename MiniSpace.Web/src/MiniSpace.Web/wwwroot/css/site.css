@@ -631,46 +631,164 @@ div.connectionRejected {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100px;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    width: 600px;
+    margin: 0 auto;
+    transform-origin: center;
 }
 
 .circle {
-    width: 15px;
-    height: 15px;
-    margin: 5px;
-    background-color: #3498db; /* You can change the color to fit your theme */
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #3498db;
     border-radius: 50%;
-    animation: bounce 1.5s infinite ease-in-out;
+    animation: modernSpiral 5s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    opacity: 0;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
 }
 
-.circle:nth-child(2) {
-    animation-delay: 0.1s;
+/* Adding unique delays for a cascading spiral effect */
+.circle:nth-child(1) { animation-delay: 0s; }
+.circle:nth-child(2) { animation-delay: 0.25s; }
+.circle:nth-child(3) { animation-delay: 0.5s; }
+.circle:nth-child(4) { animation-delay: 0.75s; }
+.circle:nth-child(5) { animation-delay: 1s; }
+.circle:nth-child(6) { animation-delay: 1.25s; }
+.circle:nth-child(7) { animation-delay: 1.5s; }
+.circle:nth-child(8) { animation-delay: 1.75s; }
+.circle:nth-child(9) { animation-delay: 2s; }
+.circle:nth-child(10) { animation-delay: 2.25s; }
+.circle:nth-child(11) { animation-delay: 2.5s; }
+
+/* Keyframes for modern spiral movement with scaling, rotation, and color changes */
+@keyframes modernSpiral {
+    0% {
+        transform: translate(-150px, 0) scale(0.5) rotate(0deg);
+        opacity: 0;
+        background-color: #3498db;
+    }
+    10% {
+        transform: translate(-100px, -50px) scale(0.75) rotate(60deg);
+        opacity: 1;
+    }
+    20% {
+        transform: translate(-50px, -100px) scale(1) rotate(120deg);
+        background-color: #9b59b6;
+    }
+    30% {
+        transform: translate(0px, -150px) scale(1.25) rotate(180deg);
+        box-shadow: 0px 0px 20px rgba(155, 89, 182, 0.5);
+    }
+    40% {
+        transform: translate(50px, -100px) scale(1.5) rotate(240deg);
+        background-color: #e74c3c;
+    }
+    50% {
+        transform: translate(100px, -50px) scale(1.25) rotate(300deg);
+        box-shadow: 0px 0px 30px rgba(231, 76, 60, 0.5);
+    }
+    60% {
+        transform: translate(150px, 0) scale(1) rotate(360deg);
+        background-color: #f1c40f;
+    }
+    70% {
+        transform: translate(100px, 50px) scale(0.75) rotate(420deg);
+        box-shadow: 0px 0px 20px rgba(241, 196, 15, 0.5);
+    }
+    80% {
+        transform: translate(50px, 100px) scale(0.5) rotate(480deg);
+        background-color: #2ecc71;
+        opacity: 1;
+    }
+    90% {
+        transform: translate(0px, 50px) scale(0.75) rotate(540deg);
+        box-shadow: 0px 0px 10px rgba(46, 204, 113, 0.5);
+    }
+    100% {
+        transform: translate(-50px, 0px) scale(1) rotate(600deg);
+        opacity: 0;
+        background-color: #3498db;
+    }
 }
 
-.circle:nth-child(3) {
+/* Text loading dots animation */
+.loading {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.loading span {
+    animation: textBlink 1.5s infinite ease-in-out;
+    opacity: 0;
+}
+
+.loading span:nth-child(2) { animation-delay: 0.2s; }
+.loading span:nth-child(3) { animation-delay: 0.4s; }
+.loading span:nth-child(4) { animation-delay: 0.6s; }
+.loading span:nth-child(5) { animation-delay: 0.8s; }
+.loading span:nth-child(6) { animation-delay: 1s; }
+
+@keyframes textBlink {
+    0% { opacity: 0; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-5px); }
+    100% { opacity: 0; transform: translateY(0); }
+}
+
+
+/* Additional text loading dots animation */
+.loading {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.loading span {
+    animation: blink 1.2s infinite;
+    opacity: 0;
+}
+
+.loading span:nth-child(2) {
     animation-delay: 0.2s;
 }
 
-.circle:nth-child(4) {
-    animation-delay: 0.3s;
-}
-
-.circle:nth-child(5) {
+.loading span:nth-child(3) {
     animation-delay: 0.4s;
 }
 
-.circle:nth-child(6) {
-    animation-delay: 0.5s;
+.loading span:nth-child(4) {
+    animation-delay: 0.6s;
 }
 
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
+.loading span:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+.loading span:nth-child(6) {
+    animation-delay: 1s;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
     }
     50% {
-        transform: translateY(-15px);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
     }
 }
+
 
 .overlay-content {
     text-align: center;
