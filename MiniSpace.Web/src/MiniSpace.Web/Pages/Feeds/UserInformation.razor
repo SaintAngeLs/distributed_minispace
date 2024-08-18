@@ -50,7 +50,7 @@
                         <MudCardContent>
                             @foreach (var education in student.Education)
                             {
-                                <MudText Typo="Typo.body2">Institution: @education.InstitutionName, Degree: @education.Degree, Period: @education.StartDate.ToString("yyyy-MM-dd") - @education.EndDate.ToString("yyyy-MM-dd")</MudText>
+                                <MudText Typo="Typo.body2">Institution: @education.InstitutionName, Degree: @education.Degree, Period: @education.StartDate?.ToString("yyyy-MM-dd") - @education.EndDate?.ToString("yyyy-MM-dd")</MudText>
                             }
                         </MudCardContent>
                     </MudCard>
@@ -68,7 +68,7 @@
                         <MudCardContent>
                             @foreach (var work in student.Work)
                             {
-                                <MudText Typo="Typo.body2">Position: @work.Position, Company: @work.Company, Period: @work.StartDate.ToString("yyyy-MM-dd") - @work.EndDate.ToString("yyyy-MM-dd")</MudText>
+                                <MudText Typo="Typo.body2">Position: @work.Position, Company: @work.Company, Period: @work.StartDate?.ToString("yyyy-MM-dd") - @work.EndDate?.ToString("yyyy-MM-dd")</MudText>
                             }
                         </MudCardContent>
                     </MudCard>

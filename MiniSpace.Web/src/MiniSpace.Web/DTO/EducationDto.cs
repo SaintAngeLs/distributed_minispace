@@ -6,8 +6,8 @@ namespace MiniSpace.Web.DTO
     {
         public string InstitutionName { get; set; }
         public string Degree { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? StartDate { get; set; } = null;
+        public DateTime? EndDate { get; set; }  = null;
         public string Description { get; set; }
     }
 }

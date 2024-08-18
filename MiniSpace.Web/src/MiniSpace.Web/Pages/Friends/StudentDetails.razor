@@ -59,7 +59,7 @@
                     <p><strong>Education:</strong></p>
                     @foreach (var education in student.Education)
                     {
-                        <p>@education.InstitutionName - @education.Degree (@education.StartDate.ToLocalTime().ToString("yyyy-MM-dd") to @education.EndDate.ToLocalTime().ToString("yyyy-MM-dd"))</p>
+                        <p>@education.InstitutionName - @education.Degree (@education.StartDate?.ToLocalTime().ToString("yyyy-MM-dd") to @education.EndDate?.ToLocalTime().ToString("yyyy-MM-dd"))</p>
                     }
                 }
                 @if (student.Work != null && student.Work.Any())
@@ -67,7 +67,7 @@
                     <p><strong>Work:</strong></p>
                     @foreach (var work in student.Work)
                     {
-                        <p>@work.Company - @work.Position (@work.StartDate.ToLocalTime().ToString("yyyy-MM-dd") to @work.EndDate.ToLocalTime().ToString("yyyy-MM-dd"))</p>
+                        <p>@work.Company - @work.Position (@work.StartDate?.ToLocalTime().ToString("yyyy-MM-dd") to @work.EndDate?.ToLocalTime().ToString("yyyy-MM-dd"))</p>
                     }
                 }
                 @if (student.Languages != null && student.Languages.Any())

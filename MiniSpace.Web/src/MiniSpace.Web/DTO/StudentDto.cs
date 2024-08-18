@@ -23,8 +23,8 @@ namespace MiniSpace.Web.DTO
         public string PhoneNumber { get; set; }
         public List<string> Languages { get; set; } 
         public List<string> Interests { get; set; } 
-        public IEnumerable<EducationDto> Education { get; set; }
-        public IEnumerable<WorkDto> Work { get; set; }
+        public List<EducationDto> Education { get; set; } = new List<EducationDto>();
+        public List<WorkDto> Work { get; set; } = new List<WorkDto>();
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }

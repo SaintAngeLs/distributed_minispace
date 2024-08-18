@@ -7,6 +7,7 @@
 @using MiniSpace.Web.Utilities
 @using System.IO
 @using MudBlazor
+@using System
 
 <MudText Typo="Typo.h6" GutterBottom="true">Profile</MudText>
 @if (IsLoading)
@@ -25,20 +26,22 @@ else
                            style="display: none;" id="file-input-banner" accept=".jpeg,.png,.jpg" />
                 
                 <!-- Centered Buttons Below the Banner -->
-                <div style="text-align: center; margin-top: 5px;">
-                     <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
-                               Color="Color.Primary" 
-                               Size="Size.Small" 
-                               HtmlTag="label" 
-                               for="file-input-banner" 
-                               Style=" top: 5px; right: 60px;" 
-                               Title="Upload Banner Image" />
-                     <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                               Color="Color.Secondary" 
-                               Size="Size.Small" 
-                               OnClick="@(async () => await RemoveImage("banner"))" 
-                               Style=" top: 5px; right: 10px;" 
-                               Title="Delete Banner Image" />
+                <div style="text-align: center; margin-top: 10px;">
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               Class="small-button"
+                               for="file-input-banner">
+                        Upload Banner Image
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.Delete"
+                               Class="small-button"
+                               OnClick="@(async () => await RemoveImage("banner"))">
+                        Remove Banner Image
+                    </MudButton>
                 </div>
             </div>
         </MudItem>
@@ -51,21 +54,21 @@ else
                 <InputFile OnChange="@(async e => await OpenCropper(e, "profile"))" 
                            style="display: none;" id="file-input-profile" accept=".jpeg,.png,.jpg" />
                 <div style="display: inline-block; margin-top: 10px;">
-                     <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" 
-                               Color="Color.Primary" 
-                               Size="Size.Small" 
-                               HtmlTag="label" 
-                               for="file-input-profile" 
-                               Style="bottom: -10px; right: 55%; transform: translateX(70%); 
-                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
-                               Title="Upload Profile Image" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                               Color="Color.Secondary" 
-                               Size="Size.Small" 
-                               OnClick="@(async () => await RemoveImage("profile"))" 
-                               Style="bottom: -10px; right: 35%; transform: translateX(30%); 
-                                      background-color: white; border-radius: 50%; box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);" 
-                               Title="Delete Profile Image" />
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               Class="small-button"
+                               for="file-input-profile">
+                        Upload Profile Image
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.Delete"
+                               Class="small-button"
+                               OnClick="@(async () => await RemoveImage("profile"))">
+                        Remove Profile Image
+                    </MudButton>
                 </div>
             </div>
         </MudItem>
@@ -94,59 +97,115 @@ else
                                   Variant="Variant.Outlined" Lines="5" />
                 </MudItem>
             </MudGrid>
+
+            <!-- Education Section -->
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Education</MudText>
+                @foreach (var education in StudentWithGalleryImagesDto.Student.Education)
+                {
+                    <MudPaper Class="pa-3 mb-3">
+                        <MudGrid>
+                            <MudItem xs="12" md="11">
+                                <MudTextField @bind-Value="education.InstitutionName" Label="Institution Name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudTextField @bind-Value="education.Degree" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudDatePicker Label="Start Date" @bind-Value="education.StartDate" />
+                                <MudDatePicker Label="End Date" @bind-Value="education.EndDate"  />
+
+                                <MudTextField @bind-Value="education.Description" Label="Description" Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" md="1" class="d-flex justify-content-center align-items-center">
+                                <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => RemoveEducation(education)">
+                                    Remove
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                }
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddEducation">
+                    Add Education
+                </MudButton>
+            </MudItem>
+
+            <!-- Work Experience Section -->
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Work Experience</MudText>
+                @foreach (var work in StudentWithGalleryImagesDto.Student.Work)
+                {
+                    <MudPaper Class="pa-3 mb-3">
+                        <MudGrid>
+                            <MudItem xs="12" md="11">
+                                <MudTextField @bind-Value="work.Company" Label="Company" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudTextField @bind-Value="work.Position" Label="Position" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudDatePicker Label="Start Date" @bind-Value="work.StartDate"/>
+                                <MudDatePicker Label="End Date" @bind-Value="work.EndDate"/>
+                                <MudTextField @bind-Value="work.Description" Label="Description" Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" md="1" class="d-flex justify-content-center align-items-center">
+                                <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => RemoveWorkExperience(work)">
+                                    Remove
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                }
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddWorkExperience">
+                    Add Work Experience
+                </MudButton>
+            </MudItem>
         </MudItem>
-     </MudGrid>
+    </MudGrid>
 
-        <!-- Styling for smaller buttons -->
-        <style>
-            .button-margins {
-                margin-right: 8px;
-                margin-bottom: 8px;
-            }
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveProfile">
+        Save profile
+    </MudButton>
 
-            .image-upload-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-        </style>
+    @if (IsUploading)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+    }
+}
 
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" 
-                   OnClick="async () => await SaveChangesAsync.InvokeAsync(null)">Save profile</MudButton>
-        @if (IsUploading)
-        {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        }
+<!-- Styling for smaller buttons -->
+<style>
+    .button-margins {
+        margin-right: 8px;
+        margin-bottom: 8px;
     }
 
-    <!-- Bootstrap Modal for Cropper -->
-    <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="cropper-container" class="img-container"></div>
-                    @if (!string.IsNullOrEmpty(CroppedImageBase64))
-                    {
-                        <div id="cropped-image-container" class="img-container">
-                            <img src="@CroppedImageBase64" style="max-width: 100%;" />
-                        </div>
-                    }
-                </div>
+    .image-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
 
-                <div class="modal-footer">
-                    <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" 
-                               OnClick="async () => await SaveCroppedImage()">Save</MudButton>
-                </div>
+<!-- Bootstrap Modal for Cropper -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="cropper-container" class="img-container"></div>
+                @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                {
+                    <div id="cropped-image-container" class="img-container">
+                        <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                    </div>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
             </div>
         </div>
     </div>
+</div>
 
 @code {
     [Parameter] public bool IsLoading { get; set; }
@@ -157,9 +216,8 @@ else
     [Parameter] public bool IsUploading { get; set; }
     private string CroppedImageBase64 { get; set; }
 
-
     private IBrowserFile croppedImageFile;
-    private string currentImageType = string.Empty; // "profile" or "banner"
+    private string currentImageType = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -211,65 +269,60 @@ else
         JSRuntime.InvokeVoidAsync("hideCropperModal");
     }
 
-[JSInvokable]
-public void ReceiveCroppedImage(string base64Image)
-{
-    if (!string.IsNullOrEmpty(base64Image))
+    [JSInvokable]
+    public void ReceiveCroppedImage(string base64Image)
     {
-        CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
-        var buffer = Convert.FromBase64String(base64Image);
-        var lastModified = DateTimeOffset.Now;  // Use the current time as a placeholder for lastModified
-        croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
-        StateHasChanged();
+        if (!string.IsNullOrEmpty(base64Image))
+        {
+            CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
+            var buffer = Convert.FromBase64String(base64Image);
+            var lastModified = DateTimeOffset.Now;  
+            croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
+            StateHasChanged();
+        }
     }
-}
-
 
     private async Task SaveCroppedImage()
-{
-    if (croppedImageFile != null)
     {
-        IsUploading = true;
-        StateHasChanged();
-
-        try
+        if (croppedImageFile != null)
         {
-            // Convert IBrowserFile to byte[]
-            byte[] fileData;
-            using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
-            using (var ms = new MemoryStream())
+            IsUploading = true;
+            StateHasChanged();
+
+            try
             {
-                await stream.CopyToAsync(ms);
-                fileData = ms.ToArray();
+                byte[] fileData;
+                using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+                using (var ms = new MemoryStream())
+                {
+                    await stream.CopyToAsync(ms);
+                    fileData = ms.ToArray();
+                }
+
+                string imageType = currentImageType == "profile" ? "StudentProfileImage" : "StudentBannerImage";
+                var response = await MediaFilesService.UploadMediaFileAsync(
+                    StudentWithGalleryImagesDto.Student.Id,
+                    imageType,
+                    IdentityService.GetCurrentUserId(),
+                    $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_{currentImageType}.png",
+                    croppedImageFile.ContentType,
+                    fileData);
+
+                StateHasChanged();
+                await SaveImageAsync.InvokeAsync(null);
+
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
             }
 
-            string imageType = currentImageType == "profile" ? "StudentProfileImage" : "StudentBannerImage";
-            var response = await MediaFilesService.UploadMediaFileAsync(
-                StudentWithGalleryImagesDto.Student.Id,
-                imageType,
-                IdentityService.GetCurrentUserId(),
-                $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_{currentImageType}.png",
-                croppedImageFile.ContentType,
-                fileData); // Pass the byte[] here
-
+            IsUploading = false;
             StateHasChanged();
-            await SaveImageAsync.InvokeAsync(null);
-
-            // Reload the page
-            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            CloseCropper();
         }
-        catch (Exception ex)
-        {
-            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
-        }
-
-        IsUploading = false;
-        StateHasChanged();
-        CloseCropper();
     }
-}
-
-
 
     private async Task RemoveImage(string imageType)
     {
@@ -290,7 +343,6 @@ public void ReceiveCroppedImage(string base64Image)
             }
             await SaveImageAsync.InvokeAsync(null);
 
-            // Reload the page
             NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
         }
         catch (Exception ex)
@@ -300,5 +352,68 @@ public void ReceiveCroppedImage(string base64Image)
 
         IsUploading = false;
         StateHasChanged();
+    }
+
+    private void AddEducation()
+    {
+        var newEducation = new EducationDto
+        {
+            InstitutionName = string.Empty,
+            Degree = string.Empty,
+            StartDate = null, // Initialize as null
+            EndDate = null, // Initialize as null
+            Description = string.Empty
+        };
+        StudentWithGalleryImagesDto.Student.Education.Add(newEducation);
+        StateHasChanged();
+    }
+
+    private void AddWorkExperience()
+    {
+        var newWork = new WorkDto
+        {
+            Company = string.Empty,
+            Position = string.Empty,
+            StartDate = null, // Initialize as null
+            EndDate = null, // Initialize as null
+            Description = string.Empty
+        };
+        StudentWithGalleryImagesDto.Student.Work.Add(newWork);
+        StateHasChanged();
+    }
+
+    private void RemoveEducation(EducationDto education)
+    {
+        StudentWithGalleryImagesDto.Student.Education.Remove(education);
+        StateHasChanged();
+    }
+
+    private void RemoveWorkExperience(WorkDto work)
+    {
+        StudentWithGalleryImagesDto.Student.Work.Remove(work);
+        StateHasChanged();
+    }
+
+    private async Task SaveProfile()
+    {
+        // Ensure dates are correct before saving
+        foreach (var education in StudentWithGalleryImagesDto.Student.Education)
+        {
+            if (education.StartDate == DateTime.MinValue)
+                education.StartDate = null;
+            if (education.EndDate == DateTime.MinValue)
+                education.EndDate = null;
+        }
+
+        foreach (var work in StudentWithGalleryImagesDto.Student.Work)
+        {
+            if (work.StartDate == DateTime.MinValue)
+                work.StartDate = null;
+            if (work.EndDate == DateTime.MinValue)
+                work.EndDate = null;
+        }
+
+        // Invoke the parent method to save changes
+        await SaveChangesAsync.InvokeAsync(null);
     }
 }

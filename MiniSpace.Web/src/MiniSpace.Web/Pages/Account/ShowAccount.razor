@@ -253,6 +253,31 @@
         try
         {
             var studentDto = studentWithGalleryImagesDto.Student;
+
+            foreach (var education in studentDto.Education)
+            {
+                Console.WriteLine($"Education StartDate: {education.StartDate}, EndDate: {education.EndDate}");
+            }
+
+            foreach (var work in studentDto.Work)
+            {
+                Console.WriteLine($"Work StartDate: {work.StartDate}, EndDate: {work.EndDate}");
+            }
+
+
+            // Ensure that StartDate and EndDate are handled correctly
+            foreach (var education in studentDto.Education)
+            {
+                education.StartDate = education.StartDate != DateTime.MinValue ? education.StartDate : null;
+                education.EndDate = education.EndDate != DateTime.MinValue ? education.EndDate : null;
+            }
+
+            foreach (var work in studentDto.Work)
+            {
+                work.StartDate = work.StartDate != DateTime.MinValue ? work.StartDate : null;
+                work.EndDate = work.EndDate != DateTime.MinValue ? work.EndDate : null;
+            }
+
             var updateStudentData = new
             {
                 studentDto.Id,
@@ -310,6 +335,7 @@
             Console.WriteLine(ex.Message);
         }
     }
+
 
  
 
