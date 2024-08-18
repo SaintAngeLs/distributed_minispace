@@ -230,53 +230,65 @@
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoading = true;
+
         try
         {
-            eventDto = await EventsService.GetEventAsync(EventId);
+            // Initialize the authentication state
+            await IdentityService.InitializeAuthenticationState();
 
-            if (eventDto != null)
+            if (IdentityService.IsAuthenticated)
             {
-                editEvent = new UpdateEventCommand
-                {
-                    EventId = eventDto.Id,
-                    Name = eventDto.Name ?? string.Empty,
-                    Description = eventDto.Description ?? string.Empty,
-                    StartDate = eventDto.StartDate.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    EndDate = eventDto.EndDate.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    Category = eventDto.Category, 
-                    Capacity = eventDto.Capacity,
-                    PublishDate = eventDto.PublishDate.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    Visibility = Enum.Parse<EventVisibility>(eventDto.Status ?? EventVisibility.Public.ToString()),
-                    BannerUrl = eventDto.BannerUrl ?? string.Empty,
-                    Settings = eventDto.Settings ?? new EventSettings(),
-                    MediaFilesUrl = eventDto.MediaFilesUrl?.ToList() ?? new List<string>(),
-                    BuildingName = eventDto.Location?.BuildingName ?? string.Empty,
-                    Street = eventDto.Location?.Street ?? string.Empty,
-                    BuildingNumber = eventDto.Location?.BuildingNumber ?? string.Empty,
-                    ApartmentNumber = eventDto.Location?.ApartmentNumber ?? string.Empty,
-                    City = eventDto.Location?.City ?? string.Empty,
-                    ZipCode = eventDto.Location?.ZipCode ?? string.Empty,
-                    Country = eventDto.Location?.Country ?? string.Empty,
-                    Fee = eventDto.Fee,
-                    OrganizerId = eventDto.Organizer?.Id ?? Guid.Empty,
-                    OrganizationId = eventDto.Organizer?.OrganizationId ?? Guid.Empty
-                };
+                eventDto = await EventsService.GetEventAsync(EventId);
 
-                startDateTemp = eventDto.StartDate;
-                startTimeTemp = eventDto.StartDate.TimeOfDay;
-                endDateTemp = eventDto.EndDate;
-                endTimeTemp = eventDto.EndDate.TimeOfDay;
-                publishDateTemp = eventDto.PublishDate;
-                publishTimeTemp = eventDto.PublishDate.TimeOfDay;
-
-                bannerPreviewUrl = editEvent.BannerUrl;
-                mediaFilesPreviews = eventDto.MediaFilesUrl?.Select(url => new FilePreview
+                if (eventDto != null)
                 {
-                    Url = url,
-                    IsImage = url.EndsWith(".jpg") || url.EndsWith(".png"),
-                    IsVideo = url.EndsWith(".mp4"),
-                    IsPdf = url.EndsWith(".pdf")
-                }).ToList() ?? new List<FilePreview>();
+                    editEvent = new UpdateEventCommand
+                    {
+                        EventId = eventDto.Id,
+                        Name = eventDto.Name ?? string.Empty,
+                        Description = eventDto.Description ?? string.Empty,
+                        StartDate = eventDto.StartDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        EndDate = eventDto.EndDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        Category = eventDto.Category, 
+                        Capacity = eventDto.Capacity,
+                        PublishDate = eventDto.PublishDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        Visibility = Enum.Parse<EventVisibility>(eventDto.Status ?? EventVisibility.Public.ToString()),
+                        BannerUrl = eventDto.BannerUrl ?? string.Empty,
+                        Settings = eventDto.Settings ?? new EventSettings(),
+                        MediaFilesUrl = eventDto.MediaFilesUrl?.ToList() ?? new List<string>(),
+                        BuildingName = eventDto.Location?.BuildingName ?? string.Empty,
+                        Street = eventDto.Location?.Street ?? string.Empty,
+                        BuildingNumber = eventDto.Location?.BuildingNumber ?? string.Empty,
+                        ApartmentNumber = eventDto.Location?.ApartmentNumber ?? string.Empty,
+                        City = eventDto.Location?.City ?? string.Empty,
+                        ZipCode = eventDto.Location?.ZipCode ?? string.Empty,
+                        Country = eventDto.Location?.Country ?? string.Empty,
+                        Fee = eventDto.Fee,
+                        OrganizerId = eventDto.Organizer?.Id ?? Guid.Empty,
+                        OrganizationId = eventDto.Organizer?.OrganizationId ?? Guid.Empty
+                    };
+
+                    startDateTemp = eventDto.StartDate;
+                    startTimeTemp = eventDto.StartDate.TimeOfDay;
+                    endDateTemp = eventDto.EndDate;
+                    endTimeTemp = eventDto.EndDate.TimeOfDay;
+                    publishDateTemp = eventDto.PublishDate;
+                    publishTimeTemp = eventDto.PublishDate.TimeOfDay;
+
+                    bannerPreviewUrl = editEvent.BannerUrl;
+                    mediaFilesPreviews = eventDto.MediaFilesUrl?.Select(url => new FilePreview
+                    {
+                        Url = url,
+                        IsImage = url.EndsWith(".jpg") || url.EndsWith(".png"),
+                        IsVideo = url.EndsWith(".mp4"),
+                        IsPdf = url.EndsWith(".pdf")
+                    }).ToList() ?? new List<FilePreview>();
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
             }
         }
         catch (Exception ex)
@@ -479,7 +491,6 @@
         {
             editEvent.PublishDate = (publishDateTemp.Value.Date + publishTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
         }
-
 
         await form.Validate();
         if (form.IsValid)
