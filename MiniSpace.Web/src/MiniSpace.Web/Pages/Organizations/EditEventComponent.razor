@@ -13,6 +13,7 @@
 @using System.Text.Json
 @using MiniSpace.Web.Utilities
 
+<AuthWrapper>
 <MudPaper Class="pa-4">
     <MudText Typo="Typo.h5">Edit Event</MudText>
 
@@ -195,6 +196,7 @@
         </div>
     </div>
 </div>
+</AuthWrapper>
 
 @code {
     [Parameter] public Guid EventId { get; set; }
