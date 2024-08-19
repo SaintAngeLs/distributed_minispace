@@ -108,8 +108,15 @@ else
                             <MudItem xs="12" md="11">
                                 <MudTextField @bind-Value="education.InstitutionName" Label="Institution Name" Variant="Variant.Outlined" Margin="Margin.Dense" />
                                 <MudTextField @bind-Value="education.Degree" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                <MudDatePicker Label="Start Date" @bind-Value="education.StartDate" />
-                                <MudDatePicker Label="End Date" @bind-Value="education.EndDate"  />
+
+                                @* <MudTextField @bind-Value="education.StartDate" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudTextField @bind-Value="education.EndDate" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
+              
+                                <MudDatePicker T="DateTime?" Label="Start Date" @bind-Date="education.StartDate" Editable="true" DisableToolbar="true" AutoClose="true" />
+                                <MudDatePicker T="DateTime?" Label="End Date" @bind-Date="education.EndDate" Editable="true" DisableToolbar="true" AutoClose="true" />
+
+                                @* <MudDatePicker T="DateTime" Label="Start Date" @bind-Value="education.StartDate" Editable="true" DisableToolbar="true" AutoClose="true"/>
+                                <MudDatePicker T="DateTime" Label="End Date" @bind-Value="education.EndDate"  /> *@
 
                                 <MudTextField @bind-Value="education.Description" Label="Description" Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
                             </MudItem>
@@ -136,8 +143,10 @@ else
                             <MudItem xs="12" md="11">
                                 <MudTextField @bind-Value="work.Company" Label="Company" Variant="Variant.Outlined" Margin="Margin.Dense" />
                                 <MudTextField @bind-Value="work.Position" Label="Position" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                <MudDatePicker Label="Start Date" @bind-Value="work.StartDate"/>
-                                <MudDatePicker Label="End Date" @bind-Value="work.EndDate"/>
+
+                                <MudDatePicker T="DateTime?" Label="Start Date" @bind-Date="work.StartDate" Editable="true" DisableToolbar="true" AutoClose="true" />
+                                <MudDatePicker T="DateTime?" Label="End Date" @bind-Date="work.EndDate" Editable="true" DisableToolbar="true" AutoClose="true" />
+
                                 <MudTextField @bind-Value="work.Description" Label="Description" Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
                             </MudItem>
                             <MudItem xs="12" md="1" class="d-flex justify-content-center align-items-center">
@@ -356,41 +365,50 @@ else
 
     private void AddEducation()
     {
-        var newEducation = new EducationDto
+        var educationList = StudentWithGalleryImagesDto.Student.Education.ToList();
+        educationList.Add(new EducationDto
         {
             InstitutionName = string.Empty,
             Degree = string.Empty,
-            StartDate = null, // Initialize as null
-            EndDate = null, // Initialize as null
+            StartDate = null,
+            EndDate = null,
             Description = string.Empty
-        };
-        StudentWithGalleryImagesDto.Student.Education.Add(newEducation);
+        });
+        StudentWithGalleryImagesDto.Student.Education = educationList;
         StateHasChanged();
     }
 
+    private void RemoveEducation(EducationDto education)
+    {
+        var educationList = StudentWithGalleryImagesDto.Student.Education.ToList();
+        educationList.Remove(education);
+        StudentWithGalleryImagesDto.Student.Education = educationList;
+        StateHasChanged();
+    }
+
+
     private void AddWorkExperience()
     {
-        var newWork = new WorkDto
+        var workList = StudentWithGalleryImagesDto.Student.Work.ToList();
+        workList.Add(new WorkDto
         {
             Company = string.Empty,
             Position = string.Empty,
             StartDate = null, // Initialize as null
             EndDate = null, // Initialize as null
             Description = string.Empty
-        };
-        StudentWithGalleryImagesDto.Student.Work.Add(newWork);
+        });
+
+        StudentWithGalleryImagesDto.Student.Work = workList;
         StateHasChanged();
     }
 
-    private void RemoveEducation(EducationDto education)
-    {
-        StudentWithGalleryImagesDto.Student.Education.Remove(education);
-        StateHasChanged();
-    }
 
     private void RemoveWorkExperience(WorkDto work)
     {
-        StudentWithGalleryImagesDto.Student.Work.Remove(work);
+        var workList = StudentWithGalleryImagesDto.Student.Work.ToList();
+        workList.Remove(work);
+        StudentWithGalleryImagesDto.Student.Work = workList;
         StateHasChanged();
     }
 
@@ -399,19 +417,16 @@ else
         // Ensure dates are correct before saving
         foreach (var education in StudentWithGalleryImagesDto.Student.Education)
         {
-            if (education.StartDate == DateTime.MinValue)
-                education.StartDate = null;
-            if (education.EndDate == DateTime.MinValue)
-                education.EndDate = null;
+            // Log the values to verify correctness
+            Console.WriteLine($"Before Save - Education StartDate: {education.StartDate}, EndDate: {education.EndDate}");
         }
 
         foreach (var work in StudentWithGalleryImagesDto.Student.Work)
         {
-            if (work.StartDate == DateTime.MinValue)
-                work.StartDate = null;
-            if (work.EndDate == DateTime.MinValue)
-                work.EndDate = null;
+            // Log the values to verify correctness
+            Console.WriteLine($"Before Save - Work StartDate: {work.StartDate}, EndDate: {work.EndDate}");
         }
+
 
         // Invoke the parent method to save changes
         await SaveChangesAsync.InvokeAsync(null);
