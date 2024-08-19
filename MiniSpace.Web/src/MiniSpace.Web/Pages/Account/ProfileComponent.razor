@@ -108,16 +108,11 @@ else
                             <MudItem xs="12" md="11">
                                 <MudTextField @bind-Value="education.InstitutionName" Label="Institution Name" Variant="Variant.Outlined" Margin="Margin.Dense" />
                                 <MudTextField @bind-Value="education.Degree" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" />
-
-                                @* <MudTextField @bind-Value="education.StartDate" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                <MudTextField @bind-Value="education.EndDate" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" /> *@
               
                                 <MudDatePicker T="DateTime?" Label="Start Date" @bind-Date="education.StartDate" Editable="true" DisableToolbar="true" AutoClose="true" />
                                 <MudDatePicker T="DateTime?" Label="End Date" @bind-Date="education.EndDate" Editable="true" DisableToolbar="true" AutoClose="true" />
 
-                                @* <MudDatePicker T="DateTime" Label="Start Date" @bind-Value="education.StartDate" Editable="true" DisableToolbar="true" AutoClose="true"/>
-                                <MudDatePicker T="DateTime" Label="End Date" @bind-Value="education.EndDate"  /> *@
-
+                              
                                 <MudTextField @bind-Value="education.Description" Label="Description" Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
                             </MudItem>
                             <MudItem xs="12" md="1" class="d-flex justify-content-center align-items-center">
