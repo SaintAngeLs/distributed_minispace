@@ -889,3 +889,22 @@ div.connectionRejected {
 .mud-drawer-content .mud-input-label {
     background-color: var(--mud-palette-primary-text) !important;
 }
+
+/***  class for the spotlight.js */
+.spotlight-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.spotlight {
+    display: block;
+    width: 100%;
+}
+
+.spotlight img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
