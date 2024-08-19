@@ -41,7 +41,7 @@
                                     </MudItem>
                                 </MudGrid>
 
-                                <MudText Typo="Typo.body1" Class="mt-2">@post.TextContent</MudText>
+                                <MudMarkdown Value="@post.TextContent"></MudMarkdown>
 
                                 @if (post.MediaFiles != null && post.MediaFiles.Any())
                                 {

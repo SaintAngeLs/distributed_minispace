@@ -19,8 +19,9 @@
         </MudCardHeader>
         <MudCardContent>
             <MudForm @ref="form" @onsubmit="HandleSubmit">
-                <MudTextField @bind-Value="textContent" Label="Text Content" Required="true" />
-
+                <MudTextField @bind-Value="textContent" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+                <MudMarkdown Value="@textContent" />
+                
                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UploadMediaFilesClick">
                     Upload Media Files
                 </MudButton>

@@ -66,16 +66,21 @@
                         <MudTimePicker Label="Publish Time" @bind-Time="publishTimeTemp" MinuteSelectionStep="5" />
                     </MudTimelineItem>
 
-                    <!-- Address Section -->
+                    <!-- Define Location Checkbox -->
                     <MudTimelineItem Icon="@Icons.Material.Filled.LocationOn" Title="Location" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
-                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Location</MudText>
-                        <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
-                        <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
-                        <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
-                        <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
-                        <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
-                        <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
-                        <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                        <MudCheckBox Label="Define Location" @bind-Checked="IsLocationDefined" />
+                        @if (IsLocationDefined)
+                        {
+                            <!-- Address Section -->
+                            <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Location</MudText>
+                            <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
+                            <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
+                            <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
+                            <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
+                            <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
+                            <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
+                            <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                        }
                     </MudTimelineItem>
 
                     <!-- Payment Section -->
@@ -212,7 +217,7 @@
 
     private string bannerPreviewUrl;
     private List<FilePreview> mediaFilesPreviews = new();
-    private string CroppedImageBase64; 
+    private string CroppedImageBase64;
 
     private IBrowserFile croppedImageFile;
     private IReadOnlyList<IBrowserFile> mediaFiles;
@@ -229,6 +234,7 @@
     private DateTime? publishDateTemp;
     private TimeSpan? publishTimeTemp;
     private bool IsLoading { get; set; } = true;
+    private bool IsLocationDefined { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -461,7 +467,16 @@
             newEvent.PublishDate = (publishDateTemp.Value.Date + publishTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
         }
 
-        newEvent.OrganizerType = "User";
+        if (!IsLocationDefined)
+        {
+            newEvent.BuildingName = null;
+            newEvent.Street = null;
+            newEvent.BuildingNumber = null;
+            newEvent.ApartmentNumber = null;
+            newEvent.City = null;
+            newEvent.ZipCode = null;
+            newEvent.Country = null;
+        }
 
         await form.Validate();
         if (form.IsValid)

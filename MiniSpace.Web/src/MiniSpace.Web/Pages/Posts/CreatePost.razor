@@ -18,61 +18,65 @@
         </MudCardHeader>
         <MudCardContent>
             <MudForm @ref="form" @onsubmit="HandleSubmit">
-                <MudTextField @bind-Value="textContent" Label="Text Content" Required="true" />
+                <MudTextField @bind-Value="textContent" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+                <MudMarkdown Value="@textContent" />
 
-                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UploadMediaFilesClick">
+                <MudButton Color="Color.Primary" Variant="Variant.Outlined" OnClick="UploadMediaFilesClick" StartIcon="@Icons.Material.Filled.Upload">
                     Upload Media Files
                 </MudButton>
                 <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
 
                 @if (mediaFilesPreviews.Any())
                 {
-                    <div class="mt-4">
-                        <MudText Typo="Typo.h6">Uploaded Files Preview</MudText>
-                        <MudGrid>
-                            @foreach (var filePreview in mediaFilesPreviews)
-                            {
-                                <MudItem xs="12" sm="6">
-                                    <MudCard>
-                                        @if (filePreview.IsImage)
-                                        {
-                                            <MudCardMedia ImageSource="@filePreview.Url" Title="Media Preview" />
-                                        }
-                                        else if (filePreview.IsVideo)
-                                        {
-                                            <video width="100%" height="200" controls>
+                    <MudText Typo="Typo.h6" Class="mt-4">Uploaded Files Preview</MudText>
+                    <MudGrid>
+                        @foreach (var filePreview in mediaFilesPreviews)
+                        {
+                            <MudItem xs="12" sm="6">
+                                <MudCard>
+                                    @if (filePreview.IsImage)
+                                    {
+                                        <MudCardMedia Image="@filePreview.Url" Title="Media Preview" AspectRatio="16:9" />
+                                    }
+                                    else if (filePreview.IsVideo)
+                                    {
+                                        <MudCardMedia AspectRatio="16:9">
+                                            <video width="100%" controls>
                                                 <source src="@filePreview.Url" type="@filePreview.ContentType">
                                                 Your browser does not support the video tag.
                                             </video>
-                                        }
-                                        else if (filePreview.IsPdf)
-                                        {
+                                        </MudCardMedia>
+                                    }
+                                    else if (filePreview.IsPdf)
+                                    {
+                                        <MudCardContent>
                                             <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
                                                 View PDF
                                             </MudButton>
-                                        }
-                                    </MudCard>
-                                </MudItem>
-                            }
-                        </MudGrid>
-                    </div>
+                                        </MudCardContent>
+                                    }
+                                </MudCard>
+                            </MudItem>
+                        }
+                    </MudGrid>
                 }
 
-                <MudSelect T="string" @bind-Value="state" Label="State" Required="true">
+                <MudSelect T="string" @bind-Value="state" Label="State" Required="true" Class="mt-4">
                     <MudSelectItem T="string" Value="@("InDraft")">Draft</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Published")">Published</MudSelectItem>
                 </MudSelect>
 
-                <!-- Add MudSelect for Visibility -->
-                <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true">
+                <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true" Class="mt-4">
                     <MudSelectItem T="string" Value="@("Visible")">Visible</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Invisible")">Invisible</MudSelectItem>
                 </MudSelect>
 
-                <MudDatePicker @bind-Date="publishDate" Label="Publish Date" />
+                <MudDatePicker @bind-Date="publishDate" Label="Publish Date" Class="mt-4" />
 
-                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(async () => await HandleSubmit())">Create Post</MudButton>
-                <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel">Cancel</MudButton>
+                <MudStack Direction="Row" Spacing="2" Class="mt-4">
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" Type="Submit" StartIcon="@Icons.Material.Filled.Check">Create Post</MudButton>
+                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
+                </MudStack>
             </MudForm>
         </MudCardContent>
     </MudCard>
@@ -84,7 +88,7 @@
     private List<FilePreview> mediaFilesPreviews = new();
     private List<string> uploadedMediaUrls = new List<string>();
     private string state = "InDraft";
-    private string visibility = "Visible"; // Add visibility field
+    private string visibility = "Visible";
     private DateTime? publishDate = DateTime.Now;
     private bool isUploading = false;
 
@@ -157,7 +161,7 @@
                 TextContent = textContent,
                 MediaFiles = uploadedMediaUrls.ToArray(),
                 State = state,
-                Visibility = visibility, // Add visibility to the command
+                Visibility = visibility,
                 PublishDate = publishDate,
                 Context = PostContext.UserPage
             };
