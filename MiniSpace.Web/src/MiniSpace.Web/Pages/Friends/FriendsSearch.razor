@@ -11,7 +11,7 @@
 @inject IJSRuntime JSRuntime
 
 <AuthWrapper>
-<div class="center-container"> 
+<MudContainer>
  
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -47,7 +47,7 @@
                         <img src="@GetProfileImageUrl(student.ProfileImageUrl)" alt="Student Image" class="friend-img" onerror="this.onerror=null;this.src='images/default_profile_image.webp';">
                         <div class="friend-info">
                             <h5>@student.FirstName @student.LastName</h5>
-                            <p>@student.Email</p>
+                            @* <p>@student.Email</p> *@
                         </div>
                         <div class="buttons">
                             @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
@@ -95,7 +95,7 @@
     
     
 </div>
-</div>
+</MudContainer>
 </AuthWrapper>
 
 <style>
