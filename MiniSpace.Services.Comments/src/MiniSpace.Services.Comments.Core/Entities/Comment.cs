@@ -1,4 +1,5 @@
 using MiniSpace.Services.Comments.Core.Exceptions;
+using MiniSpace.Services.Comments.Core.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,9 @@ namespace MiniSpace.Services.Comments.Core.Entities
             {
                 throw new UserAlreadyLikesCommentException(userId);
             }
+
             _likes.Add(userId);
+            AddEvent(new CommentLiked(Id, userId));
         }
 
         public void UnLike(Guid userId)
@@ -66,7 +69,9 @@ namespace MiniSpace.Services.Comments.Core.Entities
             {
                 throw new UserNotLikeCommentException(userId, Id);
             }
+
             _likes.Remove(userId);
+            AddEvent(new CommentUnliked(Id, userId));
         }
 
         public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid userId, 
@@ -74,8 +79,11 @@ namespace MiniSpace.Services.Comments.Core.Entities
         {
             CheckContent(id, textContent);
 
-            return new Comment(id, contextId, commentContext, userId, new List<Guid>(), parentId, textContent, 
+            var comment = new Comment(id, contextId, commentContext, userId, new List<Guid>(), parentId, textContent, 
                 createdAt, createdAt, createdAt, new List<Reply>(), false);
+
+            comment.AddEvent(new CommentCreated(comment.Id, userId, contextId, textContent, createdAt));
+            return comment;
         }
 
         public void Update(string textContent, DateTime now)
@@ -98,6 +106,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
         {
             IsDeleted = true;
             TextContent = "";
+            AddEvent(new CommentDeleted(Id));
         }
 
         public void AddReply(Guid replyId, Guid userId, string textContent, DateTime now)
@@ -105,6 +114,8 @@ namespace MiniSpace.Services.Comments.Core.Entities
             var reply = new Reply(replyId, userId, Id, textContent, now);
             _replies.Add(reply);
             LastReplyAt = now;
+
+            AddEvent(new CommentReplyAdded(Id, replyId, userId, textContent, now));
         }
 
         public void RemoveReply(Guid replyId)
