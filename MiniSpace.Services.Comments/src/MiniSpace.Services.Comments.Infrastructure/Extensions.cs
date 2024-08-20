@@ -49,9 +49,9 @@ namespace MiniSpace.Services.Comments.Infrastructure
         {
             builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
             builder.Services.AddTransient<IOrganizationEventsCommentRepository, OrganizationEventsCommentRepository>();
-            builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
-            builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
-            builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
+            builder.Services.AddTransient<IOrganizationPostsCommentRepository, OrganizationPostsCommentRepository>();
+            builder.Services.AddTransient<IUserEventsCommentRepository, UserEventsCommentRepository>();
+            builder.Services.AddTransient<IUserPostsCommentRepository, UserPostsCommentRepository>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
@@ -78,6 +78,10 @@ namespace MiniSpace.Services.Comments.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<CommentDocument, Guid>("comments")
+                .AddMongoRepository<OrganizationEventCommentDocument, Guid>("organization_events_comments")
+                .AddMongoRepository<OrganizationPostCommentDocument, Guid>("organization_posts_comments")
+                .AddMongoRepository<UserEventCommentDocument, Guid>("user_events_comments")
+                .AddMongoRepository<UserPostCommentDocument, Guid>("user_posts_comments")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
