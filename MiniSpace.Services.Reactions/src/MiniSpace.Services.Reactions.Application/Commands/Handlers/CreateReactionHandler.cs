@@ -1,15 +1,14 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Reactions.Application.Events;
 using MiniSpace.Services.Reactions.Application.Exceptions;
-using MiniSpace.Services.Reactions.Application.Services;
 using MiniSpace.Services.Reactions.Core.Entities;
-using MiniSpace.Services.Reactions.Core.Exceptions;
 using MiniSpace.Services.Reactions.Core.Repositories;
 using MiniSpace.Services.Reactions.Application.Services.Clients;
-using MiniSpace.Services.Reactions.Core.Exceptions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MiniSpace.Services.Reactions.Core.Exceptions;
+using MiniSpace.Services.Reactions.Application.Services;
 
 namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
 {
@@ -20,25 +19,37 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
         private readonly IReactionsOrganizationsPostRepository _orgPostRepository;
         private readonly IReactionsUserEventRepository _userEventRepository;
         private readonly IReactionsUserPostRepository _userPostRepository;
+        private readonly IReactionsOrganizationsEventCommentsRepository _orgEventCommentsRepository;
+        private readonly IReactionsOrganizationsPostCommentsRepository _orgPostCommentsRepository;
+        private readonly IReactionsUserEventCommentsRepository _userEventCommentsRepository;
+        private readonly IReactionsUserPostCommentsRepository _userPostCommentsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
 
-
-        public CreateReactionHandler(IReactionRepository reactionRepository,
-                                     IReactionsOrganizationsEventRepository orgEventRepository,
-                                     IReactionsOrganizationsPostRepository orgPostRepository,
-                                     IReactionsUserEventRepository userEventRepository,
-                                     IReactionsUserPostRepository userPostRepository,
-                                     IStudentsServiceClient studentsServiceClient,
-                                     IAppContext appContext,
-                                     IMessageBroker messageBroker)
+        public CreateReactionHandler(
+            IReactionRepository reactionRepository,
+            IReactionsOrganizationsEventRepository orgEventRepository,
+            IReactionsOrganizationsPostRepository orgPostRepository,
+            IReactionsUserEventRepository userEventRepository,
+            IReactionsUserPostRepository userPostRepository,
+            IReactionsOrganizationsEventCommentsRepository orgEventCommentsRepository,
+            IReactionsOrganizationsPostCommentsRepository orgPostCommentsRepository,
+            IReactionsUserEventCommentsRepository userEventCommentsRepository,
+            IReactionsUserPostCommentsRepository userPostCommentsRepository,
+            IStudentsServiceClient studentsServiceClient,
+            IAppContext appContext,
+            IMessageBroker messageBroker)
         {
             _reactionRepository = reactionRepository;
             _orgEventRepository = orgEventRepository;
             _orgPostRepository = orgPostRepository;
             _userEventRepository = userEventRepository;
             _userPostRepository = userPostRepository;
+            _orgEventCommentsRepository = orgEventCommentsRepository;
+            _orgPostCommentsRepository = orgPostCommentsRepository;
+            _userEventCommentsRepository = userEventCommentsRepository;
+            _userPostCommentsRepository = userPostCommentsRepository;
             _studentsServiceClient = studentsServiceClient;
             _messageBroker = messageBroker;
             _appContext = appContext;
@@ -51,9 +62,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             await EnsureStudentExistsAsync(command.UserId);
 
             var contentType = ParseContentType(command.ContentType);
-
             var targetType = ParseTargetType(command.TargetType);
-
             var reactionType = ParseReactionType(command.ReactionType);
 
             await EnsureReactionDoesNotExistAsync(command.ContentId, contentType, command.UserId);
@@ -78,6 +87,18 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                 case ReactionContentType.Post when targetType == ReactionTargetType.User:
                     if (!await _userPostRepository.ExistsAsync(command.ContentId))
                         throw new PostNotFoundException(command.ContentId);
+                    break;
+
+                case ReactionContentType.Comment when targetType == ReactionTargetType.Organization:
+                    if (!await _orgEventCommentsRepository.ExistsAsync(command.ContentId) &&
+                        !await _orgPostCommentsRepository.ExistsAsync(command.ContentId))
+                        throw new CommentNotFoundException(command.ContentId);
+                    break;
+
+                case ReactionContentType.Comment when targetType == ReactionTargetType.User:
+                    if (!await _userEventCommentsRepository.ExistsAsync(command.ContentId) &&
+                        !await _userPostCommentsRepository.ExistsAsync(command.ContentId))
+                        throw new CommentNotFoundException(command.ContentId);
                     break;
 
                 default:
