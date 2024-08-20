@@ -37,6 +37,8 @@ namespace MiniSpace.Services.Reactions.Api
                         .Get<GetReactionsSummary, ReactionsSummaryDto>("reactions/summary")
                         .Post<CreateReaction>("reactions",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"reactions/{cmd.ReactionId}"))
+                        .Put<UpdateReaction>("reactions/{reactionId}",  
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
                         .Delete<DeleteReaction>("reactions/{reactionId}")
                     ))
                 .UseLogging()
