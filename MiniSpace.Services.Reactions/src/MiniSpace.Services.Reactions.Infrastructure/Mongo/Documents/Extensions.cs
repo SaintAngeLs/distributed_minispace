@@ -112,6 +112,70 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Extensions
             };
         }
 
+        public static IEnumerable<Reaction> ToEntities(this OrganizationEventCommentsReactionDocument document)
+        {
+            return document.Reactions.Select(r => r.ToEntity());
+        }
+
+        public static OrganizationPostCommentsReactionDocument ToOrganizationPostCommentDocument(this IEnumerable<Reaction> reactions, Guid organizationPostCommentId, Guid organizationId)
+        {
+            return new OrganizationPostCommentsReactionDocument
+            {
+                Id = organizationPostCommentId,
+                OrganizationPostCommentId = organizationPostCommentId,
+                OrganizationId = organizationId,
+                Reactions = reactions.Select(ReactionDocument.FromEntity).ToList()
+            };
+        }
+
+        public static IEnumerable<Reaction> ToEntities(this OrganizationPostCommentsReactionDocument document)
+        {
+            return document.Reactions.Select(r => r.ToEntity());
+        }
+
+        public static UserEventCommentsReactionDocument ToUserEventCommentDocument(this IEnumerable<Reaction> reactions, Guid userEventCommentId, Guid userId)
+        {
+            return new UserEventCommentsReactionDocument
+            {
+                Id = userEventCommentId,
+                UserEventCommentId = userEventCommentId,
+                UserId = userId,
+                Reactions = reactions.Select(ReactionDocument.FromEntity).ToList()
+            };
+        }
+
+        public static IEnumerable<Reaction> ToEntities(this UserEventCommentsReactionDocument document)
+        {
+            return document.Reactions.Select(r => r.ToEntity());
+        }
+
+        public static OrganizationEventCommentsReactionDocument ToOrganizationEventCommentDocument(this IEnumerable<Reaction> reactions, Guid organizationEventCommentId, Guid organizationId)
+        {
+            return new OrganizationEventCommentsReactionDocument
+            {
+                Id = organizationEventCommentId,
+                OrganizationEventCommentId = organizationEventCommentId,
+                OrganizationId = organizationId,
+                Reactions = reactions.Select(ReactionDocument.FromEntity).ToList()
+            };
+        }
+
+        public static UserPostCommentsReactionDocument ToUserPostCommentDocument(this IEnumerable<Reaction> reactions, Guid userPostCommentId, Guid userId)
+        {
+            return new UserPostCommentsReactionDocument
+            {
+                Id = userPostCommentId,
+                UserPostCommentId = userPostCommentId,
+                UserId = userId,
+                Reactions = reactions.Select(ReactionDocument.FromEntity).ToList()
+            };
+        }
+        public static IEnumerable<Reaction> ToEntities(this UserPostCommentsReactionDocument document)
+        {
+            return document.Reactions.Select(r => r.ToEntity());
+        }
+
+
         public static UpdateDefinition<TDocument> Push<TDocument, TItem>(
             this UpdateDefinitionBuilder<TDocument> builder,
             Expression<Func<TDocument, IEnumerable<TItem>>> field,
