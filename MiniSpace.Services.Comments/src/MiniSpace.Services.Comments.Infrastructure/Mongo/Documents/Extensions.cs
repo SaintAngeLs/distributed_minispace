@@ -1,5 +1,9 @@
 using MiniSpace.Services.Comments.Application.Dto;
 using MiniSpace.Services.Comments.Core.Entities;
+using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
@@ -8,26 +12,36 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Comment AsEntity(this CommentDocument document)
-            => new Comment(document.Id,document.ContextId,document.CommentContext, document.StudentId, 
-                document.StudentName, document.Likes, document.ParentId, document.TextContent, document.CreatedAt,
-                document.LastUpdatedAt, document.LastReplyAt, document.RepliesCount, document.IsDeleted);
+            => new Comment(
+                document.Id,
+                document.ContextId,
+                document.CommentContext,
+                document.UserId,
+                document.Likes,
+                document.ParentId,
+                document.TextContent,
+                document.CreatedAt,
+                document.LastUpdatedAt,
+                document.LastReplyAt,
+                document.Replies.Select(r => r.AsEntity()),
+                document.IsDeleted
+            );
 
-        public static CommentDocument AsDocument(this Comment entity)
+        public static CommentDocument ToDocument(this Comment entity)
             => new CommentDocument()
             {
                 Id = entity.Id,
                 ContextId = entity.ContextId,
                 CommentContext = entity.CommentContext,
-                StudentId = entity.StudentId,
-                StudentName = entity.StudentName,
+                UserId = entity.UserId,
                 Likes = entity.Likes,
                 ParentId = entity.ParentId,
                 TextContent = entity.TextContent,
                 CreatedAt = entity.CreatedAt,
                 LastUpdatedAt = entity.LastUpdatedAt,
                 LastReplyAt = entity.LastReplyAt,
-                RepliesCount = entity.RepliesCount,
-                IsDeleted = entity.IsDeleted,
+                Replies = entity.Replies.Select(r => r.ToDocument()).ToList(), 
+                IsDeleted = entity.IsDeleted
             };
 
         public static CommentDto AsDto(this CommentDocument document)
@@ -36,25 +50,70 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 Id = document.Id,
                 ContextId = document.ContextId,
                 CommentContext = document.CommentContext.ToString().ToLowerInvariant(),
-                StudentId = document.StudentId,
-                StudentName = document.StudentName,
+                UserId = document.UserId,
                 Likes = document.Likes,
                 ParentId = document.ParentId,
                 TextContent = document.TextContent,
                 CreatedAt = document.CreatedAt,
                 LastUpdatedAt = document.LastUpdatedAt,
                 LastReplyAt = document.LastReplyAt,
-                RepliesCount = document.RepliesCount,
-                IsDeleted= document.IsDeleted,
+                RepliesCount = document.Replies.Count(),
+                IsDeleted = document.IsDeleted
             };
-        
-        public static Student AsEntity(this StudentDocument document)
-            => new Student(document.Id);
 
-        public static StudentDocument AsDocument(this Student entity)
-            => new StudentDocument
+        public static Reply AsEntity(this ReplyDocument document)
+            => new Reply(
+                document.Id,
+                document.UserId,
+                document.CommentId,
+                document.TextContent,
+                document.CreatedAt
+            );
+
+        public static ReplyDocument ToDocument(this Reply entity)  
+            => new ReplyDocument
             {
                 Id = entity.Id,
+                UserId = entity.UserId,
+                CommentId = entity.CommentId,
+                TextContent = entity.TextContent,
+                CreatedAt = entity.CreatedAt
             };
-    }    
+
+        public static OrganizationEventCommentDocument ToOrganizationEventDocument(this IEnumerable<Comment> comments, Guid organizationEventId, Guid organizationId)
+            => new OrganizationEventCommentDocument
+            {
+                Id = Guid.NewGuid(),
+                OrganizationEventId = organizationEventId,
+                OrganizationId = organizationId,
+                Comments = comments.Select(c => c.ToDocument()).ToList()  
+            };
+
+        public static OrganizationPostCommentDocument ToOrganizationPostDocument(this IEnumerable<Comment> comments, Guid organizationPostId, Guid organizationId)
+            => new OrganizationPostCommentDocument
+            {
+                Id = Guid.NewGuid(),
+                OrganizationPostId = organizationPostId,
+                OrganizationId = organizationId,
+                Comments = comments.Select(c => c.ToDocument()).ToList()  
+            };
+
+        public static UserEventCommentDocument ToUserEventDocument(this IEnumerable<Comment> comments, Guid userEventId, Guid userId)
+            => new UserEventCommentDocument
+            {
+                Id = Guid.NewGuid(),
+                UserEventId = userEventId,
+                UserId = userId,
+                Comments = comments.Select(c => c.ToDocument()).ToList()  
+            };
+
+        public static UserPostCommentDocument ToUserPostDocument(this IEnumerable<Comment> comments, Guid userPostId, Guid userId)
+            => new UserPostCommentDocument
+            {
+                Id = Guid.NewGuid(),
+                UserPostId = userPostId,
+                UserId = userId,
+                Comments = comments.Select(c => c.ToDocument()).ToList() 
+            };
+    }
 }

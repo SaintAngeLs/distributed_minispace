@@ -75,12 +75,11 @@
                 <MudPaper Class="pa-4">
                     @if (selectedTabIndex == 1)
                     {
-                        
                         <OverviewComponent OrganizationId="@OrganizationId" />
                     }
                     else if (selectedTabIndex == 2)
                     {
-                        <PostsComponent OrganizationId="@OrganizationId" />
+                        <OrganizationPostsComponent OrganizationId="@OrganizationId" />
                     }
                     else if (selectedTabIndex == 3)
                     {
@@ -88,7 +87,7 @@
                     }
                     else if (selectedTabIndex == 4)
                     {
-                        <MembersComponent OrganizationId="@OrganizationId" />
+                        <OrganizationMembersComponent OrganizationId="@OrganizationId" />
                     }
                     else if (selectedTabIndex == 5)
                     {
@@ -112,7 +111,7 @@
     private OrganizationGalleryUsersDto organizationGalleryUsers;
     private bool isAdmin;
     private bool isLoading = true;
-    private int selectedTabIndex = 0;
+    private int selectedTabIndex = 1;
 
     private string defaultBannerImage = "/images/default_banner_image.png";
     private string defaultProfileImage = "/images/default_organization_profile_image.png";

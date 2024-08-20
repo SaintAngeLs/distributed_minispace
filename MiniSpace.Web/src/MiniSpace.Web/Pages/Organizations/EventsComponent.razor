@@ -46,7 +46,13 @@
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
                                 View Details
                             </MudButton>
-                            @if (isAdmin)
+                            @if (canEditEvent(eventDto))
+                            {
+                                <MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="() => EditEvent(eventDto.Id)">
+                                    Edit
+                                </MudButton>
+                            }
+                            @if (canDeleteEvent())
                             {
                                 <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => DeleteEvent(eventDto.Id)">
                                     Delete
@@ -126,6 +132,25 @@
         return organization.OwnerId == currentUserId || organization.Users?.Any(u => u.Id == currentUserId && u.Role.Permissions.ContainsKey(Permission.CreateEvents)) == true;
     }
 
+    private bool canEditEvent(EventDto eventDto)
+    {
+        var currentUserId = IdentityService.GetCurrentUserId();
+        return isAdmin || eventDto.Organizer?.UserId == currentUserId || HasPermission(Permission.EditEvents, OrganizationId, currentUserId);
+    }
+
+    private bool canDeleteEvent()
+    {
+        var currentUserId = IdentityService.GetCurrentUserId();
+        return isAdmin || HasPermission(Permission.DeleteEvents, OrganizationId, currentUserId);
+    }
+
+    private bool HasPermission(Permission permission, Guid organizationId, Guid userId)
+    {
+        var organization = OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(organizationId).Result;
+        var user = organization.Users?.FirstOrDefault(u => u.Id == userId);
+        return user?.Role.Permissions.ContainsKey(permission) == true;
+    }
+
     private void CreateEvent()
     {
         if (!canPostEvents)
@@ -142,9 +167,14 @@
         NavigationManager.NavigateTo($"/events/event/{eventId}");
     }
 
+    private void EditEvent(Guid eventId)
+    {
+        NavigationManager.NavigateTo($"/events/event/{eventId}/edit");
+    }
+
     private async Task DeleteEvent(Guid eventId)
     {
-        if (!isAdmin)
+        if (!canDeleteEvent())
         {
             Snackbar.Add("You do not have permission to delete this event.", Severity.Warning);
             return;

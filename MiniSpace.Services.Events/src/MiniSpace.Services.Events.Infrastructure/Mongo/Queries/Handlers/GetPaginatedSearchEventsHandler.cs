@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Queries;
@@ -26,6 +27,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>> HandleAsync(GetSearchEvents query, CancellationToken cancellationToken)
         {
+               var jsonOptionsx = new JsonSerializerOptions { WriteIndented = true };
+            var queryJson = JsonSerializer.Serialize(query, jsonOptionsx);
+            Console.WriteLine("Query Object: ");
+            Console.WriteLine(queryJson);
+
             // Convert string values to corresponding enum types
             Category? category = null;
             State? state = null;
@@ -64,20 +70,27 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 dateTo: query.DateTo ?? default(DateTime),
                 category: category,
                 state: state,
-                organizations: query.OrganizationId.HasValue ? new List<Guid> { query.OrganizationId.Value } : Enumerable.Empty<Guid>(),
+                organizations: query.OrganizationId.HasValue ? new List<Guid> { query.OrganizationId.Value } : Enumerable.Empty<Guid>(), // Filter by OrganizationId
                 friends: query.Friends ?? Enumerable.Empty<Guid>(),
                 friendsEngagementType: engagementType,
                 sortBy: sortBy,
                 direction: sortDirection
             );
 
-
             // Map events to DTOs
             var studentId = _appContext.Identity.Id;
             var eventDtos = events.Select(e => e.AsDto(studentId)).ToList();
 
+            var pagedResult = new  MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(eventDtos, pageNumber, pageSize, totalElements);
+
+            // Serialize the result to JSON and log it
+            var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+            var jsonResult = JsonSerializer.Serialize(pagedResult, jsonOptions);
+            Console.WriteLine("Search Results: ");
+            Console.WriteLine(jsonResult);
+
             // Return the paginated result
-            return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(eventDtos, pageNumber, pageSize, totalElements);
+            return pagedResult;
         }
     }
 }

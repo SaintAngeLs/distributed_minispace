@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
@@ -137,7 +138,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             }
             else
             {
-                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, new[] { State.Published, State.Archived });
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, new[] { State.Published, State.ToBePublished, State.Archived });
             }
 
             return filterDefinition;
@@ -172,14 +173,19 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             IEnumerable<Guid> organizationsEnumerable)
         {
             var organizations = organizationsEnumerable.ToList();
+
             if (organizations.Count > 0)
             {
-                filterDefinition &= FilterDefinitionBuilder.In(nameof(EventDocument.Organizer) + "." + nameof(OrganizerDocument.OrganizationId), organizations);
+                var organizationFilter = Builders<EventDocument>.Filter.And(
+                    Builders<EventDocument>.Filter.Ne(e => e.Organizer.OrganizationId, null),
+                    Builders<EventDocument>.Filter.In(e => (Guid)e.Organizer.OrganizationId, organizations)
+                );
+
+                filterDefinition &= organizationFilter;
             }
 
             return filterDefinition;
         }
-
         
         public static FilterDefinition<EventDocument> AddEventIdFilter(this FilterDefinition<EventDocument> filterDefinition,
             IEnumerable<Guid> eventIds)
@@ -204,6 +210,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             var sortCombined = sortDefinitionBuilder.Combine(sortStateDefinition.Concat(sortDefinition));
 
             return sortCombined;
+        }
+    }
+
+    internal class FieldDefinitionBuilder<T>
+    {
+        public FieldDefinitionBuilder()
+        {
         }
     }
 }

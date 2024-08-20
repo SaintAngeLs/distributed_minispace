@@ -31,7 +31,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             }
             
             var documents = _postRepository.Collection.AsQueryable();
-            documents = documents.Where(p => p.OrganizerId == query.OrganizerId);
+            documents = documents.Where(p => p.UserId == query.OrganizerId);
 
             var posts = await documents.ToListAsync();
             return posts.Select(p => p.AsDto());

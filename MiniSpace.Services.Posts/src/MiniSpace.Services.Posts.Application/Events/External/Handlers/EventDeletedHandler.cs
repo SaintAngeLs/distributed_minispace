@@ -1,39 +1,42 @@
 using Convey.CQRS.Commands;
 using Convey.CQRS.Events;
 using MiniSpace.Services.Posts.Application.Commands;
-using MiniSpace.Services.Posts.Application.Exceptions;
+using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
 {
     public class EventDeletedHandler : IEventHandler<EventDeleted>
     {
-        private readonly IEventRepository _eventRepository;
-        private readonly IPostRepository _postRepository;
+        private readonly IUserEventPostRepository _userEventPostRepository;
+        private readonly IOrganizationEventPostRepository _organizationEventPostRepository;
         private readonly ICommandDispatcher _commandDispatcher;
 
-        public EventDeletedHandler(IEventRepository eventRepository, IPostRepository postRepository,
+        public EventDeletedHandler(
+            IUserEventPostRepository userEventPostRepository,
+            IOrganizationEventPostRepository organizationEventPostRepository,
             ICommandDispatcher commandDispatcher)
         {
-            _eventRepository = eventRepository;
-            _postRepository = postRepository;
+            _userEventPostRepository = userEventPostRepository;
+            _organizationEventPostRepository = organizationEventPostRepository;
             _commandDispatcher = commandDispatcher;
         }
-        
+
         public async Task HandleAsync(EventDeleted @event, CancellationToken cancellationToken = default)
         {
-            if (!(await _eventRepository.ExistsAsync(@event.EventId)))
+            var userPosts = await _userEventPostRepository.GetByEventIdAsync(@event.EventId);
+            foreach (var post in userPosts)
             {
-                throw new EventNotFoundException(@event.EventId);
-            }
-            
-            var posts = await _postRepository.GetByEventIdAsync(@event.EventId);
-            foreach (var post in posts)
-            {
-                await _commandDispatcher.SendAsync(new DeletePost(post.Id));
+                await _commandDispatcher.SendAsync(new DeletePost(post.Id, post.UserId, null, post.EventId, PostContext.EventPage.ToString()));
             }
 
-            await _eventRepository.DeleteAsync(@event.EventId);
+            var organizationPosts = await _organizationEventPostRepository.GetByEventIdAsync(@event.EventId);
+            foreach (var post in organizationPosts)
+            {
+                await _commandDispatcher.SendAsync(new DeletePost(post.Id, null, post.OrganizationId, post.EventId, PostContext.EventPage.ToString()));
+            }
         }
-    }    
+    }
 }

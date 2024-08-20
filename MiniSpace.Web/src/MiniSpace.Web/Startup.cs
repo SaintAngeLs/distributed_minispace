@@ -67,6 +67,8 @@ namespace MiniSpace.Web
                     options.MaximumReceiveMessageSize = 32 * 1024 * 1024; // 32 MB
                 });
 
+            services.AddMudMarkdownServices();
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.MaxRequestBodySize = 32 * 1024 * 1024; 

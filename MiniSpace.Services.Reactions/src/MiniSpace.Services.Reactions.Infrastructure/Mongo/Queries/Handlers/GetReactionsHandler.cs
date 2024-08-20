@@ -6,6 +6,7 @@ using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Application.Queries;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Reactions.Infrastructure.Mongo.Extensions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 

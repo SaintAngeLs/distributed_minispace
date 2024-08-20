@@ -57,7 +57,7 @@
             studentId = IdentityService.GetCurrentUserId();
             searchModel = InitializeSearchModel(studentId);
             var result = await PostsService.SearchPostsAsync(searchModel);
-            posts = result.Content.Content;
+            posts = result.Content.Items;
             pageInitialized = true;
         }
         else
@@ -70,7 +70,7 @@
     {
         return new()
         {
-            StudentId = studentId,
+            UserId = studentId,
             Pageable = new PageableDto()
             {
                 Page = 1,

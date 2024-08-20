@@ -7,7 +7,7 @@ using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
-
+using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
@@ -15,11 +15,15 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
     public class GetStudentsHandler : IQueryHandler<GetStudents, Application.Queries.PagedResult<StudentDto>>
     {
         private readonly IMongoRepository<StudentDocument, Guid> _studentRepository;
-         private const string BaseUrl = "students"; 
+        private readonly IUserSettingsRepository _userSettingsRepository;
+        private const string BaseUrl = "students"; 
 
-        public GetStudentsHandler(IMongoRepository<StudentDocument, Guid> studentRepository)
+        public GetStudentsHandler(
+            IMongoRepository<StudentDocument, Guid> studentRepository,
+            IUserSettingsRepository userSettingsRepository)
         {
             _studentRepository = studentRepository;
+            _userSettingsRepository = userSettingsRepository;
         }
         
         public async Task<Application.Queries.PagedResult<StudentDto>> HandleAsync(GetStudents query, CancellationToken cancellationToken)
@@ -29,9 +33,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
             if (!string.IsNullOrWhiteSpace(query.Name))
             {
                 string searchTerm = query.Name.Trim();
-
                 var parts = searchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
                 var filters = new List<FilterDefinition<StudentDocument>>();
 
                 if (parts.Length == 1)
@@ -63,6 +65,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
                 filter &= Builders<StudentDocument>.Filter.Or(filters);
             }
+
             var options = new FindOptions<StudentDocument, StudentDocument>
             {
                 Limit = query.ResultsPerPage,
@@ -72,12 +75,43 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
             using (var cursor = await _studentRepository.Collection.FindAsync(filter, options, cancellationToken))
             {
                 var documents = await cursor.ToListAsync(cancellationToken);
-                var dtos = documents.Select(s => s.AsDto()).ToList();
+                var dtos = new List<StudentDto>();
+
+                foreach (var document in documents)
+                {
+                    var studentDto = document.AsDto();
+
+                    // Fetch the user settings for each student and add to DTO
+                    var userSettings = await _userSettingsRepository.GetUserSettingsAsync(document.Id);
+                    if (userSettings != null)
+                    {
+                        studentDto.UserSettings = new UserSettingsDto
+                        {
+                            StudentId = userSettings.StudentId,
+                            CreatedAtVisibility = userSettings.AvailableSettings.CreatedAtVisibility.ToString(),
+                            DateOfBirthVisibility = userSettings.AvailableSettings.DateOfBirthVisibility.ToString(),
+                            InterestedInEventsVisibility = userSettings.AvailableSettings.InterestedInEventsVisibility.ToString(),
+                            SignedUpEventsVisibility = userSettings.AvailableSettings.SignedUpEventsVisibility.ToString(),
+                            EducationVisibility = userSettings.AvailableSettings.EducationVisibility.ToString(),
+                            WorkPositionVisibility = userSettings.AvailableSettings.WorkPositionVisibility.ToString(),
+                            LanguagesVisibility = userSettings.AvailableSettings.LanguagesVisibility.ToString(),
+                            InterestsVisibility = userSettings.AvailableSettings.InterestsVisibility.ToString(),
+                            ContactEmailVisibility = userSettings.AvailableSettings.ContactEmailVisibility.ToString(),
+                            PhoneNumberVisibility = userSettings.AvailableSettings.PhoneNumberVisibility.ToString(),
+                            ProfileImageVisibility = userSettings.AvailableSettings.ProfileImageVisibility.ToString(),
+                            BannerImageVisibility = userSettings.AvailableSettings.BannerImageVisibility.ToString(),
+                            GalleryVisibility = userSettings.AvailableSettings.GalleryVisibility.ToString(),
+                            PreferredLanguage = userSettings.AvailableSettings.PreferredLanguage.ToString(),
+                            FrontendVersion = userSettings.AvailableSettings.FrontendVersion.ToString()
+                        };
+                    }
+
+                    dtos.Add(studentDto);
+                }
+
                 var total = await _studentRepository.Collection.CountDocumentsAsync(filter);
                 return new Application.Queries.PagedResult<StudentDto>(dtos, (int)total, query.ResultsPerPage, query.Page, BaseUrl);
             }
         }
-
     }
-}    
-
+}

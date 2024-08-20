@@ -52,7 +52,6 @@
                                Title="Delete Banner Image" />
             </div>
 
-            <!-- Profile Image Overlaying Banner with Upload and Delete Option -->
             <div style="position: relative; text-align: center; margin-top: -60px;">
                 <MudImage 
                     Src="@GetProfileImageUrl()" 
@@ -81,12 +80,10 @@
                                Title="Delete Profile Image" />
             </div>
 
-            <!-- Organization Name -->
             <MudText Typo="Typo.h6" Class="mt-3" Align="Align.Center">
                 @organizationGalleryUsers.OrganizationDetails.Name
             </MudText>
             
-            <!-- Save Button -->
             <MudStack Row="true" Style="margin-top: 20px;">
                 <MudSpacer />
                 <MudButton Variant="Variant.Filled" 
@@ -99,7 +96,6 @@
             </MudStack>
         </MudPaper>
 
-        <!-- Navigation and Content -->
         <MudGrid Class="mt-4">
             <MudItem xs="12" md="3">
                 <MudNavMenu>
@@ -144,7 +140,6 @@
                     else if (selectedTabIndex == 2)
                     {
                         <MudText Typo="Typo.h6">Manage Members</MudText>
-                        <!-- Include members management UI here -->
                     }
                     else if (selectedTabIndex == 3)
                     {
@@ -301,7 +296,7 @@
         {
             CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
             var buffer = Convert.FromBase64String(base64Image);
-            var lastModified = DateTimeOffset.Now;  // Use the current time as a placeholder for lastModified
+            var lastModified = DateTimeOffset.Now;  
             croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
             StateHasChanged();
         }
@@ -363,7 +358,7 @@
             }
             finally
             {
-                IsUploading = false; // Hide the loading overlay
+                IsUploading = false; 
                 StateHasChanged();
             }
 
@@ -413,7 +408,7 @@
             organizationDetails.BannerUrl,
             organizationDetails.ImageUrl,
             organizationDetails.DefaultRoleName,
-            organizationDetails.Address,   // New fields
+            organizationDetails.Address,  
             organizationDetails.Country,
             organizationDetails.City,
             organizationDetails.Telephone,

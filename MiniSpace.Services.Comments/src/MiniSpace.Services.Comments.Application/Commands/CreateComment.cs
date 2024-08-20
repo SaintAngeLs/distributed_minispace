@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Convey.CQRS.Commands;
 
 namespace MiniSpace.Services.Comments.Application.Commands
@@ -8,21 +7,20 @@ namespace MiniSpace.Services.Comments.Application.Commands
     {
         public Guid CommentId { get; set; }
         public Guid ContextId { get; set; }
-        public string CommentContext { get; set; }
-        public Guid StudentId { get; set; }
+        public string CommentContext { get; set; } 
+        public Guid UserId { get; set; }
         public Guid ParentId { get; set; }
-        public string Comment { get; set; }
- 
+        public string TextContent { get; set; } 
 
-        public CreateComment(Guid commentId, Guid contextId, string commentContext, Guid studentId, Guid parentId,
-            string comment)
+        public CreateComment(Guid commentId, Guid contextId, string commentContext, Guid userId, Guid parentId,
+            string textContent)
         {
             CommentId = commentId == Guid.Empty ? Guid.NewGuid() : commentId;
             ContextId = contextId;
             CommentContext = commentContext;
-            StudentId = studentId;
+            UserId = userId;
             ParentId = parentId;
-            Comment = comment;
+            TextContent = textContent;
         }
     }
 }

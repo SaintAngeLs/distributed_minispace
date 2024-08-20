@@ -9,6 +9,7 @@
 @inject IMediaFilesService MediaFilesService
 @inject IIdentityService IdentityService
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 @using MudBlazor
 @using System.IO
 @using System.Text.Json;
@@ -32,9 +33,20 @@
                     <MudTimelineItem Icon="@Icons.Material.Filled.Info" Title="General Information" Color="Color.Primary">
                         <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">General Information</MudText>
                         <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
-                        <MudTextField Label="Description" @bind-Value="newEvent.Description" FullWidth Required="true" Multiline="true" />
+
+                        <MudText Typo="Typo.body2">Event Description</MudText>
+                        <MudTextField @bind-Value="newEvent.Description" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+
+                        <!-- Markdown Preview -->
+                        <MudMarkdown Value="@newEvent.Description" />
+                        <!-- Start Date and Time -->
                         <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
+                        <MudTimePicker Label="Start Time" @bind-Time="startTimeTemp" Required="true" MinuteSelectionStep="5" />
+
+                        <!-- End Date and Time -->
                         <MudDatePicker Label="End Date" @bind-Date="endDateTemp" Required="true" />
+                        <MudTimePicker Label="End Time" @bind-Time="endTimeTemp" Required="true" MinuteSelectionStep="5" />
+
                         <MudSelect T="string" Label="Category" @bind-Value="newEvent.Category" Required="true">
                             @foreach (var category in Enum.GetNames(typeof(Category)))
                             {
@@ -48,19 +60,27 @@
                                 <MudSelectItem T="string" Value="organizerType">@organizerType</MudSelectItem>
                             }
                         </MudSelect>
-                        <MudDatePicker Label="Publish Date" @bind-Date="publishDateTemp" FullWidth Required="false" />
+
+                        <!-- Publish Date and Time -->
+                        <MudDatePicker Label="Publish Date" @bind-Date="publishDateTemp" FullWidth />
+                        <MudTimePicker Label="Publish Time" @bind-Time="publishTimeTemp" MinuteSelectionStep="5" />
                     </MudTimelineItem>
 
-                    <!-- Address Section -->
+                    <!-- Define Location Checkbox -->
                     <MudTimelineItem Icon="@Icons.Material.Filled.LocationOn" Title="Location" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
-                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Location</MudText>
-                        <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
-                        <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
-                        <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
-                        <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
-                        <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
-                        <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
-                        <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                        <MudCheckBox Label="Define Location" @bind-Checked="IsLocationDefined" />
+                        @if (IsLocationDefined)
+                        {
+                            <!-- Address Section -->
+                            <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Location</MudText>
+                            <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
+                            <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
+                            <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
+                            <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
+                            <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
+                            <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
+                            <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                        }
                     </MudTimelineItem>
 
                     <!-- Payment Section -->
@@ -134,7 +154,7 @@
 
                     <!-- Additional Settings Section -->
                     <MudTimelineItem Icon="@Icons.Material.Filled.Settings" Title="Additional Settings" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
-                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Additional Setting</MudText>
+                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Additional Settings</MudText>
                         <MudCheckBox @bind-Checked="newEvent.Settings.RequiresApproval">Requires Approval</MudCheckBox>
                         <MudCheckBox @bind-Checked="newEvent.Settings.IsOnlineEvent">Is Online Event</MudCheckBox>
                         <MudCheckBox @bind-Checked="newEvent.Settings.IsPrivate">Is Private</MudCheckBox>
@@ -197,7 +217,7 @@
 
     private string bannerPreviewUrl;
     private List<FilePreview> mediaFilesPreviews = new();
-    private string CroppedImageBase64; 
+    private string CroppedImageBase64;
 
     private IBrowserFile croppedImageFile;
     private IReadOnlyList<IBrowserFile> mediaFiles;
@@ -208,8 +228,42 @@
     private string defaultMediaFileImage = "/images/default_media_file_image.png";
 
     private DateTime? startDateTemp;
+    private TimeSpan? startTimeTemp;
     private DateTime? endDateTemp;
+    private TimeSpan? endTimeTemp;
     private DateTime? publishDateTemp;
+    private TimeSpan? publishTimeTemp;
+    private bool IsLoading { get; set; } = true;
+    private bool IsLocationDefined { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                newEvent.OrganizerId = IdentityService.GetCurrentUserId();
+                newEvent.OrganizerType = "User"; // OrganizerType is set to "User" by default
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add($"Failed to initialize authentication state: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -288,7 +342,6 @@
                     fileData = ms.ToArray();
                 }
 
-                // Ensure we only upload the cropped image for the banner
                 string imageType = "EventBanner";
                 var response = await MediaFilesService.UploadMediaFileAsync(
                     sourceId: newEvent.EventId,
@@ -303,9 +356,6 @@
 
                 if (response.IsSuccessStatusCode && responseDto != null)
                 {
-                    Console.WriteLine($"Response DTO: {JsonSerializer.Serialize(responseDto)}");
-
-                    // Use only the processed (cropped) image URL
                     var uploadedUrl = responseDto.ProcessedUrl;
                     if (!string.IsNullOrWhiteSpace(uploadedUrl))
                     {
@@ -371,8 +421,6 @@
 
             if (response.IsSuccessStatusCode && responseDto != null)
             {
-                Console.WriteLine($"Response DTO: {JsonSerializer.Serialize(responseDto)}");
-
                 var uploadedUrl = responseDto.FileUrl;
                 if (!string.IsNullOrWhiteSpace(uploadedUrl))
                 {
@@ -403,10 +451,32 @@
     private async Task CreateEvent()
     {
         newEvent.OrganizerId = IdentityService.GetCurrentUserId();
-        newEvent.StartDate = startDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
-        newEvent.EndDate = endDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
-        newEvent.PublishDate = publishDateTemp?.ToString("yyyy-MM-ddTHH:mm:ss");
-        newEvent.OrganizerType = "User";
+
+        if (startDateTemp.HasValue && startTimeTemp.HasValue)
+        {
+            newEvent.StartDate = (startDateTemp.Value.Date + startTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (endDateTemp.HasValue && endTimeTemp.HasValue)
+        {
+            newEvent.EndDate = (endDateTemp.Value.Date + endTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (publishDateTemp.HasValue && publishTimeTemp.HasValue)
+        {
+            newEvent.PublishDate = (publishDateTemp.Value.Date + publishTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (!IsLocationDefined)
+        {
+            newEvent.BuildingName = null;
+            newEvent.Street = null;
+            newEvent.BuildingNumber = null;
+            newEvent.ApartmentNumber = null;
+            newEvent.City = null;
+            newEvent.ZipCode = null;
+            newEvent.Country = null;
+        }
 
         await form.Validate();
         if (form.IsValid)

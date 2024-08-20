@@ -15,6 +15,9 @@ namespace MiniSpace.Web.DTO.Organizations
         public IEnumerable<UserOrganizationsDto> SubOrganizations { get; set; }
         public bool HasSubOrganizations => SubOrganizations != null && SubOrganizations.Any();
 
+        public IEnumerable<OrganizationUserDto> Users { get; set; } = new List<OrganizationUserDto>();
+        public int UserCount => Users?.Count() ?? 0;
+
         public IEnumerable<Guid> AllChildrenIds { get; set; } = new List<Guid>();
         public bool IsExpanded { get; set; } = false;
     }

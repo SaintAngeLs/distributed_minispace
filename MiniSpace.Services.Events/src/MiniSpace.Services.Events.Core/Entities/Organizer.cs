@@ -4,10 +4,10 @@ namespace MiniSpace.Services.Events.Core.Entities
 {
     public class Organizer
     {
-        public Guid Id { get; set; } 
+        public Guid Id { get; set; }
         public Guid? UserId { get; set; } 
-        public Guid? OrganizationId { get; set; } 
-        public OrganizerType OrganizerType { get; set; } 
+        public Guid? OrganizationId { get; set; }
+        public OrganizerType OrganizerType { get; set; }
 
         public Organizer(Guid id, OrganizerType organizerType, Guid? userId = null, Guid? organizationId = null)
         {
@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Events.Core.Entities
             }
             else if (organizerType == OrganizerType.Organization)
             {
-                UserId = null;
+                UserId = userId;  
                 OrganizationId = organizationId ?? id;
             }
         }

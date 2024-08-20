@@ -10,6 +10,7 @@
 @using System.Threading.Tasks
 
 <AuthWrapper>
+    <MudContainer>
     <MudText Typo="Typo.h5" GutterBottom="true">My Organizations</MudText>
 
     <MudPaper Elevation="1" Class="pa-4">
@@ -35,6 +36,7 @@
                             <MudCardContent>
                                 <MudText Typo="Typo.h6">@organization.Name</MudText>
                                 <MudText Typo="Typo.body2">@organization.Description</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Primary">Users: @organization.UserCount</MudText> 
                             </MudCardContent>
                             <MudCardActions>
                                 <MudButton Variant="Variant.Outlined" OnClick="() => NavigateToOrganization(organization.Id)">
@@ -51,6 +53,7 @@
             }
         </MudGrid>
     </MudPaper>
+    </MudContainer>
 </AuthWrapper>
 
 @code {
@@ -63,7 +66,6 @@
 
         try
         {
-            // Ensure the authentication state is initialized
             await IdentityService.InitializeAuthenticationState();
 
             if (IdentityService.IsAuthenticated)
@@ -71,12 +73,10 @@
                 var userId = IdentityService.GetCurrentUserId();
                 var userOrganizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
 
-                // Flatten the hierarchy of organizations
                 _organizations = FlattenOrganizations(userOrganizations).ToList();
             }
             else
             {
-                // If the user is not authenticated, navigate to the sign-in page
                 NavigationManager.NavigateTo("/signin", forceLoad: true);
             }
         }
@@ -99,7 +99,8 @@
                 Description = userOrg.Description,
                 OwnerId = userOrg.OwnerId,
                 ImageUrl = userOrg.ImageUrl,
-                BannerUrl = userOrg.BannerUrl
+                BannerUrl = userOrg.BannerUrl,
+                Users = userOrg.Users 
             };
 
             if (userOrg.SubOrganizations != null)

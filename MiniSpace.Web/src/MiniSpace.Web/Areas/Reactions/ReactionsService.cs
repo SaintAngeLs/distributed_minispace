@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.Areas.Reactions.CommandDto;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Enums;
 using MiniSpace.Web.HttpClients;
@@ -30,13 +31,12 @@ namespace MiniSpace.Web.Areas.Reactions
             return _httpClient.GetAsync<ReactionsSummaryDto>($"reactions/summary?contentId={contentId}&contentType={contentType}");
         }
 
-        public Task<HttpResponse<object>> CreateReactionAsync(Guid reactionId, Guid studentId, string reactionType,
-            Guid contentId, string contentType)
+        public Task<HttpResponse<object>> CreateReactionAsync(CreateReactionDto command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("reactions",
-                new { reactionId, studentId, reactionType, contentId, contentType });
+            return _httpClient.PostAsync<object, object>("reactions", command);
         }
+
 
         public Task DeleteReactionAsync(Guid reactionId)
         {

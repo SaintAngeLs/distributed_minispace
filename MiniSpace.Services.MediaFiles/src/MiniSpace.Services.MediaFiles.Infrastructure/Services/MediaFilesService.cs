@@ -156,116 +156,120 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure.Services
         }
 
         public async Task<GeneralFileUploadResponseDto> UploadFileAsync(UploadFile command)
-{
-    try
-    {
-        // Validate identity
-        var identity = _appContext.Identity;
-        if (identity.IsAuthenticated && identity.Id != command.UploaderId)
         {
-            throw new UnauthorizedMediaFileUploadException(identity.Id, command.UploaderId);
+            try
+            {
+                // Validate identity
+                var identity = _appContext.Identity;
+                if (identity.IsAuthenticated && identity.Id != command.UploaderId)
+                {
+                    throw new UnauthorizedMediaFileUploadException(identity.Id, command.UploaderId);
+                }
+
+                // Validate context type
+                if (!Enum.TryParse(command.SourceType, out ContextType sourceType))
+                {
+                    throw new InvalidContextTypeException(command.SourceType);
+                }
+
+                // Validate file size
+                _fileValidator.ValidateFileSize(command.FileData.Length);
+
+                // Validate file extensions
+                byte[] buffer = new byte[8];
+                Array.Copy(command.FileData, 0, buffer, 0, Math.Min(buffer.Length, command.FileData.Length));
+                _fileValidator.ValidateFileExtensions(buffer, command.FileContentType);
+
+                // Prepare the file for upload
+                using var fileStream = new MemoryStream(command.FileData);
+                string fileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName);
+
+                // Upload the file to S3
+                string fileUrl = await _s3Service.UploadFileAsync("files", fileName, fileStream);
+
+                // Check if the file URL is valid
+                if (string.IsNullOrEmpty(fileUrl))
+                {
+                    throw new Exception("File upload failed. Received a null or empty file URL.");
+                }
+
+                // Record the upload date
+                var uploadDate = _dateTimeProvider.Now;
+
+                // Create file source info record
+                var fileSourceInfo = new FileSourceInfo(
+                    command.FileId,
+                    command.SourceId,
+                    sourceType,
+                    command.UploaderId,
+                    State.Associated,
+                    uploadDate,
+                    fileUrl,
+                    command.FileContentType,
+                    fileUrl,  // Assuming the processedUrl is the same as the fileUrl in this context
+                    command.FileName,
+                    command.OrganizationId
+                );
+
+                // Save file source info to the repository
+                await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
+
+                // Publish specific events based on the context type
+                if (sourceType == ContextType.EventBanner || sourceType == ContextType.EventGalleryImage || sourceType == ContextType.EventFile)
+                {
+                    await _messageBroker.PublishAsync(new EventFileUploaded(
+                        command.FileId,
+                        command.SourceId,
+                        command.FileName,
+                        fileUrl,
+                        command.FileContentType,
+                        uploadDate,
+                        command.UploaderId
+                    ));
+                }
+                else if (sourceType == ContextType.PostFile)
+                {
+                    await _messageBroker.PublishAsync(new PostFileUploaded(
+                        command.FileId,
+                        command.PostId ?? Guid.Empty,  // Passing the PostId, defaulting to empty Guid if null
+                        command.OrganizationId,
+                        command.EventId,  // Adding EventId to the event
+                        command.FileName,
+                        fileUrl,
+                        command.FileContentType,
+                        uploadDate,
+                        command.UploaderId
+                    ));
+                }
+                else
+                {
+                    await _messageBroker.PublishAsync(new GeneralFileUploaded(
+                        command.FileId,
+                        command.FileName,
+                        fileUrl,
+                        Path.GetExtension(command.FileName)?.ToLower(),
+                        command.FileContentType,
+                        uploadDate,
+                        command.OrganizationId,
+                        command.UploaderId
+                    ));
+                }
+
+                // Return the response with the correct file URL
+                var responseDto = new GeneralFileUploadResponseDto(fileSourceInfo.Id, fileUrl);
+                Console.WriteLine($"Returning response: {JsonSerializer.Serialize(responseDto)}");
+
+                return responseDto;
+            }
+            catch (Exception ex)
+            {
+                // Log the error for debugging purposes
+                Console.WriteLine($"Error in UploadFileAsync: {ex.Message}");
+                throw;
+            }
         }
 
-        // Validate context type
-        if (!Enum.TryParse(command.SourceType, out ContextType sourceType))
-        {
-            throw new InvalidContextTypeException(command.SourceType);
-        }
 
-        // Validate file size
-        _fileValidator.ValidateFileSize(command.FileData.Length);
-
-        // Validate file extensions
-        byte[] buffer = new byte[8];
-        Array.Copy(command.FileData, 0, buffer, 0, Math.Min(buffer.Length, command.FileData.Length));
-        _fileValidator.ValidateFileExtensions(buffer, command.FileContentType);
-
-        // Prepare the file for upload
-        using var fileStream = new MemoryStream(command.FileData);
-        string fileName = GenerateUniqueFileName(command.SourceType, command.UploaderId, command.FileName);
-        
-        // Upload the file to S3
-        string fileUrl = await _s3Service.UploadFileAsync("files", fileName, fileStream);
-
-        // Check if the file URL is valid
-        if (string.IsNullOrEmpty(fileUrl))
-        {
-            throw new Exception("File upload failed. Received a null or empty file URL.");
-        }
-
-        // Record the upload date
-        var uploadDate = _dateTimeProvider.Now;
-
-        // Create file source info record
-        var fileSourceInfo = new FileSourceInfo(
-            command.FileId,
-            command.SourceId,
-            sourceType,
-            command.UploaderId,
-            State.Associated,
-            uploadDate,
-            fileUrl,
-            command.FileContentType,
-            fileUrl,  // Assuming the processedUrl is the same as the fileUrl in this context
-            command.FileName,
-            command.OrganizationId
-        );
-
-        // Save file source info to the repository
-        await _fileSourceInfoRepository.AddAsync(fileSourceInfo);
-
-        // Publish specific events based on the context type
-        if (sourceType == ContextType.EventBanner || sourceType == ContextType.EventGalleryImage || sourceType == ContextType.EventFile)
-        {
-            await _messageBroker.PublishAsync(new EventFileUploaded(
-                command.FileId,
-                command.SourceId,
-                command.FileName,
-                fileUrl,
-                command.FileContentType,
-                uploadDate,
-                command.UploaderId
-            ));
-        }
-        else if (sourceType == ContextType.PostFile)
-        {
-            await _messageBroker.PublishAsync(new PostFileUploaded(
-                command.FileId,
-                command.SourceId,
-                command.FileName,
-                fileUrl,
-                command.FileContentType,
-                uploadDate,
-                command.UploaderId
-            ));
-        }
-        else
-        {
-            await _messageBroker.PublishAsync(new GeneralFileUploaded(
-                command.FileId,
-                command.FileName,
-                fileUrl,
-                Path.GetExtension(command.FileName)?.ToLower(),
-                command.FileContentType,
-                uploadDate,
-                command.OrganizationId,
-                command.UploaderId
-            ));
-        }
-
-        // Return the response with the correct file URL
-        var responseDto = new GeneralFileUploadResponseDto(fileSourceInfo.Id, fileUrl);
-        Console.WriteLine($"Returning response: {JsonSerializer.Serialize(responseDto)}");
-
-        return responseDto;
-    }
-    catch (Exception ex)
-    {
-        // Log the error for debugging purposes
-        Console.WriteLine($"Error in UploadFileAsync: {ex.Message}");
-        throw;
-    }
-}
 
 
 

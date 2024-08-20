@@ -1,4 +1,4 @@
-using MiniSpace.Services.Comments.Core;
+using MiniSpace.Services.Comments.Core.Events;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 

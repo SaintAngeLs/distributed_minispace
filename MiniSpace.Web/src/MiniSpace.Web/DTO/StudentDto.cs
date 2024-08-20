@@ -33,6 +33,7 @@ namespace MiniSpace.Web.DTO
         public string Country { get; set; }
         public string City { get; set; }
         
+        public AvailableSettingsDto UserSettings { get; set; }
         
         public bool IsInvitationPending { get; set; } 
         public bool InvitationSent { get; set; }

@@ -3,13 +3,13 @@
     public class MediaFileNotFoundException : DomainException
     {
         public override string Code { get; } = "media_file_not_found";
-        public Guid MediaFileId { get; }
+        public string MediaFileUrl { get; }
         public Guid PostId { get; }
 
-        public MediaFileNotFoundException(Guid mediaFileId, Guid postId) 
-            : base($"Media file with ID: '{mediaFileId}' for post with ID: {postId} was not found.")
+        public MediaFileNotFoundException(string mediaFileUrl, Guid postId) 
+            : base($"Media file with ID: '{mediaFileUrl}' for post with ID: {postId} was not found.")
         {
-            MediaFileId = mediaFileId;
+            MediaFileUrl = mediaFileUrl;
             PostId = postId;
         }
     }

@@ -11,8 +11,7 @@
 @inject IJSRuntime JSRuntime
 
 <AuthWrapper>
-<div class="center-container"> 
-    
+<MudContainer>
  
 <div class="breadcrumbs-container">
     <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
@@ -73,7 +72,7 @@
         }
     </div>
 </div>
-</div>
+</MudContainer>    
 </AuthWrapper>
 
 <style>
@@ -221,7 +220,7 @@
 
     private void RedirectToDetails(Guid id)
     {
-        NavigationManager.NavigateTo($"/student-details/{id}");
+        NavigationManager.NavigateTo($"/user-details/{id}");
     }
 
     private async Task WithdrawRequest(Guid inviteeId)

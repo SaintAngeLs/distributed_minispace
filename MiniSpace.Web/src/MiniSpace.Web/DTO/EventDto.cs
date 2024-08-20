@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using MiniSpace.Web.Areas.Events.CommandsDto;
+using MiniSpace.Web.DTO.Events;
 
 namespace MiniSpace.Web.DTO
 {
@@ -12,12 +14,12 @@ namespace MiniSpace.Web.DTO
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public AddressDto Location { get; set; }
-        public IEnumerable<Guid> MediaFiles { get; set; }
+        public IEnumerable<string> MediaFilesUrl { get; set; }
         public int InterestedStudents { get; set; }
         public int SignedUpStudents { get; set; }
         public int Capacity { get; set; }
         public decimal Fee { get; set; }
-        public string Category { get; set; }
+        public Category Category { get; set; }
         public string Status { get; set; }
         public DateTime PublishDate { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -27,6 +29,7 @@ namespace MiniSpace.Web.DTO
         public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
         public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
         public string BannerUrl { get; set; }
+        public EventSettings Settings { get; set; }
         public EventDto() { }
     }
 }
