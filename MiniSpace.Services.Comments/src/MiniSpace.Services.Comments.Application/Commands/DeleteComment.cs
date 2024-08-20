@@ -6,7 +6,12 @@ namespace MiniSpace.Services.Comments.Application.Commands
     public class DeleteComment : ICommand
     {
         public Guid CommentId { get; }
-
-        public DeleteComment(Guid commentId) => CommentId = commentId;
-    }    
+        public string CommentContext { get; }
+        
+        public DeleteComment(Guid commentId, string commentContext)
+        {
+            CommentId = commentId;
+            CommentContext = commentContext;
+        }
+    }
 }
