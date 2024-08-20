@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MiniSpace.Web.Areas.Reactions.CommandDto;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Enums;
 using MiniSpace.Web.HttpClients;
@@ -11,8 +12,7 @@ namespace MiniSpace.Web.Areas.Reactions
     {
         Task<IEnumerable<ReactionDto>> GetReactionsAsync(Guid contentId, ReactionContentType contentType);
         Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType);
-        Task<HttpResponse<object>> CreateReactionAsync(Guid reactionId, Guid studentId, string reactionType,
-            Guid contentId, string contentType);
+        Task<HttpResponse<object>> CreateReactionAsync(CreateReactionDto command);
         Task DeleteReactionAsync(Guid reactionId);
     }    
 }
