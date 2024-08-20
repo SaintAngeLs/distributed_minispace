@@ -8,7 +8,9 @@ namespace MiniSpace.Services.Comments.Core.Entities
 {
     public enum CommentContext
     {
-        Post,
-        Event
+        UserPost,
+        UserEvent,
+        OrganizationPost,
+        OrganizationEvent
     }
 }
