@@ -3,9 +3,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
-using MiniSpace.Services.Comments.Application.Events;
+using MiniSpace.Services.Comments.Application.Commands;
 using MiniSpace.Services.Comments.Application.Exceptions;
 using MiniSpace.Services.Comments.Application.Services;
+using MiniSpace.Services.Comments.Application.Services.Clients;
 using MiniSpace.Services.Comments.Core.Entities;
 using MiniSpace.Services.Comments.Core.Exceptions;
 using MiniSpace.Services.Comments.Core.Repositories;
@@ -14,17 +15,30 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
 {
     public class CreateCommentHandler : ICommandHandler<CreateComment>
     {
-        private readonly ICommentRepository _commentRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IOrganizationEventsCommentRepository _organizationEventsCommentRepository;
+        private readonly IOrganizationPostsCommentRepository _organizationPostsCommentRepository;
+        private readonly IUserEventsCommentRepository _userEventsCommentRepository;
+        private readonly IUserPostsCommentRepository _userPostsCommentRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
+        private readonly IStudentsServiceClient _userServiceClient;
 
-        public CreateCommentHandler(ICommentRepository commentRepository, IStudentRepository studentRepository,
-            IDateTimeProvider dateTimeProvider, IMessageBroker messageBroker, IAppContext appContext)
+        public CreateCommentHandler(
+            IOrganizationEventsCommentRepository organizationEventsCommentRepository,
+            IOrganizationPostsCommentRepository organizationPostsCommentRepository,
+            IUserEventsCommentRepository userEventsCommentRepository,
+            IUserPostsCommentRepository userPostsCommentRepository,
+            IStudentsServiceClient userServiceClient,
+            IDateTimeProvider dateTimeProvider,
+            IMessageBroker messageBroker,
+            IAppContext appContext)
         {
-            _commentRepository = commentRepository;
-            _studentRepository = studentRepository;
+            _organizationEventsCommentRepository = organizationEventsCommentRepository;
+            _organizationPostsCommentRepository = organizationPostsCommentRepository;
+            _userEventsCommentRepository = userEventsCommentRepository;
+            _userPostsCommentRepository = userPostsCommentRepository;
+            _userServiceClient = userServiceClient;
             _dateTimeProvider = dateTimeProvider;
             _messageBroker = messageBroker;
             _appContext = appContext;
@@ -33,42 +47,103 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         public async Task HandleAsync(CreateComment command, CancellationToken cancellationToken = default)
         {
             var identity = _appContext.Identity;
-            if (identity.IsAuthenticated && identity.Id != command.StudentId)
+            if (identity.IsAuthenticated && identity.Id != command.UserId)
             {
                 throw new UnauthorizedCommentAccessException(command.ContextId, identity.Id);
             }
-            if (!(await _studentRepository.ExistsAsync(command.StudentId)))
+
+            var user = await _userServiceClient.GetAsync(command.UserId);
+            if (user == null)
             {
-                throw new StudentNotFoundException(command.StudentId);
+                throw new UserNotFoundException(command.UserId);
             }
 
-            if (!Enum.TryParse<CommentContext>(command.CommentContext, true, out var newCommentContext))
+            if (!Enum.TryParse<CommentContext>(command.CommentContext, true, out var commentContext))
             {
                 throw new InvalidCommentContextEnumException(command.CommentContext);
             }
 
             var now = _dateTimeProvider.Now;
-            var comment = Comment.Create(command.CommentId, command.ContextId, newCommentContext, command.StudentId,
-                identity.Name, command.ParentId, command.Comment, now);
-            
+            Comment comment;
+
+            switch (commentContext)
+            {
+                case CommentContext.OrganizationEvent:
+                    comment = Comment.Create(command.CommentId, command.ContextId, commentContext, command.UserId, command.ParentId, command.TextContent, now);
+                    await _organizationEventsCommentRepository.AddAsync(comment);
+                    break;
+
+                case CommentContext.OrganizationPost:
+                    comment = Comment.Create(command.CommentId, command.ContextId, commentContext, command.UserId, command.ParentId, command.TextContent, now);
+                    await _organizationPostsCommentRepository.AddAsync(comment);
+                    break;
+
+                case CommentContext.UserEvent:
+                    comment = Comment.Create(command.CommentId, command.ContextId, commentContext, command.UserId, command.ParentId, command.TextContent, now);
+                    await _userEventsCommentRepository.AddAsync(comment);
+                    break;
+
+                case CommentContext.UserPost:
+                    comment = Comment.Create(command.CommentId, command.ContextId, commentContext, command.UserId, command.ParentId, command.TextContent, now);
+                    await _userPostsCommentRepository.AddAsync(comment);
+                    break;
+
+                default:
+                    throw new InvalidCommentContextEnumException(command.CommentContext);
+            }
+
+            // Handle parent comment logic if applicable
             if (command.ParentId != Guid.Empty)
             {
-                var parentComment = await _commentRepository.GetAsync(command.ParentId);
+                Comment parentComment = null;
+
+                switch (commentContext)
+                {
+                    case CommentContext.OrganizationEvent:
+                        parentComment = await _organizationEventsCommentRepository.GetAsync(command.ParentId);
+                        break;
+                    case CommentContext.OrganizationPost:
+                        parentComment = await _organizationPostsCommentRepository.GetAsync(command.ParentId);
+                        break;
+                    case CommentContext.UserEvent:
+                        parentComment = await _userEventsCommentRepository.GetAsync(command.ParentId);
+                        break;
+                    case CommentContext.UserPost:
+                        parentComment = await _userPostsCommentRepository.GetAsync(command.ParentId);
+                        break;
+                }
+
                 if (parentComment is null)
                 {
                     throw new ParentCommentNotFoundException(command.ParentId);
                 }
+
                 if (parentComment.ParentId != Guid.Empty)
                 {
                     throw new InvalidParentCommentException(command.ParentId);
                 }
+
                 parentComment.AddReply(now);
-                await _commentRepository.UpdateAsync(parentComment);
+
+                switch (commentContext)
+                {
+                    case CommentContext.OrganizationEvent:
+                        await _organizationEventsCommentRepository.UpdateAsync(parentComment);
+                        break;
+                    case CommentContext.OrganizationPost:
+                        await _organizationPostsCommentRepository.UpdateAsync(parentComment);
+                        break;
+                    case CommentContext.UserEvent:
+                        await _userEventsCommentRepository.UpdateAsync(parentComment);
+                        break;
+                    case CommentContext.UserPost:
+                        await _userPostsCommentRepository.UpdateAsync(parentComment);
+                        break;
+                }
             }
-            
-            await _commentRepository.AddAsync(comment);
+
+            // Publish the event
             await _messageBroker.PublishAsync(new CommentCreated(command.CommentId));
         }
-
     }
 }
