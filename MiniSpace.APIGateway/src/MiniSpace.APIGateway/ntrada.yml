@@ -616,10 +616,20 @@ modules:
           auth: true
 
         - upstream: /{reactionId}
+          method: PUT
+          use: downstream
+          downstream: reactions-service/reactions/{reactionId}
+          auth: true
+          bind:
+            - reactionId: {reactionId}
+
+        - upstream: /{reactionId}
           method: DELETE
           use: downstream
           downstream: reactions-service/reactions/{reactionId}
           auth: true
+          bind:
+            - reactionId: {reactionId}
 
         - upstream: /
           method: GET
