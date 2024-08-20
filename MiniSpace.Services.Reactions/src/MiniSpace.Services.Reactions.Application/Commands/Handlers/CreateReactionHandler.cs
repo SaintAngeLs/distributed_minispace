@@ -23,6 +23,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
         private readonly IReactionsOrganizationsPostCommentsRepository _orgPostCommentsRepository;
         private readonly IReactionsUserEventCommentsRepository _userEventCommentsRepository;
         private readonly IReactionsUserPostCommentsRepository _userPostCommentsRepository;
+        private readonly ICommentServiceClient _commentServiceClient;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
@@ -37,6 +38,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             IReactionsOrganizationsPostCommentsRepository orgPostCommentsRepository,
             IReactionsUserEventCommentsRepository userEventCommentsRepository,
             IReactionsUserPostCommentsRepository userPostCommentsRepository,
+            ICommentServiceClient commentServiceClient,
             IStudentsServiceClient studentsServiceClient,
             IAppContext appContext,
             IMessageBroker messageBroker)
@@ -50,6 +52,7 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             _orgPostCommentsRepository = orgPostCommentsRepository;
             _userEventCommentsRepository = userEventCommentsRepository;
             _userPostCommentsRepository = userPostCommentsRepository;
+            _commentServiceClient = commentServiceClient;
             _studentsServiceClient = studentsServiceClient;
             _messageBroker = messageBroker;
             _appContext = appContext;
@@ -67,47 +70,62 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
 
             await EnsureReactionDoesNotExistAsync(command.ContentId, contentType, command.UserId);
 
+            // Check if the comment exists using the CommentServiceClient
+            if (contentType == ReactionContentType.Comment)
+            {
+                if (!await _commentServiceClient.CommentExistsAsync(command.ContentId))
+                {
+                    throw new CommentNotFoundException(command.ContentId);
+                }
+            }
+
+            var reaction = Reaction.Create(command.ReactionId, command.UserId, reactionType,
+                                           command.ContentId, contentType, targetType);
+
+            // Add the reaction to the appropriate repository based on content and target types
             switch (contentType)
             {
                 case ReactionContentType.Event when targetType == ReactionTargetType.Organization:
-                    if (!await _orgEventRepository.ExistsAsync(command.ContentId))
-                        throw new EventNotFoundException(command.ContentId);
+                    await _orgEventRepository.AddAsync(reaction);
                     break;
 
                 case ReactionContentType.Event when targetType == ReactionTargetType.User:
-                    if (!await _userEventRepository.ExistsAsync(command.ContentId))
-                        throw new EventNotFoundException(command.ContentId);
+                    await _userEventRepository.AddAsync(reaction);
                     break;
 
                 case ReactionContentType.Post when targetType == ReactionTargetType.Organization:
-                    if (!await _orgPostRepository.ExistsAsync(command.ContentId))
-                        throw new PostNotFoundException(command.ContentId);
+                    await _orgPostRepository.AddAsync(reaction);
                     break;
 
                 case ReactionContentType.Post when targetType == ReactionTargetType.User:
-                    if (!await _userPostRepository.ExistsAsync(command.ContentId))
-                        throw new PostNotFoundException(command.ContentId);
+                    await _userPostRepository.AddAsync(reaction);
                     break;
 
                 case ReactionContentType.Comment when targetType == ReactionTargetType.Organization:
-                    if (!await _orgEventCommentsRepository.ExistsAsync(command.ContentId) &&
-                        !await _orgPostCommentsRepository.ExistsAsync(command.ContentId))
-                        throw new CommentNotFoundException(command.ContentId);
+                    if (await _orgEventCommentsRepository.ExistsAsync(command.ContentId))
+                    {
+                        await _orgEventCommentsRepository.AddAsync(reaction);
+                    }
+                    else if (await _orgPostCommentsRepository.ExistsAsync(command.ContentId))
+                    {
+                        await _orgPostCommentsRepository.AddAsync(reaction);
+                    }
                     break;
 
                 case ReactionContentType.Comment when targetType == ReactionTargetType.User:
-                    if (!await _userEventCommentsRepository.ExistsAsync(command.ContentId) &&
-                        !await _userPostCommentsRepository.ExistsAsync(command.ContentId))
-                        throw new CommentNotFoundException(command.ContentId);
+                    if (await _userEventCommentsRepository.ExistsAsync(command.ContentId))
+                    {
+                        await _userEventCommentsRepository.AddAsync(reaction);
+                    }
+                    else if (await _userPostCommentsRepository.ExistsAsync(command.ContentId))
+                    {
+                        await _userPostCommentsRepository.AddAsync(reaction);
+                    }
                     break;
 
                 default:
                     throw new InvalidReactionContentTypeException(command.ContentType);
             }
-
-            var reaction = Reaction.Create(command.ReactionId, command.UserId, reactionType,
-                                           command.ContentId, contentType, targetType);
-            await _reactionRepository.AddAsync(reaction);
 
             await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));
         }
