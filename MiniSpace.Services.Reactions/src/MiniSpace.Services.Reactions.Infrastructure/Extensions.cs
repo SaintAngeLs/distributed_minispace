@@ -56,6 +56,11 @@ namespace MiniSpace.Services.Reactions.Infrastructure
             builder.Services.AddTransient<IReactionsUserEventRepository, ReactionsUserEventMongoRepository>();
             builder.Services.AddTransient<IReactionsUserPostRepository, ReactionsUserPostMongoRepository>();
 
+            builder.Services.AddTransient<IReactionsOrganizationsEventCommentsRepository, ReactionsOrganizationsEventCommentsMongoRepository>();
+            builder.Services.AddTransient<IReactionsOrganizationsPostCommentsRepository, ReactionsOrganizationsPostCommentsMongoRepository>();
+            builder.Services.AddTransient<IReactionsUserEventCommentsRepository, ReactionsUserEventCommentsMongoRepository>();
+            builder.Services.AddTransient<IReactionsUserPostCommentsRepository, ReactionsUserPostCommentsMongoRepository>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -84,6 +89,11 @@ namespace MiniSpace.Services.Reactions.Infrastructure
                 .AddMongoRepository<OrganizationEventReactionDocument, Guid>("organization_events")
                 .AddMongoRepository<UserPostReactionDocument, Guid>("user_posts")
                 .AddMongoRepository<UserEventReactionDocument, Guid>("user_events")
+
+                .AddMongoRepository<OrganizationEventCommentsReactionDocument, Guid>("organization_posts_comments")
+                .AddMongoRepository<OrganizationPostCommentsReactionDocument, Guid>("organization_events_comments")
+                .AddMongoRepository<UserPostCommentsReactionDocument, Guid>("user_posts_comments")
+                .AddMongoRepository<UserEventCommentsReactionDocument, Guid>("user_events_comments")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
