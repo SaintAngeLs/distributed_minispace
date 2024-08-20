@@ -47,8 +47,12 @@ namespace MiniSpace.Services.Comments.Infrastructure
     {
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
+            builder.Services.AddTransient<IOrganizationEventsCommentRepository, OrganizationEventsCommentRepository>();
+            builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
+            builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
+            builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<ICommentService, CommentService>();
@@ -73,7 +77,6 @@ namespace MiniSpace.Services.Comments.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddMongoRepository<CommentDocument, Guid>("comments")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
@@ -92,9 +95,7 @@ namespace MiniSpace.Services.Comments.Infrastructure
                 .UseRabbitMq()
                 .SubscribeCommand<UpdateComment>()
                 .SubscribeCommand<DeleteComment>()
-                .SubscribeCommand<CreateComment>()
-                .SubscribeEvent<StudentCreated>()
-                .SubscribeEvent<StudentDeleted>();
+                .SubscribeCommand<CreateComment>();
 
             return app;
         }
