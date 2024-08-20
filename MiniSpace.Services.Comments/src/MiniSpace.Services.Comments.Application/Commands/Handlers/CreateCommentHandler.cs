@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Comments.Application.Commands;
+using MiniSpace.Services.Comments.Application.Events;
 using MiniSpace.Services.Comments.Application.Exceptions;
 using MiniSpace.Services.Comments.Application.Services;
 using MiniSpace.Services.Comments.Application.Services.Clients;
@@ -92,10 +93,10 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                     throw new InvalidCommentContextEnumException(command.CommentContext);
             }
 
-            // Handle parent comment logic if applicable
             if (command.ParentId != Guid.Empty)
             {
                 Comment parentComment = null;
+                Guid replyId = Guid.NewGuid(); 
 
                 switch (commentContext)
                 {
@@ -123,7 +124,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                     throw new InvalidParentCommentException(command.ParentId);
                 }
 
-                parentComment.AddReply(now);
+                parentComment.AddReply(replyId, command.UserId, command.TextContent, now);
 
                 switch (commentContext)
                 {
@@ -142,8 +143,19 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                 }
             }
 
-            // Publish the event
-            await _messageBroker.PublishAsync(new CommentCreated(command.CommentId));
+
+            await _messageBroker.PublishAsync(new CommentCreated(
+                comment.Id,
+                comment.ContextId,
+                comment.CommentContext.ToString(),
+                comment.UserId,
+                comment.ParentId,
+                comment.TextContent,
+                comment.CreatedAt,
+                comment.LastUpdatedAt,
+                comment.RepliesCount,
+                comment.IsDeleted
+            ));
         }
     }
 }
