@@ -8,9 +8,6 @@ using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Application.Queries;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Repositories;
-using MiniSpace.Services.Reactions.Infrastructure.Mongo.Extensions;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
 {
@@ -109,7 +106,14 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
                 .OrderByDescending(g => g.Count())
                 .First().Key;
 
-            return new ReactionsSummaryDto(nrReactions, dominantReaction, authUserReactionId, authUserReactionType);
+            var reactionsWithCounts = reactions
+                .GroupBy(r => r.ReactionType)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            return new ReactionsSummaryDto(nrReactions, dominantReaction, authUserReactionId, authUserReactionType)
+            {
+                ReactionsWithCounts = reactionsWithCounts
+            };
         }
     }
 }
