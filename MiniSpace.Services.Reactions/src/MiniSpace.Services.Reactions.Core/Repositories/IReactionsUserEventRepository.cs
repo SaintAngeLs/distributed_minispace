@@ -11,5 +11,6 @@ namespace MiniSpace.Services.Reactions.Core.Repositories
         Task AddAsync(Reaction reaction);
         Task UpdateAsync(Reaction reaction); 
         Task DeleteAsync(Guid id); 
+        Task<IEnumerable<Reaction>> GetByContentIdAsync(Guid contentId);
     }
 }
