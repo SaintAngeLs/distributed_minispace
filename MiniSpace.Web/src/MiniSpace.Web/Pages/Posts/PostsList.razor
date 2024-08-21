@@ -38,10 +38,10 @@
                         <MudCard Class="post-card mb-4" Elevation="2">
                             <MudCardContent>
                                 <MudGrid justify-start AlignItems="AlignItems.Center">
-                                    <MudItem xs="1" Class="pr-2">
+                                    <MudItem xs="2" Class="pr-2">
                                         <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId)" />
                                     </MudItem>
-                                    <MudItem xs="11">
+                                    <MudItem xs="10">
                                         <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId)</MudText>
                                         <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
                                     </MudItem>
@@ -56,21 +56,23 @@
 
                                 @if (reactionsSummaries.TryGetValue(post.Id, out var reactionsSummary))
                                 {
-                                    <MudGrid Class="mt-2" GutterSize="0">
+                                    <MudGrid Class="mt-2" GutterSize="0" AlignItems="Center">
                                         @foreach (var reaction in reactionsSummary.ReactionsWithCounts.OrderByDescending(r => r.Value))
                                         {
-                                            <MudItem>
-                                                <MudText>
-                                                    @((MarkupString)reaction.Key.GetReactionIcon()) @reaction.Value
+                                            <MudItem Class="d-flex align-center">
+                                                <MudIcon Icon="@(reaction.Key.GetReactionIcon())" Class="mr-1" />
+                                                <MudText Typo="Typo.overline">
+                                                    @reaction.Value
                                                 </MudText>
                                             </MudItem>
                                         }
-                                        <MudItem>
-                                            <MudText Typo="Typo.body2" Class="ml-2">
+                                        <MudItem Class="ml-2">
+                                            <MudText Typo="Typo.subtitle2">
                                                 Total: @reactionsSummary.NumberOfReactions
                                             </MudText>
                                         </MudItem>
                                     </MudGrid>
+
                                 }
                             </MudCardContent>
                             <MudCardActions Class="justify-between">
