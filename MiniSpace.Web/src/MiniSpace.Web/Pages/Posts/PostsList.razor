@@ -56,12 +56,13 @@
 
                                 @if (reactionsSummaries.TryGetValue(post.Id, out var reactionsSummary))
                                 {
-                                    <MudGrid Class="mt-2">
+                                    <MudGrid Class="mt-2" GutterSize="0">
                                         @foreach (var reaction in reactionsSummary.ReactionsWithCounts.OrderByDescending(r => r.Value))
                                         {
                                             <MudItem>
-                                                <MudIcon>@reaction.Key.GetReactionIcon()</MudIcon>
-                                                <MudText Class="ml-1">@reaction.Value</MudText>
+                                                <MudText>
+                                                    @((MarkupString)reaction.Key.GetReactionIcon()) @reaction.Value
+                                                </MudText>
                                             </MudItem>
                                         }
                                         <MudItem>
