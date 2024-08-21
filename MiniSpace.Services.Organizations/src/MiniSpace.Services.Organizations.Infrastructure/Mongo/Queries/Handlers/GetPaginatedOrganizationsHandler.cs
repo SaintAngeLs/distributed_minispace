@@ -1,5 +1,6 @@
 using Convey.CQRS.Queries;
 using MiniSpace.Services.Organizations.Application.DTO;
+using MiniSpace.Services.Organizations.Application.Queries;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MiniSpace.Services.Organizations.Application.Queries.Handlers
+namespace MiniSpace.Services.Organizations.Infrastructure.Queries.Handlers
 {
     public class GetPaginatedOrganizationsHandler : IQueryHandler<GetPaginatedOrganizations, MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>>
     {
