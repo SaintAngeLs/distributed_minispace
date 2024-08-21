@@ -1,34 +1,82 @@
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
-using DnsClient;
 using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Application.Queries;
 using MiniSpace.Services.Reactions.Core.Entities;
-using MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.Reactions.Infrastructure.Mongo.Extensions;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+using MiniSpace.Services.Reactions.Core.Repositories;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
 {
-    [ExcludeFromCodeCoverage]
     public class GetReactionsHandler : IQueryHandler<GetReactions, IEnumerable<ReactionDto>>
     {
-        private readonly IMongoRepository<ReactionDocument, Guid> _reactionRepository;
+        private readonly IReactionsUserPostRepository _userPostRepository;
+        private readonly IReactionsOrganizationsPostRepository _orgPostRepository;
+        private readonly IReactionsUserEventRepository _userEventRepository;
+        private readonly IReactionsOrganizationsEventRepository _orgEventRepository;
+        private readonly IReactionsUserPostCommentsRepository _userPostCommentsRepository;
+        private readonly IReactionsOrganizationsPostCommentsRepository _orgPostCommentsRepository;
+        private readonly IReactionsUserEventCommentsRepository _userEventCommentsRepository;
+        private readonly IReactionsOrganizationsEventCommentsRepository _orgEventCommentsRepository;
 
-        public GetReactionsHandler(IMongoRepository<ReactionDocument, Guid> reactionRepository)
+        public GetReactionsHandler(
+            IReactionsUserPostRepository userPostRepository,
+            IReactionsOrganizationsPostRepository orgPostRepository,
+            IReactionsUserEventRepository userEventRepository,
+            IReactionsOrganizationsEventRepository orgEventRepository,
+            IReactionsUserPostCommentsRepository userPostCommentsRepository,
+            IReactionsOrganizationsPostCommentsRepository orgPostCommentsRepository,
+            IReactionsUserEventCommentsRepository userEventCommentsRepository,
+            IReactionsOrganizationsEventCommentsRepository orgEventCommentsRepository)
         {
-            _reactionRepository = reactionRepository;
+            _userPostRepository = userPostRepository;
+            _orgPostRepository = orgPostRepository;
+            _userEventRepository = userEventRepository;
+            _orgEventRepository = orgEventRepository;
+            _userPostCommentsRepository = userPostCommentsRepository;
+            _orgPostCommentsRepository = orgPostCommentsRepository;
+            _userEventCommentsRepository = userEventCommentsRepository;
+            _orgEventCommentsRepository = orgEventCommentsRepository;
         }
-        
+
         public async Task<IEnumerable<ReactionDto>> HandleAsync(GetReactions query, CancellationToken cancellationToken)
         {
-            var documents = _reactionRepository.Collection.AsQueryable();
-            documents = documents.Where(p => p.ContentId == query.ContentId && p.ContentType == query.ContentType);
+            List<Reaction> reactions = new();
 
-            var reactions = await documents.ToListAsync();
-            return reactions.Select(p => p.AsDto());
+            switch (query.ContentType)
+            {
+                case ReactionContentType.Post:
+                    var userPostReactions = await _userPostRepository.GetByContentIdAsync(query.ContentId);
+                    var orgPostReactions = await _orgPostRepository.GetByContentIdAsync(query.ContentId);
+
+                    reactions.AddRange(userPostReactions);
+                    reactions.AddRange(orgPostReactions);
+                    break;
+
+                case ReactionContentType.Event:
+                    var userEventReactions = await _userEventRepository.GetByContentIdAsync(query.ContentId);
+                    var orgEventReactions = await _orgEventRepository.GetByContentIdAsync(query.ContentId);
+
+                    reactions.AddRange(userEventReactions);
+                    reactions.AddRange(orgEventReactions);
+                    break;
+
+                case ReactionContentType.Comment:
+                    var userPostCommentReactions = await _userPostCommentsRepository.GetByContentIdAsync(query.ContentId);
+                    var orgPostCommentReactions = await _orgPostCommentsRepository.GetByContentIdAsync(query.ContentId);
+                    var userEventCommentReactions = await _userEventCommentsRepository.GetByContentIdAsync(query.ContentId);
+                    var orgEventCommentReactions = await _orgEventCommentsRepository.GetByContentIdAsync(query.ContentId);
+
+                    reactions.AddRange(userPostCommentReactions);
+                    reactions.AddRange(orgPostCommentReactions);
+                    reactions.AddRange(userEventCommentReactions);
+                    reactions.AddRange(orgEventCommentReactions);
+                    break;
+            }
+
+            return reactions.Select(r => r.AsDto());
         }
-    }    
+    }
 }

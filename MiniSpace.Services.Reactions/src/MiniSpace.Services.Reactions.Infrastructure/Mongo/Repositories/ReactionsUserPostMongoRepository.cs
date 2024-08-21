@@ -43,8 +43,6 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
             }
         }
 
-
-
         public async Task UpdateAsync(Reaction reaction)
         {
             var filter = Builders<UserPostReactionDocument>.Filter.And(
@@ -63,6 +61,12 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
             var update = Builders<UserPostReactionDocument>.Update.PullFilter(x => x.Reactions, r => r.Id == id);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<IEnumerable<Reaction>> GetByContentIdAsync(Guid contentId)
+        {
+            var document = await _repository.GetAsync(d => d.UserPostId == contentId);
+            return document?.Reactions.Select(r => r.AsEntity()) ?? Enumerable.Empty<Reaction>();
         }
     }
 }

@@ -63,5 +63,11 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 
             await _repository.Collection.UpdateOneAsync(filter, update);
         }
+
+        public async Task<IEnumerable<Reaction>> GetByContentIdAsync(Guid contentId)
+        {
+            var document = await _repository.GetAsync(d => d.UserPostCommentId == contentId);
+            return document?.Reactions.Select(r => r.AsEntity()) ?? Enumerable.Empty<Reaction>();
+        }
     }
 }
