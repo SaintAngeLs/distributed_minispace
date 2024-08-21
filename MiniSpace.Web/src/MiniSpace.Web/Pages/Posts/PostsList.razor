@@ -2,12 +2,16 @@
 @inject IPostsService PostsService
 @inject IStudentsService StudentsService
 @inject IIdentityService IdentityService
+@inject IReactionsService ReactionsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
 @using MiniSpace.Web.Data.Posts
 @using MudBlazor
+@using MiniSpace.Web.Areas.Reactions.CommandDto
+@using MiniSpace.Web.DTO.Enums
+@using System.Linq
 
 <AuthWrapper>
     <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
@@ -50,7 +54,17 @@
                             </MudCardContent>
                             <MudCardActions Class="justify-between">
                                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
-                                <MudButton Variant="Variant.Text" Color="Color.Secondary">Like</MudButton>
+                                
+                                <MudMenu @ref="reactionMenu" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+                                    @foreach (var reactionType in Enum.GetValues(typeof(ReactionType)).Cast<ReactionType>())
+                                    {
+                                        <MudMenuItem OnClick="() => HandleReactionAsync(post.Id, reactionType)">
+                                            @((MarkupString)reactionType.GetReactionIcon()) @reactionType.GetReactionText()
+                                        </MudMenuItem>
+                                    }
+                                </MudMenu>
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="(e) => reactionMenu.ToggleMenu(e)">React</MudButton>
+                                
                                 <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
                             </MudCardActions>
                         </MudCard>
@@ -73,6 +87,7 @@
     private int pageSize = 10;
     private int totalItems = 0;
     private bool isLoading = true;
+    private MudMenu reactionMenu;
 
     protected override async Task OnInitializedAsync()
     {
@@ -180,5 +195,61 @@
     private void NavigateToPostDetails(Guid postId)
     {
         NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+
+    private async Task HandleReactionAsync(Guid postId, ReactionType reactionType)
+    {
+        var existingReaction = await GetExistingReactionAsync(postId);
+
+        if (existingReaction != null)
+        {
+            var updateReaction = new UpdateReactionDto
+            {
+                ReactionId = existingReaction.Id,
+                UserId = IdentityService.UserDto.Id,
+                NewReactionType = reactionType.ToString()
+            };
+
+            var updateResult = await ReactionsService.UpdateReactionAsync(updateReaction);
+
+            if (updateResult.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Reaction updated successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to update reaction: {updateResult.ErrorMessage?.Reason}", Severity.Error);
+            }
+        }
+        else
+        {
+            var createReaction = new CreateReactionDto
+            {
+                UserId = IdentityService.UserDto.Id,
+                ContentId = postId,
+                ContentType = "Post",
+                ReactionType = reactionType.ToString(),
+                TargetType = "User"
+            };
+
+            var createResult = await ReactionsService.CreateReactionAsync(createReaction);
+
+            if (createResult.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Reaction added successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to add reaction: {createResult.ErrorMessage?.Reason}", Severity.Error);
+            }
+        }
+
+        await LoadPostsAsync(); // Refresh posts to show the updated reaction
+    }
+
+    private async Task<ReactionDto> GetExistingReactionAsync(Guid postId)
+    {
+        var reactions = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
+        return reactions.FirstOrDefault(r => r.UserId == IdentityService.UserDto.Id);
     }
 }

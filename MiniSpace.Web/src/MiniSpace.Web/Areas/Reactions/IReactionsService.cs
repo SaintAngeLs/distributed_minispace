@@ -13,6 +13,7 @@ namespace MiniSpace.Web.Areas.Reactions
         Task<IEnumerable<ReactionDto>> GetReactionsAsync(Guid contentId, ReactionContentType contentType);
         Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType);
         Task<HttpResponse<object>> CreateReactionAsync(CreateReactionDto command);
+        Task<HttpResponse<object>> UpdateReactionAsync(UpdateReactionDto command);
         Task DeleteReactionAsync(Guid reactionId);
     }    
 }

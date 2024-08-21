@@ -37,6 +37,13 @@ namespace MiniSpace.Web.Areas.Reactions
             return _httpClient.PostAsync<object, object>("reactions", command);
         }
 
+        public Task<HttpResponse<object>> UpdateReactionAsync(UpdateReactionDto command)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.PutAsync<object, object>($"reactions/{command.ReactionId}", command);
+        }
+
+
 
         public Task DeleteReactionAsync(Guid reactionId)
         {
