@@ -12,6 +12,8 @@
 @using MiniSpace.Web.Areas.Reactions.CommandDto
 @using MiniSpace.Web.DTO.Enums
 @using System.Linq
+@using System.Threading.Tasks
+@using System.Collections.Generic
 
 <AuthWrapper>
     <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
@@ -51,6 +53,24 @@
                                 {
                                     <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
                                 }
+
+                                @if (reactionsSummaries.TryGetValue(post.Id, out var reactionsSummary))
+                                {
+                                    <MudGrid Class="mt-2">
+                                        @foreach (var reaction in reactionsSummary.ReactionsWithCounts.OrderByDescending(r => r.Value))
+                                        {
+                                            <MudItem>
+                                                <MudIcon>@reaction.Key.GetReactionIcon()</MudIcon>
+                                                <MudText Class="ml-1">@reaction.Value</MudText>
+                                            </MudItem>
+                                        }
+                                        <MudItem>
+                                            <MudText Typo="Typo.body2" Class="ml-2">
+                                                Total: @reactionsSummary.NumberOfReactions
+                                            </MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                }
                             </MudCardContent>
                             <MudCardActions Class="justify-between">
                                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
@@ -83,6 +103,7 @@
 @code {
     private List<PostDto> posts = new();
     private Dictionary<Guid, StudentDto> studentsCache = new();
+    private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new();
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalItems = 0;
@@ -144,7 +165,7 @@
                 posts = result.Items.ToList();
                 totalItems = result.TotalItems;
 
-                foreach (var post in posts.Where(p => p.UserId.HasValue))
+                foreach (var post in posts)
                 {
                     if (post.UserId.HasValue && !studentsCache.ContainsKey(post.UserId.Value))
                     {
@@ -154,6 +175,9 @@
                             studentsCache[post.UserId.Value] = student;
                         }
                     }
+
+                    // Get reactions summary for each post and store it in the dictionary
+                    reactionsSummaries[post.Id] = await GetReactionsSummaryAsync(post.Id);
                 }
             }
             else
@@ -195,6 +219,11 @@
     private void NavigateToPostDetails(Guid postId)
     {
         NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+
+    private async Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid postId)
+    {
+        return await ReactionsService.GetReactionsSummaryAsync(postId, ReactionContentType.Post);
     }
 
     private async Task HandleReactionAsync(Guid postId, ReactionType reactionType)
