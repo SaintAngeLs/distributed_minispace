@@ -30,10 +30,19 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
         public async Task AddAsync(Reaction reaction)
         {
             var filter = Builders<UserPostCommentsReactionDocument>.Filter.Eq(x => x.UserPostCommentId, reaction.ContentId);
-            var update = Builders<UserPostCommentsReactionDocument>.Update.Push(x => x.Reactions, reaction.AsDocument());
+            
+            var update = Builders<UserPostCommentsReactionDocument>.Update.Combine(
+                Builders<UserPostCommentsReactionDocument>.Update.Push(x => x.Reactions, reaction.AsDocument()),
+                Builders<UserPostCommentsReactionDocument>.Update.SetOnInsert(x => x.UserPostCommentId, reaction.ContentId)
+            );
 
-            await _repository.Collection.UpdateOneAsync(filter, update);
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+
+            if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            {
+            }
         }
+
 
         public async Task UpdateAsync(Reaction reaction)
         {
