@@ -79,7 +79,7 @@
                                 <MudMenu @ref="reactionMenu" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
                                     @foreach (var reactionType in Enum.GetValues(typeof(ReactionType)).Cast<ReactionType>())
                                     {
-                                        <MudMenuItem OnClick="() => HandleReactionAsync(post.Id, reactionType)">
+                                        <MudMenuItem OnClick="() => HandleReactionAsync(post, reactionType)">
                                             @((MarkupString)reactionType.GetReactionIcon()) @reactionType.GetReactionText()
                                         </MudMenuItem>
                                     }
@@ -227,9 +227,11 @@
         return await ReactionsService.GetReactionsSummaryAsync(postId, ReactionContentType.Post);
     }
 
-    private async Task HandleReactionAsync(Guid postId, ReactionType reactionType)
+    private async Task HandleReactionAsync(PostDto post, ReactionType reactionType)
     {
-        var existingReaction = await GetExistingReactionAsync(postId);
+        var existingReaction = await GetExistingReactionAsync(post.Id);
+
+        string targetType = post.OrganizationId.HasValue ? "Organization" : "User";
 
         if (existingReaction != null)
         {
@@ -256,10 +258,10 @@
             var createReaction = new CreateReactionDto
             {
                 UserId = IdentityService.UserDto.Id,
-                ContentId = postId,
+                ContentId = post.Id,
                 ContentType = "Post",
                 ReactionType = reactionType.ToString(),
-                TargetType = "User"
+                TargetType = targetType
             };
 
             var createResult = await ReactionsService.CreateReactionAsync(createReaction);
@@ -274,7 +276,7 @@
             }
         }
 
-        await LoadPostsAsync(); // Refresh posts to show the updated reaction
+        await LoadPostsAsync(); 
     }
 
     private async Task<ReactionDto> GetExistingReactionAsync(Guid postId)
