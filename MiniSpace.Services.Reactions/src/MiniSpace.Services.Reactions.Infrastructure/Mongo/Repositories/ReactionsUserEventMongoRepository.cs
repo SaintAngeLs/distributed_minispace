@@ -33,10 +33,12 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 
             var update = Builders<UserEventReactionDocument>.Update.Combine(
                 Builders<UserEventReactionDocument>.Update.Push(d => d.Reactions, reaction.AsDocument()),
-                Builders<UserEventReactionDocument>.Update.SetOnInsert(d => d.UserEventId, reaction.ContentId)
+                Builders<UserEventReactionDocument>.Update.SetOnInsert(d => d.UserEventId, reaction.ContentId),
+                Builders<UserEventReactionDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid()) // Ensure the document Id is a new Guid
             );
 
-            var result = await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
 
             if (!result.IsAcknowledged || result.ModifiedCount == 0)
             {

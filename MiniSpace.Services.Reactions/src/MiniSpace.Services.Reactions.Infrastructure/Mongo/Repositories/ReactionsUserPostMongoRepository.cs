@@ -33,13 +33,17 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 
             var update = Builders<UserPostReactionDocument>.Update.Combine(
                 Builders<UserPostReactionDocument>.Update.Push(x => x.Reactions, reaction.AsDocument()),
-                Builders<UserPostReactionDocument>.Update.SetOnInsert(x => x.UserPostId, reaction.ContentId)
+                Builders<UserPostReactionDocument>.Update.SetOnInsert(x => x.UserPostId, reaction.ContentId),
+                Builders<UserPostReactionDocument>.Update.SetOnInsert(x => x.Id, Guid.NewGuid()) // Ensure the document Id is a new Guid
             );
 
-            var result = await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            var options = new UpdateOptions { IsUpsert = true }; // Upsert: insert if not exists, update if exists
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
 
             if (!result.IsAcknowledged || result.ModifiedCount == 0)
             {
+                // Handle the case where the update wasn't acknowledged or nothing was modified
+                // This could involve logging or throwing an exception based on your application's needs
             }
         }
 
@@ -65,8 +69,11 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 
         public async Task<IEnumerable<Reaction>> GetByContentIdAsync(Guid contentId)
         {
-            var document = await _repository.GetAsync(d => d.UserPostId == contentId);
+            var filter = Builders<UserPostReactionDocument>.Filter.Eq(d => d.UserPostId, contentId);
+            var document = await _repository.Collection.Find(filter).FirstOrDefaultAsync();
+
             return document?.Reactions.Select(r => r.AsEntity()) ?? Enumerable.Empty<Reaction>();
         }
+
     }
 }

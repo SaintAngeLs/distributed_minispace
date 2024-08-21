@@ -33,16 +33,17 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 
             var update = Builders<OrganizationPostReactionDocument>.Update.Combine(
                 Builders<OrganizationPostReactionDocument>.Update.Push(d => d.Reactions, reaction.AsDocument()),
-                Builders<OrganizationPostReactionDocument>.Update.SetOnInsert(d => d.OrganizationPostId, reaction.ContentId)
+                Builders<OrganizationPostReactionDocument>.Update.SetOnInsert(d => d.OrganizationPostId, reaction.ContentId),
+                Builders<OrganizationPostReactionDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid())
             );
 
-            var result = await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
 
             if (!result.IsAcknowledged || result.ModifiedCount == 0)
             {
             }
         }
-
 
         public async Task UpdateAsync(Reaction reaction)
         {
