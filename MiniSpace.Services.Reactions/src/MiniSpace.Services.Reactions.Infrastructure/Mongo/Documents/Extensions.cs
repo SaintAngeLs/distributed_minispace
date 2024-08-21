@@ -175,6 +175,32 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Extensions
             return document.Reactions.Select(r => r.ToEntity());
         }
 
+           public static ReactionDto AsDto(this Reaction reaction)
+        {
+            return new ReactionDto
+            {
+                Id = reaction.Id,
+                UserId = reaction.UserId,
+                ContentId = reaction.ContentId,
+                ContentType = reaction.ContentType,
+                ReactionType = reaction.ReactionType,
+                TargetType = reaction.TargetType
+            };
+        }
+
+        // public static ReactionDto AsDto(this ReactionDocument document)
+        // {
+        //     return new ReactionDto
+        //     {
+        //         Id = document.Id,
+        //         UserId = document.UserId,
+        //         ContentId = document.ContentId,
+        //         ContentType = document.ContentType,
+        //         ReactionType = document.ReactionType,
+        //         TargetType = document.TargetType
+        //     };
+        // }
+
 
         public static UpdateDefinition<TDocument> Push<TDocument, TItem>(
             this UpdateDefinitionBuilder<TDocument> builder,

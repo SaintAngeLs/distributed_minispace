@@ -7,6 +7,7 @@ using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Application.Queries;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Repositories;
+using MiniSpace.Services.Reactions.Infrastructure.Mongo.Extensions;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
 {
