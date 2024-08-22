@@ -54,5 +54,23 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 PublishDate = document.PublishDate,
                 Visibility = document.Visibility.ToString().ToLowerInvariant() 
             };
+
+        public static PostDto AsDto(this Post post)
+        {
+            return new PostDto
+            {
+                Id = post.Id,
+                UserId = post.UserId,
+                OrganizationId = post.OrganizationId,
+                EventId = post.EventId,
+                TextContent = post.TextContent,
+                MediaFiles = post.MediaFiles,
+                CreatedAt = post.CreatedAt,
+                UpdatedAt = post.UpdatedAt,
+                State = post.State.ToString().ToLowerInvariant(),
+                PublishDate = post.PublishDate,
+                Visibility = post.Visibility.ToString().ToLowerInvariant()
+            };
+        }
     }
 }
