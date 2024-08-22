@@ -33,48 +33,123 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Queries.Handlers
         }
 
         public async Task<PagedResponse<CommentDto>> HandleAsync(SearchComments query, CancellationToken cancellationToken)
+{
+    try
+    {
+        if (query == null)
         {
-            var allComments = new List<Comment>();
-
-            CommentContext contextEnum;
-            if (!Enum.TryParse(query.CommentContext, true, out contextEnum))
-            {
-                throw new ArgumentException($"Invalid CommentContext value: {query.CommentContext}");
-            }
-
-            var browseRequest = new BrowseCommentsRequest(
-                pageNumber: query.Pageable.Page,
-                pageSize: query.Pageable.Size,
-                contextId: query.ContextId,
-                context: contextEnum,   
-                parentId: query.ParentId ?? Guid.Empty,
-                sortBy: query.Pageable.Sort.SortBy,
-                sortDirection: query.Pageable.Sort.Direction
-            );
-
-
-            var orgEventsComments = await _organizationEventsRepository.BrowseCommentsAsync(browseRequest);
-            allComments.AddRange(orgEventsComments.Items);
-
-            var orgPostsComments = await _organizationPostsRepository.BrowseCommentsAsync(browseRequest);
-            allComments.AddRange(orgPostsComments.Items);
-
-            var userEventsComments = await _userEventsRepository.BrowseCommentsAsync(browseRequest);
-            allComments.AddRange(userEventsComments.Items);
-
-            var userPostsComments = await _userPostsRepository.BrowseCommentsAsync(browseRequest);
-            allComments.AddRange(userPostsComments.Items);
-
-            var sortedComments = allComments
-                .OrderByDescending(c => c.CreatedAt)
-                .Skip((query.Pageable.Page - 1) * query.Pageable.Size)
-                .Take(query.Pageable.Size)
-                .ToList();
-
-            var totalItems = allComments.Count;
-            var commentDtos = sortedComments.Select(c => c.AsDto()).ToList();
-
-            return new PagedResponse<CommentDto>(commentDtos, query.Pageable.Page, query.Pageable.Size, totalItems);
+            throw new ArgumentNullException(nameof(query));
         }
+
+        // Initialize the list to hold all comments from all repositories
+        var allComments = new List<Comment>();
+
+        // Use the new SortByArray property
+        var sortByList = query.SortByArray.ToList();
+
+        CommentContext contextEnum;
+        if (!Enum.TryParse(query.CommentContext, true, out contextEnum))
+        {
+            throw new ArgumentException($"Invalid CommentContext value: {query.CommentContext}");
+        }
+
+        var browseRequest = new BrowseCommentsRequest(
+            pageNumber: query.Page,
+            pageSize: query.Size,
+            contextId: query.ContextId,
+            context: contextEnum,
+            parentId: query.ParentId ?? Guid.Empty,
+            sortBy: sortByList,
+            sortDirection: query.Direction
+        );
+
+        // Logging the browseRequest for debug purposes
+        Console.WriteLine($"Searching with ContextId: {query.ContextId}, CommentContext: {query.CommentContext}");
+
+        // Search in OrganizationEventsCommentRepository
+        Console.WriteLine("Searching in OrganizationEventsCommentRepository...");
+        var orgEventsComments = await _organizationEventsRepository.BrowseCommentsAsync(browseRequest);
+        if (orgEventsComments?.Items != null && orgEventsComments.Items.Any())
+        {
+            Console.WriteLine($"Found {orgEventsComments.Items.Count()} comments in OrganizationEventsCommentRepository.");
+            allComments.AddRange(orgEventsComments.Items);
+        }
+        else
+        {
+            Console.WriteLine("No comments found in OrganizationEventsCommentRepository.");
+        }
+
+        // Search in OrganizationPostsCommentRepository
+        Console.WriteLine("Searching in OrganizationPostsCommentRepository...");
+        var orgPostsComments = await _organizationPostsRepository.BrowseCommentsAsync(browseRequest);
+        if (orgPostsComments?.Items != null && orgPostsComments.Items.Any())
+        {
+            Console.WriteLine($"Found {orgPostsComments.Items.Count()} comments in OrganizationPostsCommentRepository.");
+            allComments.AddRange(orgPostsComments.Items);
+        }
+        else
+        {
+            Console.WriteLine("No comments found in OrganizationPostsCommentRepository.");
+        }
+
+        // Search in UserEventsCommentRepository
+        Console.WriteLine("Searching in UserEventsCommentRepository...");
+        var userEventsComments = await _userEventsRepository.BrowseCommentsAsync(browseRequest);
+        if (userEventsComments?.Items != null && userEventsComments.Items.Any())
+        {
+            Console.WriteLine($"Found {userEventsComments.Items.Count()} comments in UserEventsCommentRepository.");
+            allComments.AddRange(userEventsComments.Items);
+        }
+        else
+        {
+            Console.WriteLine("No comments found in UserEventsCommentRepository.");
+        }
+
+        // Search in UserPostsCommentRepository
+        Console.WriteLine("Searching in UserPostsCommentRepository...");
+        var userPostsComments = await _userPostsRepository.BrowseCommentsAsync(browseRequest);
+        if (userPostsComments?.Items != null && userPostsComments.Items.Any())
+        {
+            Console.WriteLine($"Found {userPostsComments.Items.Count()} comments in UserPostsCommentRepository.");
+            allComments.AddRange(userPostsComments.Items);
+        }
+        else
+        {
+            Console.WriteLine("No comments found in UserPostsCommentRepository.");
+        }
+
+        if (!allComments.Any())
+        {
+            Console.WriteLine("No comments found in any repository.");
+        }
+
+        // Sort and paginate the aggregated comments
+        var sortedComments = sortByList.Contains("CreatedAt")
+            ? allComments.OrderByDescending(c => c.CreatedAt).ToList()
+            : allComments.OrderBy(c => c.Id).ToList(); // default sorting
+
+        var pagedComments = sortedComments
+            .Skip((query.Page - 1) * query.Size)
+            .Take(query.Size)
+            .ToList();
+
+        var totalItems = allComments.Count;
+        var commentDtos = pagedComments.Select(c => c.AsDto()).ToList();
+
+        var response = new PagedResponse<CommentDto>(commentDtos, query.Page, query.Size, totalItems);
+
+        // Log the response to the console
+        Console.WriteLine($"Response: {System.Text.Json.JsonSerializer.Serialize(response)}");
+
+        return response;
+    }
+    catch (Exception ex)
+    {
+        // Log exception with more context
+        Console.Error.WriteLine($"Error in SearchCommentsHandler: {ex}");
+        throw;
+    }
+}
+
     }
 }

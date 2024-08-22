@@ -30,9 +30,20 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
         public async Task AddAsync(Comment comment)
         {
             var filter = Builders<OrganizationPostCommentDocument>.Filter.Eq(d => d.OrganizationPostId, comment.ContextId);
-            var update = Builders<OrganizationPostCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument());
 
-            await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            var update = Builders<OrganizationPostCommentDocument>.Update.Combine(
+                Builders<OrganizationPostCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument()),
+                Builders<OrganizationPostCommentDocument>.Update.SetOnInsert(d => d.OrganizationPostId, comment.ContextId),
+                Builders<OrganizationPostCommentDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid())
+            );
+
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
+
+            if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            {
+                Console.Error.WriteLine("Failed to add or update the comment.");
+            }
         }
 
         public async Task UpdateAsync(Comment comment)
@@ -66,18 +77,44 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
 
         public async Task<PagedResponse<Comment>> BrowseCommentsAsync(BrowseCommentsRequest request)
         {
+            // Log the ContextId to ensure it is correct
+            Console.WriteLine($"Searching for OrganizationPostId: {request.ContextId}");
+
+            // Filter to find the document matching the provided OrganizationPostId (ContextId)
             var filterDefinition = Builders<OrganizationPostCommentDocument>.Filter.Eq(d => d.OrganizationPostId, request.ContextId);
-            var sortDefinition = OrganizationPostCommentExtensions.ToSortDefinition(request.SortBy, request.SortDirection);
 
-            var pagedEvents = await _repository.Collection.AggregateByPage(
-                filterDefinition,
-                sortDefinition,
-                request.PageNumber,
-                request.PageSize
-            );
+            // Fetch the document(s) that match the filter
+            var document = await _repository.Collection.Find(filterDefinition).FirstOrDefaultAsync();
 
-            var comments = pagedEvents.data.SelectMany(d => d.Comments.Select(c => c.AsEntity()));
-            return new PagedResponse<Comment>(comments, request.PageNumber, request.PageSize, pagedEvents.totalElements);
+            // Log the document found or not found
+            if (document == null)
+            {
+                Console.WriteLine("No document found with the specified OrganizationPostId.");
+                return new PagedResponse<Comment>(Enumerable.Empty<Comment>(), request.PageNumber, request.PageSize, 0);
+            }
+
+            // Log the found document details
+            Console.WriteLine($"Found document: ID = {document.Id}, OrganizationPostId = {document.OrganizationPostId}");
+
+            // Extract the comments from the document and map them to the Comment entity
+            var comments = document.Comments.Select(c => c.AsEntity()).ToList();
+
+            // Log the IDs of all comments retrieved
+            if (comments.Any())
+            {
+                Console.WriteLine("Comments found:");
+                foreach (var comment in comments)
+                {
+                    Console.WriteLine($"Comment ID: {comment.Id}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No comments found.");
+            }
+
+            // Return the comments as a PagedResponse
+            return new PagedResponse<Comment>(comments, request.PageNumber, request.PageSize, comments.Count);
         }
     }
 }

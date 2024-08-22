@@ -30,10 +30,23 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
         public async Task AddAsync(Comment comment)
         {
             var filter = Builders<OrganizationEventCommentDocument>.Filter.Eq(d => d.OrganizationEventId, comment.ContextId);
-            var update = Builders<OrganizationEventCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument());
 
-            await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            var update = Builders<OrganizationEventCommentDocument>.Update.Combine(
+                Builders<OrganizationEventCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument()), 
+                Builders<OrganizationEventCommentDocument>.Update.SetOnInsert(d => d.OrganizationEventId, comment.ContextId), 
+                Builders<OrganizationEventCommentDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid())
+            );
+
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
+
+            if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            {
+                // Handle the case where the update or insert did not succeed
+                Console.Error.WriteLine("Failed to add or update the comment.");
+            }
         }
+
 
         public async Task UpdateAsync(Comment comment)
         {
