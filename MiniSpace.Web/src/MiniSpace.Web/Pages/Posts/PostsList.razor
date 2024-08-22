@@ -3,6 +3,7 @@
 @inject IStudentsService StudentsService
 @inject IIdentityService IdentityService
 @inject IReactionsService ReactionsService
+@inject ICommentsService CommentsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @using MiniSpace.Web.DTO
@@ -10,7 +11,7 @@
 @using MiniSpace.Web.Data.Posts
 @using MudBlazor
 @using MiniSpace.Web.Areas.Reactions.CommandDto
-@using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Areas.Comments.CommandsDto
 @using System.Linq
 @using System.Threading.Tasks
 @using System.Collections.Generic
@@ -38,10 +39,10 @@
                         <MudCard Class="post-card mb-4" Elevation="2">
                             <MudCardContent>
                                 <MudGrid justify-start AlignItems="Center">
-                                    <MudItem xs="1" Class="pr-2">
+                                    <MudItem xs="2" Class="pr-2">
                                         <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId)" />
                                     </MudItem>
-                                    <MudItem xs="11">
+                                    <MudItem xs="10">
                                         <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId)</MudText>
                                         <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
                                     </MudItem>
@@ -98,10 +99,77 @@
                                     </ChildContent>
                                 </MudMenu>
 
-                                <MudButton Variant="Variant.Text" Color="Color.Secondary">
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => ToggleCommentSection(post.Id)">
                                     <MudIcon Icon="@Icons.Material.Filled.Comment" Class="mr-1" /> Comment
                                 </MudButton>
                             </MudCardActions>
+
+                            @if (post.Id == activeCommentPostId)
+                            {
+                                <MudCardContent>
+                                    <MudTextField @bind-Value="newCommentText" Placeholder="Write a comment..." Variant="Variant.Outlined" FullWidth="true" />
+                                    <MudButton Color="Color.Primary" OnClick="() => SubmitCommentAsync(post)">Submit</MudButton>
+                                    
+                                    @if (postComments.TryGetValue(post.Id, out var comments) && comments.Any())
+                                    {
+                                        <MudList>
+                                            @foreach (var comment in comments.Where(c => c.ParentId == Guid.Empty))
+                                            {
+                                                @* Render the main comment *@
+                                                <MudListItem>
+                                                    <MudGrid justify-start AlignItems="Center">
+                                                        <MudItem xs="1" Class="pr-2">
+                                                            <MudAvatar Size="Size.Small" Image="@GetUserAvatar(comment.UserId)" />
+                                                        </MudItem>
+                                                        <MudItem xs="11">
+                                                            <MudText Typo="Typo.subtitle2">@GetUserName(comment.UserId)</MudText>
+                                                            <MudText Typo="Typo.body2">@comment.TextContent</MudText>
+                                                            <MudText Typo="Typo.caption" Class="text-muted">@comment.CreatedAt.ToString("g")</MudText>
+
+                                                            <!-- Reply Section -->
+                                                            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => ToggleReplySection(comment.Id)">
+                                                                <MudIcon Icon="@Icons.Material.Filled.Reply" Class="mr-1" /> Reply
+                                                            </MudButton>
+
+                                                            @if (comment.Id == activeReplyCommentId)
+                                                            {
+                                                                <MudTextField @bind-Value="newReplyText" Placeholder="Write a reply..." Variant="Variant.Outlined" FullWidth="true" Class="mt-2" />
+                                                                <MudButton Color="Color.Primary" OnClick="() => SubmitReplyAsync(post, comment)">Submit Reply</MudButton>
+                                                            }
+
+                                                            <!-- Display nested comments (replies) -->
+                                                            @if (comments.Any(c => c.ParentId == comment.Id))
+                                                            {
+                                                                <MudList Class="pl-4">
+                                                                    @foreach (var reply in comments.Where(c => c.ParentId == comment.Id))
+                                                                    {
+                                                                        <MudListItem>
+                                                                            <MudGrid justify-start AlignItems="Center">
+                                                                                <MudItem xs="1" Class="pr-2">
+                                                                                    <MudAvatar Size="Size.Small" Image="@GetUserAvatar(reply.UserId)" />
+                                                                                </MudItem>
+                                                                                <MudItem xs="11">
+                                                                                    <MudText Typo="Typo.subtitle2">@GetUserName(reply.UserId)</MudText>
+                                                                                    <MudText Typo="Typo.body2">@reply.TextContent</MudText>
+                                                                                    <MudText Typo="Typo.caption" Class="text-muted">@reply.CreatedAt.ToString("g")</MudText>
+                                                                                </MudItem>
+                                                                            </MudGrid>
+                                                                        </MudListItem>
+                                                                    }
+                                                                </MudList>
+                                                            }
+                                                        </MudItem>
+                                                    </MudGrid>
+                                                </MudListItem>
+                                            }
+                                        </MudList>
+                                    }
+                                    else
+                                    {
+                                        <MudText Typo="Typo.body2" Class="text-muted">No comments available.</MudText>
+                                    }
+                                </MudCardContent>
+                            }
                         </MudCard>
                     </MudItem>
                 }
@@ -119,10 +187,15 @@
     private List<PostDto> posts = new();
     private Dictionary<Guid, StudentDto> studentsCache = new();
     private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new();
+    private Dictionary<Guid, List<CommentDto>> postComments = new();
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalItems = 0;
     private bool isLoading = true;
+    private Guid? activeCommentPostId;
+    private Guid? activeReplyCommentId;
+    private string newCommentText = string.Empty;
+    private string newReplyText = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -192,6 +265,9 @@
 
                     // Get reactions summary for each post and store it in the dictionary
                     reactionsSummaries[post.Id] = await GetReactionsSummaryAsync(post.Id);
+
+                    // Load comments for each post
+                    postComments[post.Id] = await LoadCommentsForPostAsync(post);
                 }
             }
             else
@@ -296,5 +372,164 @@
     {
         var reactions = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
         return reactions.FirstOrDefault(r => r.UserId == IdentityService.UserDto.Id);
+    }
+
+    private void ToggleCommentSection(Guid postId)
+    {
+        if (activeCommentPostId == postId)
+        {
+            activeCommentPostId = null;
+            newCommentText = string.Empty;
+        }
+        else
+        {
+            activeCommentPostId = postId;
+            newCommentText = string.Empty;
+        }
+    }
+
+    private void ToggleReplySection(Guid commentId)
+    {
+        if (activeReplyCommentId == commentId)
+        {
+            activeReplyCommentId = null;
+            newReplyText = string.Empty;
+        }
+        else
+        {
+            activeReplyCommentId = commentId;
+            newReplyText = string.Empty;
+        }
+    }
+
+    private async Task<List<CommentDto>> LoadCommentsForPostAsync(PostDto post)
+    {
+        var command = new SearchRootCommentsCommand(
+            contextId: post.Id,
+            commentContext: DetermineCommentContext(post).ToString(),
+            pageable: new PageableDto
+            {
+                Page = 1,
+                Size = 10,
+                Sort = new SortDto
+                {
+                    SortBy = new[] { "CreatedAt" },
+                    Direction = "asc"
+                }
+            }
+        );
+
+        var response = await CommentsService.SearchRootCommentsAsync(command);
+        var comments = response.Items?.ToList() ?? new List<CommentDto>();
+
+        // Fetch user details for each comment author and reply author
+        foreach (var comment in comments)
+        {
+            if (!studentsCache.ContainsKey(comment.UserId))
+            {
+                var student = await StudentsService.GetStudentAsync(comment.UserId);
+                if (student != null)
+                {
+                    studentsCache[comment.UserId] = student;
+                }
+            }
+
+            if (comment.Replies != null)
+            {
+                foreach (var reply in comment.Replies)
+                {
+                    if (!studentsCache.ContainsKey(reply.UserId))
+                    {
+                        var replyAuthor = await StudentsService.GetStudentAsync(reply.UserId);
+                        if (replyAuthor != null)
+                        {
+                            studentsCache[reply.UserId] = replyAuthor;
+                        }
+                    }
+                }
+            }
+        }
+
+        return comments;
+    }
+
+    private CommentContext DetermineCommentContext(PostDto post)
+    {
+        if (post.OrganizationId.HasValue)
+        {
+            return post.EventId.HasValue ? CommentContext.OrganizationEvent : CommentContext.OrganizationPost;
+        }
+        else
+        {
+            return post.EventId.HasValue ? CommentContext.UserEvent : CommentContext.UserPost;
+        }
+    }
+
+    private async Task SubmitCommentAsync(PostDto post)
+    {
+        if (string.IsNullOrWhiteSpace(newCommentText))
+        {
+            Snackbar.Add("Comment cannot be empty.", Severity.Warning);
+            return;
+        }
+
+        var commentContext = DetermineCommentContext(post);
+        var userId = IdentityService.GetCurrentUserId();
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: post.Id,
+            commentContext: commentContext.ToString(),
+            userId: userId,
+            parentId: Guid.Empty,
+            textContent: newCommentText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Comment added successfully!", Severity.Success);
+            newCommentText = string.Empty;
+            await LoadPostsAsync();
+        }
+        else
+        {
+            Snackbar.Add($"Failed to add comment: {response.ErrorMessage?.Reason}", Severity.Error);
+        }
+    }
+
+    private async Task SubmitReplyAsync(PostDto post, CommentDto parentComment)
+    {
+        if (string.IsNullOrWhiteSpace(newReplyText))
+        {
+            Snackbar.Add("Reply cannot be empty.", Severity.Warning);
+            return;
+        }
+
+        var commentContext = DetermineCommentContext(post);
+        var userId = IdentityService.GetCurrentUserId();
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: post.Id,
+            commentContext: commentContext.ToString(),
+            userId: userId,
+            parentId: parentComment.Id,
+            textContent: newReplyText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Reply added successfully!", Severity.Success);
+            newReplyText = string.Empty;
+            await LoadPostsAsync();
+        }
+        else
+        {
+            Snackbar.Add($"Failed to add reply: {response.ErrorMessage?.Reason}", Severity.Error);
+        }
     }
 }

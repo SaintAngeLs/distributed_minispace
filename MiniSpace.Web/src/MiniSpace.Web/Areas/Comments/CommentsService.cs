@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using MiniSpace.Web.Areas.Comments.CommandsDto;
 using MiniSpace.Web.Areas.Identity;
-using MiniSpace.Web.DTO;
+using MiniSpace.Web.DTO.Comments;
 using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
@@ -20,10 +22,43 @@ namespace MiniSpace.Web.Areas.Comments
             _identityService = identityService;
         }
 
-        public Task<HttpResponse<PagedResponseDto<CommentDto>>> SearchRootCommentsAsync(SearchRootCommentsCommand command)
+        public Task<PagedResponseDto<CommentDto>> SearchRootCommentsAsync(SearchRootCommentsCommand command)
         {
-            return _httpClient.PostAsync<SearchRootCommentsCommand, PagedResponseDto<CommentDto>>("comments/search", command);
+            var queryString = ToQueryString(command);
+
+            // Log the query string to the console
+            Console.WriteLine($"Sending request with query string: comments/search{queryString}");
+
+            return _httpClient.GetAsync<PagedResponseDto<CommentDto>>($"comments/search{queryString}");
         }
+
+
+        private string ToQueryString(SearchRootCommentsCommand command)
+        {
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["ContextId"] = command.ContextId.ToString();
+            query["CommentContext"] = command.CommentContext;
+
+            // Flatten the PageableDto into individual query parameters
+            if (command.Pageable != null)
+            {
+                query["Page"] = command.Pageable.Page.ToString();
+                query["Size"] = command.Pageable.Size.ToString();
+                
+                if (command.Pageable.Sort != null)
+                {
+                    // Pass SortBy as a comma-separated list
+                    if (command.Pageable.Sort.SortBy != null && command.Pageable.Sort.SortBy.Any())
+                    {
+                        query["SortBy"] = string.Join(",", command.Pageable.Sort.SortBy);
+                    }
+                    query["Direction"] = command.Pageable.Sort.Direction;
+                }
+            }
+
+            return "?" + query.ToString();
+        }
+
 
         public Task<HttpResponse<PagedResponseDto<CommentDto>>> SearchSubCommentsAsync(SearchSubCommentsCommand command)
         {

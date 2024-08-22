@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MiniSpace.Web.Areas.Comments.CommandsDto
 {
@@ -10,18 +7,19 @@ namespace MiniSpace.Web.Areas.Comments.CommandsDto
         public Guid CommentId { get; set; }
         public Guid ContextId { get; set; }
         public string CommentContext { get; set; }
-        public Guid StudentId { get; set; }
+        // CommentsContext := UserPost || UserEvent || OrganizationPost || OrganizationEvent
+        public Guid UserId { get; set; } 
         public Guid ParentId { get; set; }
-        public string Comment { get; set; }
+        public string TextContent { get; set; }
 
-        public CreateCommentCommand(Guid commentId, Guid contextId, string commentContext, Guid studentId, Guid parentId, string comment)
+        public CreateCommentCommand(Guid commentId, Guid contextId, string commentContext, Guid userId, Guid parentId, string textContent)
         {
-            CommentId = commentId;
+            CommentId = commentId == Guid.Empty ? Guid.NewGuid() : commentId;
             ContextId = contextId;
             CommentContext = commentContext;
-            StudentId = studentId;
+            UserId = userId;
             ParentId = parentId;
-            Comment = comment;
+            TextContent = textContent;
         }
     }
 }
