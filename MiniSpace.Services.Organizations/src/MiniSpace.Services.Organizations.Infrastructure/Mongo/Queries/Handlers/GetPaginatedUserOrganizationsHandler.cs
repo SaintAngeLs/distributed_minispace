@@ -1,5 +1,6 @@
 using Convey.CQRS.Queries;
 using MiniSpace.Services.Organizations.Application.DTO;
+using MiniSpace.Services.Organizations.Core.Entities;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using MiniSpace.Services.Organizations.Application.Queries;
 using System.Collections.Generic;
@@ -26,31 +27,60 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
         {
             // Fetch organizations where the user is a member
             var organizations = await _organizationRepository.GetOrganizationsByUserAsync(query.UserId);
-            var organizationDtos = new List<OrganizationDto>();
 
+            var matchedOrganizations = new List<OrganizationDto>();
+
+            // Process organizations and their sub-organizations
             foreach (var org in organizations)
             {
-                var users = await _organizationMembersRepository.GetMembersAsync(org.Id);
-                var organizationDto = new OrganizationDto
+                // Add the main organization
+                var organizationDto = await ConvertToDtoAsync(org);
+                matchedOrganizations.Add(organizationDto);
+
+                // Add all sub-organizations
+                if (org.SubOrganizations != null && org.SubOrganizations.Any())
                 {
-                    Id = org.Id,
-                    Name = org.Name,
-                    Description = org.Description,
-                    ImageUrl = org.ImageUrl,
-                    BannerUrl = org.BannerUrl,
-                    Users = users.Select(u => new UserDto(u)).ToList(),
-                };
-                organizationDtos.Add(organizationDto);
+                    foreach (var subOrg in org.SubOrganizations)
+                    {
+                        var subOrganizationDto = await ConvertToDtoAsync(subOrg);
+                        matchedOrganizations.Add(subOrganizationDto);
+                    }
+                }
             }
 
             // Paginate the result
-            var totalItems = organizationDtos.Count;
-            var paginatedOrganizations = organizationDtos
+            var totalItems = matchedOrganizations.Count;
+            var paginatedOrganizations = matchedOrganizations
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();
 
             return new MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>(paginatedOrganizations, query.Page, query.PageSize, totalItems);
+        }
+
+        // Updated ConvertToDtoAsync method to accept Organization entity
+        private async Task<OrganizationDto> ConvertToDtoAsync(Organization organization)
+        {
+            // Retrieve members of the organization
+            var members = await _organizationMembersRepository.GetMembersAsync(organization.Id);
+
+            return new OrganizationDto
+            {
+                Id = organization.Id,
+                Name = organization.Name,
+                Description = organization.Description,
+                ImageUrl = organization.ImageUrl,
+                BannerUrl = organization.BannerUrl,
+                OwnerId = organization.OwnerId,
+                DefaultRoleName = organization.DefaultRoleName,
+                Address = organization.Address,
+                Country = organization.Country,
+                City = organization.City,
+                Telephone = organization.Telephone,
+                Email = organization.Email,
+                Users = members?.Select(user => new UserDto(user)).ToList(),
+                // Add other necessary properties if needed
+            };
         }
     }
 }
