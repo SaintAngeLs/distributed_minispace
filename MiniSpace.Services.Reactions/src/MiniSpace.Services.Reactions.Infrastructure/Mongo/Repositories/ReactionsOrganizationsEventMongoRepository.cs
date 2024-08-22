@@ -73,5 +73,16 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
             var document = await _repository.GetAsync(d => d.OrganizationEventId == contentId);
             return document?.Reactions.Select(r => r.AsEntity()) ?? Enumerable.Empty<Reaction>();
         }
+
+        public async Task<Reaction> GetAsync(Guid contentId, Guid userId)
+        {
+            var filter = Builders<OrganizationEventReactionDocument>.Filter.And(
+                Builders<OrganizationEventReactionDocument>.Filter.Eq(x => x.OrganizationEventId, contentId),
+                Builders<OrganizationEventReactionDocument>.Filter.ElemMatch(x => x.Reactions, r => r.UserId == userId)
+            );
+
+            var document = await _repository.Collection.Find(filter).FirstOrDefaultAsync();
+            return document?.Reactions.FirstOrDefault(r => r.UserId == userId)?.AsEntity();
+        }
     }
 }
