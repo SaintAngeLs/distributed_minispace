@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MiniSpace.Web.Areas.Comments.CommandsDto;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO;
-using MiniSpace.Web.Data.Comments;
 using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
@@ -20,18 +20,14 @@ namespace MiniSpace.Web.Areas.Comments
             _identityService = identityService;
         }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchRootCommentsAsync(Guid contextId,
-            string commentContext, PageableDto pageable)
+        public Task<HttpResponse<PagedResponseDto<CommentDto>>> SearchRootCommentsAsync(SearchRootCommentsCommand command)
         {
-            return _httpClient.PostAsync<SearchRootComments, PagedResponseDto<IEnumerable<CommentDto>>>("comments/search", 
-                new (contextId, commentContext, pageable));
+            return _httpClient.PostAsync<SearchRootCommentsCommand, PagedResponseDto<CommentDto>>("comments/search", command);
         }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchSubCommentsAsync(Guid contextId,
-            string commentContext, Guid parentId, PageableDto pageable)
+        public Task<HttpResponse<PagedResponseDto<CommentDto>>> SearchSubCommentsAsync(SearchSubCommentsCommand command)
         {
-            return _httpClient.PostAsync<SearchSubComments, PagedResponseDto<IEnumerable<CommentDto>>>("comments/search", 
-                new (contextId, commentContext, parentId, pageable));
+            return _httpClient.PostAsync<SearchSubCommentsCommand, PagedResponseDto<CommentDto>>("comments/search", command);
         }
         
         public Task<CommentDto> GetCommentAsync(Guid commentId)
@@ -39,18 +35,16 @@ namespace MiniSpace.Web.Areas.Comments
             return _httpClient.GetAsync<CommentDto>($"comments/{commentId}");
         }
         
-        public Task<HttpResponse<object>> CreateCommentAsync(Guid commentId, Guid contextId, string commentContext,
-            Guid studentId, Guid parentId, string comment)
+        public Task<HttpResponse<object>> CreateCommentAsync(CreateCommentCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("comments",
-                new { commentId, contextId, commentContext, studentId, parentId, comment });
+            return _httpClient.PostAsync<object, object>("comments", command);
         }
 
-        public Task<HttpResponse<object>> UpdateCommentAsync(Guid commentId, string textContent)
+        public Task<HttpResponse<object>> UpdateCommentAsync(UpdateCommentCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"comments/{commentId}", new { commentId, textContent});
+            return _httpClient.PutAsync<object, object>($"comments/{command.CommentId}", command);
         }
 
         public Task DeleteCommentAsync(Guid commentId)
