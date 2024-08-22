@@ -68,21 +68,72 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             var targetType = ParseTargetType(command.TargetType);
             var reactionType = ParseReactionType(command.ReactionType);
 
-            await EnsureReactionDoesNotExistAsync(command.ContentId, contentType, command.UserId);
+            var existingReaction = await FindExistingReactionAsync(command.ContentId, command.UserId, contentType, targetType);
 
-            // Check if the comment exists using the CommentServiceClient
-            if (contentType == ReactionContentType.Comment)
+            if (existingReaction != null)
             {
-                if (!await _commentServiceClient.CommentExistsAsync(command.ContentId))
-                {
-                    throw new CommentNotFoundException(command.ContentId);
-                }
+                // Update the existing reaction
+                existingReaction.UpdateReactionType(reactionType);
+                await UpdateReactionAsync(existingReaction, contentType, targetType);
+            }
+            else
+            {
+                // Create a new reaction
+                var reaction = Reaction.Create(command.ReactionId, command.UserId, reactionType,
+                                               command.ContentId, contentType, targetType);
+
+                // Add the reaction to the appropriate repository
+                await AddReactionAsync(reaction, contentType, targetType);
             }
 
-            var reaction = Reaction.Create(command.ReactionId, command.UserId, reactionType,
-                                           command.ContentId, contentType, targetType);
+            await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));
+        }
 
-            // Add the reaction to the appropriate repository based on content and target types
+        private async Task<Reaction> FindExistingReactionAsync(Guid contentId, Guid userId, ReactionContentType contentType, ReactionTargetType targetType)
+        {
+            // Check in each repository if a reaction already exists for the user and content
+            switch (contentType)
+            {
+                case ReactionContentType.Event when targetType == ReactionTargetType.Organization:
+                    return await _orgEventRepository.GetAsync(contentId, userId);
+
+                case ReactionContentType.Event when targetType == ReactionTargetType.User:
+                    return await _userEventRepository.GetAsync(contentId, userId);
+
+                case ReactionContentType.Post when targetType == ReactionTargetType.Organization:
+                    return await _orgPostRepository.GetAsync(contentId, userId);
+
+                case ReactionContentType.Post when targetType == ReactionTargetType.User:
+                    return await _userPostRepository.GetAsync(contentId, userId);
+
+                case ReactionContentType.Comment when targetType == ReactionTargetType.Organization:
+                    if (await _orgEventCommentsRepository.ExistsAsync(contentId))
+                    {
+                        return await _orgEventCommentsRepository.GetAsync(contentId, userId);
+                    }
+                    else if (await _orgPostCommentsRepository.ExistsAsync(contentId))
+                    {
+                        return await _orgPostCommentsRepository.GetAsync(contentId, userId);
+                    }
+                    break;
+
+                case ReactionContentType.Comment when targetType == ReactionTargetType.User:
+                    if (await _userEventCommentsRepository.ExistsAsync(contentId))
+                    {
+                        return await _userEventCommentsRepository.GetAsync(contentId, userId);
+                    }
+                    else if (await _userPostCommentsRepository.ExistsAsync(contentId))
+                    {
+                        return await _userPostCommentsRepository.GetAsync(contentId, userId);
+                    }
+                    break;
+            }
+
+            return null;
+        }
+
+        private async Task AddReactionAsync(Reaction reaction, ReactionContentType contentType, ReactionTargetType targetType)
+        {
             switch (contentType)
             {
                 case ReactionContentType.Event when targetType == ReactionTargetType.Organization:
@@ -102,32 +153,77 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                     break;
 
                 case ReactionContentType.Comment when targetType == ReactionTargetType.Organization:
-                    if (await _orgEventCommentsRepository.ExistsAsync(command.ContentId))
+                    if (await _orgEventCommentsRepository.ExistsAsync(reaction.ContentId))
                     {
                         await _orgEventCommentsRepository.AddAsync(reaction);
                     }
-                    else if (await _orgPostCommentsRepository.ExistsAsync(command.ContentId))
+                    else if (await _orgPostCommentsRepository.ExistsAsync(reaction.ContentId))
                     {
                         await _orgPostCommentsRepository.AddAsync(reaction);
                     }
                     break;
 
                 case ReactionContentType.Comment when targetType == ReactionTargetType.User:
-                    if (await _userEventCommentsRepository.ExistsAsync(command.ContentId))
+                    if (await _userEventCommentsRepository.ExistsAsync(reaction.ContentId))
                     {
                         await _userEventCommentsRepository.AddAsync(reaction);
                     }
-                    else if (await _userPostCommentsRepository.ExistsAsync(command.ContentId))
+                    else if (await _userPostCommentsRepository.ExistsAsync(reaction.ContentId))
                     {
                         await _userPostCommentsRepository.AddAsync(reaction);
                     }
                     break;
 
                 default:
-                    throw new InvalidReactionContentTypeException(command.ContentType);
+                    throw new InvalidReactionContentTypeException(reaction.ContentType.ToString());
             }
+        }
 
-            await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));
+        private async Task UpdateReactionAsync(Reaction reaction, ReactionContentType contentType, ReactionTargetType targetType)
+        {
+            switch (contentType)
+            {
+                case ReactionContentType.Event when targetType == ReactionTargetType.Organization:
+                    await _orgEventRepository.UpdateAsync(reaction);
+                    break;
+
+                case ReactionContentType.Event when targetType == ReactionTargetType.User:
+                    await _userEventRepository.UpdateAsync(reaction);
+                    break;
+
+                case ReactionContentType.Post when targetType == ReactionTargetType.Organization:
+                    await _orgPostRepository.UpdateAsync(reaction);
+                    break;
+
+                case ReactionContentType.Post when targetType == ReactionTargetType.User:
+                    await _userPostRepository.UpdateAsync(reaction);
+                    break;
+
+                case ReactionContentType.Comment when targetType == ReactionTargetType.Organization:
+                    if (await _orgEventCommentsRepository.ExistsAsync(reaction.ContentId))
+                    {
+                        await _orgEventCommentsRepository.UpdateAsync(reaction);
+                    }
+                    else if (await _orgPostCommentsRepository.ExistsAsync(reaction.ContentId))
+                    {
+                        await _orgPostCommentsRepository.UpdateAsync(reaction);
+                    }
+                    break;
+
+                case ReactionContentType.Comment when targetType == ReactionTargetType.User:
+                    if (await _userEventCommentsRepository.ExistsAsync(reaction.ContentId))
+                    {
+                        await _userEventCommentsRepository.UpdateAsync(reaction);
+                    }
+                    else if (await _userPostCommentsRepository.ExistsAsync(reaction.ContentId))
+                    {
+                        await _userPostCommentsRepository.UpdateAsync(reaction);
+                    }
+                    break;
+
+                default:
+                    throw new InvalidReactionContentTypeException(reaction.ContentType.ToString());
+            }
         }
 
         private void ValidateStudentIdentity(CreateReaction command)
@@ -176,14 +272,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             }
 
             return parsedReactionType;
-        }
-
-        private async Task EnsureReactionDoesNotExistAsync(Guid contentId, ReactionContentType contentType, Guid userId)
-        {
-            if (await _reactionRepository.ExistsAsync(contentId, contentType, userId))
-            {
-                throw new StudentAlreadyGaveReactionException(userId, contentId, contentType);
-            }
         }
     }
 }
