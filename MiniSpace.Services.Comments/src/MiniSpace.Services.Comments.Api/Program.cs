@@ -17,6 +17,7 @@ using MiniSpace.Services.Comments.Application.Dto;
 using MiniSpace.Services.Comments.Application.Queries;
 using MiniSpace.Services.Comments.Application.Services;
 using MiniSpace.Services.Comments.Infrastructure;
+using MiniSpace.Services.Comments.Core.Wrappers;
 
 namespace MiniSpace.Services.Identity.Api
 {
@@ -34,14 +35,10 @@ namespace MiniSpace.Services.Identity.Api
                 .Configure(app => app
                     .UseInfrastructure()
                     .UseEndpoints(endpoints => endpoints
-                        .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Post<SearchComments>("comments/search", async (cmd, ctx) =>
-                        {
-                            var pagedResult = await ctx.RequestServices.GetService<ICommentService>().BrowseCommentsAsync(cmd);
-                            await ctx.Response.WriteJsonAsync(pagedResult);
-                        }))
+                        .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name)))
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get<GetComment, CommentDto>("comments/{commentID}")
+                        .Get<SearchComments, PagedResponse<CommentDto>>("comments/search")
                         .Post<CreateComment>("comments")
                         .Put<UpdateComment>("comments/{commentID}")
                         .Delete<DeleteComment>("comments/{commentID}")
