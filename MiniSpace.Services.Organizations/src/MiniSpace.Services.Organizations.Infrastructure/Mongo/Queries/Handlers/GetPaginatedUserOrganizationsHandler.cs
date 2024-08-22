@@ -25,19 +25,15 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>> HandleAsync(GetPaginatedUserOrganizations query, CancellationToken cancellationToken)
         {
-            // Fetch organizations where the user is a member
             var organizations = await _organizationRepository.GetOrganizationsByUserAsync(query.UserId);
 
             var matchedOrganizations = new List<OrganizationDto>();
 
-            // Process organizations and their sub-organizations
             foreach (var org in organizations)
             {
-                // Add the main organization
                 var organizationDto = await ConvertToDtoAsync(org);
                 matchedOrganizations.Add(organizationDto);
 
-                // Add all sub-organizations
                 if (org.SubOrganizations != null && org.SubOrganizations.Any())
                 {
                     foreach (var subOrg in org.SubOrganizations)
@@ -48,7 +44,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Paginate the result
             var totalItems = matchedOrganizations.Count;
             var paginatedOrganizations = matchedOrganizations
                 .Skip((query.Page - 1) * query.PageSize)
@@ -58,10 +53,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
             return new MiniSpace.Services.Organizations.Application.DTO.PagedResult<OrganizationDto>(paginatedOrganizations, query.Page, query.PageSize, totalItems);
         }
 
-        // Updated ConvertToDtoAsync method to accept Organization entity
         private async Task<OrganizationDto> ConvertToDtoAsync(Organization organization)
         {
-            // Retrieve members of the organization
             var members = await _organizationMembersRepository.GetMembersAsync(organization.Id);
 
             return new OrganizationDto
@@ -79,7 +72,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 Telephone = organization.Telephone,
                 Email = organization.Email,
                 Users = members?.Select(user => new UserDto(user)).ToList(),
-                // Add other necessary properties if needed
             };
         }
     }
