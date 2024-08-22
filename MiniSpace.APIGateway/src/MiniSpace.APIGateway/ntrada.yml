@@ -590,7 +590,7 @@ modules:
           auth: true
 
         - upstream: /search
-          method: POST
+          method: GET
           use: downstream
           downstream: comments-service/comments/search
 
@@ -808,6 +808,8 @@ modules:
         method: GET
         use: downstream
         downstream: posts-service/posts/{postId}
+        bind:
+          - postId:{postId}
 
       - upstream: /
         method: GET
