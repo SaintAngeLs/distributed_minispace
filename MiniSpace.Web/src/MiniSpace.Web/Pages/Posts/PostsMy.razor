@@ -1,81 +1,136 @@
 @page "/posts/my"
 @inject IPostsService PostsService
 @inject IStudentsService StudentsService
-@inject NavigationManager NavigationManager
-@inject ISnackbar Snackbar
 @inject IIdentityService IdentityService
+@inject IReactionsService ReactionsService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.DTO.Wrappers
-@using MiniSpace.Web.Data.Posts
 @using MudBlazor
-@using System.Security.Claims
+@using System.Linq
+@using System.Threading.Tasks
+@using System.Collections.Generic
+@using MiniSpace.Web.Areas.Reactions
 
-
-<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
-    <MudGrid Justify="Justify.Center">
-        <MudItem xs="12">
-            <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">My Posts</MudText>
-        </MudItem>
-
-        @if (posts != null && posts.Any())
+<AuthWrapper>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+        @if (isLoading)
         {
-            @foreach (var post in posts)
-            {
-                <MudItem xs="12">
-                    <MudCard Class="post-card mb-4" Elevation="2">
-                        <MudCardContent>
-                            <MudGrid justify-start AlignItems="AlignItems.Center">
-                                <MudItem xs="1" Class="pr-2">
-                                    <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId.Value)" />
-                                </MudItem>
-                                <MudItem xs="11">
-                                    <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId.Value)</MudText>
-                                    <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
-                                </MudItem>
-                            </MudGrid>
-
-                            <MudMarkdown Value="@post.TextContent"></MudMarkdown>
-
-                            @if (post.MediaFiles != null && post.MediaFiles.Any())
-                            {
-                                <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
-                            }
-                        </MudCardContent>
-                        <MudCardActions Class="justify-between">
-                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Like</MudButton>
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-            }
+            <MudProgressCircular Indeterminate="true" Class="my-4" />
+        }
+        else if (posts == null || !posts.Any())
+        {
+            <MudText Typo="Typo.body1" Align="Align.Center">You have no posts yet.</MudText>
         }
         else
         {
-            <MudItem xs="12">
-                <MudText Typo="Typo.body1" Align="Align.Center">You have no posts yet.</MudText>
-            </MudItem>
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">My Posts</MudText>
+                </MudItem>
+
+                @foreach (var post in posts)
+                {
+                    <MudItem xs="12">
+                        <MudCard Class="post-card mb-4" Elevation="2">
+                            <MudCardContent>
+                                <MudGrid justify-start AlignItems="Center">
+                                    <MudItem xs="1" Class="pr-2">
+                                        <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId.Value)" />
+                                    </MudItem>
+                                    <MudItem xs="11">
+                                        <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId.Value)</MudText>
+                                        <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
+                                    </MudItem>
+                                </MudGrid>
+
+                                <MudMarkdown Value="@post.TextContent"></MudMarkdown>
+
+                                @if (post.MediaFiles != null && post.MediaFiles.Any())
+                                {
+                                    <MudImage Src="@post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
+                                }
+                            
+
+                            @if (reactionsSummaries.TryGetValue(post.Id, out var reactionsSummary))
+                            {
+                                <MudGrid Class="mt-2" GutterSize="0" AlignItems="Center" Spacing="3">
+                                    @foreach (var reaction in reactionsSummary.ReactionsWithCounts.OrderByDescending(r => r.Value))
+                                    {
+                                        <MudItem Class="d-flex align-center">
+                                            <MudIcon Icon="@(reaction.Key.GetReactionIcon())" Class="mr-1" />
+                                            <MudText Typo="Typo.overline">
+                                                @reaction.Value
+                                            </MudText>
+                                        </MudItem>
+                                    }
+                                    <MudItem Class="ml-2">
+                                        <MudText Typo="Typo.subtitle2">
+                                            Total: @reactionsSummary.NumberOfReactions
+                                        </MudText>
+                                    </MudItem>
+                                </MudGrid>
+                            }
+                            </MudCardContent>
+
+                            <MudDivider />
+
+                            <MudCardActions Class="d-flex justify-around">
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">
+                                    <MudIcon Icon="@Icons.Material.Filled.Visibility" Class="mr-1" /> View
+                                </MudButton>
+
+                                <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" CloseOnSelection="true">
+                                    <ActivatorContent>
+                                        <MudButton Variant="Variant.Text" Color="Color.Secondary">
+                                            <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> React
+                                        </MudButton>
+                                    </ActivatorContent>
+                                    <ChildContent>
+                                        @foreach (var reactionType in Enum.GetValues(typeof(ReactionType)).Cast<ReactionType>())
+                                        {
+                                            <MudMenuItem OnClick="() => HandleReactionAsync(post, reactionType)" Class="d-flex align-center">
+                                                <MudIcon Icon="@reactionType.GetReactionIcon()" Class="mr-2" /> @reactionType.GetReactionText()
+                                            </MudMenuItem>
+                                        }
+                                    </ChildContent>
+                                </MudMenu>
+
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary">
+                                    <MudIcon Icon="@Icons.Material.Filled.Comment" Class="mr-1" /> Comment
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+
+            <MudGrid Justify="Justify.Center" Class="mt-4">
+                <MudItem>
+                    <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
+                </MudItem>
+            </MudGrid>
         }
-    </MudGrid>
-    <MudGrid Justify="Justify.Center" Class="mt-4">
-        <MudItem>
-            <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
-        </MudItem>
-    </MudGrid>
-</MudContainer>
+    </MudContainer>
+</AuthWrapper>
 
 @code {
     private List<PostDto> posts = new();
     private Dictionary<Guid, StudentDto> studentsCache = new();
+    private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new();
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalItems = 0;
+    private bool isLoading = true;
     private Guid? currentUserId;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            isLoading = true;
+
             if (IdentityService.IsAuthenticated)
             {
                 currentUserId = IdentityService.GetCurrentUserId();
@@ -98,6 +153,10 @@
         catch (Exception ex)
         {
             Snackbar.Add($"Error initializing page: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 
@@ -134,7 +193,6 @@
                     posts = result.Items.ToList();
                     totalItems = result.TotalItems;
 
-                    // Load student data for posts with UserId
                     foreach (var post in posts.Where(p => p.UserId.HasValue))
                     {
                         if (!studentsCache.ContainsKey(post.UserId.Value))
@@ -145,6 +203,8 @@
                                 studentsCache[post.UserId.Value] = student;
                             }
                         }
+
+                        reactionsSummaries[post.Id] = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
                     }
                 }
                 else
@@ -191,5 +251,63 @@
     private void NavigateToPostDetails(Guid postId)
     {
         NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+
+    private async Task HandleReactionAsync(PostDto post, ReactionType reactionType)
+    {
+        var existingReaction = await GetExistingReactionAsync(post.Id);
+
+        string targetType = post.OrganizationId.HasValue ? "Organization" : "User";
+
+        if (existingReaction != null)
+        {
+            var updateReaction = new UpdateReactionDto
+            {
+                ReactionId = existingReaction.Id,
+                UserId = IdentityService.UserDto.Id,
+                NewReactionType = reactionType.ToString()
+            };
+
+            var updateResult = await ReactionsService.UpdateReactionAsync(updateReaction);
+
+            if (updateResult.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Reaction updated successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to update reaction: {updateResult.ErrorMessage?.Reason}", Severity.Error);
+            }
+        }
+        else
+        {
+            var createReaction = new CreateReactionDto
+            {
+                UserId = IdentityService.UserDto.Id,
+                ContentId = post.Id,
+                ContentType = "Post",
+                ReactionType = reactionType.ToString(),
+                TargetType = targetType
+            };
+
+            var createResult = await ReactionsService.CreateReactionAsync(createReaction);
+
+            if (createResult.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Reaction added successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to add reaction: {createResult.ErrorMessage?.Reason}", Severity.Error);
+            }
+        }
+
+        await LoadPostsAsync();
+    }
+
+    private async Task<ReactionDto> GetExistingReactionAsync(Guid postId)
+    {
+        var reactions = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
+        return reactions.FirstOrDefault(r => r.UserId == IdentityService.UserDto.Id);
     }
 }

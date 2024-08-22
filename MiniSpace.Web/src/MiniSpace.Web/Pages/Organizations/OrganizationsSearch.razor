@@ -8,64 +8,65 @@
 
 <AuthWrapper>
     <MudContainer>
-    <MudPaper Class="pa-4">
-        <MudText Typo="Typo.h4" GutterBottom="true">Discover Organizations</MudText>
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h4" GutterBottom="true">Discover Organizations</MudText>
 
-        <MudTextField @bind-Value="_searchQuery" Placeholder="Search organizations..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Immediate="true" OnKeyUp="@(async (e) => await SearchOrganizations())" />
+            <MudTextField @bind-Value="_searchQuery" Placeholder="Search organizations..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Immediate="true" OnKeyUp="@(async (e) => await SearchOrganizations())" />
 
-        <MudGrid Class="mt-4">
-            @if (_organizations != null && _organizations.Items != null && _organizations.Items.Any())
-            {
-                @foreach (var organization in _organizations.Items)
+            <MudGrid Class="mt-4">
+                @if (_organizations != null && _organizations.Items != null && _organizations.Items.Any())
                 {
-                    <MudItem xs="12" sm="6" md="4" lg="3">
-                        <MudCard Class="ma-2" Style="height: 100%;">
-                            <MudCardMedia Image="@organization.ImageUrl" Height="140" />
-                            <MudCardContent>
-                                <MudText Typo="Typo.h6">@organization.Name</MudText>
-                                <MudText Typo="Typo.body2" Class="mb-2">@organization.Description</MudText>
-                                <MudText Typo="Typo.caption" Color="Color.Primary">Users: @organization.UserCount</MudText>
-                            </MudCardContent>
-                            <MudCardActions>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToOrganization(organization.Id)">
-                                    View
-                                </MudButton>
-                                @if (IsUserMemberOfOrganization(organization))
-                                {
-                                    <MudButton Variant="Variant.Text" Disabled="true">
-                                        Member
+                    @foreach (var organization in _organizations.Items)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Class="ma-2" Style="height: 100%;">
+                                <MudCardContent>
+                                    <MudImage Src="@GetOrganizationBanner(organization.BannerUrl)" Alt="Organization Banner" Style="width: 100%; height: 180px;" />
+                                    <MudAvatar Image="@GetOrganizationImage(organization.ImageUrl)" Size="Size.Large" Class="avatar-overlay" />
+                                    <MudText Typo="Typo.h6" Class="mt-4">@organization.Name</MudText>
+                                    <MudText Typo="Typo.body2" Class="mb-2">@organization.Description</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Primary">Users: @organization.UserCount</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToOrganization(organization.Id)">
+                                        View
                                     </MudButton>
-                                }
-                                else
-                                {
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => FollowOrganization(organization.Id)">
-                                        Follow
-                                    </MudButton>
-                                }
-                            </MudCardActions>
-                        </MudCard>
-                    </MudItem>
+                                    @if (IsUserMemberOfOrganization(organization))
+                                    {
+                                        <MudButton Variant="Variant.Text" Disabled="true">
+                                            Member
+                                        </MudButton>
+                                    }
+                                    else
+                                    {
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => FollowOrganization(organization.Id)">
+                                            Follow
+                                        </MudButton>
+                                    }
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    }
                 }
-            }
-            else if (_organizations == null || _organizations.Items == null)
-            {
-                <MudText Typo="Typo.subtitle1" Color="Color.Secondary">Loading organizations...</MudText>
-            }
-            else
-            {
-                <MudText Typo="Typo.subtitle1" Color="Color.Secondary">No organizations found.</MudText>
-            }
-        </MudGrid>
+                else if (_organizations == null || _organizations.Items == null)
+                {
+                    <MudText Typo="Typo.subtitle1" Color="Color.Secondary">Loading organizations...</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.subtitle1" Color="Color.Secondary">No organizations found.</MudText>
+                }
+            </MudGrid>
 
-        <MudDivider Class="my-4" />
+            <MudDivider Class="my-4" />
 
-        <MudPagination @bind-SelectedPage="_currentPage" PageSizeOptions="@pageSizeOptions" PageSize="@_pageSize" 
-                       TotalItems="@_totalItems" OnPageChanged="OnPageChanged" />
+            <MudPagination @bind-SelectedPage="_currentPage" PageSizeOptions="@pageSizeOptions" PageSize="@_pageSize" 
+                           TotalItems="@_totalItems" OnPageChanged="OnPageChanged" />
 
-        <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">
-            Page @_currentPage of @_totalPages
-        </MudText>
-    </MudPaper>
+            <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">
+                Page @_currentPage of @_totalPages
+            </MudText>
+        </MudPaper>
     </MudContainer>
 </AuthWrapper>
 
@@ -153,5 +154,19 @@
     private bool IsUserMemberOfOrganization(OrganizationDto organization)
     {
         return organization.Users.Any(user => user.Id == IdentityService.UserDto.Id);
+    }
+
+    private string GetOrganizationImage(string imageUrl)
+    {
+        return string.IsNullOrEmpty(imageUrl) 
+            ? "/images/default_organization_profile_image.png" 
+            : imageUrl;
+    }
+
+    private string GetOrganizationBanner(string bannerUrl)
+    {
+        return string.IsNullOrEmpty(bannerUrl)
+            ? "/images/default_banner_image.png"
+            : bannerUrl;
     }
 }

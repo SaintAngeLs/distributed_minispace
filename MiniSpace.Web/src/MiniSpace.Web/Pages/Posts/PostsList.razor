@@ -37,11 +37,11 @@
                     <MudItem xs="12">
                         <MudCard Class="post-card mb-4" Elevation="2">
                             <MudCardContent>
-                                <MudGrid justify-start AlignItems="AlignItems.Center">
-                                    <MudItem xs="2" Class="pr-2">
+                                <MudGrid justify-start AlignItems="Center">
+                                    <MudItem xs="1" Class="pr-2">
                                         <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId)" />
                                     </MudItem>
-                                    <MudItem xs="10">
+                                    <MudItem xs="11">
                                         <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId)</MudText>
                                         <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
                                     </MudItem>
@@ -56,7 +56,7 @@
 
                                 @if (reactionsSummaries.TryGetValue(post.Id, out var reactionsSummary))
                                 {
-                                    <MudGrid Class="mt-2" GutterSize="0" AlignItems="Center">
+                                    <MudGrid Class="mt-2" GutterSize="0" AlignItems="Center" Spacing="3">
                                         @foreach (var reaction in reactionsSummary.ReactionsWithCounts.OrderByDescending(r => r.Value))
                                         {
                                             <MudItem Class="d-flex align-center">
@@ -72,23 +72,35 @@
                                             </MudText>
                                         </MudItem>
                                     </MudGrid>
-
                                 }
                             </MudCardContent>
-                            <MudCardActions Class="justify-between">
-                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">View</MudButton>
-                                
-                                <MudMenu @ref="reactionMenu" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-                                    @foreach (var reactionType in Enum.GetValues(typeof(ReactionType)).Cast<ReactionType>())
-                                    {
-                                        <MudMenuItem OnClick="() => HandleReactionAsync(post, reactionType)">
-                                            @((MarkupString)reactionType.GetReactionIcon()) @reactionType.GetReactionText()
-                                        </MudMenuItem>
-                                    }
+
+                            <MudDivider />
+
+                            <MudCardActions Class="d-flex justify-around">
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToPostDetails(post.Id)">
+                                    <MudIcon Icon="@Icons.Material.Filled.Visibility" Class="mr-1" /> View
+                                </MudButton>
+
+                                <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" CloseOnSelection="true">
+                                    <ActivatorContent>
+                                        <MudButton Variant="Variant.Text" Color="Color.Secondary">
+                                            <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> React
+                                        </MudButton>
+                                    </ActivatorContent>
+                                    <ChildContent>
+                                        @foreach (var reactionType in Enum.GetValues(typeof(ReactionType)).Cast<ReactionType>())
+                                        {
+                                            <MudMenuItem OnClick="() => HandleReactionAsync(post, reactionType)" Class="d-flex align-center">
+                                                <MudIcon Icon="@reactionType.GetReactionIcon()" Class="mr-2" /> @reactionType.GetReactionText()
+                                            </MudMenuItem>
+                                        }
+                                    </ChildContent>
                                 </MudMenu>
-                                <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="(e) => reactionMenu.ToggleMenu(e)">React</MudButton>
-                                
-                                <MudButton Variant="Variant.Text" Color="Color.Secondary">Comment</MudButton>
+
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary">
+                                    <MudIcon Icon="@Icons.Material.Filled.Comment" Class="mr-1" /> Comment
+                                </MudButton>
                             </MudCardActions>
                         </MudCard>
                     </MudItem>
@@ -111,7 +123,6 @@
     private int pageSize = 10;
     private int totalItems = 0;
     private bool isLoading = true;
-    private MudMenu reactionMenu;
 
     protected override async Task OnInitializedAsync()
     {

@@ -43,41 +43,40 @@ namespace MiniSpace.Web.Areas.Posts
         }
         
         public async Task<HttpResponse<PagedResponseDto<PostDto>>> SearchPostsAsync(SearchPosts searchPosts)
-{
-    _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-
-    var query = HttpUtility.ParseQueryString(string.Empty);
-    if (searchPosts.UserId.HasValue)
-        query["UserId"] = searchPosts.UserId.ToString();
-    if (searchPosts.OrganizationId.HasValue)
-        query["OrganizationId"] = searchPosts.OrganizationId.ToString();
-    if (searchPosts.EventId.HasValue)
-        query["EventId"] = searchPosts.EventId.ToString();
-
-    query["PageNumber"] = searchPosts.Pageable.Page.ToString();
-    query["PageSize"] = searchPosts.Pageable.Size.ToString();
-    if (searchPosts.Pageable.Sort?.SortBy != null)
-        query["SortBy"] = string.Join(",", searchPosts.Pageable.Sort.SortBy);
-    query["Direction"] = searchPosts.Pageable.Sort?.Direction;
-
-    string queryString = query.ToString();
-    string url = $"posts/search?{queryString}";
-
-    try
-    {
-        var result = await _httpClient.GetAsync<PagedResponseDto<PostDto>>(url);
-        return new HttpResponse<PagedResponseDto<PostDto>>(result);
-    }
-    catch (Exception ex)
-    {
-        return new HttpResponse<PagedResponseDto<PostDto>>(new ErrorMessage
         {
-            Code = ex.Message,
-            Reason = ex.Message
-        });
-    }
-}
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
 
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            if (searchPosts.UserId.HasValue)
+                query["UserId"] = searchPosts.UserId.ToString();
+            if (searchPosts.OrganizationId.HasValue)
+                query["OrganizationId"] = searchPosts.OrganizationId.ToString();
+            if (searchPosts.EventId.HasValue)
+                query["EventId"] = searchPosts.EventId.ToString();
+
+            query["PageNumber"] = searchPosts.Pageable.Page.ToString();
+            query["PageSize"] = searchPosts.Pageable.Size.ToString();
+            if (searchPosts.Pageable.Sort?.SortBy != null)
+                query["SortBy"] = string.Join(",", searchPosts.Pageable.Sort.SortBy);
+            query["Direction"] = searchPosts.Pageable.Sort?.Direction;
+
+            string queryString = query.ToString();
+            string url = $"posts/search?{queryString}";
+
+            try
+            {
+                var result = await _httpClient.GetAsync<PagedResponseDto<PostDto>>(url);
+                return new HttpResponse<PagedResponseDto<PostDto>>(result);
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponse<PagedResponseDto<PostDto>>(new ErrorMessage
+                {
+                    Code = ex.Message,
+                    Reason = ex.Message
+                });
+            }
+        }
 
 
         public Task DeletePostAsync(Guid postId)
