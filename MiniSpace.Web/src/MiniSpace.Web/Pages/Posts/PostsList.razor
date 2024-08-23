@@ -39,7 +39,7 @@
                         <MudCard Class="post-card mb-4" Elevation="2">
                             <MudCardContent>
                                 <MudGrid>
-                                    <MudItem Class="d-flex justify-center" xs="2" lg="1" >
+                                    <MudItem Class="d-flex justify-center" xs="2" lg="1">
                                         <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId)" />
                                     </MudItem>
                                     <MudItem xs="10" lg="11">
@@ -328,7 +328,9 @@
             {
                 ReactionId = existingReaction.Id,
                 UserId = IdentityService.UserDto.Id,
-                NewReactionType = reactionType.ToString()
+                NewReactionType = reactionType.ToString(),
+                ContentType = "Post",
+                TargetType = targetType
             };
 
             var updateResult = await ReactionsService.UpdateReactionAsync(updateReaction);
@@ -533,3 +535,4 @@
         }
     }
 }
+

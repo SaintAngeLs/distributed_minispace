@@ -13,6 +13,7 @@
 @using System.Threading.Tasks
 @using System.Collections.Generic
 @using MiniSpace.Web.Areas.Reactions
+@using MiniSpace.Web.Areas.Reactions.CommandDto
 
 <AuthWrapper>
     <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
@@ -332,15 +333,15 @@
     {
         var existingReaction = await GetExistingReactionAsync(post.Id);
 
-        string targetType = post.OrganizationId.HasValue ? "Organization" : "User";
-
         if (existingReaction != null)
         {
             var updateReaction = new UpdateReactionDto
             {
                 ReactionId = existingReaction.Id,
-                UserId = IdentityService.UserDto.Id,
-                NewReactionType = reactionType.ToString()
+                UserId = currentUserId.Value,
+                NewReactionType = reactionType.ToString(),
+                ContentType = "Post",
+                TargetType = post.OrganizationId.HasValue ? "Organization" : "User"
             };
 
             var updateResult = await ReactionsService.UpdateReactionAsync(updateReaction);
@@ -358,11 +359,11 @@
         {
             var createReaction = new CreateReactionDto
             {
-                UserId = IdentityService.UserDto.Id,
+                UserId = currentUserId.Value,
                 ContentId = post.Id,
                 ContentType = "Post",
                 ReactionType = reactionType.ToString(),
-                TargetType = targetType
+                TargetType = post.OrganizationId.HasValue ? "Organization" : "User"
             };
 
             var createResult = await ReactionsService.CreateReactionAsync(createReaction);
@@ -383,7 +384,7 @@
     private async Task<ReactionDto> GetExistingReactionAsync(Guid postId)
     {
         var reactions = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
-        return reactions.FirstOrDefault(r => r.UserId == IdentityService.UserDto.Id);
+        return reactions.FirstOrDefault(r => r.UserId == currentUserId.Value);
     }
 
     private void ToggleCommentSection(Guid postId)
@@ -486,7 +487,7 @@
         }
 
         var commentContext = DetermineCommentContext(post);
-        var userId = IdentityService.GetCurrentUserId();
+        var userId = currentUserId.Value;
 
         var command = new CreateCommentCommand(
             commentId: Guid.NewGuid(),
@@ -520,7 +521,7 @@
         }
 
         var commentContext = DetermineCommentContext(post);
-        var userId = IdentityService.GetCurrentUserId();
+        var userId = currentUserId.Value;
 
         var command = new CreateCommentCommand(
             commentId: Guid.NewGuid(),

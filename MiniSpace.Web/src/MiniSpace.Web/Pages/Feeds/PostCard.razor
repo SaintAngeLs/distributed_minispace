@@ -9,10 +9,10 @@
 <MudCard Class="post-card mb-4" Elevation="2">
     <MudCardContent>
         <MudGrid>
-            <MudItem Class="d-flex justify-center" xs="2" lg="1">
+            <MudItem Class="d-flex justify-center" xs="3" lg="2">
                 <MudAvatar Size="Size.Large" Image="@GetUserAvatar(Post.UserId)" />
             </MudItem>
-            <MudItem xs="10" lg="11">
+            <MudItem xs="9" lg="10">
                 <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(Post.UserId)</MudText>
                 <MudText Typo="Typo.caption" Class="text-muted">@Post.CreatedAt.ToString("g")</MudText>
             </MudItem>
@@ -233,15 +233,18 @@
 
     private async Task HandleReactionAsync(ReactionType reactionType)
     {
-        var existingReaction = await ReactionsService.GetReactionsAsync(Post.Id, ReactionContentType.Post);
+        var reactions = await ReactionsService.GetReactionsAsync(Post.Id, ReactionContentType.Post);
+        var existingReaction = reactions.FirstOrDefault(r => r.UserId == IdentityService.UserDto.Id);
 
         if (existingReaction != null)
         {
             var updateReaction = new UpdateReactionDto
             {
-                ReactionId = existingReaction.FirstOrDefault()?.Id ?? Guid.NewGuid(),
+                ReactionId = existingReaction.Id,
                 UserId = IdentityService.UserDto.Id,
-                NewReactionType = reactionType.ToString()
+                NewReactionType = reactionType.ToString(),
+                ContentType = "Post",
+                TargetType = Post.OrganizationId.HasValue ? "Organization" : "User"
             };
 
             var updateResult = await ReactionsService.UpdateReactionAsync(updateReaction);
@@ -263,7 +266,7 @@
                 ContentId = Post.Id,
                 ContentType = "Post",
                 ReactionType = reactionType.ToString(),
-                TargetType = "User"
+                TargetType = Post.OrganizationId.HasValue ? "Organization" : "User"
             };
 
             var createResult = await ReactionsService.CreateReactionAsync(createReaction);

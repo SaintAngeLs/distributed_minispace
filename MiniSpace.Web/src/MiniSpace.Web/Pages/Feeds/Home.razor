@@ -11,10 +11,13 @@
 <AuthWrapper>
     <MudContainer>
         <MudGrid>
-            <MudItem xs="12" sm="4">
+            <!-- Left Side: User Information -->
+            <MudItem xs="12" md="3" lg="3">
                 <UserInformation UserId="studentId" />
             </MudItem>
-            <MudItem xs="12" sm="4">
+
+            <!-- Middle Section: Discover What's New -->
+            <MudItem xs="12" md="6" lg="6">
                 <MudText Typo="Typo.h4" Align="Align.Center">Discover What's New</MudText>
                 @if (pageInitialized)
                 {
@@ -32,11 +35,13 @@
                     else
                     {
                         <MudText Typo="Typo.h6" Align="Align.Center">No activity found</MudText>
-                        <MudButton Variant="MudBlazor.Variant.Outlined" Color="MudBlazor.Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/events/search"))">Please join an event first</MudButton>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/events/search"))">Please join an event first</MudButton>
                     }
                 }
             </MudItem>
-            <MudItem xs="12" sm="4">
+
+            <!-- Right Side: User Related Content -->
+            <MudItem xs="12" md="3" lg="3">
                 <UserRelatedContent UserId="studentId" />
             </MudItem>
         </MudGrid>
@@ -62,7 +67,6 @@
             else
             {
                 posts = new List<PostDto>(); // Handle error gracefully
-                // Optionally, log the error or display a message
                 Console.WriteLine($"Error: {result.ErrorMessage.Reason}");
             }
             pageInitialized = true;
