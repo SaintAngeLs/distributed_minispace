@@ -86,7 +86,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                 await AddReactionAsync(reaction, contentType, targetType);
             }
 
-              // Publish the ReactionCreated event with all necessary details
             var reactionCreatedEvent = new ReactionCreated(
                 command.ReactionId,
                 command.UserId,
