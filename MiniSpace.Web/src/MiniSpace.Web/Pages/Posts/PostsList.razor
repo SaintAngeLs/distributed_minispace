@@ -38,11 +38,11 @@
                     <MudItem xs="12">
                         <MudCard Class="post-card mb-4" Elevation="2">
                             <MudCardContent>
-                                <MudGrid justify-start AlignItems="Center">
-                                    <MudItem xs="2" Class="pr-2">
+                                <MudGrid>
+                                    <MudItem Class="d-flex justify-center" xs="2" lg="1" >
                                         <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId)" />
                                     </MudItem>
-                                    <MudItem xs="10">
+                                    <MudItem xs="10" lg="11">
                                         <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(post.UserId)</MudText>
                                         <MudText Typo="Typo.caption" Class="text-muted">@post.CreatedAt.ToString("g")</MudText>
                                     </MudItem>
