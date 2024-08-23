@@ -110,7 +110,8 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .SubscribeCommand<CreatePost>()
                 .SubscribeCommand<UpdatePostsState>()
                 .SubscribeCommand<ChangePostState>()
-                .SubscribeEvent<MediaFileDeleted>();
+                .SubscribeEvent<MediaFileDeleted>()
+                .SubscribeEvent<CommentCreated>();
 
             return app;
         }

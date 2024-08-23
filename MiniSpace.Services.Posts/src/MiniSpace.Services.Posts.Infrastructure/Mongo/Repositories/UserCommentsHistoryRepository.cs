@@ -16,13 +16,20 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 
         public UserCommentsHistoryRepository(IMongoDatabase database)
         {
-            _collection = database.GetCollection<UserCommentsDocument>("user_comments");
+            _collection = database.GetCollection<UserCommentsDocument>("user_comments_history");
         }
-
+                
         public async Task SaveCommentAsync(Guid userId, Comment comment)
         {
             var filter = Builders<UserCommentsDocument>.Filter.Eq(uc => uc.UserId, userId);
-            var update = Builders<UserCommentsDocument>.Update.Push(uc => uc.Comments, comment.AsDocument());
+
+            var commentDocument = comment.AsDocument();
+
+            var update = Builders<UserCommentsDocument>.Update.Combine(
+                Builders<UserCommentsDocument>.Update.Push(uc => uc.Comments, commentDocument),
+                Builders<UserCommentsDocument>.Update.SetOnInsert(uc => uc.UserId, userId),
+                Builders<UserCommentsDocument>.Update.SetOnInsert(uc => uc.Id, Guid.NewGuid()) 
+            );
 
             await _collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
         }
