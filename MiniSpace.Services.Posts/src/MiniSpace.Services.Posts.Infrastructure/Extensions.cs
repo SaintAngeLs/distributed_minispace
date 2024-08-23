@@ -63,6 +63,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient<IUserEventPostRepository, UserEventPostMongoRepository>();
             builder.Services.AddTransient<IUserPostRepository, UserPostMongoRepository>();
             builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryRepository>();
+            builder.Services.AddTransient<IUserReactionsHistoryRepository, UserReactionsHistoryRepository>();
 
             builder.Services.AddSingleton<MLContext>(new MLContext());
             builder.Services.AddTransient<IPostRecommendationService, PostRecommendationService>();
@@ -94,6 +95,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .AddMongoRepository<UserPostDocument, Guid>("user_posts")
                 .AddMongoRepository<PostDocument, Guid>("posts")
                 .AddMongoRepository<UserCommentsDocument, Guid>("user_comments_history")
+                .AddMongoRepository<UserReactionDocument, Guid>("user_reactions_history")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
