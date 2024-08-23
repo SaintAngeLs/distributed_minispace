@@ -781,6 +781,14 @@ modules:
         downstream: posts-service/posts
         auth: true
 
+      - upstream: /users/{userId}/feed
+        method: GET
+        use: downstream
+        downstream: posts-service/posts/users/{userId}/feed
+        bind:
+          - userId:{userId}
+        auth: true
+
       - upstream: /search
         method: GET
         use: downstream
