@@ -7,7 +7,7 @@ using Convey.MessageBrokers;
 
 namespace MiniSpace.Services.Posts.Application.Events.External
 {
-    [Message("comments")]
+    [Message("reactions")]
     public class ReactionCreated : IEvent
     {
         public Guid ReactionId { get; }
