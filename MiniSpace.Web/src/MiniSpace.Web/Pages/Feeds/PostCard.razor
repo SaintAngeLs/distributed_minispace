@@ -203,7 +203,6 @@
     {
         if (string.IsNullOrWhiteSpace(NewCommentText))
         {
-            // Show a snackbar or other notification
             return;
         }
 
@@ -224,7 +223,7 @@
         if (response.IsSuccessStatusCode)
         {
             NewCommentText = string.Empty;
-            Comments = await LoadCommentsForPostAsync(); // Refresh comments
+            Comments = await LoadCommentsForPostAsync(); 
         }
         else
         {
