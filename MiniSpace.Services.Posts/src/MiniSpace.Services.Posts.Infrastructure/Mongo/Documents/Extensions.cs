@@ -72,5 +72,53 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 Visibility = post.Visibility.ToString().ToLowerInvariant()
             };
         }
+
+        public static CommentDocument AsDocument(this Comment comment)
+        {
+            return new CommentDocument
+            {
+                Id = comment.Id,
+                ContextId = comment.ContextId,
+                CommentContext = comment.CommentContext,
+                UserId = comment.UserId,
+                ParentId = comment.ParentId,
+                TextContent = comment.TextContent,
+                CreatedAt = comment.CreatedAt,
+                LastUpdatedAt = comment.LastUpdatedAt,
+                RepliesCount = comment.RepliesCount,
+                IsDeleted = comment.IsDeleted
+            };
+        }
+
+        public static Comment AsEntity(this CommentDocument document)
+        {
+            return new Comment(
+                document.Id,
+                document.ContextId,
+                document.CommentContext,
+                document.UserId,
+                document.ParentId,
+                document.TextContent,
+                document.CreatedAt,
+                document.LastUpdatedAt,
+                document.RepliesCount,
+                document.IsDeleted
+            );
+        }
+
+        public static UserCommentsDocument AsDocument(this IEnumerable<Comment> comments, Guid userId)
+        {
+            return new UserCommentsDocument
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Comments = comments.Select(comment => comment.AsDocument()).ToList()
+            };
+        }
+
+        public static IEnumerable<Comment> AsEntities(this UserCommentsDocument document)
+        {
+            return document.Comments.Select(doc => doc.AsEntity());
+        }
     }
 }
