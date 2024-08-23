@@ -1,6 +1,6 @@
 using System;
 
-namespace MiniSpace.Services.Reactions.Core.Entities
+namespace MiniSpace.Services.Posts.Core.Entities
 {
     public class Reaction
     {
