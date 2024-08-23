@@ -77,43 +77,17 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
 
         public async Task<PagedResponse<Comment>> BrowseCommentsAsync(BrowseCommentsRequest request)
         {
-            // Log the ContextId to ensure it is correct
-            Console.WriteLine($"Searching for OrganizationPostId: {request.ContextId}");
-
-            // Filter to find the document matching the provided OrganizationPostId (ContextId)
             var filterDefinition = Builders<OrganizationPostCommentDocument>.Filter.Eq(d => d.OrganizationPostId, request.ContextId);
 
-            // Fetch the document(s) that match the filter
             var document = await _repository.Collection.Find(filterDefinition).FirstOrDefaultAsync();
 
-            // Log the document found or not found
             if (document == null)
             {
-                Console.WriteLine("No document found with the specified OrganizationPostId.");
                 return new PagedResponse<Comment>(Enumerable.Empty<Comment>(), request.PageNumber, request.PageSize, 0);
             }
 
-            // Log the found document details
-            Console.WriteLine($"Found document: ID = {document.Id}, OrganizationPostId = {document.OrganizationPostId}");
-
-            // Extract the comments from the document and map them to the Comment entity
             var comments = document.Comments.Select(c => c.AsEntity()).ToList();
-
-            // Log the IDs of all comments retrieved
-            if (comments.Any())
-            {
-                Console.WriteLine("Comments found:");
-                foreach (var comment in comments)
-                {
-                    Console.WriteLine($"Comment ID: {comment.Id}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No comments found.");
-            }
-
-            // Return the comments as a PagedResponse
+           
             return new PagedResponse<Comment>(comments, request.PageNumber, request.PageSize, comments.Count);
         }
     }
