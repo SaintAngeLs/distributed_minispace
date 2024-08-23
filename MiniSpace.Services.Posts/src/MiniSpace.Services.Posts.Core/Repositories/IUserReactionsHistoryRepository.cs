@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Wrappers;
 
-namespace MiniSpace.Services.Reactions.Core.Repositories
+namespace MiniSpace.Services.Posts.Core.Repositories
 {
     public interface IUserReactionsHistoryRepository
     {
