@@ -42,6 +42,7 @@ using MiniSpace.Services.Posts.Infrastructure.Services.Workers;
 using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Events.Infrastructure.Services.Clients;
 using MiniSpace.Services.Posts.Application.Services.Clients;
+using Microsoft.ML;
 
 namespace MiniSpace.Services.Posts.Infrastructure
 {
@@ -62,6 +63,8 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient<IUserEventPostRepository, UserEventPostMongoRepository>();
             builder.Services.AddTransient<IUserPostRepository, UserPostMongoRepository>();
             builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryRepository>();
+
+            builder.Services.AddSingleton<MLContext>(new MLContext());
             builder.Services.AddTransient<IPostRecommendationService, PostRecommendationService>();
 
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();

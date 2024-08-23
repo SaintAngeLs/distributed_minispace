@@ -13,19 +13,23 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
     public class PostRecommendationService : IPostRecommendationService
     {
         private readonly MLContext _mlContext;
-        private readonly ITransformer _model; 
 
-        public PostRecommendationService(MLContext mlContext, ITransformer model)
+        public PostRecommendationService(MLContext mlContext)
         {
             _mlContext = mlContext;
-            _model = model;
         }
 
         public async Task<IEnumerable<(PostDto Post, double Score)>> RankPostsByUserInterestAsync(Guid userId, IEnumerable<PostDto> posts, IDictionary<string, double> userInterests)
         {
-            var predictionEngine = _mlContext.Model.CreatePredictionEngine<PostInputModel, PostPrediction>(_model);
+            // Step 1: Prepare the training data
+            var trainingData = PrepareTrainingData(userInterests, posts);
 
+            // Step 2: Train the model
+            var model = TrainModel(trainingData);
+
+            // Step 3: Use the trained model to rank posts
             var rankedPosts = new List<(PostDto Post, double Score)>();
+            var predictionEngine = _mlContext.Model.CreatePredictionEngine<PostInputModel, PostPrediction>(model);
 
             foreach (var post in posts)
             {
@@ -39,6 +43,30 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
             }
 
             return rankedPosts.OrderByDescending(x => x.Score);
+        }
+
+        private IDataView PrepareTrainingData(IDictionary<string, double> userInterests, IEnumerable<PostDto> posts)
+        {
+            var inputData = posts.Select(post => new PostInputModel
+            {
+                TextContent = post.TextContent,
+                Label = (float)userInterests.Where(ui => post.TextContent.Contains(ui.Key))
+                                     .Sum(ui => ui.Value) // Sum the relevance scores of matched keywords
+            });
+
+            return _mlContext.Data.LoadFromEnumerable(inputData);
+        }
+
+        private ITransformer TrainModel(IDataView trainingData)
+        {
+            var dataProcessPipeline = _mlContext.Transforms.Text.FeaturizeText("Features", nameof(PostInputModel.TextContent));
+
+            var trainer = _mlContext.Regression.Trainers.Sdca(labelColumnName: "Label", featureColumnName: "Features");
+
+            var trainingPipeline = dataProcessPipeline.Append(trainer);
+
+            var model = trainingPipeline.Fit(trainingData);
+            return model;
         }
     }
 }

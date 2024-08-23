@@ -12,6 +12,7 @@ using MiniSpace.Services.Posts.Core.Wrappers;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Requests;
+using Newtonsoft.Json;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 {
@@ -34,16 +35,20 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
         {
             // Step 1: Retrieve user comments history
             var userComments = await _userCommentsHistoryRepository.GetUserCommentsAsync(query.UserId);
+            _logger.LogInformation("Handling GetUserFeed query: {Query}", JsonConvert.SerializeObject(query));
+
             
             // Step 2: Analyze the user's comments to infer interests and calculate coefficients
             var userInterests = AnalyzeUserComments(userComments);
 
             // Step 3: Fetch posts
-            var allPostsRequest = new BrowseRequest
+             var allPostsRequest = new BrowseRequest
             {
                 UserId = query.UserId,
-                PageNumber = 1,
-                PageSize = int.MaxValue, 
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                SortBy = new List<string> { query.SortBy },
+                Direction = query.Direction
             };
 
             var allPostsResult = await _postsService.BrowsePostsAsync(allPostsRequest);
