@@ -2,7 +2,6 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Reactions.Application.Exceptions;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Repositories;
-using MiniSpace.Services.Reactions.Application.Services.Clients;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +11,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
 {
     public class UpdateReactionHandler : ICommandHandler<UpdateReaction>
     {
-        private readonly IReactionRepository _reactionRepository;
         private readonly IReactionsOrganizationsEventRepository _orgEventRepository;
         private readonly IReactionsOrganizationsPostRepository _orgPostRepository;
         private readonly IReactionsUserEventRepository _userEventRepository;
@@ -24,7 +22,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
         private readonly IAppContext _appContext;
 
         public UpdateReactionHandler(
-            IReactionRepository reactionRepository,
             IReactionsOrganizationsEventRepository orgEventRepository,
             IReactionsOrganizationsPostRepository orgPostRepository,
             IReactionsUserEventRepository userEventRepository,
@@ -35,7 +32,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             IReactionsUserPostCommentsRepository userPostCommentsRepository,
             IAppContext appContext)
         {
-            _reactionRepository = reactionRepository;
             _orgEventRepository = orgEventRepository;
             _orgPostRepository = orgPostRepository;
             _userEventRepository = userEventRepository;
@@ -49,43 +45,63 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdateReaction command, CancellationToken cancellationToken = default)
         {
-            ValidateStudentIdentity(command);
+            ValidateUserIdentity(command);
 
-            var reaction = await _reactionRepository.GetByIdAsync(command.ReactionId, command.UserId);
+            var contentType = ParseContentType(command.ContentType);
+            var targetType = ParseTargetType(command.TargetType);
+
+            // Attempt to find the reaction in the appropriate repository using the ReactionId
+            var reaction = await FindExistingReactionAsync(command.ReactionId, contentType, targetType);
             if (reaction == null)
             {
                 throw new ReactionNotFoundException(command.ReactionId);
             }
 
+            // Ensure the reaction belongs to the correct user
             if (reaction.UserId != command.UserId)
             {
                 throw new UnauthorizedReactionAccessException(command.ReactionId, command.UserId);
             }
 
+            // Update the reaction type
             var newReactionType = ParseReactionType(command.NewReactionType);
             reaction.UpdateReactionType(newReactionType);
 
-            var contentType = reaction.ContentType;
-            var targetType = reaction.TargetType;
+            // Update the reaction in the appropriate repository
+            await UpdateReactionAsync(reaction, contentType, targetType);
+        }
 
+        private async Task<Reaction> FindExistingReactionAsync(Guid reactionId, ReactionContentType contentType, ReactionTargetType targetType)
+        {
+            // Retrieve the reaction from the correct repository based on content and target type
+            return contentType switch
+            {
+                ReactionContentType.Event when targetType == ReactionTargetType.Organization => await _orgEventRepository.GetByIdAsync(reactionId),
+                ReactionContentType.Event when targetType == ReactionTargetType.User => await _userEventRepository.GetByIdAsync(reactionId),
+                ReactionContentType.Post when targetType == ReactionTargetType.Organization => await _orgPostRepository.GetByIdAsync(reactionId),
+                ReactionContentType.Post when targetType == ReactionTargetType.User => await _userPostRepository.GetByIdAsync(reactionId),
+                ReactionContentType.Comment when targetType == ReactionTargetType.Organization => await _orgEventCommentsRepository.GetByIdAsync(reactionId) ?? await _orgPostCommentsRepository.GetByIdAsync(reactionId),
+                ReactionContentType.Comment when targetType == ReactionTargetType.User => await _userEventCommentsRepository.GetByIdAsync(reactionId) ?? await _userPostCommentsRepository.GetByIdAsync(reactionId),
+                _ => null,
+            };
+        }
+
+        private async Task UpdateReactionAsync(Reaction reaction, ReactionContentType contentType, ReactionTargetType targetType)
+        {
             switch (contentType)
             {
                 case ReactionContentType.Event when targetType == ReactionTargetType.Organization:
                     await _orgEventRepository.UpdateAsync(reaction);
                     break;
-
                 case ReactionContentType.Event when targetType == ReactionTargetType.User:
                     await _userEventRepository.UpdateAsync(reaction);
                     break;
-
                 case ReactionContentType.Post when targetType == ReactionTargetType.Organization:
                     await _orgPostRepository.UpdateAsync(reaction);
                     break;
-
                 case ReactionContentType.Post when targetType == ReactionTargetType.User:
                     await _userPostRepository.UpdateAsync(reaction);
                     break;
-
                 case ReactionContentType.Comment when targetType == ReactionTargetType.Organization:
                     if (await _orgEventCommentsRepository.ExistsAsync(reaction.ContentId))
                     {
@@ -96,7 +112,6 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                         await _orgPostCommentsRepository.UpdateAsync(reaction);
                     }
                     break;
-
                 case ReactionContentType.Comment when targetType == ReactionTargetType.User:
                     if (await _userEventCommentsRepository.ExistsAsync(reaction.ContentId))
                     {
@@ -107,13 +122,12 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                         await _userPostCommentsRepository.UpdateAsync(reaction);
                     }
                     break;
-
                 default:
                     throw new InvalidReactionContentTypeException(contentType.ToString());
             }
         }
 
-        private void ValidateStudentIdentity(UpdateReaction command)
+        private void ValidateUserIdentity(UpdateReaction command)
         {
             var identity = _appContext.Identity;
 
@@ -121,6 +135,26 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
             {
                 throw new UnauthorizedReactionAccessException(command.ReactionId, command.UserId);
             }
+        }
+
+        private ReactionContentType ParseContentType(string contentType)
+        {
+            if (!Enum.TryParse<ReactionContentType>(contentType, true, out var parsedContentType))
+            {
+                throw new InvalidReactionContentTypeException(contentType);
+            }
+
+            return parsedContentType;
+        }
+
+        private ReactionTargetType ParseTargetType(string targetType)
+        {
+            if (!Enum.TryParse<ReactionTargetType>(targetType, true, out var parsedTargetType))
+            {
+                throw new InvalidReactionTargetTypeException(targetType);
+            }
+
+            return parsedTargetType;
         }
 
         private ReactionType ParseReactionType(string reactionType)
