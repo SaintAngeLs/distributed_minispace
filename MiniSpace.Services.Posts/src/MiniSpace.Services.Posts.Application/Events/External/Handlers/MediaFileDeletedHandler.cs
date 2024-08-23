@@ -4,7 +4,7 @@ using MiniSpace.Services.Posts.Core.Repositories;
 
 namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
 {
-    public class MediaFileDeletedHandler: IEventHandler<MediaFileDeleted>
+    public class MediaFileDeletedHandler : IEventHandler<MediaFileDeleted>
     {
         private readonly IPostRepository _postRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
@@ -17,15 +17,24 @@ namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
 
         public async Task HandleAsync(MediaFileDeleted @event, CancellationToken cancellationToken)
         {
-            if(@event.Source.ToLowerInvariant() != "post")
+            var relevantContextTypes = new[]
+            {
+                "PostFileUserEvent",
+                "PostFileUser",
+                "PostFileOrganizationEvent",
+                "PostFileOrganization",
+                "PostFile"
+            };
+
+            if (!relevantContextTypes.Contains(@event.Source) || !@event.PostId.HasValue)
             {
                 return;
             }
 
-            var post = await _postRepository.GetAsync(@event.SourceId);
+            var post = await _postRepository.GetAsync(@event.PostId.Value);
             if (post != null)
             {
-                post.RemoveMediaFile(@event.MediaFileId, _dateTimeProvider.Now);
+                post.RemoveMediaFile(@event.MediaFileUrl, _dateTimeProvider.Now);
                 await _postRepository.UpdateAsync(post);
             }
         }

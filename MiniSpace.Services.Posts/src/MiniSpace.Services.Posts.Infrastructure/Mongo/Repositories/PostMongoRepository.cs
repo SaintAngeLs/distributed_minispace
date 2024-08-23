@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;
+using MiniSpace.Services.Posts.Core.Requests;
+using MiniSpace.Services.Posts.Core.Wrappers;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -65,16 +67,23 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
             return pagedEvents;
         }
 
-        public async Task<(IEnumerable<Post> posts, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseCommentsAsync(int pageNumber, int pageSize, 
-            IEnumerable<Guid> eventsIds, IEnumerable<string> sortBy, string direction)
+        public async Task<PagedResponse<Post>> BrowsePostsAsync(BrowseRequest request)
         {
-            var filterDefinition = Extensions.ToFilterDefinition(eventsIds);
-            var sortDefinition = Extensions.ToSortDefinition(sortBy, direction);
+            var filterDefinition = Builders<PostDocument>.Filter.Empty;
+            var sortDefinition = Extensions.ToSortDefinition(request.SortBy, request.Direction);
 
-            var pagedEvents = await BrowseAsync(filterDefinition, sortDefinition, pageNumber, pageSize);
+            var totalItems = await _repository.Collection.CountDocumentsAsync(filterDefinition);
 
-            return (pagedEvents.data.Select(e => e.AsEntity()), pageNumber, pageSize,
-                pagedEvents.totalPages, pagedEvents.totalElements);
+            var posts = await _repository.Collection
+                .Find(filterDefinition)
+                .Sort(sortDefinition)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Limit(request.PageSize)
+                .ToListAsync();
+
+            var postEntities = posts.Select(p => p.AsEntity());
+
+            return new PagedResponse<Post>(postEntities, request.PageNumber, request.PageSize, (int)totalItems);
         }
     }    
 }

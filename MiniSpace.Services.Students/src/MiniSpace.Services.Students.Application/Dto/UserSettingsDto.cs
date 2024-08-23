@@ -17,6 +17,9 @@ namespace MiniSpace.Services.Students.Application.Dto
         public string InterestsVisibility { get; set; }
         public string ContactEmailVisibility { get; set; }
         public string PhoneNumberVisibility { get; set; }
+        public string ProfileImageVisibility { get; set; }
+        public string BannerImageVisibility { get; set; }
+        public string GalleryVisibility { get; set; }
         public string PreferredLanguage { get; set; }
         public string FrontendVersion { get; set; }
     }

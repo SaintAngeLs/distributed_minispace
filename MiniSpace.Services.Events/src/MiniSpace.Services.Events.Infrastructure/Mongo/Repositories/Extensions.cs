@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
@@ -89,17 +90,19 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             return filterDefinition;
         }
         
-        public static FilterDefinition<EventDocument> AddOrganizerNameFilter (
+       public static FilterDefinition<EventDocument> AddOrganizerNameFilter(
             this FilterDefinition<EventDocument> filterDefinition, string organizer)
         {
+            // Assuming there is no organization name and using OrganizationId instead
             if (!string.IsNullOrWhiteSpace(organizer))
-            {   
-                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Organizer.OrganizationName, 
+            {
+                filterDefinition &= FilterDefinitionBuilder.Regex(x => x.Organizer.OrganizationId.ToString(),
                     new BsonRegularExpression(new Regex($".*{organizer}.*", RegexOptions.IgnoreCase)));
             }
 
             return filterDefinition;
         }
+
         
         public static FilterDefinition<EventDocument> AddOrganizerIdFilter (this FilterDefinition<EventDocument> filterDefinition, Guid organizerId)
         {
@@ -135,7 +138,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             }
             else
             {
-                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, new[] { State.Published, State.Archived });
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, new[] { State.Published, State.ToBePublished, State.Archived });
             }
 
             return filterDefinition;
@@ -170,9 +173,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             IEnumerable<Guid> organizationsEnumerable)
         {
             var organizations = organizationsEnumerable.ToList();
+
             if (organizations.Count > 0)
             {
-                filterDefinition &= FilterDefinitionBuilder.In(x => x.Organizer.OrganizationId, organizations);
+                var organizationFilter = Builders<EventDocument>.Filter.And(
+                    Builders<EventDocument>.Filter.Ne(e => e.Organizer.OrganizationId, null),
+                    Builders<EventDocument>.Filter.In(e => (Guid)e.Organizer.OrganizationId, organizations)
+                );
+
+                filterDefinition &= organizationFilter;
             }
 
             return filterDefinition;
@@ -201,6 +210,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             var sortCombined = sortDefinitionBuilder.Combine(sortStateDefinition.Concat(sortDefinition));
 
             return sortCombined;
+        }
+    }
+
+    internal class FieldDefinitionBuilder<T>
+    {
+        public FieldDefinitionBuilder()
+        {
         }
     }
 }

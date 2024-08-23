@@ -2,56 +2,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using Convey.CQRS.Commands;
+using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Application.Commands
 {
     public class CreateEvent : ICommand
     {
-        public Guid EventId { get; }
-        public string Name { get; }
-        public Guid OrganizerId { get; }
-        public Guid OrganizationId { get; }
-        public Guid RootOrganizationId { get; }
-        public string StartDate { get; }
-        public string EndDate { get; }
-        public string BuildingName { get; }
-        public string Street { get; }
-        public string BuildingNumber { get; }
-        public string ApartmentNumber { get; }
-        public string City { get; }
-        public string ZipCode { get; }
-        public IEnumerable<Guid> MediaFiles { get; }
-        public string Description { get; }
-        public int Capacity { get; }
-        public decimal Fee { get; }
-        public string Category { get; }
-        public string PublishDate { get; }
+        public Guid EventId { get; set; }
+        public string Name { get; set; }
+        public string OrganizerType { get; set; }  
+        public Guid OrganizerId { get; set; }
+        public Guid? OrganizationId { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public string BuildingName { get; set; }
+        public string Street { get; set; }
+        public string BuildingNumber { get; set; }
+        public string ApartmentNumber { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
+        public string Country { get; set; }  
+        public IEnumerable<string> MediaFilesUrl { get; set; }
+        public string BannerUrl { get; set; } 
+        public string Description { get; set; }
+        public int Capacity { get; set; }
+        public decimal Fee { get; set; }
+        public string Category { get; set; } 
+        public string PublishDate { get; set; }
+        public string Visibility { get; set; } 
+        public EventSettingsCommand Settings { get; set; }
 
-        public CreateEvent(Guid eventId, string name, Guid organizerId, Guid organizationId, Guid rootOrganizationId,
-            string startDate, string endDate, string buildingName, string street, string buildingNumber, 
-            string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles, string description, 
-            int capacity, decimal fee, string category, string publishDate)
+        public class EventSettingsCommand
         {
-            EventId = eventId;
-            Name = name;
-            OrganizerId = organizerId;
-            OrganizationId = organizationId;
-            RootOrganizationId = rootOrganizationId;
-            StartDate = startDate;
-            EndDate = endDate;
-            BuildingName = buildingName;
-            Street = street;
-            BuildingNumber = buildingNumber;
-            ApartmentNumber = apartmentNumber;
-            City = city;
-            ZipCode = zipCode;
-            MediaFiles = mediaFiles;
-            Description = description;
-            Capacity = capacity;
-            Fee = fee;
-            Category = category;
-            PublishDate = publishDate;
+            public bool RequiresApproval { get; set; }
+            public bool IsOnlineEvent { get; set; }
+            public bool IsPrivate { get; set; }
+            public bool RequiresRSVP { get; set; }
+            public bool AllowsGuests { get; set; }
+            public bool ShowAttendeesPublicly { get; set; }
+            public bool SendReminders { get; set; }
+            public int ReminderDaysBefore { get; set; }
+            public bool EnableChat { get; set; }
+            public bool AllowComments { get; set; }
+            public bool RequiresPayment { get; set; }
+            public string PaymentMethod { get; set; }
+            public string PaymentReceiverDetails { get; set; }
+            public string PaymentGateway { get; set; }
+            public bool IssueTickets { get; set; }
+            public int MaxTicketsPerPerson { get; set; }
+            public decimal TicketPrice { get; set; }
+            public bool RecordEvent { get; set; }
+            public string CustomTermsAndConditions { get; set; }
+            public IDictionary<string, string> CustomFields { get; set; } = new Dictionary<string, string>();
         }
+
     }
 }

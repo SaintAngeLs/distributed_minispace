@@ -13,7 +13,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Exceptions
         public object Map(Exception exception, object message)
             => exception switch
             {
-                // TODO: Add more exceptions
                 AuthorizedUserIsNotAnOrganizerException ex => new CreateEventRejected(ex.UserId, ex.Message, ex.Code),
                 EventNotFoundException ex 
                     => message switch

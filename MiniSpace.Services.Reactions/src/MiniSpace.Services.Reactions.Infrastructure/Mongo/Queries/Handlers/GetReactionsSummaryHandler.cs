@@ -41,13 +41,13 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Queries.Handlers
             Guid? authUserReactionId = null;
             ReactionType? authUserReactionType = null;
 
-            if (identity.IsAuthenticated && reactions.Exists(x => x.StudentId == identity.Id)) {
-                var reactionDocument = reactions.Find(x => x.StudentId == identity.Id);
+            if (identity.IsAuthenticated && reactions.Exists(x => x.UserId == identity.Id)) {
+                var reactionDocument = reactions.Find(x => x.UserId == identity.Id);
                 authUserReactionId = reactionDocument.Id;
-                authUserReactionType = reactionDocument.Type;
+                authUserReactionType = reactionDocument.ReactionType;
             }
 
-            ReactionType dominant = reactions.GroupBy(x => x.Type)
+            ReactionType dominant = reactions.GroupBy(x => x.ReactionType)
                 .OrderBy(x => x.ToList().Count).Last().Key;
             return new ReactionsSummaryDto(nrReactions, dominant, authUserReactionId, authUserReactionType);
         }

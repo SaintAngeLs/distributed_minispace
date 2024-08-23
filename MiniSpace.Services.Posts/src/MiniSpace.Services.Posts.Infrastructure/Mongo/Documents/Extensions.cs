@@ -8,45 +8,51 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Post AsEntity(this PostDocument document)
-            => new Post(document.Id, document.EventId, document.OrganizerId, document.TextContent,
-                document.MediaFiles, document.CreatedAt, document.State, document.PublishDate, document.UpdatedAt);
+        => new Post(
+            document.Id,
+            document.UserId,
+            document.OrganizationId,
+            document.EventId,
+            document.TextContent,
+            document.MediaFiles,
+            document.CreatedAt,
+            document.State,
+            document.Context,
+            document.PublishDate,
+            document.Visibility,  
+            document.UpdatedAt);
 
         public static PostDocument AsDocument(this Post entity)
             => new PostDocument()
             {
                 Id = entity.Id,
+                UserId = entity.UserId,
+                OrganizationId = entity.OrganizationId,
                 EventId = entity.EventId,
-                OrganizerId = entity.OrganizerId,
                 TextContent = entity.TextContent,
                 MediaFiles = entity.MediaFiles,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 State = entity.State,
-                PublishDate = entity.PublishDate
+                PublishDate = entity.PublishDate,
+                Context = entity.Context,
+                Visibility = entity.Visibility 
             };
 
         public static PostDto AsDto(this PostDocument document)
             => new PostDto()
             {
                 Id = document.Id,
+                UserId = document.UserId,
+                OrganizationId = document.OrganizationId,
                 EventId = document.EventId,
-                OrganizerId = document.OrganizerId,
                 TextContent = document.TextContent,
                 MediaFiles = document.MediaFiles,
                 CreatedAt = document.CreatedAt,
                 UpdatedAt = document.UpdatedAt,
                 State = document.State.ToString().ToLowerInvariant(),
-                PublishDate = document.PublishDate
+                PublishDate = document.PublishDate,
+                Visibility = document.Visibility.ToString().ToLowerInvariant() 
             };
-        
-        public static Event AsEntity(this EventDocument document)
-            => new Event(document.Id, document.OrganizerId);
-
-        public static EventDocument AsDocument(this Event entity)
-            => new EventDocument
-            {
-                Id = entity.Id,
-                OrganizerId = entity.OrganizerId
-            };
-    }    
+    }
 }

@@ -32,5 +32,9 @@ namespace MiniSpace.Services.Students.Application.Dto
         public IEnumerable<Guid> SignedUpEvents { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
+
+        public UserSettingsDto UserSettings { get; set; }
+
+        public List<GalleryImageDto> GalleryOfImageUrls { get; set; }
     }
 }

@@ -23,6 +23,12 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         public Guid? ParentOrganizationId { get; private set; }
         public string DefaultRoleName { get; private set; }
 
+        public string Address { get; private set; }
+        public string Country { get; private set; }
+        public string City { get; private set; }
+        public string Telephone { get; private set; }
+        public string Email { get; private set; }
+
         public IEnumerable<Organization> SubOrganizations
         {
             get => _subOrganizations;
@@ -54,15 +60,20 @@ namespace MiniSpace.Services.Organizations.Core.Entities
         }
 
          public Organization(Guid id, 
-                        string name, 
-                        string description, 
-                        OrganizationSettings settings, 
-                        Guid ownerId, 
-                        string bannerUrl = null, 
-                        string imageUrl = null, 
-                        Guid? parentOrganizationId = null, 
-                        IEnumerable<Organization> organizations = null, 
-                        string defaultRoleName = "User")
+                            string name, 
+                            string description, 
+                            OrganizationSettings settings, 
+                            Guid ownerId, 
+                            string bannerUrl = null, 
+                            string imageUrl = null, 
+                            Guid? parentOrganizationId = null, 
+                            string defaultRoleName = "User", 
+                            string address = null, 
+                            string country = null, 
+                            string city = null, 
+                            string telephone = null, 
+                            string email = null, 
+                            IEnumerable<Organization> organizations = null)
         {
             Id = id;
             Name = name;
@@ -74,6 +85,13 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             ParentOrganizationId = parentOrganizationId;
             SubOrganizations = organizations ?? Enumerable.Empty<Organization>();
             DefaultRoleName = defaultRoleName;
+
+            Address = address;
+            Country = country;
+            City = city;
+            Telephone = telephone;
+            Email = email;
+
             AddEvent(new OrganizationCreated(Id, Name, Description, id, ParentOrganizationId ?? Guid.Empty, OwnerId, DateTime.UtcNow));
             InitializeDefaultRoles();
         }
@@ -459,7 +477,16 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             parent._subOrganizations.Remove(organization);
         }
 
-         public void UpdateDetails(string name, string description, OrganizationSettings settings, string bannerUrl, string imageUrl)
+          public void UpdateDetails(string name, 
+                                  string description, 
+                                  OrganizationSettings settings, 
+                                  string bannerUrl, 
+                                  string imageUrl, 
+                                  string address = null, 
+                                  string country = null, 
+                                  string city = null, 
+                                  string telephone = null, 
+                                  string email = null)
         {
             if (name != null && Name != name)
             {
@@ -489,6 +516,32 @@ namespace MiniSpace.Services.Organizations.Core.Entities
             {
                 ImageUrl = imageUrl;
                 AddEvent(new OrganizationImageUrlUpdated(Id, ImageUrl, DateTime.UtcNow));
+            }
+
+            // Update new properties
+            if (address != null && Address != address)
+            {
+                Address = address;
+            }
+
+            if (country != null && Country != country)
+            {
+                Country = country;
+            }
+
+            if (city != null && City != city)
+            {
+                City = city;
+            }
+
+            if (telephone != null && Telephone != telephone)
+            {
+                Telephone = telephone;
+            }
+
+            if (email != null && Email != email)
+            {
+                Email = email;
             }
         }
 

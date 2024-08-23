@@ -40,7 +40,7 @@ namespace MiniSpace.Web.DTO.Notifications
                     // return $"/reports/{notification.RelatedEntityId}";
 
                 default:
-                    return $"/student-details/{notification.RelatedEntityId}";
+                    return $"/user-details/{notification.RelatedEntityId}";
             }
         }
     }

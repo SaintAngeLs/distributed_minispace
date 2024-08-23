@@ -48,10 +48,13 @@ namespace MiniSpace.Services.Organizations.Infrastructure
         public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
         {
             builder.Services.AddTransient<IOrganizationRepository, OrganizationMongoRepository>();
+            builder.Services.AddScoped<IOrganizationReadOnlyRepository, OrganizationMongoRepository>();
             builder.Services.AddTransient<IOrganizationGalleryRepository, OrganizationGalleryMongoRepository>();
             builder.Services.AddTransient<IOrganizationMembersRepository, OrganizationMembersMongoRepository>();
             builder.Services.AddTransient<IUserInvitationsRepository, UserInvitationsMongoRepository>();
             builder.Services.AddTransient<IOrganizationRolesRepository, OrganizationRolesMongoRepository>();
+            builder.Services.AddTransient<IOrganizationRequestsRepository, OrganizationRequestsMongoRepository>();
+            builder.Services.AddTransient<IUserOrganizationsRepository, UserOrganizationsMongoRepository>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
@@ -60,6 +63,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
+
+            builder.Services.AddGrpc();
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -81,6 +86,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .AddMongoRepository<OrganizationMembersDocument, Guid>("organization_members")
                 .AddMongoRepository<OrganizationInvitationDocument, Guid>("organization_invitations")
                 .AddMongoRepository<OrganizationRolesDocument, Guid>("organization_roles")
+                .AddMongoRepository<OrganizationRequestsDocument, Guid>("organization_requests")
+                .AddMongoRepository<UserOrganizationsDocument, Guid>("user_organizations")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -107,7 +114,11 @@ namespace MiniSpace.Services.Organizations.Infrastructure
                 .SubscribeCommand<UpdateOrganizationSettings>()
                 .SubscribeCommand<SetOrganizationVisibility>()
                 .SubscribeCommand<UpdateOrganization>()
+                .SubscribeCommand<FollowOrganization>()
+                .SubscribeCommand<AcceptFollowRequest>()
+                .SubscribeCommand<RejectFollowRequest>()
                 .SubscribeCommand<ManageFeed>()
+                .SubscribeCommand<LeaveOrganization>()
                 .SubscribeEvent<OrganizationImageUploaded>()
                 .SubscribeEvent<MediaFileDeleted>();
 

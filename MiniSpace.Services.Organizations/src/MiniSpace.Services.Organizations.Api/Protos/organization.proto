@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option csharp_namespace = "MiniSpace.Services.Organizations.Grpc";
+
+package organizations;
+
+service OrganizationService {
+  rpc GetOrganization(GetOrganizationRequest) returns (OrganizationDto);
+  rpc GetOrganizationDetails(GetOrganizationDetailsRequest) returns (OrganizationDetailsDto);
+  rpc GetRootOrganizations(EmptyRequest) returns (OrganizationsList);
+  rpc GetChildrenOrganizations(GetChildrenOrganizationsRequest) returns (OrganizationsList);
+  rpc GetAllChildrenOrganizations(GetAllChildrenOrganizationsRequest) returns (GuidsList);
+}
+
+message GetOrganizationRequest {
+  string organizationId = 1;
+}
+
+message GetOrganizationDetailsRequest {
+  string organizationId = 1;
+}
+
+message EmptyRequest {}
+
+message GetChildrenOrganizationsRequest {
+  string organizationId = 1;
+}
+
+message GetAllChildrenOrganizationsRequest {
+  string organizationId = 1;
+}
+
+message OrganizationDto {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string ownerId = 4;
+  string bannerUrl = 5;
+  string imageUrl = 6;
+}
+
+message OrganizationDetailsDto {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string ownerId = 4;
+  string bannerUrl = 5;
+  string imageUrl = 6;
+  repeated RoleDto roles = 7;
+}
+
+message OrganizationsList {
+  repeated OrganizationDto organizations = 1;
+}
+
+message GuidsList {
+  repeated string ids = 1;
+}
+
+message RoleDto {
+  string id = 1;
+  string name = 2;
+}

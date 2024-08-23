@@ -1,32 +1,50 @@
-using System.Diagnostics.CodeAnalysis;
 using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Queries;
-using MiniSpace.Services.Posts.Core.Entities;
-using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+using MiniSpace.Services.Posts.Application.Services;
+using MiniSpace.Services.Posts.Core.Requests;
+using MiniSpace.Services.Posts.Core.Wrappers;
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 {
-    [ExcludeFromCodeCoverage]
-    public class GetPostsHandler : IQueryHandler<GetPosts, IEnumerable<PostDto>>
+    public class GetPostsHandler : IQueryHandler<GetPosts, PagedResponse<PostDto>>
     {
-        private readonly IMongoRepository<PostDocument, Guid> _postRepository;
+        private readonly IPostsService _postsService;
+        private readonly ILogger<GetPostsHandler> _logger;
 
-        public GetPostsHandler(IMongoRepository<PostDocument, Guid> postRepository)
+        public GetPostsHandler(IPostsService postsService, ILogger<GetPostsHandler> logger)
         {
-            _postRepository = postRepository;
+            _postsService = postsService;
+            _logger = logger;
         }
-        
-        public async Task<IEnumerable<PostDto>> HandleAsync(GetPosts query, CancellationToken cancellationToken)
-        {
-            var documents = _postRepository.Collection.AsQueryable();
-            documents = documents.Where(p => p.EventId == query.EventId && p.State == State.Published);
 
-            var posts = await documents.ToListAsync();
-            return posts.Select(p => p.AsDto());
+        public async Task<PagedResponse<PostDto>> HandleAsync(GetPosts query, CancellationToken cancellationToken)
+        {
+            var sortByList = new List<string> { query.SortBy };
+
+            var request = new BrowseRequest
+            {
+                UserId = query.UserId,
+                OrganizationId = query.OrganizationId,
+                EventId = query.EventId,
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                SortBy = sortByList,
+                Direction = query.Direction
+            };
+
+            var result = await _postsService.BrowsePostsAsync(request);
+
+            // Log the serialized JSON object
+            _logger.LogInformation("Fetched posts: {JsonResult}", JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true }));
+
+            return result;
         }
-    }    
+    }
 }

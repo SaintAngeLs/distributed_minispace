@@ -48,7 +48,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
 
             if (command.ParentId == null)
             {
-                // Create as a root organization
                 organization = new Organization(
                     command.OrganizationId,
                     command.Name,
@@ -57,14 +56,19 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     command.OwnerId,
                     command.BannerUrl,
                     command.ImageUrl,
-                    null // No parent organization
+                    null, // No parent organization
+                    "User", // Set default role to "User"
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email
                 );
 
                 await _organizationRepository.AddAsync(organization);
             }
             else
             {
-                // Handle creation of a sub-organization
                 var root = await _organizationRepository.GetAsync(command.RootId.Value);
                 if (root == null)
                 {
@@ -85,7 +89,13 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                     command.OwnerId,
                     command.BannerUrl,
                     command.ImageUrl,
-                    command.ParentId.Value
+                    command.ParentId.Value,
+                    "User", // Set default role to "User"
+                    command.Address,   // New fields
+                    command.Country,
+                    command.City,
+                    command.Telephone,
+                    command.Email
                 );
 
                 parent.AddSubOrganization(organization);
@@ -98,8 +108,8 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 await _organizationRolesRepository.AddRoleAsync(organization.Id, role);
             }
 
-            // Initialize an empty gallery for the organization
-            await _organizationGalleryRepository.AddImageAsync(organization.Id, new GalleryImage(Guid.NewGuid(), "Default Image URL", DateTime.UtcNow));
+            // We do not have to initialize gallery in the momentum organization is created
+            // await _organizationGalleryRepository.AddImageAsync(organization.Id, new GalleryImage(Guid.NewGuid(), "Default Image URL", DateTime.UtcNow));
 
             // Add the creator as a member with the "Creator" role
             var creatorRole = defaultRoles.SingleOrDefault(r => r.Name == "Creator");
@@ -111,13 +121,7 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
             var creatorMember = new User(identity.Id, creatorRole);
             await _organizationMembersRepository.AddMemberAsync(organization.Id, creatorMember);
 
-            var userRole = defaultRoles.SingleOrDefault(r => r.Name == "User");
-            if (userRole == null)
-            {
-                throw new RoleNotFoundException("User");
-            }
-            organization.UpdateDefaultRole(userRole.Name);
-
+            // The default role is already set to "User" during the organization creation.
 
             await _messageBroker.PublishAsync(new OrganizationCreated(
                 organization.Id,

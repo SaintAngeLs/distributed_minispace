@@ -44,6 +44,12 @@ namespace MiniSpace.Services.MediaFiles.Api
                             var fileId = await ctx.RequestServices.GetService<IMediaFilesService>().UploadAsync(cmd);
                             await ctx.Response.WriteJsonAsync(fileId);
                         })
+                        .Post<UploadFile>("files", async (cmd, ctx) =>
+                        {
+                            var fileId = await ctx.RequestServices.GetService<IMediaFilesService>().UploadFileAsync(cmd);
+                            await ctx.Response.WriteJsonAsync(fileId);
+                            /// the probblems is that is is like writing the file id ? to responce only 
+                        })
                     )
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))

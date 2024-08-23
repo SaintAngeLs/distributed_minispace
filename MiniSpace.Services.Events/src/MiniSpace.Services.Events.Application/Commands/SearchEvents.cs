@@ -10,7 +10,6 @@ namespace MiniSpace.Services.Events.Application.Commands
         public string Name { get; set; }
         public string Organizer { get; set; }
         public Guid OrganizationId { get; set; }
-        public Guid RootOrganizationId { get; set; }
         public string Category { get; set; }
         public string State { get; set; }
         public IEnumerable<Guid> Friends { get; set; }

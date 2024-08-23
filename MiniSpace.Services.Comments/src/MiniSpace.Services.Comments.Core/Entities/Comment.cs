@@ -1,76 +1,89 @@
 using MiniSpace.Services.Comments.Core.Exceptions;
+using MiniSpace.Services.Comments.Core.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 
 namespace MiniSpace.Services.Comments.Core.Entities
 {
     public class Comment : AggregateRoot
     {
         private ISet<Guid> _likes = new HashSet<Guid>();
+        private ISet<Reply> _replies = new HashSet<Reply>();
+
         public Guid ContextId { get; private set; }
         public CommentContext CommentContext { get; private set; }
-        public Guid StudentId { get; private set; }
-        public string StudentName { get; private set; }
+        public Guid UserId { get; private set; }
         public Guid ParentId { get; private set; }
         public string TextContent { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime LastUpdatedAt { get; private set; }
         public DateTime LastReplyAt { get; private set; }
-        public int RepliesCount { get; private set; }
+        public int RepliesCount => _replies.Count;
         public bool IsDeleted { get; private set; }
-        
+
         public IEnumerable<Guid> Likes
         {
             get => _likes;
             private set => _likes = new HashSet<Guid>(value);
         }
 
-        public Comment(Guid id, Guid contextId, CommentContext commentContext, Guid studentId, string studentName,
+        public IEnumerable<Reply> Replies
+        {
+            get => _replies;
+            private set => _replies = new HashSet<Reply>(value);
+        }
+
+        public Comment(Guid id, Guid contextId, CommentContext commentContext, Guid userId,
             IEnumerable<Guid> likes, Guid parentId, string textContent, DateTime createdAt, DateTime lastUpdatedAt, 
-            DateTime lastReplyAt, int repliesCount, bool isDeleted)
+            DateTime lastReplyAt, IEnumerable<Reply> replies, bool isDeleted)
         {
             Id = id;
             ContextId = contextId;
             CommentContext = commentContext;
-            StudentId = studentId;
-            StudentName = studentName;
+            UserId = userId;
             Likes = likes;
             ParentId = parentId;
             TextContent = textContent;
             CreatedAt = createdAt;
             LastUpdatedAt = lastUpdatedAt;
             LastReplyAt = lastReplyAt;
-            RepliesCount = repliesCount;
+            Replies = replies;
             IsDeleted = isDeleted;
         }
 
-        public void Like(Guid studentId)
+        public void Like(Guid userId)
         {
-            if (Likes.Any(id => id == studentId))
+            if (Likes.Any(id => id == userId))
             {
-                throw new StudentAlreadyLikesCommentException(studentId);
+                throw new UserAlreadyLikesCommentException(userId);
             }
-            _likes.Add(studentId);
+
+            _likes.Add(userId);
+            AddEvent(new CommentLiked(Id, userId));
         }
 
-        public void UnLike(Guid studentId)
+        public void UnLike(Guid userId)
         {
-            if (Likes.All(id => id != studentId))
+            if (Likes.All(id => id != userId))
             {
-                throw new StudentNotLikeCommentException(studentId, Id);
+                throw new UserNotLikeCommentException(userId, Id);
             }
-            _likes.Remove(studentId);
+
+            _likes.Remove(userId);
+            AddEvent(new CommentUnliked(Id, userId));
         }
 
-        public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid studentId, 
-            string studentName, Guid parentId, string textContent, DateTime createdAt)
+        public static Comment Create(AggregateId id, Guid contextId, CommentContext commentContext, Guid userId, 
+            Guid parentId, string textContent, DateTime createdAt)
         {
             CheckContent(id, textContent);
 
-            return new Comment(id, contextId, commentContext, studentId, studentName, new List<Guid>(), parentId, textContent, 
-                createdAt, createdAt, createdAt, 0,false);
+            var comment = new Comment(id, contextId, commentContext, userId, new List<Guid>(), parentId, textContent, 
+                createdAt, createdAt, createdAt, new List<Reply>(), false);
+
+            comment.AddEvent(new CommentCreated(comment.Id, userId, contextId, textContent, createdAt));
+            return comment;
         }
 
         public void Update(string textContent, DateTime now)
@@ -93,12 +106,25 @@ namespace MiniSpace.Services.Comments.Core.Entities
         {
             IsDeleted = true;
             TextContent = "";
+            AddEvent(new CommentDeleted(Id));
         }
-        
-        public void AddReply(DateTime now)
+
+        public void AddReply(Guid replyId, Guid userId, string textContent, DateTime now)
         {
-            RepliesCount++;
+            var reply = new Reply(replyId, userId, Id, textContent, now);
+            _replies.Add(reply);
             LastReplyAt = now;
+
+            AddEvent(new CommentReplyAdded(Id, replyId, userId, textContent, now));
+        }
+
+        public void RemoveReply(Guid replyId)
+        {
+            var reply = _replies.FirstOrDefault(r => r.Id == replyId);
+            if (reply != null)
+            {
+                _replies.Remove(reply);
+            }
         }
     }
 }

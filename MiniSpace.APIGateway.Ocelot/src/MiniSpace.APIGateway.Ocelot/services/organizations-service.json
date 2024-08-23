@@ -1,0 +1,80 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/organizations",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5015
+          }
+        ],
+        "UpstreamPathTemplate": "/organizations",
+        "UpstreamHttpMethod": [ "POST", "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/organizations/{organizationId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5015
+          }
+        ],
+        "UpstreamPathTemplate": "/organizations/{organizationId}",
+        "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/organizations/{organizationId}/details",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5015
+          }
+        ],
+        "UpstreamPathTemplate": "/organizations/{organizationId}/details",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/organizations/{organizationId}/children",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5015
+          }
+        ],
+        "UpstreamPathTemplate": "/organizations/{organizationId}/children",
+        "UpstreamHttpMethod": [ "GET", "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/organizations/users/{userId}/organizations",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5015
+          }
+        ],
+        "UpstreamPathTemplate": "/organizations/users/{userId}/organizations",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      }
+    ]
+}
+  

@@ -12,6 +12,9 @@ namespace MiniSpace.Web.DTO
         public Visibility InterestsVisibility { get; set; }
         public Visibility ContactEmailVisibility { get; set; }
         public Visibility PhoneNumberVisibility { get; set; }
+        public Visibility ProfileImageVisibility { get; set; }  
+        public Visibility BannerImageVisibility { get; set; } 
+        public Visibility GalleryVisibility { get; set; }   
         public PreferredLanguage PreferredLanguage { get; set; }
         public FrontendVersion FrontendVersion { get; set; }
     }

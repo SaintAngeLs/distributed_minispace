@@ -6,179 +6,216 @@ using MiniSpace.Services.Events.Core.Exceptions;
 
 namespace MiniSpace.Services.Events.Core.Entities
 {
-    public class Event: AggregateRoot
+    public class Event : AggregateRoot
     {
-        private ISet<Participant> _interestedStudents = new HashSet<Participant>();
-        private ISet<Participant> _signedUpStudents = new HashSet<Participant>();
+        private ISet<Participant> _interestedParticipants = new HashSet<Participant>();
+        private ISet<Participant> _signedUpParticipants = new HashSet<Participant>();
         private ISet<Rating> _ratings = new HashSet<Rating>();
+
         public string Name { get; private set; }
         public string Description { get; private set; }
         public Organizer Organizer { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public Address Location { get; private set; }
-        public IEnumerable<Guid> MediaFiles { get; set; }
+        public IList<string> MediaFiles { get; set; }
+        public string BannerUrl { get; private set; } 
         public int Capacity { get; private set; }
         public decimal Fee { get; private set; }
         public Category Category { get; private set; }
         public State State { get; private set; }
         public DateTime PublishDate { get; private set; }
         public DateTime UpdatedAt { get; private set; }
-        
-        public IEnumerable<Participant> InterestedStudents
+        public Visibility Visibility { get; private set; } 
+        public EventSettings Settings { get; private set; }
+
+        public IEnumerable<Participant> InterestedParticipants
         {
-            get => _interestedStudents;
-            private set => _interestedStudents = new HashSet<Participant>(value);
+            get => _interestedParticipants;
+            private set => _interestedParticipants = new HashSet<Participant>(value);
         }
-        
-        public IEnumerable<Participant> SignedUpStudents
+
+        public IEnumerable<Participant> SignedUpParticipants
         {
-            get => _signedUpStudents;
-            private set => _signedUpStudents = new HashSet<Participant>(value);
+            get => _signedUpParticipants;
+            private set => _signedUpParticipants = new HashSet<Participant>(value);
         }
-        
+
         public IEnumerable<Rating> Ratings
         {
             get => _ratings;
             private set => _ratings = new HashSet<Rating>(value);
         }
 
-        public Event(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, IEnumerable<Guid> mediaFiles, int capacity, decimal fee, Category category, State state, 
-            DateTime publishDate, Organizer organizer, DateTime updatedAt, IEnumerable<Participant> interestedStudents = null, 
-            IEnumerable<Participant> signedUpStudents = null, IEnumerable<Rating> ratings = null)
+        public Event(AggregateId id, string name, string description, Organizer organizer,
+            DateTime startDate, DateTime endDate, Address location, IList<string> mediaFiles, string bannerUrl, 
+            int capacity, decimal fee, Category category, State state, DateTime publishDate, DateTime updatedAt, 
+            Visibility visibility, EventSettings settings, IEnumerable<Participant> interestedParticipants = null, 
+            IEnumerable<Participant> signedUpParticipants = null, IEnumerable<Rating> ratings = null)
         {
             Id = id;
+            Name = name;
+            Description = description;
+            Organizer = organizer;
+            StartDate = startDate;
+            EndDate = endDate;
+            Location = location;
+            MediaFiles = mediaFiles;
+            BannerUrl = bannerUrl;
+            Capacity = capacity;
+            Fee = fee;
+            Category = category;
+            State = state;
+            PublishDate = publishDate;
+            UpdatedAt = updatedAt;
+            Visibility = visibility;
+            Settings = settings;
+            InterestedParticipants = interestedParticipants ?? Enumerable.Empty<Participant>();
+            SignedUpParticipants = signedUpParticipants ?? Enumerable.Empty<Participant>();
+            Ratings = ratings ?? Enumerable.Empty<Rating>();
+        }
+
+        public static Event Create(AggregateId id, string name, string description, Organizer organizer,
+            DateTime startDate, DateTime endDate, Address location, IList<string> mediaFiles, string bannerUrl, 
+            int capacity, decimal fee, Category category, State state, DateTime publishDate, DateTime now, 
+            Visibility visibility, EventSettings settings)
+        {
+            return new Event(id, name, description, organizer, startDate, endDate, location, mediaFiles, 
+                bannerUrl, capacity, fee, category, state, publishDate, now, visibility, settings);
+        }
+
+        public void Update(string name, string description, DateTime startDate, DateTime endDate, Address location,
+            IList<string> mediaFiles, string bannerUrl, int capacity, decimal fee, Category category, State state, 
+            DateTime publishDate, DateTime now, Visibility visibility, EventSettings settings)
+        {
             Name = name;
             Description = description;
             StartDate = startDate;
             EndDate = endDate;
             Location = location;
             MediaFiles = mediaFiles;
-            Capacity = capacity;
-            Fee = fee;
-            Category = category;
-            State = state;
-            Organizer = organizer;
-            InterestedStudents = interestedStudents ?? Enumerable.Empty<Participant>();
-            SignedUpStudents = signedUpStudents ?? Enumerable.Empty<Participant>();
-            Ratings = ratings ?? Enumerable.Empty<Rating>();
-            PublishDate = publishDate;
-            UpdatedAt = updatedAt;
-        }
-        
-        public static Event Create(AggregateId id,  string name, string description, DateTime startDate, DateTime endDate, 
-            Address location, IEnumerable<Guid> mediaFiles, int capacity, decimal fee, Category category, State state,
-            DateTime publishDate, Organizer organizer, DateTime now)
-        {
-            var @event = new Event(id, name, description, startDate, endDate, location, mediaFiles, capacity, fee, 
-                category, state, publishDate, organizer, now);
-            return @event;
-        }
-        
-        public void Update(string name, string description, DateTime startDate, DateTime endDate, Address location,
-            int capacity, decimal fee, Category category, State state, DateTime publishDate, DateTime now)
-        {
-            Name = name;
-            Description = description;
-            StartDate = startDate;
-            EndDate = endDate;
-            Location = location;
+            BannerUrl = bannerUrl;
             Capacity = capacity;
             Fee = fee;
             Category = category;
             State = state;
             PublishDate = publishDate;
             UpdatedAt = now;
+            Visibility = visibility;
+            Settings = settings;
         }
-        
-        public void SignUpStudent(Participant participant)
+
+        public void SignUpParticipant(Participant participant)
         {
-            if(State != State.Published)
+            if (State != State.Published)
             {
                 throw new InvalidEventState(Id, State.Published, State);
             }
             AddParticipant(participant);
         }
-        
+
         public void AddParticipant(Participant participant)
         {
-            if (SignedUpStudents.Any(p => p.StudentId == participant.StudentId))
+            if (SignedUpParticipants.Any(p => p.StudentId == participant.StudentId))
             {
                 throw new StudentAlreadySignedUpException(participant.StudentId, Id);
             }
 
-            if (SignedUpStudents.Count() >= Capacity)
+            if (SignedUpParticipants.Count() >= Capacity)
             {
                 throw new EventCapacityExceededException(Id, Capacity);
             }
-            
-            if(participant.StudentId == Organizer.Id)
-            {
-                throw new OrganizerCannotSignUpForOwnEventException(Organizer.Id, Id);
-            }
+            // Theoretically here the assumption is that no matter if the user is organize or not, 
+            // they may not sign-up or show interest to evnet, so theoretically, I should be able to 
+            // add user who was the organizer to the event.
+            // if (participant.StudentId == Organizer.UserId && Organizer.OrganizerType == OrganizerType.User)
+            // {
+            //     throw new OrganizerCannotSignUpForOwnEventException(Organizer.UserId.Value, Id);
+            // }
 
-            _signedUpStudents.Add(participant);
+            _signedUpParticipants.Add(participant);
         }
-        
+
         public void CancelSignUp(Guid studentId)
         {
-            if(State != State.Published)
+            if (State != State.Published)
             {
                 throw new InvalidEventState(Id, State.Published, State);
             }
             RemoveParticipant(studentId);
         }
-        
+
         public void RemoveParticipant(Guid studentId)
         {
-            var participant = _signedUpStudents.SingleOrDefault(p => p.StudentId == studentId);
+            var participant = _signedUpParticipants.SingleOrDefault(p => p.StudentId == studentId);
             if (participant is null)
             {
                 throw new StudentNotSignedUpException(studentId, Id);
             }
 
-            _signedUpStudents.Remove(participant);
+            _signedUpParticipants.Remove(participant);
         }
-        
-        public void ShowStudentInterest(Participant participant)
+
+        public void UpdateBannerUrl(string newBannerUrl)
         {
-            if (InterestedStudents.Any(p => p.StudentId == participant.StudentId))
+            if (string.IsNullOrWhiteSpace(newBannerUrl))
+            {
+                throw new InvalidBannerUrlException(newBannerUrl);
+            }
+
+            BannerUrl = newBannerUrl;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void AddGalleryImage(string newImageUrl)
+        {
+            if (string.IsNullOrWhiteSpace(newImageUrl))
+            {
+                throw new InvalidGalleryImageUrlException(newImageUrl);
+            }
+
+            MediaFiles.Add(newImageUrl);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void ShowParticipantInterest(Participant participant)
+        {
+            if (InterestedParticipants.Any(p => p.StudentId == participant.StudentId))
             {
                 throw new StudentAlreadyInterestedInEventException(participant.StudentId, Id);
             }
 
-            _interestedStudents.Add(participant);
+            _interestedParticipants.Add(participant);
         }
-        
+
         public void CancelInterest(Guid studentId)
         {
-            var participant = _interestedStudents.SingleOrDefault(p => p.StudentId == studentId);
+            var participant = _interestedParticipants.SingleOrDefault(p => p.StudentId == studentId);
             if (participant is null)
             {
                 throw new StudentNotInterestedInEventException(studentId, Id);
             }
 
-            _interestedStudents.Remove(participant);
+            _interestedParticipants.Remove(participant);
         }
-        
+
         public void Rate(Guid studentId, int rating)
         {
-            if(State != State.Archived)
+            if (State != State.Archived)
             {
                 throw new InvalidEventState(Id, State.Archived, State);
             }
-            
-            if(_signedUpStudents.All(p => p.StudentId != studentId))
+
+            if (_signedUpParticipants.All(p => p.StudentId != studentId))
             {
-                throw new StudentNotSignedUpForEventException(Id ,studentId);
+                throw new StudentNotSignedUpForEventException(Id, studentId);
             }
-            
+
             if (rating < 1 || rating > 5)
             {
                 throw new InvalidRatingValueException(rating);
             }
-            
+
             if (_ratings.Any(r => r.StudentId == studentId))
             {
                 throw new StudentAlreadyRatedException(studentId, Id);
@@ -186,7 +223,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
             _ratings.Add(new Rating(studentId, rating));
         }
-        
+
         public void CancelRate(Guid studentId)
         {
             var rating = _ratings.SingleOrDefault(r => r.StudentId == studentId);
@@ -200,7 +237,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public bool UpdateState(DateTime now)
         {
-            if(State == State.ToBePublished && PublishDate <= now)
+            if (State == State.ToBePublished && PublishDate <= now)
             {
                 ChangeState(State.Published);
             }
@@ -209,12 +246,14 @@ namespace MiniSpace.Services.Events.Core.Entities
                 ChangeState(State.Archived);
             }
             else
+            {
                 return false;
+            }
 
             UpdatedAt = now;
             return true;
         }
-        
+
         private void ChangeState(State state)
         {
             if (State == state)
@@ -224,17 +263,18 @@ namespace MiniSpace.Services.Events.Core.Entities
 
             State = state;
         }
-        
-        public void RemoveMediaFile(Guid mediaFileId)
+
+        public void RemoveMediaFile(string mediaFileUrl)
         {
-            var mediaFile = MediaFiles.SingleOrDefault(mf => mf == mediaFileId);
-            if (mediaFile == Guid.Empty)
+            if (!MediaFiles.Contains(mediaFileUrl))
             {
-                throw new MediaFileNotFoundException(mediaFileId, Id);
+                throw new MediaFileNotFoundException(mediaFileUrl, Id);
             }
+
+            MediaFiles.Remove(mediaFileUrl);
         }
-        
+
         public bool IsOrganizer(Guid organizerId)
-            => Organizer.Id == organizerId;
+            => Organizer.UserId == organizerId && Organizer.OrganizerType == OrganizerType.User;
     }
-}   
+}

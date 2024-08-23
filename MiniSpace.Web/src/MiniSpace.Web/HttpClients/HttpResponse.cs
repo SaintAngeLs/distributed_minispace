@@ -3,6 +3,7 @@
     public class HttpResponse<T>
     {
         public T Content { get; set; }
+        public HttpResponse() { }
         public ErrorMessage ErrorMessage { get; set; }
         public bool IsSuccessStatusCode { get; set; }
 

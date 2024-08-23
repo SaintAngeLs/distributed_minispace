@@ -1,0 +1,73 @@
+{
+    "GlobalConfiguration": {
+      "BaseUrl": "https://localhost:5000",
+      "RequestIdKey": "Request-ID",
+      "TraceIdKey": "Trace-ID",
+      "UseServiceDiscovery": true
+    },
+    "HttpHandlerOptions": {
+      "AllowAutoRedirect": false,
+      "UseCookieContainer": true,
+      "UseTracing": true
+    },
+    "QoSOptions": {
+      "ExceptionsAllowedBeforeBreaking": 5,
+      "DurationOfBreak": 30,
+      "TimeoutValue": 10000
+    },
+    "RateLimitOptions": {
+      "ClientIdHeader": "ClientId",
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Rate limit exceeded!",
+      "HttpStatusCode": 429
+    },
+    "LoadBalancerOptions": {
+      "Type": "RoundRobin",
+      "Key": "fabio",
+      "ExpiringCacheSize": 100,
+      "Expiry": 10000
+    },
+    "AuthenticationOptions": {
+      "AuthenticationProviderKey": "Bearer",
+      "RequireAuthenticatedUser": true
+    },
+    "CorsOptions": {
+      "AllowAnyOrigin": false,
+      "AllowCredentials": true,
+      "AllowedOrigins": [
+        "http://localhost:5606"
+      ],
+      "AllowedMethods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "AllowedHeaders": [
+        "*"
+      ],
+      "ExposedHeaders": [
+        "Request-ID",
+        "Resource-ID",
+        "Trace-ID",
+        "Total-Count"
+      ]
+    },
+    "TracingOptions": {
+      "ServiceName": "api-gateway",
+      "UdpHost": "localhost",
+      "UdpPort": 6831,
+      "MaxPacketSize": 0,
+      "Sampler": "const",
+      "UseEmptyTracer": false
+    },
+    "JwtOptions": {
+      "IssuerSigningKey": "Gtn9vBDB5RCDLJSMqZQQmN75J8hgzbQwWkcD8jMIXnvCLAmlL0QVacUAbyootWihMrPIz",
+      "ValidIssuer": "minispace",
+      "ValidateAudience": false,
+      "ValidateIssuer": false,
+      "ValidateLifetime": false
+    }
+  }
+  

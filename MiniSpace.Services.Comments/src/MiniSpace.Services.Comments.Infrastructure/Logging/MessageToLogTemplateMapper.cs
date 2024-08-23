@@ -31,18 +31,6 @@ namespace MiniSpace.Services.Comments.Infrastructure.Logging
                     }
                 },
                 {
-                    typeof(StudentCreated), new HandlerLogTemplate
-                    {
-                        After = "Created a new student with id: {StudentId}."
-                    }
-                },
-                {
-                    typeof(StudentDeleted), new HandlerLogTemplate
-                    {
-                        After = "Deleted a student with id: {StudentId}."
-                    }
-                },
-                {
                     typeof(AddLike), new HandlerLogTemplate
                     {
                         After = "Added like in the comment with id: {CommentId}."

@@ -1,0 +1,62 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/comments",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5009
+          }
+        ],
+        "UpstreamPathTemplate": "/comments",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/comments/{commentId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5009
+          }
+        ],
+        "UpstreamPathTemplate": "/comments/{commentId}",
+        "UpstreamHttpMethod": [ "PUT", "DELETE", "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/comments/{commentId}/like",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5009
+          }
+        ],
+        "UpstreamPathTemplate": "/comments/{commentId}/like",
+        "UpstreamHttpMethod": [ "POST", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/comments/search",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5009
+          }
+        ],
+        "UpstreamPathTemplate": "/comments/search",
+        "UpstreamHttpMethod": [ "POST" ]
+      }
+    ]
+  }
+  

@@ -1,41 +1,35 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Wrappers;
+using MiniSpace.Web.Areas.Events.CommandsDto;
 using MiniSpace.Web.HttpClients;
+using MiniSpace.Web.Areas.PagedResult;
 
 namespace MiniSpace.Web.Areas.Events
 {
     public interface IEventsService
     {
-        Task<EventDto> GetEventAsync(Guid eventId, bool isAuthenticated);
-        Task<PagedResponseDto<IEnumerable<EventDto>>> GetStudentEventsAsync(Guid studentId,
-            string engagementType, int page, int numberOfResults);
-        Task<HttpResponse<object>> CreateEventAsync(Guid eventId, string name, Guid organizerId, Guid organizationId,
-            Guid rootOrganizationId, string startDate, string endDate, string buildingName, string street,
-            string buildingNumber, string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles,
-            string description, int capacity, decimal fee, string category, string publishDate);
-        Task<HttpResponse<object>> UpdateEventAsync(Guid eventId, string name, Guid organizerId,
-            string startDate, string endDate, string buildingName, string street, string buildingNumber,
-            string apartmentNumber, string city, string zipCode, IEnumerable<Guid> mediaFiles, string description,
-            int capacity, decimal fee, string category, string publishDate);
+        Task<EventDto> GetEventAsync(Guid eventId);
+        Task<HttpResponse<object>> CreateEventAsync(CreateEventCommand command);
+        Task<HttpResponse<object>> UpdateEventAsync(UpdateEventCommand command);
         Task DeleteEventAsync(Guid eventId);
-        Task SignUpToEventAsync(Guid eventId, Guid studentId);
-        Task CancelSignUpToEventAsync(Guid eventId, Guid studentId);
-        Task ShowInterestInEventAsync(Guid eventId, Guid studentId);
-        Task CancelInterestInEventAsync(Guid eventId, Guid studentId);
-        Task RateEventAsync(Guid eventId, int rating, Guid studentId);
-        Task CancelRateEventAsync(Guid eventId, Guid studentId);
+        Task SignUpToEventAsync(SignUpToEventCommand command);
+        Task CancelSignUpToEventAsync(CancelSignUpToEventCommand command);
+        Task ShowInterestInEventAsync(ShowInterestInEventCommand command);
+        Task CancelInterestInEventAsync(CancelInterestInEventCommand command);
+        Task RateEventAsync(RateEventCommand command);
         Task<EventRatingDto> GetEventRatingAsync(Guid eventId);
-        Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchEventsAsync(string name, string organizer, 
-            Guid organizationId, Guid rootOrganizationId, string category, string state, IEnumerable<Guid> friends,
-            string friendsEngagementType, string dateFrom, string dateTo, PageableDto pageable);
-        Task<HttpResponse<PagedResponseDto<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(Guid organizerId,
-            string name, string state, string dateFrom, string dateTo, PageableDto pageable);
+        
+        // Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchEventsAsync(SearchEvents command);
+        Task<PagedResult<EventDto>> SearchEventsAsync(SearchEvents command);
+        Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(SearchOrganizerEvents command);
         Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId);
         Task AddEventParticipantAsync(Guid eventId, Guid studentId, string studentName);
         Task RemoveEventParticipantAsync(Guid eventId, Guid participantId);
+        Task<PagedResult<EventDto>> GetPaginatedEventsAsync(int page, int pageSize);
+        Task<PagedResult<EventDto>> GetMyEventsAsync(Guid organizerId, int page, int pageSize); 
+        Task<PagedResult<EventDto>> GetUserEventsAsync(Guid userId, int page, int pageSize, string engagementType);
     }
 }

@@ -14,6 +14,9 @@ namespace MiniSpace.Services.Students.Core.Entities
         public Visibility InterestsVisibility { get; private set; }
         public Visibility ContactEmailVisibility { get; private set; }
         public Visibility PhoneNumberVisibility { get; private set; }
+        public Visibility ProfileImageVisibility { get; private set; }
+        public Visibility BannerImageVisibility { get; private set; }
+        public Visibility GalleryVisibility { get; private set; }
         public FrontendVersion FrontendVersion { get; private set; }
         public PreferredLanguage PreferredLanguage { get; private set; }
 
@@ -29,6 +32,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             InterestsVisibility = Visibility.Everyone;
             ContactEmailVisibility = Visibility.Everyone;
             PhoneNumberVisibility = Visibility.Everyone;
+            ProfileImageVisibility = Visibility.Everyone;
+            BannerImageVisibility = Visibility.Everyone;
+            GalleryVisibility = Visibility.Everyone;
             FrontendVersion = FrontendVersion.Default;
             PreferredLanguage = PreferredLanguage.English;
         }
@@ -36,7 +42,8 @@ namespace MiniSpace.Services.Students.Core.Entities
         public UserAvailableSettings(Visibility createdAtVisibility, Visibility dateOfBirthVisibility, Visibility interestedInEventsVisibility,
                                      Visibility signedUpEventsVisibility, Visibility educationVisibility, Visibility workPositionVisibility,
                                      Visibility languagesVisibility, Visibility interestsVisibility, Visibility contactEmailVisibility,
-                                     Visibility phoneNumberVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
+                                     Visibility phoneNumberVisibility, Visibility profileImageVisibility, Visibility bannerImageVisibility,
+                                     Visibility galleryVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -48,6 +55,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             InterestsVisibility = interestsVisibility;
             ContactEmailVisibility = contactEmailVisibility;
             PhoneNumberVisibility = phoneNumberVisibility;
+            ProfileImageVisibility = profileImageVisibility;
+            BannerImageVisibility = bannerImageVisibility;
+            GalleryVisibility = galleryVisibility;
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
         }
@@ -55,7 +65,8 @@ namespace MiniSpace.Services.Students.Core.Entities
         public void UpdateSettings(Visibility createdAtVisibility, Visibility dateOfBirthVisibility, Visibility interestedInEventsVisibility,
                                    Visibility signedUpEventsVisibility, Visibility educationVisibility, Visibility workPositionVisibility,
                                    Visibility languagesVisibility, Visibility interestsVisibility, Visibility contactEmailVisibility,
-                                   Visibility phoneNumberVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
+                                   Visibility phoneNumberVisibility, Visibility profileImageVisibility, Visibility bannerImageVisibility,
+                                   Visibility galleryVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -67,6 +78,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             InterestsVisibility = interestsVisibility;
             ContactEmailVisibility = contactEmailVisibility;
             PhoneNumberVisibility = phoneNumberVisibility;
+            ProfileImageVisibility = profileImageVisibility;
+            BannerImageVisibility = bannerImageVisibility;
+            GalleryVisibility = galleryVisibility;
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
         }

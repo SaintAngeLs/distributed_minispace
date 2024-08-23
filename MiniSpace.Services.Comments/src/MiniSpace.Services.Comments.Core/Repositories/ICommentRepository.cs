@@ -1,7 +1,9 @@
 using MiniSpace.Services.Comments.Core.Entities;
+using MiniSpace.Services.Comments.Application.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MiniSpace.Services.Comments.Core.Wrappers;
 
 namespace MiniSpace.Services.Comments.Core.Repositories
 {
@@ -13,10 +15,6 @@ namespace MiniSpace.Services.Comments.Core.Repositories
         Task DeleteAsync(Guid id);
         Task<IEnumerable<Comment>> GetByEventIdAsync(Guid eventId);
         Task<IEnumerable<Comment>> GetByPostIdAsync(Guid postId);
-
-        Task<(IEnumerable<Comment> comments, int pageNumber, int pageSize, int totalPages, int totalElements)>
-            BrowseCommentsAsync(int pageNumber, int pageSize, Guid contextId, CommentContext context, Guid parentId,
-                IEnumerable<string> sortBy, string direction);
-
-    }    
+        Task<PagedResponse<Comment>> BrowseCommentsAsync(BrowseCommentsRequest request);
+    }
 }

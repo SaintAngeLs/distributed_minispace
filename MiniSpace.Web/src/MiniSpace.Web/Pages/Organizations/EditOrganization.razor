@@ -52,7 +52,6 @@
                                Title="Delete Banner Image" />
             </div>
 
-            <!-- Profile Image Overlaying Banner with Upload and Delete Option -->
             <div style="position: relative; text-align: center; margin-top: -60px;">
                 <MudImage 
                     Src="@GetProfileImageUrl()" 
@@ -81,12 +80,10 @@
                                Title="Delete Profile Image" />
             </div>
 
-            <!-- Organization Name -->
             <MudText Typo="Typo.h6" Class="mt-3" Align="Align.Center">
                 @organizationGalleryUsers.OrganizationDetails.Name
             </MudText>
             
-            <!-- Save Button -->
             <MudStack Row="true" Style="margin-top: 20px;">
                 <MudSpacer />
                 <MudButton Variant="Variant.Filled" 
@@ -99,7 +96,6 @@
             </MudStack>
         </MudPaper>
 
-        <!-- Navigation and Content -->
         <MudGrid Class="mt-4">
             <MudItem xs="12" md="3">
                 <MudNavMenu>
@@ -117,7 +113,12 @@
                         <MudText Typo="Typo.h6">Edit Overview</MudText>
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Name" Label="Organization Name" Variant="Variant.Outlined" />
                         <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Description" Label="Description" Variant="Variant.Outlined" Class="mt-3" />
-                         <MudSelect @bind-Value="organizationGalleryUsers.OrganizationDetails.DefaultRoleName" Label="Default Role Name" Variant="Variant.Outlined" Class="mt-3">
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Address" Label="Address" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Country" Label="Country" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.City" Label="City" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Telephone" Label="Telephone" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudTextField @bind-Value="organizationGalleryUsers.OrganizationDetails.Email" Label="Email" Variant="Variant.Outlined" Class="mt-3" />
+                        <MudSelect @bind-Value="organizationGalleryUsers.OrganizationDetails.DefaultRoleName" Label="Default Role Name" Variant="Variant.Outlined" Class="mt-3">
                             @foreach (var role in organizationGalleryUsers.OrganizationDetails.Roles)
                             {
                                 <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
@@ -126,7 +127,7 @@
                     }
                     else if (selectedTabIndex == 1)
                     {
-                       <MudText Typo="Typo.h6">Organization Settings</MudText>
+                        <MudText Typo="Typo.h6">Organization Settings</MudText>
                         @if (organizationGalleryUsers?.OrganizationDetails?.Settings != null)
                         {
                             <OrganizationSettings Settings="organizationGalleryUsers.OrganizationDetails.Settings" OnSave="HandleSaveSettings" />
@@ -139,7 +140,6 @@
                     else if (selectedTabIndex == 2)
                     {
                         <MudText Typo="Typo.h6">Manage Members</MudText>
-                        <!-- Include members management UI here -->
                     }
                     else if (selectedTabIndex == 3)
                     {
@@ -148,7 +148,7 @@
                     }
                     else if (selectedTabIndex == 4)
                     {
-                        <MudText Typo="Typo.h6">Manage Organiztion Galler</MudText>
+                        <MudText Typo="Typo.h6">Manage Organization Gallery</MudText>
                         <OrganizationGallery OrganizationId="OrganizationId" />
                     }
 
@@ -158,9 +158,6 @@
     }
 </MudContainer>
 </AuthWrapper>
-
-
-
 
 <!-- Bootstrap Modal for Cropper -->
 <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
@@ -287,7 +284,6 @@
         }
     }
 
-
     private void CloseCropper()
     {
         JSRuntime.InvokeVoidAsync("hideCropperModal");
@@ -300,13 +296,11 @@
         {
             CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
             var buffer = Convert.FromBase64String(base64Image);
-            var lastModified = DateTimeOffset.Now;  // Use the current time as a placeholder for lastModified
+            var lastModified = DateTimeOffset.Now;  
             croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
             StateHasChanged();
         }
     }
-
-
 
     private async Task SaveCroppedImage()
     {
@@ -342,11 +336,11 @@
                     {
                         if (currentImageType == "profile")
                         {
-                            organizationGalleryUsers.OrganizationDetails.ImageUrl = uploadedFile.FileUrl;
+                            organizationGalleryUsers.OrganizationDetails.ImageUrl = uploadedFile.ProcessedUrl;
                         }
                         else
                         {
-                            organizationGalleryUsers.OrganizationDetails.BannerUrl = uploadedFile.FileUrl;
+                            organizationGalleryUsers.OrganizationDetails.BannerUrl = uploadedFile.ProcessedUrl;
                         }
 
                         StateHasChanged();
@@ -364,16 +358,13 @@
             }
             finally
             {
-                IsUploading = false; // Hide the loading overlay
+                IsUploading = false; 
                 StateHasChanged();
             }
 
             CloseCropper();
         }
     }
-
-
-
 
     private async Task RemoveImage(string imageType)
     {
@@ -416,7 +407,12 @@
             organizationDetails.Settings,
             organizationDetails.BannerUrl,
             organizationDetails.ImageUrl,
-            organizationDetails.DefaultRoleName
+            organizationDetails.DefaultRoleName,
+            organizationDetails.Address,  
+            organizationDetails.Country,
+            organizationDetails.City,
+            organizationDetails.Telephone,
+            organizationDetails.Email
         );
 
         var response = await OrganizationsService.UpdateOrganizationAsync(OrganizationId, updateCommand);

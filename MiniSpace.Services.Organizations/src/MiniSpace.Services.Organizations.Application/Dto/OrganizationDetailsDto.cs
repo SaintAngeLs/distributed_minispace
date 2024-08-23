@@ -24,6 +24,13 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public OrganizationSettingsDto Settings { get; set; }
         public string DefaultRoleName { get; set; }
 
+        // New fields
+        public string Address { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
+        public string Telephone { get; set; }
+        public string Email { get; set; }
+
         public OrganizationDetailsDto()
         {
         }
@@ -43,7 +50,14 @@ namespace MiniSpace.Services.Organizations.Application.DTO
             Roles = organization.Roles?.Select(r => new RoleDto(r)).ToList();
             Gallery = organization.Gallery?.Select(g => new GalleryImageDto(g)).ToList();
             Settings = organization.Settings != null ? new OrganizationSettingsDto(organization.Settings) : null;
-            DefaultRoleName = organization.DefaultRoleName;  
+            DefaultRoleName = organization.DefaultRoleName;
+
+            // Initialize new fields
+            Address = organization.Address;
+            Country = organization.Country;
+            City = organization.City;
+            Telephone = organization.Telephone;
+            Email = organization.Email;
         }
     }
 }

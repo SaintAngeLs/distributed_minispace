@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Organizations.CommandsDto;
+using MiniSpace.Web.Areas.PagedResult;
 using MiniSpace.Web.DTO.Organizations;
 using MiniSpace.Web.HttpClients;
 
@@ -12,7 +13,7 @@ namespace MiniSpace.Web.Areas.Organizations
         Task<OrganizationDto> GetOrganizationAsync(Guid organizationId);
         Task<OrganizationDetailsDto> GetOrganizationDetailsAsync(Guid organizationId);
         Task<IEnumerable<OrganizationDto>> GetRootOrganizationsAsync();
-        Task<IEnumerable<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId);
+        Task<PagedResult<OrganizationDto>> GetChildrenOrganizationsAsync(Guid organizationId, int page, int pageSize);
         Task<OrganizationGalleryUsersDto> GetOrganizationWithGalleryAndUsersAsync(Guid organizationId);
         Task<IEnumerable<Guid>> GetAllChildrenOrganizationsAsync(Guid organizationId);
         Task<HttpResponse<object>> CreateOrganizationAsync(CreateOrganizationDto command);
@@ -27,7 +28,12 @@ namespace MiniSpace.Web.Areas.Organizations
         Task SetOrganizationVisibilityAsync(Guid organizationId, SetOrganizationVisibilityCommand command);
         Task ManageFeedAsync(Guid organizationId, ManageFeedCommand command);
         Task<HttpResponse<object>> UpdateOrganizationAsync(Guid organizationId, UpdateOrganizationCommand command);
-        Task<IEnumerable<OrganizationDto>> GetUserOrganizationsAsync(Guid userId);
+        Task<IEnumerable<UserOrganizationsDto>> GetUserOrganizationsAsync(Guid userId);
         Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId);
+        Task<PagedResult<OrganizationDto>> GetPaginatedOrganizationsAsync(int page, int pageSize, string search = null);
+        Task FollowOrganizationAsync(Guid organizationId);
+        Task AcceptFollowRequestAsync(Guid organizationId, Guid requestId);
+        Task RejectFollowRequestAsync(Guid organizationId, Guid requestId, string reason);
+        Task<IEnumerable<OrganizationGalleryUsersDto>> GetUserFollowedOrganizationsAsync(Guid userId);
     }
 }

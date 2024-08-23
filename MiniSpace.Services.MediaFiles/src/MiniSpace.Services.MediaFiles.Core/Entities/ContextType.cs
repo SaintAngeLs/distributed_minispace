@@ -2,8 +2,14 @@
 {
     public enum ContextType
     {
-        Event,
-        Post,
+        EventBanner,
+        EventFile,
+        EventGalleryImage,
+        PostFileUserEvent,
+        PostFileUser,
+        PostFileOrganizationEvent,
+        PostFileOrganization,      
+        PostFile,
         StudentProfileImage,
         StudentBannerImage,
         StudentGalleryImage,

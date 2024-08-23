@@ -2,7 +2,6 @@
 @using System.Globalization
 @using MiniSpace.Web.Shared
 @using MiniSpace.Web.Areas.Students
-@using MiniSpace.Web.Components
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.MediaFiles
 @using MiniSpace.Web.DTO.Types
@@ -15,11 +14,12 @@
 @inject NavigationManager NavigationManager
 
 <AuthWrapper>
+    <MudContainer Class="account-container">
     <div class="breadcrumbs-container">
         <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
     </div>
 
-    <MudContainer Class="account-container">
+    
         <MudGrid>
             <MudItem xs="12" sm="4" md="3">
                 <MudNavMenu Elevation="1">
@@ -253,6 +253,31 @@
         try
         {
             var studentDto = studentWithGalleryImagesDto.Student;
+
+            foreach (var education in studentDto.Education)
+            {
+                Console.WriteLine($"Education StartDate: {education.StartDate}, EndDate: {education.EndDate}");
+            }
+
+            foreach (var work in studentDto.Work)
+            {
+                Console.WriteLine($"Work StartDate: {work.StartDate}, EndDate: {work.EndDate}");
+            }
+
+
+            // Ensure that StartDate and EndDate are handled correctly
+            foreach (var education in studentDto.Education)
+            {
+                education.StartDate = education.StartDate != DateTime.MinValue ? education.StartDate : null;
+                education.EndDate = education.EndDate != DateTime.MinValue ? education.EndDate : null;
+            }
+
+            foreach (var work in studentDto.Work)
+            {
+                work.StartDate = work.StartDate != DateTime.MinValue ? work.StartDate : null;
+                work.EndDate = work.EndDate != DateTime.MinValue ? work.EndDate : null;
+            }
+
             var updateStudentData = new
             {
                 studentDto.Id,
@@ -310,6 +335,7 @@
             Console.WriteLine(ex.Message);
         }
     }
+
 
  
 
@@ -376,18 +402,26 @@
     }
 
     private async Task SaveUserSettingsAsync()
+{
+    try
     {
-        try
-        {
-            var studentId = IdentityService.GetCurrentUserId();
-            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
-            Console.WriteLine("Student settings updated successfully.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error saving user settings: {ex.Message}");
-        }
+        var studentId = IdentityService.GetCurrentUserId();
+        
+        @* var jsonSettings = JsonSerializer.Serialize(availableSettingsDto, new JsonSerializerOptions { WriteIndented = true });
+
+        Console.WriteLine("Sending the following settings to the student service:");
+        Console.WriteLine(jsonSettings); *@
+
+        await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
+
+        Console.WriteLine("Student settings updated successfully.");
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error saving user settings: {ex.Message}");
+    }
+}
+
 
     private void SetActiveTabIndex(int index)
     {

@@ -35,7 +35,6 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor.Services
 <CascadingAuthenticationState>
-    <MudDialogProvider />
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />

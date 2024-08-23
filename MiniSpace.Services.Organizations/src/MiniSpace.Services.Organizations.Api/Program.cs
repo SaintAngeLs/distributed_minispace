@@ -35,11 +35,15 @@ namespace MiniSpace.Services.Organizations.Api
                         .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
                         .Get<GetOrganizationDetails, OrganizationDetailsDto>("organizations/{organizationId}/details")
                         .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
-                        .Get<GetChildrenOrganizations, IEnumerable<OrganizationDto>>("organizations/{organizationId}/children")
+                        .Get<GetChildrenOrganizations, PagedResult<OrganizationDto>>("organizations/{organizationId}/children")
                         .Get<GetAllChildrenOrganizations, IEnumerable<Guid>>("organizations/{organizationId}/children/all")
-                        .Get<GetUserOrganizations, IEnumerable<OrganizationDto>>("users/{userId}/organizations")
+                        // the organizations users is the organizer
+                        .Get<GetUserOrganizations, IEnumerable<UserOrganizationsDto>>("users/{userId}/organizations")
+                        // organizations, user is a part of
+                        .Get<GetUserFollowOrganizations, IEnumerable<OrganizationGalleryUsersDto>>("users/{userId}/organizations/follow")
                         .Get<GetOrganizationWithGalleryAndUsers, OrganizationGalleryUsersDto>("organizations/{organizationId}/details/gallery-users")
-                         .Get<GetOrganizationRoles, IEnumerable<RoleDto>>("organizations/{organizationId}/roles")
+                        .Get<GetOrganizationRoles, IEnumerable<RoleDto>>("organizations/{organizationId}/roles")
+                        .Get<GetPaginatedOrganizations, PagedResult<OrganizationDto>>("organizations/paginated")
                          
                         .Post<CreateOrganization>("organizations",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}"))
@@ -47,6 +51,13 @@ namespace MiniSpace.Services.Organizations.Api
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.SubOrganizationId}"))
                         .Post<CreateOrganizationRole>("organizations/{organizationId}/roles",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}/roles/{cmd.RoleName}"))
+                        .Post<FollowOrganization>("organizations/{organizationId}/follow", 
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}/follow"))
+                        .Put<AcceptFollowRequest>("organizations/{organizationId}/requests/{requestId}/accept", 
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Post<LeaveOrganization>("organizations/{organizationId}/leave", 
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Put<RejectFollowRequest>("organizations/{organizationId}/requests/{requestId}/reject")
                         .Delete<DeleteOrganization>("organizations/{organizationId}")
                         .Post<InviteUserToOrganization>("organizations/{organizationId}/invite")
                         .Post<AssignRoleToMember>("organizations/{organizationId}/roles/{memberId}")

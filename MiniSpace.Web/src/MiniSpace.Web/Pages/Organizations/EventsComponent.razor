@@ -1,0 +1,207 @@
+@inject IEventsService EventsService
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@inject IOrganizationsService OrganizationsService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@using MudBlazor
+@using MiniSpace.Web.DTO.Events
+@using MiniSpace.Web.DTO.Organizations
+@using MiniSpace.Web.DTO.Enums
+@using MiniSpace.Web.Areas.Events.CommandsDto
+@using MiniSpace.Web.DTO.Wrappers
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.h4">Events</MudText>
+        @if (canPostEvents)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="CreateEvent">
+                Create Event
+            </MudButton>
+        }
+    </MudStack>
+
+    <MudDivider Class="my-4" />
+
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else if (events != null && events.Any())
+    {
+        <MudGrid Spacing="3">
+            @foreach (var eventDto in events)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px;">
+                        <MudCardMedia Image="@GetBannerUrl(eventDto)" Alt="@eventDto.Name" Style="height: 180px;" />
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6">@eventDto.Name</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">@eventDto.Category</MudText>
+                            <MudText Typo="Typo.body2">Starts: @eventDto.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                            <MudText Typo="Typo.body2">Ends: @eventDto.EndDate.ToString("MMMM dd, yyyy")</MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
+                                View Details
+                            </MudButton>
+                            @if (canEditEvent(eventDto))
+                            {
+                                <MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="() => EditEvent(eventDto.Id)">
+                                    Edit
+                                </MudButton>
+                            }
+                            @if (canDeleteEvent())
+                            {
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => DeleteEvent(eventDto.Id)">
+                                    Delete
+                                </MudButton>
+                            }
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+    else
+    {
+        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center" Class="mt-6">No events found.</MudText>
+    }
+</MudContainer>
+
+<MudSnackbarProvider />
+
+@code {
+    [Parameter] public Guid OrganizationId { get; set; }
+    private List<EventDto> events;
+    private bool isLoading = true;
+    private bool canPostEvents = false;
+    private bool isAdmin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                var organization = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId); 
+                canPostEvents = organization.OrganizationDetails.Settings?.CanPostEvents ?? false;
+                isAdmin = CheckIfUserIsAdmin(organization.OrganizationDetails);
+                await LoadEvents();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add($"Failed to load events: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadEvents()
+    {
+        var searchCommand = new SearchEvents
+        {
+            OrganizationId = OrganizationId,
+            Pageable = new PageableDto
+            {
+                Page = 1,
+                Size = 50
+            }
+        };
+
+        var result = await EventsService.SearchEventsAsync(searchCommand);
+        events = result?.Items.ToList() ?? new List<EventDto>();
+    }
+
+    private bool CheckIfUserIsAdmin(OrganizationDetailsDto organization)
+    {
+        var currentUserId = IdentityService.GetCurrentUserId();
+        return organization.OwnerId == currentUserId || organization.Users?.Any(u => u.Id == currentUserId && u.Role.Permissions.ContainsKey(Permission.CreateEvents)) == true;
+    }
+
+    private bool canEditEvent(EventDto eventDto)
+    {
+        var currentUserId = IdentityService.GetCurrentUserId();
+        return isAdmin || eventDto.Organizer?.UserId == currentUserId || HasPermission(Permission.EditEvents, OrganizationId, currentUserId);
+    }
+
+    private bool canDeleteEvent()
+    {
+        var currentUserId = IdentityService.GetCurrentUserId();
+        return isAdmin || HasPermission(Permission.DeleteEvents, OrganizationId, currentUserId);
+    }
+
+    private bool HasPermission(Permission permission, Guid organizationId, Guid userId)
+    {
+        var organization = OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(organizationId).Result;
+        var user = organization.Users?.FirstOrDefault(u => u.Id == userId);
+        return user?.Role.Permissions.ContainsKey(permission) == true;
+    }
+
+    private void CreateEvent()
+    {
+        if (!canPostEvents)
+        {
+            Snackbar.Add("You do not have permission to create events for this organization.", Severity.Warning);
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/organizations/{OrganizationId}/events/create");
+    }
+
+    private void ViewEvent(Guid eventId)
+    {
+        NavigationManager.NavigateTo($"/events/event/{eventId}");
+    }
+
+    private void EditEvent(Guid eventId)
+    {
+        NavigationManager.NavigateTo($"/events/event/{eventId}/edit");
+    }
+
+    private async Task DeleteEvent(Guid eventId)
+    {
+        if (!canDeleteEvent())
+        {
+            Snackbar.Add("You do not have permission to delete this event.", Severity.Warning);
+            return;
+        }
+
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Confirm Delete",
+            "Are you sure you want to delete this event?",
+            yesText: "Yes", cancelText: "No");
+
+        if (confirmed == true)
+        {
+            try
+            {
+                await EventsService.DeleteEventAsync(eventId);
+                Snackbar.Add("Event deleted successfully.", Severity.Success);
+                await LoadEvents();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Failed to delete event: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private string GetBannerUrl(EventDto eventDto)
+    {
+        return !string.IsNullOrWhiteSpace(eventDto.BannerUrl) ? eventDto.BannerUrl : "/images/default_media_file_image.png";
+    }
+}

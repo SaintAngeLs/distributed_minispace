@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Repositories;
 using MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Reactions.Infrastructure.Mongo.Extensions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -40,6 +41,6 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
         
         public Task<bool> ExistsAsync(Guid contentId, ReactionContentType contentType, Guid studentId)
             => _repository.ExistsAsync(x => x.ContentId == contentId && x.ContentType == contentType 
-                                                                     && x.StudentId == studentId);
+                                                                     && x.UserId == studentId);
     }    
 }

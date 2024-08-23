@@ -9,7 +9,12 @@
 @using System.IO
 @using MiniSpace.Web.Areas.Organizations.CommandsDto
 @using MudBlazor
+@using MiniSpace.Web.DTO.Organizations
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
 
+<MudContainer>
 <MudText Typo="Typo.h5" GutterBottom="true">Create New Organization</MudText>
 
 <MudPaper Elevation="1" Class="pa-4">
@@ -41,12 +46,12 @@
             Create Organization
         </MudButton>
 
-        <!-- Back Button -->
         <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack" Style="margin-top: 10px;">
             Back
         </MudButton>
     </MudForm>
 </MudPaper>
+</MudContainer>
 
 @code {
     private MudForm form;
@@ -60,8 +65,11 @@
         try
         {
             var userId = IdentityService.GetCurrentUserId();
-            var organizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
-            _parentOrganizations = organizations.ToList();
+            var userOrganizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
+
+            // Flatten the hierarchy and map to OrganizationDto
+            _parentOrganizations = FlattenOrganizations(userOrganizations).ToList();
+
             selectedParentId = organizationModel.ParentId?.ToString();
             if (organizationModel.Settings == null)
             {
@@ -74,6 +82,28 @@
         }
     }
 
+    private IEnumerable<OrganizationDto> FlattenOrganizations(IEnumerable<UserOrganizationsDto> userOrganizations)
+    {
+        foreach (var userOrg in userOrganizations)
+        {
+            yield return new OrganizationDto
+            {
+                Id = userOrg.Id,
+                Name = userOrg.Name,
+                Description = userOrg.Description,
+                OwnerId = userOrg.OwnerId
+                // Add any other necessary properties
+            };
+
+            if (userOrg.SubOrganizations != null)
+            {
+                foreach (var subOrg in FlattenOrganizations(userOrg.SubOrganizations))
+                {
+                    yield return subOrg;
+                }
+            }
+        }
+    }
 
     private async Task SubmitForm()
     {

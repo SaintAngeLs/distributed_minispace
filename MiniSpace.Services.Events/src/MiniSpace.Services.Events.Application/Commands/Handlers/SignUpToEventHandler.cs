@@ -5,6 +5,7 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
+using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Exceptions;
 using MiniSpace.Services.Events.Core.Repositories;
@@ -14,15 +15,15 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
     public class SignUpToEventHandler : ICommandHandler<SignUpToEvent>
     {
         private readonly IEventRepository _eventRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
 
-        public SignUpToEventHandler(IEventRepository eventRepository, IStudentRepository studentRepository, 
+        public SignUpToEventHandler(IEventRepository eventRepository, IStudentsServiceClient studentsServiceClient, 
             IMessageBroker messageBroker, IAppContext appContext)
         {
             _eventRepository = eventRepository;
-            _studentRepository = studentRepository;
+            _studentsServiceClient = studentsServiceClient;
             _messageBroker = messageBroker;
             _appContext = appContext;
         }
@@ -41,16 +42,16 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
                 throw new EventNotFoundException(command.EventId);
             }
 
-            var student = await _studentRepository.GetAsync(command.StudentId);
-            if (student is null)
+            var studentExists = await _studentsServiceClient.StudentExistsAsync(command.StudentId);
+            if (!studentExists)
             {
                 throw new StudentNotFoundException(command.StudentId);
             }
 
-            var participant = new Participant(student.Id, identity.Name);
-            @event.SignUpStudent(participant);
+            var participant = new Participant(command.StudentId);
+            @event.SignUpParticipant(participant);
             await _eventRepository.UpdateAsync(@event);
-            await _messageBroker.PublishAsync(new StudentSignedUpToEvent(@event.Id, student.Id));
+            await _messageBroker.PublishAsync(new StudentSignedUpToEvent(@event.Id, command.StudentId));
         }
     }
 }

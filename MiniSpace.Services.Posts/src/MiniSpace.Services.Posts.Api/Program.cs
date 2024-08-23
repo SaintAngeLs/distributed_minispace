@@ -16,6 +16,7 @@ using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Queries;
 using MiniSpace.Services.Posts.Application.Services;
+using MiniSpace.Services.Posts.Core.Wrappers;
 using MiniSpace.Services.Posts.Infrastructure;
 
 namespace MiniSpace.Services.Posts.Api
@@ -33,16 +34,11 @@ namespace MiniSpace.Services.Posts.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseEndpoints(endpoints => endpoints
-                        .Post<SearchPosts>("posts/search", async (cmd, ctx) =>
-                        {
-                            var pagedResult = await ctx.RequestServices.GetService<IPostsService>().BrowsePostsAsync(cmd);
-                            await ctx.Response.WriteJsonAsync(pagedResult);
-                        }))
+            
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetPost, PostDto>("posts/{postId}")
-                        .Get<GetPosts, IEnumerable<PostDto>>("posts")
+                        .Get<GetPosts, PagedResponse<PostDto>>("posts/search")
                         .Get<GetOrganizerPosts, IEnumerable<PostDto>>("posts/organizer/{organizerId}")
                         .Put<UpdatePost>("posts/{postId}")
                         .Delete<DeletePost>("posts/{postId}")

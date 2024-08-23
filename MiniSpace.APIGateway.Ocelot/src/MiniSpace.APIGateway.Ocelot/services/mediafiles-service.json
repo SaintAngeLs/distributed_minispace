@@ -1,0 +1,66 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/media-files",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5014
+          }
+        ],
+        "UpstreamPathTemplate": "/media-files",
+        "UpstreamHttpMethod": [ "POST" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        },
+        "RequestSizeLimit": 50000000,
+        "FormLimits": {
+          "MultipartBodyLengthLimit": 50000000
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/media-files/{mediaFileId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5014
+          }
+        ],
+        "UpstreamPathTemplate": "/media-files/{mediaFileId}",
+        "UpstreamHttpMethod": [ "GET" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/media-files/{mediaFileId}/original",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5014
+          }
+        ],
+        "UpstreamPathTemplate": "/media-files/{mediaFileId}/original",
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {
+        "DownstreamPathTemplate": "/media-files/delete/{mediaFileUrl}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 5014
+          }
+        ],
+        "UpstreamPathTemplate": "/media-files/delete/{mediaFileUrl}",
+        "UpstreamHttpMethod": [ "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Bearer"
+        }
+      }
+    ]
+  }
+  

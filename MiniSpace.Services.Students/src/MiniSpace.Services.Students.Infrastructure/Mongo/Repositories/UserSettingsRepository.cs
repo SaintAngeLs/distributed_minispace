@@ -53,6 +53,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
                     InterestsVisibility = userSettings.AvailableSettings.InterestsVisibility,
                     ContactEmailVisibility = userSettings.AvailableSettings.ContactEmailVisibility,
                     PhoneNumberVisibility = userSettings.AvailableSettings.PhoneNumberVisibility,
+                    ProfileImageVisibility = userSettings.AvailableSettings.ProfileImageVisibility,
+                    BannerImageVisibility = userSettings.AvailableSettings.BannerImageVisibility,
+                    GalleryVisibility = userSettings.AvailableSettings.GalleryVisibility,       
                     FrontendVersion = userSettings.AvailableSettings.FrontendVersion,
                     PreferredLanguage = userSettings.AvailableSettings.PreferredLanguage
                 };
