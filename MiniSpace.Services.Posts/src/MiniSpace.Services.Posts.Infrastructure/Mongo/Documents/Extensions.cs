@@ -122,5 +122,46 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
         {
             return document.Comments.Select(doc => doc.AsEntity());
         }
+
+        public static ReactionDocument AsDocument(this Reaction reaction)
+        {
+            return new ReactionDocument
+            {
+                Id = reaction.Id,
+                UserId = reaction.UserId,
+                ContentId = reaction.ContentId,
+                ContentType = reaction.ContentType,
+                ReactionType = reaction.Type,
+                TargetType = reaction.TargetType,
+                CreatedAt = reaction.CreatedAt
+            };
+        }
+
+         public static Reaction AsEntity(this ReactionDocument document)
+        {
+            return Reaction.Create(
+                document.Id,
+                document.UserId,
+                document.ReactionType,
+                document.ContentId,
+                document.ContentType,
+                document.TargetType
+            );
+        }
+
+        public static UserReactionDocument AsDocument(this IEnumerable<Reaction> reactions, Guid userId)
+        {
+            return new UserReactionDocument
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Reactions = reactions.Select(reaction => reaction.AsDocument()).ToList()
+            };
+        }
+
+        public static IEnumerable<Reaction> AsEntities(this UserReactionDocument document)
+        {
+            return document.Reactions.Select(doc => doc.AsEntity());
+        }
     }
 }
