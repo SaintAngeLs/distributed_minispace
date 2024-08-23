@@ -22,6 +22,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
             document.Visibility,  
             document.UpdatedAt);
 
+                   
+
         public static PostDocument AsDocument(this Post entity)
             => new PostDocument()
             {

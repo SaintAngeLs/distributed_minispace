@@ -62,6 +62,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient<IUserEventPostRepository, UserEventPostMongoRepository>();
             builder.Services.AddTransient<IUserPostRepository, UserPostMongoRepository>();
             builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryRepository>();
+            builder.Services.AddTransient<IPostRecommendationService, PostRecommendationService>();
 
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
