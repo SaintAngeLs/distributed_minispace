@@ -86,7 +86,17 @@ namespace MiniSpace.Services.Reactions.Application.Commands.Handlers
                 await AddReactionAsync(reaction, contentType, targetType);
             }
 
-            await _messageBroker.PublishAsync(new ReactionCreated(command.ReactionId));
+              // Publish the ReactionCreated event with all necessary details
+            var reactionCreatedEvent = new ReactionCreated(
+                command.ReactionId,
+                command.UserId,
+                command.ContentId,
+                command.ContentType,
+                command.ReactionType,
+                command.TargetType
+            );
+
+            await _messageBroker.PublishAsync(reactionCreatedEvent);
         }
 
         private async Task<Reaction> FindExistingReactionAsync(Guid contentId, Guid userId, ReactionContentType contentType, ReactionTargetType targetType)
