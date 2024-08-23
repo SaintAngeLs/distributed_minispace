@@ -1,20 +1,307 @@
 @using MiniSpace.Web.DTO
 @using MudBlazor
+@inject IReactionsService ReactionsService
+@inject ICommentsService CommentsService
+@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
-
-<MudCard>
-    <MudCardHeader>
-        <MudText Typo="Typo.h6">@Post.TextContent</MudText>
-    </MudCardHeader>
+<MudCard Class="post-card mb-4" Elevation="2">
     <MudCardContent>
-        <MudText Typo="Typo.body2">@Post.State</MudText>
+        <MudGrid>
+            <MudItem Class="d-flex justify-center" xs="2" lg="1">
+                <MudAvatar Size="Size.Large" Image="@GetUserAvatar(Post.UserId)" />
+            </MudItem>
+            <MudItem xs="10" lg="11">
+                <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(Post.UserId)</MudText>
+                <MudText Typo="Typo.caption" Class="text-muted">@Post.CreatedAt.ToString("g")</MudText>
+            </MudItem>
+        </MudGrid>
+
+        <MudMarkdown Value="@Post.TextContent"></MudMarkdown>
+
+        @if (Post.MediaFiles != null && Post.MediaFiles.Any())
+        {
+            <MudImage Src="@Post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
+        }
+
+        @if (ReactionsSummary != null)
+        {
+            <MudGrid Class="mt-2" GutterSize="0" AlignItems="Center" Spacing="3">
+                @foreach (var reaction in ReactionsSummary.ReactionsWithCounts.OrderByDescending(r => r.Value))
+                {
+                    <MudItem Class="d-flex align-center">
+                        <MudIcon Icon="@(reaction.Key.GetReactionIcon())" Class="mr-1" />
+                        <MudText Typo="Typo.overline">@reaction.Value</MudText>
+                    </MudItem>
+                }
+                <MudItem Class="ml-2">
+                    <MudText Typo="Typo.subtitle2">Total: @ReactionsSummary.NumberOfReactions</MudText>
+                </MudItem>
+            </MudGrid>
+        }
     </MudCardContent>
-    <MudCardActions>
-        <MudButton Variant="MudBlazor.Variant.Text" Color="MudBlazor.Color.Primary">Read More</MudButton>
+
+    <MudDivider />
+
+    <MudCardActions Class="d-flex justify-around">
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="NavigateToPostDetails">
+            <MudIcon Icon="@Icons.Material.Filled.Visibility" Class="mr-1" /> View
+        </MudButton>
+
+        <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" CloseOnSelection="true">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Text" Color="Color.Secondary">
+                    <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> React
+                </MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                @foreach (var reactionType in Enum.GetValues(typeof(ReactionType)).Cast<ReactionType>())
+                {
+                    <MudMenuItem OnClick="() => HandleReactionAsync(reactionType)" Class="d-flex align-center">
+                        <MudIcon Icon="@reactionType.GetReactionIcon()" Class="mr-2" /> @reactionType.GetReactionText()
+                    </MudMenuItem>
+                }
+            </ChildContent>
+        </MudMenu>
+
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="ToggleCommentSection">
+            <MudIcon Icon="@Icons.Material.Filled.Comment" Class="mr-1" /> Comment
+        </MudButton>
     </MudCardActions>
+
+    @if (IsCommentSectionVisible)
+    {
+        <MudCardContent>
+            <MudTextField @bind-Value="NewCommentText" Placeholder="Write a comment..." Variant="Variant.Outlined" FullWidth="true" />
+            <MudButton Color="Color.Primary" OnClick="SubmitCommentAsync">Submit</MudButton>
+            
+            @if (Comments != null && Comments.Any())
+            {
+                <MudList>
+                    @foreach (var comment in Comments)
+                    {
+                        <MudListItem>
+                            <MudGrid justify-start AlignItems="Center">
+                                <MudItem xs="1" Class="pr-2">
+                                    <MudAvatar Size="Size.Small" Image="@GetUserAvatar(comment.UserId)" />
+                                </MudItem>
+                                <MudItem xs="11">
+                                    <MudText Typo="Typo.subtitle2">@GetUserName(comment.UserId)</MudText>
+                                    <MudText Typo="Typo.body2">@comment.TextContent</MudText>
+                                    <MudText Typo="Typo.caption" Class="text-muted">@comment.CreatedAt.ToString("g")</MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="text-muted">No comments available.</MudText>
+            }
+        </MudCardContent>
+    }
 </MudCard>
 
 @code {
     [Parameter]
     public PostDto Post { get; set; }
+
+    private ReactionsSummaryDto ReactionsSummary { get; set; }
+    private List<CommentDto> Comments { get; set; } = new();
+    private bool IsCommentSectionVisible { get; set; } = false;
+    private string NewCommentText { get; set; } = string.Empty;
+
+    private Dictionary<Guid, StudentDto> studentsCache = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ReactionsSummary = await ReactionsService.GetReactionsSummaryAsync(Post.Id, ReactionContentType.Post);
+        Comments = await LoadCommentsForPostAsync();
+
+        if (Post.UserId.HasValue && !studentsCache.ContainsKey(Post.UserId.Value))
+        {
+            var student = await StudentsService.GetStudentAsync(Post.UserId.Value);
+            if (student != null)
+            {
+                studentsCache[Post.UserId.Value] = student;
+            }
+        }
+    }
+
+    private async Task<List<CommentDto>> LoadCommentsForPostAsync()
+    {
+        var command = new SearchRootCommentsCommand(
+            contextId: Post.Id,
+            commentContext: DetermineCommentContext().ToString(),
+            pageable: new PageableDto
+            {
+                Page = 1,
+                Size = 10,
+                Sort = new SortDto
+                {
+                    SortBy = new[] { "CreatedAt" },
+                    Direction = "asc"
+                }
+            }
+        );
+
+        var response = await CommentsService.SearchRootCommentsAsync(command);
+        var comments = response.Items?.ToList() ?? new List<CommentDto>();
+
+        // Load user data for comments and replies
+        foreach (var comment in comments)
+        {
+            if (!studentsCache.ContainsKey(comment.UserId))
+            {
+                var student = await StudentsService.GetStudentAsync(comment.UserId);
+                if (student != null)
+                {
+                    studentsCache[comment.UserId] = student;
+                }
+            }
+
+            if (comment.Replies != null)
+            {
+                foreach (var reply in comment.Replies)
+                {
+                    if (!studentsCache.ContainsKey(reply.UserId))
+                    {
+                        var replyAuthor = await StudentsService.GetStudentAsync(reply.UserId);
+                        if (replyAuthor != null)
+                        {
+                            studentsCache[reply.UserId] = replyAuthor;
+                        }
+                    }
+                }
+            }
+        }
+
+        return comments;
+    }
+
+    private CommentContext DetermineCommentContext()
+    {
+        if (Post.OrganizationId.HasValue)
+        {
+            return Post.EventId.HasValue ? CommentContext.OrganizationEvent : CommentContext.OrganizationPost;
+        }
+        else
+        {
+            return Post.EventId.HasValue ? CommentContext.UserEvent : CommentContext.UserPost;
+        }
+    }
+
+    private void ToggleCommentSection()
+    {
+        IsCommentSectionVisible = !IsCommentSectionVisible;
+        NewCommentText = string.Empty;
+    }
+
+    private async Task SubmitCommentAsync()
+    {
+        if (string.IsNullOrWhiteSpace(NewCommentText))
+        {
+            // Show a snackbar or other notification
+            return;
+        }
+
+        var commentContext = DetermineCommentContext();
+        var userId = IdentityService.GetCurrentUserId();
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: Post.Id,
+            commentContext: commentContext.ToString(),
+            userId: userId,
+            parentId: Guid.Empty,
+            textContent: NewCommentText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            NewCommentText = string.Empty;
+            Comments = await LoadCommentsForPostAsync(); // Refresh comments
+        }
+        else
+        {
+            // Handle error (e.g., show a snackbar)
+        }
+    }
+
+    private async Task HandleReactionAsync(ReactionType reactionType)
+    {
+        var existingReaction = await ReactionsService.GetReactionsAsync(Post.Id, ReactionContentType.Post);
+
+        if (existingReaction != null)
+        {
+            var updateReaction = new UpdateReactionDto
+            {
+                ReactionId = existingReaction.FirstOrDefault()?.Id ?? Guid.NewGuid(),
+                UserId = IdentityService.UserDto.Id,
+                NewReactionType = reactionType.ToString()
+            };
+
+            var updateResult = await ReactionsService.UpdateReactionAsync(updateReaction);
+
+            if (updateResult.IsSuccessStatusCode)
+            {
+                // Reaction updated successfully
+            }
+            else
+            {
+                // Handle error (e.g., show a snackbar)
+            }
+        }
+        else
+        {
+            var createReaction = new CreateReactionDto
+            {
+                UserId = IdentityService.UserDto.Id,
+                ContentId = Post.Id,
+                ContentType = "Post",
+                ReactionType = reactionType.ToString(),
+                TargetType = "User"
+            };
+
+            var createResult = await ReactionsService.CreateReactionAsync(createReaction);
+
+            if (createResult.IsSuccessStatusCode)
+            {
+                // Reaction added successfully
+            }
+            else
+            {
+                // Handle error (e.g., show a snackbar)
+            }
+        }
+
+        ReactionsSummary = await ReactionsService.GetReactionsSummaryAsync(Post.Id, ReactionContentType.Post); // Refresh reactions summary
+    }
+
+    private string GetUserAvatar(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return studentsCache[userId.Value].ProfileImageUrl ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    private string GetUserName(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return $"{studentsCache[userId.Value].FirstName} {studentsCache[userId.Value].LastName}";
+        }
+        return "Unknown User";
+    }
+
+    private void NavigateToPostDetails()
+    {
+        NavigationManager.NavigateTo($"/posts/details/{Post.Id}");
+    }
 }

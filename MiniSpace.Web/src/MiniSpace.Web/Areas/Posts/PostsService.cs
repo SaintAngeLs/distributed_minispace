@@ -78,6 +78,35 @@ namespace MiniSpace.Web.Areas.Posts
             }
         }
 
+        public async Task<HttpResponse<PagedResponseDto<PostDto>>> GetUserFeedAsync(Guid userId, int pageNumber, 
+            int pageSize, string sortBy = "PublishDate", string direction = "asc")
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["PageNumber"] = pageNumber.ToString();
+            query["PageSize"] = pageSize.ToString();
+            query["SortBy"] = sortBy;
+            query["Direction"] = direction;
+
+            string queryString = query.ToString();
+            string url = $"posts/users/{userId}/feed?{queryString}";
+
+            try
+            {
+                var result = await _httpClient.GetAsync<PagedResponseDto<PostDto>>(url);
+                return new HttpResponse<PagedResponseDto<PostDto>>(result);
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponse<PagedResponseDto<PostDto>>(new ErrorMessage
+                {
+                    Code = ex.Message,
+                    Reason = ex.Message
+                });
+            }
+        }
+
 
         public Task DeletePostAsync(Guid postId)
         {

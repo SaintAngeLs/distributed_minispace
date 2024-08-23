@@ -15,6 +15,7 @@ namespace MiniSpace.Web.Areas.Posts
         Task ChangePostStateAsync(Guid postId, string state, DateTime publishDate); 
         Task<HttpResponse<object>> CreatePostAsync(CreatePostCommand command);
         Task<HttpResponse<PagedResponseDto<PostDto>>> SearchPostsAsync(SearchPosts searchPosts);
+        Task<HttpResponse<PagedResponseDto<PostDto>>> GetUserFeedAsync(Guid userId, int pageNumber, int pageSize, string sortBy = "PublishDate", string direction = "asc");
         Task DeletePostAsync(Guid postId);
         Task<IEnumerable<PostDto>> GetPostsAsync(Guid eventId);
         Task<HttpResponse<object>> UpdatePostAsync(Guid postId, string textContent, IEnumerable<Guid> mediaFiles);
