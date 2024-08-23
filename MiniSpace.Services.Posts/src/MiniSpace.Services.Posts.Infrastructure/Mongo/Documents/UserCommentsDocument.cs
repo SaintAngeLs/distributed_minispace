@@ -9,6 +9,5 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
         public Guid Id { get; set; } 
         public Guid UserId { get; set; } 
         public IEnumerable<CommentDocument> Comments { get; set; } 
-
     }
 }

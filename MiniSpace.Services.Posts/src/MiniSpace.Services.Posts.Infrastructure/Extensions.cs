@@ -56,10 +56,13 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IPostsService, PostsService>();
+
             builder.Services.AddTransient<IOrganizationEventPostRepository, OrganizationEventPostMongoRepository>();
             builder.Services.AddTransient<IOrganizationPostRepository, OrganizationPostMongoRepository>();
             builder.Services.AddTransient<IUserEventPostRepository, UserEventPostMongoRepository>();
             builder.Services.AddTransient<IUserPostRepository, UserPostMongoRepository>();
+            builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryRepository>();
+
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
@@ -86,6 +89,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .AddMongoRepository<UserEventPostDocument, Guid>("user_events_posts")
                 .AddMongoRepository<UserPostDocument, Guid>("user_posts")
                 .AddMongoRepository<PostDocument, Guid>("posts")
+                .AddMongoRepository<UserCommentsDocument, Guid>("user_comments_history")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
