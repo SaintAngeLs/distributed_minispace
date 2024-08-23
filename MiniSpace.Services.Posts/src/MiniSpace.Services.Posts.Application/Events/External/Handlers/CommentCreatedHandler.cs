@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Events;
@@ -18,6 +19,14 @@ namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
 
         public async Task HandleAsync(CommentCreated @event, CancellationToken cancellationToken = default)
         {
+
+             var eventJson = JsonSerializer.Serialize(@event, new JsonSerializerOptions
+            {
+                WriteIndented = true // Optional: For pretty-printing the JSON
+            });
+            Console.WriteLine("Received CommentCreated event:");
+            Console.WriteLine(eventJson);
+
             // Create a new Comment entity based on the received event data
             var comment = new Comment(
                 @event.CommentId,
