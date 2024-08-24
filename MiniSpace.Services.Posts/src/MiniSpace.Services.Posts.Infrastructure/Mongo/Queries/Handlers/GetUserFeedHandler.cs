@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Requests;
 using Newtonsoft.Json;
+using MiniSpace.Services.Posts.Application.Services.Clients;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 {
@@ -22,6 +23,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
         private readonly IUserCommentsHistoryRepository _userCommentsHistoryRepository;
         private readonly IUserReactionsHistoryRepository _userReactionsHistoryRepository;
         private readonly IPostRecommendationService _postRecommendationService;
+        private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly ILogger<GetUserFeedHandler> _logger;
 
         public GetUserFeedHandler(
@@ -29,18 +31,23 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             IUserCommentsHistoryRepository userCommentsHistoryRepository,
             IUserReactionsHistoryRepository userReactionsHistoryRepository,
             IPostRecommendationService postRecommendationService,
+            IStudentsServiceClient studentsServiceClient,
             ILogger<GetUserFeedHandler> logger)
         {
             _postsService = postsService;
             _userCommentsHistoryRepository = userCommentsHistoryRepository;
             _userReactionsHistoryRepository = userReactionsHistoryRepository;
             _postRecommendationService = postRecommendationService;
+            _studentsServiceClient = studentsServiceClient;
             _logger = logger;
         }
 
         public async Task<PagedResponse<PostDto>> HandleAsync(GetUserFeed query, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling GetUserFeed query: {Query}", JsonConvert.SerializeObject(query));
+
+            // Retrieve the user details
+            var user = await _studentsServiceClient.GetStudentByIdAsync(query.UserId);
 
             // Step 1: Retrieve all posts without pagination (we'll handle ranking and pagination manually)
             var allPostsRequest = new BrowseRequest
@@ -60,8 +67,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             var userComments = await _userCommentsHistoryRepository.GetUserCommentsAsync(query.UserId);
             var userReactions = await _userReactionsHistoryRepository.GetUserReactionsAsync(query.UserId);
 
-            // Step 3: Analyze user interactions to infer interests and calculate coefficients
-            var userInterests = AnalyzeUserInteractions(userComments, userReactions);
+            // Step 3: Analyze user interactions to infer interests and calculate coefficients, including user's interests and languages
+            var userInterests = AnalyzeUserInteractions(user, userComments, userReactions);
 
             // Step 4: Rank all posts by relevance to user interests
             var rankedPosts = await _postRecommendationService.RankPostsByUserInterestAsync(query.UserId, allPostsResult.Items, userInterests);
@@ -81,9 +88,36 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             return new PagedResponse<PostDto>(pagedPosts, query.PageNumber, query.PageSize, combinedPosts.Count());
         }
 
-        private IDictionary<string, double> AnalyzeUserInteractions(IEnumerable<Comment> userComments, IEnumerable<Reaction> userReactions)
+
+        private IDictionary<string, double> AnalyzeUserInteractions(UserDto user, IEnumerable<Comment> userComments, IEnumerable<Reaction> userReactions)
         {
             var interestKeywords = new Dictionary<string, double>();
+
+            // Include user interests in the analysis
+            foreach (var interest in user.Interests)
+            {
+                if (interestKeywords.ContainsKey(interest))
+                {
+                    interestKeywords[interest] += 1;
+                }
+                else
+                {
+                    interestKeywords[interest] = 1;
+                }
+            }
+
+            // Include user languages in the analysis
+            foreach (var language in user.Languages)
+            {
+                if (interestKeywords.ContainsKey(language))
+                {
+                    interestKeywords[language] += 1;
+                }
+                else
+                {
+                    interestKeywords[language] = 1;
+                }
+            }
 
             // Analyze user comments
             foreach (var comment in userComments)
@@ -93,11 +127,11 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 {
                     if (interestKeywords.ContainsKey(word))
                     {
-                        interestKeywords[word] += 1; // Increase weight for recurring words
+                        interestKeywords[word] += 1;
                     }
                     else
                     {
-                        interestKeywords[word] = 1; // Initial weight
+                        interestKeywords[word] = 1;
                     }
                 }
             }
@@ -105,14 +139,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             // Analyze user reactions
             foreach (var reaction in userReactions)
             {
-                var reactionType = reaction.Type; // Use 'Type' instead of 'ReactionType'
+                var reactionType = reaction.Type;
                 if (interestKeywords.ContainsKey(reactionType))
                 {
-                    interestKeywords[reactionType] += 1; // Increase weight for recurring reactions
+                    interestKeywords[reactionType] += 1;
                 }
                 else
                 {
-                    interestKeywords[reactionType] = 1; // Initial weight for this reaction type
+                    interestKeywords[reactionType] = 1;
                 }
             }
 
@@ -124,6 +158,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 
             return normalizedInterests;
         }
+
 
         private IEnumerable<PostDto> CombineRankedAndUnrankedPosts(IEnumerable<(PostDto Post, double Score)> rankedPosts, IEnumerable<PostDto> allPosts)
         {
