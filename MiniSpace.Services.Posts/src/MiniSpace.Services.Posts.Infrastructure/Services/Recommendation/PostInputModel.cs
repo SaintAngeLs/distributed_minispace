@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.ML.Data;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Services.Recommendation
@@ -13,5 +11,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services.Recommendation
 
         [LoadColumn(1)]
         public float Label { get; set; }
+
+        [LoadColumn(2)]
+        public float TextLength { get; set; }
+
+        [LoadColumn(3)]
+        public float KeywordMatchCount { get; set; }
+
+        [LoadColumn(4)]
+        public float PostAgeDays { get; set; }
     }
 }

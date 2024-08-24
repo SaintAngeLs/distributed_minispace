@@ -35,7 +35,10 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
             {
                 var input = new PostInputModel
                 {
-                    TextContent = post.TextContent
+                    TextContent = post.TextContent,
+                    TextLength = post.TextContent.Length,
+                    KeywordMatchCount = (float)userInterests.Where(ui => post.TextContent.Contains(ui.Key)).Sum(ui => ui.Value),
+                    PostAgeDays = (post.PublishDate.HasValue ? (float)(DateTime.UtcNow - post.PublishDate.Value).TotalDays : 0)
                 };
 
                 var prediction = predictionEngine.Predict(input);
@@ -47,11 +50,17 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
 
         private IDataView PrepareTrainingData(IDictionary<string, double> userInterests, IEnumerable<PostDto> posts)
         {
-            var inputData = posts.Select(post => new PostInputModel
+            var inputData = posts.Select(post =>
             {
-                TextContent = post.TextContent,
-                Label = (float)userInterests.Where(ui => post.TextContent.Contains(ui.Key))
-                                     .Sum(ui => ui.Value) // Sum the relevance scores of matched keywords
+                var keywordMatches = userInterests.Where(ui => post.TextContent.Contains(ui.Key)).Sum(ui => ui.Value);
+                return new PostInputModel
+                {
+                    TextContent = post.TextContent,
+                    Label = (float)keywordMatches, // Use matched keyword scores for the label
+                    TextLength = post.TextContent.Length,
+                    KeywordMatchCount = (float)keywordMatches, // Explicitly cast to float
+                    PostAgeDays = (post.PublishDate.HasValue ? (float)(DateTime.UtcNow - post.PublishDate.Value).TotalDays : 0) // Proper handling of nullable
+                };
             });
 
             return _mlContext.Data.LoadFromEnumerable(inputData);
