@@ -8,8 +8,8 @@ namespace MiniSpace.Services.Comments.Core.Entities
 {
     public class Comment : AggregateRoot
     {
-        private ISet<Guid> _likes = new HashSet<Guid>();
-        private ISet<Reply> _replies = new HashSet<Reply>();
+        private readonly ISet<Guid> _likes = new HashSet<Guid>();
+        private readonly ISet<Reply> _replies = new HashSet<Reply>();
 
         public Guid ContextId { get; private set; }
         public CommentContext CommentContext { get; private set; }
@@ -22,17 +22,10 @@ namespace MiniSpace.Services.Comments.Core.Entities
         public int RepliesCount => _replies.Count;
         public bool IsDeleted { get; private set; }
 
-        public IEnumerable<Guid> Likes
-        {
-            get => _likes;
-            private set => _likes = new HashSet<Guid>(value);
-        }
+        // Expose the _likes set as a read-only IEnumerable
+        public IEnumerable<Guid> Likes => _likes;
 
-        public IEnumerable<Reply> Replies
-        {
-            get => _replies;
-            private set => _replies = new HashSet<Reply>(value);
-        }
+        public IEnumerable<Reply> Replies => _replies;
 
         public Comment(Guid id, Guid contextId, CommentContext commentContext, Guid userId,
             IEnumerable<Guid> likes, Guid parentId, string textContent, DateTime createdAt, DateTime lastUpdatedAt, 
@@ -42,19 +35,19 @@ namespace MiniSpace.Services.Comments.Core.Entities
             ContextId = contextId;
             CommentContext = commentContext;
             UserId = userId;
-            Likes = likes;
+            _likes = new HashSet<Guid>(likes);
             ParentId = parentId;
             TextContent = textContent;
             CreatedAt = createdAt;
             LastUpdatedAt = lastUpdatedAt;
             LastReplyAt = lastReplyAt;
-            Replies = replies;
+            _replies = new HashSet<Reply>(replies);
             IsDeleted = isDeleted;
         }
 
         public void Like(Guid userId)
         {
-            if (Likes.Any(id => id == userId))
+            if (_likes.Contains(userId))
             {
                 throw new UserAlreadyLikesCommentException(userId);
             }
@@ -65,7 +58,7 @@ namespace MiniSpace.Services.Comments.Core.Entities
 
         public void UnLike(Guid userId)
         {
-            if (Likes.All(id => id != userId))
+            if (!_likes.Contains(userId))
             {
                 throw new UserNotLikeCommentException(userId, Id);
             }
