@@ -9,6 +9,7 @@ using MiniSpace.Services.Comments.Core.Entities;
 using MiniSpace.Services.Comments.Core.Repositories;
 using MiniSpace.Services.Comments.Core.Exceptions;
 using MiniSpace.Services.Comments.Application.Services;
+using System.Text.Json;
 
 namespace MiniSpace.Services.Comments.Application.Commands.Handlers
 {
@@ -42,6 +43,8 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
 
         public async Task HandleAsync(AddLike command, CancellationToken cancellationToken = default)
         {
+             var commandJson = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine($"Received AddLike command: {commandJson}");
             var identity = _appContext.Identity;
 
             if (!identity.IsAuthenticated || identity.Id != command.UserId)
