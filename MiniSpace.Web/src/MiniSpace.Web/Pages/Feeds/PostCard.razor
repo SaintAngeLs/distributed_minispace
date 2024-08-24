@@ -5,6 +5,7 @@
 @inject IStudentsService StudentsService
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@using MiniSpace.Web.Areas.Comments.CommandDto
 
 <MudCard Class="post-card mb-4" Elevation="2">
     <MudCardContent>
@@ -90,6 +91,51 @@
                                     <MudText Typo="Typo.subtitle2">@GetUserName(comment.UserId)</MudText>
                                     <MudText Typo="Typo.body2">@comment.TextContent</MudText>
                                     <MudText Typo="Typo.caption" Class="text-muted">@comment.CreatedAt.ToString("g")</MudText>
+                                    
+                                    <MudText Typo="Typo.caption" Class="text-muted">
+                                        @($"{comment.Likes?.Count() ?? 0} people liked this comment")
+                                    </MudText>
+
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => AddLikeToCommentAsync(comment)">
+                                        <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> Like
+                                    </MudButton>
+
+                                    <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => ToggleReplySection(comment.Id)">
+                                        <MudIcon Icon="@Icons.Material.Filled.Reply" Class="mr-1" /> Reply
+                                    </MudButton>
+
+                                    @if (comment.Id == activeReplyCommentId)
+                                    {
+                                        <MudTextField @bind-Value="newReplyText" Placeholder="Write a reply..." Variant="Variant.Outlined" FullWidth="true" Class="mt-2" />
+                                        <MudButton Color="Color.Primary" OnClick="() => SubmitReplyAsync(comment)">Submit Reply</MudButton>
+                                    }
+
+                                    @if (comment.Replies != null && comment.Replies.Any())
+                                    {
+                                        <MudList Class="pl-4">
+                                            @foreach (var reply in comment.Replies)
+                                            {
+                                                <MudListItem>
+                                                    <MudGrid justify-start AlignItems="Center">
+                                                        <MudItem xs="1" Class="pr-2">
+                                                            <MudAvatar Size="Size.Small" Image="@GetUserAvatar(reply.UserId)" />
+                                                        </MudItem>
+                                                        <MudItem xs="11">
+                                                            <MudText Typo="Typo.subtitle2">@GetUserName(reply.UserId)</MudText>
+                                                            <MudText Typo="Typo.body2">@reply.TextContent</MudText>
+                                                            <MudText Typo="Typo.caption" Class="text-muted">@reply.CreatedAt.ToString("g")</MudText>
+
+                                                            <!-- Remove Likes display for ReplyDto as it does not have Likes -->
+                                                            
+                                                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => AddLikeToReplyAsync(reply)">
+                                                                <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> Like
+                                                            </MudButton>
+                                                        </MudItem>
+                                                    </MudGrid>
+                                                </MudListItem>
+                                            }
+                                        </MudList>
+                                    }
                                 </MudItem>
                             </MudGrid>
                         </MudListItem>
@@ -112,6 +158,8 @@
     private List<CommentDto> Comments { get; set; } = new();
     private bool IsCommentSectionVisible { get; set; } = false;
     private string NewCommentText { get; set; } = string.Empty;
+    private string newReplyText { get; set; } = string.Empty;
+    private Guid? activeReplyCommentId { get; set; } = null;
 
     private Dictionary<Guid, StudentDto> studentsCache = new();
 
@@ -150,7 +198,6 @@
         var response = await CommentsService.SearchRootCommentsAsync(command);
         var comments = response.Items?.ToList() ?? new List<CommentDto>();
 
-        // Load user data for comments and replies
         foreach (var comment in comments)
         {
             if (!studentsCache.ContainsKey(comment.UserId))
@@ -199,6 +246,20 @@
         NewCommentText = string.Empty;
     }
 
+    private void ToggleReplySection(Guid commentId)
+    {
+        if (activeReplyCommentId == commentId)
+        {
+            activeReplyCommentId = null;
+            newReplyText = string.Empty;
+        }
+        else
+        {
+            activeReplyCommentId = commentId;
+            newReplyText = string.Empty;
+        }
+    }
+
     private async Task SubmitCommentAsync()
     {
         if (string.IsNullOrWhiteSpace(NewCommentText))
@@ -224,6 +285,39 @@
         {
             NewCommentText = string.Empty;
             Comments = await LoadCommentsForPostAsync(); 
+        }
+        else
+        {
+            // Handle error (e.g., show a snackbar)
+        }
+    }
+
+    private async Task SubmitReplyAsync(CommentDto parentComment)
+    {
+        if (string.IsNullOrWhiteSpace(newReplyText))
+        {
+            return;
+        }
+
+        var commentContext = DetermineCommentContext();
+        var userId = IdentityService.GetCurrentUserId();
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: Post.Id,
+            commentContext: commentContext.ToString(),
+            userId: userId,
+            parentId: parentComment.Id,
+            textContent: newReplyText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            newReplyText = string.Empty;
+            Comments = await LoadCommentsForPostAsync();
+            activeReplyCommentId = null;
         }
         else
         {
@@ -282,6 +376,38 @@
         }
 
         ReactionsSummary = await ReactionsService.GetReactionsSummaryAsync(Post.Id, ReactionContentType.Post); // Refresh reactions summary
+    }
+
+    private async Task AddLikeToCommentAsync(CommentDto comment)
+    {
+        var command = new AddLikeDto(comment.Id, IdentityService.GetCurrentUserId(), DetermineCommentContext().ToString());
+
+        var response = await CommentsService.AddLikeAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Comments = await LoadCommentsForPostAsync(); // Refresh comments
+        }
+        else
+        {
+            // Handle error (e.g., show a snackbar)
+        }
+    }
+
+    private async Task AddLikeToReplyAsync(ReplyDto reply)
+    {
+        var command = new AddLikeDto(reply.Id, IdentityService.GetCurrentUserId(), DetermineCommentContext().ToString());
+
+        var response = await CommentsService.AddLikeAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Comments = await LoadCommentsForPostAsync(); // Refresh comments
+        }
+        else
+        {
+            // Handle error (e.g., show a snackbar)
+        }
     }
 
     private string GetUserAvatar(Guid? userId)
