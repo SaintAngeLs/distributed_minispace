@@ -26,4 +26,5 @@ namespace MiniSpace.Web.DTO.Comments
         public bool IsLast { get; set; }
 
     }
+    
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using MiniSpace.Web.Areas.Comments.CommandDto;
 using MiniSpace.Web.Areas.Comments.CommandsDto;
 using MiniSpace.Web.DTO.Comments;
 using MiniSpace.Web.DTO.Wrappers;
@@ -17,7 +17,7 @@ namespace MiniSpace.Web.Areas.Comments
         Task<HttpResponse<object>> CreateCommentAsync(CreateCommentCommand command);
         Task<HttpResponse<object>> UpdateCommentAsync(UpdateCommentCommand command);
         Task DeleteCommentAsync(Guid commentId);
-        Task AddLikeAsync(Guid commentId);
+        Task<HttpResponse<object>> AddLikeAsync(AddLikeDto command);
         Task DeleteLikeAsync(Guid commentId);
     }
 }

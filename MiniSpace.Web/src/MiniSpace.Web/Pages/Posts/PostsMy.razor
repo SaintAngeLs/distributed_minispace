@@ -14,6 +14,8 @@
 @using System.Collections.Generic
 @using MiniSpace.Web.Areas.Reactions
 @using MiniSpace.Web.Areas.Reactions.CommandDto
+@using MiniSpace.Web.Areas.Comments.CommandsDto
+@using MiniSpace.Web.Areas.Comments.CommandDto
 
 <AuthWrapper>
     <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
@@ -38,7 +40,7 @@
                         <MudCard Class="post-card mb-4" Elevation="2">
                             <MudCardContent>
                                 <MudGrid>
-                                    <MudItem Class="d-flex justify-center" xs="2" lg="1" >
+                                    <MudItem Class="d-flex justify-center" xs="2" lg="1">
                                         <MudAvatar Size="Size.Large" Image="@GetUserAvatar(post.UserId.Value)" />
                                     </MudItem>
                                     <MudItem xs="10" lg="11">
@@ -114,7 +116,6 @@
                                         <MudList>
                                             @foreach (var comment in comments.Where(c => c.ParentId == Guid.Empty))
                                             {
-                                                @* Render the main comment *@
                                                 <MudListItem>
                                                     <MudGrid justify-start AlignItems="Center">
                                                         <MudItem xs="1" Class="pr-2">
@@ -125,9 +126,19 @@
                                                             <MudText Typo="Typo.body2">@comment.TextContent</MudText>
                                                             <MudText Typo="Typo.caption" Class="text-muted">@comment.CreatedAt.ToString("g")</MudText>
 
+                                                            <!-- Display number of likes -->
+                                                            <MudText Typo="Typo.caption" Class="text-muted">
+                                                                @($"{comment.Likes?.Count() ?? 0} people liked this comment")
+                                                            </MudText>
+
                                                             <!-- Reply Section -->
                                                             <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => ToggleReplySection(comment.Id)">
                                                                 <MudIcon Icon="@Icons.Material.Filled.Reply" Class="mr-1" /> Reply
+                                                            </MudButton>
+
+                                                            <!-- Like Comment Button -->
+                                                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => AddLikeToCommentAsync(comment, post)">
+                                                                <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> Like
                                                             </MudButton>
 
                                                             @if (comment.Id == activeReplyCommentId)
@@ -151,6 +162,16 @@
                                                                                     <MudText Typo="Typo.subtitle2">@GetUserName(reply.UserId)</MudText>
                                                                                     <MudText Typo="Typo.body2">@reply.TextContent</MudText>
                                                                                     <MudText Typo="Typo.caption" Class="text-muted">@reply.CreatedAt.ToString("g")</MudText>
+
+                                                                                    <!-- Display number of likes -->
+                                                                                    <MudText Typo="Typo.caption" Class="text-muted">
+                                                                                        @($"{reply.Likes?.Count() ?? 0} people liked this reply")
+                                                                                    </MudText>
+
+                                                                                    <!-- Like Reply Button -->
+                                                                                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => AddLikeToReplyAsync(reply.ToReplyDto(), post)">
+                                                                                        <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> Like
+                                                                                    </MudButton>
                                                                                 </MudItem>
                                                                             </MudGrid>
                                                                         </MudListItem>
@@ -543,6 +564,40 @@
         else
         {
             Snackbar.Add($"Failed to add reply: {response.ErrorMessage?.Reason}", Severity.Error);
+        }
+    }
+
+    private async Task AddLikeToCommentAsync(CommentDto comment, PostDto post)
+    {
+        var command = new AddLikeDto(comment.Id, currentUserId.Value, DetermineCommentContext(post).ToString());
+
+        var response = await CommentsService.AddLikeAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Comment liked successfully!", Severity.Success);
+            await LoadPostsAsync();
+        }
+        else
+        {
+            Snackbar.Add($"Failed to like comment: {response.ErrorMessage?.Reason}", Severity.Error);
+        }
+    }
+
+    private async Task AddLikeToReplyAsync(ReplyDto reply, PostDto post)
+    {
+        var command = new AddLikeDto(reply.Id, currentUserId.Value, DetermineCommentContext(post).ToString());
+
+        var response = await CommentsService.AddLikeAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Reply liked successfully!", Severity.Success);
+            await LoadPostsAsync();
+        }
+        else
+        {
+            Snackbar.Add($"Failed to like reply: {response.ErrorMessage?.Reason}", Severity.Error);
         }
     }
 }

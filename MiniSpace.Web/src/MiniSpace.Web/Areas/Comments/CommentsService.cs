@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using MiniSpace.Web.Areas.Comments.CommandDto;
 using MiniSpace.Web.Areas.Comments.CommandsDto;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO.Comments;
@@ -88,10 +89,10 @@ namespace MiniSpace.Web.Areas.Comments
             return _httpClient.DeleteAsync($"comments/{commentId}");
         }
 
-        public Task AddLikeAsync(Guid commentId)
+        public Task<HttpResponse<object>> AddLikeAsync(AddLikeDto command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>($"comments/{commentId}/like", new { commentId });
+            return _httpClient.PostAsync<object, object>($"comments/{command.CommentId}/like", command);
         }
 
         public Task DeleteLikeAsync(Guid commentId)
