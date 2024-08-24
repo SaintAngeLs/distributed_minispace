@@ -56,10 +56,10 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
                 return new PostInputModel
                 {
                     TextContent = post.TextContent,
-                    Label = (float)keywordMatches, // Use matched keyword scores for the label
+                    Label = (float)keywordMatches, 
                     TextLength = post.TextContent.Length,
-                    KeywordMatchCount = (float)keywordMatches, // Explicitly cast to float
-                    PostAgeDays = (post.PublishDate.HasValue ? (float)(DateTime.UtcNow - post.PublishDate.Value).TotalDays : 0) // Proper handling of nullable
+                    KeywordMatchCount = (float)keywordMatches, 
+                    PostAgeDays = (post.PublishDate.HasValue ? (float)(DateTime.UtcNow - post.PublishDate.Value).TotalDays : 0) 
                 };
             });
 
