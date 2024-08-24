@@ -42,8 +42,6 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
 
             if (!result.IsAcknowledged || result.ModifiedCount == 0)
             {
-                // Handle the case whre the update or insert did not succeed
-                Console.Error.WriteLine("Failed to add or update the comment.");
             }
         }
 
@@ -58,7 +56,8 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
             var update = Builders<UserPostCommentDocument>.Update
                 .Set($"{nameof(UserPostCommentDocument.Comments)}.$.{nameof(CommentDocument.TextContent)}", comment.TextContent)
                 .Set($"{nameof(UserPostCommentDocument.Comments)}.$.{nameof(CommentDocument.LastUpdatedAt)}", comment.LastUpdatedAt)
-                .Set($"{nameof(UserPostCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted);
+                .Set($"{nameof(UserPostCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted)
+                .Set($"{nameof(UserPostCommentDocument.Comments)}.$.{nameof(CommentDocument.Likes)}", comment.Likes);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
         }

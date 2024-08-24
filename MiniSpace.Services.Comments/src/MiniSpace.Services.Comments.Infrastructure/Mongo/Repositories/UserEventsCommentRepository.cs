@@ -57,7 +57,8 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
             var update = Builders<UserEventCommentDocument>.Update
                 .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.TextContent)}", comment.TextContent)
                 .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.LastUpdatedAt)}", comment.LastUpdatedAt)
-                .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted);
+                .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted)
+                .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.Likes)}", comment.Likes);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
         }
