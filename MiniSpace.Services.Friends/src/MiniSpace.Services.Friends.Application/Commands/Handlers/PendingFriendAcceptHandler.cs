@@ -41,10 +41,10 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             await _userRequestsRepository.UpdateAsync(command.RequesterId, inviterRequests.FriendRequests);
             await _userRequestsRepository.UpdateAsync(command.FriendId, inviteeRequests.FriendRequests);
             
+            CreateAndAddFriends(command.RequesterId, command.FriendId, FriendState.Accepted); 
+            
             var pendingFriendAcceptedEvent = new PendingFriendAccepted(command.RequesterId, command.FriendId);
             await _messageBroker.PublishAsync(pendingFriendAcceptedEvent);
-
-            CreateAndAddFriends(command.RequesterId, command.FriendId, FriendState.Accepted); 
         }
 
         private FriendRequest FindFriendRequest(UserRequests inviter, UserRequests invitee, Guid inviterId, Guid inviteeId)

@@ -61,16 +61,6 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var friendInvitedEvent = new FriendInvited(command.InviterId, command.InviteeId);
             string friendInvitedJson = JsonSerializer.Serialize(friendInvitedEvent);
             await _messageBroker.PublishAsync(friendInvitedEvent);
-
-            // Publish FriendRequestCreated Event
-            var friendRequestCreatedEvent = new FriendRequestCreated(command.InviterId, command.InviteeId);
-            string friendRequestCreatedJson = JsonSerializer.Serialize(friendRequestCreatedEvent);
-            await _messageBroker.PublishAsync(friendRequestCreatedEvent);
-
-            // Publish FriendRequestSent Event
-            var friendRequestSentEvent = new FriendRequestSent(command.InviterId, command.InviteeId);
-            string friendRequestSentJson = JsonSerializer.Serialize(friendRequestSentEvent);
-            await _messageBroker.PublishAsync(friendRequestSentEvent);
         }
 
         private async Task AddOrUpdateUserRequest(Guid userId, FriendRequest friendRequest, FriendState state)
