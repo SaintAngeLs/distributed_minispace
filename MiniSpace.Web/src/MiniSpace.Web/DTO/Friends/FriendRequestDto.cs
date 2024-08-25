@@ -1,7 +1,7 @@
 using System;
 using MiniSpace.Web.DTO.States;
 
-namespace MiniSpace.Web.DTO
+namespace MiniSpace.Web.DTO.Friends
 {
     public class FriendRequestDto
     {
@@ -10,7 +10,7 @@ namespace MiniSpace.Web.DTO
         public Guid InviteeId { get; set; }
         public DateTime RequestedAt { get; set; }
         public FriendState State { get; set; }
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
 
         public string InviteeName { get; set; }
         public string InviterName { get; set; }
