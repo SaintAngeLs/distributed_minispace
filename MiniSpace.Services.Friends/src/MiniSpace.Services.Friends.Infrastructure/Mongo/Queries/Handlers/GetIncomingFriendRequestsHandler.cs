@@ -12,33 +12,33 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetIncomingFriendRequestsHandler : IQueryHandler<GetIncomingFriendRequests, IEnumerable<StudentRequestsDto>>
+    public class GetIncomingFriendRequestsHandler : IQueryHandler<GetIncomingFriendRequests, IEnumerable<UserRequestsDto>>
     {
-        private readonly IMongoRepository<StudentRequestsDocument, Guid> _studentRequestsRepository;
+        private readonly IMongoRepository<UserRequestsDocument, Guid> _studentRequestsRepository;
 
-        public GetIncomingFriendRequestsHandler(IMongoRepository<StudentRequestsDocument, Guid> studentRequestsRepository)
+        public GetIncomingFriendRequestsHandler(IMongoRepository<UserRequestsDocument, Guid> studentRequestsRepository)
         {
             _studentRequestsRepository = studentRequestsRepository;
         }
 
-        public async Task<IEnumerable<StudentRequestsDto>> HandleAsync(GetIncomingFriendRequests query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserRequestsDto>> HandleAsync(GetIncomingFriendRequests query, CancellationToken cancellationToken)
         {
             var studentRequests = await _studentRequestsRepository.Collection
-                .Find(doc => doc.StudentId == query.StudentId)
+                .Find(doc => doc.UserId == query.UserId)
                 .ToListAsync(cancellationToken);
 
             if (studentRequests == null || !studentRequests.Any())
             {
-                return Enumerable.Empty<StudentRequestsDto>();
+                return Enumerable.Empty<UserRequestsDto>();
             }
 
             var incomingRequests = studentRequests
-                .Select(doc => new StudentRequestsDto
+                .Select(doc => new UserRequestsDto
                 {
                     Id = doc.Id,
-                    StudentId = doc.StudentId,
+                    UserId = doc.UserId,
                     FriendRequests = doc.FriendRequests
-                        .Where(request => request.InviteeId == query.StudentId && request.State != Core.Entities.FriendState.Accepted)
+                        .Where(request => request.InviteeId == query.UserId && request.State != Core.Entities.FriendState.Accepted)
                         .Select(request => new FriendRequestDto
                         {
                             Id = request.Id,

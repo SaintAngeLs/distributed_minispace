@@ -11,32 +11,32 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetFriendsHandler : IQueryHandler<GetFriends, IEnumerable<StudentFriendsDto>>
+    public class GetFriendsHandler : IQueryHandler<GetFriends, IEnumerable<UserFriendsDto>>
     {
-        private readonly IStudentFriendsRepository _studentFriendsRepository;
+        private readonly IUserFriendsRepository _studentFriendsRepository;
 
-        public GetFriendsHandler(IStudentFriendsRepository studentFriendsRepository)
+        public GetFriendsHandler(IUserFriendsRepository studentFriendsRepository)
         {
             _studentFriendsRepository = studentFriendsRepository;
         }
 
-        public async Task<IEnumerable<StudentFriendsDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserFriendsDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
         {
-            var friends = await _studentFriendsRepository.GetFriendsAsync(query.StudentId);
+            var friends = await _studentFriendsRepository.GetFriendsAsync(query.UserId);
             if (!friends.Any())
             {
-                return Enumerable.Empty<StudentFriendsDto>();
+                return Enumerable.Empty<UserFriendsDto>();
             }
 
-            return new List<StudentFriendsDto>
+            return new List<UserFriendsDto>
             {
-                new StudentFriendsDto
+                new UserFriendsDto
                 {
-                    StudentId = query.StudentId,
+                    UserId = query.UserId,
                     Friends = friends.Select(f => new FriendDto
                     {
                         Id = f.Id,
-                        StudentId = f.StudentId,
+                        UserId = f.UserId,
                         FriendId = f.FriendId,
                         CreatedAt = f.CreatedAt,
                         State = f.FriendState

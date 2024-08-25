@@ -18,9 +18,9 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<FriendDto> HandleAsync(GetFriend query, CancellationToken cancellationToken)
         {
-            var document = await _friendRepository.GetAsync(p => p.Id == query.StudentId);
+            var document = await _friendRepository.GetAsync(p => p.Id == query.UserId);
             if (document == null)
-                throw new FriendshipNotFoundException(query.StudentId);
+                throw new FriendshipNotFoundException(query.UserId);
 
             return document.AsDto();
         }

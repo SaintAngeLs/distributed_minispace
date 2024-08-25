@@ -51,8 +51,9 @@ namespace MiniSpace.Services.Friends.Infrastructure
         {
             builder.Services.AddTransient<IFriendRepository, FriendMongoRepository>();
             builder.Services.AddTransient<IFriendRequestRepository, FriendRequestMongoRepository>();
-            builder.Services.AddTransient<IStudentFriendsRepository, StudentFriendsMongoRepository>();
-            builder.Services.AddTransient<IStudentRequestsRepository, StudentRequestsMongoRepository>();
+            builder.Services.AddTransient<IUserFriendsRepository, UserFriendsMongoRepository>();
+            builder.Services.AddTransient<IUserRequestsRepository, UserRequestsMongoRepository>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -79,8 +80,8 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .AddHandlersLogging()
                 .AddMongoRepository<FriendRequestDocument, Guid>("friendRequests")
                 .AddMongoRepository<FriendDocument, Guid>("friends")
-                .AddMongoRepository<StudentFriendsDocument, Guid>("student-friends")
-                .AddMongoRepository<StudentRequestsDocument, Guid>("student-requests")
+                .AddMongoRepository<UserFriendsDocument, Guid>("user-friends")
+                .AddMongoRepository<UserRequestsDocument, Guid>("user-requests")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -102,12 +103,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .SubscribeCommand<PendingFriendAccept>()
                 .SubscribeCommand<PendingFriendDecline>()
                 .SubscribeCommand<SentFriendRequestWithdraw>()
-                // .SubscribeEvent<FriendRequestCreated>()
                 .SubscribeEvent<FriendRequestSent>()
-                // .SubscribeEvent<Application.Events.FriendAdded>()
-                // .SubscribeEvent<Application.Events.FriendRemoved>()
-                // .SubscribeEvent<PendingFriendAccepted>()
-                // .SubscribeEvent<PendingFriendDeclined>()
                 .SubscribeEvent<UserStatusUpdated>();
 
             return app;

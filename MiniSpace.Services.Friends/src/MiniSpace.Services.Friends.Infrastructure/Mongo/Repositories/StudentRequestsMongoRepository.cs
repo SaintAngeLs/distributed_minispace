@@ -11,19 +11,18 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 {
-    public class StudentRequestsMongoRepository : IStudentRequestsRepository
+    public class UserRequestsMongoRepository : IUserRequestsRepository
     {
-        private readonly IMongoRepository<StudentRequestsDocument, Guid> _repository;
+        private readonly IMongoRepository<UserRequestsDocument, Guid> _repository;
 
-        public StudentRequestsMongoRepository(IMongoRepository<StudentRequestsDocument, Guid> repository)
+        public UserRequestsMongoRepository(IMongoRepository<UserRequestsDocument, Guid> repository)
         {
             _repository = repository;
         }
      
-        public async Task<StudentRequests> GetAsync(Guid studentId)
+        public async Task<UserRequests> GetAsync(Guid studentId)
         {
-            // Console.WriteLine($"{studentId}");
-            var document = await _repository.FindAsync(doc => doc.StudentId == studentId);
+            var document = await _repository.FindAsync(doc => doc.UserId == studentId);
             var studentRequestDocument = document.SingleOrDefault();
             if (studentRequestDocument == null)
             {
@@ -32,25 +31,24 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
             var entity = studentRequestDocument.AsEntity();
             var json = JsonSerializer.Serialize(entity, new JsonSerializerOptions { WriteIndented = true });
-            // Console.WriteLine(json);
 
             return entity;
         }
 
 
-        public async Task<IEnumerable<StudentRequests>> GetAllAsync()
+        public async Task<IEnumerable<UserRequests>> GetAllAsync()
         {
             var documents = await _repository.FindAsync(_ => true);
             return documents.Select(doc => doc.AsEntity()); 
         }
 
-        public async Task AddAsync(StudentRequests studentRequests)
+        public async Task AddAsync(UserRequests studentRequests)
         {
             var document = studentRequests.AsDocument(); 
             await _repository.AddAsync(document);
         }
 
-        public async Task UpdateAsync(StudentRequests studentRequests)
+        public async Task UpdateAsync(UserRequests studentRequests)
         {
             var document = studentRequests.AsDocument();
             await _repository.UpdateAsync(document);
@@ -58,45 +56,23 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
         public async Task UpdateAsync(Guid studentId, IEnumerable<FriendRequest> updatedFriendRequests)
         {
-            var document = await _repository.FindAsync(doc => doc.StudentId == studentId);
+            var document = await _repository.FindAsync(doc => doc.UserId == studentId);
             var studentRequestDocument = document.SingleOrDefault();
-            // Console.WriteLine($"*******************************************************************************");
             if (studentRequestDocument == null)
             {
-                // Console.WriteLine($"No document found with Student ID: {studentId}");
                 return; // Consider handling this case appropriately, possibly by adding a new document.
             }
-
-            // Console.WriteLine($"Before update - Document JSON: {JsonSerializer.Serialize(studentRequestDocument, new JsonSerializerOptions { WriteIndented = true })}");
-
-            // Convert each FriendRequest to a FriendRequestDocument before assignment
             studentRequestDocument.FriendRequests = updatedFriendRequests.Select(fr => fr.AsDocument()).ToList();
 
-            var filter = Builders<StudentRequestsDocument>.Filter.Eq(doc => doc.StudentId, studentRequestDocument.StudentId);
-            var update = Builders<StudentRequestsDocument>.Update.Set(doc => doc.FriendRequests, studentRequestDocument.FriendRequests);
+            var filter = Builders<UserRequestsDocument>.Filter.Eq(doc => doc.UserId, studentRequestDocument.UserId);
+            var update = Builders<UserRequestsDocument>.Update.Set(doc => doc.FriendRequests, studentRequestDocument.FriendRequests);
 
-            var result = await _repository.Collection.UpdateOneAsync(filter, update);
-
-            // Fetch the updated document to log its new state
-            var updatedDocument = await _repository.FindAsync(doc => doc.StudentId == studentId);
-            var updatedStudentRequestDocument = updatedDocument.SingleOrDefault();
-
-            // Console.WriteLine($"After update - Document JSON: {JsonSerializer.Serialize(updatedStudentRequestDocument, new JsonSerializerOptions { WriteIndented = true })}");
-
-            if (result.ModifiedCount == 0)
-            {
-                // Console.WriteLine("No documents were modified during the update operation.");
-                throw new Exception("Update failed, no document was modified.");
-            }
-            else
-            {
-                // Console.WriteLine($"Document with Student ID: {studentId} was successfully updated. Modified count: {result.ModifiedCount}");
-            }
+            await _repository.Collection.UpdateOneAsync(filter, update);
         }
 
         public async Task DeleteAsync(Guid studentId)
         {
-            var documents = await _repository.FindAsync(doc => doc.StudentId == studentId);
+            var documents = await _repository.FindAsync(doc => doc.UserId == studentId);
             var document = documents.SingleOrDefault();
             if (document != null)
             {
@@ -106,25 +82,19 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
         public async Task RemoveFriendRequestAsync(Guid requesterId, Guid friendId)
         {
-            var filter = Builders<StudentRequestsDocument>.Filter.Eq(doc => doc.StudentId, requesterId) &
-                        Builders<StudentRequestsDocument>.Filter.Or(
-                            Builders<StudentRequestsDocument>.Filter.ElemMatch(doc => doc.FriendRequests, Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviterId, friendId)),
-                            Builders<StudentRequestsDocument>.Filter.ElemMatch(doc => doc.FriendRequests, Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviteeId, friendId))
+            var filter = Builders<UserRequestsDocument>.Filter.Eq(doc => doc.UserId, requesterId) &
+                        Builders<UserRequestsDocument>.Filter.Or(
+                            Builders<UserRequestsDocument>.Filter.ElemMatch(doc => doc.FriendRequests, Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviterId, friendId)),
+                            Builders<UserRequestsDocument>.Filter.ElemMatch(doc => doc.FriendRequests, Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviteeId, friendId))
                         );
 
-            var update = Builders<StudentRequestsDocument>.Update.PullFilter(doc => doc.FriendRequests,
+            var update = Builders<UserRequestsDocument>.Update.PullFilter(doc => doc.FriendRequests,
                 Builders<FriendRequestDocument>.Filter.Or(
                     Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviterId, friendId),
                     Builders<FriendRequestDocument>.Filter.Eq(fr => fr.InviteeId, friendId)
                 ));
 
-            var result = await _repository.Collection.UpdateOneAsync(filter, update);
-
-            if (result.ModifiedCount == 0)
-            {
-                throw new Exception("No friend request was removed.");
-            }
+            await _repository.Collection.UpdateOneAsync(filter, update);
         }
-
     }
 }

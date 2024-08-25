@@ -33,16 +33,11 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
         public async Task UpdateAsync(FriendRequest friendRequest)
         {
-        
-                var documentToUpdate = friendRequest.AsDocument();
+            var documentToUpdate = friendRequest.AsDocument();
 
-                documentToUpdate.State = friendRequest.State;
+            documentToUpdate.State = friendRequest.State;
 
-                // Console.WriteLine("Attempting to update document in database: " + JsonSerializer.Serialize(documentToUpdate));
-                await _repository.UpdateAsync(documentToUpdate);
-
-                var documentAfterUpdate = await _repository.GetAsync(friendRequest.Id);
-                // Console.WriteLine("Document after update: " + JsonSerializer.Serialize(documentAfterUpdate));
+            await _repository.UpdateAsync(documentToUpdate);
         }
 
         public async Task DeleteAsync(Guid id)
@@ -61,6 +56,5 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
             var document = await _repository.FindAsync(fr => fr.InviterId == inviterId && fr.InviteeId == inviteeId);
             return document.FirstOrDefault()?.AsEntity();
         }
-        
     }
 }
