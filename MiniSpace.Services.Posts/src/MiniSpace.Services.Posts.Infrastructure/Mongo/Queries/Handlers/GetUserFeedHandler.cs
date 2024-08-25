@@ -67,11 +67,22 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             var userComments = await _userCommentsHistoryRepository.GetUserCommentsAsync(query.UserId);
             var userReactions = await _userReactionsHistoryRepository.GetUserReactionsAsync(query.UserId);
 
-            // Step 3: Analyze user interactions to infer interests and calculate coefficients, including user's interests and languages
+            // Step 3: Analyze user interactions to infer interests and calculate coefficients
             var userInterests = AnalyzeUserInteractions(user, userComments, userReactions);
 
             // Step 4: Rank all posts by relevance to user interests
-            var rankedPosts = await _postRecommendationService.RankPostsByUserInterestAsync(query.UserId, allPostsResult.Items, userInterests);
+            IEnumerable<(PostDto Post, double Score)> rankedPosts;
+
+            // If the user has no interests, comments, or reactions, generate a random feed
+            if (!userInterests.Any() && !userComments.Any() && !userReactions.Any())
+            {
+                _logger.LogInformation("User {UserId} has no interactions or defined interests, generating a random feed.", query.UserId);
+                rankedPosts = GenerateRandomFeed(allPostsResult.Items);
+            }
+            else
+            {
+                rankedPosts = await _postRecommendationService.RankPostsByUserInterestAsync(query.UserId, allPostsResult.Items, userInterests);
+            }
 
             // Step 5: Combine ranked posts with remaining posts, prioritizing more relevant posts
             var combinedPosts = CombineRankedAndUnrankedPosts(rankedPosts, allPostsResult.Items);
@@ -88,34 +99,39 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             return new PagedResponse<PostDto>(pagedPosts, query.PageNumber, query.PageSize, combinedPosts.Count());
         }
 
-
         private IDictionary<string, double> AnalyzeUserInteractions(UserDto user, IEnumerable<Comment> userComments, IEnumerable<Reaction> userReactions)
         {
             var interestKeywords = new Dictionary<string, double>();
 
-            // Include user interests in the analysis
-            foreach (var interest in user.Interests)
+            // Include user interests in the analysis if they exist
+            if (user.Interests != null)
             {
-                if (interestKeywords.ContainsKey(interest))
+                foreach (var interest in user.Interests)
                 {
-                    interestKeywords[interest] += 1;
-                }
-                else
-                {
-                    interestKeywords[interest] = 1;
+                    if (interestKeywords.ContainsKey(interest))
+                    {
+                        interestKeywords[interest] += 1;
+                    }
+                    else
+                    {
+                        interestKeywords[interest] = 1;
+                    }
                 }
             }
 
-            // Include user languages in the analysis
-            foreach (var language in user.Languages)
+            // Include user languages in the analysis if they exist
+            if (user.Languages != null)
             {
-                if (interestKeywords.ContainsKey(language))
+                foreach (var language in user.Languages)
                 {
-                    interestKeywords[language] += 1;
-                }
-                else
-                {
-                    interestKeywords[language] = 1;
+                    if (interestKeywords.ContainsKey(language))
+                    {
+                        interestKeywords[language] += 1;
+                    }
+                    else
+                    {
+                        interestKeywords[language] = 1;
+                    }
                 }
             }
 
@@ -150,14 +166,27 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Normalize coefficients to sum to 1
+            // Normalize coefficients to sum to 1 if there are any
             var total = interestKeywords.Values.Sum();
-            var normalizedInterests = interestKeywords.ToDictionary(kvp => kvp.Key, kvp => kvp.Value / total);
+            if (total > 0)
+            {
+                var normalizedInterests = interestKeywords.ToDictionary(kvp => kvp.Key, kvp => kvp.Value / total);
+                _logger.LogInformation("Inferred user interests with coefficients: {Interests}", string.Join(", ", normalizedInterests.Select(kvp => $"{kvp.Key}: {kvp.Value:F2}")));
+                return normalizedInterests;
+            }
 
-            _logger.LogInformation("Inferred user interests with coefficients: {Interests}", string.Join(", ", normalizedInterests.Select(kvp => $"{kvp.Key}: {kvp.Value:F2}")));
-
-            return normalizedInterests;
+            return interestKeywords; // This may be empty if no interests, languages, comments, or reactions
         }
+
+        private IEnumerable<(PostDto Post, double Score)> GenerateRandomFeed(IEnumerable<PostDto> allPosts)
+        {
+            var random = new Random();
+            return allPosts
+                .OrderBy(p => random.NextDouble())
+                .Select(p => (p, Score: random.NextDouble())) // Assign a random score for ranking
+                .Take(100); // Limit to a reasonable number to prevent overwhelming the user
+        }
+
 
 
         private IEnumerable<PostDto> CombineRankedAndUnrankedPosts(IEnumerable<(PostDto Post, double Score)> rankedPosts, IEnumerable<PostDto> allPosts)
