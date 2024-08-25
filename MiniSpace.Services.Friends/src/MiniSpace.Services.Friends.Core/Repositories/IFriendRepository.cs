@@ -8,8 +8,8 @@ namespace MiniSpace.Services.Friends.Core.Repositories
     public interface IFriendRepository
     {
         Task AddFriendAsync(Guid requesterId, Guid friendId);
-        Task<List<Friend>> GetFriendsAsync(Guid studentId);
-        Task<bool> IsFriendAsync(Guid studentId, Guid potentialFriendId);
+        Task<List<Friend>> GetFriendsAsync(Guid userId);
+        Task<bool> IsFriendAsync(Guid userId, Guid potentialFriendId);
         Task RemoveFriendAsync(Guid requesterId, Guid friendId);
         Task AcceptFriendInvitationAsync(Guid requesterId, Guid friendId);
         Task DeclineFriendInvitationAsync(Guid requesterId, Guid friendId);
