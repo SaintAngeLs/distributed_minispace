@@ -34,18 +34,18 @@ namespace MiniSpace.Services.Friends.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseEndpoints(endpoints => endpoints
-                        .Get<GetFriends, PagedResponse<UserFriendsDto>>("friends/{userId}")
-                        .Get<GetIncomingFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/{userId}")
-
-                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
-                        .Get<GetSentFriendRequests, PagedResponse<UserRequestsDto>>("friends/requests/sent/{userId}")
-                        )
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Post<PendingFriendAccept>("friends/requests/{userId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Post<PendingFriendDecline>("friends/requests/{userId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Post<InviteFriend>("friends/{userId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}/invite"))
+
+                        .Get<GetFriends, PagedResponse<UserFriendsDto>>("friends/{userId}")
+                        .Get<GetIncomingFriendRequests, PagedResponse<UserRequestsDto>>("friends/requests/{userId}")
+                        .Get<GetFriendRequests, PagedResponse<FriendRequestDto>>("friends/pending/all")
+                        .Get<GetSentFriendRequests, PagedResponse<UserRequestsDto>>("friends/requests/sent/{userId}")
+
+
 
                         .Put<SentFriendRequestWithdraw>("friends/requests/{userId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
 
