@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Friends.Application;
+using MiniSpace.Services.Friends.Core.Wrappers;
 using MiniSpace.Services.Friends.Application.Commands;
 using MiniSpace.Services.Friends.Application.Dto;
 // using MiniSpace.Services.Friends.Application.Events;
@@ -33,28 +34,34 @@ namespace MiniSpace.Services.Friends.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
+                    .UseEndpoints(endpoints => endpoints
+                        .Get<GetFriends, PagedResponse<UserFriendsDto>>("friends/{userId}")
+                        .Get<GetIncomingFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/{userId}")
+
+                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
+                        .Get<GetSentFriendRequests, PagedResponse<UserRequestsDto>>("friends/requests/sent/{userId}")
+                        )
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        .Post<PendingFriendAccept>("friends/requests/{userId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Post<PendingFriendDecline>("friends/requests/{userId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Post<InviteFriend>("friends/{userId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}/invite"))
+
+                        .Put<SentFriendRequestWithdraw>("friends/requests/{userId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+
+                        
                         // .Get<IEnumerable<FriendDto>>("friends/{studentId}", 
                         //     ctx => new GetFriends { StudentId = Guid.Parse(ctx.Request.RouteValues["studentId"].ToString()) }, 
                         //     (query, ctx) => ctx.Response.WriteAsJsonAsync(query), // Correctly define delegate with parameters
                         //     afterDispatch: ctx => ctx.Response.Ok())
-                        .Get<GetFriends, IEnumerable<UserFriendsDto>>("friends/{userId}") 
-                        .Get<GetIncomingFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/{userId}")
-                        // .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
-                        .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
-                        .Get<GetSentFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/sent/{userId}")
+                       
                         // .Get("friends/requests/sent", ctx =>
                         // {
                         //     var query = new GetSentFriendRequests { StudentId = ctx.User.GetUserId() }; 
                         //     return ctx.QueryDispatcher.QueryAsync(query);
                         // }, afterDispatch: ctx => ctx.Response.WriteAsJsonAsync(ctx.Result))
-
-                        .Post<PendingFriendAccept>("friends/requests/{userId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
-                        .Post<PendingFriendDecline>("friends/requests/{userId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
-                        .Put<SentFriendRequestWithdraw>("friends/requests/{userId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Delete<RemoveFriend>("friends/{requesterId}/{friendId}/remove")
-                        .Post<InviteFriend>("friends/{userId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}/invite")))) 
+                       )) 
                 .UseLogging()
                 .UseLogging()
                 .Build()
