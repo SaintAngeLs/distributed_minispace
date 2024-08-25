@@ -54,9 +54,9 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             await _userRequestsRepository.RemoveFriendRequestAsync(command.RequesterId, command.FriendId);
             await _userRequestsRepository.RemoveFriendRequestAsync(command.FriendId, command.RequesterId);
 
-            var eventToPublish = new PendingFriendDeclined(command.RequesterId, command.FriendId);
+            var eventToPublish = new FriendRemoved(command.RequesterId, command.FriendId);
             await _messageBroker.PublishAsync(eventToPublish);
-            var reciprocalEventToPublish = new PendingFriendDeclined(command.FriendId, command.RequesterId);
+            var reciprocalEventToPublish = new FriendRemoved(command.FriendId, command.RequesterId);
             await _messageBroker.PublishAsync(reciprocalEventToPublish);
         }
 
