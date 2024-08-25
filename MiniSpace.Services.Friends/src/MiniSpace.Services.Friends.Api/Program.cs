@@ -39,22 +39,22 @@ namespace MiniSpace.Services.Friends.Api
                         //     ctx => new GetFriends { StudentId = Guid.Parse(ctx.Request.RouteValues["studentId"].ToString()) }, 
                         //     (query, ctx) => ctx.Response.WriteAsJsonAsync(query), // Correctly define delegate with parameters
                         //     afterDispatch: ctx => ctx.Response.Ok())
-                        .Get<GetFriends, IEnumerable<StudentFriendsDto>>("friends/{studentId}") 
-                        .Get<GetIncomingFriendRequests, IEnumerable<StudentRequestsDto>>("friends/requests/{studentId}")
+                        .Get<GetFriends, IEnumerable<UserFriendsDto>>("friends/{userId}") 
+                        .Get<GetIncomingFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/{userId}")
                         // .Get<GetFriends, IEnumerable<FriendDto>>("friends/pending")
                         .Get<GetFriendRequests, IEnumerable<FriendRequestDto>>("friends/pending/all")
-                        .Get<GetSentFriendRequests, IEnumerable<StudentRequestsDto>>("friends/requests/sent/{studentId}")
+                        .Get<GetSentFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/sent/{userId}")
                         // .Get("friends/requests/sent", ctx =>
                         // {
                         //     var query = new GetSentFriendRequests { StudentId = ctx.User.GetUserId() }; 
                         //     return ctx.QueryDispatcher.QueryAsync(query);
                         // }, afterDispatch: ctx => ctx.Response.WriteAsJsonAsync(ctx.Result))
 
-                        .Post<PendingFriendAccept>("friends/requests/{studentId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
-                        .Post<PendingFriendDecline>("friends/requests/{studentId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
-                        .Put<SentFriendRequestWithdraw>("friends/requests/{studentId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Post<PendingFriendAccept>("friends/requests/{userId}/accept", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Post<PendingFriendDecline>("friends/requests/{userId}/decline", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Put<SentFriendRequestWithdraw>("friends/requests/{userId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Delete<RemoveFriend>("friends/{requesterId}/{friendId}/remove")
-                        .Post<InviteFriend>("friends/{studentId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["studentId"]}/invite")))) 
+                        .Post<InviteFriend>("friends/{userId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}/invite")))) 
                 .UseLogging()
                 .UseLogging()
                 .Build()
