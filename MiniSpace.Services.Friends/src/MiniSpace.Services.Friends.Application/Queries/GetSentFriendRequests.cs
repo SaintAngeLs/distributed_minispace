@@ -4,8 +4,8 @@ using System;
 
 namespace MiniSpace.Services.Friends.Application.Queries
 {
-    public class GetSentFriendRequests : IQuery<IEnumerable<StudentRequestsDto>>
+    public class GetSentFriendRequests : IQuery<IEnumerable<UserRequestsDto>>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

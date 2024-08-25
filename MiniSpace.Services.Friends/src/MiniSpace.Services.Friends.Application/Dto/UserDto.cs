@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MiniSpace.Services.Friends.Application.Dto
 {
-    public class StudentDto
+    public class UserDto
     {
         public Guid Id { get; set; }
         public string Email { get; set; }

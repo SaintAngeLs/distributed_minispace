@@ -22,23 +22,7 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             _appContext = appContext;
         }
 
-        // public async Task HandleAsync(FriendRequestSent @event, CancellationToken cancellationToken)
-        // {
-        //     var now = DateTime.UtcNow;
-        //     var request = new FriendRequest(
-        //         inviterId: @event.InviterId, 
-        //         inviteeId: @event.InviteeId, 
-        //         requestedAt: now, 
-        //         state: FriendState.Requested 
-        //     );
-        //     await _friendRepository.AddRequestAsync(request);
-            
-        //     var events = _eventMapper.MapAll(request.Events);
-        //     await _messageBroker.PublishAsync(events.ToArray());
-        //     // Console.WriteLine($"FriendInvited event published: InviterId={@event.InviterId}, InviteeId={@event.InviteeId}");
-        // }
-
-         public async Task HandleAsync(FriendRequestSent @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(FriendRequestSent @event, CancellationToken cancellationToken)
         {
             try
             {

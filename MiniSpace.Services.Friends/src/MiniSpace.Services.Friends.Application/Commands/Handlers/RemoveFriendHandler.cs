@@ -5,25 +5,31 @@ using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Repositories;
 
+/*
+  This will require an update:
+    - RemoveFriendHandler.cs should be responsible for handling the RemoveFriend command with 
+    that in mind that it will remove a friend from the user's friend list but should leave the 
+    removed frined requests as avaising lite to accept (make the user subscriber).
+*/
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
 {
     public class RemoveFriendHandler : ICommandHandler<RemoveFriend>
     {
-        private readonly IStudentFriendsRepository _studentFriendsRepository;
-        private readonly IStudentRequestsRepository _studentRequestsRepository;
+        private readonly IUserFriendsRepository _userFriendsRepository;
+        private readonly IUserRequestsRepository _userRequestsRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IEventMapper _eventMapper;
         private readonly IAppContext _appContext; 
 
           public RemoveFriendHandler(
-            IStudentFriendsRepository studentFriendsRepository, 
-            IStudentRequestsRepository studentRequestsRepository,
+            IUserFriendsRepository userFriendsRepository, 
+            IUserRequestsRepository userRequestsRepository,
             IMessageBroker messageBroker, 
             IEventMapper eventMapper, 
             IAppContext appContext)
         {
-            _studentFriendsRepository = studentFriendsRepository;
-            _studentRequestsRepository = studentRequestsRepository;
+            _userFriendsRepository = userFriendsRepository;
+            _userRequestsRepository = userRequestsRepository;
             _messageBroker = messageBroker;
             _eventMapper = eventMapper;
             _appContext = appContext; 
@@ -34,23 +40,20 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             var identity = _appContext.Identity;
             Console.WriteLine($"Handling RemoveFriend for RequesterId: {command.RequesterId} and FriendId: {command.FriendId}. Authenticated: {identity.IsAuthenticated}");
 
-            var requesterFriends = await _studentFriendsRepository.GetAsync(command.RequesterId);
-            var friendFriends = await _studentFriendsRepository.GetAsync(command.FriendId);
+            var requesterFriends = await _userFriendsRepository.GetAsync(command.RequesterId);
+            var friendFriends = await _userRequestsRepository.GetAsync(command.FriendId);
 
             if (requesterFriends == null || friendFriends == null)
             {
                 throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
             }
 
-            // Call specific methods to remove the friend connection
-            await _studentFriendsRepository.RemoveFriendAsync(command.RequesterId, command.FriendId);
-            await _studentFriendsRepository.RemoveFriendAsync(command.FriendId, command.RequesterId);
+            await _userFriendsRepository.RemoveFriendAsync(command.RequesterId, command.FriendId);
+            await _userFriendsRepository.RemoveFriendAsync(command.FriendId, command.RequesterId);
 
-            // Remove the corresponding friend requests
-            await _studentRequestsRepository.RemoveFriendRequestAsync(command.RequesterId, command.FriendId);
-            await _studentRequestsRepository.RemoveFriendRequestAsync(command.FriendId, command.RequesterId);
+            await _userRequestsRepository.RemoveFriendRequestAsync(command.RequesterId, command.FriendId);
+            await _userRequestsRepository.RemoveFriendRequestAsync(command.FriendId, command.RequesterId);
 
-            // Publish events indicating the removal of pending friend requests
             var eventToPublish = new PendingFriendDeclined(command.RequesterId, command.FriendId);
             await _messageBroker.PublishAsync(eventToPublish);
             var reciprocalEventToPublish = new PendingFriendDeclined(command.FriendId, command.RequesterId);

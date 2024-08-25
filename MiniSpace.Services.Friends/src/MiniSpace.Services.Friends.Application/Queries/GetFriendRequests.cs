@@ -7,12 +7,12 @@ namespace MiniSpace.Services.Friends.Application.Queries
 {
     public class GetFriendRequests : IQuery<IEnumerable<FriendRequestDto>>, IQuery
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
 
         [JsonConstructor]
-        public GetFriendRequests([property: JsonPropertyName("studentId")] Guid studentId)
+        public GetFriendRequests([property: JsonPropertyName("userId")] Guid userId)
         {
-            StudentId = studentId;
+            UserId = userId;
         }
     }
 }

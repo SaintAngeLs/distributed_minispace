@@ -39,9 +39,6 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
             friendRequest.Decline();
             friendRequest.State = Core.Entities.FriendState.Declined;
             await _friendRequestRepository.UpdateAsync(friendRequest);
-
-            // var events = _eventMapper.MapAll(friendRequest.Events);
-            // await _messageBroker.PublishAsync(events.ToArray());
         }
     }
 }
