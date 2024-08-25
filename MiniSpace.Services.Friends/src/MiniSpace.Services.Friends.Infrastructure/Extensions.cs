@@ -29,7 +29,6 @@ using Newtonsoft.Json;
 using MiniSpace.Services.Friends.Application;
 using MiniSpace.Services.Friends.Application.Commands;
 using MiniSpace.Services.Friends.Application.Events.External;
-using MiniSpace.Services.Friends.Application.Events.External.Handlers;
 using MiniSpace.Services.Friends.Application.Services;
 using MiniSpace.Services.Friends.Core.Repositories;
 using MiniSpace.Services.Friends.Infrastructure.Contexts;
@@ -42,6 +41,7 @@ using MiniSpace.Services.Friends.Infrastructure.Services;
 using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
 using MiniSpace.Services.Friends.Application.Services.Clients;
+using Convey.Logging.CQRS;
 
 namespace MiniSpace.Services.Friends.Infrastructure
 {
@@ -77,7 +77,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .AddRedis()
                 .AddMetrics()
                 .AddJaeger()
-                .AddHandlersLogging()
+                .AddEventHandlersLogging()
                 .AddMongoRepository<FriendRequestDocument, Guid>("friendRequests")
                 .AddMongoRepository<FriendDocument, Guid>("friends")
                 .AddMongoRepository<UserFriendsDocument, Guid>("user-friends")
@@ -97,7 +97,6 @@ namespace MiniSpace.Services.Friends.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<AddFriend>()
                 .SubscribeCommand<RemoveFriend>()
                 .SubscribeCommand<InviteFriend>()
                 .SubscribeCommand<PendingFriendAccept>()

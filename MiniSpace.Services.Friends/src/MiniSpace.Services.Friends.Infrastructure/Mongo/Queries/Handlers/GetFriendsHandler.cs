@@ -2,7 +2,7 @@ using Convey.CQRS.Queries;
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Application.Queries;
 using MiniSpace.Services.Friends.Core.Repositories;
-using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Friends.Core.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,39 +11,48 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetFriendsHandler : IQueryHandler<GetFriends, IEnumerable<UserFriendsDto>>
+    public class GetFriendsHandler : IQueryHandler<GetFriends, PagedResponse<UserFriendsDto>>
     {
-        private readonly IUserFriendsRepository _studentFriendsRepository;
+        private readonly IUserFriendsRepository _userFriendsRepository;
 
-        public GetFriendsHandler(IUserFriendsRepository studentFriendsRepository)
+        public GetFriendsHandler(IUserFriendsRepository userFriendsRepository)
         {
-            _studentFriendsRepository = studentFriendsRepository;
+            _userFriendsRepository = userFriendsRepository;
         }
 
-        public async Task<IEnumerable<UserFriendsDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<UserFriendsDto>> HandleAsync(GetFriends query, CancellationToken cancellationToken)
         {
-            var friends = await _studentFriendsRepository.GetFriendsAsync(query.UserId);
-            if (!friends.Any())
+            var allFriends = await _userFriendsRepository.GetFriendsAsync(query.UserId);
+
+            if (allFriends == null || !allFriends.Any())
             {
-                return Enumerable.Empty<UserFriendsDto>();
+                return new PagedResponse<UserFriendsDto>(Enumerable.Empty<UserFriendsDto>(), query.Page, query.PageSize, 0);
             }
 
-            return new List<UserFriendsDto>
-            {
-                new UserFriendsDto
+            var totalItems = allFriends.Count();
+
+            var friendsToReturn = allFriends
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(f => new FriendDto
                 {
-                    UserId = query.UserId,
-                    Friends = friends.Select(f => new FriendDto
-                    {
-                        Id = f.Id,
-                        UserId = f.UserId,
-                        FriendId = f.FriendId,
-                        CreatedAt = f.CreatedAt,
-                        State = f.FriendState
-                    }).ToList()
-                }
+                    Id = f.Id,
+                    UserId = f.UserId,
+                    FriendId = f.FriendId,
+                    CreatedAt = f.CreatedAt,
+                    State = f.FriendState
+                })
+                .ToList();
+
+            var userFriendsDto = new UserFriendsDto
+            {
+                UserId = query.UserId,
+                Friends = friendsToReturn
             };
+
+            var userFriendsDtos = new List<UserFriendsDto> { userFriendsDto };
+
+            return new PagedResponse<UserFriendsDto>(userFriendsDtos, query.Page, query.PageSize, totalItems);
         }
     }
-
 }

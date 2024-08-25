@@ -16,9 +16,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Services
         {
             switch (@event)
             {
-                case Core.Events.FriendAdded e:
-                    return new Application.Events.FriendAdded(e.Requester.Id, e.Friend.Id);
-
+                
                 case Core.Events.FriendRemoved e:
                     return new Application.Events.FriendRemoved(e.Requester.Id, e.Friend.Id);
 

@@ -2,6 +2,7 @@ using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Application.Queries;
+using MiniSpace.Services.Friends.Core.Wrappers;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using System;
@@ -12,27 +13,29 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, IEnumerable<UserRequestsDto>>
+    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, PagedResponse<UserRequestsDto>>
     {
-        private readonly IMongoRepository<UserRequestsDocument, Guid> _studentRequestsRepository;
+        private readonly IMongoRepository<UserRequestsDocument, Guid> _userRequestsRepository;
 
-        public GetSentFriendRequestsHandler(IMongoRepository<UserRequestsDocument, Guid> studentRequestsRepository)
+        public GetSentFriendRequestsHandler(IMongoRepository<UserRequestsDocument, Guid> userRequestsRepository)
         {
-            _studentRequestsRepository = studentRequestsRepository;
+            _userRequestsRepository = userRequestsRepository;
         }
 
-       public async Task<IEnumerable<UserRequestsDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<UserRequestsDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
         {
-            var studentRequests = await _studentRequestsRepository.Collection
+            // Fetch user requests from the database
+            var userRequests = await _userRequestsRepository.Collection
                 .Find(doc => doc.UserId == query.UserId)
                 .ToListAsync(cancellationToken);
 
-            if (studentRequests == null || !studentRequests.Any())
+            if (userRequests == null || !userRequests.Any())
             {
-                return Enumerable.Empty<UserRequestsDto>();
+                return new PagedResponse<UserRequestsDto>(Enumerable.Empty<UserRequestsDto>(), query.Page, query.PageSize, 0);
             }
 
-            var sentRequests = studentRequests
+            // Filter sent friend requests and map them to DTOs
+            var sentRequests = userRequests
                 .Select(doc => new UserRequestsDto
                 {
                     Id = doc.Id,
@@ -45,15 +48,22 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
                             InviterId = request.InviterId,
                             InviteeId = request.InviteeId,
                             RequestedAt = request.RequestedAt,
-                            State = request.State, 
-                            UserId = request.InviterId
+                            State = request.State
                         })
                         .ToList()
                 })
                 .Where(dto => dto.FriendRequests.Any())
                 .ToList();
 
-            return sentRequests;
+            // Implement pagination
+            var totalItems = sentRequests.Count;
+            var paginatedRequests = sentRequests
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToList();
+
+            // Return the paginated response
+            return new PagedResponse<UserRequestsDto>(paginatedRequests, query.Page, query.PageSize, totalItems);
         }
     }
 }

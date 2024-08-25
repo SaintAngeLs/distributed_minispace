@@ -15,7 +15,6 @@ namespace MiniSpace.Services.Friends.Infrastructure.Exceptions
                 AlreadyFriendsException ex => new FriendAddingFailed(ex.RequesterId, ex.FriendId, ex.Message, "already_friends"),
                 FriendshipNotFoundException ex => message switch
                 {
-                    AddFriend _ => new FriendAddingFailed(ex.RequesterId, ex.FriendId, ex.Message, "friendship_not_found"),
                     RemoveFriend _ => new FriendRemovalFailed(ex.RequesterId, ex.FriendId, ex.Message, "friendship_not_found"),
                     _ => null
                 },
