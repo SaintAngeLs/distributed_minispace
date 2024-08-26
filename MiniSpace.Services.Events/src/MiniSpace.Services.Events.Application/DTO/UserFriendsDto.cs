@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace MiniSpace.Services.Events.Application.DTO
 {
     [ExcludeFromCodeCoverage]
-    public class StudentFriendsDto
+    public class UserFriendsDto
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public List<FriendDto> Friends { get; set; } = new List<FriendDto>();
     }
 }
