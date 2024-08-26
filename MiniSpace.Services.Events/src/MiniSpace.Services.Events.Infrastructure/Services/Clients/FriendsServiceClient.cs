@@ -20,7 +20,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
             _url = options.Services["friends"];
         }
 
-        public Task<IEnumerable<StudentFriendsDto>> GetAsync(Guid studentId)
-            => _httpClient.GetAsync<IEnumerable<StudentFriendsDto>>($"{_url}/friends/{studentId}");
+        public async Task<IEnumerable<UserFriendsDto>> GetAsync(Guid studentId)
+        {
+            var pagedResponse = await _httpClient.GetAsync<MiniSpace.Services.Events.Application.DTO.PagedResult<UserFriendsDto>>($"{_url}/friends/{studentId}");
+            return pagedResponse.Items;
+        }
     }
 }

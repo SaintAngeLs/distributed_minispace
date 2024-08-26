@@ -36,24 +36,33 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
         public async Task<EventDto> HandleAsync(GetEvent query, CancellationToken cancellationToken)
         {
             var document = await _eventRepository.GetAsync(p => p.Id == query.EventId);
-            if(document is null)
+            if (document == null)
             {
                 return null;
             }
+            
             var identity = _appContext.Identity;
             var friends = Enumerable.Empty<FriendDto>();
-            if(identity.IsAuthenticated)
+
+            if (identity.IsAuthenticated)
             {
-                var result = await _friendsServiceClient.GetAsync(identity.Id);
-                if (result != null && result.Any()) 
+                try
                 {
-                    friends = result.First().Friends;
+                    var userFriends = await _friendsServiceClient.GetAsync(identity.Id);
+                    if (userFriends != null && userFriends.Any())
+                    {
+                        friends = userFriends.SelectMany(uf => uf.Friends);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Error fetching friends: {ex.Message}");
+                    throw new ApplicationException("An error occurred while fetching friends data.", ex);
                 }
             }
 
             await _messageBroker.PublishAsync(new EventViewed(query.EventId));
             return document.AsDtoWithFriends(identity.Id, friends);
         }
-        
     }
 }

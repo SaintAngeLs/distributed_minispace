@@ -46,11 +46,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 Id = @event.Id,
                 Name = @event.Name,
                 Description = @event.Description,
-                Organizer = @event.Organizer.AsDto(),  // Assuming an AsDto method exists for Organizer
+                Organizer = @event.Organizer.AsDto(),  
                 StartDate = @event.StartDate,
                 EndDate = @event.EndDate,
-                Location = @event.Location.AsDto(),  // Assuming an AsDto method exists for Address
-                MediaFilesUrl = @event.MediaFiles?.ToList(),  // Converting MediaFiles to a list of URLs
+                Location = @event.Location.AsDto(),  
+                MediaFilesUrl = @event.MediaFiles?.ToList(), 
                 BannerUrl = @event.BannerUrl,
                 InterestedStudents = @event.InterestedParticipants.Count(),
                 SignedUpStudents = @event.SignedUpParticipants.Count(),
@@ -61,12 +61,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 PublishDate = @event.PublishDate,
                 UpdatedAt = @event.UpdatedAt,
                 Visibility = @event.Visibility,
-                Settings = new EventSettingsDto(@event.Settings), // Assuming an AsDto method exists for EventSettings
+                Settings = new EventSettingsDto(@event.Settings),
                 IsSignedUp = @event.SignedUpParticipants.Any(x => x.StudentId == studentId),
                 IsInterested = @event.InterestedParticipants.Any(x => x.StudentId == studentId),
                 StudentRating = @event.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value,
-                FriendsInterestedIn = Enumerable.Empty<ParticipantDto>(),  // Placeholder, customize as needed
-                FriendsSignedUp = Enumerable.Empty<ParticipantDto>()  // Placeholder, customize as needed
+                FriendsInterestedIn = Enumerable.Empty<ParticipantDto>(), 
+                FriendsSignedUp = Enumerable.Empty<ParticipantDto>()  
             };
         }
 
