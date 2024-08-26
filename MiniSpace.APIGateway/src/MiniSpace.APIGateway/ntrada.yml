@@ -946,6 +946,13 @@ modules:
         bind:
           - organizationId: {organizationId}
         
+      - upstream: /{organizationId}/requests
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/requests
+        bind:
+          - organizationId: {organizationId}
+
       - upstream: /paginated
         method: GET
         use: downstream
