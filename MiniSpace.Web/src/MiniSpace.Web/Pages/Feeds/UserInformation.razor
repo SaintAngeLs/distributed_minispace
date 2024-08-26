@@ -1,7 +1,9 @@
 @page "/user-information/{UserId:guid}"
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.Areas.Events
 @inject IStudentsService StudentsService
+@inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 @using MudBlazor
 
@@ -113,8 +115,7 @@
                         </MudItem>
                     }
 
-
-                    @if ((student.InterestedInEvents != null && student.InterestedInEvents.Any()) || (student.SignedUpEvents != null && student.SignedUpEvents.Any()))
+                    @if (InterestedInEventsDetails.Any() || SignedUpEventsDetails.Any())
                     {
                         <MudItem xs="12">
                             <MudCard Class="info-card modern-card">
@@ -123,13 +124,21 @@
                                     <MudText Typo="Typo.h6">Events</MudText>
                                 </MudCardHeader>
                                 <MudCardContent>
-                                    @if (student.InterestedInEvents != null && student.InterestedInEvents.Any())
+                                    @if (InterestedInEventsDetails.Any())
                                     {
-                                        <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventAvailable" /> Interested in: @string.Join(", ", student.InterestedInEvents.Select(e => e.ToString()))</MudText>
+                                        <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventAvailable" /> Interested in:</MudText>
+                                        @foreach (var eventDetail in InterestedInEventsDetails)
+                                        {
+                                            <MudText Typo="Typo.body2">@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                                        }
                                     }
-                                    @if (student.SignedUpEvents != null && student.SignedUpEvents.Any())
+                                    @if (SignedUpEventsDetails.Any())
                                     {
-                                        <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventNote" /> Signed Up for: @string.Join(", ", student.SignedUpEvents.Select(e => e.ToString()))</MudText>
+                                        <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventNote" /> Signed Up for:</MudText>
+                                        @foreach (var eventDetail in SignedUpEventsDetails)
+                                        {
+                                            <MudText Typo="Typo.body2">@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                                        }
                                     }
                                 </MudCardContent>
                             </MudCard>
@@ -146,11 +155,38 @@
     public Guid UserId { get; set; }
 
     private StudentDto student;
+    private List<EventDto> InterestedInEventsDetails = new List<EventDto>();
+    private List<EventDto> SignedUpEventsDetails = new List<EventDto>();
     private static readonly Random random = new Random();
 
     protected override async Task OnInitializedAsync()
     {
-        student = await StudentsService.GetStudentAsync(UserId);
+        try
+        {
+            student = await StudentsService.GetStudentAsync(UserId);
+
+            if (student.InterestedInEvents != null && student.InterestedInEvents.Any())
+            {
+                foreach (var eventId in student.InterestedInEvents)
+                {
+                    var eventDetail = await EventsService.GetEventAsync(eventId);
+                    InterestedInEventsDetails.Add(eventDetail);
+                }
+            }
+
+            if (student.SignedUpEvents != null && student.SignedUpEvents.Any())
+            {
+                foreach (var eventId in student.SignedUpEvents)
+                {
+                    var eventDetail = await EventsService.GetEventAsync(eventId);
+                    SignedUpEventsDetails.Add(eventDetail);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading student events: {ex.Message}");
+        }
     }
 
     private string GetProfileImage()
@@ -173,10 +209,11 @@
 
     private int GetRandomFontSize()
     {
-        // Generate a random font size between 14px and 24px
-        return random.Next(10, 20);
+        return random.Next(14, 24);
     }
 }
+
+
 
 <style>
     .profile-paper {
