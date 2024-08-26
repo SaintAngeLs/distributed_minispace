@@ -918,7 +918,7 @@ modules:
       - upstream: /users/{userId}/organizations
         method: GET
         use: downstream
-        downstream: organizations-service/users/{userId}/organizations
+        downstream: organizations-service/organizations/users/{userId}/organizations
         auth: true
         bind:
           - userId: {userId}
@@ -930,6 +930,16 @@ modules:
         auth: true
         bind:
           - organizationId: {organizationId}
+
+      - upstream: /users/{userId}/organizations/follow
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/users/{userId}/organizations/follow
+        auth: true
+        bind:
+          - userId: {userId}
+
+          
       
       - upstream: /{organizationId}/details/gallery-users
         method: GET
