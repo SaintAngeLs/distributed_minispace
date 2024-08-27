@@ -1,18 +1,22 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Communication.Application.Commands;
+using MiniSpace.Services.Communication.Application.Events;
+using MiniSpace.Services.Communication.Application.Services;
 using MiniSpace.Services.Communication.Core.Repositories;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Communication.Application.Commands.Handlers
 {
     public class UpdateMessageStatusHandler : ICommandHandler<UpdateMessageStatus>
     {
         private readonly IUserChatsRepository _userChatsRepository;
+        private readonly IMessageBroker _messageBroker;
 
-        public UpdateMessageStatusHandler(IUserChatsRepository userChatsRepository)
+        public UpdateMessageStatusHandler(IUserChatsRepository userChatsRepository, IMessageBroker messageBroker)
         {
             _userChatsRepository = userChatsRepository;
+            _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(UpdateMessageStatus command, CancellationToken cancellationToken)
@@ -39,6 +43,8 @@ namespace MiniSpace.Services.Communication.Application.Commands.Handlers
                     }
 
                     await _userChatsRepository.UpdateAsync(userChats);
+
+                    await _messageBroker.PublishAsync(new MessageStatusUpdated(command.ChatId, command.MessageId, command.Status));
                 }
             }
         }

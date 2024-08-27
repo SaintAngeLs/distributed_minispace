@@ -6,8 +6,6 @@ namespace MiniSpace.Services.Communication.Application.Services.Clients
 {
     public interface IStudentsServiceClient
     {
-        Task<UserDto> GetAsync(Guid id);
-        public Task<IEnumerable<UserDto>> GetAllAsync();
-        
+        Task<UserDto> GetAsync(Guid id);        
     }
 }

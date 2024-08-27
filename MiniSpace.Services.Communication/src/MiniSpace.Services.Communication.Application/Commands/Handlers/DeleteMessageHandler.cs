@@ -1,18 +1,22 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Communication.Application.Commands;
+using MiniSpace.Services.Communication.Application.Services;
 using MiniSpace.Services.Communication.Core.Repositories;
-using System.Threading.Tasks;
+using MiniSpace.Services.Communication.Application.Events;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Communication.Application.Commands.Handlers
 {
     public class DeleteMessageHandler : ICommandHandler<DeleteMessage>
     {
         private readonly IUserChatsRepository _userChatsRepository;
+        private readonly IMessageBroker _messageBroker;
 
-        public DeleteMessageHandler(IUserChatsRepository userChatsRepository)
+        public DeleteMessageHandler(IUserChatsRepository userChatsRepository, IMessageBroker messageBroker)
         {
             _userChatsRepository = userChatsRepository;
+            _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(DeleteMessage command, CancellationToken cancellationToken)
@@ -27,6 +31,8 @@ namespace MiniSpace.Services.Communication.Application.Commands.Handlers
                 {
                     chat.Messages.Remove(message);
                     await _userChatsRepository.UpdateAsync(userChats);
+
+                    await _messageBroker.PublishAsync(new MessageStatusUpdated(command.ChatId, command.MessageId, "Deleted"));
                 }
             }
         }

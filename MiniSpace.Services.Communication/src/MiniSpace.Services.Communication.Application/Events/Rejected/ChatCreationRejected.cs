@@ -1,17 +1,17 @@
 using Convey.CQRS.Events;
+using System;
 
 namespace MiniSpace.Services.Communication.Application.Events.Rejected
 {
-    
-    public class NotificationCreationRejected : IRejectedEvent
+    public class ChatCreationRejected : IRejectedEvent
     {
-        public Guid NotificationId { get; }
+        public Guid ChatId { get; }
         public string Reason { get; }
         public string Code { get; }
 
-        public NotificationCreationRejected(Guid notificationId, string reason, string code)
+        public ChatCreationRejected(Guid chatId, string reason, string code)
         {
-            NotificationId = notificationId;
+            ChatId = chatId;
             Reason = reason;
             Code = code;
         }

@@ -1,19 +1,23 @@
 using Convey.CQRS.Commands;
 using MiniSpace.Services.Communication.Application.Commands;
+using MiniSpace.Services.Communication.Application.Events;
+using MiniSpace.Services.Communication.Application.Services;
 using MiniSpace.Services.Communication.Core.Entities;
 using MiniSpace.Services.Communication.Core.Repositories;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Communication.Application.Commands.Handlers
 {
     public class SendMessageHandler : ICommandHandler<SendMessage>
     {
         private readonly IUserChatsRepository _userChatsRepository;
+        private readonly IMessageBroker _messageBroker;
 
-        public SendMessageHandler(IUserChatsRepository userChatsRepository)
+        public SendMessageHandler(IUserChatsRepository userChatsRepository, IMessageBroker messageBroker)
         {
             _userChatsRepository = userChatsRepository;
+            _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(SendMessage command, CancellationToken cancellationToken)
@@ -26,6 +30,8 @@ namespace MiniSpace.Services.Communication.Application.Commands.Handlers
                 var message = new Message(command.ChatId, command.SenderId, command.SenderId, command.Content, Enum.Parse<MessageType>(command.MessageType));
                 chat.AddMessage(message);
                 await _userChatsRepository.UpdateAsync(userChats);
+
+                await _messageBroker.PublishAsync(new MessageSent(command.ChatId, message.Id, command.SenderId, command.Content));
             }
         }
     }
