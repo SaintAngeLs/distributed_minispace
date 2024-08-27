@@ -45,17 +45,12 @@ namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Documents
                 Status = entity.Status
             };
         }
-          public static Chat AsEntity(this ChatDocument document)
+        public static Chat AsEntity(this ChatDocument document)
         {
-            var chat = new Chat(document.ParticipantIds);
-
-            foreach (var messageDocument in document.Messages)
-            {
-                chat.AddMessage(messageDocument.AsEntity());
-            }
-
-            return chat;
+            var messages = document.Messages.Select(m => m.AsEntity()).ToList();
+            return new Chat(document.Id, document.ParticipantIds, messages);
         }
+
 
         public static ChatDocument AsDocument(this Chat entity)
         {
