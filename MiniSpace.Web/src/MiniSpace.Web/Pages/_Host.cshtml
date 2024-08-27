@@ -219,6 +219,38 @@
             });
         }
 
+
+          // Initialize SignalR for communication service
+        function initializeCommunicationSignalR() {
+            if (!userId) return;
+
+            const communicationConnection = new signalR.HubConnectionBuilder()
+                .withUrl(`http://localhost:5016/chatHub?userId=${userId}`)
+                .withAutomaticReconnect()
+                .build();
+
+            communicationConnection.on("ReceiveMessage", function (jsonMessage) {
+                var message = JSON.parse(jsonMessage);
+                console.log("Message received: ", message);
+
+                playNotificationSound(); // Use appropriate sound for message notification
+
+                communicationConnection.invoke("AcknowledgeMessage", message.ChatId, message.MessageId)
+                    .then(function () {
+                        console.log("Acknowledgment sent for message: ", message.MessageId);
+                    })
+                    .catch(function (err) {
+                        console.error(err.toString());
+                    });
+            });
+
+            communicationConnection.start().then(function () {
+                console.log("Communication SignalR connection established.");
+            }).catch(function (err) {
+                console.error("Error establishing SignalR connection: ", err.toString());
+            });
+        }
+
         window.getSystemTheme = () => {
             return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         };
