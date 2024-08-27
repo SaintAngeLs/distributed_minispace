@@ -58,17 +58,17 @@ namespace MiniSpace.Services.Communication.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         
                         // Chat-related endpoints
-                        .Get<GetUserChats, PagedResponse<UserChatDto>>("chats/user/{userId}")
-                        .Get<GetChatById, ChatDto>("chats/{chatId}")
-                        .Get<GetMessagesForChat, IEnumerable<MessageDto>>("chats/{chatId}/messages")
-                        .Post<CreateChat>("chats")
-                        .Put<AddUserToChat>("chats/{chatId}/users")
-                        .Delete<DeleteChat>("chats/{chatId}")
+                        .Get<GetUserChats, PagedResponse<UserChatDto>>("communication/chats/user/{userId}")
+                        .Get<GetChatById, ChatDto>("communication/chats/{chatId}")
+                        .Get<GetMessagesForChat, IEnumerable<MessageDto>>("communication/chats/{chatId}/messages")
+                        .Post<CreateChat>("communication/chats")
+                        .Put<AddUserToChat>("communication/chats/{chatId}/users")
+                        .Delete<DeleteChat>("communication/chats/{chatId}")
                         
                         // Message-related endpoints
-                        .Post<SendMessage>("chats/{chatId}/messages")
-                        .Put<UpdateMessageStatus>("chats/{chatId}/messages/{messageId}/status")
-                        .Delete<DeleteMessage>("chats/{chatId}/messages/{messageId}") 
+                        .Post<SendMessage>("communication/chats/{chatId}/messages")
+                        .Put<UpdateMessageStatus>("communication/chats/{chatId}/messages/{messageId}/status")
+                        .Delete<DeleteMessage>("communication/chats/{chatId}/messages/{messageId}") 
                     ))
                 .UseLogging()
                 .UseLogging()

@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5006"
+      "applicationUrl": "http://localhost:5016"
     }
   },
   "profiles": {
@@ -14,10 +14,10 @@
         "ASPNETCORE_ENVIRONMENT": "local"
       }
     },
-    "MiniSpace.Services.Students": {
+    "MiniSpace.Services.Communication": {
       "commandName": "Project",
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:5006",
+      "applicationUrl": "http://localhost:5016",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "local"
       }
