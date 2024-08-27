@@ -49,8 +49,10 @@ namespace MiniSpace.Services.Communication.Infrastructure
         {
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
             builder.Services.AddTransient<IOrganizationChatsRepository, OrganizationChatsRepository>();
             builder.Services.AddTransient<IUserChatsRepository, UserChatsRepository>();
+            
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
