@@ -302,6 +302,87 @@ modules:
       notifications-service:
         localUrl: localhost:5006
         url: notifications-service
+
+
+  communication:
+    path: /communication
+    routes:
+      - upstream: /chats
+        method: POST
+        use: downstream
+        downstream: communication-service/communication/chats
+        auth: true 
+
+      - upstream: /chats/{chatId}/messages
+        method: POST
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages
+        auth: true  
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/users
+        method: PUT
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/users
+        auth: true  
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/messages/{messageId}/status
+        method: PUT
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages/{messageId}/status
+        auth: true  
+        bind:
+          - chatId:{chatId}
+          - messageId:{messageId}
+
+      - upstream: /chats/user/{userId}
+        method: GET
+        use: downstream
+        downstream: communication-service/communication/chats/user/{userId}
+        auth: true 
+        bind:
+          - userId:{userId}
+
+      - upstream: /chats/{chatId}
+        method: GET
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}
+        auth: true 
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/messages
+        method: GET
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages
+        auth: true 
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}
+        method: DELETE
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}
+        auth: true 
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/messages/{messageId}
+        method: DELETE
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages/{messageId}
+        auth: true 
+        bind:
+          - chatId:{chatId}
+          - messageId:{messageId}
+
+    services:
+      communication-service:
+        localUrl: localhost:5016
+        url: communication-service
   
 
   students:
