@@ -1,0 +1,231 @@
+@page "/chats/{ChatId:guid}"
+@using MiniSpace.Web.HttpClients
+@using MiniSpace.Web.Areas.Communication
+@using MiniSpace.Web.DTO.Communication
+@using MiniSpace.Web.DTO
+@inject IIdentityService IdentityService
+@inject ICommunicationService CommunicationService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@using MudBlazor
+
+<MudContainer>
+    <MudGrid>
+        <MudItem xs="4">
+            <MudPaper Class="conversation-list">
+                <MudList>
+                    @foreach (var chat in userChats)
+                    {
+                        <MudListItem @onclick="@(() => SelectChat(chat.Id))" Class="@GetSelectedChatClass(chat.Id)">
+                            <MudListItemIcon>
+                                <MudAvatar Icon="@Icons.Material.Filled.Chat" />
+                            </MudListItemIcon>
+                            <MudListItemText>@chat.Name</MudListItemText>
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="8">
+            <MudPaper Class="chat-window">
+                <div class="chat-messages">
+                    @if (messages != null)
+                    {
+                        @foreach (var message in messages)
+                        {
+                            <div class="message-bubble @GetMessageBubbleClass(message)">
+                                <div class="message-sender">@GetSenderName(message.SenderId)</div>
+                                <p>@message.Content</p>
+                                <span class="message-time">@message.Timestamp.ToString("HH:mm")</span>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <MudTextField @bind-Value="newMessageContent" Placeholder="Type a message..." FullWidth="true" OnKeyDown="@(async e => await SendMessage(e))" />
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<style>
+    .conversation-list {
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .chat-window {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .chat-messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 16px;
+    }
+
+    .message-bubble {
+        margin-bottom: 12px;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 60%;
+        background-color: #f1f1f1;
+        position: relative;
+    }
+
+    .message-bubble.sent {
+        margin-left: auto;
+        background-color: #e1ffc7;
+    }
+
+    .message-time {
+        font-size: 0.75rem;
+        color: gray;
+        position: absolute;
+        bottom: 4px;
+        right: 10px;
+    }
+
+    .message-sender {
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+</style>
+
+@code {
+    [Parameter] public Guid ChatId { get; set; }
+    
+    private List<ChatDto> userChats = new();
+    private List<MessageDto> messages = new();
+    private string newMessageContent = string.Empty;
+    private Dictionary<Guid, string> userNames = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IdentityService.InitializeAuthenticationState();
+
+        if (IdentityService.IsAuthenticated)
+        {
+            await LoadUserChats();
+            if (ChatId != Guid.Empty)
+            {
+                await LoadMessages(ChatId);
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private async Task LoadUserChats()
+    {
+        try
+        {
+            var userId = IdentityService.GetCurrentUserId();
+            var result = await CommunicationService.GetUserChatsAsync(userId, 1, 20);
+
+            if (result != null)
+            {
+                userChats = result.Items.SelectMany(u => u.Chats).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load chats: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task LoadMessages(Guid chatId)
+    {
+        try
+        {
+            messages = (await CommunicationService.GetMessagesForChatAsync(chatId)).ToList();
+            await LoadUserNames();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load messages: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task LoadUserNames()
+    {
+        var senderIds = messages.Select(m => m.SenderId).Distinct().ToList();
+        foreach (var senderId in senderIds)
+        {
+            if (!userNames.ContainsKey(senderId))
+            {
+                var user = await StudentsService.GetStudentAsync(senderId);
+                if (user != null)
+                {
+                    userNames[senderId] = $"{user.FirstName} {user.LastName}";
+                }
+            }
+        }
+    }
+
+    private async Task SendMessage(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(newMessageContent))
+        {
+            try
+            {
+                var userId = IdentityService.GetCurrentUserId();
+                var command = new SendMessageCommand(ChatId, userId, newMessageContent);
+
+                var response = await CommunicationService.SendMessageAsync(command);
+                if (response.IsSuccessStatusCode)
+                {
+                    var newMessage = new MessageDto
+                    {
+                        @* ChatId = ChatId, *@
+                        SenderId = userId,
+                        Content = newMessageContent,
+                        Timestamp = DateTime.UtcNow
+                    };
+                    messages.Add(newMessage);
+                    if (!userNames.ContainsKey(userId))
+                    {
+                        var user = await StudentsService.GetStudentAsync(userId);
+                        userNames[userId] = $"{user.FirstName} {user.LastName}";
+                    }
+                    newMessageContent = string.Empty;
+                    Snackbar.Add("Message sent!", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add("Failed to send message.", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private void SelectChat(Guid chatId)
+    {
+        NavigationManager.NavigateTo($"/chats/{chatId}");
+    }
+
+    private string GetSelectedChatClass(Guid chatId)
+    {
+        return ChatId == chatId ? "selected-chat" : string.Empty;
+    }
+
+    private string GetMessageBubbleClass(MessageDto message)
+    {
+        return message.SenderId == IdentityService.GetCurrentUserId() ? "sent" : "received";
+    }
+
+    private string GetSenderName(Guid senderId)
+    {
+        return userNames.TryGetValue(senderId, out var name) ? name : "Unknown";
+    }
+}

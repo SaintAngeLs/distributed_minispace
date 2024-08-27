@@ -7,6 +7,7 @@ using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.DTO.Communication;
 using MiniSpace.Web.Areas.Communication.CommandsDto;
+using System.Linq;
 
 namespace MiniSpace.Web.Areas.Communication
 {
@@ -26,6 +27,28 @@ namespace MiniSpace.Web.Areas.Communication
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return await _httpClient.GetAsync<PagedResponseDto<UserChatDto>>($"communication/chats/user/{userId}?page={page}&pageSize={pageSize}");
         }
+
+        public async Task<ChatDto> FindExistingChatAsync(Guid userId, Guid friendId)
+        {
+            var userChatsResponse = await GetUserChatsAsync(userId, 1, 100); 
+
+            if (userChatsResponse == null || !userChatsResponse.Items.Any())
+                return null;
+
+            // Loop through all the chats to find one with the friend
+            foreach (var userChat in userChatsResponse.Items.SelectMany(u => u.Chats))
+            {
+                if (userChat.ParticipantIds.Contains(friendId))
+                {
+                    // Return the chat if a matching participant is found
+                    return userChat;
+                }
+            }
+
+            // Return null if no existing chat is found
+            return null;
+        }
+
 
         public async Task<ChatDto> GetChatByIdAsync(Guid chatId)
         {

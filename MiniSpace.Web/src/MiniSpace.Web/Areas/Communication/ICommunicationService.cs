@@ -12,6 +12,7 @@ namespace MiniSpace.Web.Areas.Communication
     public interface ICommunicationService
     {
         Task<PagedResponseDto<UserChatDto>> GetUserChatsAsync(Guid userId, int page, int pageSize);
+        Task<ChatDto> FindExistingChatAsync(Guid userId, Guid friendId);
         Task<ChatDto> GetChatByIdAsync(Guid chatId);
         Task<IEnumerable<MessageDto>> GetMessagesForChatAsync(Guid chatId);
         Task<HttpResponse<object>> CreateChatAsync(CreateChatCommand command);
