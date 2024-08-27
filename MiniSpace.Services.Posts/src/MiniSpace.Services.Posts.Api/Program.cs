@@ -39,6 +39,7 @@ namespace MiniSpace.Services.Posts.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetPost, PostDto>("posts/{postId}")
                         .Get<GetPosts, PagedResponse<PostDto>>("posts/search")
+                        .Get<GetUserFeed, PagedResponse<PostDto>>("posts/users/{userId}/feed")
                         .Get<GetOrganizerPosts, IEnumerable<PostDto>>("posts/organizer/{organizerId}")
                         .Put<UpdatePost>("posts/{postId}")
                         .Delete<DeletePost>("posts/{postId}")

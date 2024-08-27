@@ -7,95 +7,83 @@
 @using MiniSpace.Web.DTO
 @using MiniSpace.Web.Areas.Identity
 @inject IIdentityService IdentityService
-@inject Radzen.NotificationService NotificationService
 @inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
 
 <AuthWrapper>
-<MudContainer>
- 
-<div class="breadcrumbs-container">
-    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
-</div>
-@code {
-    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Search", href: "/friends/search", disabled: true, icon: Icons.Material.Filled.PersonSearch)
-    };
-}
+    <MudContainer>
+        <MudBreadcrumbs Items="_items" Class="my-3" />
+        <MudGrid>
+            <MudItem xs="12" sm="8">
+                <MudTextField @bind-Value="searchTerm" Placeholder="Search friends..." FullWidth="true" Adornment="Adornment.Start" StartAdornmentIcon="@Icons.Material.Filled.Search" />
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchFriends" FullWidth="true">
+                    Search
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+        <MudDivider Class="my-2" />
 
-<div style="display: flex;">
-    <div class="left-panel">
-        <div class="search-bar">
-            <MudTextField @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
-            <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@SearchFriends" Style="margin-left: 10px; width: 23%;">
-                <MudIcon Icon="@Icons.Material.Filled.Search" />
-                <span class="button-text">Search</span>
-            </MudButton>
-        </div>
         @if (!pageInitialized)
         {
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <MudProgressCircular Indeterminate="true" Size="Size.Large" />
-            </div>
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Class="my-5 mx-auto d-block" />
         }
-        <div class="card-container">
-            @foreach (var student in students)
-            {
-                <div class="friend-card" @onclick="@(() => ViewDetails(student.Id))">
-                    <div class="friend-row">
-                        <img src="@GetProfileImageUrl(student.ProfileImageUrl)" alt="Student Image" class="friend-img" onerror="this.onerror=null;this.src='images/default_profile_image.webp';">
-                        <div class="friend-info">
-                            <h5>@student.FirstName @student.LastName</h5>
-                            @* <p>@student.Email</p> *@
-                        </div>
-                        <div class="buttons">
-                            @if (student.Id != IdentityService.GetCurrentUserId() && !sentRequests.Any(r => r.InviteeId == student.Id) && !allFriends.Any(f => f.FriendId == student.Id))
-                            {
-                                <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@(e => ConnectWithStudent(student.Id, e))" Class="action-button">
-                                    <MudIcon Icon="@Icons.Material.Filled.PersonAdd" />
-                                    <span class="button-text">Connect</span>
-                                </MudButton>
-                            }
-                            else if (allFriends.Any(f => f.FriendId == student.Id))
-                            {
-                                <MudButton Disabled="true" Class="action-button" Style="background-color: white; color: black; border: 1px solid #ccc; border-radius: 5px;">
-                                    <MudIcon Icon="@Icons.Material.Filled.Check" />
-                                    <span class="button-text">Connected</span>
-                                </MudButton>
-                            }
-                            else if (sentRequests.Any(r => r.InviteeId == student.Id))
-                            {
-                                <MudButton Disabled="true" Class="action-button" Style="background-color: #ccc; color: black; border-radius: 5px;">
-                                    <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty" />
-                                    <span class="button-text">Pending</span>
-                                </MudButton>
-                            }
-                            else if (incomingRequests.Any(r => r.InviteeId == IdentityService.GetCurrentUserId() && r.State == DTO.States.FriendState.Requested))
-                            {
-                                <MudButton Disabled="true" Class="action-button" Style="background-color: blue; color: white; border-radius: 5px;">
-                                    <MudIcon Icon="@Icons.Material.Filled.Notifications" />
-                                    <span class="button-text">Incoming Request</span>
-                                </MudButton>
-                            }
-                            else if (student.Id == IdentityService.GetCurrentUserId())
-                            {
-                                <MudButton Disabled="true" Class="action-button" Style="background-color: grey; color: white; border-radius: 5px;">
-                                    <MudIcon Icon="@Icons.Material.Filled.Person" />
-                                    <span class="button-text">It's You</span>
-                                </MudButton>
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-            <div id="end-of-list"></div>
-        </div>
-    </div>
-    
-    
-</div>
-</MudContainer>
+        else if (students.Any())
+        {
+            <MudGrid>
+                @foreach (var student in students)
+                {
+                    <MudItem xs="12">
+                        <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; background-color: #f7f9fa; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
+                            <MudGrid>
+                                <MudItem xs="2" Class="d-flex justify-content-center align-items-center">
+                                    <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Alt="Student Image" Size="Size.Large" Class="border border-primary" />
+                                </MudItem>
+                                <MudItem xs="10">
+                                    <MudText Typo="Typo.h6" Class="mb-0" Style="font-weight: bold;">@($"{student.FirstName} {student.LastName}")</MudText>
+                                    <MudButtonGroup>
+                                        @if (student.Id != IdentityService.GetCurrentUserId() && !(sentRequests?.Any(r => r.InviteeId == student.Id) ?? false) && !(allFriends?.Any(f => f.FriendId == student.Id) ?? false))
+                                        {
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(e => ConnectWithStudent(student.Id, e))">
+                                                <MudIcon Icon="@Icons.Material.Filled.PersonAdd" />
+                                                <span class="ml-2">Connect</span>
+                                            </MudButton>
+                                        }
+                                        else if (allFriends?.Any(f => f.FriendId == student.Id) == true)
+                                        {
+                                            <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Success">
+                                                <MudIcon Icon="@Icons.Material.Filled.Check" />
+                                                <span class="ml-2">Connected</span>
+                                            </MudButton>
+                                        }
+                                        else if (sentRequests?.Any(r => r.InviteeId == student.Id) == true)
+                                        {
+                                            <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Warning">
+                                                <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty" />
+                                                <span class="ml-2">Pending</span>
+                                            </MudButton>
+                                        }
+                                        else if (student.Id == IdentityService.GetCurrentUserId())
+                                        {
+                                            <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Secondary">
+                                                <MudIcon Icon="@Icons.Material.Filled.Person" />
+                                                <span class="ml-2">It's You</span>
+                                            </MudButton>
+                                        }
+                                    </MudButtonGroup>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+        else
+        {
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">No students found. Try searching with a different term.</MudText>
+        }
+    </MudContainer>
 </AuthWrapper>
 
 <style>
@@ -133,11 +121,12 @@
      
         box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
     }
+
     .search-bar {
         display: flex; 
         margin-bottom: 20px; 
         }
-    
+
     .card-container {
         display: flex;
         flex-direction: column;
@@ -198,46 +187,48 @@
         margin-left: 8px;
     }
 
-  
-
     .search-bar input:focus {
         outline: none;
         border: 2px solid #0056b3;
         box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
     }
-
 </style>
 
 @code {
     private string searchTerm;
     private List<StudentDto> students = new List<StudentDto>();
-    private IEnumerable<FriendRequestDto> sentRequests;
-    private StudentDto student;
-    RadzenNotification notificationComponent;
+    private IEnumerable<FriendRequestDto> sentRequests = Enumerable.Empty<FriendRequestDto>();
+    private IEnumerable<FriendDto> allFriends = Enumerable.Empty<FriendDto>();
+    private IEnumerable<FriendRequestDto> incomingRequests = Enumerable.Empty<FriendRequestDto>();
+    private bool pageInitialized = false;
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalStudents;
-    private IEnumerable<FriendDto> allFriends;
-    private IEnumerable<FriendRequestDto> incomingRequests;
-    private bool pageInitialized;
-    private DotNetObjectReference<FriendsSearch> _dotNetRef;
 
-    protected override async Task OnInitializedAsync() 
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
-        await IdentityService.InitializeAuthenticationState(); 
+        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Search", href: "/friends/search", disabled: true, icon: Icons.Material.Filled.PersonSearch)
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IdentityService.InitializeAuthenticationState();
 
         if (IdentityService.IsAuthenticated)
         {
-            sentRequests = await FriendsService.GetSentFriendRequestsAsync();
-            incomingRequests = await FriendsService.GetIncomingFriendRequestsAsync();
-            allFriends = await FriendsService.GetAllFriendsAsync(IdentityService.GetCurrentUserId());
-
-            await LoadStudents();
-            pageInitialized = true;
-            StateHasChanged();
-
-            _dotNetRef = DotNetObjectReference.Create(this);
-            await JSRuntime.InvokeVoidAsync("infiniteScroll.initialize", _dotNetRef);
+            try
+            {
+                await LoadStudents();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Failed to Load Data: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                pageInitialized = true;
+            }
         }
         else
         {
@@ -250,49 +241,59 @@
         return string.IsNullOrEmpty(profileImageUrl) ? "images/default_profile_image.webp" : profileImageUrl;
     }
 
-    private async Task LoadStudents(string searchArgument = null) 
+    private async Task LoadStudents(string searchArgument = null)
     {
         var response = await FriendsService.GetAllStudentsAsync(currentPage, pageSize, searchArgument);
-        if (response != null) {
+    
+        // Log the response object to the console
+        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+        Console.WriteLine("Response JSON:");
+        Console.WriteLine(jsonResponse);
+        
+        if (response?.Results != null)
+        {
             students.AddRange(response.Results);
-            totalStudents = response.Total; 
-            StateHasChanged();
+            totalStudents = response.Total;
         }
     }
 
-    [JSInvokable]
-    public async Task LoadMoreData()
+    private async Task SearchFriends()
     {
-        currentPage++;
-        await LoadStudents(searchTerm);
-    }
-
-    private async Task SearchFriends() {
         currentPage = 1;
         students.Clear();
         await LoadStudents(searchTerm);
     }
 
-    private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e) 
+    private async Task ConnectWithStudent(Guid studentId, MouseEventArgs e)
     {
-        var currentUserId = IdentityService.GetCurrentUserId();
-        await FriendsService.InviteStudent(currentUserId, studentId);
-
-        var student = students.FirstOrDefault(s => s.Id == studentId);
-        if (student != null)
+        try
         {
-            student.InvitationSent = true;
-            student.IsInvitationPending = true;
+            var currentUserId = IdentityService.GetCurrentUserId();
+            await FriendsService.InviteStudent(currentUserId, studentId);
+
+            var student = students.FirstOrDefault(s => s.Id == studentId);
+            if (student != null)
+            {
+                student.InvitationSent = true;
+            }
+
+            sentRequests = (await FriendsService.GetSentFriendRequestsAsync(currentPage, pageSize))?.Items ?? Enumerable.Empty<FriendRequestDto>();
+
+            Snackbar.Add("The invitation has been successfully sent.", Severity.Success);
+            await JSRuntime.InvokeVoidAsync("playNotificationSound");
         }
-        sentRequests = await FriendsService.GetSentFriendRequestsAsync();
-        NotificationService.Notify(Radzen.NotificationSeverity.Success, "Invitation Sent", "The invitation has been successfully sent.", 10000);
-        await JSRuntime.InvokeVoidAsync("playNotificationSound");
-        StateHasChanged(); 
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to Send Invitation: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
     private void ViewDetails(Guid studentId)
     {
         NavigationManager.NavigateTo($"/user-details/{studentId}");
     }
-
 }

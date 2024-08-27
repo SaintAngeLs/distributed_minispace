@@ -2,6 +2,7 @@ using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Application.Queries;
+using MiniSpace.Services.Friends.Core.Wrappers;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using System;
@@ -12,33 +13,38 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetIncomingFriendRequestsHandler : IQueryHandler<GetIncomingFriendRequests, IEnumerable<StudentRequestsDto>>
+    public class GetIncomingFriendRequestsHandler : IQueryHandler<GetIncomingFriendRequests, PagedResponse<UserRequestsDto>>
     {
-        private readonly IMongoRepository<StudentRequestsDocument, Guid> _studentRequestsRepository;
+        private readonly IMongoRepository<UserRequestsDocument, Guid> _userRequestsRepository;
 
-        public GetIncomingFriendRequestsHandler(IMongoRepository<StudentRequestsDocument, Guid> studentRequestsRepository)
+        public GetIncomingFriendRequestsHandler(IMongoRepository<UserRequestsDocument, Guid> userRequestsRepository)
         {
-            _studentRequestsRepository = studentRequestsRepository;
+            _userRequestsRepository = userRequestsRepository;
         }
 
-        public async Task<IEnumerable<StudentRequestsDto>> HandleAsync(GetIncomingFriendRequests query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<UserRequestsDto>> HandleAsync(GetIncomingFriendRequests query, CancellationToken cancellationToken)
         {
-            var studentRequests = await _studentRequestsRepository.Collection
-                .Find(doc => doc.StudentId == query.StudentId)
+            var filter = Builders<UserRequestsDocument>.Filter.Eq(doc => doc.UserId, query.UserId);
+            var totalItems = (int)await _userRequestsRepository.Collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+
+            var userRequests = await _userRequestsRepository.Collection
+                .Find(filter)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Limit(query.PageSize)
                 .ToListAsync(cancellationToken);
 
-            if (studentRequests == null || !studentRequests.Any())
+            if (userRequests == null || !userRequests.Any())
             {
-                return Enumerable.Empty<StudentRequestsDto>();
+                return new PagedResponse<UserRequestsDto>(Enumerable.Empty<UserRequestsDto>(), query.Page, query.PageSize, 0);
             }
 
-            var incomingRequests = studentRequests
-                .Select(doc => new StudentRequestsDto
+            var incomingRequests = userRequests
+                .Select(doc => new UserRequestsDto
                 {
                     Id = doc.Id,
-                    StudentId = doc.StudentId,
+                    UserId = doc.UserId,
                     FriendRequests = doc.FriendRequests
-                        .Where(request => request.InviteeId == query.StudentId && request.State != Core.Entities.FriendState.Accepted)
+                        .Where(request => request.InviteeId == query.UserId && request.State != Core.Entities.FriendState.Accepted)
                         .Select(request => new FriendRequestDto
                         {
                             Id = request.Id,
@@ -52,7 +58,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
                 .Where(dto => dto.FriendRequests.Any())
                 .ToList();
 
-            return incomingRequests;
+            return new PagedResponse<UserRequestsDto>(incomingRequests, query.Page, query.PageSize, totalItems);
         }
     }
 }

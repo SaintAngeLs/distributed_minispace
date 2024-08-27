@@ -48,6 +48,16 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         public async Task HandleAsync(CreateComment command, CancellationToken cancellationToken = default)
         {
             var identity = _appContext.Identity;
+
+    if (identity.IsAuthenticated)
+    {
+        Console.WriteLine($"User is authenticated: {identity.Id}");
+        Console.WriteLine($"User command id is: {command.UserId}");
+    }
+    else
+    {
+        Console.WriteLine("User is not authenticated.");
+    }
             if (identity.IsAuthenticated && identity.Id != command.UserId)
             {
                 throw new UnauthorizedCommentAccessException(command.ContextId, identity.Id);

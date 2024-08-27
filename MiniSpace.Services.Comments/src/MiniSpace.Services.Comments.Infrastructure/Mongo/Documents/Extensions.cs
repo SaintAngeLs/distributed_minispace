@@ -79,6 +79,25 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Documents
                 TextContent = entity.TextContent,
                 CreatedAt = entity.CreatedAt
             };
+        
+        public static CommentDto AsDto(this Comment comment)
+        {
+            return new CommentDto
+            {
+                Id = comment.Id,
+                ContextId = comment.ContextId,
+                CommentContext = comment.CommentContext.ToString().ToLowerInvariant(),
+                UserId = comment.UserId,
+                Likes = comment.Likes,
+                ParentId = comment.ParentId,
+                TextContent = comment.TextContent,
+                CreatedAt = comment.CreatedAt,
+                LastUpdatedAt = comment.LastUpdatedAt,
+                LastReplyAt = comment.LastReplyAt,
+                RepliesCount = comment.Replies.Count(),
+                IsDeleted = comment.IsDeleted
+            };
+        }
 
         public static OrganizationEventCommentDocument ToOrganizationEventDocument(this IEnumerable<Comment> comments, Guid organizationEventId, Guid organizationId)
             => new OrganizationEventCommentDocument

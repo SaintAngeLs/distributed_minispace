@@ -30,10 +30,19 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
         public async Task AddAsync(Reaction reaction)
         {
             var filter = Builders<OrganizationPostReactionDocument>.Filter.Eq(d => d.OrganizationPostId, reaction.ContentId);
-            var update = Builders<OrganizationPostReactionDocument>.Update
-                .Push(d => d.Reactions, reaction.AsDocument());
 
-            await _repository.Collection.UpdateOneAsync(filter, update);
+            var update = Builders<OrganizationPostReactionDocument>.Update.Combine(
+                Builders<OrganizationPostReactionDocument>.Update.Push(d => d.Reactions, reaction.AsDocument()),
+                Builders<OrganizationPostReactionDocument>.Update.SetOnInsert(d => d.OrganizationPostId, reaction.ContentId),
+                Builders<OrganizationPostReactionDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid())
+            );
+
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
+
+            if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            {
+            }
         }
 
         public async Task UpdateAsync(Reaction reaction)
@@ -56,6 +65,23 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
                 .PullFilter(d => d.Reactions, r => r.Id == id);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<IEnumerable<Reaction>> GetByContentIdAsync(Guid contentId)
+        {
+            var document = await _repository.GetAsync(d => d.OrganizationPostId == contentId);
+            return document?.Reactions.Select(r => r.AsEntity()) ?? Enumerable.Empty<Reaction>();
+        }
+
+        public async Task<Reaction> GetAsync(Guid contentId, Guid userId)
+        {
+            var filter = Builders<OrganizationPostReactionDocument>.Filter.And(
+                Builders<OrganizationPostReactionDocument>.Filter.Eq(x => x.OrganizationPostId, contentId),
+                Builders<OrganizationPostReactionDocument>.Filter.ElemMatch(x => x.Reactions, r => r.UserId == userId)
+            );
+
+            var document = await _repository.Collection.Find(filter).FirstOrDefaultAsync();
+            return document?.Reactions.FirstOrDefault(r => r.UserId == userId)?.AsEntity();
         }
     }
 }

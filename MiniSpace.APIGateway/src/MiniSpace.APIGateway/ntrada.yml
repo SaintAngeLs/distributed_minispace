@@ -590,7 +590,7 @@ modules:
           auth: true
 
         - upstream: /search
-          method: POST
+          method: GET
           use: downstream
           downstream: comments-service/comments/search
 
@@ -616,10 +616,20 @@ modules:
           auth: true
 
         - upstream: /{reactionId}
+          method: PUT
+          use: downstream
+          downstream: reactions-service/reactions/{reactionId}
+          auth: true
+          bind:
+            - reactionId: {reactionId}
+
+        - upstream: /{reactionId}
           method: DELETE
           use: downstream
           downstream: reactions-service/reactions/{reactionId}
           auth: true
+          bind:
+            - reactionId: {reactionId}
 
         - upstream: /
           method: GET
@@ -771,6 +781,14 @@ modules:
         downstream: posts-service/posts
         auth: true
 
+      - upstream: /users/{userId}/feed
+        method: GET
+        use: downstream
+        downstream: posts-service/posts/users/{userId}/feed
+        bind:
+          - userId:{userId}
+        auth: true
+
       - upstream: /search
         method: GET
         use: downstream
@@ -798,6 +816,8 @@ modules:
         method: GET
         use: downstream
         downstream: posts-service/posts/{postId}
+        bind:
+          - postId:{postId}
 
       - upstream: /
         method: GET

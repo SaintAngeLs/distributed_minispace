@@ -8,7 +8,6 @@ namespace MiniSpace.Services.Friends.Application.Services
     {
         IEvent Map(IDomainEvent @event);
         IEnumerable<IEvent> MapAll(IEnumerable<IDomainEvent> events);
-        // IEnumerable<IEvent> MapAll(IDomainEvent @event);
         IEnumerable<IEvent> MapAll(PendingFriendAccepted pendingFriendAccept);
     }    
 }

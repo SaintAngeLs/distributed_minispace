@@ -42,6 +42,8 @@ using Convey.Logging.CQRS;
 using MiniSpace.Services.Reactions.Application.Events;
 
 using System.Diagnostics.CodeAnalysis;
+using MiniSpace.Services.Reactions.Application.Services.Clients;
+using MiniSpace.Services.Reactions.Infrastructure.Services.Clients;
 
 namespace MiniSpace.Services.Reactions.Infrastructure
 {
@@ -60,6 +62,9 @@ namespace MiniSpace.Services.Reactions.Infrastructure
             builder.Services.AddTransient<IReactionsOrganizationsPostCommentsRepository, ReactionsOrganizationsPostCommentsMongoRepository>();
             builder.Services.AddTransient<IReactionsUserEventCommentsRepository, ReactionsUserEventCommentsMongoRepository>();
             builder.Services.AddTransient<IReactionsUserPostCommentsRepository, ReactionsUserPostCommentsMongoRepository>();
+
+            builder.Services.AddTransient<ICommentServiceClient, CommentServiceClient>();
+            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();

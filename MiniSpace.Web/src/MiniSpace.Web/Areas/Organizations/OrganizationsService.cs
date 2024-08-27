@@ -130,10 +130,11 @@ namespace MiniSpace.Web.Areas.Organizations
             return _httpClient.PutAsync<UpdateOrganizationCommand, object>($"organizations/{organizationId}", command);
         }
 
-        public Task<IEnumerable<UserOrganizationsDto>> GetUserOrganizationsAsync(Guid userId)
+        public async Task<PagedResult<OrganizationDto>> GetPaginatedUserOrganizationsAsync(Guid userId, int page, int pageSize)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<UserOrganizationsDto>>($"organizations/users/{userId}/organizations");
+            var queryString = $"organizations/users/{userId}/organizations?page={page}&pageSize={pageSize}";
+            return await _httpClient.GetAsync<PagedResult<OrganizationDto>>(queryString);
         }
 
         public Task<IEnumerable<RoleDto>> GetOrganizationRolesAsync(Guid organizationId)

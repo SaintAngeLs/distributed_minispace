@@ -15,42 +15,42 @@
 @using System.Threading.Tasks
 
 <MudContainer>
-<MudText Typo="Typo.h5" GutterBottom="true">Create New Organization</MudText>
+    <MudText Typo="Typo.h5" GutterBottom="true">Create New Organization</MudText>
 
-<MudPaper Elevation="1" Class="pa-4">
-    <MudForm Model="organizationModel" @ref="form" Validated="OnValidSubmit">
-        <MudTextField @bind-Value="organizationModel.Name" Label="Organization Name" Required="true" />
-        <MudTextField @bind-Value="organizationModel.Description" Label="Description" Required="false" />
+    <MudPaper Elevation="1" Class="pa-4">
+        <MudForm Model="organizationModel" @ref="form" Validated="OnValidSubmit">
+            <MudTextField @bind-Value="organizationModel.Name" Label="Organization Name" Required="true" />
+            <MudTextField @bind-Value="organizationModel.Description" Label="Description" Required="false" />
 
-        <div class="form-group">
-            <label for="parentOrganization">Parent Organization</label>
-            <select class="form-control" id="parentOrganization" @bind="selectedParentId">
-                <option value="">No Parent</option>
-                @if (_parentOrganizations != null)
-                {
-                    @foreach (var org in _parentOrganizations)
+            <div class="form-group">
+                <label for="parentOrganization">Parent Organization</label>
+                <select class="form-control" id="parentOrganization" @bind="selectedParentId">
+                    <option value="">No Parent</option>
+                    @if (_parentOrganizations != null)
                     {
-                        <option value="@org.Id">@org.Name</option>
+                        @foreach (var org in _parentOrganizations)
+                        {
+                            <option value="@org.Id">@org.Name</option>
+                        }
                     }
-                }
-            </select>
-        </div>
+                </select>
+            </div>
 
-        @if (organizationModel.Settings != null)
-        {
-            <MudSwitch @bind-Value="organizationModel.Settings.IsPrivate" Color="Color.Primary">Private Organization</MudSwitch>
-            <MudSwitch @bind-Value="organizationModel.Settings.IsVisible" Color="Color.Secondary">Visible to Public</MudSwitch>
-        }
+            @if (organizationModel.Settings != null)
+            {
+                <MudSwitch @bind-Value="organizationModel.Settings.IsPrivate" Color="Color.Primary">Private Organization</MudSwitch>
+                <MudSwitch @bind-Value="organizationModel.Settings.IsVisible" Color="Color.Secondary">Visible to Public</MudSwitch>
+            }
 
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForm">
-            Create Organization
-        </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForm">
+                Create Organization
+            </MudButton>
 
-        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack" Style="margin-top: 10px;">
-            Back
-        </MudButton>
-    </MudForm>
-</MudPaper>
+            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack" Style="margin-top: 10px;">
+                Back
+            </MudButton>
+        </MudForm>
+    </MudPaper>
 </MudContainer>
 
 @code {
@@ -65,10 +65,7 @@
         try
         {
             var userId = IdentityService.GetCurrentUserId();
-            var userOrganizations = await OrganizationsService.GetUserOrganizationsAsync(userId);
-
-            // Flatten the hierarchy and map to OrganizationDto
-            _parentOrganizations = FlattenOrganizations(userOrganizations).ToList();
+            await LoadUserOrganizationsAsync(userId);
 
             selectedParentId = organizationModel.ParentId?.ToString();
             if (organizationModel.Settings == null)
@@ -82,27 +79,21 @@
         }
     }
 
-    private IEnumerable<OrganizationDto> FlattenOrganizations(IEnumerable<UserOrganizationsDto> userOrganizations)
+    private async Task LoadUserOrganizationsAsync(Guid userId)
     {
-        foreach (var userOrg in userOrganizations)
-        {
-            yield return new OrganizationDto
-            {
-                Id = userOrg.Id,
-                Name = userOrg.Name,
-                Description = userOrg.Description,
-                OwnerId = userOrg.OwnerId
-                // Add any other necessary properties
-            };
+        var page = 1;
+        var pageSize = 100;
+        var allOrganizations = new List<OrganizationDto>();
 
-            if (userOrg.SubOrganizations != null)
-            {
-                foreach (var subOrg in FlattenOrganizations(userOrg.SubOrganizations))
-                {
-                    yield return subOrg;
-                }
-            }
-        }
+        PagedResult<OrganizationDto> pagedOrganizations;
+        do
+        {
+            pagedOrganizations = await OrganizationsService.GetPaginatedUserOrganizationsAsync(userId, page, pageSize);
+            allOrganizations.AddRange(pagedOrganizations.Items);
+            page++;
+        } while (pagedOrganizations.NextPage.HasValue);
+
+        _parentOrganizations = allOrganizations.ToList();
     }
 
     private async Task SubmitForm()

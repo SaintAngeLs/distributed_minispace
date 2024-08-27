@@ -7,14 +7,14 @@ namespace MiniSpace.Web.Areas.Reactions.CommandDto
 {
     public class CreateReactionDto
     {
-        public Guid ReactionId { get; set;}
-        public Guid UserId { get; }
-        public string ReactionType { get; }
+        public Guid ReactionId { get; set; } = Guid.NewGuid();
+        public Guid UserId { get; set; }
+        public string ReactionType { get; set; }
         // ReactionType :=  LoveIt || LikeIt || Wow || ItWasOkay || HateIt
-        public Guid ContentId { get; }
-        public string ContentType { get; }
+        public Guid ContentId { get; set; }
+        public string ContentType { get; set; }
         // ContentType :=  Post || Event || Comment
-        public string TargetType { get; }
+        public string TargetType { get; set; }
         // ReactionTargetType :=  User || Organization
     }
 }

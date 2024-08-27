@@ -2,6 +2,7 @@ using Convey.CQRS.Queries;
 using Convey.Persistence.MongoDB;
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Application.Queries;
+using MiniSpace.Services.Friends.Core.Wrappers;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using System;
@@ -12,48 +13,57 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, IEnumerable<StudentRequestsDto>>
+    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, PagedResponse<UserRequestsDto>>
     {
-        private readonly IMongoRepository<StudentRequestsDocument, Guid> _studentRequestsRepository;
+        private readonly IMongoRepository<UserRequestsDocument, Guid> _userRequestsRepository;
 
-        public GetSentFriendRequestsHandler(IMongoRepository<StudentRequestsDocument, Guid> studentRequestsRepository)
+        public GetSentFriendRequestsHandler(IMongoRepository<UserRequestsDocument, Guid> userRequestsRepository)
         {
-            _studentRequestsRepository = studentRequestsRepository;
+            _userRequestsRepository = userRequestsRepository;
         }
 
-       public async Task<IEnumerable<StudentRequestsDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<UserRequestsDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
         {
-            var studentRequests = await _studentRequestsRepository.Collection
-                .Find(doc => doc.StudentId == query.StudentId)
+            // Fetch user requests from the database
+            var userRequests = await _userRequestsRepository.Collection
+                .Find(doc => doc.UserId == query.UserId)
                 .ToListAsync(cancellationToken);
 
-            if (studentRequests == null || !studentRequests.Any())
+            if (userRequests == null || !userRequests.Any())
             {
-                return Enumerable.Empty<StudentRequestsDto>();
+                return new PagedResponse<UserRequestsDto>(Enumerable.Empty<UserRequestsDto>(), query.Page, query.PageSize, 0);
             }
 
-            var sentRequests = studentRequests
-                .Select(doc => new StudentRequestsDto
+            // Filter sent friend requests and map them to DTOs
+            var sentRequests = userRequests
+                .Select(doc => new UserRequestsDto
                 {
                     Id = doc.Id,
-                    StudentId = doc.StudentId,
+                    UserId = doc.UserId,
                     FriendRequests = doc.FriendRequests
-                        .Where(request => request.InviterId == query.StudentId && request.State == Core.Entities.FriendState.Requested)
+                        .Where(request => request.InviterId == query.UserId && request.State == Core.Entities.FriendState.Requested)
                         .Select(request => new FriendRequestDto
                         {
                             Id = request.Id,
                             InviterId = request.InviterId,
                             InviteeId = request.InviteeId,
                             RequestedAt = request.RequestedAt,
-                            State = request.State, 
-                            StudentId = request.InviterId
+                            State = request.State
                         })
                         .ToList()
                 })
                 .Where(dto => dto.FriendRequests.Any())
                 .ToList();
 
-            return sentRequests;
+            // Implement pagination
+            var totalItems = sentRequests.Count;
+            var paginatedRequests = sentRequests
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToList();
+
+            // Return the paginated response
+            return new PagedResponse<UserRequestsDto>(paginatedRequests, query.Page, query.PageSize, totalItems);
         }
     }
 }

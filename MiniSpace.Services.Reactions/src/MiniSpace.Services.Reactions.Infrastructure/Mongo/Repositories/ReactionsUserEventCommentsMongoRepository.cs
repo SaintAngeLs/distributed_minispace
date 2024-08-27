@@ -29,11 +29,22 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
 
         public async Task AddAsync(Reaction reaction)
         {
-            var filter = Builders<UserEventCommentsReactionDocument>.Filter.Eq(x => x.UserEventCommentId, reaction.ContentId);
-            var update = Builders<UserEventCommentsReactionDocument>.Update.Push(x => x.Reactions, reaction.AsDocument());
+            var filter = Builders<UserEventCommentsReactionDocument>.Filter.Eq(d => d.UserEventCommentId, reaction.ContentId);
 
-            await _repository.Collection.UpdateOneAsync(filter, update);
+            var update = Builders<UserEventCommentsReactionDocument>.Update.Combine(
+                Builders<UserEventCommentsReactionDocument>.Update.Push(d => d.Reactions, reaction.AsDocument()),
+                Builders<UserEventCommentsReactionDocument>.Update.SetOnInsert(d => d.UserEventCommentId, reaction.ContentId),
+                Builders<UserEventCommentsReactionDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid())
+            );
+
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
+
+            if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            {
+            }
         }
+
 
         public async Task UpdateAsync(Reaction reaction)
         {
@@ -53,6 +64,23 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
             var update = Builders<UserEventCommentsReactionDocument>.Update.PullFilter(x => x.Reactions, r => r.Id == id);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<IEnumerable<Reaction>> GetByContentIdAsync(Guid contentId)
+        {
+            var document = await _repository.GetAsync(d => d.UserEventCommentId == contentId);
+            return document?.Reactions.Select(r => r.AsEntity()) ?? Enumerable.Empty<Reaction>();
+        }
+
+        public async Task<Reaction> GetAsync(Guid contentId, Guid userId)
+        {
+            var filter = Builders<UserEventCommentsReactionDocument>.Filter.And(
+                Builders<UserEventCommentsReactionDocument>.Filter.Eq(x => x.UserEventCommentId, contentId),
+                Builders<UserEventCommentsReactionDocument>.Filter.ElemMatch(x => x.Reactions, r => r.UserId == userId)
+            );
+
+            var document = await _repository.Collection.Find(filter).FirstOrDefaultAsync();
+            return document?.Reactions.FirstOrDefault(r => r.UserId == userId)?.AsEntity();
         }
     }
 }

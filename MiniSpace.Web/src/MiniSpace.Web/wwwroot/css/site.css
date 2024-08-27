@@ -908,3 +908,10 @@ div.connectionRejected {
     height: auto;
     border-radius: 8px;
 }
+
+.avatar-overlay {
+    bottom: 40px;
+    left: 16px;
+    border: 3px solid white;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+}

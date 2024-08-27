@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
+using MiniSpace.Web.Areas.Comments.CommandDto;
+using MiniSpace.Web.Areas.Comments.CommandsDto;
 using MiniSpace.Web.Areas.Identity;
-using MiniSpace.Web.DTO;
-using MiniSpace.Web.Data.Comments;
+using MiniSpace.Web.DTO.Comments;
 using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
@@ -20,18 +23,47 @@ namespace MiniSpace.Web.Areas.Comments
             _identityService = identityService;
         }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchRootCommentsAsync(Guid contextId,
-            string commentContext, PageableDto pageable)
+        public Task<PagedResponseDto<CommentDto>> SearchRootCommentsAsync(SearchRootCommentsCommand command)
         {
-            return _httpClient.PostAsync<SearchRootComments, PagedResponseDto<IEnumerable<CommentDto>>>("comments/search", 
-                new (contextId, commentContext, pageable));
+            var queryString = ToQueryString(command);
+
+            // Log the query string to the console
+            Console.WriteLine($"Sending request with query string: comments/search{queryString}");
+
+            return _httpClient.GetAsync<PagedResponseDto<CommentDto>>($"comments/search{queryString}");
         }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<CommentDto>>>> SearchSubCommentsAsync(Guid contextId,
-            string commentContext, Guid parentId, PageableDto pageable)
+
+        private string ToQueryString(SearchRootCommentsCommand command)
         {
-            return _httpClient.PostAsync<SearchSubComments, PagedResponseDto<IEnumerable<CommentDto>>>("comments/search", 
-                new (contextId, commentContext, parentId, pageable));
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["ContextId"] = command.ContextId.ToString();
+            query["CommentContext"] = command.CommentContext;
+
+            // Flatten the PageableDto into individual query parameters
+            if (command.Pageable != null)
+            {
+                query["Page"] = command.Pageable.Page.ToString();
+                query["Size"] = command.Pageable.Size.ToString();
+                
+                if (command.Pageable.Sort != null)
+                {
+                    // Pass SortBy as a comma-separated list
+                    if (command.Pageable.Sort.SortBy != null && command.Pageable.Sort.SortBy.Any())
+                    {
+                        query["SortBy"] = string.Join(",", command.Pageable.Sort.SortBy);
+                    }
+                    query["Direction"] = command.Pageable.Sort.Direction;
+                }
+            }
+
+            return "?" + query.ToString();
+        }
+
+
+        public Task<HttpResponse<PagedResponseDto<CommentDto>>> SearchSubCommentsAsync(SearchSubCommentsCommand command)
+        {
+            return _httpClient.PostAsync<SearchSubCommentsCommand, PagedResponseDto<CommentDto>>("comments/search", command);
         }
         
         public Task<CommentDto> GetCommentAsync(Guid commentId)
@@ -39,18 +71,16 @@ namespace MiniSpace.Web.Areas.Comments
             return _httpClient.GetAsync<CommentDto>($"comments/{commentId}");
         }
         
-        public Task<HttpResponse<object>> CreateCommentAsync(Guid commentId, Guid contextId, string commentContext,
-            Guid studentId, Guid parentId, string comment)
+        public Task<HttpResponse<object>> CreateCommentAsync(CreateCommentCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("comments",
-                new { commentId, contextId, commentContext, studentId, parentId, comment });
+            return _httpClient.PostAsync<object, object>("comments", command);
         }
 
-        public Task<HttpResponse<object>> UpdateCommentAsync(Guid commentId, string textContent)
+        public Task<HttpResponse<object>> UpdateCommentAsync(UpdateCommentCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"comments/{commentId}", new { commentId, textContent});
+            return _httpClient.PutAsync<object, object>($"comments/{command.CommentId}", command);
         }
 
         public Task DeleteCommentAsync(Guid commentId)
@@ -59,10 +89,10 @@ namespace MiniSpace.Web.Areas.Comments
             return _httpClient.DeleteAsync($"comments/{commentId}");
         }
 
-        public Task AddLikeAsync(Guid commentId)
+        public Task<HttpResponse<object>> AddLikeAsync(AddLikeDto command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>($"comments/{commentId}/like", new { commentId });
+            return _httpClient.PostAsync<object, object>($"comments/{command.CommentId}/like", command);
         }
 
         public Task DeleteLikeAsync(Guid commentId)

@@ -30,9 +30,20 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
         public async Task AddAsync(Comment comment)
         {
             var filter = Builders<OrganizationPostCommentDocument>.Filter.Eq(d => d.OrganizationPostId, comment.ContextId);
-            var update = Builders<OrganizationPostCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument());
 
-            await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            var update = Builders<OrganizationPostCommentDocument>.Update.Combine(
+                Builders<OrganizationPostCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument()),
+                Builders<OrganizationPostCommentDocument>.Update.SetOnInsert(d => d.OrganizationPostId, comment.ContextId),
+                Builders<OrganizationPostCommentDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid())
+            );
+
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
+
+            if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            {
+                Console.Error.WriteLine("Failed to add or update the comment.");
+            }
         }
 
         public async Task UpdateAsync(Comment comment)
@@ -45,7 +56,8 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
             var update = Builders<OrganizationPostCommentDocument>.Update
                 .Set($"{nameof(OrganizationPostCommentDocument.Comments)}.$.{nameof(CommentDocument.TextContent)}", comment.TextContent)
                 .Set($"{nameof(OrganizationPostCommentDocument.Comments)}.$.{nameof(CommentDocument.LastUpdatedAt)}", comment.LastUpdatedAt)
-                .Set($"{nameof(OrganizationPostCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted);
+                .Set($"{nameof(OrganizationPostCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted)
+                .Set($"{nameof(OrganizationPostCommentDocument.Comments)}.$.{nameof(CommentDocument.Likes)}", comment.Likes);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
         }
@@ -67,17 +79,17 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
         public async Task<PagedResponse<Comment>> BrowseCommentsAsync(BrowseCommentsRequest request)
         {
             var filterDefinition = Builders<OrganizationPostCommentDocument>.Filter.Eq(d => d.OrganizationPostId, request.ContextId);
-            var sortDefinition = OrganizationPostCommentExtensions.ToSortDefinition(request.SortBy, request.SortDirection);
 
-            var pagedEvents = await _repository.Collection.AggregateByPage(
-                filterDefinition,
-                sortDefinition,
-                request.PageNumber,
-                request.PageSize
-            );
+            var document = await _repository.Collection.Find(filterDefinition).FirstOrDefaultAsync();
 
-            var comments = pagedEvents.data.SelectMany(d => d.Comments.Select(c => c.AsEntity()));
-            return new PagedResponse<Comment>(comments, request.PageNumber, request.PageSize, pagedEvents.totalElements);
+            if (document == null)
+            {
+                return new PagedResponse<Comment>(Enumerable.Empty<Comment>(), request.PageNumber, request.PageSize, 0);
+            }
+
+            var comments = document.Comments.Select(c => c.AsEntity()).ToList();
+           
+            return new PagedResponse<Comment>(comments, request.PageNumber, request.PageSize, comments.Count);
         }
     }
 }
