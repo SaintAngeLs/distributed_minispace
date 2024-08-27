@@ -1,60 +1,61 @@
 using Convey.Logging.CQRS;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Communication.Application.Commands;
-using MiniSpace.Services.Communication.Application.Events.External;
+using System;
+using System.Collections.Generic;
 
 namespace MiniSpace.Services.Communication.Infrastructure.Logging
 {
     internal sealed class MessageToLogTemplateMapper : IMessageToLogTemplateMapper
     {
-       private readonly ILogger<MessageToLogTemplateMapper> _logger;
-       private static IReadOnlyDictionary<Type, HandlerLogTemplate> MessageTemplates 
-            => new Dictionary<Type, HandlerLogTemplate>
+        private readonly ILogger<MessageToLogTemplateMapper> _logger;
+
+        private static IReadOnlyDictionary<Type, HandlerLogTemplate> MessageTemplates => new Dictionary<Type, HandlerLogTemplate>
+        {
             {
+                typeof(AddUserToChat), new HandlerLogTemplate
                 {
-                    typeof(CreateNotification), new HandlerLogTemplate
-                    {
-                        After = "Created notification with id: {NotificationId} for user: {UserId}."
-                    }
-                },
+                    After = "Added user with id: {UserId} to chat with id: {ChatId}."
+                }
+            },
+            {
+                typeof(CreateChat), new HandlerLogTemplate
                 {
-                    typeof(DeleteNotification), new HandlerLogTemplate
-                    {
-                        After = "Deleted notification with id: {NotificationId}."
-                    }
-                },
+                    After = "Created chat with id: {ChatId}, participants: {ParticipantIds}, and name: '{ChatName}'."
+                }
+            },
+            {
+                typeof(DeleteChat), new HandlerLogTemplate
                 {
-                    typeof(UpdateNotificationStatus), new HandlerLogTemplate
-                    {
-                        After = "Updated the status of notification with id: {NotificationId} to: {Status}."
-                    }
-                },
+                    After = "Deleted chat with id: {ChatId}."
+                }
+            },
+            {
+                typeof(DeleteMessage), new HandlerLogTemplate
                 {
-                    typeof(FriendRequestCreated), new HandlerLogTemplate
-                    {
-                        After = "Processed creation of friend request from {RequesterId} to {FriendId}."
-                    }
-                },
+                    After = "Deleted message with id: {MessageId} from chat with id: {ChatId}."
+                }
+            },
+            {
+                typeof(RemoveUserFromChat), new HandlerLogTemplate
                 {
-                    typeof(FriendRequestSent), new HandlerLogTemplate
-                    {
-                        After = "Processed friend request sent from {InviterId} to {InviteeId}."
-                    }
-                },
+                    After = "Removed user with id: {UserId} from chat with id: {ChatId}."
+                }
+            },
+            {
+                typeof(SendMessage), new HandlerLogTemplate
                 {
-                    typeof(FriendInvited), new HandlerLogTemplate
-                    {
-                        After = "Handled invitation sent by {InviterId} to {InviteeId}."
-                    }
-                },
+                    After = "Sent message in chat with id: {ChatId} by user with id: {SenderId}, content: '{Content}', and type: '{MessageType}'."
+                }
+            },
+            {
+                typeof(UpdateMessageStatus), new HandlerLogTemplate
                 {
-                    typeof(NotificationCreated), new HandlerLogTemplate
-                    {
-                        After = "Notification created with ID: {NotificationId} for user: {UserId}, message: '{Message}' at {CreatedAt}."
-                    }
-                },
-            };
-        
+                    After = "Updated message status to '{Status}' for message with id: {MessageId} in chat with id: {ChatId}."
+                }
+            }
+        };
+
         public MessageToLogTemplateMapper(ILogger<MessageToLogTemplateMapper> logger)
         {
             _logger = logger;

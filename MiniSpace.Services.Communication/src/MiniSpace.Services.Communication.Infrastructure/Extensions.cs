@@ -28,8 +28,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using MiniSpace.Services.Communication.Application;
 using MiniSpace.Services.Communication.Application.Commands;
-using MiniSpace.Services.Communication.Application.Events.External;
-using MiniSpace.Services.Communication.Application.Events.External.Handlers;
 using MiniSpace.Services.Communication.Application.Services;
 using MiniSpace.Services.Communication.Core.Repositories;
 using MiniSpace.Services.Communication.Infrastructure.Contexts;
@@ -41,7 +39,6 @@ using MiniSpace.Services.Communication.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Communication.Infrastructure.Services;
 using MiniSpace.Services.Communication.Application.Services.Clients;
 using MiniSpace.Services.Communication.Infrastructure.Services.Clients;
-// using MiniSpace.Services.Notifications.Infrastructure.Managers;
 using MiniSpace.Services.Communication.Application.Hubs;
 
 namespace MiniSpace.Services.Communication.Infrastructure
@@ -52,29 +49,17 @@ namespace MiniSpace.Services.Communication.Infrastructure
         {
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            // builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
-            builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
-            builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
-            builder.Services.AddTransient<IStudentNotificationsRepository, StudentNotificationsMongoRepository>();
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
-            builder.Services.AddTransient<IExtendedStudentNotificationsRepository, StudentNotificationsMongoRepository>();
+            builder.Services.AddTransient<IOrganizationChatsRepository, OrganizationChatsRepository>();
+            builder.Services.AddTransient<IUserChatsRepository, UserChatsRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
-            builder.Services.AddTransient<IFriendsServiceClient, FriendsServiceClient>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
-            builder.Services.AddTransient<IEventsServiceClient, EventsServiceClient>();
-            builder.Services.AddTransient<IPostsServiceClient, PostsServiceClient>();
-            builder.Services.AddTransient<ICommentsServiceClient, CommentsServiceClient>();
-            builder.Services.AddTransient<IReactionsServiceClient, ReactionsServiceClient>();
-            builder.Services.AddTransient<IReportsServiceClient, ReportsServiceClient>();
+
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-            builder.Services.AddHostedService<DailyNotificationCleanupService>();  
-            builder.Services.AddHostedService<PeriodicNotificationCleanupService>();  
-            // builder.Services.AddScoped<INotificationHub, NotificationHub>();
+
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()
@@ -91,11 +76,8 @@ namespace MiniSpace.Services.Communication.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<NotificationDocument, Guid>("notifications")
-                .AddMongoRepository<FriendEventDocument, Guid>("friend-service")
-                .AddMongoRepository<StudentDocument, Guid>("students")
-                .AddMongoRepository<StudentNotificationsDocument, Guid>("students-notifications")
-                // .AddMongoRepository<FriendEventDocument, Guid>("events-service")
+                .AddMongoRepository<OrganizationChatsDocument, Guid>("organizations_chats")
+                .AddMongoRepository<UserChatsDocument, Guid>("user_chats")
                 .AddSignalRInfrastructure() 
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
@@ -112,38 +94,14 @@ namespace MiniSpace.Services.Communication.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<CreateNotification>()
-                .SubscribeCommand<DeleteNotification>()
-                .SubscribeCommand<UpdateNotificationStatus>()
-                // .SubscribeEvent<FriendRequestCreated>()
-                // .SubscribeEvent<FriendRequestCreated>()
-                .SubscribeEvent<FriendRequestSent>()
-                .SubscribeEvent<FriendInvited>()
-                .SubscribeEvent<FriendAdded>()
-                .SubscribeEvent<PendingFriendAccepted>()
-                .SubscribeEvent<PendingFriendDeclined>()
-                .SubscribeEvent<EventCreated>()
-                .SubscribeEvent<EventDeleted>()
-                .SubscribeEvent<StudentShowedInterestInEvent>()
-                .SubscribeEvent<StudentCancelledInterestInEvent>()
-                .SubscribeEvent<EventParticipantAdded>()
-                .SubscribeEvent<EventParticipantRemoved>()
-                .SubscribeEvent<StudentSignedUpToEvent>()
-                .SubscribeEvent<StudentCancelledSignUpToEvent>()
-                .SubscribeEvent<PostCreated>()
-                .SubscribeEvent<PostUpdated>()
-                .SubscribeEvent<PasswordResetTokenGenerated>()
-                .SubscribeEvent<SignedUp>()
-                .SubscribeEvent<CommentCreated>()
-                .SubscribeEvent<CommentUpdated>()
-                .SubscribeEvent<ReactionCreated>()
-                .SubscribeEvent<ReportCreated>()
-                .SubscribeEvent<ReportReviewStarted>()
-                .SubscribeEvent<ReportResolved>()
-                .SubscribeEvent<ReportRejected>()
-                .SubscribeEvent<ReportCancelled>()
-                .SubscribeEvent<EmailVerified>()
-                .SubscribeEvent<TwoFactorCodeGenerated>();
+                .SubscribeCommand<AddUserToChat>()
+                .SubscribeCommand<CreateChat>()
+                .SubscribeCommand<DeleteChat>()
+                .SubscribeCommand<DeleteMessage>()
+                .SubscribeCommand<RemoveUserFromChat>()
+                .SubscribeCommand<SendMessage>()
+                .SubscribeCommand<UpdateMessageStatus>()
+                ;
             return app;
         }
 

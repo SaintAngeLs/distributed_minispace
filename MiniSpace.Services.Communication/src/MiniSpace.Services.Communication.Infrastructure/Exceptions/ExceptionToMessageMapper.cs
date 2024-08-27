@@ -2,6 +2,7 @@ using Convey.MessageBrokers.RabbitMQ;
 using MiniSpace.Services.Communication.Application.Commands;
 using MiniSpace.Services.Communication.Application.Events.Rejected;
 using MiniSpace.Services.Communication.Application.Exceptions;
+using System;
 
 namespace MiniSpace.Services.Communication.Infrastructure.Exceptions
 {
@@ -10,29 +11,30 @@ namespace MiniSpace.Services.Communication.Infrastructure.Exceptions
         public object Map(Exception exception, object message)
             => exception switch
             {
-                NotificationNotFoundException ex => message switch
+                ChatNotFoundException ex => message switch
                 {
-                    DeleteNotification command => new NotificationDeletionRejected(command.NotificationId, "Notification not found", ex.Code),
-                    UpdateNotificationStatus command => new NotificationUpdateRejected(command.NotificationId, "Notification not found", ex.Code),
-                    CreateNotification command => new NotificationCreationRejected(command.NotificationId, "Notification not found", ex.Code),
-                    _ => new NotificationProcessRejected(ex.NotificationId, ex.Message, ex.Code),
+                    DeleteChat command => new ChatDeletionRejected(command.ChatId, "Chat not found", ex.Code),
+                    CreateChat command => new ChatCreationRejected(command.ChatId, "Chat not found", ex.Code),
+                    AddUserToChat command => new UserAdditionToChatRejected(command.ChatId, command.UserId, "Chat not found", ex.Code),
+                    SendMessage command => new MessageSendRejected(command.ChatId, Guid.NewGuid(), "Chat not found", ex.Code),
+                    _ => new ChatProcessRejected(ex.ChatId, ex.Message, ex.Code),
                 },
-                InvalidNotificationStatusException ex => message switch
+                MessageNotFoundException ex => message switch
                 {
-                    UpdateNotificationStatus command => new NotificationUpdateRejected(command.NotificationId, ex.Message, ex.Code),
-                    _ => new NotificationProcessRejected(Guid.Empty, ex.Message, ex.Code),
+                    DeleteMessage command => new MessageSendRejected(command.ChatId, command.MessageId, "Message not found", ex.Code),
+                    _ => new MessageProcessRejected(ex.MessageId, ex.Message, ex.Code),
                 },
-                NotificationAlreadyDeletedException ex => message switch
+                InvalidChatOperationException ex => message switch
                 {
-                    DeleteNotification command => new NotificationDeletionRejected(command.NotificationId, ex.Message, ex.Code),
-                    UpdateNotificationStatus command => new NotificationUpdateRejected(command.NotificationId, ex.Message, ex.Code),
-                    _ => new NotificationProcessRejected(ex.NotificationId, ex.Message, ex.Code),
+                    AddUserToChat command => new UserAdditionToChatRejected(command.ChatId, command.UserId, ex.Message, ex.Code),
+                    SendMessage command => new MessageSendRejected(command.ChatId, Guid.NewGuid(), ex.Message, ex.Code),
+                    _ => new ChatProcessRejected(Guid.Empty, ex.Message, ex.Code),
                 },
                 AppException ex => message switch
                 {
-                    _ => new NotificationProcessRejected(Guid.Empty, ex.Message, ex.Code)
+                    _ => new ChatProcessRejected(Guid.Empty, ex.Message, ex.Code)
                 },
-                _ => null 
+                _ => null
             };
     }
 }

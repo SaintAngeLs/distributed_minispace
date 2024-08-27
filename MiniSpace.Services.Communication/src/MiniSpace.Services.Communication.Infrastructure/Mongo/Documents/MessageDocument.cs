@@ -1,6 +1,7 @@
 using Convey.Types;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MiniSpace.Services.Communication.Core.Entities;
 using System;
 
 namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Documents

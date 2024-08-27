@@ -1,6 +1,6 @@
-using MiniSpace.Services.Notifications.Application.Services;
+using MiniSpace.Services.Communication.Application.Services;
 
-namespace MiniSpace.Services.Notifications.Infrastructure.Services
+namespace MiniSpace.Services.Communication.Infrastructure.Services
 {
     internal sealed class DateTimeProvider : IDateTimeProvider
     {
