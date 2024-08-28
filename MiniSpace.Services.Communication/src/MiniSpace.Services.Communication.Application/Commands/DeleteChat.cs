@@ -6,11 +6,9 @@ namespace MiniSpace.Services.Communication.Application.Commands
 {
     public class DeleteChat : ICommand
     {
-        [FromRoute]
-        public Guid ChatId { get; }
+        public Guid ChatId { get; set; }
 
-        [FromQuery]
-        public Guid UserId { get; }
+        public Guid UserId { get; set; }
 
         public DeleteChat(Guid chatId, Guid userId)
         {
