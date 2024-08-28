@@ -1,60 +1,104 @@
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Concurrent;
-using System.Linq;
+using MiniSpace.Services.Communication.Application.Dto;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace MiniSpace.Services.Communication.Application.Hubs
 {
     public class ChatHub : Hub
     {
-        private static readonly ConcurrentDictionary<string, string> Users = new ConcurrentDictionary<string, string>();
+        private readonly ILogger<ChatHub> _logger;
+
+        public ChatHub(ILogger<ChatHub> logger)
+        {
+            _logger = logger;
+        }
 
         public override async Task OnConnectedAsync()
         {
-            var username = Context.User.Identity.Name;
-            if (!string.IsNullOrEmpty(username))
+            var userId = Context.GetHttpContext().Request.Query["userId"];
+            if (!string.IsNullOrEmpty(userId))
             {
-                Users.TryAdd(Context.ConnectionId, username);
-                await Clients.All.SendAsync("UserConnected", username);
+                await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+                _logger.LogInformation($"User {userId} connected and added to group with Connection ID: {Context.ConnectionId}");
+            }
+            else
+            {
+                _logger.LogWarning("User ID is missing in the query string.");
             }
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            Users.TryRemove(Context.ConnectionId, out var username);
-            if (!string.IsNullOrEmpty(username))
+            var userId = Context.GetHttpContext().Request.Query["userId"];
+            if (!string.IsNullOrEmpty(userId))
             {
-                await Clients.All.SendAsync("UserDisconnected", username);
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
+                _logger.LogInformation($"User {userId} disconnected and removed from group with Connection ID: {Context.ConnectionId}");
             }
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendMessageToUser(string targetUser, string message)
+        public async Task SendMessage(string userId, MessageDto message)
         {
-            var connectionId = Users.FirstOrDefault(u => u.Value == targetUser).Key;
-            if (!string.IsNullOrEmpty(connectionId))
-            {
-                await Clients.Client(connectionId).SendAsync("ReceiveMessage", Context.User.Identity.Name, message);
-            }
+            var jsonMessage = JsonSerializer.Serialize(message);
+            _logger.LogInformation($"Sending message to user {userId}: {jsonMessage}");
+            await Clients.User(userId).SendAsync("ReceiveMessage", jsonMessage);
         }
 
-        public async Task SendMessageToGroup(string groupName, string message)
+        public async Task SendMessageToGroup(string groupName, MessageDto message)
         {
-            await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", Context.User.Identity.Name, message);
+            var jsonMessage = JsonSerializer.Serialize(message);
+            _logger.LogInformation($"Sending message to group {groupName}: {jsonMessage}");
+            await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", jsonMessage);
         }
 
         public async Task AddToGroup(string groupName)
         {
+            _logger.LogInformation($"Adding connection {Context.ConnectionId} to group {groupName}");
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-            await Clients.Group(groupName).SendAsync("ShowWho", $"{Context.User.Identity.Name} has joined the group {groupName}.");
         }
 
         public async Task RemoveFromGroup(string groupName)
         {
+            _logger.LogInformation($"Removing connection {Context.ConnectionId} from group {groupName}");
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-            await Clients.Group(groupName).SendAsync("ShowWho", $"{Context.User.Identity.Name} has left the group {groupName}.");
         }
+
+        public static async Task SendMessageToUser(IHubContext<ChatHub> hubContext, string userId, MessageDto message, ILogger logger)
+        {
+            var jsonMessage = JsonSerializer.Serialize(message);
+            logger.LogInformation($"Sending message to user {userId}: {jsonMessage}");
+            await hubContext.Clients.All.SendAsync("ReceiveMessage", jsonMessage);
+        }
+
+        public static async Task BroadcastMessage(IHubContext<ChatHub> hubContext, MessageDto message, ILogger logger)
+        {
+            var jsonMessage = JsonSerializer.Serialize(message);
+            logger.LogInformation($"Broadcasting message to all users: {jsonMessage}");
+            await hubContext.Clients.All.SendAsync("ReceiveMessage", jsonMessage);
+        }
+
+
+        public static async Task SendMessageStatusUpdate(IHubContext<ChatHub> hubContext, string chatId, Guid messageId, string status, ILogger logger)
+        {
+            var statusUpdate = new
+            {
+                ChatId = chatId,
+                MessageId = messageId,
+                Status = status
+            };
+
+            logger.LogInformation($"Sending message status update to chat {chatId} for message {messageId} with status {status}");
+
+            // Serialize the statusUpdate object to JSON
+            var jsonStatusUpdate = JsonSerializer.Serialize(statusUpdate);
+
+            await hubContext.Clients.All.SendAsync("ReceiveMessageStatusUpdate", jsonStatusUpdate);
+        }
+
+
     }
 }
