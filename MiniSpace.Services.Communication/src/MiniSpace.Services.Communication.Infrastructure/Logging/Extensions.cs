@@ -1,6 +1,7 @@
 using Convey;
 using Convey.Logging.CQRS;
 using Microsoft.Extensions.DependencyInjection;
+using MiniSpace.Services.Communication.Application.Commands;
 using System.Reflection;
 
 namespace MiniSpace.Services.Communication.Infrastructure.Logging
@@ -9,7 +10,7 @@ namespace MiniSpace.Services.Communication.Infrastructure.Logging
     {
         public static IConveyBuilder AddHandlersLogging(this IConveyBuilder builder)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var assembly = typeof(UpdateMessageStatus).Assembly;
 
             builder.Services.AddSingleton<IMessageToLogTemplateMapper, MessageToLogTemplateMapper>();
 

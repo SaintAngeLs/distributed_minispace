@@ -23,6 +23,13 @@ namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Repositories
             return document?.AsEntity();
         }
 
+        public async Task<Chat> GetByChatIdAsync(Guid chatId)
+        {
+            var document = await _repository.Collection.Find(x => x.Chats.Any(c => c.Id == chatId)).FirstOrDefaultAsync();
+            var chatDocument = document?.Chats.FirstOrDefault(c => c.Id == chatId);
+            return chatDocument?.AsEntity();
+        }
+
         public async Task AddAsync(UserChats userChats)
         {
             await _repository.AddAsync(userChats.AsDocument());
@@ -30,7 +37,12 @@ namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Repositories
 
         public async Task UpdateAsync(UserChats userChats)
         {
-            await _repository.UpdateAsync(userChats.AsDocument());
+            // Ensure the entire UserChatsDocument is updated in the database
+            var filter = Builders<UserChatsDocument>.Filter.Eq(doc => doc.UserId, userChats.UserId);
+            var update = Builders<UserChatsDocument>.Update
+                .Set(doc => doc.Chats, userChats.Chats.Select(chat => chat.AsDocument()).ToList());
+
+            await _repository.Collection.UpdateOneAsync(filter, update);
         }
 
         public async Task AddOrUpdateAsync(UserChats userChats)
