@@ -99,6 +99,11 @@ namespace MiniSpace.Services.Communication.Application.Hubs
             await hubContext.Clients.All.SendAsync("ReceiveMessageStatusUpdate", jsonStatusUpdate);
         }
 
+        public async Task SendTypingNotification(string chatId, string userId, bool isTyping)
+        {
+            _logger.LogInformation($"User {userId} is typing in chat {chatId}: {isTyping}");
+            await Clients.All.SendAsync("ReceiveTypingNotification", userId, isTyping);
+        }
 
     }
 }

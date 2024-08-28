@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Communication.Application.Commands.Handlers
 
         public async Task HandleAsync(DeleteChat command, CancellationToken cancellationToken)
         {
-            await _userChatsRepository.DeleteChatAsync(command.ChatId, command.ChatId);
+            await _userChatsRepository.DeleteChatAsync(command.UserId, command.ChatId);
 
             await _messageBroker.PublishAsync(new ChatDeleted(command.ChatId));
         }

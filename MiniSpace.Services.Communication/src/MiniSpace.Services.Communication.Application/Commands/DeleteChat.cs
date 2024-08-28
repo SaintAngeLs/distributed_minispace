@@ -9,9 +9,13 @@ namespace MiniSpace.Services.Communication.Application.Commands
         [FromRoute]
         public Guid ChatId { get; }
 
-        public DeleteChat(Guid chatId)
+        [FromQuery]
+        public Guid UserId { get; }
+
+        public DeleteChat(Guid chatId, Guid userId)
         {
             ChatId = chatId;
+            UserId = userId;
         }
     }
 }
