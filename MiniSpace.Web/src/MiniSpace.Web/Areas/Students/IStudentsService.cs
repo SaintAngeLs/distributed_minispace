@@ -48,5 +48,7 @@ namespace MiniSpace.Web.Areas.Students
             IEnumerable<string> languages, 
             IEnumerable<string> interests);
 
+        Task<bool> IsUserOnlineAsync(Guid studentId);
+
     }
 }

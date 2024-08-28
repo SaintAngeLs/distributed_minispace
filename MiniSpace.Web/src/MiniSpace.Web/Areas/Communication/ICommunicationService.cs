@@ -17,7 +17,7 @@ namespace MiniSpace.Web.Areas.Communication
         Task<IEnumerable<MessageDto>> GetMessagesForChatAsync(Guid chatId);
         Task<HttpResponse<object>> CreateChatAsync(CreateChatCommand command);
         Task AddUserToChatAsync(Guid chatId, Guid userId);
-        Task DeleteChatAsync(Guid chatId);
+        Task DeleteChatAsync(Guid chatId, Guid userId);
         Task<HttpResponse<object>> SendMessageAsync(SendMessageCommand command);
         Task<HttpResponse<object>> UpdateMessageStatusAsync(UpdateMessageStatusCommand command);
         Task DeleteMessageAsync(Guid chatId, Guid messageId);

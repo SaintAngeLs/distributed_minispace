@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.Areas.Notifications;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Interests;
 using MiniSpace.Web.DTO.Languages;
@@ -16,6 +17,8 @@ namespace MiniSpace.Web.Areas.Students
     {
         private readonly IHttpClient _httpClient;
         private readonly IIdentityService _identityService;
+
+        private readonly INotificationsService _notificationsService;
 
         public StudentDto StudentDto { get; private set; }
         
@@ -202,6 +205,12 @@ namespace MiniSpace.Web.Areas.Students
             Console.WriteLine($"Sending UpdateStudentLanguagesAndInterests request: {jsonData}");
 
             await _httpClient.PutAsync($"students/{studentId}/languages-and-interests", updateData);
+        }
+
+        public async Task<bool> IsUserOnlineAsync(Guid studentId)
+        {
+            // Assuming the NotificationsService has a method to check if a user is connected
+            return await _notificationsService.IsUserConnectedAsync(studentId);
         }
     }
 }

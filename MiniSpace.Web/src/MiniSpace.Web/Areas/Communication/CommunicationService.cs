@@ -74,11 +74,13 @@ namespace MiniSpace.Web.Areas.Communication
             await _httpClient.PutAsync<object>($"communication/chats/{chatId}/users", new { chatId, userId });
         }
 
-        public async Task DeleteChatAsync(Guid chatId)
+         public async Task DeleteChatAsync(Guid chatId, Guid userId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            await _httpClient.DeleteAsync($"communication/chats/{chatId}");
+            var command = new DeleteChatCommand(chatId, userId); 
+            await _httpClient.PostAsync<DeleteChatCommand, object>($"communication/chats/{chatId}", command); 
         }
+
 
         public async Task<HttpResponse<object>> SendMessageAsync(SendMessageCommand command)
         {
