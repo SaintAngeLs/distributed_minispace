@@ -2,107 +2,176 @@
 @using MiniSpace.Web.HttpClients
 @using MiniSpace.Web.Areas.Communication
 @using MiniSpace.Web.DTO.Communication
-@using MiniSpace.Web.DTO
 @inject IIdentityService IdentityService
 @inject ICommunicationService CommunicationService
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @using MudBlazor
+@using System.Text.Json
+@inject ChatSignalRService ChatSignalRService
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 
-<MudContainer>
-    <MudGrid>
-        <MudItem xs="4">
-            <MudPaper Class="conversation-list">
-                <MudList>
-                    @foreach (var chat in userChats)
-                    {
-                        <MudListItem @onclick="@(() => SelectChat(chat.Id))" Class="@GetSelectedChatClass(chat.Id)">
-                            <MudListItemIcon>
-                                <MudAvatar Icon="@Icons.Material.Filled.Chat" />
-                            </MudListItemIcon>
-                            <MudListItemText>@chat.Name</MudListItemText>
-                        </MudListItem>
-                    }
-                </MudList>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="8">
-            <MudPaper Class="chat-window">
-                <div class="chat-messages">
-                    @if (messages != null)
-                    {
-                        @foreach (var message in messages)
+<AuthWrapper>
+    <MudContainer Class="chat-container">
+        <MudGrid>
+            <MudItem xs="4" Class="conversation-list-container">
+                <MudPaper Class="d-flex flex-column overflow-x-auto conversation-list" Height="100vh">
+                    <MudList>
+                        @foreach (var chat in userChats)
                         {
-                            <div class="message-bubble @GetMessageBubbleClass(message)">
-                                <div class="message-sender">@GetSenderName(message.SenderId)</div>
-                                <p>@message.Content</p>
-                                <span class="message-time">@message.Timestamp.ToString("HH:mm")</span>
-                            </div>
-                        }
-                    }
-                </div>
+                            <MudListItem @onclick="@(() => SelectChat(chat.Id))" Class="@GetSelectedChatClass(chat.Id)">
+                                <MudListItemIcon>
+                                     <MudAvatar>
+                                            <MudImage Src="@GetChatImage(chat.Id)"  Size="Size.Small"></MudImage>
+                                        </MudAvatar>
+                                </MudListItemIcon>
+                                <MudListItemText>@GetChatName(chat.Id)</MudListItemText>
+                            </MudListItem>
 
-                <MudTextField @bind-Value="newMessageContent" Placeholder="Type a message..." FullWidth="true" OnKeyDown="@(async e => await SendMessage(e))" />
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
+                        }
+                    </MudList>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="8" Class="chat-window-container">
+                <MudPaper Class="d-flex flex-column chat-window" Height="100vh">
+                    <div id="chatMessagesContainer" class="chat-messages flex-grow-1 overflow-y-auto">
+                        @if (messages != null)
+                        {
+                            @foreach (var message in messages)
+                            {
+                                <div class="message-bubble @GetMessageBubbleClass(message)">
+                                    <div class="message-avatar">
+                                        <MudAvatar>
+                                            <MudImage Src="@GetSenderImage(message.SenderId)" Size="Size.Small"></MudImage>
+                                        </MudAvatar>
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-header">
+                                            <span class="message-sender">@GetSenderName(message.SenderId)</span>
+                                            <span class="message-time">@message.Timestamp.ToString("HH:mm")</span>
+                                        </div>
+                                        <div class="message-text">@message.Content</div>
+                                        <div class="message-status">
+                                            <MudIcon Icon="@GetStatusIcon(message.Status)" Color="Color.Secondary" Size="Size.Small" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="message-input-container">
+                        <MudTextField @bind-Value="newMessageContent" Placeholder="Type a message..." FullWidth="true" Disabled="@isSending" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Send" Color="Color.Primary" Disabled="@IsSendButtonDisabled" @onclick="SendMessage" />
+                    </div>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</AuthWrapper>
 
 <style>
-    .conversation-list {
+    .chat-container {
         height: 100vh;
+        padding: 0;
+    }
+    .conversation-list-container {
+        border-right: 1px solid #E0E0E0;
+        height: 100%;
+    }
+    .chat-window-container {
+        height: 100%;
+    }
+    .conversation-list {
+        height: 100%;
         overflow-y: auto;
     }
-
     .chat-window {
         display: flex;
         flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
+        height: 100%;
     }
-
     .chat-messages {
         flex-grow: 1;
         overflow-y: auto;
         padding: 16px;
+        background-color: #FAFAFA;
     }
-
     .message-bubble {
-        margin-bottom: 12px;
-        padding: 10px;
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        padding: 12px;
         border-radius: 10px;
-        max-width: 60%;
-        background-color: #f1f1f1;
+        max-width: 70%;
+        background-color: #E0F7FA;
         position: relative;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-
+    .message-bubble.received {
+        background-color: #FFFFFF;
+        margin-right: auto;
+    }
     .message-bubble.sent {
+        background-color: #E0F7FA;
         margin-left: auto;
-        background-color: #e1ffc7;
     }
-
-    .message-time {
-        font-size: 0.75rem;
-        color: gray;
-        position: absolute;
-        bottom: 4px;
-        right: 10px;
+    .message-avatar {
+        margin-right: 10px;
     }
-
-    .message-sender {
-        font-weight: bold;
+    .message-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 4px;
+        color: #607d8b;
+    }
+    .message-sender {
+        font-weight: 500;
+        color: #455a64;
+    }
+    .message-time {
+        font-size: 12px;
+        color: #78909c;
+    }
+    .message-text {
+        margin-bottom: 6px;
+        color: #37474f;
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    .message-status {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 4px;
+    }
+    .message-input-container {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background-color: #FFFFFF;
+        border-top: 1px solid #E0E0E0;
     }
 </style>
 
 @code {
     [Parameter] public Guid ChatId { get; set; }
-    
+
     private List<ChatDto> userChats = new();
     private List<MessageDto> messages = new();
     private string newMessageContent = string.Empty;
     private Dictionary<Guid, string> userNames = new();
+    private Dictionary<Guid, string> userImages = new();
+    private bool isSending = false;
+
+    private bool IsSendButtonDisabled => isSending || string.IsNullOrWhiteSpace(newMessageContent);
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,11 +184,30 @@
             {
                 await LoadMessages(ChatId);
             }
+
+            var userId = IdentityService.GetCurrentUserId();
+            await ChatSignalRService.StartAsync(userId, ChatId);
+            ChatSignalRService.MessageReceived += OnMessageReceived;
+            ChatSignalRService.MessageStatusUpdated += OnMessageStatusUpdated;
         }
         else
         {
             NavigationManager.NavigateTo("/login");
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ScrollToBottomAsync();
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("scrollToBottom", "chatMessagesContainer");
+        }
+
+        await UpdateUnreadMessagesStatusAsync();
     }
 
     private async Task LoadUserChats()
@@ -132,6 +220,7 @@
             if (result != null)
             {
                 userChats = result.Items.SelectMany(u => u.Chats).ToList();
+                await LoadUserDetails();
             }
         }
         catch (Exception ex)
@@ -145,7 +234,8 @@
         try
         {
             messages = (await CommunicationService.GetMessagesForChatAsync(chatId)).ToList();
-            await LoadUserNames();
+            await LoadUserDetails();
+            await ScrollToBottomAsync();
         }
         catch (Exception ex)
         {
@@ -153,26 +243,32 @@
         }
     }
 
-    private async Task LoadUserNames()
+    private async Task LoadUserDetails()
     {
         var senderIds = messages.Select(m => m.SenderId).Distinct().ToList();
-        foreach (var senderId in senderIds)
+        var chatUserIds = userChats.SelectMany(c => c.ParticipantIds).Distinct().ToList();
+        var allUserIds = senderIds.Union(chatUserIds).Distinct().ToList();
+
+        foreach (var userId in allUserIds)
         {
-            if (!userNames.ContainsKey(senderId))
+            if (!userNames.ContainsKey(userId))
             {
-                var user = await StudentsService.GetStudentAsync(senderId);
+                var user = await StudentsService.GetStudentAsync(userId);
                 if (user != null)
                 {
-                    userNames[senderId] = $"{user.FirstName} {user.LastName}";
+                    userNames[userId] = $"{user.FirstName} {user.LastName}";
+                    userImages[userId] = string.IsNullOrWhiteSpace(user.ProfileImageUrl) ? "images/default_profile_image.webp" : user.ProfileImageUrl;
                 }
             }
         }
     }
 
-    private async Task SendMessage(KeyboardEventArgs e)
+    private async Task SendMessage()
     {
-        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(newMessageContent))
+        if (!string.IsNullOrWhiteSpace(newMessageContent) && !isSending)
         {
+            isSending = true;
+
             try
             {
                 var userId = IdentityService.GetCurrentUserId();
@@ -181,21 +277,9 @@
                 var response = await CommunicationService.SendMessageAsync(command);
                 if (response.IsSuccessStatusCode)
                 {
-                    var newMessage = new MessageDto
-                    {
-                        @* ChatId = ChatId, *@
-                        SenderId = userId,
-                        Content = newMessageContent,
-                        Timestamp = DateTime.UtcNow
-                    };
-                    messages.Add(newMessage);
-                    if (!userNames.ContainsKey(userId))
-                    {
-                        var user = await StudentsService.GetStudentAsync(userId);
-                        userNames[userId] = $"{user.FirstName} {user.LastName}";
-                    }
                     newMessageContent = string.Empty;
                     Snackbar.Add("Message sent!", Severity.Success);
+                    await ScrollToBottomAsync();
                 }
                 else
                 {
@@ -206,6 +290,53 @@
             {
                 Snackbar.Add($"Error: {ex.Message}", Severity.Error);
             }
+            finally
+            {
+                isSending = false;
+            }
+        }
+    }
+
+    private async Task ScrollToBottomAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", "chatMessagesContainer");
+    }
+
+    private async Task UpdateUnreadMessagesStatusAsync()
+    {
+        // Find all unread messages sent by others
+        var unreadMessages = messages
+            .Where(m => m.SenderId != IdentityService.GetCurrentUserId() && m.Status != "Read")
+            .ToList();
+
+        // If there are unread messages, update their status to "Read"
+        if (unreadMessages.Any())
+        {
+            foreach (var message in unreadMessages)
+            {
+                await UpdateMessageStatus(message, "Read");
+            }
+        }
+    }
+
+    private async Task UpdateMessageStatus(MessageDto message, string status)
+    {
+        if (message.ChatId == Guid.Empty || message.Id == Guid.Empty)
+        {
+            Snackbar.Add("Invalid message ID or chat ID.", Severity.Error);
+            return;
+        }
+
+        var command = new UpdateMessageStatusCommand(message.ChatId, message.Id, status);
+        var response = await CommunicationService.UpdateMessageStatusAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            message.Status = status; // Update local message status
+        }
+        else
+        {
+            Snackbar.Add($"Failed to update message status: {response.ErrorMessage}", Severity.Error);
         }
     }
 
@@ -227,5 +358,87 @@
     private string GetSenderName(Guid senderId)
     {
         return userNames.TryGetValue(senderId, out var name) ? name : "Unknown";
+    }
+
+    private string GetSenderImage(Guid senderId)
+    {
+        return userImages.TryGetValue(senderId, out var imageUrl) ? imageUrl : "/images/default_profile_image.webp";
+    }
+
+    private string GetChatImage(Guid chatId)
+    {
+        var chat = userChats.FirstOrDefault(c => c.Id == chatId);
+        
+        // Check if the chat is with the user
+        var userId = IdentityService.GetCurrentUserId();
+        if (chat != null && chat.ParticipantIds.Count == 1 && chat.ParticipantIds.First() == userId)
+        {
+            // Return the user's own image
+            return GetSenderImage(userId);
+        }
+
+        if (chat != null && chat.ParticipantIds.Any())
+        {
+            return GetSenderImage(chat.ParticipantIds.First());
+        }
+        return "/images/default_profile_image.webp";
+    }
+
+    private string GetChatName(Guid chatId)
+    {
+        var chat = userChats.FirstOrDefault(c => c.Id == chatId);
+
+        // Check if the chat is with the user
+        var userId = IdentityService.GetCurrentUserId();
+        if (chat != null && chat.ParticipantIds.Count == 2 && chat.ParticipantIds.First() == userId)
+        {
+            // Return the user's own name
+            return userNames[userId];
+        }
+
+        return chat?.Name ?? "Unknown Chat";
+    }
+
+
+
+    private void OnMessageReceived(MessageDto message)
+    {
+        if (message.ChatId == ChatId)
+        {
+            if (!messages.Any(m => m.Id == message.Id))
+            {
+                messages.Add(message);
+                InvokeAsync(async () => await ScrollToBottomAsync());
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void OnMessageStatusUpdated(Guid messageId, string status)
+    {
+        var message = messages.FirstOrDefault(m => m.Id == messageId);
+        if (message != null)
+        {
+            message.Status = status;
+            StateHasChanged();
+        }
+    }
+
+    private string GetStatusIcon(string status)
+    {
+        return status switch
+        {
+            "Sent" => Icons.Material.Filled.Check,
+            "Delivered" => Icons.Material.Filled.DoneAll,
+            "Read" => Icons.Material.Filled.Visibility,
+            _ => Icons.Material.Filled.Schedule // Default icon for pending or unknown status
+        };
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        ChatSignalRService.MessageReceived -= OnMessageReceived;
+        ChatSignalRService.MessageStatusUpdated -= OnMessageStatusUpdated;
+        await ChatSignalRService.DisposeAsync();
     }
 }

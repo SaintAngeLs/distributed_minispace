@@ -106,6 +106,7 @@ namespace MiniSpace.Web
             services.AddScoped<IFriendsService, FriendsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
             services.AddScoped<SignalRService>();
+            services.AddScoped<ChatSignalRService>();
             services.AddScoped<IReactionsService, ReactionsService>();
             services.AddScoped<ICommentsService, CommentsService>();
             services.AddScoped<IReportsService, ReportsService>();

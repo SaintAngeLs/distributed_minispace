@@ -220,28 +220,17 @@
         }
 
 
-          // Initialize SignalR for communication service
         function initializeCommunicationSignalR() {
             if (!userId) return;
 
             const communicationConnection = new signalR.HubConnectionBuilder()
                 .withUrl(`http://localhost:5016/chatHub?userId=${userId}`)
-                .withAutomaticReconnect()
+                .withAutomaticReconnect([0, 2000, 10000, 30000]) // Retry delays
                 .build();
 
             communicationConnection.on("ReceiveMessage", function (jsonMessage) {
-                var message = JSON.parse(jsonMessage);
-                console.log("Message received: ", message);
-
-                playNotificationSound(); // Use appropriate sound for message notification
-
-                communicationConnection.invoke("AcknowledgeMessage", message.ChatId, message.MessageId)
-                    .then(function () {
-                        console.log("Acknowledgment sent for message: ", message.MessageId);
-                    })
-                    .catch(function (err) {
-                        console.error(err.toString());
-                    });
+                console.log("Message received: ", jsonMessage);
+                DotNet.invokeMethodAsync('MiniSpace.Web', 'ReceiveMessage', jsonMessage);
             });
 
             communicationConnection.start().then(function () {
@@ -249,11 +238,34 @@
             }).catch(function (err) {
                 console.error("Error establishing SignalR connection: ", err.toString());
             });
+
+            communicationConnection.onreconnecting((error) => {
+                console.warn(`Connection lost due to error "${error}". Reconnecting.`);
+            });
+
+            communicationConnection.onreconnected((connectionId) => {
+                console.log(`Connection reestablished. Connected with connectionId "${connectionId}".`);
+            });
+
+            communicationConnection.onclose((error) => {
+                console.error(`Connection closed due to error "${error}". Attempting to reconnect...`);
+                setTimeout(() => initializeCommunicationSignalR(), 5000);
+            });
         }
+
 
         window.getSystemTheme = () => {
             return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         };
+
+        window.scrollToBottom = function (elementId) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                element.scrollTop = element.scrollHeight;
+            }
+        };
+
+
 
 
     </script>
