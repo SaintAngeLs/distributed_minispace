@@ -15,5 +15,6 @@ namespace MiniSpace.Services.Communication.Core.Repositories
         Task<bool> ChatExistsAsync(Guid userId, Guid chatId);
         Task AddChatAsync(Guid userId, Chat chat);
         Task DeleteChatAsync(Guid userId, Guid chatId);
+        Task<Chat> GetByChatIdAsync(Guid chatId);
     }
 }
