@@ -4,6 +4,7 @@ using MiniSpace.Services.Communication.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using Convey.Persistence.MongoDB;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Repositories
@@ -37,7 +38,6 @@ namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Repositories
 
         public async Task UpdateAsync(UserChats userChats)
         {
-            // Ensure the entire UserChatsDocument is updated in the database
             var filter = Builders<UserChatsDocument>.Filter.Eq(doc => doc.UserId, userChats.UserId);
             var update = Builders<UserChatsDocument>.Update
                 .Set(doc => doc.Chats, userChats.Chats.Select(chat => chat.AsDocument()).ToList());
@@ -79,15 +79,17 @@ namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Repositories
         public async Task DeleteChatAsync(Guid userId, Guid chatId)
         {
             var userChats = await GetByUserIdAsync(userId);
-            if (userChats != null)
+            if (userChats == null)
             {
-                var chat = userChats.GetChatById(chatId);
-                if (chat != null)
-                {
-                    userChats.Chats.Remove(chat);
-                    await UpdateAsync(userChats);
-                }
+                return;
             }
+            var chat = userChats.GetChatById(chatId);
+            if (chat == null)
+            {
+                return;
+            }
+            userChats.Chats.Remove(chat);
+            await UpdateAsync(userChats);
         }
     }
 }
