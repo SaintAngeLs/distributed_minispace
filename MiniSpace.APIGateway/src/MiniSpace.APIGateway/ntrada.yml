@@ -362,13 +362,14 @@ modules:
         bind:
           - chatId:{chatId}
 
-      - upstream: /chats/{chatId}
+      - upstream: /chats/{chatId}/{userId}
         method: DELETE
         use: downstream
-        downstream: communication-service/communication/chats/{chatId}
+        downstream: communication-service/communication/chats/{chatId}/{userId}
         auth: true 
         bind:
           - chatId:{chatId}
+          - userId:{userId}
 
       - upstream: /chats/{chatId}/messages/{messageId}
         method: DELETE
