@@ -45,6 +45,10 @@ namespace MiniSpace.Services.Friends.Api
                         .Get<GetFriendRequests, PagedResponse<FriendRequestDto>>("friends/pending/all")
                         .Get<GetSentFriendRequests, PagedResponse<UserRequestsDto>>("friends/requests/sent/{userId}")
 
+                        .Get<GetFollowers, PagedResponse<UserFriendsDto>>("friends/{userId}/followers")
+                        .Get<GetFollowing, PagedResponse<UserFriendsDto>>("friends/{userId}/following")
+
+
 
 
                         .Put<SentFriendRequestWithdraw>("friends/requests/{userId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
