@@ -91,5 +91,16 @@ namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Repositories
             userChats.Chats.Remove(chat);
             await UpdateAsync(userChats);
         }
+
+        public async Task<List<Guid>> GetParticipantIdsByChatIdAsync(Guid chatId)
+        {
+            var document = await _repository.Collection
+                .Find(x => x.Chats.Any(c => c.Id == chatId))
+                .FirstOrDefaultAsync();
+
+            var chatDocument = document?.Chats.FirstOrDefault(c => c.Id == chatId);
+            return chatDocument?.ParticipantIds ?? new List<Guid>();
+        }
+
     }
 }
