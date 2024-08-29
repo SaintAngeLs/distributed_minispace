@@ -27,37 +27,43 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<PagedResponse<UserFriendsDto>> HandleAsync(GetFollowers query, CancellationToken cancellationToken)
         {
-            var friends = await _userFriendsRepository.GetFriendsAsync(query.UserId);
-
+            // Step 1: Get all users who have sent friend requests to the user (followers)
             var incomingRequestsFilter = Builders<UserRequestsDocument>.Filter.Eq(doc => doc.UserId, query.UserId);
             var incomingRequests = await _userRequestsRepository.Collection
                 .Find(incomingRequestsFilter)
                 .ToListAsync(cancellationToken);
 
-            var followers = friends.Select(f => new FriendDto
+            var followersFromRequests = incomingRequests
+                .SelectMany(doc => doc.FriendRequests
+                    .Where(request => request.InviteeId == query.UserId && request.State == Core.Entities.FriendState.Requested)
+                    .Select(request => new FriendDto
+                    {
+                        Id = request.Id,
+                        UserId = request.InviterId,  // The inviter is the follower
+                        FriendId = request.InviteeId,
+                        CreatedAt = request.RequestedAt,
+                        State = request.State
+                    }))
+                .ToList();
+
+            // Step 2: Get all friends of the user (friends are also followers)
+            var friends = await _userFriendsRepository.GetFriendsAsync(query.UserId);
+
+            var followersFromFriends = friends.Select(f => new FriendDto
             {
                 Id = f.Id,
-                UserId = f.UserId,
-                FriendId = f.FriendId,
+                UserId = f.FriendId,
+                FriendId = f.UserId,
                 CreatedAt = f.CreatedAt,
                 State = f.FriendState
             }).ToList();
 
-            var incomingRequestDtos = incomingRequests.SelectMany(doc => doc.FriendRequests
-                .Where(request => request.InviteeId == query.UserId && request.State == Core.Entities.FriendState.Requested)
-                .Select(request => new FriendDto
-                {
-                    Id = request.Id,
-                    UserId = request.InviterId,  // The inviter is the follower
-                    FriendId = request.InviteeId,
-                    CreatedAt = request.RequestedAt,
-                    State = request.State
-                })).ToList();
+            // Step 3: Combine followers from requests and friends
+            var allFollowers = followersFromRequests.Concat(followersFromFriends).Distinct().ToList();
 
-            followers.AddRange(incomingRequestDtos);
-
-            var totalItems = followers.Count;
-            var paginatedFollowers = followers
+            // Step 4: Paginate the combined followers list
+            var totalItems = allFollowers.Count;
+            var paginatedFollowers = allFollowers
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();
