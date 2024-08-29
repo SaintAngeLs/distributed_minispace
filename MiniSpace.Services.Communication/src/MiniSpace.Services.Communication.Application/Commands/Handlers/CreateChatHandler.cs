@@ -1,10 +1,7 @@
 using Convey.CQRS.Commands;
+using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Communication.Application.Commands;
-using MiniSpace.Services.Communication.Application.Events;
 using MiniSpace.Services.Communication.Application.Services;
-using MiniSpace.Services.Communication.Core.Entities;
-using MiniSpace.Services.Communication.Core.Repositories;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,27 +9,23 @@ namespace MiniSpace.Services.Communication.Application.Commands.Handlers
 {
     public class CreateChatHandler : ICommandHandler<CreateChat>
     {
-        private readonly IUserChatsRepository _userChatsRepository;
-        private readonly IMessageBroker _messageBroker;
+        private readonly ICommunicationService _communicationService;
+        private readonly ILogger<CreateChatHandler> _logger;
 
-        public CreateChatHandler(IUserChatsRepository userChatsRepository, IMessageBroker messageBroker)
+        public CreateChatHandler(ICommunicationService communicationService, ILogger<CreateChatHandler> logger)
         {
-            _userChatsRepository = userChatsRepository;
-            _messageBroker = messageBroker;
+            _communicationService = communicationService;
+            _logger = logger;
         }
 
         public async Task HandleAsync(CreateChat command, CancellationToken cancellationToken)
         {
-            var chat = new Chat(command.ParticipantIds);
+            _logger.LogInformation($"Handling CreateChat command for Chat ID: {command.ChatId}");
 
-            foreach (var participantId in command.ParticipantIds)
-            {
-                var userChats = await _userChatsRepository.GetByUserIdAsync(participantId) ?? new UserChats(participantId);
-                userChats.AddChat(chat);
-                await _userChatsRepository.AddOrUpdateAsync(userChats);
-            }
+            // Call the CommunicationService to create the chat
+            var chatId = await _communicationService.CreateChatAsync(command.ChatId, command.ParticipantIds, command.ChatName);
 
-            await _messageBroker.PublishAsync(new ChatCreated(command.ChatId, command.ParticipantIds));
+            _logger.LogInformation($"Chat created with ID: {chatId}");
         }
     }
 }
