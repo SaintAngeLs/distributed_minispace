@@ -23,23 +23,14 @@ namespace MiniSpace.Services.Communication.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<IEnumerable<MessageDto>> HandleAsync(GetMessagesForChat query, CancellationToken cancellationToken)
         {
-            // Retrieve the Chat object by ChatId
             var chat = await _userChatsRepository.GetByChatIdAsync(query.ChatId);
 
             if (chat != null)
             {
-                // Convert messages to DTOs
                 var messages = chat.Messages.Select(m => m.AsDto()).ToList();
-
-                // Serialize the response to JSON and log it
-                var jsonResponse = JsonSerializer.Serialize(messages, new JsonSerializerOptions { WriteIndented = true });
-                Console.WriteLine("Messages JSON:");
-                Console.WriteLine(jsonResponse);
-
                 return messages;
             }
 
-            // If the chat was not found, return an empty list
             return Enumerable.Empty<MessageDto>();
         }
     }
