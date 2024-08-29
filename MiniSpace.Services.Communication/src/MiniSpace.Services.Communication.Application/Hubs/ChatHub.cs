@@ -93,7 +93,6 @@ namespace MiniSpace.Services.Communication.Application.Hubs
 
             logger.LogInformation($"Sending message status update to chat {chatId} for message {messageId} with status {status}");
 
-            // Serialize the statusUpdate object to JSON
             var jsonStatusUpdate = JsonSerializer.Serialize(statusUpdate);
 
             await hubContext.Clients.All.SendAsync("ReceiveMessageStatusUpdate", jsonStatusUpdate);

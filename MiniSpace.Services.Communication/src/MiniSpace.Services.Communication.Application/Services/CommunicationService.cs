@@ -60,5 +60,65 @@ namespace MiniSpace.Services.Communication.Application.Services
             _logger.LogInformation($"New chat created with ID: {newChat.Id}");
             return newChat.Id;
         }
+
+
+        public async Task UpdateMessageStatusAsync(Guid chatId, Guid messageId, string status)
+        {
+            // Retrieve the chat using the GetByChatIdAsync method
+            var chat = await _userChatsRepository.GetByChatIdAsync(chatId);
+            if (chat == null)
+            {
+                _logger.LogWarning($"Chat with ID {chatId} not found.");
+                return;
+            }
+
+            var message = chat.Messages.FirstOrDefault(m => m.Id == messageId);
+            if (message == null)
+            {
+                _logger.LogWarning($"Message with ID {messageId} not found in chat with ID {chatId}.");
+                return;
+            }
+
+            switch (status)
+            {
+                case "Read":
+                    message.MarkAsRead();
+                    break;
+                case "Unread":
+                    message.MarkAsUnread();
+                    break;
+                case "Deleted":
+                    message.MarkAsDeleted();
+                    break;
+                default:
+                    _logger.LogWarning($"Unsupported status '{status}' for message ID {messageId} in chat ID {chatId}.");
+                    return;
+            }
+
+            foreach (var participantId in chat.ParticipantIds)
+            {
+                var userChats = await _userChatsRepository.GetByUserIdAsync(participantId);
+                if (userChats != null)
+                {
+                    var existingChat = userChats.GetChatById(chatId);
+                    if (existingChat != null)
+                    {
+                        var messageToUpdate = existingChat.Messages.FirstOrDefault(m => m.Id == messageId);
+                        if (messageToUpdate != null)
+                        {
+                            _logger.LogInformation($"Updating message status for chat ID {chatId} and message ID {messageId} to {status}");
+                            messageToUpdate.MarkAsRead(); 
+                        }
+                        _logger.LogInformation($"Updating chat for participant {participantId} with chat ID {chatId}");
+                        await _userChatsRepository.UpdateAsync(userChats); 
+                    }
+                }
+            }
+
+            _logger.LogInformation($"Message status updated: ChatId={chatId}, MessageId={messageId}, Status={status}");
+
+            await _messageBroker.PublishAsync(new MessageStatusUpdated(chatId, messageId, status));
+        }
+
     }
 }
