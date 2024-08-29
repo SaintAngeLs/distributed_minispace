@@ -39,7 +39,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
                     .Select(request => new FriendDto
                     {
                         Id = request.Id,
-                        UserId = request.InviterId,  // The inviter is the follower
+                        UserId = request.InviterId,  
                         FriendId = request.InviteeId,
                         CreatedAt = request.RequestedAt,
                         State = request.State
