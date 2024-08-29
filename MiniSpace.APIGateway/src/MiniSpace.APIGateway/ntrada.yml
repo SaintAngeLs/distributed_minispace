@@ -839,18 +839,18 @@ modules:
           downstream: friends-service/friends/requests/sent/{userId}
           auth: true
 
-        - upstream: /userId}/followers
+        - upstream: /{userId}/followers
           method: GET
           use: downstream
-          downstream: friends-service/friends/userId}/followers
+          downstream: friends-service/friends/{userId}/followers
           auth: true
           bind:
             - userId: {userId}
         
-        - upstream: /userId}/following
+        - upstream: /{userId}/following
           method: GET
           use: downstream
-          downstream: friends-service/friends/userId}/following
+          downstream: friends-service/friends/{userId}/following
           auth: true
           bind:
             - userId: {userId}
