@@ -12,13 +12,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Communication.Application;
+using MiniSpace.Services.Communication.Application.Services;
 using MiniSpace.Services.Communication.Application.Commands;
 using MiniSpace.Services.Communication.Application.Dto;
 using MiniSpace.Services.Communication.Application.Queries;
 using MiniSpace.Services.Communication.Infrastructure;
 using MiniSpace.Services.Communication.Application.Hubs;
 using MiniSpace.Services.Communication.Core.Wrappers;
-
+using System;
 
 namespace MiniSpace.Services.Communication.Api
 {
@@ -61,9 +62,24 @@ namespace MiniSpace.Services.Communication.Api
                         .Get<GetUserChats, PagedResponse<UserChatDto>>("communication/chats/user/{userId}")
                         .Get<GetChatById, ChatDto>("communication/chats/{chatId}")
                         .Get<GetMessagesForChat, IEnumerable<MessageDto>>("communication/chats/{chatId}/messages")
-                        .Post<CreateChat>("communication/chats")
+                        .Post<CreateChat>("communication/chats", async (cmd, ctx) =>
+                        {
+                            try
+                            {
+                                var chatId = await ctx.RequestServices.GetService<ICommunicationService>()
+                                    .CreateChatAsync(cmd.ChatId, cmd.ParticipantIds, cmd.ChatName);
+                                ctx.Response.StatusCode = StatusCodes.Status200OK;
+                                await ctx.Response.WriteJsonAsync(new { ChatId = chatId });
+                            }
+                            catch (Exception ex)
+                            {
+                                ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                                await ctx.Response.WriteJsonAsync(new { Error = ex.Message });
+                            }
+                        })
+
                         .Put<AddUserToChat>("communication/chats/{chatId}/users")
-                        .Delete<DeleteChat>("communication/chats/{chatId}")
+                        .Delete<DeleteChat>("communication/chats/{chatId}/{userId}")
                         
                         // Message-related endpoints
                         .Post<SendMessage>("communication/chats/{chatId}/messages")
