@@ -24,7 +24,7 @@
             @foreach (var chat in filteredChats)
             {
                 var lastMessage = lastMessages.ContainsKey(chat.Id) ? lastMessages[chat.Id] : null;
-                var isTyping = typingStatus.TryGetValue(chat.Id, out var typingUser) && !string.IsNullOrEmpty(typingUser.UserName);
+                var isTyping = typingStatus.ContainsKey(chat.Id);
                 <MudItem @onclick="@(() => SelectChat(chat.Id))" Class="chat-item">
                     <MudAvatar Class="chat-avatar">
                         <MudImage Src="@GetChatImage(chat.Id)" Size="Size.Large" />
@@ -34,7 +34,7 @@
                         <MudText Class="last-message">
                             @if (isTyping)
                             {
-                                <span class="typing-status">@typingUser.UserName is typing...</span>
+                                <span class="typing-status">@typingStatus[chat.Id].UserName is typing...</span>
                             }
                             else
                             {

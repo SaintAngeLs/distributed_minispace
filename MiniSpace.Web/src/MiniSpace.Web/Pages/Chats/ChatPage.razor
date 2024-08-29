@@ -15,106 +15,111 @@
 @using System.Threading;
 
 <AuthWrapper>
-    <MudContainer Class="chat-container">
-        <MudGrid>
-            <MudItem xs="4" sm="2" md="4" Class="conversation-list-container">
-                <MudPaper Class="   overflow-x-auto conversation-list" Height="100vh">
-                    <MudCard>
-                        @foreach (var chat in userChats)
-                        {
-                            <MudListItem @onclick="@(() => SelectChat(chat.Id))" Class="@GetChatItemClass(chat.Id)">
-                                <div class="d-flex flex-grow-1 gap-4">
-                                <MudAvatar>
-                                    <MudImage Src="@GetChatImage(chat.Id)" Size="Size.Small"></MudImage>
-                                    @if (GetUnreadMessageCount(chat.Id) > 0)
-                                    {
-                                        <MudBadge Content="@GetUnreadMessageCount(chat.Id)" Color="Color.Primary" Class="unread-badge" />
-                                    }
-                                </MudAvatar>
-                                <MudText  Align="Align.Right" Class="chat-name">@GetChatName(chat.Id)</MudText>
-                                </div>
-                            </MudListItem>
-                        }
-                    </MudCard>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="8" sm="10"  md="8" Class="chat-window-container">
-                <MudPaper Class="d-flex flex-column chat-window" Height="100vh">
-
-                    <!-- User Information Section -->
-                    <div class="user-info-container d-flex align-items-center p-2 border-bottom">
-                        <MudAvatar Class="mr-2">
-                            <MudImage Src="@GetChatImage(ChatId)" Size="Size.Medium"></MudImage>
-                        </MudAvatar>
-                        <div class="user-details flex-grow-1">
-                            <MudText Typo="Typo.h6">@GetChatName(ChatId)</MudText>
-                            @* <MudText Typo="Typo.body2" Color="Color.Secondary">@GetUserStatus(ChatId)</MudText> *@
-                        </div>
-                        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" />
-                    </div>
-
-                    <!-- Chat Messages Section -->
-                    <div id="chatMessagesContainer" class="chat-messages flex-grow-1 overflow-auto">
-                        @if (messages != null)
-                        {
-                            @foreach (var message in messages)
+    @if (isConnected)
+    {
+        <MudContainer Class="chat-container">
+            <MudGrid>
+                <MudItem xs="4" sm="2" md="4" Class="conversation-list-container">
+                    <MudPaper Class="overflow-x-auto conversation-list" Height="100vh">
+                        <MudCard>
+                            @foreach (var chat in userChats)
                             {
-                                <div class="message-bubble @GetMessageBubbleClass(message)">
-                                    <!-- User Avatar -->
-                                    <div class="message-avatar">
+                                <MudListItem @onclick="@(() => SelectChat(chat.Id))" Class="@GetChatItemClass(chat.Id)">
+                                    <div class="d-flex flex-grow-1 gap-4">
                                         <MudAvatar>
-                                            <MudImage Src="@GetSenderImage(message.SenderId)" Size="Size.Small"></MudImage>
+                                            <MudImage Src="@GetChatImage(chat.Id)" Size="Size.Small"></MudImage>
+                                            @if (GetUnreadMessageCount(chat.Id) > 0)
+                                            {
+                                                <MudBadge Content="@GetUnreadMessageCount(chat.Id)" Color="Color.Primary" Class="unread-badge" />
+                                            }
                                         </MudAvatar>
-                                    </div>
-
-                                    <!-- Message Content -->
-                                    <div class="message-content">
-                                        <!-- Message Header with Sender Name and Timestamp -->
-                                        <div class="message-header">
-                                            <span class="message-sender">@GetSenderName(message.SenderId)</span>
-                                            <span class="message-time">@message.Timestamp.ToString("HH:mm")</span>
-                                        </div>
-
-                                        <!-- Message Text -->
-                                        <div class="message-text">@message.Content</div>
-
-                                        <!-- Message Status (Sent, Delivered, Read) -->
-                                        <div class="message-status">
-                                            <MudIcon Icon="@GetStatusIcon(message.Status)" Color="Color.Secondary" Size="Size.Small" />
+                                        <div class="flex-grow-1">
+                                            <MudText Align="Align.Left" Class="chat-name">@GetChatName(chat.Id)</MudText>
+                                            @if (IsUserTypingInChat(chat.Id))
+                                            {
+                                                <MudText Align="Align.Left" Typo="Typo.body2" Color="Color.Primary">@typingUserName is typing...</MudText>
+                                            }
+                                            else
+                                            {
+                                                <MudText Align="Align.Left" Typo="Typo.body2">@GetLastMessagePreview(chat.Id)</MudText>
+                                                <MudText Align="Align.Right" Typo="Typo.caption" Color="Color.Secondary">@GetLastMessageTime(chat.Id)</MudText>
+                                            }
                                         </div>
                                     </div>
-                                </div>
+                                </MudListItem>
                             }
-                        }
-                    </div>
-
-                    <!-- Typing Indicator -->
-                    @if (isUserTyping)
-                    {
-                        <div class="typing-indicator">
-                            @typingUserName is typing...
+                        </MudCard>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="8" sm="10" md="8" Class="chat-window-container">
+                    <MudPaper Class="d-flex flex-column chat-window" Height="100vh">
+                        <div class="user-info-container d-flex align-items-center p-2 border-bottom">
+                            <MudAvatar Class="mr-2">
+                                <MudImage Src="@GetChatImage(ChatId)" Size="Size.Medium"></MudImage>
+                            </MudAvatar>
+                            <div class="user-details flex-grow-1">
+                                <MudText Typo="Typo.h6">@GetChatName(ChatId)</MudText>
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" />
                         </div>
-                    }
 
-                    <!-- Message Input Section -->
-                    <div class="message-input-container">
-                        <textarea @bind="newMessageContent" @oninput="HandleInputChange" placeholder="Type a message..." disabled="@(!isConnected)" rows="1"></textarea>
-                        <MudIconButton Icon="@Icons.Material.Filled.Send" Color="Color.Primary" Disabled="@IsSendButtonDisabledCombined" @onclick="SendMessage" Class="send-button" />
-                    </div>
+                        <div id="chatMessagesContainer" class="chat-messages flex-grow-1 overflow-auto">
+                            @if (messages != null)
+                            {
+                                @foreach (var message in messages)
+                                {
+                                    <div class="message-bubble @GetMessageBubbleClass(message)">
+                                        <div class="message-avatar">
+                                            <MudAvatar>
+                                                <MudImage Src="@GetSenderImage(message.SenderId)" Size="Size.Small"></MudImage>
+                                            </MudAvatar>
+                                        </div>
 
+                                        <div class="message-content">
+                                            <div class="message-header">
+                                                <span class="message-sender">@GetSenderName(message.SenderId)</span>
+                                                <span class="message-time">@message.Timestamp.ToString("HH:mm")</span>
+                                            </div>
+                                            <div class="message-text">@message.Content</div>
+                                            <div class="message-status">
+                                                <MudIcon Icon="@GetStatusIcon(message.Status)" Color="Color.Secondary" Size="Size.Small" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
 
-                    <!-- Connection Status -->
-                    @if (!isConnected)
-                    {
-                        <MudText Class="connection-status" Color="Color.Error">
-                            You are currently disconnected. Some features may be unavailable.
-                        </MudText>
-                    }
-                </MudPaper>
-            </MudItem>
-        </MudGrid>
-    </MudContainer>
+                        @if (isUserTyping && typingUserName != null)
+                        {
+                            <div class="typing-indicator">
+                                @typingUserName is typing...
+                            </div>
+                        }
+
+                        <div class="message-input-container">
+                            <textarea @bind="newMessageContent" @oninput="HandleInputChange" placeholder="Type a message..." disabled="@(!isConnected)" rows="1"></textarea>
+                            <MudIconButton Icon="@Icons.Material.Filled.Send" Color="Color.Primary" Disabled="@IsSendButtonDisabledCombined" @onclick="SendMessage" Class="send-button" />
+                        </div>
+
+                        @if (!isConnected)
+                        {
+                            <MudText Class="connection-status" Color="Color.Error">
+                                You are currently disconnected. Some features may be unavailable.
+                            </MudText>
+                        }
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
+    }
+    else
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        <MudText Typo="Typo.h6" Align="Align.Center">Connecting to chat...</MudText>
+    }
 </AuthWrapper>
+
 
 <style>
     .chat-container {
@@ -203,6 +208,7 @@
         padding: 12px 16px;
         background-color: #FFFFFF;
         border-top: 1px solid #E0E0E0;
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .unread-chat {
@@ -250,48 +256,39 @@
         color: #9e9e9e;
     }
 
-    .message-input-container {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    background-color: #FFFFFF;
-    border-top: 1px solid #E0E0E0;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-}
+    .message-input-container textarea {
+        flex-grow: 1;
+        border: 1px solid #E0E0E0;
+        border-radius: 20px;
+        padding: 10px 15px;
+        font-size: 14px;
+        line-height: 1.5;
+        resize: none;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        font-family: 'Roboto', sans-serif;
+        transition: border-color 0.2s;
+    }
 
-.message-input-container textarea {
-    flex-grow: 1;
-    border: 1px solid #E0E0E0;
-    border-radius: 20px;
-    padding: 10px 15px;
-    font-size: 14px;
-    line-height: 1.5;
-    resize: none;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    font-family: 'Roboto', sans-serif;
-    transition: border-color 0.2s;
-}
+    .message-input-container textarea:focus {
+        outline: none;
+        border-color: #42A5F5;
+    }
 
-.message-input-container textarea:focus {
-    outline: none;
-    border-color: #42A5F5;
-}
+    .message-input-container textarea:disabled {
+        background-color: #F5F5F5;
+        cursor: not-allowed;
+    }
 
-.message-input-container textarea:disabled {
-    background-color: #F5F5F5;
-    cursor: not-allowed;
-}
+    .message-input-container .send-button {
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s;
+    }
 
-.message-input-container .send-button {
-    margin-left: 10px;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s;
-}
-
-.message-input-container .send-button:disabled {
-    background-color: #E0E0E0;
-}
+    .message-input-container .send-button:disabled {
+        background-color: #E0E0E0;
+    }
 
 </style>
 
@@ -303,12 +300,14 @@
     private string newMessageContent = string.Empty;
     private Dictionary<Guid, string> userNames = new();
     private Dictionary<Guid, string> userImages = new();
+    private Dictionary<Guid, MessageDto> lastMessages = new();
+    private Dictionary<Guid, bool> typingStatus = new();
     private bool isSending = false;
     private bool hasUpdatedStatus = false;
     private bool isUserTyping = false;
     private string typingUserName = string.Empty;
     private Timer typingTimer;
-    private bool isConnected = true;
+    private bool isConnected = false; // Start as not connected
     private bool IsSendButtonDisabledCombined => IsSendButtonDisabled || !isConnected;
 
     private bool IsSendButtonDisabled => isSending || string.IsNullOrWhiteSpace(newMessageContent);
@@ -319,22 +318,46 @@
 
         if (IdentityService.IsAuthenticated)
         {
-            await LoadUserChats();
-            if (ChatId != Guid.Empty)
-            {
-                await LoadMessages(ChatId);
-            }
-
             var userId = IdentityService.GetCurrentUserId();
-            await ChatSignalRService.StartAsync(userId, ChatId);
+            ChatSignalRService.ConnectionChanged += OnConnectionChanged;
             ChatSignalRService.MessageReceived += OnMessageReceived;
             ChatSignalRService.MessageStatusUpdated += OnMessageStatusUpdated;
             ChatSignalRService.TypingNotificationReceived += OnTypingNotificationReceived;
-            ChatSignalRService.ConnectionChanged += OnConnectionChanged;
+
+            await InitializeSignalRConnection(userId);
+
+            if (isConnected)
+            {
+                await LoadUserChats();
+                if (ChatId != Guid.Empty)
+                {
+                    await LoadMessages(ChatId);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }
         }
         else
         {
             NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (isConnected)
+        {
+            await LoadMessages(ChatId);
+        }
+    }
+
+    private async Task InitializeSignalRConnection(Guid userId)
+    {
+        if (!isConnected)
+        {
+            await ChatSignalRService.StartAsync(userId, ChatId);
         }
     }
 
@@ -361,9 +384,13 @@
     {
         await InvokeAsync(() =>
         {
-            isUserTyping = false;
-            typingUserName = string.Empty;
-            StateHasChanged();
+            if (state is Guid chatId)
+            {
+                typingStatus[chatId] = false;
+                isUserTyping = false;
+                typingUserName = string.Empty;
+                StateHasChanged();
+            }
         });
 
         typingTimer?.Dispose();
@@ -376,7 +403,7 @@
             await ChatSignalRService.SendTypingNotificationAsync(!string.IsNullOrEmpty(inputValue));
 
             typingTimer?.Dispose();
-            typingTimer = new Timer(OnTypingTimeout, null, 1000, Timeout.Infinite);
+            typingTimer = new Timer(OnTypingTimeout, ChatId, 1000, Timeout.Infinite);
         }
     }
 
@@ -384,26 +411,24 @@
     {
         await InvokeAsync(() =>
         {
-            if (isTyping)
+            var chatId = ChatId;
+
+            if (userNames.TryGetValue(Guid.Parse(userId), out var userName))
             {
-                if (userNames.TryGetValue(Guid.Parse(userId), out var userName))
-                {
-                    typingUserName = userName;
-                }
-                else
-                {
-                    typingUserName = "Unknown User";
-                }
-
-                isUserTyping = true;
-
-                typingTimer?.Dispose();
-                typingTimer = new Timer(OnTypingTimeout, null, 1000, Timeout.Infinite);
+                typingUserName = userName;
             }
             else
             {
-                isUserTyping = false;
-                typingUserName = string.Empty;
+                typingUserName = "Unknown User";
+            }
+
+            isUserTyping = isTyping;
+            typingStatus[chatId] = isTyping;
+
+            if (isTyping)
+            {
+                typingTimer?.Dispose();
+                typingTimer = new Timer(OnTypingTimeout, chatId, 1000, Timeout.Infinite);
             }
 
             StateHasChanged();
@@ -412,10 +437,18 @@
 
     private async void OnConnectionChanged(bool connected)
     {
-        await InvokeAsync(() =>
+        await InvokeAsync(async () =>
         {
             isConnected = connected;
-            StateHasChanged();
+            if (isConnected)
+            {
+                await LoadUserChats();
+                if (ChatId != Guid.Empty)
+                {
+                    await LoadMessages(ChatId);
+                }
+                StateHasChanged();
+            }
         });
     }
 
@@ -430,6 +463,7 @@
             {
                 userChats = result.Items.SelectMany(u => u.Chats).ToList();
                 await LoadUserDetails();
+                await LoadLastMessages();
             }
         }
         catch (Exception ex)
@@ -470,6 +504,16 @@
                 }
             }
         }
+    }
+
+    private async Task LoadLastMessages()
+    {
+        foreach (var chat in userChats)
+        {
+            var messages = await CommunicationService.GetMessagesForChatAsync(chat.Id);
+            lastMessages[chat.Id] = messages.OrderByDescending(m => m.Timestamp).FirstOrDefault();
+        }
+        StateHasChanged();
     }
 
     private async Task SendMessage()
@@ -579,37 +623,31 @@
 
     private string GetChatImage(Guid chatId)
     {
-         if (IdentityService.IsAuthenticated)
+        if (IdentityService.IsAuthenticated)
         {
-        var chat = userChats.FirstOrDefault(c => c.Id == chatId);
+            var chat = userChats.FirstOrDefault(c => c.Id == chatId);
 
-        if (chat == null)
-        {
-            return "/images/default_profile_image.webp";
-        }
+            if (chat == null)
+            {
+                return "/images/default_profile_image.webp";
+            }
 
-       
             var userId = IdentityService.GetCurrentUserId();
             if (chat.ParticipantIds.Count == 2)
             {
-                // Get the ID of the other participant
                 var otherParticipantId = chat.ParticipantIds.FirstOrDefault(id => id != userId);
-                
-                // Return the image of the other participant or the default image if none is available
                 return GetSenderImage(otherParticipantId);
             }
 
-            // For chats with more than two participants or if the logic above fails
             var otherParticipant = chat.ParticipantIds.FirstOrDefault(id => id != userId);
             if (otherParticipant != Guid.Empty)
             {
                 return GetSenderImage(otherParticipant);
             }
         }
-        
+
         return "/images/default_profile_image.webp";
     }
-
 
     private string GetChatName(Guid chatId)
     {
@@ -620,16 +658,12 @@
             var userId = IdentityService.GetCurrentUserId();
             if (chat != null && chat.ParticipantIds.Count == 2)
             {
-                // Get the ID of the other participant
                 var otherParticipantId = chat.ParticipantIds.FirstOrDefault(id => id != userId);
-                
-                // Return the name of the other participant
-                return userNames.TryGetValue(otherParticipantId, out var otherParticipantName) 
-                    ? otherParticipantName 
+                return userNames.TryGetValue(otherParticipantId, out var otherParticipantName)
+                    ? otherParticipantName
                     : "Unknown Chat";
             }
 
-            // Return the chat's custom name or a default name if it has more than 2 participants
             return chat?.Name ?? "Unknown Chat";
         }
         return "Unknown Chat";
@@ -648,6 +682,17 @@
                     StateHasChanged();
                 }
             }
+
+            if (lastMessages.ContainsKey(message.ChatId))
+            {
+                lastMessages[message.ChatId] = message;
+            }
+            else
+            {
+                lastMessages.Add(message.ChatId, message);
+            }
+
+            StateHasChanged();
         });
     }
 
@@ -662,6 +707,29 @@
                 StateHasChanged();
             }
         });
+    }
+
+    private string GetLastMessagePreview(Guid chatId)
+    {
+        if (lastMessages.TryGetValue(chatId, out var lastMessage))
+        {
+            return $"{GetSenderName(lastMessage.SenderId)}: {lastMessage.Content}";
+        }
+        return "No messages yet";
+    }
+
+    private string GetLastMessageTime(Guid chatId)
+    {
+        if (lastMessages.TryGetValue(chatId, out var lastMessage))
+        {
+            return lastMessage.Timestamp.ToString("g");
+        }
+        return string.Empty;
+    }
+
+    private bool IsUserTypingInChat(Guid chatId)
+    {
+        return typingStatus.TryGetValue(chatId, out var isTyping) && isTyping;
     }
 
     private string GetStatusIcon(string status)

@@ -9,172 +9,171 @@ using System.Threading.Tasks;
 namespace MiniSpace.Web.Areas.Communication
 {
     public class ChatSignalRService : IAsyncDisposable
-{
-    private HubConnection _hubConnection;
-    private readonly NavigationManager _navigationManager;
-    private readonly IIdentityService _identityService;
-    private Guid _userId;
-    private Guid _currentChatId;
-    private bool _disposed;
-
-    public event Action<MessageDto> MessageReceived;
-    public event Action<Guid, string> MessageStatusUpdated;
-    public event Action<string, bool> TypingNotificationReceived;
-    public event Action<bool> ConnectionChanged;
-
-    public ChatSignalRService(NavigationManager navigationManager, IIdentityService identityService)
     {
-        _navigationManager = navigationManager;
-        _identityService = identityService;
-    }
+        private HubConnection _hubConnection;
+        private readonly NavigationManager _navigationManager;
+        private readonly IIdentityService _identityService;
+        private Guid _userId;
+        private Guid _currentChatId;
+        private bool _disposed;
 
-    public async Task StartAsync(Guid userId, Guid currentChatId)
-    {
-        _userId = userId;
-        _currentChatId = currentChatId;
-        var hubUrl = $"http://localhost:5016/chatHub?userId={userId}&chatId={currentChatId}";
+        public event Action<MessageDto> MessageReceived;
+        public event Action<Guid, string> MessageStatusUpdated;
+        public event Action<string, bool> TypingNotificationReceived;
+        public event Action<bool> ConnectionChanged;
 
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(hubUrl, options =>
-            {
-                options.AccessTokenProvider = async () =>
-                {
-                    if (_disposed)
-                    {
-                        return null; // Circuit is disposed, return null to avoid further calls.
-                    }
-
-                    try
-                    {
-                        var token = await _identityService.GetAccessTokenAsync();
-                        return token;
-                    }
-                    catch (JSDisconnectedException)
-                    {
-                        // Handle the JS interop disconnection gracefully
-                        return null;
-                    }
-                };
-            })
-            .WithAutomaticReconnect()
-            .Build();
-
-        _hubConnection.On<string>("ReceiveMessage", (jsonMessage) =>
+        public ChatSignalRService(NavigationManager navigationManager, IIdentityService identityService)
         {
-            var message = System.Text.Json.JsonSerializer.Deserialize<MessageDto>(jsonMessage);
-            MessageReceived?.Invoke(message);
-        });
+            _navigationManager = navigationManager;
+            _identityService = identityService;
+        }
 
-        _hubConnection.On<string>("ReceiveMessageStatusUpdate", (jsonStatusUpdate) =>
+        public async Task StartAsync(Guid userId, Guid currentChatId)
         {
-            var statusUpdate = System.Text.Json.JsonSerializer.Deserialize<MessageStatusUpdateDto>(jsonStatusUpdate);
-            var chatId = statusUpdate.ChatId;
-            var messageId = Guid.Parse(statusUpdate.MessageId);
-            var status = statusUpdate.Status;
-
-            if (chatId == _currentChatId.ToString())
+            if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
             {
-                MessageStatusUpdated?.Invoke(messageId, status);
+                await _hubConnection.StopAsync();
             }
-        });
 
-        _hubConnection.On<string, bool>("ReceiveTypingNotification", (userId, isTyping) =>
-        {
-            TypingNotificationReceived?.Invoke(userId, isTyping);
-        });
+            _userId = userId;
+            _currentChatId = currentChatId;
+            var hubUrl = $"http://localhost:5016/chatHub?userId={userId}&chatId={currentChatId}";
 
-        _hubConnection.Reconnecting += (error) =>
-        {
-            ConnectionChanged?.Invoke(false);
-            return Task.CompletedTask;
-        };
-
-        _hubConnection.Reconnected += (connectionId) =>
-        {
-            ConnectionChanged?.Invoke(true);
-            return Task.CompletedTask;
-        };
-
-        _hubConnection.Closed += (error) =>
-        {
-            ConnectionChanged?.Invoke(false);
-            return Task.CompletedTask;
-        };
-
-        if (!_disposed)
-        {
-            await _hubConnection.StartAsync();
-            ConnectionChanged?.Invoke(true);
-        }
-    }
-
-    public async Task StartAsync(Guid userId)
-    {
-        _userId = userId;
-        _currentChatId = Guid.Empty;  // No specific chat in this context
-        var hubUrl = $"http://localhost:5016/chatHub?userId={userId}";
-
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(hubUrl, options =>
-            {
-                options.AccessTokenProvider = async () =>
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(hubUrl, options =>
                 {
-                    if (_disposed)
+                    options.AccessTokenProvider = async () =>
                     {
-                        return null; // Circuit is disposed, return null to avoid further calls.
-                    }
+                        if (_disposed)
+                        {
+                            return null;
+                        }
 
-                    try
+                        try
+                        {
+                            return await _identityService.GetAccessTokenAsync();
+                        }
+                        catch (JSDisconnectedException)
+                        {
+                            return null;
+                        }
+                    };
+                })
+                .WithAutomaticReconnect()
+                .Build();
+
+            RegisterHubEvents();
+            await StartConnectionAsync();
+        }
+
+        public async Task StartAsync(Guid userId)
+        {
+            if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
+            {
+                await _hubConnection.StopAsync();
+            }
+
+            _userId = userId;
+            _currentChatId = Guid.Empty;
+            var hubUrl = $"http://localhost:5016/chatHub?userId={userId}";
+
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(hubUrl, options =>
+                {
+                    options.AccessTokenProvider = async () =>
                     {
-                        var token = await _identityService.GetAccessTokenAsync();
-                        return token;
-                    }
-                    catch (JSDisconnectedException)
-                    {
-                        // Handle the JS interop disconnection gracefully
-                        return null;
-                    }
-                };
-            })
-            .WithAutomaticReconnect()
-            .Build();
+                        if (_disposed)
+                        {
+                            return null;
+                        }
 
-        _hubConnection.On<string>("ReceiveMessage", (jsonMessage) =>
-        {
-            var message = System.Text.Json.JsonSerializer.Deserialize<MessageDto>(jsonMessage);
-            MessageReceived?.Invoke(message);
-        });
+                        try
+                        {
+                            return await _identityService.GetAccessTokenAsync();
+                        }
+                        catch (JSDisconnectedException)
+                        {
+                            return null;
+                        }
+                    };
+                })
+                .WithAutomaticReconnect()
+                .Build();
 
-        _hubConnection.On<string, bool>("ReceiveTypingNotification", (userId, isTyping) =>
-        {
-            TypingNotificationReceived?.Invoke(userId, isTyping);
-        });
+            RegisterHubEvents();
+            await StartConnectionAsync();
+        }
 
-        if (!_disposed)
+        private void RegisterHubEvents()
         {
-            await _hubConnection.StartAsync();
-            ConnectionChanged?.Invoke(true);
+            _hubConnection.On<string>("ReceiveMessage", (jsonMessage) =>
+            {
+                var message = System.Text.Json.JsonSerializer.Deserialize<MessageDto>(jsonMessage);
+                MessageReceived?.Invoke(message);
+            });
+
+            _hubConnection.On<string>("ReceiveMessageStatusUpdate", (jsonStatusUpdate) =>
+            {
+                var statusUpdate = System.Text.Json.JsonSerializer.Deserialize<MessageStatusUpdateDto>(jsonStatusUpdate);
+                MessageStatusUpdated?.Invoke(Guid.Parse(statusUpdate.MessageId), statusUpdate.Status);
+            });
+
+            _hubConnection.On<string, bool>("ReceiveTypingNotification", (userId, isTyping) =>
+            {
+                TypingNotificationReceived?.Invoke(userId, isTyping);
+            });
+
+            _hubConnection.Reconnecting += (error) =>
+            {
+                ConnectionChanged?.Invoke(false);
+                return Task.CompletedTask;
+            };
+
+            _hubConnection.Reconnected += (connectionId) =>
+            {
+                ConnectionChanged?.Invoke(true);
+                return Task.CompletedTask;
+            };
+
+            _hubConnection.Closed += (error) =>
+            {
+                ConnectionChanged?.Invoke(false);
+                return Task.CompletedTask;
+            };
+        }
+
+        private async Task StartConnectionAsync()
+        {
+            if (!_disposed)
+            {
+                await _hubConnection.StartAsync();
+                ConnectionChanged?.Invoke(true);
+            }
+        }
+
+        public async Task StopAsync()
+        {
+            if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected)
+            {
+                await _hubConnection.StopAsync();
+            }
+        }
+
+        public async Task SendTypingNotificationAsync(bool isTyping)
+        {
+            if (_hubConnection.State == HubConnectionState.Connected)
+            {
+                await _hubConnection.InvokeAsync("SendTypingNotification", _currentChatId.ToString(), _userId.ToString(), isTyping);
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_hubConnection != null)
+            {
+                await _hubConnection.DisposeAsync();
+            }
+            _disposed = true;
         }
     }
-
-
-    public async Task SendTypingNotificationAsync(bool isTyping)
-    {
-        if (_hubConnection.State == HubConnectionState.Connected)
-        {
-            await _hubConnection.InvokeAsync("SendTypingNotification", _currentChatId.ToString(), _userId.ToString(), isTyping);
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_hubConnection != null)
-        {
-            await _hubConnection.DisposeAsync();
-        }
-        _disposed = true;
-    }
-}
-
-
 }
