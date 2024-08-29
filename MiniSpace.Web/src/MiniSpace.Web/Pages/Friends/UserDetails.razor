@@ -1,0 +1,447 @@
+@page "/user-details/{Id:guid}"
+@using MiniSpace.Web.Areas.Friends
+@inject NavigationManager NavigationManager
+@inject IFriendsService FriendsService
+@inject IEventsService EventsService
+@using MiniSpace.Web.Areas.MediaFiles
+@inject IMediaFilesService MediaFilesService
+@using MiniSpace.Web.Models.Reports
+@using MiniSpace.Web.Pages.Reports.Dialogs
+@using DialogOptions = Radzen.DialogOptions
+@using DialogService = Radzen.DialogService
+@inject DialogService DialogService
+@inject IIdentityService IdentityService
+@using MiniSpace.Web.DTO
+@using MudBlazor
+
+<AuthWrapper>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="main-container">
+        @if (studentNotFound)
+        {
+            <MudAlert Severity="Severity.Warning">
+                <MudText Typo="Typo.h5">Student profile not found!</MudText>
+                <MudText>It may have been deleted or is inaccessible.</MudText>
+            </MudAlert>
+        }
+        else if (student == null)
+        {
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Class="center-loader" />
+        }
+        else
+        {
+            <MudPaper Class="profile-banner" Elevation="4">
+                <MudImage Src="@GetBannerImageUrl(student.BannerUrl)" Alt="Banner" Class="banner-image" />
+                <MudAvatar Size="Size.Large" Class="profile-avatar" Src="@GetProfileImageUrl(student.ProfileImageUrl)" />
+            </MudPaper>
+
+            <MudGrid Container Class="profile-content">
+                <MudItem xs="12" sm="8">
+                    <MudText Typo="Typo.h3">@student.FirstName @student.LastName</MudText>
+
+                    @if (!string.IsNullOrWhiteSpace(student.Description))
+                    {
+                        <MudText Typo="Typo.subtitle1" Color="Color.Secondary">@student.Description</MudText>
+                    }
+
+                    <MudDivider Class="divider" />
+
+                    @if (student.DateOfBirth.HasValue)
+                    {
+                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-calendar-alt" /> Date of Birth: @student.DateOfBirth?.ToLocalTime().ToString("yyyy-MM-dd")</MudText>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(student.City) || !string.IsNullOrWhiteSpace(student.Country))
+                    {
+                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-map-marker-alt" /> Location: @student.City, @student.Country</MudText>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(student.State))
+                    {
+                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-flag" /> State: @student.State</MudText>
+                    }
+
+                    <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-calendar-check" /> Joined: @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    @if (userEvents?.Any() == true)
+                    {
+                        <MudCard Class="events-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5">Events</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var eventDto in userEvents)
+                                    {
+                                        <MudListItem>
+                                            <MudText>@eventDto.Name</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+            </MudGrid>
+
+            <MudGrid Container Class="profile-details-grid">
+                <MudItem xs="12" sm="6">
+                    @if (student.Education?.Any() == true)
+                    {
+                        <MudCard Class="education-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-graduation-cap" /> Education</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var education in student.Education)
+                                    {
+                                        <MudListItem>
+                                            <MudText>@education.InstitutionName - @education.Degree (@education.StartDate?.ToLocalTime().ToString("yyyy-MM-dd") to @education.EndDate?.ToLocalTime().ToString("yyyy-MM-dd"))</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    @if (student.Work?.Any() == true)
+                    {
+                        <MudCard Class="work-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-briefcase" /> Work</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var work in student.Work)
+                                    {
+                                        <MudListItem>
+                                            <MudText>@work.Company - @work.Position (@work.StartDate?.ToLocalTime().ToString("yyyy-MM-dd") to @work.EndDate?.ToLocalTime().ToString("yyyy-MM-dd"))</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+            </MudGrid>
+
+            <MudGrid Container Class="gallery-and-friends">
+                <MudItem xs="12" sm="6">
+                    @if (ShouldDisplayGallery(student.UserSettings.GalleryVisibility) && student.GalleryOfImageUrls?.Any(img => IsValidImageUrl(img.ImageUrl)) == true)
+                    {
+                        <MudCard Class="gallery-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-images" /> Gallery</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudGrid Spacing="2">
+                                    @foreach (var galleryImage in student.GalleryOfImageUrls.Where(img => IsValidImageUrl(img.ImageUrl)))
+                                    {
+                                        <MudItem xs="6">
+                                            <MudImage Src="@galleryImage.ImageUrl" Alt="Gallery image" Class="gallery-image" />
+                                        </MudItem>
+                                    }
+                                </MudGrid>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+                
+                <MudItem xs="12" sm="6">
+                    @if (followers?.Any() == true)
+                    {
+                        <MudCard Class="followers-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-user-friends" /> Followers</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var follower in followers)
+                                    {
+                                        <MudListItem>
+                                            <MudAvatar Src="@GetProfileImageUrl(follower.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudAvatar>
+                                            <MudText>@follower.StudentDetails.FirstName @follower.StudentDetails.LastName</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    @if (following?.Any() == true)
+                    {
+                        <MudCard Class="following-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-user-friends" /> Following</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var follow in following)
+                                    {
+                                        <MudListItem>
+                                            <MudAvatar Src="@GetProfileImageUrl(follow.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudAvatar>
+                                            <MudText>@follow.StudentDetails.FirstName @follow.StudentDetails.LastName</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+
+                <MudItem xs="12" sm="6">
+                    @if (friends?.Any() == true)
+                    {
+                        <MudCard Class="friends-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-user-friends" /> Friends</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var friend in friends)
+                                    {
+                                        <MudListItem>
+                                            <MudAvatar Src="@GetProfileImageUrl(friend.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudAvatar>
+                                            <MudText>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+            </MudGrid>
+
+            <MudGrid Container Class="requests-section">
+                <MudItem xs="12">
+                    @if (sentFriendRequests?.Any() == true)
+                    {
+                        <MudCard Class="requests-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-user-plus" /> Sent Friend Requests</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var request in sentFriendRequests)
+                                    {
+                                        <MudListItem>
+                                            <MudText>@request.InviteeName</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+                <MudItem xs="12">
+                    @if (incomingFriendRequests?.Any() == true)
+                    {
+                        <MudCard Class="requests-card">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-user-clock" /> Incoming Friend Requests</MudText>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudList>
+                                    @foreach (var request in incomingFriendRequests)
+                                    {
+                                        <MudListItem>
+                                            <MudText>@request.InviterName</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .main-container {
+        padding: 20px;
+    }
+
+    .center-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .profile-banner {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .banner-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .profile-avatar {
+        position: absolute;
+        bottom: -40px;
+        left: 20px;
+        border: 4px solid white;
+    }
+
+    .profile-content {
+        padding-top: 60px;
+        margin-bottom: 20px;
+    }
+
+    .profile-details-grid {
+        margin-bottom: 30px;
+    }
+
+    .divider {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .gallery-and-friends {
+        margin-top: 20px;
+    }
+
+    .gallery-image {
+        border-radius: 8px;
+        width: 100%;
+        height: auto;
+    }
+
+    .events-card,
+    .education-card,
+    .work-card,
+    .gallery-card,
+    .friends-card,
+    .followers-card,
+    .following-card,
+    .requests-card {
+        margin-bottom: 20px;
+    }
+
+    .requests-section {
+        margin-top: 30px;
+    }
+</style>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private StudentDto student;
+    private bool studentNotFound;
+    private List<EventDto> userEvents;
+    private List<FriendDto> friends;
+    private List<FriendDto> followers;
+    private List<FriendDto> following;
+    private List<FriendRequestDto> sentFriendRequests;
+    private List<FriendRequestDto> incomingFriendRequests;
+
+    protected override async Task OnInitializedAsync()
+{
+    await IdentityService.InitializeAuthenticationState();
+    if (IdentityService.IsAuthenticated)
+    {
+        student = await FriendsService.GetStudentAsync(Id);
+        if (student == null)
+        {
+            studentNotFound = true;
+        }
+        else
+        {
+            var pagedEvents = await EventsService.GetUserEventsAsync(Id, 1, 10, "signed_up");
+            userEvents = pagedEvents?.Items?.ToList() ?? new List<EventDto>();  // Ensure list is not null
+
+            var allFriends = (await FriendsService.GetAllFriendsAsync(Id))?.Items?.ToList() ?? new List<FriendDto>();
+            followers = allFriends.Where(f => !IsFollowing(f)).ToList();
+            following = allFriends.Where(f => IsFollowing(f)).ToList();
+            friends = allFriends.Where(f => IsFriend(f)).ToList();
+
+            var sentRequestsPaged = await FriendsService.GetSentFriendRequestsAsync(1, 10);
+            sentFriendRequests = sentRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();  // Ensure list is not null
+
+            var incomingRequestsPaged = await FriendsService.GetIncomingFriendRequestsAsync(1, 10);
+            incomingFriendRequests = incomingRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();  // Ensure list is not null
+        }
+    }
+    else
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+}
+
+
+    private string GetProfileImageUrl(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "/images/default_profile_image.webp" : profileImageUrl;
+    }
+
+    private string GetBannerImageUrl(string bannerImageUrl)
+    {
+        return string.IsNullOrEmpty(bannerImageUrl) ? "/images/default_banner_image.png" : bannerImageUrl;
+    }
+
+    private bool IsValidImageUrl(string url)
+    {
+        if (string.IsNullOrEmpty(url))
+            return false;
+
+        string[] validExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        string extension = System.IO.Path.GetExtension(url)?.ToLower();
+        return validExtensions.Contains(extension);
+    }
+
+    private bool IsFollowing(FriendDto friend)
+{
+    // Ensure the lists are initialized to avoid null reference exceptions
+    if (friends == null) friends = new List<FriendDto>();
+    if (sentFriendRequests == null) sentFriendRequests = new List<FriendRequestDto>();
+
+    // Check if the user is friends with this person or has sent a friend request
+    bool isFriend = friends.Contains(friend);
+    
+    // Compare the state with the enum value FriendState.Pending
+    bool hasSentRequest = sentFriendRequests.Any(req => req.InviteeId == friend.FriendId && req.State == FriendState.Pending);
+
+    return isFriend || hasSentRequest;
+}
+
+
+
+    private bool IsFriend(FriendDto friend)
+    {
+        // Implement logic to determine if this friend is a mutual friend
+        // For now, assuming all followers who are also being followed are mutual friends
+        return IsFollowing(friend) && following.Contains(friend);
+    }
+
+    private async Task ReportStudentProfile(StudentDto studentDto)
+    {
+        var createReportModel = new CreateReportModel
+        {
+            IssuerId = IdentityService.GetCurrentUserId(),
+            TargetId = studentDto.Id,
+            TargetOwnerId = studentDto.Id,
+            ContextType = "StudentProfile"
+        };
+
+        await DialogService.OpenAsync<CreateReportDialog>("Report profile of the student:",
+            new Dictionary<string, object>() { { "CreateReportModel", createReportModel } },
+            new DialogOptions()
+            {
+                Width = "700px", Height = "350px", Resizable = true, Draggable = true,
+                AutoFocusFirstElement = false
+            });
+    }
+
+    private bool ShouldDisplayGallery(Visibility galleryVisibility)
+    {
+        return galleryVisibility == Visibility.Everyone || (galleryVisibility == Visibility.Connections && IsFriend(null));
+    }
+}
