@@ -62,10 +62,10 @@ namespace MiniSpace.Web.Areas.Communication
             return await _httpClient.GetAsync<IEnumerable<MessageDto>>($"communication/chats/{chatId}/messages");
         }
 
-        public async Task<HttpResponse<object>> CreateChatAsync(CreateChatCommand command)
+        public async Task<HttpResponse<Guid>> CreateChatAsync(CreateChatCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return await _httpClient.PostAsync<CreateChatCommand, object>("communication/chats", command);
+            return await _httpClient.PostAsync<CreateChatCommand, Guid>("communication/chats", command);
         }
 
         public async Task AddUserToChatAsync(Guid chatId, Guid userId)
@@ -78,7 +78,7 @@ namespace MiniSpace.Web.Areas.Communication
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             var command = new DeleteChatCommand(chatId, userId); 
-            await _httpClient.PostAsync<DeleteChatCommand, object>($"communication/chats/{chatId}", command); 
+            await _httpClient.DeleteAsync($"communication/chats/{chatId}/{userId}", command); 
         }
 
 

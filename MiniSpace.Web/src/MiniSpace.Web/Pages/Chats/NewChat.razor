@@ -229,8 +229,6 @@
             }
             else
             {
-                Console.WriteLine("Creating new chat...");
-                Console.WriteLine($"=========================================");
                 // If no chat exists, create a new one
                 var command = new CreateChatCommand(
                     chatId: Guid.NewGuid(),
@@ -239,10 +237,11 @@
                 );
 
                 var response = await CommunicationService.CreateChatAsync(command);
+
                 if (response.IsSuccessStatusCode)
                 {
                     Snackbar.Add($"You have started a chat with {friendName}.", Severity.Success);
-                    NavigationManager.NavigateTo($"/chats/{command.ChatId}");
+                    NavigationManager.NavigateTo($"/chats/{response.Content}");
                 }
                 else
                 {

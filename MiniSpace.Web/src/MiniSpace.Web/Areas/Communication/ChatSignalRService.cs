@@ -108,6 +108,56 @@ namespace MiniSpace.Web.Areas.Communication
         }
     }
 
+    public async Task StartAsync(Guid userId)
+    {
+        _userId = userId;
+        _currentChatId = Guid.Empty;  // No specific chat in this context
+        var hubUrl = $"http://localhost:5016/chatHub?userId={userId}";
+
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(hubUrl, options =>
+            {
+                options.AccessTokenProvider = async () =>
+                {
+                    if (_disposed)
+                    {
+                        return null; // Circuit is disposed, return null to avoid further calls.
+                    }
+
+                    try
+                    {
+                        var token = await _identityService.GetAccessTokenAsync();
+                        return token;
+                    }
+                    catch (JSDisconnectedException)
+                    {
+                        // Handle the JS interop disconnection gracefully
+                        return null;
+                    }
+                };
+            })
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On<string>("ReceiveMessage", (jsonMessage) =>
+        {
+            var message = System.Text.Json.JsonSerializer.Deserialize<MessageDto>(jsonMessage);
+            MessageReceived?.Invoke(message);
+        });
+
+        _hubConnection.On<string, bool>("ReceiveTypingNotification", (userId, isTyping) =>
+        {
+            TypingNotificationReceived?.Invoke(userId, isTyping);
+        });
+
+        if (!_disposed)
+        {
+            await _hubConnection.StartAsync();
+            ConnectionChanged?.Invoke(true);
+        }
+    }
+
+
     public async Task SendTypingNotificationAsync(bool isTyping)
     {
         if (_hubConnection.State == HubConnectionState.Connected)
