@@ -839,6 +839,22 @@ modules:
           downstream: friends-service/friends/requests/sent/{userId}
           auth: true
 
+        - upstream: /userId}/followers
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/userId}/followers
+          auth: true
+          bind:
+            - userId: {userId}
+        
+        - upstream: /userId}/following
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/userId}/following
+          auth: true
+          bind:
+            - userId: {userId}
+
         - upstream: /requests/{userId}/withdraw
           method: PUT
           use: downstream
