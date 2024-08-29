@@ -15,8 +15,7 @@
 @using System.Threading;
 
 <AuthWrapper>
-    @if (isConnected)
-    {
+   
         <MudContainer Class="chat-container">
             <MudGrid>
                 <MudItem xs="4" sm="2" md="4" Class="conversation-list-container">
@@ -111,13 +110,18 @@
                     </MudPaper>
                 </MudItem>
             </MudGrid>
+
+             @if (!isConnected)
+            {
+                <div class="loading-overlay">
+                    <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                    <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Connecting to chat...</MudText>
+                </div>
+            }
+
         </MudContainer>
-    }
-    else
-    {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-        <MudText Typo="Typo.h6" Align="Align.Center">Connecting to chat...</MudText>
-    }
+    
+       
 </AuthWrapper>
 
 

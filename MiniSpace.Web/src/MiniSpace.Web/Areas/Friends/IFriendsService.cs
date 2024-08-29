@@ -21,6 +21,10 @@ namespace MiniSpace.Web.Areas.Friends
 
         Task<PagedResult<FriendDto>> GetAllFriendsAsync(Guid userId, int page = 1, int pageSize = 10);
 
+        Task<PagedResult<FriendDto>> GetPagedFollowersAsync(Guid userId, int page = 1, int pageSize = 10);
+        
+        Task<PagedResult<FriendDto>> GetPagedFollowingAsync(Guid userId, int page = 1, int pageSize = 10);
+
         Task<HttpResponse<object>> AddFriendAsync(Guid friendId);
 
         Task RemoveFriendAsync(Guid friendId);
