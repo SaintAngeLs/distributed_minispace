@@ -67,6 +67,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient<IUserReactionsHistoryRepository, UserReactionsHistoryMongoRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
+            builder.Services.AddTransient<IEventRecommendationService, EventRecommendationService>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient<IFriendsServiceClient, FriendsServiceClient>();
             builder.Services.AddTransient<IOrganizationsServiceClient, OrganizationsServiceClient>();
