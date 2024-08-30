@@ -53,6 +53,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Get<GetPaginatedEvents, PagedResponse<EventDto>>("events/paginated")
                         .Get<GetPaginatedOrganizerEvents, PagedResponse<EventDto>>("events/organizer/{organizerId}/paginated")
                         .Get<GetSearchEvents,  PagedResponse<EventDto>>("events/search")
+                        .Get<GetUserEventsFeed, PagedResponse<EventDto>>("events/users/{userId}/feed") 
 
                         .Put<UpdateEvent>("events/{eventId}")
                         .Post<CreateEvent>("events",
