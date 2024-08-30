@@ -19,5 +19,17 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Recommendation
 
         [LoadColumn(4)]
         public float EventAgeDays { get; set; }
+
+        [LoadColumn(5)]
+        public float UserCommentScore { get; set; }
+
+        [LoadColumn(6)]
+        public float UserReactionScore { get; set; }
+
+        [LoadColumn(7)]
+        public float EducationMatchScore { get; set; }
+
+        [LoadColumn(8)]
+        public float WorkMatchScore { get; set; }
     }
 }

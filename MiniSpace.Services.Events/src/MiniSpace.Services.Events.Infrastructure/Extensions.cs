@@ -50,6 +50,7 @@ using MiniSpace.Services.Events.Infrastructure.Services.Clients;
 using MiniSpace.Services.Events.Infrastructure.Services.Workers;
 using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories;
+using MiniSpace.Services.Events.Infrastructure.Services.Recommendation;
 
 namespace MiniSpace.Services.Events.Infrastructure
 {
