@@ -46,10 +46,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
         {
             _logger.LogInformation("Handling GetUserFeed query: {Query}", JsonConvert.SerializeObject(query));
 
-            // Retrieve the user details
             var user = await _studentsServiceClient.GetStudentByIdAsync(query.UserId);
 
-            // Step 1: Retrieve all posts without pagination (we'll handle ranking and pagination manually)
             var allPostsRequest = new BrowseRequest
             {
                 SortBy = new List<string> { query.SortBy },
@@ -63,17 +61,13 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 return new PagedResponse<PostDto>(Enumerable.Empty<PostDto>(), query.PageNumber, query.PageSize, 0);
             }
 
-            // Step 2: Retrieve user interactions (comments and reactions)
             var userComments = await _userCommentsHistoryRepository.GetUserCommentsAsync(query.UserId);
             var userReactions = await _userReactionsHistoryRepository.GetUserReactionsAsync(query.UserId);
 
-            // Step 3: Analyze user interactions to infer interests and calculate coefficients
             var userInterests = AnalyzeUserInteractions(user, userComments, userReactions);
 
-            // Step 4: Rank all posts by relevance to user interests
             IEnumerable<(PostDto Post, double Score)> rankedPosts;
 
-            // If the user has no interests, comments, or reactions, generate a random feed
             if (!userInterests.Any() && !userComments.Any() && !userReactions.Any())
             {
                 _logger.LogInformation("User {UserId} has no interactions or defined interests, generating a random feed.", query.UserId);
@@ -84,16 +78,13 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 rankedPosts = await _postRecommendationService.RankPostsByUserInterestAsync(query.UserId, allPostsResult.Items, userInterests);
             }
 
-            // Step 5: Combine ranked posts with remaining posts, prioritizing more relevant posts
             var combinedPosts = CombineRankedAndUnrankedPosts(rankedPosts, allPostsResult.Items);
 
-            // Step 6: Paginate the combined posts
             var pagedPosts = combinedPosts
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();
 
-            // Log the result
             _logger.LogInformation("User {UserId} feed generated with {PostCount} posts.", query.UserId, pagedPosts.Count);
 
             return new PagedResponse<PostDto>(pagedPosts, query.PageNumber, query.PageSize, combinedPosts.Count());
@@ -103,7 +94,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
         {
             var interestKeywords = new Dictionary<string, double>();
 
-            // Include user interests in the analysis if they exist
             if (user.Interests != null)
             {
                 foreach (var interest in user.Interests)
@@ -119,7 +109,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Include user languages in the analysis if they exist
             if (user.Languages != null)
             {
                 foreach (var language in user.Languages)
@@ -135,7 +124,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Analyze user comments
             foreach (var comment in userComments)
             {
                 var words = comment.TextContent.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -152,7 +140,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Analyze user reactions
             foreach (var reaction in userReactions)
             {
                 var reactionType = reaction.Type;
@@ -166,7 +153,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Normalize coefficients to sum to 1 if there are any
             var total = interestKeywords.Values.Sum();
             if (total > 0)
             {
@@ -175,7 +161,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 return normalizedInterests;
             }
 
-            return interestKeywords; // This may be empty if no interests, languages, comments, or reactions
+            return interestKeywords; 
         }
 
         private IEnumerable<(PostDto Post, double Score)> GenerateRandomFeed(IEnumerable<PostDto> allPosts)
@@ -183,20 +169,18 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             var random = new Random();
             return allPosts
                 .OrderBy(p => random.NextDouble())
-                .Select(p => (p, Score: random.NextDouble())) // Assign a random score for ranking
-                .Take(100); // Limit to a reasonable number to prevent overwhelming the user
+                .Select(p => (p, Score: random.NextDouble())) 
+                .Take(100); 
         }
-
 
 
         private IEnumerable<PostDto> CombineRankedAndUnrankedPosts(IEnumerable<(PostDto Post, double Score)> rankedPosts, IEnumerable<PostDto> allPosts)
         {
-            // Order posts by the relevance score first and then by publish date if the score is equal
             var rankedPostIds = rankedPosts.Select(rp => rp.Post.Id).ToHashSet();
             var unrankedPosts = allPosts.Where(p => !rankedPostIds.Contains(p.Id));
 
             return rankedPosts.Select(rp => rp.Post)
-                              .Concat(unrankedPosts.OrderByDescending(p => p.PublishDate));  // Fallback to publish date for unranked posts
+                              .Concat(unrankedPosts.OrderByDescending(p => p.PublishDate));  
         }
     }
 }
