@@ -31,10 +31,12 @@
         {
             <MudPaper Class="profile-banner" Elevation="4">
                 <MudImage Src="@GetBannerImageUrl(student.BannerUrl)" Alt="Banner" Class="banner-image" />
-                <MudAvatar Size="Size.Large" Class="profile-avatar" Src="@GetProfileImageUrl(student.ProfileImageUrl)" />
+                <MudAvatar Class="profile-avatar" Size="Size.Large">
+                    <MudImage   Src="@GetProfileImageUrl(student.ProfileImageUrl)"></MudImage>
+                </MudAvatar>
             </MudPaper>
 
-            <MudGrid Container Class="profile-content">
+            <MudGrid Class="profile-content">
                 <MudItem xs="12" sm="8">
                     <MudText Typo="Typo.h3">@student.FirstName @student.LastName</MudText>
 
@@ -60,7 +62,9 @@
                         <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-flag" /> State: @student.State</MudText>
                     }
 
-                    <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-calendar-check" /> Joined: @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</MudText>
+                    <MudText Typo="Typo.body1">
+                        <MudIcon Icon="fas fa-calendar-check" /> Joined: @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")
+                    </MudText>
                 </MudItem>
                 <MudItem xs="12" sm="4">
                     @if (userEvents?.Any() == true)
@@ -75,49 +79,6 @@
                                     {
                                         <MudListItem>
                                             <MudText>@eventDto.Name</MudText>
-                                        </MudListItem>
-                                    }
-                                </MudList>
-                            </MudCardContent>
-                        </MudCard>
-                    }
-                </MudItem>
-            </MudGrid>
-
-            <MudGrid Container Class="profile-details-grid">
-                <MudItem xs="12" sm="6">
-                    @if (student.Education?.Any() == true)
-                    {
-                        <MudCard Class="education-card">
-                            <MudCardHeader>
-                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-graduation-cap" /> Education</MudText>
-                            </MudCardHeader>
-                            <MudCardContent>
-                                <MudList>
-                                    @foreach (var education in student.Education)
-                                    {
-                                        <MudListItem>
-                                            <MudText>@education.InstitutionName - @education.Degree (@education.StartDate?.ToLocalTime().ToString("yyyy-MM-dd") to @education.EndDate?.ToLocalTime().ToString("yyyy-MM-dd"))</MudText>
-                                        </MudListItem>
-                                    }
-                                </MudList>
-                            </MudCardContent>
-                        </MudCard>
-                    }
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    @if (student.Work?.Any() == true)
-                    {
-                        <MudCard Class="work-card">
-                            <MudCardHeader>
-                                <MudText Typo="Typo.h5"><MudIcon Icon="fas fa-briefcase" /> Work</MudText>
-                            </MudCardHeader>
-                            <MudCardContent>
-                                <MudList>
-                                    @foreach (var work in student.Work)
-                                    {
-                                        <MudListItem>
-                                            <MudText>@work.Company - @work.Position (@work.StartDate?.ToLocalTime().ToString("yyyy-MM-dd") to @work.EndDate?.ToLocalTime().ToString("yyyy-MM-dd"))</MudText>
                                         </MudListItem>
                                     }
                                 </MudList>
@@ -161,7 +122,9 @@
                                     @foreach (var follower in followers)
                                     {
                                         <MudListItem>
-                                            <MudAvatar Src="@GetProfileImageUrl(follower.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudAvatar>
+                                            <MudAvatar>
+                                                <MudImage Src="@GetProfileImageUrl(follower.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
+                                            </MudAvatar>
                                             <MudText>@follower.StudentDetails.FirstName @follower.StudentDetails.LastName</MudText>
                                         </MudListItem>
                                     }
@@ -183,7 +146,9 @@
                                     @foreach (var follow in following)
                                     {
                                         <MudListItem>
-                                            <MudAvatar Src="@GetProfileImageUrl(follow.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudAvatar>
+                                            <MudAvatar>
+                                                <MudImage Src="@GetProfileImageUrl(follow.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
+                                            </MudAvatar>
                                             <MudText>@follow.StudentDetails.FirstName @follow.StudentDetails.LastName</MudText>
                                         </MudListItem>
                                     }
@@ -205,7 +170,9 @@
                                     @foreach (var friend in friends)
                                     {
                                         <MudListItem>
-                                            <MudAvatar Src="@GetProfileImageUrl(friend.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudAvatar>
+                                             <MudAvatar>
+                                                <MudImage Src="@GetProfileImageUrl(friend.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
+                                            </MudAvatar>
                                             <MudText>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</MudText>
                                         </MudListItem>
                                     }
@@ -303,7 +270,7 @@
 
     .divider {
         margin-top: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 20px.
     }
 
     .gallery-and-friends {
@@ -344,38 +311,36 @@
     private List<FriendRequestDto> incomingFriendRequests;
 
     protected override async Task OnInitializedAsync()
-{
-    await IdentityService.InitializeAuthenticationState();
-    if (IdentityService.IsAuthenticated)
     {
-        student = await FriendsService.GetStudentAsync(Id);
-        if (student == null)
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
         {
-            studentNotFound = true;
+            student = await FriendsService.GetStudentAsync(Id);
+            if (student == null)
+            {
+                studentNotFound = true;
+            }
+            else
+            {
+                var pagedEvents = await EventsService.GetUserEventsAsync(Id, 1, 10, "signed_up");
+                userEvents = pagedEvents?.Items?.ToList() ?? new List<EventDto>();  // Ensure list is not null
+
+                friends = (await FriendsService.GetAllFriendsAsync(Id, 1, 10))?.Items?.ToList() ?? new List<FriendDto>(); 
+                followers = (await FriendsService.GetPagedFollowersAsync(Id, 1, 10))?.Items?.ToList() ?? new List<FriendDto>();
+                following = (await FriendsService.GetPagedFollowingAsync(Id, 1, 10))?.Items?.ToList() ?? new List<FriendDto>();
+
+                var sentRequestsPaged = await FriendsService.GetSentFriendRequestsAsync(1, 10);
+                sentFriendRequests = sentRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();  // Ensure list is not null
+
+                var incomingRequestsPaged = await FriendsService.GetIncomingFriendRequestsAsync(1, 10);
+                incomingFriendRequests = incomingRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();  // Ensure list is not null
+            }
         }
         else
         {
-            var pagedEvents = await EventsService.GetUserEventsAsync(Id, 1, 10, "signed_up");
-            userEvents = pagedEvents?.Items?.ToList() ?? new List<EventDto>();  // Ensure list is not null
-
-            var allFriends = (await FriendsService.GetAllFriendsAsync(Id))?.Items?.ToList() ?? new List<FriendDto>();
-            followers = allFriends.Where(f => !IsFollowing(f)).ToList();
-            following = allFriends.Where(f => IsFollowing(f)).ToList();
-            friends = allFriends.Where(f => IsFriend(f)).ToList();
-
-            var sentRequestsPaged = await FriendsService.GetSentFriendRequestsAsync(1, 10);
-            sentFriendRequests = sentRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();  // Ensure list is not null
-
-            var incomingRequestsPaged = await FriendsService.GetIncomingFriendRequestsAsync(1, 10);
-            incomingFriendRequests = incomingRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();  // Ensure list is not null
+            NavigationManager.NavigateTo("/login");
         }
     }
-    else
-    {
-        NavigationManager.NavigateTo("/login");
-    }
-}
-
 
     private string GetProfileImageUrl(string profileImageUrl)
     {
@@ -397,28 +362,9 @@
         return validExtensions.Contains(extension);
     }
 
-    private bool IsFollowing(FriendDto friend)
-{
-    // Ensure the lists are initialized to avoid null reference exceptions
-    if (friends == null) friends = new List<FriendDto>();
-    if (sentFriendRequests == null) sentFriendRequests = new List<FriendRequestDto>();
-
-    // Check if the user is friends with this person or has sent a friend request
-    bool isFriend = friends.Contains(friend);
-    
-    // Compare the state with the enum value FriendState.Pending
-    bool hasSentRequest = sentFriendRequests.Any(req => req.InviteeId == friend.FriendId && req.State == FriendState.Pending);
-
-    return isFriend || hasSentRequest;
-}
-
-
-
     private bool IsFriend(FriendDto friend)
     {
-        // Implement logic to determine if this friend is a mutual friend
-        // For now, assuming all followers who are also being followed are mutual friends
-        return IsFollowing(friend) && following.Contains(friend);
+        return friends.Any(f => f.FriendId == friend.FriendId);
     }
 
     private async Task ReportStudentProfile(StudentDto studentDto)

@@ -175,7 +175,6 @@ namespace MiniSpace.Web.Areas.Friends
             return new PagedResult<FriendRequestDto>(incomingRequests, studentRequests.Page, studentRequests.PageSize, studentRequests.TotalItems);
         }
 
-          // New method to get paged followers
         public async Task<PagedResult<FriendDto>> GetPagedFollowersAsync(Guid userId, int page = 1, int pageSize = 10)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
@@ -194,7 +193,6 @@ namespace MiniSpace.Web.Areas.Friends
             return new PagedResult<FriendDto>(allFollowers, userFollowers.Page, userFollowers.PageSize, userFollowers.TotalItems);
         }
 
-        // New method to get paged following users
         public async Task<PagedResult<FriendDto>> GetPagedFollowingAsync(Guid userId, int page = 1, int pageSize = 10)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
