@@ -49,6 +49,7 @@ using MiniSpace.Services.Events.Infrastructure.Services;
 using MiniSpace.Services.Events.Infrastructure.Services.Clients;
 using MiniSpace.Services.Events.Infrastructure.Services.Workers;
 using System.Diagnostics.CodeAnalysis;
+using MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories;
 
 namespace MiniSpace.Services.Events.Infrastructure
 {
@@ -62,6 +63,8 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddSingleton<IEventValidator, EventValidator>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
+            builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryMongoRepository>();
+            builder.Services.AddTransient<IUserReactionsHistoryRepository, UserReactionsHistoryMongoRepository>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
@@ -88,6 +91,8 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<EventDocument, Guid>("events")
+                .AddMongoRepository<UserCommentsDocument, Guid>("user_comments_history")
+                .AddMongoRepository<UserReactionDocument, Guid>("events")
                 .AddWebApiSwaggerDocs()
                 .AddSecurity();
         }
@@ -113,7 +118,9 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .SubscribeCommand<AddEventParticipant>()
                 .SubscribeCommand<RemoveEventParticipant>()
                 .SubscribeEvent<MediaFileDeleted>()
-                .SubscribeEvent<EventImageUploaded>();
+                .SubscribeEvent<EventImageUploaded>()
+                .SubscribeEvent<CommentCreated>()
+                .SubscribeEvent<ReactionCreated>();
 
             return app;
         }

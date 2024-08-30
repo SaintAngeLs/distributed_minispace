@@ -10,13 +10,13 @@ using MongoDB.Driver;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {
-    public class UserCommentsHistoryRepository : IUserCommentsHistoryRepository
+    public class UserCommentsHistoryMongoRepository : IUserCommentsHistoryRepository
     {
         private readonly IMongoCollection<UserCommentsDocument> _collection;
 
-        public UserCommentsHistoryRepository(IMongoDatabase database)
+        public UserCommentsHistoryMongoRepository(IMongoDatabase database)
         {
-            _collection = database.GetCollection<UserCommentsDocument>("user_comments_history");
+            _collection = database.GetCollection<UserCommentsDocument>("user_reactions_history");
         }
                 
         public async Task SaveCommentAsync(Guid userId, Comment comment)

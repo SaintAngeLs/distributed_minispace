@@ -11,11 +11,11 @@ using MongoDB.Driver;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories
 {
-    public class UserReactionsHistoryRepository : IUserReactionsHistoryRepository
+    public class UserReactionsHistoryMongoRepository : IUserReactionsHistoryRepository
     {
         private readonly IMongoCollection<UserReactionDocument> _collection;
 
-        public UserReactionsHistoryRepository(IMongoDatabase database)
+        public UserReactionsHistoryMongoRepository(IMongoDatabase database)
         {
             _collection = database.GetCollection<UserReactionDocument>("user_reactions_history");
         }
