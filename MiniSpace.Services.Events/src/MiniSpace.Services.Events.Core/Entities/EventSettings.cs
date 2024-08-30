@@ -19,9 +19,9 @@ namespace MiniSpace.Services.Events.Core.Entities
         public bool AllowComments { get; set; }
 
         public bool RequiresPayment { get; set; } 
-        public PaymentMethod PaymentMethod { get; set; } // Specifies if payment is online or offline
-        public string PaymentReceiverDetails { get; set; } // Details of the payment receiver (e.g., account info)
-        public string PaymentGateway { get; set; } // Specifies the payment gateway (e.g., Stripe)
+        public PaymentMethod PaymentMethod { get; set; }
+        public string PaymentReceiverDetails { get; set; } 
+        public string PaymentGateway { get; set; } 
         public bool IssueTickets { get; set; }
         public int MaxTicketsPerPerson { get; set; } 
         public decimal TicketPrice { get; set; } 
