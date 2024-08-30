@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Convey.HTTP;
 using MiniSpace.Services.Events.Application.DTO;
+using MiniSpace.Services.Events.Core.Wrappers;
 using MiniSpace.Services.Events.Application.Services.Clients;
 
 namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
@@ -22,7 +23,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
 
         public async Task<IEnumerable<UserFriendsDto>> GetAsync(Guid studentId)
         {
-            var pagedResponse = await _httpClient.GetAsync<MiniSpace.Services.Events.Application.DTO.PagedResult<UserFriendsDto>>($"{_url}/friends/{studentId}");
+            var pagedResponse = await _httpClient.GetAsync<PagedResponse<UserFriendsDto>>($"{_url}/friends/{studentId}");
             return pagedResponse.Items;
         }
     }
