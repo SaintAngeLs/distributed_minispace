@@ -75,7 +75,6 @@ namespace MiniSpace.Services.Organizations.Application.Commands.Handlers
                 var newUser = new User(command.UserId, defaultRole);
                 await _organizationMembersRepository.AddMemberAsync(command.OrganizationId, newUser);
 
-                // Add the organization to the user's list of organizations
                 await _userOrganizationsRepository.AddOrganizationToUserAsync(command.UserId, command.OrganizationId);
 
                 // Publish event
