@@ -536,6 +536,14 @@ modules:
         downstream: events-service/events/student/{studentId}
         auth: true
 
+      - upstream: /users/{userId}/feed
+        method: GET
+        use: downstream
+        downstream: events-service/events/users/{userId}/feed
+        auth: true
+        bind:
+          - userId:{userId}
+      
       - upstream: /{eventId}
         method: DELETE
         use: downstream
