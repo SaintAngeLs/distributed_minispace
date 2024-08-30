@@ -27,7 +27,6 @@ namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
             Console.WriteLine("Received CommentCreated event:");
             Console.WriteLine(eventJson);
 
-            // Create a new Comment entity based on the received event data
             var comment = new Comment(
                 @event.CommentId,
                 @event.ContextId,
@@ -41,7 +40,6 @@ namespace MiniSpace.Services.Posts.Application.Events.External.Handlers
                 @event.IsDeleted
             );
 
-            // Save the comment to the user's comment history
             await _userCommentsHistoryRepository.SaveCommentAsync(@event.UserId, comment);
         }
     }
