@@ -18,7 +18,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public PostContext Context { get; private set; }
-        public VisibilityStatus Visibility { get; private set; } // New visibility status property
+        public VisibilityStatus Visibility { get; private set; } 
 
         public Post(Guid id, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
             IEnumerable<string> mediaFiles, DateTime createdAt, State state, PostContext context, DateTime? publishDate,
@@ -166,7 +166,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
             MediaFiles = MediaFiles.Where(mf => mf != mediaFileUrl).ToList();
             UpdatedAt = now;
 
-            // Raise an event if necessary (e.g., PostMediaFileRemovedEvent)
         }
 
         private static void CheckTextContent(AggregateId id, string textContent)
