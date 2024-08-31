@@ -543,6 +543,15 @@ modules:
         auth: true
         bind:
           - userId:{userId}
+
+      - upstream: /users/{userId}/views/paginated
+        method: GET
+        use: downstream
+        downstream: events-service/events/users/{userId}/views/paginated
+        auth: true
+        bind:
+          - userId:{userId}
+          
       
       - upstream: /{eventId}
         method: DELETE
@@ -572,6 +581,14 @@ modules:
         use: downstream
         downstream: events-service/events/{eventId}/show-interest
         auth: true
+
+      - upstream: /{eventId}/view
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/view
+        auth: true
+        bind:
+          - eventId:{eventId}
 
       - upstream: /{eventId}/show-interest
         method: DELETE
