@@ -8,11 +8,11 @@ using MiniSpace.Services.Posts.Core.Entities;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {
-    public class PostsUserViewsRepository : IPostsUserViewsRepository
+    public class PostsUserViewsMongoRepository : IPostsUserViewsRepository
     {
         private readonly IMongoRepository<UserPostsViewsDocument, Guid> _repository;
 
-        public PostsUserViewsRepository(IMongoRepository<UserPostsViewsDocument, Guid> repository)
+        public PostsUserViewsMongoRepository(IMongoRepository<UserPostsViewsDocument, Guid> repository)
         {
             _repository = repository;
         }

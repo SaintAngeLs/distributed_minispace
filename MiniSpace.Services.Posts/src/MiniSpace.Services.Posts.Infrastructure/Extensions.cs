@@ -43,6 +43,7 @@ using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Events.Infrastructure.Services.Clients;
 using MiniSpace.Services.Posts.Application.Services.Clients;
 using Microsoft.ML;
+using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
 
 namespace MiniSpace.Services.Posts.Infrastructure
 {
@@ -64,6 +65,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient<IUserPostRepository, UserPostMongoRepository>();
             builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryRepository>();
             builder.Services.AddTransient<IUserReactionsHistoryRepository, UserReactionsHistoryRepository>();
+            builder.Services.AddTransient<IPostsUserViewsRepository, PostsUserViewsMongoRepository>();
 
             builder.Services.AddSingleton<MLContext>(new MLContext());
             builder.Services.AddTransient<IPostRecommendationService, PostRecommendationService>();
@@ -96,6 +98,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .AddMongoRepository<PostDocument, Guid>("posts")
                 .AddMongoRepository<UserCommentsDocument, Guid>("user_comments_history")
                 .AddMongoRepository<UserReactionDocument, Guid>("user_reactions_history")
+                .AddMongoRepository<UserPostsViewsDocument, Guid>("user_views")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
