@@ -54,6 +54,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Get<GetPaginatedOrganizerEvents, PagedResponse<EventDto>>("events/organizer/{organizerId}/paginated")
                         .Get<GetSearchEvents,  PagedResponse<EventDto>>("events/search")
                         .Get<GetUserEventsFeed, PagedResponse<EventDto>>("events/users/{userId}/feed") 
+                        .Get<GetPaginatedUserViews, PagedResponse<ViewDto>>("events/users/{userId}/views/paginated")
 
                         .Put<UpdateEvent>("events/{eventId}")
                         .Post<CreateEvent>("events",
@@ -66,6 +67,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<RateEvent>("events/{eventId}/rate")
                         .Delete<CancelRateEvent>("events/{eventId}/rate")
                         .Post<AddEventParticipant>("events/{eventId}/participants")
+                        .Post<ViewEvent>("events/{eventId}/view") 
                         .Delete<RemoveEventParticipant>("events/{eventId}/participants")
                     )
                 )
