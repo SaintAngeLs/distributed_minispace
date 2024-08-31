@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using MiniSpace.Services.Events.Application.DTO;
@@ -12,104 +15,85 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Recommendation
     public class EventRecommendationService : IEventRecommendationService
     {
         private readonly MLContext _mlContext;
+        private readonly ILogger<EventRecommendationService> _logger;
 
-        public EventRecommendationService(MLContext mlContext)
+        public EventRecommendationService(ILogger<EventRecommendationService> logger)
         {
-            _mlContext = mlContext;
+            _mlContext = new MLContext();
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<(EventDto Event, double Score)>> RankEventsByUserInterestAsync(Guid userId, IEnumerable<EventDto> events, IDictionary<string, double> userInterests)
+        public IEnumerable<EventDto> RankEventsByUserInterest(Guid userId, IEnumerable<EventDto> events, IEnumerable<string> userInterests)
         {
-            // Prepare the training data
-            var trainingData = PrepareTrainingData(userInterests, events);
+            _logger.LogInformation("Starting RankEventsByUserInterest method.");
+            var stopwatch = Stopwatch.StartNew();
 
-            // Train the model
-            var model = TrainModel(trainingData);
+            // Convert user interests to HashSet for quick lookups
+            var userInterestsSet = new HashSet<string>(userInterests, StringComparer.OrdinalIgnoreCase);
 
-            // Use the trained model to rank events
-            var rankedEvents = new List<(EventDto Event, double Score)>();
-            var predictionEngine = _mlContext.Model.CreatePredictionEngine<EventInputModel, EventPrediction>(model);
+            // Prepare input data and filter out unlikely matches early to reduce the data size
+            var inputData = events
+                .Where(e => userInterestsSet.Any(interest => e.Description.Contains(interest, StringComparison.OrdinalIgnoreCase)))
+                .Select(e => CreateInputModel(e, userInterestsSet))
+                .ToArray();
 
-            foreach (var eventItem in events)
+            // Return early if no events match the user's interests
+            if (inputData.Length == 0)
             {
-                var input = CreateInputModel(eventItem, userInterests);
-                var prediction = predictionEngine.Predict(input);
-                rankedEvents.Add((eventItem, prediction.Score));
+                _logger.LogInformation("No events matched user interests. Returning empty list.");
+                return Enumerable.Empty<EventDto>();
             }
 
-            return rankedEvents.OrderByDescending(x => x.Score);
+            // Train model dynamically for the specific user
+            var userModel = TrainUserModel(inputData);
+            var predictionEngine = _mlContext.Model.CreatePredictionEngine<EventInputModel, EventPrediction>(userModel);
+
+            // Score events
+            var scoredEvents = inputData
+                .AsParallel()
+                .WithDegreeOfParallelism(Environment.ProcessorCount)
+                .Select(input => (Event: events.First(e => e.Id.ToString() == input.EventId), Score: predictionEngine.Predict(input).Score))
+                .OrderByDescending(result => result.Score)
+                .Select(result => result.Event)
+                .ToList();
+
+            _logger.LogInformation("Completed RankEventsByUserInterest method in {TotalElapsedMilliseconds} ms.", stopwatch.ElapsedMilliseconds);
+            return scoredEvents;
         }
 
-        private IDataView PrepareTrainingData(IDictionary<string, double> userInterests, IEnumerable<EventDto> events)
+        // Asynchronous version of the method
+        public async Task<IEnumerable<EventDto>> RankEventsByUserInterestAsync(Guid userId, IEnumerable<EventDto> events, IEnumerable<string> userInterests)
         {
-            var inputData = events.Select(eventItem =>
-            {
-                var keywordMatches = userInterests.Where(ui => eventItem.Description.Contains(ui.Key)).Sum(ui => ui.Value);
-                var inputModel = CreateInputModel(eventItem, userInterests);
-                inputModel.Label = (float)keywordMatches;  // Use keyword match as the label for training
-
-                return inputModel;
-            });
-
-            return _mlContext.Data.LoadFromEnumerable(inputData);
+            return await Task.Run(() => RankEventsByUserInterest(userId, events, userInterests));
         }
 
-        private EventInputModel CreateInputModel(EventDto eventItem, IDictionary<string, double> userInterests)
+        private EventInputModel CreateInputModel(EventDto eventItem, HashSet<string> userInterests)
         {
-            var keywordMatches = userInterests.Where(ui => eventItem.Description.Contains(ui.Key)).Sum(ui => ui.Value);
+            var keywordMatches = userInterests.Count(interest => eventItem.Description.Contains(interest, StringComparison.OrdinalIgnoreCase));
             return new EventInputModel
             {
-                Description = eventItem.Description,
-                TextLength = eventItem.Description.Length,
-                KeywordMatchCount = (float)keywordMatches,
+                EventId = eventItem.Id.ToString(),
+                TextLength = eventItem.Description?.Length ?? 0,
+                KeywordMatchCount = keywordMatches,
                 EventAgeDays = eventItem.StartDate != DateTime.MinValue ? (float)(DateTime.UtcNow - eventItem.StartDate).TotalDays : 0,
-                UserCommentScore = GetUserCommentScore(eventItem),
-                UserReactionScore = GetUserReactionScore(eventItem),
-                EducationMatchScore = GetEducationMatchScore(eventItem),
-                WorkMatchScore = GetWorkMatchScore(eventItem)
+                Label = keywordMatches // Use keyword matches as the label
             };
         }
 
-        private ITransformer TrainModel(IDataView trainingData)
+        private ITransformer TrainUserModel(EventInputModel[] inputData)
         {
-            var dataProcessPipeline = _mlContext.Transforms.Text.FeaturizeText("Features", nameof(EventInputModel.Description))
-                .Append(_mlContext.Transforms.Concatenate("Features", nameof(EventInputModel.TextLength),
-                                                                   nameof(EventInputModel.KeywordMatchCount),
-                                                                   nameof(EventInputModel.EventAgeDays),
-                                                                   nameof(EventInputModel.UserCommentScore),
-                                                                   nameof(EventInputModel.UserReactionScore),
-                                                                   nameof(EventInputModel.EducationMatchScore),
-                                                                   nameof(EventInputModel.WorkMatchScore)));
+            var trainingData = _mlContext.Data.LoadFromEnumerable(inputData);
+
+            var dataProcessPipeline = _mlContext.Transforms.Concatenate("Features", nameof(EventInputModel.TextLength),
+                                                                       nameof(EventInputModel.KeywordMatchCount),
+                                                                       nameof(EventInputModel.EventAgeDays));
 
             var trainer = _mlContext.Regression.Trainers.Sdca(labelColumnName: "Label", featureColumnName: "Features");
-
             var trainingPipeline = dataProcessPipeline.Append(trainer);
 
+            // Train the model dynamically for the user
             return trainingPipeline.Fit(trainingData);
-        }
-
-        private float GetUserCommentScore(EventDto eventItem)
-        {
-            // Stub: Implement actual logic to calculate user comment score
-            return 0.5f;
-        }
-
-        private float GetUserReactionScore(EventDto eventItem)
-        {
-            // Stub: Implement actual logic to calculate user reaction score
-            return 0.3f;
-        }
-
-        private float GetEducationMatchScore(EventDto eventItem)
-        {
-            // Stub: Implement actual logic to calculate education match score
-            return 0.7f;
-        }
-
-        private float GetWorkMatchScore(EventDto eventItem)
-        {
-            // Stub: Implement actual logic to calculate work match score
-            return 0.6f;
         }
     }
 }
+

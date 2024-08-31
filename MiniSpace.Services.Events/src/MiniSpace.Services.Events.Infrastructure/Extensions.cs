@@ -51,6 +51,7 @@ using MiniSpace.Services.Events.Infrastructure.Services.Workers;
 using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Services.Recommendation;
+using Microsoft.ML;
 
 namespace MiniSpace.Services.Events.Infrastructure
 {
@@ -63,9 +64,12 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventValidator, EventValidator>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
+            
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
+            builder.Services.AddTransient<IEventsUserViewsRepository, EventsUserViewsRepository>();
             builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryMongoRepository>();
             builder.Services.AddTransient<IUserReactionsHistoryRepository, UserReactionsHistoryMongoRepository>();
+
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IEventService, EventService>();
             builder.Services.AddTransient<IEventRecommendationService, EventRecommendationService>();
@@ -75,6 +79,7 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
+            builder.Services.AddSingleton<MLContext>();
             builder.Services.AddHostedService<EventStateUpdaterWorker>();
 
             return builder
@@ -93,6 +98,7 @@ namespace MiniSpace.Services.Events.Infrastructure
                 .AddJaeger()
                 .AddHandlersLogging()
                 .AddMongoRepository<EventDocument, Guid>("events")
+                .AddMongoRepository<UserEventsViewsDocument, Guid>("events_views")
                 .AddMongoRepository<UserCommentsDocument, Guid>("user_comments_history")
                 .AddMongoRepository<UserReactionDocument, Guid>("events")
                 .AddWebApiSwaggerDocs()

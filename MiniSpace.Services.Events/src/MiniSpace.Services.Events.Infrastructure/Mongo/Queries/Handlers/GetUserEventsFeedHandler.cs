@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
-using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Infrastructure.Queries.Handlers
 {
@@ -23,8 +22,6 @@ namespace MiniSpace.Services.Events.Infrastructure.Queries.Handlers
         private readonly IEventRepository _eventRepository;
         private readonly IEventRecommendationService _eventRecommendationService;
         private readonly IStudentsServiceClient _studentsServiceClient;
-        private readonly IUserCommentsHistoryRepository _userCommentsHistoryRepository;
-        private readonly IUserReactionsHistoryRepository _userReactionsHistoryRepository;
         private readonly IAppContext _appContext;
         private readonly ILogger<GetUserEventsFeedHandler> _logger;
 
@@ -32,16 +29,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Queries.Handlers
             IEventRepository eventRepository,
             IEventRecommendationService eventRecommendationService,
             IStudentsServiceClient studentsServiceClient,
-            IUserCommentsHistoryRepository userCommentsHistoryRepository,
-            IUserReactionsHistoryRepository userReactionsHistoryRepository,
             IAppContext appContext,
             ILogger<GetUserEventsFeedHandler> logger)
         {
             _eventRepository = eventRepository;
             _eventRecommendationService = eventRecommendationService;
             _studentsServiceClient = studentsServiceClient;
-            _userCommentsHistoryRepository = userCommentsHistoryRepository;
-            _userReactionsHistoryRepository = userReactionsHistoryRepository;
             _appContext = appContext;
             _logger = logger;
         }
@@ -50,25 +43,11 @@ namespace MiniSpace.Services.Events.Infrastructure.Queries.Handlers
         {
             _logger.LogInformation("Handling GetUserEventsFeed query: {Query}", JsonConvert.SerializeObject(query));
 
-            // Fetch user data
-            var user = await _studentsServiceClient.GetStudentByIdAsync(query.UserId);
-            if (user == null)
-            {
-                _logger.LogWarning("User {UserId} not found.", query.UserId);
-                return new PagedResponse<EventDto>(Enumerable.Empty<EventDto>(), query.PageNumber, query.PageSize, 0);
-            }
-
-            // Fetch user comments and reactions
-            var userComments = await _userCommentsHistoryRepository.GetUserCommentsAsync(query.UserId);
-            var userReactions = await _userReactionsHistoryRepository.GetUserReactionsAsync(query.UserId);
-
-            // Analyze user's interests based on their profile and interactions
-            var userInterests = AnalyzeUserInterests(user, userComments, userReactions);
-
-            // Fetch events to be ranked
-            var (events, pageNumber, pageSize, totalPages, totalElements) = await _eventRepository.BrowseEventsAsync(
-                pageNumber: query.PageNumber,
-                pageSize: query.PageSize,
+            // Fetch user data and events in parallel
+            var userTask = _studentsServiceClient.GetStudentByIdAsync(query.UserId);
+            var eventsTask = _eventRepository.BrowseEventsAsync(
+                query.PageNumber,
+                query.PageSize,
                 name: string.Empty,
                 organizer: string.Empty,
                 dateFrom: default,
@@ -82,7 +61,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Queries.Handlers
                 direction: query.Direction
             );
 
-            if (events == null || !events.Any())
+            await Task.WhenAll(userTask, eventsTask);
+
+            var user = userTask.Result;
+            var (events, _, _, _, _) = eventsTask.Result;
+
+            if (user == null)
             {
                 return new PagedResponse<EventDto>(Enumerable.Empty<EventDto>(), query.PageNumber, query.PageSize, 0);
             }
@@ -91,7 +75,34 @@ namespace MiniSpace.Services.Events.Infrastructure.Queries.Handlers
             var eventDtos = events.Select(e => e.AsDto(studentId)).ToList();
 
             // Rank events using the recommendation service
-            var rankedEvents = await _eventRecommendationService.RankEventsByUserInterestAsync(query.UserId, eventDtos, userInterests);
+            var rankedEvents = _eventRecommendationService.RankEventsByUserInterest(query.UserId, eventDtos, user.Interests);
+
+            if (!rankedEvents.Any())
+            {
+                // If no ranked events, fetch all events
+                _logger.LogInformation("No ranked events found, loading all events.");
+                var allEventsTask = _eventRepository.BrowseEventsAsync(
+                    query.PageNumber,
+                    query.PageSize,
+                    name: string.Empty,
+                    organizer: string.Empty,
+                    dateFrom: default,
+                    dateTo: default,
+                    category: null,
+                    state: null,
+                    organizations: Enumerable.Empty<Guid>(),
+                    friends: Enumerable.Empty<Guid>(),
+                    friendsEngagementType: null,
+                    sortBy: new List<string> { query.SortBy },
+                    direction: query.Direction
+                );
+
+                await allEventsTask;
+
+                var (allEvents, _, _, _, _) = allEventsTask.Result;
+                eventDtos = allEvents.Select(e => e.AsDto(studentId)).ToList();
+                rankedEvents = eventDtos; // Use all events as the ranked events
+            }
 
             // Paginate the ranked events
             var pagedEvents = rankedEvents
@@ -99,108 +110,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Queries.Handlers
                 .Take(query.PageSize)
                 .ToList();
 
-            _logger.LogInformation("User {UserId} event feed generated with {EventCount} events.", query.UserId, pagedEvents.Count);
+            var response = new PagedResponse<EventDto>(pagedEvents, query.PageNumber, query.PageSize, rankedEvents.Count());
 
-            return new PagedResponse<EventDto>(pagedEvents.Select(e => e.Event), query.PageNumber, query.PageSize, rankedEvents.Count());
-        }
+            // Log the response for debugging purposes
+            var jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
+            _logger.LogInformation("Response JSON: {JsonResponse}", jsonResponse);
 
-        private IDictionary<string, double> AnalyzeUserInterests(UserFromServiceDto user, IEnumerable<Comment> comments, IEnumerable<Reaction> reactions)
-        {
-            var interestKeywords = new Dictionary<string, double>();
-
-            // Analyze profile data
-            if (user.Interests != null)
-            {
-                foreach (var interest in user.Interests)
-                {
-                    if (interestKeywords.ContainsKey(interest))
-                    {
-                        interestKeywords[interest] += 1;
-                    }
-                    else
-                    {
-                        interestKeywords[interest] = 1;
-                    }
-                }
-            }
-
-            if (user.Education != null)
-            {
-                foreach (var education in user.Education)
-                {
-                    var keywords = new[] { education.Degree, education.InstitutionName };
-                    foreach (var keyword in keywords)
-                    {
-                        if (interestKeywords.ContainsKey(keyword))
-                        {
-                            interestKeywords[keyword] += 1;
-                        }
-                        else
-                        {
-                            interestKeywords[keyword] = 1;
-                        }
-                    }
-                }
-            }
-
-            if (user.Work != null)
-            {
-                foreach (var work in user.Work)
-                {
-                    var keywords = new[] { work.Position, work.Company };
-                    foreach (var keyword in keywords)
-                    {
-                        if (interestKeywords.ContainsKey(keyword))
-                        
-                        {
-                            interestKeywords[keyword] += 1;
-                        }
-                        else
-                        {
-                            interestKeywords[keyword] = 1;
-                        }
-                    }
-                }
-            }
-
-            // Analyze comments
-            foreach (var comment in comments)
-            {
-                var words = comment.TextContent.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                foreach (var word in words)
-                {
-                    if (interestKeywords.ContainsKey(word))
-                    {
-                        interestKeywords[word] += 1;
-                    }
-                    else
-                    {
-                        interestKeywords[word] = 1;
-                    }
-                }
-            }
-
-            // Analyze reactions
-            foreach (var reaction in reactions)
-            {
-                if (interestKeywords.ContainsKey(reaction.Type))
-                {
-                    interestKeywords[reaction.Type] += 1;
-                }
-                else
-                {
-                    interestKeywords[reaction.Type] = 1;
-                }
-            }
-
-            // Normalize the scores
-            var total = interestKeywords.Values.Sum();
-            if (total > 0)
-            {
-                return interestKeywords.ToDictionary(kvp => kvp.Key, kvp => kvp.Value / total);
-            }
-
-            return interestKeywords;
+            return response;
         }
     }
 }
