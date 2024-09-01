@@ -4,29 +4,29 @@ using System.Linq;
 
 namespace MiniSpace.Services.Students.Core.Entities
 {
-    public class UserProfileViews
+    public class UserProfileViewsForUser
     {
         public Guid UserId { get; private set; }
-        public IEnumerable<View> Views { get; private set; }
+        public IEnumerable<UserProfileView> Views { get; private set; }
 
-        public UserProfileViews(Guid userProfileId, IEnumerable<View> views)
+        public UserProfileViewsForUser(Guid userId, IEnumerable<UserProfileView> views)
         {
-            UserId = userProfileId;
-            Views = views ?? new List<View>();
+            UserId = userId;
+            Views = views ?? new List<UserProfileView>();
         }
 
         public void AddView(Guid userProfileId, DateTime date, string ipAddress, string deviceType, string operatingSystem)
         {
-            var viewList = new List<View>(Views)
+            var viewList = new List<UserProfileView>(Views)
             {
-                new View(userProfileId, date, ipAddress, deviceType, operatingSystem)
+                new UserProfileView(userProfileId, date, ipAddress, deviceType, operatingSystem)
             };
             Views = viewList;
         }
 
         public void RemoveView(Guid userProfileId)
         {
-            var viewList = new List<View>(Views);
+            var viewList = new List<UserProfileView>(Views);
             var viewToRemove = viewList.Find(view => view.UserProfileId == userProfileId);
             if (viewToRemove != null)
             {

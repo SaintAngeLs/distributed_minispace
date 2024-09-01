@@ -2,7 +2,7 @@ using System;
 
 namespace MiniSpace.Services.Students.Core.Entities
 {
-    public class View
+    public class UserProfileView
     {
         public Guid UserProfileId { get; private set; }
         public DateTime Date { get; private set; }
@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string DeviceType { get; private set; }
         public string OperatingSystem { get; private set; }
 
-        public View(Guid userProfileId, DateTime date, string ipAddress, string deviceType, string operatingSystem)
+        public UserProfileView(Guid userProfileId, DateTime date, string ipAddress, string deviceType, string operatingSystem)
         {
             UserProfileId = userProfileId;
             Date = date;
