@@ -7,7 +7,7 @@ using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
-using MiniSpace.Services.Posts.Application.Commands;
+using MiniSpace.Services.Students.Application.Commands;
 using MiniSpace.Services.Students.Application.Services;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers

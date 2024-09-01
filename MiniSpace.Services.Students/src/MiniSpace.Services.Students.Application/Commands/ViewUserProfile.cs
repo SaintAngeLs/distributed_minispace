@@ -1,7 +1,7 @@
 using System;
 using Convey.CQRS.Commands;
 
-namespace MiniSpace.Services.Posts.Application.Commands
+namespace MiniSpace.Services.Students.Application.Commands
 {
     public class ViewUserProfile : ICommand
     {
