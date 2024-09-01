@@ -54,6 +54,7 @@ namespace MiniSpace.Services.Students.Infrastructure
             builder.Services.AddTransient<IUserNotificationPreferencesRepository, UserNotificationPreferencesRepository>();
             builder.Services.AddTransient<IUserSettingsRepository, UserSettingsRepository>();
             builder.Services.AddTransient<IUserGalleryRepository, UserGalleryRepository>();
+            builder.Services.AddTransient<IUserProfileViewsRepository, UserProfileViewsRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
