@@ -41,8 +41,8 @@ namespace MiniSpace.Services.Students.Api
                         .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")
                         .Get<GetUserNotificationPreferences, NotificationPreferencesDto>("students/{studentId}/notifications")
                         .Get<GetUserProfileViews, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/paginated")
-
-
+                        .Get<GetProfilesViewedByUser, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/viewed") 
+                        
                         .Put<UpdateStudent>("students/{studentId}")
                         .Put<UpdateUserSettings>("students/{studentId}/settings")
                         .Put<ChangeStudentState>("students/{studentId}/state/{state}",
