@@ -439,6 +439,14 @@ modules:
         bind:
           - userId:{userId}
 
+      - upstream: /profiles/users/{userId}/views/viewed
+        method: GET
+        use: downstream
+        downstream: students-service/students/profiles/users/{userId}/views/viewed
+        auth: true
+        bind:
+          - userId:{userId}
+
       - upstream: /{studentId}
         method: PUT
         use: downstream
