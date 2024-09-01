@@ -58,6 +58,7 @@ namespace MiniSpace.Services.Students.Infrastructure
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
+            builder.Services.AddTransient<IDeviceInfoService, DeviceInfoService>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
@@ -82,6 +83,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMongoRepository<UserNotificationsDocument, Guid>("user-notifications")
                 .AddMongoRepository<UserSettingsDocument, Guid>("user-settings")
                 .AddMongoRepository<UserGalleryDocument, Guid>("user-gellery")
+                .AddMongoRepository<UserProfileViewsDocument, Guid>("user_profile_views")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
