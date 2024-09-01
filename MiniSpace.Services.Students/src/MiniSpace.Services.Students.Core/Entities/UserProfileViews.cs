@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MiniSpace.Services.Students.Core.Entities
 {
@@ -14,11 +15,11 @@ namespace MiniSpace.Services.Students.Core.Entities
             Views = views ?? new List<View>();
         }
 
-        public void AddView(Guid userProfileId, DateTime date)
+        public void AddView(Guid userProfileId, DateTime date, string ipAddress, string deviceType, string operatingSystem)
         {
             var viewList = new List<View>(Views)
             {
-                new View(userProfileId, date)
+                new View(userProfileId, date, ipAddress, deviceType, operatingSystem)
             };
             Views = viewList;
         }

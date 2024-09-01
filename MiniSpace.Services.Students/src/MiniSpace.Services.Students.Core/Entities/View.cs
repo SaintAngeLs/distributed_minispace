@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Core.Entities
 {
@@ -9,11 +6,17 @@ namespace MiniSpace.Services.Students.Core.Entities
     {
         public Guid UserProfileId { get; private set; }
         public DateTime Date { get; private set; }
+        public string IpAddress { get; private set; }
+        public string DeviceType { get; private set; }
+        public string OperatingSystem { get; private set; }
 
-        public View(Guid postId, DateTime date)
+        public View(Guid userProfileId, DateTime date, string ipAddress, string deviceType, string operatingSystem)
         {
-            UserProfileId = postId;
+            UserProfileId = userProfileId;
             Date = date;
+            IpAddress = ipAddress;
+            DeviceType = deviceType;
+            OperatingSystem = operatingSystem;
         }
     }
 }
