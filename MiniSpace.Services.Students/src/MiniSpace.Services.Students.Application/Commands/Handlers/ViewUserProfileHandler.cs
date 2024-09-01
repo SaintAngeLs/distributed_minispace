@@ -8,6 +8,7 @@ using MiniSpace.Services.Students.Core.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using MiniSpace.Services.Posts.Application.Commands;
+using MiniSpace.Services.Students.Application.Services;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
@@ -15,15 +16,18 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
     {
         private readonly IUserProfileViewsRepository _userProfileViewsRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDeviceInfoService _deviceInfoService;
         private readonly ILogger<ViewUserProfileHandler> _logger;
 
         public ViewUserProfileHandler(
             IUserProfileViewsRepository userProfileViewsRepository,
             IHttpContextAccessor httpContextAccessor,
+            IDeviceInfoService deviceInfoService,
             ILogger<ViewUserProfileHandler> logger)
         {
             _userProfileViewsRepository = userProfileViewsRepository;
             _httpContextAccessor = httpContextAccessor;
+            _deviceInfoService = deviceInfoService;
             _logger = logger;
         }
 
@@ -31,15 +35,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
         {
             var httpContext = _httpContextAccessor.HttpContext;
 
-            var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
-
-            var userAgent = httpContext.Request.Headers["User-Agent"].ToString().ToLower();
-            var deviceType = userAgent.Contains("mobile") ? "Mobile" : "Computer";
-            var operatingSystem = userAgent.Contains("windows") ? "Windows" :
-                                userAgent.Contains("mac") ? "MacOS" :
-                                userAgent.Contains("android") ? "Android" :
-                                userAgent.Contains("iphone") ? "iOS" :
-                                userAgent.Contains("linux") ? "Linux" : "Unknown";
+            var deviceInfo = _deviceInfoService.GetDeviceInfo(httpContext);
 
             var userViews = await _userProfileViewsRepository.GetAsync(command.UserId);
             if (userViews == null)
@@ -53,12 +49,11 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 userViews.RemoveView(command.UserProfileId);
             }
 
-            userViews.AddView(command.UserProfileId, DateTime.UtcNow, ipAddress, deviceType, operatingSystem);
+            userViews.AddView(command.UserProfileId, DateTime.UtcNow, deviceInfo.IpAddress, deviceInfo.DeviceType, deviceInfo.OperatingSystem);
 
             await _userProfileViewsRepository.UpdateAsync(userViews);
 
-            _logger.LogInformation($"User {command.UserId} viewed user profile {command.UserProfileId} from IP {ipAddress} using {deviceType} ({operatingSystem}).");
+            _logger.LogInformation($"User {command.UserId} viewed user profile {command.UserProfileId} from IP {deviceInfo.IpAddress} using {deviceInfo.DeviceType} ({deviceInfo.OperatingSystem}).");
         }
-
     }
 }
