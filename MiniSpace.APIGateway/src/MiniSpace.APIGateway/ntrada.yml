@@ -431,6 +431,14 @@ modules:
         downstream: students-service/students/{studentId}/notifications
         auth: true
 
+      - upstream: /profiles/users/{userId}/views/paginated
+        method: GET
+        use: downstream
+        downstream: students-service/students/profiles/users/{userId}/views/paginated
+        auth: true
+        bind:
+          - userId:{userId}
+
       - upstream: /{studentId}
         method: PUT
         use: downstream
@@ -473,6 +481,14 @@ modules:
         use: downstream
         downstream: students-service/students/{studentId}/notifications
         auth: true
+
+      - upstream: /profiles/users/{userProfileId}/view
+        method: POST
+        use: downstream
+        downstream: students-service/students/profiles/users/{userProfileId}/view
+        auth: true
+        bind:
+          - userProfileId:{userProfileId}
 
       - upstream: /{studentId}/languages-and-interests
         method: PUT
