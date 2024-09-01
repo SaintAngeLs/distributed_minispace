@@ -40,7 +40,7 @@ namespace MiniSpace.Services.Students.Api
                         .Get<GetStudentWithVisibilitySettings, StudentWithVisibilitySettingsDto>("students/{studentId}/visibility-settings")
                         .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")
                         .Get<GetUserNotificationPreferences, NotificationPreferencesDto>("students/{studentId}/notifications")
-                        .Get<GetUserProfileViews, PagedResponse<UserProfileViewDto>>("profiles/users/{userId}/views/paginated")
+                        .Get<GetUserProfileViews, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/paginated")
 
 
                         .Put<UpdateStudent>("students/{studentId}")
@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Students.Api
                         .Post<CompleteStudentRegistration>("students",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))  
                         .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")
-                        .Post<ViewUserProfile>("profiles/users/{userProfileId}/view", afterDispatch: (cmd, ctx) => ctx.Response.Ok())                        
+                        .Post<ViewUserProfile>("students/profiles/users/{userProfileId}/view", afterDispatch: (cmd, ctx) => ctx.Response.Ok())                        
                         ))
                 .UseLogging()
                 .Build()
