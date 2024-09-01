@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public Guid UserId { get; set; }
         public List<UserProfileViewDocument> Views { get; set; } = new List<UserProfileViewDocument>();
 
-        public static UserProfileViewsDocument FromEntity(UserProfileViews userProfileViews)
+        public static UserProfileViewsDocument FromEntity(UserProfileViewsForUser userProfileViews)
         {
             return new UserProfileViewsDocument
             {
@@ -22,9 +22,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             };
         }
 
-        public UserProfileViews ToEntity()
+        public UserProfileViewsForUser ToEntity()
         {
-            return new UserProfileViews(UserId, Views.Select(view => view.ToEntity()));
+            return new UserProfileViewsForUser(UserId, Views.Select(view => view.ToEntity()));
         }
     }
 }

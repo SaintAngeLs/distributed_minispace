@@ -11,9 +11,9 @@ namespace MiniSpace.Services.Students.Application.Queries.Handlers
 {
     public class GetUserProfileViewsHandler : IQueryHandler<GetUserProfileViews, PagedResponse<UserProfileViewDto>>
     {
-        private readonly IUserProfileViewsRepository _userProfileViewsRepository;
+        private readonly IUserProfileViewsForUserRepository _userProfileViewsRepository;
 
-        public GetUserProfileViewsHandler(IUserProfileViewsRepository userProfileViewsRepository)
+        public GetUserProfileViewsHandler(IUserProfileViewsForUserRepository userProfileViewsRepository)
         {
             _userProfileViewsRepository = userProfileViewsRepository;
         }

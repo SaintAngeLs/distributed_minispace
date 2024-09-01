@@ -13,7 +13,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public string DeviceType { get; set; }
         public string OperatingSystem { get; set; }
 
-        public static UserProfileViewDocument FromEntity(View view)
+        public static UserProfileViewDocument FromEntity(UserProfileView view)
         {
             return new UserProfileViewDocument
             {
@@ -26,9 +26,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             };
         }
 
-        public View ToEntity()
+        public UserProfileView ToEntity()
         {
-            return new View(UserProfileId, Date, IpAddress, DeviceType, OperatingSystem);
+            return new UserProfileView(UserProfileId, Date, IpAddress, DeviceType, OperatingSystem);
         }
     }
 }

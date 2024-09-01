@@ -7,30 +7,30 @@ using Convey.Persistence.MongoDB;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 {
-    public class UserProfileViewsRepository : IUserProfileViewsForUserRepository
+    public class UserViewingProfilesRepository : IUserViewingProfilesRepository
     {
-        private readonly IMongoRepository<UserProfileViewsDocument, Guid> _repository;
+        private readonly IMongoRepository<UserViewingProfilesDocument, Guid> _repository;
 
-        public UserProfileViewsRepository(IMongoRepository<UserProfileViewsDocument, Guid> repository)
+        public UserViewingProfilesRepository(IMongoRepository<UserViewingProfilesDocument, Guid> repository)
         {
             _repository = repository;
         }
 
-        public async Task<UserProfileViewsForUser> GetAsync(Guid userId)
+        public async Task<UserViewingProfiles> GetAsync(Guid userId)
         {
             var document = await _repository.GetAsync(x => x.UserId == userId);
             return document?.ToEntity();
         }
 
-        public async Task AddAsync(UserProfileViewsForUser userProfileViews)
+        public async Task AddAsync(UserViewingProfiles userViewingProfiles)
         {
-            var document = userProfileViews.AsDocument();
+            var document = userViewingProfiles.AsDocument();
             await _repository.AddAsync(document);
         }
 
-        public async Task UpdateAsync(UserProfileViewsForUser userProfileViews)
+        public async Task UpdateAsync(UserViewingProfiles userViewingProfiles)
         {
-            var document = userProfileViews.AsDocument();
+            var document = userViewingProfiles.AsDocument();
             await _repository.UpdateAsync(document);
         }
 
