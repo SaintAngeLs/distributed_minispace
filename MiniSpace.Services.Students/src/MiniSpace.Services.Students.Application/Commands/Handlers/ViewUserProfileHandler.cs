@@ -14,18 +14,21 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
     public class ViewUserProfileHandler : ICommandHandler<ViewUserProfile>
     {
-        private readonly IUserProfileViewsRepository _userProfileViewsRepository;
+        private readonly IUserProfileViewsForUserRepository _userProfileViewsForUserRepository;
+        private readonly IUserViewingProfilesRepository _userViewingProfilesRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly ILogger<ViewUserProfileHandler> _logger;
 
         public ViewUserProfileHandler(
-            IUserProfileViewsRepository userProfileViewsRepository,
+            IUserProfileViewsForUserRepository userProfileViewsForUserRepository,
+            IUserViewingProfilesRepository userViewingProfilesRepository,
             IHttpContextAccessor httpContextAccessor,
             IDeviceInfoService deviceInfoService,
             ILogger<ViewUserProfileHandler> logger)
         {
-            _userProfileViewsRepository = userProfileViewsRepository;
+            _userProfileViewsForUserRepository = userProfileViewsForUserRepository;
+            _userViewingProfilesRepository = userViewingProfilesRepository;
             _httpContextAccessor = httpContextAccessor;
             _deviceInfoService = deviceInfoService;
             _logger = logger;
@@ -34,24 +37,27 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
         public async Task HandleAsync(ViewUserProfile command, CancellationToken cancellationToken)
         {
             var httpContext = _httpContextAccessor.HttpContext;
-
             var deviceInfo = _deviceInfoService.GetDeviceInfo(httpContext);
 
-            var userViews = await _userProfileViewsRepository.GetAsync(command.UserId);
-            if (userViews == null)
+            // Handle views of the user profile being viewed
+            var userViewsForUser = await _userProfileViewsForUserRepository.GetAsync(command.UserProfileId);
+            if (userViewsForUser == null)
             {
-                userViews = new UserProfileViews(command.UserId, Enumerable.Empty<View>());
+                userViewsForUser = new UserProfileViewsForUser(command.UserProfileId, Enumerable.Empty<UserProfileView>());
             }
 
-            var existingView = userViews.Views.FirstOrDefault(v => v.UserProfileId == command.UserProfileId);
-            if (existingView != null)
+            userViewsForUser.AddView(command.UserId, DateTime.UtcNow, deviceInfo.IpAddress, deviceInfo.DeviceType, deviceInfo.OperatingSystem);
+            await _userProfileViewsForUserRepository.UpdateAsync(userViewsForUser);
+
+            // Handle views by the user viewing profiles
+            var userViewingProfiles = await _userViewingProfilesRepository.GetAsync(command.UserId);
+            if (userViewingProfiles == null)
             {
-                userViews.RemoveView(command.UserProfileId);
+                userViewingProfiles = new UserViewingProfiles(command.UserId, Enumerable.Empty<UserProfileView>());
             }
 
-            userViews.AddView(command.UserProfileId, DateTime.UtcNow, deviceInfo.IpAddress, deviceInfo.DeviceType, deviceInfo.OperatingSystem);
-
-            await _userProfileViewsRepository.UpdateAsync(userViews);
+            userViewingProfiles.AddViewedProfile(command.UserProfileId, DateTime.UtcNow, deviceInfo.IpAddress, deviceInfo.DeviceType, deviceInfo.OperatingSystem);
+            await _userViewingProfilesRepository.UpdateAsync(userViewingProfiles);
 
             _logger.LogInformation($"User {command.UserId} viewed user profile {command.UserProfileId} from IP {deviceInfo.IpAddress} using {deviceInfo.DeviceType} ({deviceInfo.OperatingSystem}).");
         }
