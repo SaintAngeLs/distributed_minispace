@@ -49,8 +49,6 @@
         }
         catch (Exception ex)
         {
-            // Handle error (you could also use a Snackbar or some other UI component to display errors)
-            Console.Error.WriteLine($"Failed to fetch recommendations: {ex.Message}");
             return new List<EventDto>();
         }
     }

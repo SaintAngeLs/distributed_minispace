@@ -265,6 +265,35 @@
             }
         };
 
+       window.initializeInfiniteScroll = (element) => {
+    if (!element || !(element instanceof Element)) {
+        console.warn('Element for infinite scroll is not defined or is not a valid DOM element.');
+        return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Call Blazor method to load more comments
+                DotNet.invokeMethodAsync('MiniSpace.Web', 'LoadMoreCommentsAsync')
+                    .catch(err => console.error('Error invoking Blazor method:', err));
+            }
+        });
+    }, {
+        threshold: 1.0
+    });
+
+    // Disconnect any existing observer to avoid multiple triggers
+    const lastChild = element.lastElementChild;
+    if (lastChild) {
+        observer.observe(lastChild);
+    }
+};
+
+
+
+
+
 
 
 

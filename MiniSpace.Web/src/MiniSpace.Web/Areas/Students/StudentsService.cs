@@ -10,6 +10,7 @@ using MiniSpace.Web.Areas.Students.CommandsDto;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Interests;
 using MiniSpace.Web.DTO.Languages;
+using MiniSpace.Web.DTO.Users;
 using MiniSpace.Web.DTO.Views;
 using MiniSpace.Web.HttpClients;
 
@@ -230,6 +231,33 @@ namespace MiniSpace.Web.Areas.Students
             
             var queryString = $"?pageNumber={pageNumber}&pageSize={pageSize}";
             return await _httpClient.GetAsync<PaginatedResponseDto<UserProfileViewDto>>($"students/profiles/users/{userId}/views/paginated{queryString}");
+        }
+
+         public async Task BlockUserAsync(Guid blockerId, Guid blockedUserId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var command = new { blockerId, blockedUserId };
+            await _httpClient.PostAsync<object, object>($"students/{blockerId}/block-user/{blockedUserId}", command);
+        }
+
+        public async Task UnblockUserAsync(Guid blockerId, Guid blockedUserId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var command = new { blockerId, blockedUserId };
+            await _httpClient.PostAsync<object, object>($"students/{blockerId}/unblock-user/{blockedUserId}", command);
+        }
+
+        public async Task<PaginatedResponseDto<BlockedUserDto>> GetBlockedUsersAsync(Guid blockerId, int page, int resultsPerPage)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var queryString = $"?page={page}&resultsPerPage={resultsPerPage}";
+            return await _httpClient.GetAsync<PaginatedResponseDto<BlockedUserDto>>($"students/{blockerId}/blocked-users{queryString}");
         }
 
 

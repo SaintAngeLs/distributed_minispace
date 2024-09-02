@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Interests;
 using MiniSpace.Web.DTO.Languages;
+using MiniSpace.Web.DTO.Users;
 using MiniSpace.Web.DTO.Views;
 using MiniSpace.Web.HttpClients;
 
@@ -54,5 +55,8 @@ namespace MiniSpace.Web.Areas.Students
         Task ViewUserProfileAsync(Guid userId, Guid userProfileId);
 
         Task<PaginatedResponseDto<UserProfileViewDto>> GetUserProfileViewsAsync(Guid userId, int pageNumber, int pageSize);
+        Task BlockUserAsync(Guid blockerId, Guid blockedUserId);
+        Task UnblockUserAsync(Guid blockerId, Guid blockedUserId);
+        Task<PaginatedResponseDto<BlockedUserDto>> GetBlockedUsersAsync(Guid blockerId, int page, int resultsPerPage);
     }
 }
