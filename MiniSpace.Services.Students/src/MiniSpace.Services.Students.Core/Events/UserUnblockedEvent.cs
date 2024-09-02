@@ -4,12 +4,12 @@ namespace MiniSpace.Services.Students.Core.Events
 {
     public class UserUnblockedEvent : IDomainEvent
     {
-        public Student Student { get; }
+        public BlockedUsers BlockedUsers { get; }
         public Guid UnblockedUserId { get; }
 
-        public UserUnblockedEvent(Student student, Guid unblockedUserId)
+        public UserUnblockedEvent(BlockedUsers blockedUsers, Guid unblockedUserId)
         {
-            Student = student;
+            BlockedUsers = blockedUsers;
             UnblockedUserId = unblockedUserId;
         }
     }
