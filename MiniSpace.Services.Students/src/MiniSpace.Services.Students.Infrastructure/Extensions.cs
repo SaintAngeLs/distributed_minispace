@@ -56,6 +56,8 @@ namespace MiniSpace.Services.Students.Infrastructure
             builder.Services.AddTransient<IUserGalleryRepository, UserGalleryRepository>();
             builder.Services.AddTransient<IUserProfileViewsForUserRepository, UserProfileViewsRepository>();
             builder.Services.AddTransient<IUserViewingProfilesRepository, UserViewingProfilesRepository>();
+            builder.Services.AddTransient<IBlockedUsersRepository, BlockedUsersMongoRepository>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
@@ -86,6 +88,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMongoRepository<UserGalleryDocument, Guid>("user-gellery")
                 .AddMongoRepository<UserProfileViewsDocument, Guid>("user_profile_views")
                 .AddMongoRepository<UserViewingProfilesDocument, Guid>("user_viewing_profiles")
+                .AddMongoRepository<BlockedUsersDocument, Guid>("blocked_users")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
