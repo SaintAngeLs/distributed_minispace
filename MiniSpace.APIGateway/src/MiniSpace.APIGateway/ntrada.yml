@@ -447,6 +447,14 @@ modules:
         bind:
           - userId:{userId}
 
+      - upstream: /{blockerId}/blocked-users
+        method: GET
+        use: downstream
+        downstream: students-service/students/{blockerId}/blocked-users
+        auth: true
+        bind:
+          - blockerId:{blockerId}
+
       - upstream: /{studentId}
         method: PUT
         use: downstream
@@ -497,6 +505,24 @@ modules:
         auth: true
         bind:
           - userProfileId:{userProfileId}
+
+      - upstream: /{blockerId}/block-user/{blockedUserId}
+        method: POST
+        use: downstream
+        downstream: students-service/students/{blockerId}/block-user/{blockedUserId}
+        auth: true
+        bind:
+          - blockerId:{blockerId}
+          - blockedUserId:{blockedUserId}
+
+      - upstream: /{blockerId}/unblock-user/{blockedUserId}
+        method: POST
+        use: downstream
+        downstream: students-service/students/{blockerId}/unblock-user/{blockedUserId}
+        auth: true
+        bind:
+          - blockerId:{blockerId}
+          - blockedUserId:{blockedUserId}
 
       - upstream: /{studentId}/languages-and-interests
         method: PUT
