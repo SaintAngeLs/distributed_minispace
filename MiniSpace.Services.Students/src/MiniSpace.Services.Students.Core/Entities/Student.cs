@@ -14,7 +14,8 @@ namespace MiniSpace.Services.Students.Core.Entities
         private ISet<Interest> _interests = new HashSet<Interest>();
         private ISet<Education> _education = new HashSet<Education>();
         private ISet<Work> _work = new HashSet<Work>();
-
+        private ISet<Guid> _blockedUsers = new HashSet<Guid>();
+        public IEnumerable<Guid> BlockedUsers => _blockedUsers;
         public string Email { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
@@ -309,6 +310,27 @@ namespace MiniSpace.Services.Students.Core.Entities
         {
             EmailNotifications = emailNotifications;
             AddEvent(new StudentUpdated(this));
+        }
+
+        public void BlockUser(Guid userId)
+        {
+            if (userId == Guid.Empty || _blockedUsers.Contains(userId))
+            {
+                throw new InvalidOperationException($"User with ID {userId} cannot be blocked.");
+            }
+
+            _blockedUsers.Add(userId);
+            AddEvent(new UserBlockedEvent(this, userId));
+        }
+
+        public void UnblockUser(Guid userId)
+        {
+            if (!_blockedUsers.Remove(userId))
+            {
+                throw new InvalidOperationException($"User with ID {userId} is not blocked.");
+            }
+
+            AddEvent(new UserUnblockedEvent(this, userId));
         }
     }
 }
