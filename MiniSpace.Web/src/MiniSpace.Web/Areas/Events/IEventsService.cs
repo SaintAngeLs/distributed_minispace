@@ -32,5 +32,6 @@ namespace MiniSpace.Web.Areas.Events
         Task<PagedResult<EventDto>> GetMyEventsAsync(Guid organizerId, int page, int pageSize); 
         Task<PagedResult<EventDto>> GetUserEventsAsync(Guid userId, int page, int pageSize, string engagementType);
         Task<PagedResult<EventDto>> GetUserEventsFeedAsync(Guid userId, int pageNumber, int pageSize, string sortBy, string direction);
+        Task ViewEventAsync(ViewEventCommand command);
     }
 }

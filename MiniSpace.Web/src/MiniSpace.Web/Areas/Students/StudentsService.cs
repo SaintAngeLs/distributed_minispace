@@ -6,9 +6,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
 using MiniSpace.Web.Areas.Notifications;
+using MiniSpace.Web.Areas.Students.CommandsDto;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Interests;
 using MiniSpace.Web.DTO.Languages;
+using MiniSpace.Web.DTO.Views;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -209,8 +211,27 @@ namespace MiniSpace.Web.Areas.Students
 
         public async Task<bool> IsUserOnlineAsync(Guid studentId)
         {
-            // Assuming the NotificationsService has a method to check if a user is connected
             return await _notificationsService.IsUserConnectedAsync(studentId);
         }
+
+        public async Task ViewUserProfileAsync(Guid userId, Guid userProfileId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var command = new ViewUserProfileCommand(userId, userProfileId);
+            await _httpClient.PostAsync("students/profiles/users/{userProfileId}/view", command);
+        }
+
+        public async Task<PaginatedResponseDto<UserProfileViewDto>> GetUserProfileViewsAsync(Guid userId, int pageNumber, int pageSize)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            
+            var queryString = $"?pageNumber={pageNumber}&pageSize={pageSize}";
+            return await _httpClient.GetAsync<PaginatedResponseDto<UserProfileViewDto>>($"students/profiles/users/{userId}/views/paginated{queryString}");
+        }
+
+
     }
 }

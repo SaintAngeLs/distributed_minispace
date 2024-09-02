@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Interests;
 using MiniSpace.Web.DTO.Languages;
+using MiniSpace.Web.DTO.Views;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -50,5 +51,8 @@ namespace MiniSpace.Web.Areas.Students
 
         Task<bool> IsUserOnlineAsync(Guid studentId);
 
+        Task ViewUserProfileAsync(Guid userId, Guid userProfileId);
+
+        Task<PaginatedResponseDto<UserProfileViewDto>> GetUserProfileViewsAsync(Guid userId, int pageNumber, int pageSize);
     }
 }

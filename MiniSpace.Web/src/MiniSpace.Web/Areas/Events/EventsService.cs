@@ -83,12 +83,6 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.GetAsync<EventRatingDto>($"events/{eventId}/rating");
         }
 
-        // public Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchEventsAsync(SearchEvents command)
-        // {
-        //     _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-        //     return _httpClient.PostAsync<SearchEvents, PagedResult<IEnumerable<EventDto>>>("events/search", command);
-        // }
-
         public Task<PagedResult<EventDto>> SearchEventsAsync(SearchEvents command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
@@ -124,7 +118,6 @@ namespace MiniSpace.Web.Areas.Events
 
             var queryString = "?" + string.Join("&", queryParams);
             
-            // Return the correct type based on your API response
             return _httpClient.GetAsync<PagedResult<EventDto>>($"events/search{queryString}");
         }
 
@@ -136,7 +129,6 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.PostAsync<SearchOrganizerEvents, PagedResult<IEnumerable<EventDto>>>("events/search/organizer", command);
         }
 
-        // Implementations for participant-related methods
         public Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
@@ -176,6 +168,12 @@ namespace MiniSpace.Web.Areas.Events
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             var queryString = $"?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={HttpUtility.UrlEncode(sortBy)}&direction={HttpUtility.UrlEncode(direction)}";
             return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/users/{userId}/feed{queryString}");
+        }
+
+        public Task ViewEventAsync(ViewEventCommand command)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.PostAsync<ViewEventCommand, object>($"events/{command.EventId}/view", command);
         }
 
     }
