@@ -1,11 +1,12 @@
 using Convey.CQRS.Queries;
 using MiniSpace.Services.Students.Application.Dto;
+using MiniSpace.Services.Students.Core.Wrappers;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Students.Application.Queries
 {
     [ExcludeFromCodeCoverage]
-    public class GetBlockedUsers : IQuery<PagedResult<BlockedUserDto>>
+    public class GetBlockedUsers : IQuery<PagedResponse<BlockedUserDto>>
     {
         public Guid BlockerId { get; set; }  
         public int Page { get; set; }
