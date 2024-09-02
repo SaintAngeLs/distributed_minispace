@@ -1,17 +1,29 @@
 @using MiniSpace.Web.DTO
-@using MiniSpace.Web.Areas.Students
-@inject IStudentsService StudentsService
+@using MiniSpace.Web.Areas.Events
+@inject IEventsService EventsService
 @using MudBlazor
 
 <MudPaper>
-    <MudText Typo="Typo.h5">Recommendations</MudText>
-    <!-- Add recommendation logic here -->
-    @if (recommendations != null)
+    <MudText Typo="Typo.h5">Event Recommendations</MudText>
+
+    @if (loadingRecommendations)
     {
-        @foreach (var recommendation in recommendations)
-        {
-            <MudText Typo="Typo.body1">@recommendation</MudText>
-        }
+        <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+    }
+    else if (recommendations != null && recommendations.Any())
+    {
+        <MudList>
+            @foreach (var recommendation in recommendations)
+            {
+                <MudListItem>
+                    <MudText Typo="Typo.body1">@recommendation.Name - @recommendation.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                </MudListItem>
+            }
+        </MudList>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1">No recommendations available at the moment.</MudText>
     }
 </MudPaper>
 
@@ -19,17 +31,27 @@
     [Parameter]
     public Guid UserId { get; set; }
 
-    private List<string> recommendations;
+    private List<EventDto> recommendations;
+    private bool loadingRecommendations = true;
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch recommendations based on the user ID
         recommendations = await FetchRecommendationsAsync(UserId);
+        loadingRecommendations = false;
     }
 
-    private Task<List<string>> FetchRecommendationsAsync(Guid userId)
+    private async Task<List<EventDto>> FetchRecommendationsAsync(Guid userId)
     {
-        // Dummy implementation, replace with actual recommendation logic
-        return Task.FromResult(new List<string> { "Event 1", "Event 2", "Event 3" });
+        try
+        {
+            var result = await EventsService.GetUserEventsFeedAsync(userId, pageNumber: 1, pageSize: 10, sortBy: "PublishDate", direction: "asc");
+            return result.Items.ToList();
+        }
+        catch (Exception ex)
+        {
+            // Handle error (you could also use a Snackbar or some other UI component to display errors)
+            Console.Error.WriteLine($"Failed to fetch recommendations: {ex.Message}");
+            return new List<EventDto>();
+        }
     }
 }

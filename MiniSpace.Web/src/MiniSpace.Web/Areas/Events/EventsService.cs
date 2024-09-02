@@ -155,20 +155,27 @@ namespace MiniSpace.Web.Areas.Events
             return _httpClient.DeleteAsync($"events/{eventId}/participants?participantId={participantId}");
         }
 
-        public Task<MiniSpace.Web.Areas.PagedResult.PagedResult<EventDto>> GetPaginatedEventsAsync(int page, int pageSize)
+        public Task<PagedResult<EventDto>> GetPaginatedEventsAsync(int page, int pageSize)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<MiniSpace.Web.Areas.PagedResult.PagedResult<EventDto>>($"events/paginated?page={page}&pageSize={pageSize}");
+            return _httpClient.GetAsync<PagedResult<EventDto>>($"events/paginated?page={page}&pageSize={pageSize}");
         }
         public async Task<PagedResult<EventDto>> GetMyEventsAsync(Guid organizerId, int page, int pageSize)
         {
-            return await _httpClient.GetAsync<MiniSpace.Web.Areas.PagedResult.PagedResult<EventDto>>($"events/organizer/{organizerId}/paginated?page={page}&pageSize={pageSize}");
+            return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/organizer/{organizerId}/paginated?page={page}&pageSize={pageSize}");
         }
 
         public async Task<PagedResult<EventDto>> GetUserEventsAsync(Guid userId, int page, int pageSize, string engagementType)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/users/{userId}?engagementType={engagementType}&page={page}&pageSize={pageSize}");
+        }
+
+        public async Task<PagedResult<EventDto>> GetUserEventsFeedAsync(Guid userId, int pageNumber, int pageSize, string sortBy, string direction)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var queryString = $"?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={HttpUtility.UrlEncode(sortBy)}&direction={HttpUtility.UrlEncode(direction)}";
+            return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/users/{userId}/feed{queryString}");
         }
 
     }
