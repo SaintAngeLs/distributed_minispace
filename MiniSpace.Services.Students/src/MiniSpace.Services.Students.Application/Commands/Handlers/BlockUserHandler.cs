@@ -1,7 +1,8 @@
 using Convey.CQRS.Commands;
-using MiniSpace.Services.Students.Core.Repositories;
-using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Application.Exceptions;
+using MiniSpace.Services.Students.Application.Services;
+using MiniSpace.Services.Students.Core.Entities;
+using MiniSpace.Services.Students.Core.Repositories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,11 +13,15 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
     {
         private readonly IBlockedUsersRepository _blockedUsersRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly IEventMapper _eventMapper;
+        private readonly IMessageBroker _messageBroker;
 
-        public BlockUserHandler(IBlockedUsersRepository blockedUsersRepository, IStudentRepository studentRepository)
+        public BlockUserHandler(IBlockedUsersRepository blockedUsersRepository, IStudentRepository studentRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _blockedUsersRepository = blockedUsersRepository;
             _studentRepository = studentRepository;
+            _eventMapper = eventMapper;
+            _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(BlockUser command, CancellationToken cancellationToken = default)
@@ -34,14 +39,25 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 throw new StudentNotFoundException(command.BlockedUserId);
             }
 
-            var existingBlockedUser = await _blockedUsersRepository.GetAsync(command.BlockerId, command.BlockedUserId);
-            if (existingBlockedUser != null)
+            var blockedUsersAggregate = await _blockedUsersRepository.GetAsync(command.BlockerId);
+            if (blockedUsersAggregate == null)
             {
-                throw new UserAlreadyBlockedException(command.BlockerId, command.BlockedUserId);
+                blockedUsersAggregate = new BlockedUsers(command.BlockerId);
             }
 
-            var blockedUserEntity = new BlockedUser(command.BlockerId, command.BlockedUserId, DateTime.UtcNow);
-            await _blockedUsersRepository.AddAsync(blockedUserEntity);
+            blockedUsersAggregate.BlockUser(command.BlockedUserId);
+
+            if (!blockedUsersAggregate.BlockedUsersList.Any())
+            {
+                await _blockedUsersRepository.AddAsync(blockedUsersAggregate);
+            }
+            else
+            {
+                await _blockedUsersRepository.UpdateAsync(blockedUsersAggregate);
+            }
+
+            var events = _eventMapper.MapAll(blockedUsersAggregate.Events);
+            await _messageBroker.PublishAsync(events.ToArray());
         }
     }
 }
