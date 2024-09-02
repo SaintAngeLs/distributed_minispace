@@ -1,6 +1,6 @@
 namespace MiniSpace.Services.Students.Application.Dto
 {
-    public class BlockedStudentDto
+    public class BlockedUserDto
     {
         public Guid BlockerId { get; set; }
         public Guid BlockedUserId { get; set; }
