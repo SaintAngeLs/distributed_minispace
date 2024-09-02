@@ -42,6 +42,8 @@ namespace MiniSpace.Services.Students.Api
                         .Get<GetUserNotificationPreferences, NotificationPreferencesDto>("students/{studentId}/notifications")
                         .Get<GetUserProfileViews, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/paginated")
                         .Get<GetProfilesViewedByUser, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/viewed") 
+                        .Get<GetBlockedUsers, PagedResponse<BlockedUserDto>>("students/{blockerId}/blocked-users")
+                        
                         
                         .Put<UpdateStudent>("students/{studentId}")
                         .Put<UpdateUserSettings>("students/{studentId}/settings")
@@ -50,7 +52,12 @@ namespace MiniSpace.Services.Students.Api
                         .Put<UpdateStudentLanguagesAndInterests>("students/{studentId}/languages-and-interests")
 
                         .Delete<DeleteStudent>("students/{studentId}")
-
+                        
+                        .Post<BlockUser>("students/{blockerId}/block-user/{blockedUserId}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Post<UnblockUser>("students/{blockerId}/unblock-user/{blockedUserId}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                            
                         .Post<CompleteStudentRegistration>("students",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))  
                         .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")
