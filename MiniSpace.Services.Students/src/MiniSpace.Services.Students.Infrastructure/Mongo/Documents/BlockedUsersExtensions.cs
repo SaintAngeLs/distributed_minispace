@@ -2,47 +2,51 @@ using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Students.Application.Dto;
 using System.Linq;
+using System.Collections.Generic;
 
-namespace MiniSpace.Services.Students.Infrastructure.Mongo
+namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 {
     public static class BlockedUsersExtensions
     {
-        public static BlockedUsersDocument AsDocument(this BlockedUser blockedUser)
+        public static BlockedUsersDocument AsDocument(this BlockedUsers blockedUsers)
         {
             return new BlockedUsersDocument
             {
-                Id = blockedUser.BlockerId,
-                UserId = blockedUser.BlockerId,
-                BlockedUsers = new[]
+                Id = blockedUsers.UserId,
+                UserId = blockedUsers.UserId,
+                BlockedUsers = blockedUsers.BlockedUsersList.Select(b => new BlockedUsersDocument.BlockedUserEntry
                 {
-                    new BlockedUsersDocument.BlockedUserEntry
-                    {
-                        BlockedUserId = blockedUser.BlockedUserId,
-                        BlockedAt = blockedUser.BlockedAt
-                    }
-                }
+                    BlockedUserId = b.BlockedUserId,
+                    BlockedAt = b.BlockedAt
+                }).ToList()
             };
         }
 
-        public static BlockedUser AsEntity(this BlockedUsersDocument document)
+        public static BlockedUsers AsEntity(this BlockedUsersDocument document)
         {
-            var blockedUserEntry = document.BlockedUsers.FirstOrDefault();
+            var blockedUsers = new BlockedUsers(document.UserId);
+            foreach (var entry in document.BlockedUsers)
+            {
+                var blockedUser = new BlockedUser(document.UserId, entry.BlockedUserId, entry.BlockedAt);
+                blockedUsers.BlockUser(blockedUser.BlockedUserId); 
+            }
 
-            return blockedUserEntry == null ? null : new BlockedUser(
-                document.Id,
-                blockedUserEntry.BlockedUserId,
-                blockedUserEntry.BlockedAt);
+            return blockedUsers;
         }
 
-        public static BlockedUserDto AsDto(this BlockedUsersDocument.BlockedUserEntry blockedUserEntry, Guid blockerId, string blockedUserName)
+        public static BlockedUserDto AsDto(this BlockedUsersDocument.BlockedUserEntry blockedUserEntry, Guid blockerId)
         {
             return new BlockedUserDto
             {
                 BlockerId = blockerId,
                 BlockedUserId = blockedUserEntry.BlockedUserId,
-                BlockedUserName = blockedUserName,
                 BlockedAt = blockedUserEntry.BlockedAt
             };
+        }
+
+        public static IEnumerable<BlockedUserDto> AsDto(this BlockedUsersDocument document)
+        {
+            return document.BlockedUsers.Select(b => b.AsDto(document.UserId));
         }
     }
 }
