@@ -30,6 +30,7 @@
                                 <MudText Typo="Typo.h4" Class="profile-name">@($"{student.FirstName} {student.LastName}")</MudText>
                                 <MudText Typo="Typo.subtitle1" Class="profile-description">@student.Description</MudText>
                                 <MudButton Variant="MudBlazor.Variant.Filled" Color="MudBlazor.Color.Primary" OnClick="@NavigateToProfileSettings">Edit Profile</MudButton>
+                                <MudButton Variant="MudBlazor.Variant.Outlined" Color="MudBlazor.Color.Primary" OnClick="@NavigateToPublicProfile">Public Profile</MudButton>
                             </div>
                         </div>
                     }
@@ -234,7 +235,6 @@
         }
         else
         {
-            // If profile fails, don't load dependent sections like events
             loadingEducation = false;
             loadingWork = false;
             loadingLanguages = false;
@@ -263,7 +263,6 @@
     {
         try
         {
-            // Load education details (assume an async method is called here)
         }
         catch (Exception ex)
         {
@@ -280,7 +279,6 @@
     {
         try
         {
-            // Load work experience details (assume an async method is called here)
         }
         catch (Exception ex)
         {
@@ -297,7 +295,6 @@
     {
         try
         {
-            // Load languages and interests details (assume an async method is called here)
         }
         catch (Exception ex)
         {
@@ -394,6 +391,13 @@
     {
         NavigationManager.NavigateTo("/account");
     }
+
+    private void NavigateToPublicProfile()
+    {
+        NavigationManager.NavigateTo($"/user-details/{UserId}");
+    }
+
+    
 
     private int GetRandomFontSize()
     {

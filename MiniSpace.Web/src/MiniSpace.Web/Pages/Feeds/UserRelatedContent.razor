@@ -15,8 +15,20 @@
         <MudList>
             @foreach (var recommendation in recommendations)
             {
-                <MudListItem>
-                    <MudText Typo="Typo.body1">@recommendation.Name - @recommendation.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                <MudListItem Class="mb-2">
+                    <MudCard Elevation="3" Class="d-flex flex-column">
+                        <MudImage 
+                            Src="@(!string.IsNullOrEmpty(recommendation.BannerUrl) ? recommendation.BannerUrl : "/images/default_media_file_image.png")" 
+                            Alt="Event image" 
+                            Style="width: 100%; height: auto;" 
+                        />
+
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6">@recommendation.Name</MudText>
+                            <MudText Typo="Typo.caption" Class="text-muted">@recommendation.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                            <MudText Typo="Typo.body2" Class="mt-1">@recommendation.Description</MudText>
+                        </MudCardContent>
+                    </MudCard>
                 </MudListItem>
             }
         </MudList>
