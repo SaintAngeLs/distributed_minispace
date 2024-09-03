@@ -115,7 +115,8 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Queries.Handlers
                 City = organization.City,
                 Telephone = organization.Telephone,
                 Email = organization.Email,
-                Users = members?.Select(user => new UserDto(user)).ToList()
+                Users = members?.Select(user => new UserDto(user)).ToList(),
+                Settings = organization.Settings != null ? new OrganizationSettingsDto(organization.Settings) : null 
             };
         }
     }
