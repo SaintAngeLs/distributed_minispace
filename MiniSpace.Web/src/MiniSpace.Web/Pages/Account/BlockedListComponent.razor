@@ -2,9 +2,13 @@
 @inject IStudentsService StudentsService
 @inject IIdentityService IdentityService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 @using MiniSpace.Web.DTO.Users
 @using MiniSpace.Web.Models.BlockedUsers
 @using MudBlazor
+@using System.Collections.Generic
+@using System.Threading.Tasks
+
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="blocked-users-container">
     <MudText Typo="Typo.h4" GutterBottom="true">Blocked Users</MudText>
@@ -21,17 +25,25 @@
                 <MudCard Class="blocked-user-card" Elevation="4">
                     <MudCardContent>
                         <MudGrid AlignItems="center">
-                            <MudItem xs="2">
-                                <MudAvatar Image="@user.ProfileImageUrl" Size="Size.Large" />
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudText Typo="Typo.h6">@user.FullName</MudText>
-                                <MudText Typo="Typo.body2">Blocked on: @user.BlockedAt.ToString("MMMM dd, yyyy")</MudText>
+                            <MudItem xs="8">
+                                <MudNavLink Href="@($"/user-details/{user.BlockedUserId}")" Style="text-decoration:none;">
+                                    <MudGrid AlignItems="center" Class="justify-start">
+                                        <MudItem xs="4" md="2">
+                                            <MudAvatar Image="@user.ProfileImageUrl" Size="Size.Large" />
+                                        </MudItem>
+                                        <MudItem xs="8" md="6">
+                                            <MudText Typo="Typo.h6">@user.FullName</MudText>
+                                            <MudText Typo="Typo.body2">Blocked on: @user.BlockedAt.ToString("MMMM dd, yyyy")</MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudNavLink>
                             </MudItem>
                             <MudItem xs="4" Class="text-right">
-                                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => UnblockUser(user.BlockedUserId)" Class="unblock-button">
-                                    Unblock
-                                </MudButton>
+                                <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="async (e) => await UnblockUser(user.BlockedUserId)" Class="unblock-button">
+                                        Unblock
+                                    </MudButton>
+                                </div>
                             </MudItem>
                         </MudGrid>
                     </MudCardContent>
@@ -47,13 +59,13 @@
 
 <style>
     .blocked-users-container {
-        padding: 20px;
+        padding: 10px;
     }
 
     .blocked-user-card {
         width: 100%;
         margin-bottom: 16px;
-        padding: 16px;
+        padding: 6px;
         transition: box-shadow 0.3s ease;
     }
 
@@ -89,7 +101,6 @@
             var response = await StudentsService.GetBlockedUsersAsync(currentUserId, 1, 10);
             var blockedUserIds = response.Items.Select(bu => bu.BlockedUserId).ToList();
 
-            // Fetch detailed information for each blocked user
             foreach (var blockedUserId in blockedUserIds)
             {
                 var student = await StudentsService.GetStudentAsync(blockedUserId);
