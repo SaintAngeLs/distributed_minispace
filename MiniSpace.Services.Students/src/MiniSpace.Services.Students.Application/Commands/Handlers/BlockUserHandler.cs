@@ -26,36 +26,35 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
         public async Task HandleAsync(BlockUser command, CancellationToken cancellationToken = default)
         {
+            // Ensure the blocker exists
             var blocker = await _studentRepository.GetAsync(command.BlockerId);
-            var blockedUser = await _studentRepository.GetAsync(command.BlockedUserId);
-
             if (blocker is null)
             {
                 throw new StudentNotFoundException(command.BlockerId);
             }
 
+            // Ensure the user to be blocked exists
+            var blockedUser = await _studentRepository.GetAsync(command.BlockedUserId);
             if (blockedUser is null)
             {
                 throw new StudentNotFoundException(command.BlockedUserId);
             }
 
+            // Fetch or create the BlockedUsers aggregate
             var blockedUsersAggregate = await _blockedUsersRepository.GetAsync(command.BlockerId);
             if (blockedUsersAggregate == null)
             {
                 blockedUsersAggregate = new BlockedUsers(command.BlockerId);
-            }
-
-            blockedUsersAggregate.BlockUser(command.BlockedUserId);
-
-            if (!blockedUsersAggregate.BlockedUsersList.Any())
-            {
                 await _blockedUsersRepository.AddAsync(blockedUsersAggregate);
             }
-            else
-            {
-                await _blockedUsersRepository.UpdateAsync(blockedUsersAggregate);
-            }
 
+            // Block the user
+            blockedUsersAggregate.BlockUser(command.BlockedUserId);
+
+            // Update the repository to save changes
+            await _blockedUsersRepository.UpdateAsync(blockedUsersAggregate);
+
+            // Publish domain events
             var events = _eventMapper.MapAll(blockedUsersAggregate.Events);
             await _messageBroker.PublishAsync(events.ToArray());
         }
