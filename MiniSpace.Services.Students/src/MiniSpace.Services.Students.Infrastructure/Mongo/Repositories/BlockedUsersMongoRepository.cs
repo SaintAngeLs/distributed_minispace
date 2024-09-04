@@ -34,7 +34,15 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
         {
             var document = blockedUsers.AsDocument();
             var filter = Builders<BlockedUsersDocument>.Filter.Eq(d => d.UserId, document.UserId);
-            await _repository.Collection.ReplaceOneAsync(filter, document);
+
+            // Replace the existing document
+            var result = await _repository.Collection.ReplaceOneAsync(filter, document, new ReplaceOptions { IsUpsert = true });
+
+            // Ensure the operation was successful
+            if (result.MatchedCount == 0 && result.UpsertedId == null)
+            {
+                throw new Exception("Failed to update the blocked user list.");
+            }
         }
 
         public async Task DeleteAsync(Guid blockerId)
