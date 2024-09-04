@@ -12,6 +12,7 @@ using MiniSpace.Web.DTO.Interests;
 using MiniSpace.Web.DTO.Languages;
 using MiniSpace.Web.DTO.Users;
 using MiniSpace.Web.DTO.Views;
+using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -251,15 +252,13 @@ namespace MiniSpace.Web.Areas.Students
             await _httpClient.PostAsync<object, object>($"students/{blockerId}/unblock-user/{blockedUserId}", command);
         }
 
-        public async Task<PaginatedResponseDto<BlockedUserDto>> GetBlockedUsersAsync(Guid blockerId, int page, int resultsPerPage)
+        public async Task<PagedResponseDto<BlockedUserDto>> GetBlockedUsersAsync(Guid blockerId, int page, int resultsPerPage)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
 
             var queryString = $"?page={page}&resultsPerPage={resultsPerPage}";
-            return await _httpClient.GetAsync<PaginatedResponseDto<BlockedUserDto>>($"students/{blockerId}/blocked-users{queryString}");
+            return await _httpClient.GetAsync<PagedResponseDto<BlockedUserDto>>($"students/{blockerId}/blocked-users{queryString}");
         }
-
-
     }
 }

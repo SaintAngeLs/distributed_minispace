@@ -1,0 +1,134 @@
+@page "/blocked-users"
+@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
+@inject ISnackbar Snackbar
+@using MiniSpace.Web.DTO.Users
+@using MiniSpace.Web.Models.BlockedUsers
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="blocked-users-container">
+    <MudText Typo="Typo.h4" GutterBottom="true">Blocked Users</MudText>
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else
+    {
+        @if (blockedUsers?.Any() == true)
+        {
+            @foreach (var user in blockedUsers)
+            {
+                <MudCard Class="blocked-user-card" Elevation="4">
+                    <MudCardContent>
+                        <MudGrid AlignItems="center">
+                            <MudItem xs="2">
+                                <MudAvatar Image="@user.ProfileImageUrl" Size="Size.Large" />
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudText Typo="Typo.h6">@user.FullName</MudText>
+                                <MudText Typo="Typo.body2">Blocked on: @user.BlockedAt.ToString("MMMM dd, yyyy")</MudText>
+                            </MudItem>
+                            <MudItem xs="4" Class="text-right">
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => UnblockUser(user.BlockedUserId)" Class="unblock-button">
+                                    Unblock
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            }
+        }
+        else
+        {
+            <MudText Typo="Typo.subtitle1">You have no blocked users.</MudText>
+        }
+    }
+</MudContainer>
+
+<style>
+    .blocked-users-container {
+        padding: 20px;
+    }
+
+    .blocked-user-card {
+        width: 100%;
+        margin-bottom: 16px;
+        padding: 16px;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .blocked-user-card:hover {
+        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .unblock-button {
+        width: auto;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+</style>
+
+@code {
+    private List<BlockedUserViewModel> blockedUsers = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        await LoadBlockedUsersAsync();
+        isLoading = false;
+    }
+
+    private async Task LoadBlockedUsersAsync()
+    {
+        try
+        {
+            var currentUserId = IdentityService.GetCurrentUserId();
+            var response = await StudentsService.GetBlockedUsersAsync(currentUserId, 1, 10);
+            var blockedUserIds = response.Items.Select(bu => bu.BlockedUserId).ToList();
+
+            // Fetch detailed information for each blocked user
+            foreach (var blockedUserId in blockedUserIds)
+            {
+                var student = await StudentsService.GetStudentAsync(blockedUserId);
+                if (student != null)
+                {
+                    blockedUsers.Add(new BlockedUserViewModel
+                    {
+                        BlockedUserId = blockedUserId,
+                        FullName = $"{student.FirstName} {student.LastName}",
+                        ProfileImageUrl = GetProfileImageUrl(student.ProfileImageUrl),
+                        BlockedAt = response.Items.First(bu => bu.BlockedUserId == blockedUserId).BlockedAt
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading blocked users: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task UnblockUser(Guid blockedUserId)
+    {
+        try
+        {
+            var currentUserId = IdentityService.GetCurrentUserId();
+            await StudentsService.UnblockUserAsync(currentUserId, blockedUserId);
+            blockedUsers.RemoveAll(u => u.BlockedUserId == blockedUserId);
+            Snackbar.Add("User has been unblocked successfully.", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error unblocking user: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string GetProfileImageUrl(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "images/default_profile_image.webp" : profileImageUrl;
+    }
+}
