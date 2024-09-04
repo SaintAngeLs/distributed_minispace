@@ -8,13 +8,15 @@ namespace MiniSpace.Services.Students.Core.Entities
     public class BlockedUsers : AggregateRoot
     {
         private readonly ISet<BlockedUser> _blockedUsers = new HashSet<BlockedUser>();
-        public Guid UserId { get; private set; }
-        public IEnumerable<BlockedUser> BlockedUsersList => _blockedUsers;
 
         public BlockedUsers(Guid userId)
         {
+            Id = userId; 
             UserId = userId;
         }
+
+        public Guid UserId { get; private set; }
+        public IEnumerable<BlockedUser> BlockedUsersList => _blockedUsers;
 
         public void BlockUser(Guid blockedUserId)
         {
