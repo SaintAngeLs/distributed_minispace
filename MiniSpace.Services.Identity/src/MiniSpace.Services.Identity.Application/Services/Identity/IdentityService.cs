@@ -323,5 +323,20 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
             return auth;
         }
+
+        public async Task UpdateUserStatusAsync(UpdateUserStatus command)
+        {
+            var user = await _userRepository.GetAsync(command.UserId);
+            if (user == null)
+            {
+                throw new UserNotFoundException(command.UserId);
+            }
+
+            user.SetOnlineStatus(command.IsOnline, command.DeviceType);
+            await _userRepository.UpdateAsync(user);
+
+            _logger.LogInformation($"Updated status for user {command.UserId}: Online = {command.IsOnline}, DeviceType = {command.DeviceType}");
+        }
+
     }
 }

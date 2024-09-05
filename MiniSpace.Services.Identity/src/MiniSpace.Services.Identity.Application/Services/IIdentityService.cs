@@ -20,5 +20,6 @@ namespace MiniSpace.Services.Identity.Application.Services
         Task DisableTwoFactorAsync(DisableTwoFactor command);
         Task<string> GenerateTwoFactorSecretAsync(GenerateTwoFactorSecret command);
         Task<AuthDto> VerifyTwoFactorCodeAsync(VerifyTwoFactorCode command);
+        Task UpdateUserStatusAsync(UpdateUserStatus command);
     }
 }
