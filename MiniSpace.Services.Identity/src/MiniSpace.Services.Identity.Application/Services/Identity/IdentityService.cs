@@ -62,6 +62,9 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
         public async Task<AuthDto> SignInAsync(SignIn command)
         {
+             string commandJson = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
+    Console.WriteLine("SignIn Command: " + commandJson);
+    
             if (!EmailRegex.IsMatch(command.Email))
             {
                 throw new InvalidEmailException(command.Email);
