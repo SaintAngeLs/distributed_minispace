@@ -179,7 +179,6 @@
     {
         try
         {
-            // Pass the deviceType when calling SignInAsync
             var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
 
             if (response != null && response.Content != null)
@@ -188,14 +187,14 @@
                 {
                     isTwoFactorRequired = true;
                     userId = response.Content.UserId;
-                    twoFactorModel.Code = string.Empty; // Ensure the code is clear
+                    twoFactorModel.Code = string.Empty; 
                     StateHasChanged();
                 }
                 else if (!string.IsNullOrEmpty(response.Content.AccessToken))
                 {
                     await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-                    var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/";
-                    NavigationManager.NavigateTo(nextPage, true);
+                    var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
+                    NavigationManager.NavigateTo(nextPage, forceLoad: true);
                 }
                 else
                 {
@@ -227,7 +226,7 @@
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
                 await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/";
+                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
                 NavigationManager.NavigateTo(nextPage, true);
             }
             else

@@ -266,7 +266,7 @@
     {
         if (NavigationManager.Uri != NavigationManager.BaseUri)
         {
-            NavigationManager.NavigateTo("/", true);
+            NavigationManager.NavigateTo("/home", true);
         }
         while (NavigationManager.Uri != NavigationManager.BaseUri)
         {
@@ -277,7 +277,7 @@
 
     void NavigateToHome()
     {
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/home");
     }
 
     private string _themeName = "light";

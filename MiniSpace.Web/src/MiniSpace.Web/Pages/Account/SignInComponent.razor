@@ -85,7 +85,7 @@
             var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
-                NavigationManager.NavigateTo("/", true);
+                NavigationManager.NavigateTo("/home", true);
             }
             else
             {
