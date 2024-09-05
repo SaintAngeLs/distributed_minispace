@@ -94,15 +94,20 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             {
                 claims.Add("permissions", user.Permissions);
             }
+
+            user.SetOnlineStatus(true, command.DeviceType);  
+            await _userRepository.UpdateAsync(user);
+
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
+
+            auth.IsOnline = true;
+            auth.DeviceType = command.DeviceType;
 
             await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
 
             return auth;
         }
-
-
 
         public async Task SignUpAsync(SignUp command)
         {
