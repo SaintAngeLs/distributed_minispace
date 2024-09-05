@@ -290,6 +290,18 @@
     }
 };
 
+window.getDeviceType = () => {
+    const ua = navigator.userAgent;
+    if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua)) {
+        return "Mobile";
+    }
+    if (/tablet|ipad/i.test(ua)) {
+        return "Tablet";
+    }
+    return "Desktop";
+};
+
+
 
 
 

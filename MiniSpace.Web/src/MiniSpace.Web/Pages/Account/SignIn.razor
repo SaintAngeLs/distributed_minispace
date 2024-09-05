@@ -11,12 +11,10 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
-
 <style>
     body {
         margin: 0;
-        @* font-family: 'Roboto', sans-serif;
-        background: #f4f4f9; *@
+        background: #f4f4f9;
     }
 
     .split-container {
@@ -68,10 +66,6 @@
     }
 
     .text-center {
-        text-align: center;
-    }
-
-    .input-center {
         text-align: center;
     }
 
@@ -153,6 +147,13 @@
     private string passwordInputIcon = MudBlazor.Icons.Material.Filled.VisibilityOff;
     private bool isTwoFactorRequired = false;
     private Guid userId;
+    private string deviceType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Capture the device type using JavaScript interop
+        deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+    }
 
     private void OnAlertClose()
     {
@@ -178,7 +179,8 @@
     {
         try
         {
-            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+            // Pass the deviceType when calling SignInAsync
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
 
             if (response != null && response.Content != null)
             {

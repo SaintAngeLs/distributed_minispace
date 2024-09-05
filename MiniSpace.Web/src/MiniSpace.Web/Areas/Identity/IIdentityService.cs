@@ -13,7 +13,7 @@ namespace MiniSpace.Web.Areas.Identity
         bool IsAuthenticated { get; set; }
         Task<UserDto> GetAccountAsync(JwtDto jwtDto);
         Task<HttpResponse<object>> SignUpAsync(string firstName, string lastName, string email, string password, string role = "user", IEnumerable<string> permissions = null);
-        Task<HttpResponse<JwtDto>> SignInAsync(string email, string password);
+        Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType);
         Task Logout();
         Task<string> GetAccessTokenAsync();
         Task InitializeAuthenticationState();
