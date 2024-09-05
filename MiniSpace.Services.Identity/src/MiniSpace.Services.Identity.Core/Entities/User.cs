@@ -15,9 +15,12 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public IEnumerable<string> Permissions { get; private set; }
         public bool IsEmailVerified { get; set; }
         public string EmailVerificationToken { get; set; }
-        public DateTime? EmailVerifiedAt { get; set; } 
+        public DateTime? EmailVerifiedAt { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
+        public bool IsOnline { get; private set; }         
+        public string DeviceType { get; private set; }     
+        public DateTime? LastActive { get; private set; }  
 
         public User(Guid id, string name, string email, string password, Role role, DateTime createdAt,
             IEnumerable<string> permissions = null)
@@ -26,7 +29,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
             {
                 throw new InvalidNameException(name);
             }
-            
+
             if (string.IsNullOrWhiteSpace(email))
             {
                 throw new InvalidEmailException(email);
@@ -49,10 +52,14 @@ namespace MiniSpace.Services.Identity.Core.Entities
             Role = role;
             CreatedAt = createdAt;
             Permissions = permissions ?? Enumerable.Empty<string>();
+
+            IsOnline = false;
+            DeviceType = null;
+            LastActive = DateTime.UtcNow;  
         }
 
         internal User(Guid id, string name, string email, string password, Role role, DateTime createdAt,
-            bool isEmailVerified, string emailVerificationToken, DateTime? emailVerifiedAt, 
+            bool isEmailVerified, string emailVerificationToken, DateTime? emailVerifiedAt,
             bool isTwoFactorEnabled, string twoFactorSecret, IEnumerable<string> permissions = null)
             : this(id, name, email, password, role, createdAt, permissions)
         {
@@ -62,7 +69,19 @@ namespace MiniSpace.Services.Identity.Core.Entities
             IsTwoFactorEnabled = isTwoFactorEnabled;
             TwoFactorSecret = twoFactorSecret;
         }
-                
+
+        public void SetOnlineStatus(bool isOnline, string deviceType)
+        {
+            IsOnline = isOnline;
+            DeviceType = isOnline ? deviceType : null;  
+            LastActive = DateTime.UtcNow;
+        }
+
+        public void UpdateLastActive()
+        {
+            LastActive = DateTime.UtcNow;
+        }
+
         public void Ban()
         {
             if (Role == Role.Banned || Role == Role.Admin)
@@ -72,7 +91,7 @@ namespace MiniSpace.Services.Identity.Core.Entities
 
             Role = Role.Banned;
         }
-        
+
         public void Unban()
         {
             if (Role != Role.Banned)
@@ -137,6 +156,4 @@ namespace MiniSpace.Services.Identity.Core.Entities
     {
         public static string OrganizeEvents { get; private set; } = "organize_events";
     }
-    
-
 }
