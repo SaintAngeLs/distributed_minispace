@@ -45,22 +45,37 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
             token.Revoke(DateTime.UtcNow);
             await _refreshTokenRepository.UpdateAsync(token);
+
+            var user = await _userRepository.GetAsync(token.UserId);
+            if (user != null)
+            {
+                user.SetOnlineStatus(false, null);
+                await _userRepository.UpdateAsync(user);
+            }
         }
 
         public async Task<AuthDto> UseAsync(string refreshToken)
         {
             var token = await _refreshTokenRepository.GetAsync(refreshToken);
-            if (token is null)
+            User user = null;  
+
+            if (token is null || token.Revoked)
             {
+                if (token?.UserId != null)
+                {
+                    user = await _userRepository.GetAsync(token.UserId);
+                }
+
+                if (user != null)
+                {
+                    user.SetOnlineStatus(false, null);
+                    await _userRepository.UpdateAsync(user);
+                }
+
                 throw new InvalidRefreshTokenException();
             }
 
-            if (token.Revoked)
-            {
-                throw new RevokedRefreshTokenException();
-            }
-
-            var user = await _userRepository.GetAsync(token.UserId);
+            user = await _userRepository.GetAsync(token.UserId);
             if (user is null)
             {
                 throw new UserNotFoundException(token.UserId);
@@ -72,6 +87,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                     ["permissions"] = user.Permissions
                 }
                 : null;
+
             var auth = _jwtProvider.Create(token.UserId, user.Role, claims: claims);
             auth.RefreshToken = refreshToken;
 
