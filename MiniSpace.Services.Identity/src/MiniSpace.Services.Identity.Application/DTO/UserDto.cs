@@ -19,9 +19,11 @@ namespace MiniSpace.Services.Identity.Application.DTO
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
 
-        public UserDto()
-        {
-        }
+        public bool IsOnline { get; set; }
+        public string DeviceType { get; set; }
+        public DateTime? LastActive { get; set; }
+
+        public UserDto() { }
 
         public UserDto(User user)
         {
@@ -35,6 +37,10 @@ namespace MiniSpace.Services.Identity.Application.DTO
             EmailVerifiedAt = user.EmailVerifiedAt;
             IsTwoFactorEnabled = user.IsTwoFactorEnabled;
             TwoFactorSecret = user.TwoFactorSecret;
+
+            IsOnline = user.IsOnline;
+            DeviceType = user.DeviceType;
+            LastActive = user.LastActive;
         }
     }
 }
