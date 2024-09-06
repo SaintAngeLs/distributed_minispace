@@ -5,12 +5,12 @@ using MiniSpace.Services.Notifications.Core.Entities;
 
 namespace MiniSpace.Services.Notifications.Core.Repositories
 {
-    public interface IStudentNotificationsRepository
+    public interface IUserNotificationsRepository
     {
         Task<UserNotifications> GetByStudentIdAsync(Guid userId);
-        Task AddAsync(UserNotifications studentNotifications);
-        Task UpdateAsync(UserNotifications studentNotifications);
-        Task AddOrUpdateAsync(UserNotifications studentNotifications);
+        Task AddAsync(UserNotifications userNotifications);
+        Task UpdateAsync(UserNotifications userNotifications);
+        Task AddOrUpdateAsync(UserNotifications userNotifications);
         Task DeleteAsync(Guid userId);
         Task UpdateNotificationStatus(Guid userId, Guid notificationId, string newStatus);
         Task<bool> NotificationExists(Guid userId, Guid notificationId);
