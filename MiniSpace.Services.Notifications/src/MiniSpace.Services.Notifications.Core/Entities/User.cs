@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MiniSpace.Services.Notifications.Core.Entities
 {
-    public class Student
+    public class User
     {
         public Guid Id { get; set; }
         public string Email { get; set; }
@@ -21,7 +21,10 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         public List<Guid> InterestedInEvents { get; set; }
         public List<Guid> SignedUpEvents { get; set; }
 
-        public Student(Guid id, string email, string firstName, string lastName, int numberOfFriends, Guid profileImage, string description, DateTime dateOfBirth, bool emailNotifications, bool isBanned, bool isOrganizer, string state, DateTime createdAt)
+        public User(Guid id, string email, string firstName, string lastName, 
+            int numberOfFriends, Guid profileImage, string description, 
+            DateTime dateOfBirth, bool emailNotifications, bool isBanned,
+            bool isOrganizer, string state, DateTime createdAt)
         {
             Id = id;
             Email = email;

@@ -6,14 +6,14 @@ namespace MiniSpace.Services.Notifications.Core.Entities
 {
     public class StudentNotifications
     {
-        public Guid StudentId { get; private set; }
+        public Guid UserId { get; private set; }
         private List<Notification> _notifications;
 
         public IEnumerable<Notification> Notifications => _notifications.AsReadOnly();
 
-        public StudentNotifications(Guid studentId)
+        public StudentNotifications(Guid userId)
         {
-            StudentId = studentId;
+            UserId = userId;
             _notifications = new List<Notification>();
         }
 
