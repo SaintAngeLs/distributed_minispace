@@ -175,6 +175,42 @@ namespace MiniSpace.Web.Areas.Friends
             return new PagedResult<FriendRequestDto>(incomingRequests, studentRequests.Page, studentRequests.PageSize, studentRequests.TotalItems);
         }
 
+        public async Task<PagedResult<FriendDto>> GetPagedFollowersAsync(Guid userId, int page = 1, int pageSize = 10)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            
+            string url = $"friends/{userId}/followers?page={page}&pageSize={pageSize}";
+            var userFollowers = await _httpClient.GetAsync<PagedResult<UserFriendsDto>>(url);
+
+            var allFollowers = userFollowers.Items.SelectMany(uf => uf.Friends).ToList();
+
+            foreach (var follower in allFollowers)
+            {
+                follower.StudentDetails = await GetStudentAsync(follower.UserId);
+            }
+
+            return new PagedResult<FriendDto>(allFollowers, userFollowers.Page, userFollowers.PageSize, userFollowers.TotalItems);
+        }
+
+        public async Task<PagedResult<FriendDto>> GetPagedFollowingAsync(Guid userId, int page = 1, int pageSize = 10)
+        {
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            
+            string url = $"friends/{userId}/following?page={page}&pageSize={pageSize}";
+            var userFollowing = await _httpClient.GetAsync<PagedResult<UserFriendsDto>>(url);
+
+            var allFollowing = userFollowing.Items.SelectMany(uf => uf.Friends).ToList();
+
+            foreach (var following in allFollowing)
+            {
+                following.StudentDetails = await GetStudentAsync(following.FriendId);
+            }
+
+            return new PagedResult<FriendDto>(allFollowing, userFollowing.Page, userFollowing.PageSize, userFollowing.TotalItems);
+        }
+
         public async Task AcceptFriendRequestAsync(FriendRequestActionDto requestAction)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();

@@ -114,6 +114,11 @@ namespace MiniSpace.Services.Identity.Api
                             var token = await ctx.RequestServices.GetService<IIdentityService>().VerifyTwoFactorCodeAsync(cmd);
                             await ctx.Response.WriteJsonAsync(token);
                         })
+                        .Put<UpdateUserStatus>("users/status", async (cmd, ctx) =>
+                        {
+                            await ctx.RequestServices.GetService<IIdentityService>().UpdateUserStatusAsync(cmd);
+                            ctx.Response.StatusCode = 204;
+                        })
                     ))
                 .UseLogging()
                 .Build()

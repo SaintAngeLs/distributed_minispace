@@ -11,6 +11,8 @@ namespace MiniSpace.Services.Identity.Application.DTO
         public string Role { get; set; }
         public long Expires { get; set; }
         public bool IsTwoFactorRequired { get; set; }
-        public Guid UserId { get; set; } 
+        public Guid UserId { get; set; }
+        public bool IsOnline { get; set; }
+        public string DeviceType { get; set; }
     }
 }

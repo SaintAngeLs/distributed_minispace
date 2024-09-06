@@ -11,12 +11,13 @@ using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Services.Clients;
 using MiniSpace.Services.Events.Core.Entities;
+using MiniSpace.Services.Events.Core.Wrappers;
 using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 {
     [ExcludeFromCodeCoverage]
-    public class GetUserEventsHandler : IQueryHandler<GetUserEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
+    public class GetUserEventsHandler : IQueryHandler<GetUserEvents, PagedResponse<EventDto>>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IStudentsServiceClient _studentsServiceClient; 
@@ -32,12 +33,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             _appContext = appContext;
         }
 
-        public async Task<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>> HandleAsync(GetUserEvents query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<EventDto>> HandleAsync(GetUserEvents query, CancellationToken cancellationToken)
         {
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != query.UserId)
             {
-                return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(Enumerable.Empty<EventDto>(), 1, query.NumberOfResults, 0);
+                return new PagedResponse<EventDto>(Enumerable.Empty<EventDto>(), 1, query.NumberOfResults, 0);
             }
 
             int pageSize = query.NumberOfResults > 0 ? query.NumberOfResults : 10;
@@ -55,7 +56,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             var result = await _eventRepository.BrowseStudentEventsAsync(query.Page, 
                 pageSize, studentEventIds, Enumerable.Empty<string>(), "asc");
 
-            return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(
+            return new PagedResponse<EventDto>(
                 result.events.Select(e => new EventDto(e, identity.Id)),
                 result.pageNumber,
                 result.pageSize,

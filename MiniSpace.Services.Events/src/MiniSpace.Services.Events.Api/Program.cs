@@ -17,6 +17,7 @@ using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Infrastructure;
+using MiniSpace.Services.Events.Core.Wrappers;
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
@@ -36,16 +37,9 @@ namespace MiniSpace.Services.Identity.Api
                     .AddInfrastructure()
                     .Build())
                 .Configure(app => app
-                    // .UseMiddleware<RequestLoggingMiddleware>() 
-                    // .UseMiddleware<ExceptionHandlingMiddleware>() 
                     .UseInfrastructure()
                     .UseEndpoints(endpoints => endpoints
-                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        // .Post<SearchEvents>("events/search", async (cmd, ctx) =>
-                        // {
-                        //     var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseEventsAsync(cmd);
-                        //     await ctx.Response.WriteJsonAsync(pagedResult);
-                        // })
+                        .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Post<SearchOrganizerEvents>("events/search/organizer", async (cmd, ctx) =>
                         {
                             var pagedResult = await ctx.RequestServices.GetService<IEventService>().BrowseOrganizerEventsAsync(cmd);
@@ -53,13 +47,14 @@ namespace MiniSpace.Services.Identity.Api
                         }))
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get<GetEvent, EventDto>("events/{eventId}")
-                        .Get<GetUserEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/users/{userId}")
+                        .Get<GetUserEvents, PagedResponse<EventDto>>("events/users/{userId}")
                         .Get<GetEventParticipants, EventParticipantsDto>("events/{eventId}/participants")
                         .Get<GetEventRating, EventRatingDto>("events/{eventId}/rating")
-                        .Get<GetPaginatedEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/paginated")
-                        .Get<GetPaginatedOrganizerEvents, PagedResult<EventDto>>("events/organizer/{organizerId}/paginated")
-                        .Get<GetSearchEvents,  MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>("events/search")
-
+                        .Get<GetPaginatedEvents, PagedResponse<EventDto>>("events/paginated")
+                        .Get<GetPaginatedOrganizerEvents, PagedResponse<EventDto>>("events/organizer/{organizerId}/paginated")
+                        .Get<GetSearchEvents,  PagedResponse<EventDto>>("events/search")
+                        .Get<GetUserEventsFeed, PagedResponse<EventDto>>("events/users/{userId}/feed") 
+                        .Get<GetPaginatedUserViews, PagedResponse<ViewDto>>("events/users/{userId}/views/paginated")
                         .Put<UpdateEvent>("events/{eventId}")
                         .Post<CreateEvent>("events",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"events/{cmd.EventId}"))
@@ -71,6 +66,7 @@ namespace MiniSpace.Services.Identity.Api
                         .Post<RateEvent>("events/{eventId}/rate")
                         .Delete<CancelRateEvent>("events/{eventId}/rate")
                         .Post<AddEventParticipant>("events/{eventId}/participants")
+                        .Post<ViewEvent>("events/{eventId}/view") 
                         .Delete<RemoveEventParticipant>("events/{eventId}/participants")
                     )
                 )
@@ -78,75 +74,4 @@ namespace MiniSpace.Services.Identity.Api
                 .Build()
                 .RunAsync();
     }
-
-    public class RequestLoggingMiddleware
-    {
-        private readonly RequestDelegate _next;
-
-        public RequestLoggingMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
-        public async Task InvokeAsync(HttpContext context)
-        {
-            // Enable buffering so the stream can be read multiple times
-            context.Request.EnableBuffering();
-
-            // Read the stream as text
-            var bodyAsText = await new StreamReader(context.Request.Body).ReadToEndAsync();
-
-            // Log the request body
-            Console.WriteLine("Received JSON:");
-            Console.WriteLine(bodyAsText);
-
-            // Reset the stream position to allow the next middleware to read it
-            context.Request.Body.Position = 0;
-
-            // Call the next middleware in the pipeline
-            await _next(context);
-        }
-    }
-
-    public class ExceptionHandlingMiddleware
-{
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
-    {
-        try
-        {
-            await _next(context);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unhandled exception occurred.");
-            await HandleExceptionAsync(context, ex);
-        }
-    }
-
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        var statusCode = StatusCodes.Status500InternalServerError;
-        var result = JsonSerializer.Serialize(new { error = exception.Message });
-
-        if (exception is ArgumentException || exception is InvalidOperationException)
-        {
-            statusCode = StatusCodes.Status400BadRequest;
-        }
-
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = statusCode;
-        return context.Response.WriteAsync(result);
-    }
-}
-
-
 }

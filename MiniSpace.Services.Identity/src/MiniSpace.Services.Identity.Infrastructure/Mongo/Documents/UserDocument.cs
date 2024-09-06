@@ -20,5 +20,9 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
         public DateTime? EmailVerifiedAt { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
+
+        public bool IsOnline { get; set; }
+        public string DeviceType { get; set; } 
+        public DateTime? LastActive { get; set; }
     }
 }

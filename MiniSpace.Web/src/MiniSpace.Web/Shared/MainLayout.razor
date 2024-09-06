@@ -47,8 +47,8 @@
                 </div>
             </MudDrawerHeader>
             <MudNavMenu>
-                <MudNavLink Href="/profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
-                <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+                <MudNavLink Href="/home" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+                <MudNavLink Href="/account" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
                 <MudNavLink Href="/account" Icon="@Icons.Material.Filled.AccountBox">Account settings</MudNavLink>
                 <MudNavLink Href="/notifications/all" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
                 <MudNavLink OnClick="SignOut" Icon="@Icons.Material.Filled.ExitToApp">Sign Out</MudNavLink>
@@ -118,11 +118,18 @@
                     <MudNavLink Href="organizations/following" Icon="@Icons.Material.Filled.Group">Organizations I Follow</MudNavLink>
                 </MudNavGroup>
 
+                <MudNavGroup Title="Chats" Icon="@Icons.Material.Filled.Chat" Expanded="true">
+                    <MudNavLink Href="chats/all" Icon="@Icons.Material.Filled.ChatBubbleOutline">All Chats</MudNavLink>
+                    <MudNavLink Href="chats/new" Icon="@Icons.Material.Filled.AddComment">New Chat</MudNavLink>
+                    <MudNavLink Href="chats/history" Icon="@Icons.Material.Filled.History">Chat History</MudNavLink>
+                </MudNavGroup>
+
                 <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
                     <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
                     <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
                     <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
                 </MudNavGroup>
+                
                 <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
                 @if (IdentityService.GetCurrentUserRole() == "admin")
                 {
@@ -138,20 +145,20 @@
 
     <MudMainContent>
         <div style="flex: 1; display: flex; flex-direction: column;">
-           
-                
-                            @Body
+        
+            @Body
                         
-                    @if (_isUserAuthenticated)
-                    {
-                        <div style="max-width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
-                            <NotificationComponent />
-                        </div>
-                    }
+            @if (_isUserAuthenticated)
+            {
+                <div style="max-width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
+                    <NotificationComponent />
+                </div>
+            }
                
-            <FooterComponent />
         </div>
+        <FooterComponent />
     </MudMainContent>
+    
 </MudLayout>
 
 <MudDialog />
@@ -259,7 +266,7 @@
     {
         if (NavigationManager.Uri != NavigationManager.BaseUri)
         {
-            NavigationManager.NavigateTo("/", true);
+            NavigationManager.NavigateTo("/home", true);
         }
         while (NavigationManager.Uri != NavigationManager.BaseUri)
         {
@@ -270,7 +277,7 @@
 
     void NavigateToHome()
     {
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/home");
     }
 
     private string _themeName = "light";

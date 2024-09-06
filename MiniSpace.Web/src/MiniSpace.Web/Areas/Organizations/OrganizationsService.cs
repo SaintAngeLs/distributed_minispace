@@ -187,7 +187,14 @@ namespace MiniSpace.Web.Areas.Organizations
         public Task<IEnumerable<OrganizationGalleryUsersDto>> GetUserFollowedOrganizationsAsync(Guid userId)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<OrganizationGalleryUsersDto>>($"users/{userId}/organizations/follow");
+            return _httpClient.GetAsync<IEnumerable<OrganizationGalleryUsersDto>>($"organizations/users/{userId}/organizations/follow");
+        }
+
+        public async Task<PagedResult<OrganizationRequestDto>> GetOrganizationRequestsAsync(Guid organizationId, int page, int pageSize)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var queryString = $"organizations/{organizationId}/requests?page={page}&pageSize={pageSize}";
+            return await _httpClient.GetAsync<PagedResult<OrganizationRequestDto>>(queryString);
         }
     }
 }

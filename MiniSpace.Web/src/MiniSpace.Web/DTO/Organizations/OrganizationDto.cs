@@ -23,6 +23,7 @@ namespace MiniSpace.Web.DTO.Organizations
         public string Email { get; set; }
 
         public IEnumerable<OrganizationUserDto> Users { get; set; } = new List<OrganizationUserDto>();
+        public OrganizationSettingsDto Settings { get; set; } = new OrganizationSettingsDto();
         public int UserCount => Users?.Count() ?? 0;  
 
         public bool IsExpanded { get; set; } = false;

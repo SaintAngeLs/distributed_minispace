@@ -30,6 +30,7 @@
                     <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
                     <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(7)" Icon="@Icons.Material.Filled.Block">Blocked Users</MudNavLink> 
                 </MudNavMenu>
             </MudItem>
             <MudItem xs="12" sm="8" md="9">
@@ -91,6 +92,10 @@
                     else if (activeTabIndex == 6)
                     {
                         <UserSettingsComponent IsLoading="isLoading" AvailableSettingsDto="availableSettingsDto" SaveUserSettingsAsync="SaveUserSettingsAsync" />
+                    }
+                    else if (activeTabIndex == 7) 
+                    {
+                        <BlockedListComponent />
                     }
                 </MudPaper>
             </MudItem>
@@ -157,7 +162,7 @@
 @code {
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
-        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
         new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
     };
 

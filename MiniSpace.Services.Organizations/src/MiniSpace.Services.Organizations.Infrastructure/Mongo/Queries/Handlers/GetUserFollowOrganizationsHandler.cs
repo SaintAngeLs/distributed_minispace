@@ -34,6 +34,11 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
             var organizationIds = await _userOrganizationsRepository.GetUserOrganizationsAsync(query.UserId);
             var organizationDetailsList = new List<OrganizationGalleryUsersDto>();
 
+            if (organizationIds == null || !organizationIds.Any())
+            {
+                return Enumerable.Empty<OrganizationGalleryUsersDto>();
+            }
+
             foreach (var organizationId in organizationIds)
             {
                 var organization = await _organizationRepository.GetAsync(organizationId);

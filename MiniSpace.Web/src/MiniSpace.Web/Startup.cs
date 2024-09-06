@@ -29,6 +29,7 @@ using MiniSpace.Web.Areas.MediaFiles;
 using MiniSpace.Web.Areas.Reactions;
 using MiniSpace.Web.Areas.Reports;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using MiniSpace.Web.Areas.Communication;
 
 namespace MiniSpace.Web
 {
@@ -105,9 +106,11 @@ namespace MiniSpace.Web
             services.AddScoped<IFriendsService, FriendsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
             services.AddScoped<SignalRService>();
+            services.AddScoped<ChatSignalRService>();
             services.AddScoped<IReactionsService, ReactionsService>();
             services.AddScoped<ICommentsService, CommentsService>();
             services.AddScoped<IReportsService, ReportsService>();
+            services.AddScoped<ICommunicationService, CommunicationService>();
 
         }
 

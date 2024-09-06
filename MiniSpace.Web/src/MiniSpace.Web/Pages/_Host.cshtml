@@ -219,9 +219,95 @@
             });
         }
 
+
+        function initializeCommunicationSignalR() {
+            if (!userId) return;
+
+            const communicationConnection = new signalR.HubConnectionBuilder()
+                .withUrl(`http://localhost:5016/chatHub?userId=${userId}`)
+                .withAutomaticReconnect([0, 2000, 10000, 30000]) // Retry delays
+                .build();
+
+            communicationConnection.on("ReceiveMessage", function (jsonMessage) {
+                console.log("Message received: ", jsonMessage);
+                DotNet.invokeMethodAsync('MiniSpace.Web', 'ReceiveMessage', jsonMessage);
+            });
+
+            communicationConnection.start().then(function () {
+                console.log("Communication SignalR connection established.");
+            }).catch(function (err) {
+                console.error("Error establishing SignalR connection: ", err.toString());
+            });
+
+            communicationConnection.onreconnecting((error) => {
+                console.warn(`Connection lost due to error "${error}". Reconnecting.`);
+            });
+
+            communicationConnection.onreconnected((connectionId) => {
+                console.log(`Connection reestablished. Connected with connectionId "${connectionId}".`);
+            });
+
+            communicationConnection.onclose((error) => {
+                console.error(`Connection closed due to error "${error}". Attempting to reconnect...`);
+                setTimeout(() => initializeCommunicationSignalR(), 5000);
+            });
+        }
+
+
         window.getSystemTheme = () => {
             return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         };
+
+        window.scrollToBottom = function (elementId) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                element.scrollTop = element.scrollHeight;
+            }
+        };
+
+       window.initializeInfiniteScroll = (element) => {
+    if (!element || !(element instanceof Element)) {
+        console.warn('Element for infinite scroll is not defined or is not a valid DOM element.');
+        return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Call Blazor method to load more comments
+                DotNet.invokeMethodAsync('MiniSpace.Web', 'LoadMoreCommentsAsync')
+                    .catch(err => console.error('Error invoking Blazor method:', err));
+            }
+        });
+    }, {
+        threshold: 1.0
+    });
+
+    // Disconnect any existing observer to avoid multiple triggers
+    const lastChild = element.lastElementChild;
+    if (lastChild) {
+        observer.observe(lastChild);
+    }
+};
+
+window.getDeviceType = () => {
+    const ua = navigator.userAgent;
+    if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua)) {
+        return "Mobile";
+    }
+    if (/tablet|ipad/i.test(ua)) {
+        return "Tablet";
+    }
+    return "Desktop";
+};
+
+
+
+
+
+
+
+
 
 
     </script>
@@ -230,7 +316,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="_framework/blazor.server.js"></script>
-    <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="_content/MudBlazor.Markdown/MudBlazor.Markdown.min.js"></script>
     <script src="js/spotlight/spotlight.bundle.js"></script>

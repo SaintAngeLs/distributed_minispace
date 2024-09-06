@@ -46,10 +46,8 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
         {
             _logger.LogInformation("Handling GetUserFeed query: {Query}", JsonConvert.SerializeObject(query));
 
-            // Retrieve the user details
             var user = await _studentsServiceClient.GetStudentByIdAsync(query.UserId);
 
-            // Step 1: Retrieve all posts without pagination (we'll handle ranking and pagination manually)
             var allPostsRequest = new BrowseRequest
             {
                 SortBy = new List<string> { query.SortBy },
@@ -63,63 +61,69 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 return new PagedResponse<PostDto>(Enumerable.Empty<PostDto>(), query.PageNumber, query.PageSize, 0);
             }
 
-            // Step 2: Retrieve user interactions (comments and reactions)
             var userComments = await _userCommentsHistoryRepository.GetUserCommentsAsync(query.UserId);
             var userReactions = await _userReactionsHistoryRepository.GetUserReactionsAsync(query.UserId);
 
-            // Step 3: Analyze user interactions to infer interests and calculate coefficients, including user's interests and languages
             var userInterests = AnalyzeUserInteractions(user, userComments, userReactions);
 
-            // Step 4: Rank all posts by relevance to user interests
-            var rankedPosts = await _postRecommendationService.RankPostsByUserInterestAsync(query.UserId, allPostsResult.Items, userInterests);
+            IEnumerable<(PostDto Post, double Score)> rankedPosts;
 
-            // Step 5: Combine ranked posts with remaining posts, prioritizing more relevant posts
+            if (!userInterests.Any() && !userComments.Any() && !userReactions.Any())
+            {
+                _logger.LogInformation("User {UserId} has no interactions or defined interests, generating a random feed.", query.UserId);
+                rankedPosts = GenerateRandomFeed(allPostsResult.Items);
+            }
+            else
+            {
+                rankedPosts = await _postRecommendationService.RankPostsByUserInterestAsync(query.UserId, allPostsResult.Items, userInterests);
+            }
+
             var combinedPosts = CombineRankedAndUnrankedPosts(rankedPosts, allPostsResult.Items);
 
-            // Step 6: Paginate the combined posts
             var pagedPosts = combinedPosts
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();
 
-            // Log the result
             _logger.LogInformation("User {UserId} feed generated with {PostCount} posts.", query.UserId, pagedPosts.Count);
 
             return new PagedResponse<PostDto>(pagedPosts, query.PageNumber, query.PageSize, combinedPosts.Count());
         }
 
-
         private IDictionary<string, double> AnalyzeUserInteractions(UserDto user, IEnumerable<Comment> userComments, IEnumerable<Reaction> userReactions)
         {
             var interestKeywords = new Dictionary<string, double>();
 
-            // Include user interests in the analysis
-            foreach (var interest in user.Interests)
+            if (user.Interests != null)
             {
-                if (interestKeywords.ContainsKey(interest))
+                foreach (var interest in user.Interests)
                 {
-                    interestKeywords[interest] += 1;
-                }
-                else
-                {
-                    interestKeywords[interest] = 1;
+                    if (interestKeywords.ContainsKey(interest))
+                    {
+                        interestKeywords[interest] += 1;
+                    }
+                    else
+                    {
+                        interestKeywords[interest] = 1;
+                    }
                 }
             }
 
-            // Include user languages in the analysis
-            foreach (var language in user.Languages)
+            if (user.Languages != null)
             {
-                if (interestKeywords.ContainsKey(language))
+                foreach (var language in user.Languages)
                 {
-                    interestKeywords[language] += 1;
-                }
-                else
-                {
-                    interestKeywords[language] = 1;
+                    if (interestKeywords.ContainsKey(language))
+                    {
+                        interestKeywords[language] += 1;
+                    }
+                    else
+                    {
+                        interestKeywords[language] = 1;
+                    }
                 }
             }
 
-            // Analyze user comments
             foreach (var comment in userComments)
             {
                 var words = comment.TextContent.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -136,7 +140,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Analyze user reactions
             foreach (var reaction in userReactions)
             {
                 var reactionType = reaction.Type;
@@ -150,24 +153,34 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
                 }
             }
 
-            // Normalize coefficients to sum to 1
             var total = interestKeywords.Values.Sum();
-            var normalizedInterests = interestKeywords.ToDictionary(kvp => kvp.Key, kvp => kvp.Value / total);
+            if (total > 0)
+            {
+                var normalizedInterests = interestKeywords.ToDictionary(kvp => kvp.Key, kvp => kvp.Value / total);
+                _logger.LogInformation("Inferred user interests with coefficients: {Interests}", string.Join(", ", normalizedInterests.Select(kvp => $"{kvp.Key}: {kvp.Value:F2}")));
+                return normalizedInterests;
+            }
 
-            _logger.LogInformation("Inferred user interests with coefficients: {Interests}", string.Join(", ", normalizedInterests.Select(kvp => $"{kvp.Key}: {kvp.Value:F2}")));
+            return interestKeywords; 
+        }
 
-            return normalizedInterests;
+        private IEnumerable<(PostDto Post, double Score)> GenerateRandomFeed(IEnumerable<PostDto> allPosts)
+        {
+            var random = new Random();
+            return allPosts
+                .OrderBy(p => random.NextDouble())
+                .Select(p => (p, Score: random.NextDouble())) 
+                .Take(100); 
         }
 
 
         private IEnumerable<PostDto> CombineRankedAndUnrankedPosts(IEnumerable<(PostDto Post, double Score)> rankedPosts, IEnumerable<PostDto> allPosts)
         {
-            // Order posts by the relevance score first and then by publish date if the score is equal
             var rankedPostIds = rankedPosts.Select(rp => rp.Post.Id).ToHashSet();
             var unrankedPosts = allPosts.Where(p => !rankedPostIds.Contains(p.Id));
 
             return rankedPosts.Select(rp => rp.Post)
-                              .Concat(unrankedPosts.OrderByDescending(p => p.PublishDate));  // Fallback to publish date for unranked posts
+                              .Concat(unrankedPosts.OrderByDescending(p => p.PublishDate));  
         }
     }
 }

@@ -38,12 +38,14 @@ namespace MiniSpace.Services.Organizations.Api
                         .Get<GetChildrenOrganizations, PagedResult<OrganizationDto>>("organizations/{organizationId}/children")
                         .Get<GetAllChildrenOrganizations, IEnumerable<Guid>>("organizations/{organizationId}/children/all")
                         // the organizations users is the organizer
-                        .Get<GetPaginatedUserOrganizations, PagedResult<OrganizationDto>>("users/{userId}/organizations")
+                        .Get<GetPaginatedUserOrganizations, PagedResult<OrganizationDto>>("organizations/users/{userId}/organizations")
                         // organizations, user is a part of
-                        .Get<GetUserFollowOrganizations, IEnumerable<OrganizationGalleryUsersDto>>("users/{userId}/organizations/follow")
+                        .Get<GetUserFollowOrganizations, IEnumerable<OrganizationGalleryUsersDto>>("organizations/users/{userId}/organizations/follow")
                         .Get<GetOrganizationWithGalleryAndUsers, OrganizationGalleryUsersDto>("organizations/{organizationId}/details/gallery-users")
                         .Get<GetOrganizationRoles, IEnumerable<RoleDto>>("organizations/{organizationId}/roles")
                         .Get<GetPaginatedOrganizations, PagedResult<OrganizationDto>>("organizations/paginated")
+                        .Get<GetPaginatedOrganizationRequests, PagedResult<OrganizationRequestDto>>("organizations/{organizationId}/requests")
+
                          
                         .Post<CreateOrganization>("organizations",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"organizations/{cmd.OrganizationId}"))

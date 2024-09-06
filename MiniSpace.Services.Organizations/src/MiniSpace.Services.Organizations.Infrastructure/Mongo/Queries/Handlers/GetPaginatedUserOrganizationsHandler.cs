@@ -72,6 +72,7 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
                 Telephone = organization.Telephone,
                 Email = organization.Email,
                 Users = members?.Select(user => new UserDto(user)).ToList(),
+                Settings = organization.Settings != null ? new OrganizationSettingsDto(organization.Settings) : null // Include settings
             };
         }
     }
