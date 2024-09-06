@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace MiniSpace.Services.Notifications.Core.Entities
 {
-    public class StudentNotifications
+    public class UserNotifications
     {
         public Guid UserId { get; private set; }
         private List<Notification> _notifications;
 
         public IEnumerable<Notification> Notifications => _notifications.AsReadOnly();
 
-        public StudentNotifications(Guid userId)
+        public UserNotifications(Guid userId)
         {
             UserId = userId;
             _notifications = new List<Notification>();
