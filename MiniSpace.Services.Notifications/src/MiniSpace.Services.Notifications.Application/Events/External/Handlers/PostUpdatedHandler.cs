@@ -87,7 +87,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await NotifyOrganizer(eventDetails.Organizer, eventDetails, post);
         }
 
-        private async Task NotifyStudent(StudentDto student, EventDto eventDetails, PostDto post)
+        private async Task NotifyStudent(UserDto student, EventDto eventDetails, PostDto post)
         {
             var notificationMessage = $"An updated post is available for an event you are interested in: '{eventDetails.Name}'.";
             var detailsHtml = $"<p>{notificationMessage} Check out the updated post details here: {post.TextContent}</p>";

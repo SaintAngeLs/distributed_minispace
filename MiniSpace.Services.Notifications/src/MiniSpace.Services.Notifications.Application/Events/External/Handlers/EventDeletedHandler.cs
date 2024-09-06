@@ -74,7 +74,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var studentParticipant in eventParticipants.SignedUpStudents)
             {
-                StudentDto student;
+                UserDto student;
                 try
                 {
                     student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);

@@ -33,7 +33,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(EventCreated eventCreated, CancellationToken cancellationToken)
         {
-            IEnumerable<StudentDto> users;
+            IEnumerable<UserDto> users;
 
             try
             {
