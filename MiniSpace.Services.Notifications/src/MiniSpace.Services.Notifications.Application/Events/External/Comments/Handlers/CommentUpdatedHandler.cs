@@ -1,15 +1,17 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Convey.CQRS.Events;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
-using System.Threading.Tasks;
-using System.Threading;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SignalR;
 using MiniSpace.Services.Notifications.Application.Hubs;
 using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Events.External.Comments;
+using MiniSpace.Services.Notifications.Application.Dto.Events;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -87,7 +89,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 message: $"Your updated comment on the event '{eventDetails.Name}' has been processed.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
-                updatedAt: DateTime.UtcNow, 
+                updatedAt: DateTime.UtcNow,
                 relatedEntityId: eventArgs.CommentId,
                 eventType: NotificationEventType.CommentUpdated
             );
@@ -109,6 +111,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             await _messageBroker.PublishAsync(notificationUpdatedEvent);
 
+            // Broadcast the updated notification via SignalR
             var notificationDto = new NotificationDto
             {
                 UserId = commentDetails.StudentId,
@@ -134,7 +137,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 message: $"{commentDetails.StudentName} has updated their comment on your event '{eventDetails.Name}'.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
-                updatedAt: DateTime.UtcNow, 
+                updatedAt: DateTime.UtcNow,
                 relatedEntityId: eventArgs.CommentId,
                 eventType: NotificationEventType.CommentUpdated
             );
@@ -142,6 +145,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             organizerNotifications.AddNotification(organizerNotification);
             await _studentNotificationsRepository.AddOrUpdateAsync(organizerNotifications);
 
+            // Prepare and send organizer notification details HTML
             var organizerNotificationDetailsHtml = $"<p>{commentDetails.StudentName} updated their comment on your event '{eventDetails.Name}': {commentDetails.CommentContext}</p>";
 
             var organizerNotificationUpdatedEvent = new NotificationCreated(

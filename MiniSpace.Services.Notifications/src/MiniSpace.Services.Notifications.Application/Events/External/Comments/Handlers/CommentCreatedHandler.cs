@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Hubs;
 using MiniSpace.Services.Notifications.Application.Dto;
 using Microsoft.AspNetCore.SignalR;
+using MiniSpace.Services.Notifications.Core.Entities;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.Handlers
 {
@@ -16,6 +17,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
     {
         private readonly ICommentsServiceClient _commentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
+        private readonly IPostsServiceClient _postsServiceClient;
         private readonly IOrganizationsServiceClient _organizationsServiceClient;
         private readonly IUserNotificationsRepository _userNotificationsRepository;
         private readonly ILogger<CommentCreatedHandler> _logger;
@@ -24,6 +26,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
         public CommentCreatedHandler(
             ICommentsServiceClient commentsServiceClient,
             IEventsServiceClient eventsServiceClient,
+            IPostsServiceClient postsServiceClient,
             IOrganizationsServiceClient organizationsServiceClient,
             IUserNotificationsRepository userNotificationsRepository,
             ILogger<CommentCreatedHandler> logger,
@@ -31,6 +34,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
         {
             _commentsServiceClient = commentsServiceClient;
             _eventsServiceClient = eventsServiceClient;
+            _postsServiceClient = postsServiceClient;
             _organizationsServiceClient = organizationsServiceClient;
             _userNotificationsRepository = userNotificationsRepository;
             _logger = logger;
@@ -41,6 +45,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
         {
             try
             {
+                // Fetch comment details from the comment service
                 var commentDetails = await _commentsServiceClient.GetCommentAsync(@event.CommentId);
                 if (commentDetails == null)
                 {
@@ -48,30 +53,37 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
                     return;
                 }
 
+                // Initialize entity owner and name variables
                 var entityOwnerId = Guid.Empty;
                 string entityName = string.Empty;
 
+                // Check if it's an event or post
                 if (@event.CommentContext.Equals("OrganizationEvent", StringComparison.OrdinalIgnoreCase))
                 {
+                    // Fetch organization event details
                     var organizationEvent = await _eventsServiceClient.GetEventAsync(@event.ContextId);
                     if (organizationEvent != null)
                     {
-                        entityOwnerId = organizationEvent.Organizer.Id;
+                        entityOwnerId = organizationEvent.Organizer.OrganizationId != Guid.Empty 
+                            ? organizationEvent.Organizer.OrganizationId 
+                            : organizationEvent.Organizer.Id;
                         entityName = organizationEvent.Name;
                     }
                 }
                 else if (@event.CommentContext.Equals("OrganizationPost", StringComparison.OrdinalIgnoreCase))
                 {
-                    var organizationPost = await _organizationsServiceClient.GetOrganizationPostAsync(@event.ContextId);
+                    // Fetch organization post details
+                    var organizationPost = await  _postsServiceClient.GetPostAsync(@event.ContextId);
                     if (organizationPost != null)
                     {
-                        entityOwnerId = organizationPost.Organization.OwnerId;
-                        entityName = organizationPost.Title;
+                        entityOwnerId = organizationPost.UserId.HasValue ? organizationPost.UserId.Value : Guid.Empty;
+                        entityName = organizationPost.TextContent;
                     }
                 }
                 else if (@event.CommentContext.Equals("UserEvent", StringComparison.OrdinalIgnoreCase))
                 {
-                    var userEvent = await _eventsServiceClient.GetUserEventAsync(@event.ContextId);
+                    // Fetch user event details
+                    var userEvent = await _eventsServiceClient.GetEventAsync(@event.ContextId);
                     if (userEvent != null)
                     {
                         entityOwnerId = userEvent.Organizer.Id;
@@ -80,11 +92,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
                 }
                 else if (@event.CommentContext.Equals("UserPost", StringComparison.OrdinalIgnoreCase))
                 {
-                    var userPost = await _commentsServiceClient.GetUserPostAsync(@event.ContextId);
+                    // Fetch user post details
+                    var userPost = await _postsServiceClient.GetPostAsync(@event.ContextId);
                     if (userPost != null)
                     {
-                        entityOwnerId = userPost.UserId;
-                        entityName = userPost.Title;
+                        entityOwnerId = userPost.UserId.HasValue ? userPost.UserId.Value : Guid.Empty;
+                        entityName = userPost.TextContent;
                     }
                 }
                 else
