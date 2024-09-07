@@ -101,69 +101,9 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
             };
         }
 
-       public static Student AsEntity(this StudentDocument document)
+        public static UserNotifications AsEntity(this UserNotificationsDocument document)
         {
-            return new Student(
-                document.Id,
-                document.Email,
-                document.FirstName,
-                document.LastName,
-                document.NumberOfFriends,
-                document.ProfileImage,
-                document.Description,
-                document.DateOfBirth,
-                document.EmailNotifications,
-                document.IsBanned,
-                document.IsOrganizer,
-                document.State,
-                document.CreatedAt
-            );
-        }
-
-        public static StudentDocument AsDocument(this Student entity)
-        {
-            return new StudentDocument
-            {
-                Id = entity.Id,
-                Email = entity.Email,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                NumberOfFriends = entity.NumberOfFriends,
-                ProfileImage = entity.ProfileImage,
-                Description = entity.Description,
-                DateOfBirth = entity.DateOfBirth,
-                EmailNotifications = entity.EmailNotifications,
-                IsBanned = entity.IsBanned,
-                IsOrganizer = entity.IsOrganizer,
-                State = entity.State,
-                CreatedAt = entity.CreatedAt,
-                InterestedInEvents = entity.InterestedInEvents,
-                SignedUpEvents = entity.SignedUpEvents
-            };
-        }
-
-        public static StudentDto AsDto(this StudentDocument document)
-        {
-            return new StudentDto
-            {
-                Id = document.Id,
-                Email = document.Email,
-                FirstName = document.FirstName,
-                LastName = document.LastName,
-                Description = document.Description,
-                DateOfBirth = document.DateOfBirth,
-                EmailNotifications = document.EmailNotifications,
-                IsBanned = document.IsBanned,
-                State = document.State,
-                CreatedAt = document.CreatedAt,
-                InterestedInEvents = document.InterestedInEvents,
-                SignedUpEvents = document.SignedUpEvents
-            };
-        }
-
-        public static StudentNotifications AsEntity(this StudentNotificationsDocument document)
-        {
-            var studentNotifications = new StudentNotifications(document.StudentId);
+            var studentNotifications = new UserNotifications(document.UserId);
             foreach (var notificationDocument in document.Notifications)
             {
                 var notification = notificationDocument.AsEntity(); 
@@ -172,7 +112,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
             return studentNotifications;
         }
 
-        public static StudentNotificationsDocument AsDocument(this StudentNotifications entity)
+        public static UserNotificationsDocument AsDocument(this UserNotifications entity)
         {
             var notifications = new List<NotificationDocument>();
             foreach (var notification in entity.Notifications) 
@@ -180,15 +120,15 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Documents
                 notifications.Add(notification.AsDocument()); 
             }
 
-            return new StudentNotificationsDocument
+            return new UserNotificationsDocument
             {
                 Id = Guid.NewGuid(), 
-                StudentId = entity.StudentId,
+                UserId = entity.UserId,
                 Notifications = notifications
             };
         }
 
-        public static IEnumerable<NotificationDto> AsDto(this StudentNotificationsDocument document)
+        public static IEnumerable<NotificationDto> AsDto(this UserNotificationsDocument document)
         {
             return document.Notifications.Select(nd => nd.AsDto()); 
         }

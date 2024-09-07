@@ -55,10 +55,9 @@ namespace MiniSpace.Services.Notifications.Infrastructure
             // builder.Services.AddSingleton<ISignalRConnectionManager, SignalRConnectionManager>();
             builder.Services.AddTransient<INotificationRepository, NotificationMongoRepository>();
             builder.Services.AddTransient<IFriendEventRepository, FriendEventMongoRepository>();
-            builder.Services.AddTransient<IStudentNotificationsRepository, StudentNotificationsMongoRepository>();
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
-            builder.Services.AddTransient<IExtendedStudentNotificationsRepository, StudentNotificationsMongoRepository>();
-            builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            builder.Services.AddTransient<IUserNotificationsRepository, UserNotificationsMongoRepository>();
+            builder.Services.AddTransient<IExtendedUserNotificationsRepository, UserNotificationsMongoRepository>();
+            builder.Services.AddSingleton<IBaseUrlService, BaseUrlService>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
@@ -93,8 +92,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure
                 .AddHandlersLogging()
                 .AddMongoRepository<NotificationDocument, Guid>("notifications")
                 .AddMongoRepository<FriendEventDocument, Guid>("friend-service")
-                .AddMongoRepository<StudentDocument, Guid>("students")
-                .AddMongoRepository<StudentNotificationsDocument, Guid>("students-notifications")
+                .AddMongoRepository<UserNotificationsDocument, Guid>("user_notifications")
                 // .AddMongoRepository<FriendEventDocument, Guid>("events-service")
                 .AddSignalRInfrastructure() 
                 .AddWebApiSwaggerDocs()

@@ -19,10 +19,10 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             _url = options.Services["students"];
         }
         
-        public Task<StudentDto> GetAsync(Guid id)
-            => _httpClient.GetAsync<StudentDto>($"{_url}/students/{id}");
+        public Task<UserDto> GetAsync(Guid id)
+            => _httpClient.GetAsync<UserDto>($"{_url}/students/{id}");
 
-        public async Task<IEnumerable<StudentDto>> GetAllAsync()
+        public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
             var response = await _httpClient.GetAsync($"{_url}/students");
             var json = await response.Content.ReadAsStringAsync();
@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             var jsonDocument = JsonDocument.Parse(json);
             if (jsonDocument.RootElement.TryGetProperty("results", out JsonElement resultsElement))
             {
-                var students = JsonSerializer.Deserialize<IEnumerable<StudentDto>>(resultsElement.GetRawText(), new JsonSerializerOptions
+                var students = JsonSerializer.Deserialize<IEnumerable<UserDto>>(resultsElement.GetRawText(), new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
