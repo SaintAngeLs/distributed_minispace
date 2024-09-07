@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class EventParticipantAddedHandler : IEventHandler<EventParticipantAdded>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly ILogger<EventParticipantAddedHandler> _logger;
@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public EventParticipantAddedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
             IEventsServiceClient eventsServiceClient,
             ILogger<EventParticipantAddedHandler> logger,
@@ -40,11 +40,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(EventParticipantAdded eventArgs, CancellationToken cancellationToken)
         {
-            var participantNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.ParticipantId);
+            var participantNotifications = await _studentNotificationsRepository.GetByUserIdAsync(eventArgs.ParticipantId);
             var participant = await _studentsServiceClient.GetAsync(eventArgs.ParticipantId);
             if (participantNotifications == null)
             {
-                participantNotifications = new StudentNotifications(eventArgs.ParticipantId);
+                participantNotifications = new UserNotifications(eventArgs.ParticipantId);
             }
 
             var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);
@@ -109,10 +109,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     details: detailsHtmlForOrganizer
                 );
 
-                var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventDetails.Organizer.Id);
+                var organizerNotifications = await _studentNotificationsRepository.GetByUserIdAsync(eventDetails.Organizer.Id);
                 if (organizerNotifications == null)
                 {
-                    organizerNotifications = new StudentNotifications(eventDetails.Organizer.Id);
+                    organizerNotifications = new UserNotifications(eventDetails.Organizer.Id);
                 }
 
                 organizerNotifications.AddNotification(organizerNotification);

@@ -12,7 +12,7 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 {
     public class CreateNotificationHandler : ICommandHandler<CreateNotification>
     {
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IFriendsServiceClient _friendsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IPostsServiceClient _postsServiceClient;
@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
         private readonly IBaseUrlService _baseUrlService;
 
         public CreateNotificationHandler(
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IFriendsServiceClient friendsServiceClient,
             IEventsServiceClient eventsServiceClient,
             IPostsServiceClient postsServiceClient,
@@ -108,10 +108,10 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
                     null
                 );
 
-                var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(userId);
+                var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(userId);
                 if (studentNotifications == null)
                 {
-                    studentNotifications = new StudentNotifications(userId);
+                    studentNotifications = new UserNotifications(userId);
                 }
 
                 studentNotifications.AddNotification(notification);

@@ -12,11 +12,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class SignedUpHandler : IEventHandler<SignedUp>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
 
         public SignedUpHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository)
+            IUserNotificationsRepository studentNotificationsRepository)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(SignedUp @event, CancellationToken cancellationToken)
         {
-            var userNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.UserId) ?? new StudentNotifications(@event.UserId);
+            var userNotifications = await _studentNotificationsRepository.GetByUserIdAsync(@event.UserId) ?? new UserNotifications(@event.UserId);
 
             var welcomeMessage = $"Welcome to MiniSpace, {@event.FirstName} {@event.LastName}!";
             

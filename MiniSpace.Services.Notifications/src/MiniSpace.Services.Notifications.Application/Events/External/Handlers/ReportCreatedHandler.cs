@@ -16,14 +16,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class ReportCreatedHandler : IEventHandler<ReportCreated>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ILogger<ReportCreatedHandler> _logger;
 
         public ReportCreatedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
             IHubContext<NotificationHub> hubContext,
             ILogger<ReportCreatedHandler> logger)
@@ -63,7 +63,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         private async Task<Notification> CreateNotificationForUser(Guid userId, ReportCreated eventArgs, string message)
         {
-            var notifications = await _studentNotificationsRepository.GetByStudentIdAsync(userId) ?? new StudentNotifications(userId);
+            var notifications = await _studentNotificationsRepository.GetByUserIdAsync(userId) ?? new UserNotifications(userId);
             var notification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: userId,

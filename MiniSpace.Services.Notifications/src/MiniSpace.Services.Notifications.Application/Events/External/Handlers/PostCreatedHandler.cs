@@ -17,7 +17,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class PostCreatedHandler : IEventHandler<PostCreated>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IPostsServiceClient _postsServiceClient;
         private readonly IStudentsServiceClient _studentsServiceClient;
@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public PostCreatedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IEventsServiceClient eventsServiceClient,
             IPostsServiceClient postsServiceClient,
             IStudentsServiceClient studentsServiceClient,
@@ -106,10 +106,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             _logger.LogInformation($"Creating post creation notification for user: {student.Id}");
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(student.Id);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(student.Id);
             if (studentNotifications == null)
             {
-                studentNotifications = new StudentNotifications(student.Id);
+                studentNotifications = new UserNotifications(student.Id);
             }
 
             studentNotifications.AddNotification(notification);
@@ -161,10 +161,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             _logger.LogInformation($"Creating post creation notification for organizer: {organizer.Id}");
 
-            var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(organizer.Id);
+            var organizerNotifications = await _studentNotificationsRepository.GetByUserIdAsync(organizer.Id);
             if (organizerNotifications == null)
             {
-                organizerNotifications = new StudentNotifications(organizer.Id);
+                organizerNotifications = new UserNotifications(organizer.Id);
             }
 
             organizerNotifications.AddNotification(notification);

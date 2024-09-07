@@ -13,13 +13,13 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class TwoFactorCodeGeneratedHandler : IEventHandler<TwoFactorCodeGenerated>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly ILogger<TwoFactorCodeGeneratedHandler> _logger;
 
         public TwoFactorCodeGeneratedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
             ILogger<TwoFactorCodeGeneratedHandler> logger)
         {
@@ -38,8 +38,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 return;
             }
 
-            var userNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.UserId) 
-                                    ?? new StudentNotifications(@event.UserId);
+            var userNotifications = await _studentNotificationsRepository.GetByUserIdAsync(@event.UserId) 
+                                    ?? new UserNotifications(@event.UserId);
 
             var notificationMessage = $"Your 2FA code is {@event.Code}. Please use this to complete your sign-in.";
 

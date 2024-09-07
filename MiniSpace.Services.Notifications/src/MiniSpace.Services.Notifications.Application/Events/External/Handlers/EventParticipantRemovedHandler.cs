@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class EventParticipantRemovedHandler : IEventHandler<EventParticipantRemoved>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly ILogger<EventParticipantRemovedHandler> _logger;
@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public EventParticipantRemovedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
             IEventsServiceClient eventsServiceClient,
             ILogger<EventParticipantRemovedHandler> logger,
@@ -40,11 +40,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(EventParticipantRemoved eventArgs, CancellationToken cancellationToken)
         {
-            var participantNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.Participant);
+            var participantNotifications = await _studentNotificationsRepository.GetByUserIdAsync(eventArgs.Participant);
             var participant = await _studentsServiceClient.GetAsync(eventArgs.Participant);
             if (participantNotifications == null)
             {
-                participantNotifications = new StudentNotifications(eventArgs.Participant);
+                participantNotifications = new UserNotifications(eventArgs.Participant);
             }
 
             var eventDetails = await _eventsServiceClient.GetEventAsync(eventArgs.EventId);

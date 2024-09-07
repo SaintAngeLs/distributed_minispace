@@ -11,11 +11,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class EmailVerifiedHandler : IEventHandler<EmailVerified>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
 
         public EmailVerifiedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository)
+            IUserNotificationsRepository studentNotificationsRepository)
         {
             _messageBroker = messageBroker;
             _studentNotificationsRepository = studentNotificationsRepository;
@@ -23,8 +23,8 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(EmailVerified @event, CancellationToken cancellationToken)
         {
-            var userNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.UserId) 
-                                     ?? new StudentNotifications(@event.UserId);
+            var userNotifications = await _studentNotificationsRepository.GetByUserIdAsync(@event.UserId) 
+                                     ?? new UserNotifications(@event.UserId);
 
             var emailVerifiedMessage = $"Your email {@event.Email} has been successfully verified!";
             

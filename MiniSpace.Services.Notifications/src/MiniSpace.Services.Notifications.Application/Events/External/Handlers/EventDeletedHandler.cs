@@ -17,7 +17,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     {
         private readonly IMessageBroker _messageBroker;
         private readonly IEventsServiceClient _eventsServiceClient;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly ILogger<EventDeletedHandler> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
@@ -25,7 +25,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         public EventDeletedHandler(
             IMessageBroker messageBroker,
             IEventsServiceClient eventsServiceClient,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
             ILogger<EventDeletedHandler> logger,
             IHubContext<NotificationHub> hubContext)
@@ -104,10 +104,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     eventType: NotificationEventType.EventDeleted
                 );
 
-                var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(student.Id);
+                var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(student.Id);
                 if (studentNotifications == null)
                 {
-                    studentNotifications = new StudentNotifications(student.Id);
+                    studentNotifications = new UserNotifications(student.Id);
                 }
 
                 studentNotifications.AddNotification(notification);

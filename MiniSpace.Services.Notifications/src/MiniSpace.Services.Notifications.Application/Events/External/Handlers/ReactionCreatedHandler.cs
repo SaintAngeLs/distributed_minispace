@@ -17,7 +17,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class ReactionCreatedHandler : IEventHandler<ReactionCreated>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IReactionsServiceClient _reactionsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IPostsServiceClient _postsServiceClient;
@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public ReactionCreatedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IReactionsServiceClient reactionsServiceClient,
             IEventsServiceClient eventsServiceClient,
             IPostsServiceClient postsServiceClient,
@@ -53,10 +53,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 return;
             }
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(reaction.StudentId);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(reaction.StudentId);
             if (studentNotifications == null)
             {
-                studentNotifications = new StudentNotifications(reaction.StudentId);
+                studentNotifications = new UserNotifications(reaction.StudentId);
             }
 
             var notificationMessage = "Your reaction has been recorded.";
@@ -118,10 +118,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             if (organizerId.HasValue)
             {
-                var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(organizerId.Value);
+                var organizerNotifications = await _studentNotificationsRepository.GetByUserIdAsync(organizerId.Value);
                 if (organizerNotifications == null)
                 {
-                    organizerNotifications = new StudentNotifications(organizerId.Value);
+                    organizerNotifications = new UserNotifications(organizerId.Value);
                 }
 
                 var organizerNotificationMessage = "A new reaction has been added to your content.";

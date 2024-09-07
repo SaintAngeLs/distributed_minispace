@@ -18,7 +18,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly ICommentsServiceClient _commentsServiceClient;
         private readonly ILogger<CommentCreatedHandler> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
@@ -27,7 +27,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             IMessageBroker messageBroker,
             IStudentsServiceClient studentsServiceClient,
             IEventsServiceClient eventsServiceClient,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             ICommentsServiceClient commentsServiceClient,
             ILogger<CommentCreatedHandler> logger,
             IHubContext<NotificationHub> hubContext)
@@ -75,10 +75,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 throw;
             }
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(commentDetails.StudentId);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(commentDetails.StudentId);
             if (studentNotifications == null)
             {
-                studentNotifications = new StudentNotifications(commentDetails.StudentId);
+                studentNotifications = new UserNotifications(commentDetails.StudentId);
             }
 
             var userNotification = new Notification(
@@ -122,10 +122,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
             _logger.LogInformation("Broadcasted SignalR notification to all users.");
 
-            var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventDetails.Organizer.Id);
+            var organizerNotifications = await _studentNotificationsRepository.GetByUserIdAsync(eventDetails.Organizer.Id);
             if (organizerNotifications == null)
             {
-                organizerNotifications = new StudentNotifications(eventDetails.Organizer.Id);
+                organizerNotifications = new UserNotifications(eventDetails.Organizer.Id);
             }
 
             var organizerNotification = new Notification(

@@ -17,13 +17,13 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
 
         public EventCreatedHandler(
             IMessageBroker messageBroker,
             IStudentsServiceClient studentsServiceClient,
             IEventsServiceClient eventsServiceClient,
-            IStudentNotificationsRepository studentNotificationsRepository)
+            IUserNotificationsRepository studentNotificationsRepository)
         {
             _messageBroker = messageBroker;
             _studentsServiceClient = studentsServiceClient;
@@ -79,10 +79,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     eventType: NotificationEventType.NewEvent
                 );
 
-                var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(user.Id);
+                var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(user.Id);
                 if (studentNotifications == null)
                 {
-                    studentNotifications = new StudentNotifications(user.Id);
+                    studentNotifications = new UserNotifications(user.Id);
                 }
 
 

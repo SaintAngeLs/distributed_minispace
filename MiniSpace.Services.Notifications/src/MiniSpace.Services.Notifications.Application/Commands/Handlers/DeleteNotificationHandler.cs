@@ -10,11 +10,11 @@ namespace MiniSpace.Services.Notifications.Application.Commands.Handlers
 {
     public class DeleteNotificationHandler : ICommandHandler<DeleteNotification>
     {
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public DeleteNotificationHandler(IStudentNotificationsRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public DeleteNotificationHandler(IUserNotificationsRepository notificationRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _studentNotificationsRepository = notificationRepository;
             _eventMapper = eventMapper;

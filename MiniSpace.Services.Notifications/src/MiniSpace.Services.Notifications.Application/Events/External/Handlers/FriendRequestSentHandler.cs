@@ -17,14 +17,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class FriendRequestSentHandler : IEventHandler<FriendRequestSent>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly ILogger<FriendRequestSentHandler> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
 
         public FriendRequestSentHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
             ILogger<FriendRequestSentHandler> logger,
             IHubContext<NotificationHub> hubContext)
@@ -60,7 +60,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 details: detailsHtml
             );
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.InviteeId) ?? new StudentNotifications(@event.InviteeId);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(@event.InviteeId) ?? new UserNotifications(@event.InviteeId);
             studentNotifications.AddNotification(notification);
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 

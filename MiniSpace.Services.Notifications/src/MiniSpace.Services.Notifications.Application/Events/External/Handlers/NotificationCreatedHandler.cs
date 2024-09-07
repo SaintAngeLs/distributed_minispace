@@ -10,12 +10,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class NotificationCreatedHandler : IEventHandler<NotificationCreated>
     {
-        private readonly IStudentNotificationsRepository _notificationRepository;
+        private readonly IUserNotificationsRepository _notificationRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
         public NotificationCreatedHandler(
-            IStudentNotificationsRepository notificationRepository, 
+            IUserNotificationsRepository notificationRepository, 
             IEventMapper eventMapper, 
             IMessageBroker messageBroker)
         {
@@ -26,7 +26,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public async Task HandleAsync(NotificationCreated @event, CancellationToken cancellationToken)
         {
-            // var notification = await _notificationRepository.GetByStudentIdAsync(@event.UserId); 
+            // var notification = await _notificationRepository.GetByUserIdAsync(@event.UserId); 
             // // GetAsync(@event.NotificationId);
             // if (notification == null)
             // {

@@ -12,12 +12,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class PasswordResetTokenGeneratedHandler : IEventHandler<PasswordResetTokenGenerated>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
 
         public PasswordResetTokenGeneratedHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient)
         {
             _messageBroker = messageBroker;
@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 details: detailsHtml
             );
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.UserId) ?? new StudentNotifications(@event.UserId);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(@event.UserId) ?? new UserNotifications(@event.UserId);
             studentNotifications.AddNotification(notification);
             await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
 

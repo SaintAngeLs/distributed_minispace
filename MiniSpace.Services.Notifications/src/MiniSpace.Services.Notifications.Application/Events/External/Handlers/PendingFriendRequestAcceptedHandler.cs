@@ -16,14 +16,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class PendingFriendRequestAcceptedHandler : IEventHandler<PendingFriendAccepted>
     {
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly ILogger<PendingFriendRequestAcceptedHandler> _logger;
         private readonly IHubContext<NotificationHub> _hubContext; 
 
         public PendingFriendRequestAcceptedHandler(
-            IStudentNotificationsRepository studentNotificationsRepository, 
+            IUserNotificationsRepository studentNotificationsRepository, 
             IMessageBroker messageBroker, 
             IStudentsServiceClient studentsServiceClient, 
             ILogger<PendingFriendRequestAcceptedHandler> logger,
@@ -62,10 +62,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 details: detailsHtml
             );
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(@event.RequesterId);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(@event.RequesterId);
             if (studentNotifications == null)
             {
-                studentNotifications = new StudentNotifications(@event.RequesterId);
+                studentNotifications = new UserNotifications(@event.RequesterId);
                 _logger.LogInformation($"Creating new StudentNotifications for UserId={@event.RequesterId}");
             }
 

@@ -16,7 +16,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
     public class StudentCancelledSignUpToEventHandler : IEventHandler<StudentCancelledSignUpToEvent>
     {
         private readonly IMessageBroker _messageBroker;
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
         private readonly IStudentsServiceClient _studentsServiceClient;
         private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IHubContext<NotificationHub> _hubContext;
@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
         public StudentCancelledSignUpToEventHandler(
             IMessageBroker messageBroker,
-            IStudentNotificationsRepository studentNotificationsRepository,
+            IUserNotificationsRepository studentNotificationsRepository,
             IStudentsServiceClient studentsServiceClient,
             IEventsServiceClient eventsServiceClient,
             IHubContext<NotificationHub> hubContext,
@@ -54,10 +54,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 return;
             }
 
-            var studentNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventArgs.StudentId);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(eventArgs.StudentId);
             if (studentNotifications == null)
             {
-                studentNotifications = new StudentNotifications(eventArgs.StudentId);
+                studentNotifications = new UserNotifications(eventArgs.StudentId);
             }
 
             var detailsHtml = $"<p>{student.FirstName} {student.LastName}, you have cancelled your registration for the event '{eventDetails.Name}' on {eventDetails.StartDate:yyyy-MM-dd}.</p>";
@@ -119,10 +119,10 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 details: organizerDetailsHtml
             );
 
-            var organizerNotifications = await _studentNotificationsRepository.GetByStudentIdAsync(eventDetails.Organizer.Id);
+            var organizerNotifications = await _studentNotificationsRepository.GetByUserIdAsync(eventDetails.Organizer.Id);
             if (organizerNotifications == null)
             {
-                organizerNotifications = new StudentNotifications(eventDetails.Organizer.Id);
+                organizerNotifications = new UserNotifications(eventDetails.Organizer.Id);
             }
 
             organizerNotifications.AddNotification(organizerNotification);
