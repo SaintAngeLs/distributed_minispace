@@ -94,7 +94,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                     break;
             }
 
-            await _messageBroker.PublishAsync(new CommentDeleted(command.CommentId));
+            // await _messageBroker.PublishAsync(new CommentDeleted(command.CommentId));
         }
     }
 }

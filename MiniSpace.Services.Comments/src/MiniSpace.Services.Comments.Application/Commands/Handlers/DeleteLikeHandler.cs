@@ -42,7 +42,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             comment.UnLike(identity.Id);
             await _commentRepository.UpdateAsync(comment);
 
-            await _messageBroker.PublishAsync(new CommentUpdated(command.CommentId));
+            // await _messageBroker.PublishAsync(new CommentUpdated(command.CommentId));
         }
     }
 }

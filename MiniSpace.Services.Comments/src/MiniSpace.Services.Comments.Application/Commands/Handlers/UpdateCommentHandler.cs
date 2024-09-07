@@ -64,12 +64,13 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                     throw new InvalidCommentContextEnumException(command.CommentContext);
             }
 
-            if (comment is null)
+            if (comment == null)
             {
                 throw new CommentNotFoundException(command.CommentId);
             }
 
             var identity = _appContext.Identity;
+
             if (identity.IsAuthenticated && identity.Id != comment.UserId)
             {
                 throw new UnauthorizedCommentAccessException(command.CommentId, identity.Id);
@@ -96,7 +97,13 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                     break;
             }
 
-            await _messageBroker.PublishAsync(new CommentUpdated(command.CommentId));
+            await _messageBroker.PublishAsync(new CommentUpdated(
+                commentId: command.CommentId,
+                userId: identity.Id,
+                commentContext: command.CommentContext,
+                updatedAt: _dateTimeProvider.Now,
+                commentContent: command.TextContent
+            ));
         }
     }
 }
