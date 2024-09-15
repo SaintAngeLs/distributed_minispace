@@ -7,6 +7,7 @@ using MiniSpace.Services.Comments.Application.Exceptions;
 using MiniSpace.Services.Comments.Application.Services;
 using MiniSpace.Services.Comments.Core.Entities;
 using MiniSpace.Services.Comments.Core.Repositories;
+using MiniSpace.Services.Comments.Application.Services.Clients;
 
 namespace MiniSpace.Services.Comments.Application.Commands.Handlers
 {
@@ -19,6 +20,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IStudentsServiceClient _userServiceClient;
 
         public UpdateCommentHandler(
             IOrganizationEventsCommentRepository organizationEventsCommentRepository,
@@ -27,7 +29,8 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             IUserPostsCommentRepository userPostsCommentRepository,
             IAppContext appContext,
             IMessageBroker messageBroker,
-            IDateTimeProvider dateTimeProvider)
+            IDateTimeProvider dateTimeProvider,
+            IStudentsServiceClient userServiceClient)
         {
             _organizationEventsCommentRepository = organizationEventsCommentRepository;
             _organizationPostsCommentRepository = organizationPostsCommentRepository;
@@ -36,6 +39,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             _appContext = appContext;
             _messageBroker = messageBroker;
             _dateTimeProvider = dateTimeProvider;
+            _userServiceClient = userServiceClient;
         }
 
         public async Task HandleAsync(UpdateComment command, CancellationToken cancellationToken = default)
@@ -83,18 +87,21 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                 case nameof(CommentContext.OrganizationEvent):
                     await _organizationEventsCommentRepository.UpdateAsync(comment);
                     break;
-
                 case nameof(CommentContext.OrganizationPost):
                     await _organizationPostsCommentRepository.UpdateAsync(comment);
                     break;
-
                 case nameof(CommentContext.UserEvent):
                     await _userEventsCommentRepository.UpdateAsync(comment);
                     break;
-
                 case nameof(CommentContext.UserPost):
                     await _userPostsCommentRepository.UpdateAsync(comment);
                     break;
+            }
+
+            var user = await _userServiceClient.GetAsync(identity.Id);
+            if (user == null)
+            {
+                throw new UserNotFoundException(identity.Id);
             }
 
             await _messageBroker.PublishAsync(new CommentUpdated(
@@ -102,7 +109,9 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                 userId: identity.Id,
                 commentContext: command.CommentContext,
                 updatedAt: _dateTimeProvider.Now,
-                commentContent: command.TextContent
+                commentContent: command.TextContent,
+                userName: $"{user.FirstName} {user.LastName}",  
+                profileImageUrl: user.ProfileImageUrl 
             ));
         }
     }
