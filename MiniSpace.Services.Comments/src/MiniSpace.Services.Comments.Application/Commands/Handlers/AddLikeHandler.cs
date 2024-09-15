@@ -76,7 +76,9 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                 commentId: command.CommentId,
                 userId: command.UserId,
                 commentContext: command.CommentContext,
-                likedAt: DateTime.UtcNow
+                likedAt: DateTime.UtcNow,
+                userName: $"{user.FirstName} {user.LastName}",  
+                profileImageUrl: user.ProfileImageUrl 
             ));
         }
 
