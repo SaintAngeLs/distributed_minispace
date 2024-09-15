@@ -12,6 +12,7 @@ using MiniSpace.Services.Notifications.Application.Hubs;
 using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Events.External.Comments;
 using MiniSpace.Services.Notifications.Application.Dto.Events;
+using MiniSpace.Services.Notifications.Application.Dto.Comments;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -77,15 +78,16 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 throw;
             }
 
-            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(commentDetails.StudentId);
+            var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(commentDetails.UserId);
             if (studentNotifications == null)
             {
-                studentNotifications = new UserNotifications(commentDetails.StudentId);
+                studentNotifications = new UserNotifications(commentDetails.UserId);
             }
 
+            // Create notification for the user who updated the comment
             var userNotification = new Notification(
                 notificationId: Guid.NewGuid(),
-                userId: commentDetails.StudentId,
+                userId: commentDetails.UserId,
                 message: $"Your updated comment on the event '{eventDetails.Name}' has been processed.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
@@ -114,7 +116,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             // Broadcast the updated notification via SignalR
             var notificationDto = new NotificationDto
             {
-                UserId = commentDetails.StudentId,
+                UserId = commentDetails.UserId,
                 Message = userNotification.Message,
                 CreatedAt = userNotification.CreatedAt,
                 EventType = NotificationEventType.CommentUpdated,
@@ -123,18 +125,20 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             };
 
             await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
-            _logger.LogInformation("Broadcasted SignalR notification to all users.");
+            _logger.LogInformation("Broadcasted SignalR notification to the user.");
 
+            // Organizer notification
             var organizerNotifications = await _studentNotificationsRepository.GetByUserIdAsync(eventDetails.Organizer.Id);
             if (organizerNotifications == null)
             {
                 organizerNotifications = new UserNotifications(eventDetails.Organizer.Id);
             }
 
+            // Create notification for the organizer
             var organizerNotification = new Notification(
                 notificationId: Guid.NewGuid(),
                 userId: eventDetails.Organizer.Id,
-                message: $"{commentDetails.StudentName} has updated their comment on your event '{eventDetails.Name}'.",
+                message: $"{eventArgs.UserName} has updated their comment on your event '{eventDetails.Name}'.",
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: DateTime.UtcNow,
@@ -145,13 +149,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             organizerNotifications.AddNotification(organizerNotification);
             await _studentNotificationsRepository.AddOrUpdateAsync(organizerNotifications);
 
-            // Prepare and send organizer notification details HTML
-            var organizerNotificationDetailsHtml = $"<p>{commentDetails.StudentName} updated their comment on your event '{eventDetails.Name}': {commentDetails.CommentContext}</p>";
+            // Prepare and send organizer notification details HTML, including profile image
+            var organizerNotificationDetailsHtml = $"<p>{eventArgs.UserName} updated their comment on your event '{eventDetails.Name}': {eventArgs.CommentContent}.</p>" +
+                                                   $"<img src='{eventArgs.ProfileImageUrl}' alt='Profile Image' style='width:50px;height:50px;' />";
 
             var organizerNotificationUpdatedEvent = new NotificationCreated(
                 notificationId: Guid.NewGuid(),
                 userId: eventDetails.Organizer.Id,
-                message: $"{commentDetails.StudentName} has updated their comment on your event '{eventDetails.Name}'.",
+                message: $"{eventArgs.UserName} has updated their comment on your event '{eventDetails.Name}'.",
                 createdAt: DateTime.UtcNow,
                 eventType: NotificationEventType.CommentUpdated.ToString(),
                 relatedEntityId: eventArgs.CommentId,
@@ -171,7 +176,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             };
 
             await NotificationHub.BroadcastNotification(_hubContext, organizerNotificationDto, _logger);
-            _logger.LogInformation("Broadcasted SignalR notification to all users.");
+            _logger.LogInformation("Broadcasted SignalR notification to the event organizer.");
         }
     }
 }

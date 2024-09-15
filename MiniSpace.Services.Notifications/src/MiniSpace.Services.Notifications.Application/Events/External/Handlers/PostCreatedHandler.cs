@@ -10,7 +10,9 @@ using MiniSpace.Services.Notifications.Application.Services;
 using Microsoft.AspNetCore.SignalR;
 using MiniSpace.Services.Notifications.Application.Hubs;
 using Microsoft.Extensions.Logging;
-using MiniSpace.Services.Notifications.Application.DTO;
+using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Dto.Events;
+using MiniSpace.Services.Notifications.Application.Dto.Posts;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
@@ -51,14 +53,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 return;
             }
 
-            var eventDetails = await _eventsServiceClient.GetEventAsync(post.EventId);
+            var eventDetails = await _eventsServiceClient.GetEventAsync(post.EventId ?? post.OrganizationId ?? post.UserId ?? post.Id);
             if (eventDetails == null)
             {
                 _logger.LogError("Event not found for the post.");
                 return;
             }
 
-            var eventParticipants = await _eventsServiceClient.GetParticipantsAsync(post.EventId);
+            var eventParticipants = await _eventsServiceClient.GetParticipantsAsync(post.EventId ?? post.OrganizationId ?? post.UserId ?? post.Id);
             if (eventParticipants == null)
             {
                 _logger.LogError("No participants found for the event.");
@@ -99,7 +101,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
-                relatedEntityId: post.EventId,
+                relatedEntityId: post.EventId ?? post.OrganizationId ?? post.UserId ?? post.Id,
                 eventType: NotificationEventType.PostCreated,
                 details: detailsHtml
             );
@@ -121,7 +123,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 notificationMessage,
                 DateTime.UtcNow,
                 NotificationEventType.PostCreated.ToString(),
-                post.EventId,
+                post.EventId ?? post.OrganizationId ?? post.UserId ?? post.Id,
                 detailsHtml
             );
 
@@ -154,7 +156,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 status: NotificationStatus.Unread,
                 createdAt: DateTime.UtcNow,
                 updatedAt: null,
-                relatedEntityId: post.EventId,
+                relatedEntityId: post.EventId ?? post.OrganizationId ?? post.UserId ?? post.Id,
                 eventType: NotificationEventType.PostCreated,
                 details: detailsHtml
             );
@@ -176,7 +178,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                 notificationMessage,
                 DateTime.UtcNow,
                 NotificationEventType.PostCreated.ToString(),
-                post.EventId,
+                post.EventId ?? post.OrganizationId ?? post.UserId ?? post.Id,
                 detailsHtml
             );
 

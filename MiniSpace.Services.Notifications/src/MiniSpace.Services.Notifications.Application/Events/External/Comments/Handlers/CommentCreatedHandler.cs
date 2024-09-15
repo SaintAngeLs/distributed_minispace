@@ -45,22 +45,11 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
         {
             try
             {
-                // Fetch comment details from the comment service
-                var commentDetails = await _commentsServiceClient.GetCommentAsync(@event.CommentId);
-                if (commentDetails == null)
-                {
-                    _logger.LogError("No comment details found for CommentCreated event.");
-                    return;
-                }
-
-                // Initialize entity owner and name variables
                 var entityOwnerId = Guid.Empty;
                 string entityName = string.Empty;
 
-                // Check if it's an event or post
                 if (@event.CommentContext.Equals("OrganizationEvent", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Fetch organization event details
                     var organizationEvent = await _eventsServiceClient.GetEventAsync(@event.ContextId);
                     if (organizationEvent != null)
                     {
@@ -72,8 +61,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
                 }
                 else if (@event.CommentContext.Equals("OrganizationPost", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Fetch organization post details
-                    var organizationPost = await  _postsServiceClient.GetPostAsync(@event.ContextId);
+                    var organizationPost = await _postsServiceClient.GetPostAsync(@event.ContextId);
                     if (organizationPost != null)
                     {
                         entityOwnerId = organizationPost.UserId.HasValue ? organizationPost.UserId.Value : Guid.Empty;
@@ -82,7 +70,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
                 }
                 else if (@event.CommentContext.Equals("UserEvent", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Fetch user event details
                     var userEvent = await _eventsServiceClient.GetEventAsync(@event.ContextId);
                     if (userEvent != null)
                     {
@@ -92,7 +79,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
                 }
                 else if (@event.CommentContext.Equals("UserPost", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Fetch user post details
                     var userPost = await _postsServiceClient.GetPostAsync(@event.ContextId);
                     if (userPost != null)
                     {
@@ -112,11 +98,12 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
                     return;
                 }
 
-                // Notify the entity owner (user or organization)
+                var notificationMessage = $"A new comment has been made on '{entityName}' by {@event.UserName}. <img src='{@event.ProfileImageUrl}' alt='Profile Image' style='width:50px;height:50px;' />";
+                
                 var notification = new Notification(
                     notificationId: Guid.NewGuid(),
                     userId: entityOwnerId,
-                    message: $"A new comment has been made on '{entityName}' by {commentDetails.StudentName}.",
+                    message: notificationMessage,
                     status: NotificationStatus.Unread,
                     createdAt: DateTime.UtcNow,
                     updatedAt: null,
@@ -130,15 +117,14 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.
                 userNotifications.AddNotification(notification);
                 await _userNotificationsRepository.AddOrUpdateAsync(userNotifications);
 
-                // Broadcast notification via SignalR
                 var notificationDto = new NotificationDto
                 {
                     UserId = entityOwnerId,
-                    Message = notification.Message,
+                    Message = notificationMessage,
                     CreatedAt = notification.CreatedAt,
                     EventType = NotificationEventType.CommentCreated,
                     RelatedEntityId = @event.CommentId,
-                    Details = $"<p>A new comment was made on '{entityName}'.</p>"
+                    Details = $"<p>{@event.UserName} commented: '{@event.TextContent}' on '{entityName}'.</p><img src='{@event.ProfileImageUrl}' alt='Profile Image' style='width:50px;height:50px;' />"
                 };
 
                 await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
