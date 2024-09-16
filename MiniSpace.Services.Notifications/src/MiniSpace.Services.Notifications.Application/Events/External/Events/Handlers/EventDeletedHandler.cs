@@ -15,21 +15,18 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class EventDeletedHandler : IEventHandler<EventDeleted>
     {
-        private readonly IFriendsServiceClient _friendsServiceClient;
-        private readonly IOrganizationsServiceClient _organizationsServiceClient;
+        private readonly IEventsServiceClient _eventsServiceClient;
         private readonly IUserNotificationsRepository _userNotificationsRepository;
         private readonly ILogger<EventDeletedHandler> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
 
         public EventDeletedHandler(
-            IFriendsServiceClient friendsServiceClient,
-            IOrganizationsServiceClient organizationsServiceClient,
+            IEventsServiceClient eventsServiceClient,
             IUserNotificationsRepository userNotificationsRepository,
             ILogger<EventDeletedHandler> logger,
             IHubContext<NotificationHub> hubContext)
         {
-            _friendsServiceClient = friendsServiceClient;
-            _organizationsServiceClient = organizationsServiceClient;
+            _eventsServiceClient = eventsServiceClient;
             _userNotificationsRepository = userNotificationsRepository;
             _logger = logger;
             _hubContext = hubContext;
@@ -39,85 +36,26 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
         {
             try
             {
-                if (eventDeleted.OrganizerType.Equals("Organization", StringComparison.OrdinalIgnoreCase))
+                // Fetch participants and interested users for the event
+                var eventParticipants = await _eventsServiceClient.GetParticipantsAsync(eventDeleted.EventId);
+
+                if (eventParticipants == null)
                 {
-                    await NotifyOrganizationMembersAsync(eventDeleted);
+                    _logger.LogWarning($"No participants found for event {eventDeleted.EventId}");
+                    return;
                 }
-                else if (eventDeleted.OrganizerType.Equals("User", StringComparison.OrdinalIgnoreCase))
+
+                // Combine signed-up users and interested users
+                var allUsersToNotify = eventParticipants.SignedUpStudents
+                    .Concat(eventParticipants.InterestedStudents)
+                    .Distinct()
+                    .Select(p => p.UserId)
+                    .ToList();
+
+                // Notify all relevant users
+                foreach (var userId in allUsersToNotify)
                 {
-                    await NotifyUserFriendsAndFollowersAsync(eventDeleted);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to handle EventDeleted event: {ex.Message}");
-            }
-        }
-
-        private async Task NotifyOrganizationMembersAsync(EventDeleted eventDeleted)
-        {
-            try
-            {
-                var organizationUsers = await _organizationsServiceClient.GetOrganizationMembersAsync(eventDeleted.OrganizerId);
-
-                if (organizationUsers != null && organizationUsers.Users != null)
-                {
-                    foreach (var user in organizationUsers.Users)
-                    {
-                        var notificationMessage = $"The event '{eventDeleted.EventName}' (Event ID: {eventDeleted.EventId}) scheduled from {eventDeleted.StartDate:yyyy-MM-dd} to {eventDeleted.EndDate:yyyy-MM-dd} has been cancelled.";
-
-                        var notification = new Notification(
-                            notificationId: Guid.NewGuid(),
-                            userId: user.Id,
-                            message: notificationMessage,
-                            status: NotificationStatus.Unread,
-                            createdAt: DateTime.UtcNow,
-                            updatedAt: null,
-                            relatedEntityId: eventDeleted.EventId,
-                            eventType: NotificationEventType.EventDeleted
-                        );
-
-                        var userNotifications = await _userNotificationsRepository.GetByUserIdAsync(user.Id)
-                                              ?? new UserNotifications(user.Id);
-
-                        userNotifications.AddNotification(notification);
-                        await _userNotificationsRepository.AddOrUpdateAsync(userNotifications);
-
-                        var notificationDto = new NotificationDto
-                        {
-                            UserId = user.Id,
-                            Message = notificationMessage,
-                            CreatedAt = notification.CreatedAt,
-                            EventType = NotificationEventType.EventDeleted,
-                            RelatedEntityId = eventDeleted.EventId,
-                            Details = $"<p>The event '{eventDeleted.EventName}' has been cancelled by the organization.</p>"
-                        };
-
-                        await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to notify organization members about the deleted event: {ex.Message}");
-            }
-        }
-
-        private async Task NotifyUserFriendsAndFollowersAsync(EventDeleted eventDeleted)
-        {
-            try
-            {
-                var friends = await _friendsServiceClient.GetFriendsAsync(eventDeleted.OrganizerId);
-                var friendIds = friends.Select(f => f.FriendId).ToList();
-
-                var followers = await _friendsServiceClient.GetRequestsAsync(eventDeleted.OrganizerId);
-                var followerIds = followers.Select(f => f.InviterId).ToList();
-
-                var userIdsToNotify = friendIds.Concat(followerIds).Distinct().ToList();
-
-                foreach (var userId in userIdsToNotify)
-                {
-                    var notificationMessage = $"An event '{eventDeleted.EventName}' (Event ID: {eventDeleted.EventId}) scheduled from {eventDeleted.StartDate:yyyy-MM-dd} to {eventDeleted.EndDate:yyyy-MM-dd} created by your friend or someone you follow has been cancelled.";
+                    var notificationMessage = $"The event '{eventDeleted.EventName}' (Event ID: {eventDeleted.EventId}) scheduled from {eventDeleted.StartDate:yyyy-MM-dd} to {eventDeleted.EndDate:yyyy-MM-dd} has been cancelled.";
 
                     var notification = new Notification(
                         notificationId: Guid.NewGuid(),
@@ -136,6 +74,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                     userNotifications.AddNotification(notification);
                     await _userNotificationsRepository.AddOrUpdateAsync(userNotifications);
 
+                    // Broadcast the notification to the user using SignalR
                     var notificationDto = new NotificationDto
                     {
                         UserId = userId,
@@ -143,7 +82,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
                         CreatedAt = notification.CreatedAt,
                         EventType = NotificationEventType.EventDeleted,
                         RelatedEntityId = eventDeleted.EventId,
-                        Details = $"<p>The event '{eventDeleted.EventName}' has been cancelled by the organizer.</p>"
+                        Details = $"<p>The event '{eventDeleted.EventName}' has been cancelled.</p>"
                     };
 
                     await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
@@ -151,7 +90,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to notify friends and followers about the deleted event: {ex.Message}");
+                _logger.LogError($"Failed to handle EventDeleted event: {ex.Message}");
             }
         }
     }

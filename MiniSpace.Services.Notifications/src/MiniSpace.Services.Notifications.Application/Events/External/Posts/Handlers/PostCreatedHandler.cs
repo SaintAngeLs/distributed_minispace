@@ -69,7 +69,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var studentParticipant in eventParticipants.InterestedStudents)
             {
-                var student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);
+                var student = await _studentsServiceClient.GetAsync(studentParticipant.UserId);
                 if (student != null)
                 {
                     await NotifyStudent(student, eventDetails, post);
@@ -78,7 +78,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 
             foreach (var studentParticipant in eventParticipants.SignedUpStudents)
             {
-                var student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);
+                var student = await _studentsServiceClient.GetAsync(studentParticipant.UserId);
                 if (student != null)
                 {
                     await NotifyStudent(student, eventDetails, post);
