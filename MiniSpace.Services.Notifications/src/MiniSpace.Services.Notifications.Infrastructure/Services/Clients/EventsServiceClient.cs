@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Convey.HTTP;
 using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Dto.Events;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
@@ -43,7 +44,6 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            // Console.WriteLine("JSON Response: " + json); 
 
             try
             {
@@ -54,12 +54,10 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
 
                 if (responseObject == null)
                 {
-                    // Console.WriteLine("Deserialized object is null. Possibly empty JSON.");
                     return null;
                 }
 
                 var jsonString = JsonSerializer.Serialize(responseObject, new JsonSerializerOptions { WriteIndented = true });
-                // Console.WriteLine("Deserialized JSON Object: " + jsonString);
 
                 return responseObject;
             }

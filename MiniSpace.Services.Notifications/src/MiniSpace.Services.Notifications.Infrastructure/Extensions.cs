@@ -43,6 +43,13 @@ using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
 // using MiniSpace.Services.Notifications.Infrastructure.Managers;
 using MiniSpace.Services.Notifications.Application.Hubs;
+using MiniSpace.Services.Notifications.Application.Events.External.Comments;
+using MiniSpace.Services.Notifications.Application.Events.External.Identity;
+using MiniSpace.Services.Notifications.Application.Events.External.Reports;
+using MiniSpace.Services.Notifications.Application.Events.External.Reactions;
+using MiniSpace.Services.Notifications.Application.Events.External.Posts;
+using MiniSpace.Services.Notifications.Application.Events.External.Friends;
+using MiniSpace.Services.Notifications.Application.Events.External.Events;
 
 namespace MiniSpace.Services.Notifications.Infrastructure
 {
