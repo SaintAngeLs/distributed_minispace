@@ -121,8 +121,9 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 command.EventId,
                 command.TextContent,
                 command.MediaFiles,
-                command.Context.ToString(),  
-                command.Visibility
+                command.Context.ToString(),
+                command.Visibility,
+                shouldNotify: true  
             ));
         }
     }
