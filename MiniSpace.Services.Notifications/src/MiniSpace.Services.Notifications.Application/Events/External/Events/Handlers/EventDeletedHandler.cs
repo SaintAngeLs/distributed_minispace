@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Convey.CQRS.Events;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Hubs;
-using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
@@ -15,128 +15,143 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
 {
     public class EventDeletedHandler : IEventHandler<EventDeleted>
     {
-        private readonly IMessageBroker _messageBroker;
-        private readonly IEventsServiceClient _eventsServiceClient;
-        private readonly IUserNotificationsRepository _studentNotificationsRepository;
-        private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IFriendsServiceClient _friendsServiceClient;
+        private readonly IOrganizationsServiceClient _organizationsServiceClient;
+        private readonly IUserNotificationsRepository _userNotificationsRepository;
         private readonly ILogger<EventDeletedHandler> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
 
         public EventDeletedHandler(
-            IMessageBroker messageBroker,
-            IEventsServiceClient eventsServiceClient,
-            IUserNotificationsRepository studentNotificationsRepository,
-            IStudentsServiceClient studentsServiceClient,
+            IFriendsServiceClient friendsServiceClient,
+            IOrganizationsServiceClient organizationsServiceClient,
+            IUserNotificationsRepository userNotificationsRepository,
             ILogger<EventDeletedHandler> logger,
             IHubContext<NotificationHub> hubContext)
         {
-            _messageBroker = messageBroker;
-            _eventsServiceClient = eventsServiceClient;
-            _studentNotificationsRepository = studentNotificationsRepository;
-            _studentsServiceClient = studentsServiceClient;
+            _friendsServiceClient = friendsServiceClient;
+            _organizationsServiceClient = organizationsServiceClient;
+            _userNotificationsRepository = userNotificationsRepository;
             _logger = logger;
             _hubContext = hubContext;
         }
 
         public async Task HandleAsync(EventDeleted eventDeleted, CancellationToken cancellationToken)
         {
-            EventDto eventDetails;
             try
             {
-                eventDetails = await _eventsServiceClient.GetEventAsync(eventDeleted.EventId);
-                if (eventDetails == null)
+                if (eventDeleted.OrganizerType.Equals("Organization", StringComparison.OrdinalIgnoreCase))
                 {
-                    _logger.LogError($"Event with ID {eventDeleted.EventId} not found.");
-                    return;
+                    await NotifyOrganizationMembersAsync(eventDeleted);
+                }
+                else if (eventDeleted.OrganizerType.Equals("User", StringComparison.OrdinalIgnoreCase))
+                {
+                    await NotifyUserFriendsAndFollowersAsync(eventDeleted);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to retrieve event details: {ex.Message}");
-                return;
+                _logger.LogError($"Failed to handle EventDeleted event: {ex.Message}");
             }
+        }
 
-            EventParticipantsDto eventParticipants;
+        private async Task NotifyOrganizationMembersAsync(EventDeleted eventDeleted)
+        {
             try
             {
-                eventParticipants = await _eventsServiceClient.GetParticipantsAsync(eventDeleted.EventId);
-                if (eventParticipants == null)
-                {
-                    _logger.LogError($"No participants found for event with ID {eventDeleted.EventId}.");
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to retrieve participants for event with ID {eventDeleted.EventId}: {ex.Message}");
-                return;
-            }
+                var organizationUsers = await _organizationsServiceClient.GetOrganizationMembersAsync(eventDeleted.OrganizerId);
 
-            foreach (var studentParticipant in eventParticipants.SignedUpStudents)
-            {
-                UserDto student;
-                try
+                if (organizationUsers != null && organizationUsers.Users != null)
                 {
-                    student = await _studentsServiceClient.GetAsync(studentParticipant.StudentId);
-                    if (student == null)
+                    foreach (var user in organizationUsers.Users)
                     {
-                        _logger.LogWarning($"Student with ID {studentParticipant.StudentId} not found.");
-                        continue;
+                        var notificationMessage = $"The event '{eventDeleted.EventName}' (Event ID: {eventDeleted.EventId}) scheduled from {eventDeleted.StartDate:yyyy-MM-dd} to {eventDeleted.EndDate:yyyy-MM-dd} has been cancelled.";
+
+                        var notification = new Notification(
+                            notificationId: Guid.NewGuid(),
+                            userId: user.Id,
+                            message: notificationMessage,
+                            status: NotificationStatus.Unread,
+                            createdAt: DateTime.UtcNow,
+                            updatedAt: null,
+                            relatedEntityId: eventDeleted.EventId,
+                            eventType: NotificationEventType.EventDeleted
+                        );
+
+                        var userNotifications = await _userNotificationsRepository.GetByUserIdAsync(user.Id)
+                                              ?? new UserNotifications(user.Id);
+
+                        userNotifications.AddNotification(notification);
+                        await _userNotificationsRepository.AddOrUpdateAsync(userNotifications);
+
+                        var notificationDto = new NotificationDto
+                        {
+                            UserId = user.Id,
+                            Message = notificationMessage,
+                            CreatedAt = notification.CreatedAt,
+                            EventType = NotificationEventType.EventDeleted,
+                            RelatedEntityId = eventDeleted.EventId,
+                            Details = $"<p>The event '{eventDeleted.EventName}' has been cancelled by the organization.</p>"
+                        };
+
+                        await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
                     }
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to notify organization members about the deleted event: {ex.Message}");
+            }
+        }
+
+        private async Task NotifyUserFriendsAndFollowersAsync(EventDeleted eventDeleted)
+        {
+            try
+            {
+                var friends = await _friendsServiceClient.GetFriendsAsync(eventDeleted.OrganizerId);
+                var friendIds = friends.Select(f => f.FriendId).ToList();
+
+                var followers = await _friendsServiceClient.GetRequestsAsync(eventDeleted.OrganizerId);
+                var followerIds = followers.Select(f => f.InviterId).ToList();
+
+                var userIdsToNotify = friendIds.Concat(followerIds).Distinct().ToList();
+
+                foreach (var userId in userIdsToNotify)
                 {
-                    _logger.LogError($"Failed to retrieve student with ID {studentParticipant.StudentId}: {ex.Message}");
-                    continue;
+                    var notificationMessage = $"An event '{eventDeleted.EventName}' (Event ID: {eventDeleted.EventId}) scheduled from {eventDeleted.StartDate:yyyy-MM-dd} to {eventDeleted.EndDate:yyyy-MM-dd} created by your friend or someone you follow has been cancelled.";
+
+                    var notification = new Notification(
+                        notificationId: Guid.NewGuid(),
+                        userId: userId,
+                        message: notificationMessage,
+                        status: NotificationStatus.Unread,
+                        createdAt: DateTime.UtcNow,
+                        updatedAt: null,
+                        relatedEntityId: eventDeleted.EventId,
+                        eventType: NotificationEventType.EventDeleted
+                    );
+
+                    var userNotifications = await _userNotificationsRepository.GetByUserIdAsync(userId)
+                                          ?? new UserNotifications(userId);
+
+                    userNotifications.AddNotification(notification);
+                    await _userNotificationsRepository.AddOrUpdateAsync(userNotifications);
+
+                    var notificationDto = new NotificationDto
+                    {
+                        UserId = userId,
+                        Message = notificationMessage,
+                        CreatedAt = notification.CreatedAt,
+                        EventType = NotificationEventType.EventDeleted,
+                        RelatedEntityId = eventDeleted.EventId,
+                        Details = $"<p>The event '{eventDeleted.EventName}' has been cancelled by the organizer.</p>"
+                    };
+
+                    await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
                 }
-
-                var notificationMessage = $"The event you were signed up for has been cancelled.";
-                var detailsHtml = $"<p>Event <strong>{eventDetails.Name}</strong> scheduled on <strong>{eventDetails.StartDate:yyyy-MM-dd}</strong> has been cancelled. We apologize for any inconvenience.</p>";
-
-                var notification = new Notification(
-                    notificationId: Guid.NewGuid(),
-                    userId: student.Id,
-                    message: notificationMessage,
-                    status: NotificationStatus.Unread,
-                    createdAt: DateTime.UtcNow,
-                    updatedAt: null,
-                    relatedEntityId: eventDeleted.EventId,
-                    eventType: NotificationEventType.EventDeleted
-                );
-
-                var studentNotifications = await _studentNotificationsRepository.GetByUserIdAsync(student.Id);
-                if (studentNotifications == null)
-                {
-                    studentNotifications = new UserNotifications(student.Id);
-                }
-
-                studentNotifications.AddNotification(notification);
-                await _studentNotificationsRepository.AddOrUpdateAsync(studentNotifications);
-
-                var notificationCreatedEvent = new NotificationCreated(
-                    notification.NotificationId,
-                    student.Id,
-                    notificationMessage,
-                    DateTime.UtcNow,
-                    NotificationEventType.EventDeleted.ToString(),
-                    eventDeleted.EventId,
-                    detailsHtml
-                );
-
-                await _messageBroker.PublishAsync(notificationCreatedEvent);
-
-                var notificationDto = new NotificationDto
-                {
-                    UserId = student.Id,
-                    Message = notificationMessage,
-                    CreatedAt = DateTime.UtcNow,
-                    EventType = NotificationEventType.EventDeleted,
-                    RelatedEntityId = eventDeleted.EventId,
-                    Details = detailsHtml
-                };
-
-                await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
-                _logger.LogInformation($"Broadcasted SignalR notification to student with ID {student.Id}.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to notify friends and followers about the deleted event: {ex.Message}");
             }
         }
     }
