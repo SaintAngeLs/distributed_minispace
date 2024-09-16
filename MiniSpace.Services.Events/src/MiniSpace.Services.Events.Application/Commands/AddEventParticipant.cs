@@ -10,6 +10,5 @@ namespace MiniSpace.Services.Events.Application.Commands
     {
         public Guid EventId { get; set; }
         public Guid StudentId { get; set; }
-        public string StudentName { get; set; }
     }
 }
