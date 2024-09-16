@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Convey.CQRS.Events;
 
-namespace MiniSpace.Services.Notifications.Application.Events
+namespace MiniSpace.Services.Notifications.Application.Events.Events
 {
     [Contract]
     public class EventUpdated(Guid eventId, DateTime updatedAt, Guid updatedBy, IEnumerable<Guid> mediaFilesIds) : IEvent

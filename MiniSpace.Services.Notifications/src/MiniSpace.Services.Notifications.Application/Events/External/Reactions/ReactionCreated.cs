@@ -2,7 +2,7 @@ using Convey.CQRS.Events;
 using Convey.MessageBrokers;
 using System;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External
+namespace MiniSpace.Services.Notifications.Application.Events.External.Reactions
 {
     [Message("reactions")]
     public class ReactionCreated : IEvent

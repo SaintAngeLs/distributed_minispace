@@ -7,7 +7,7 @@ using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Reports.Handlers
 {
     public class ReportResolvedHandler : IEventHandler<ReportResolved>
     {

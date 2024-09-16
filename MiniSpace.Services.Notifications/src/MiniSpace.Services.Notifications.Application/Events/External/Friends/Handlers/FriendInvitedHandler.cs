@@ -11,7 +11,7 @@ using MiniSpace.Services.Notifications.Application.Hubs;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Dto;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Friends.Handlers
 {
     public class FriendInvitedHandler : IEventHandler<FriendInvited>
     {

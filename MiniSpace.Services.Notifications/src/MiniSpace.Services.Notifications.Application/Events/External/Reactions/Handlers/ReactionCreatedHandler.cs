@@ -12,7 +12,7 @@ using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Hubs;
 using MiniSpace.Services.Notifications.Application.Services;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Reactions.Handlers
 {
     public class ReactionCreatedHandler : IEventHandler<ReactionCreated>
     {

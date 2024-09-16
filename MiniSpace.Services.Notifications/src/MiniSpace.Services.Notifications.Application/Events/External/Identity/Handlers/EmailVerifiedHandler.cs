@@ -6,7 +6,7 @@ using MiniSpace.Services.Notifications.Application.Services;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Identity.Handlers
 {
     public class EmailVerifiedHandler : IEventHandler<EmailVerified>
     {

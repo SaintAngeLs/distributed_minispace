@@ -2,7 +2,7 @@ using Convey.CQRS.Events;
 using Convey.MessageBrokers;
 using MiniSpace.Services.Notifications.Core.Events;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External
+namespace MiniSpace.Services.Notifications.Application.Events.External.Friends
 {
     [Message("friends")]
     public class FriendInvited : IEvent, IDomainEvent

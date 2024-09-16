@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SignalR;
 using MiniSpace.Services.Notifications.Application.Hubs;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Events.Handlers
 {
     public class EventCreatedHandler : IEventHandler<EventCreated>
     {

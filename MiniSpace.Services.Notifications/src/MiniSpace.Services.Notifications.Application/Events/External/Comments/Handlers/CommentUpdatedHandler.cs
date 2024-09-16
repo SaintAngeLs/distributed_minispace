@@ -14,7 +14,7 @@ using MiniSpace.Services.Notifications.Application.Events.External.Comments;
 using MiniSpace.Services.Notifications.Application.Dto.Events;
 using MiniSpace.Services.Notifications.Application.Dto.Comments;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Comments.Handlers
 {
     public class CommentUpdatedHandler : IEventHandler<CommentUpdated>
     {

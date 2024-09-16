@@ -3,7 +3,7 @@ using Convey.MessageBrokers;
 using System;
 using System.Collections.Generic;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External
+namespace MiniSpace.Services.Notifications.Application.Events.External.Posts
 {
     [Message("posts")]
     public class PostCreated : IEvent

@@ -11,7 +11,7 @@ using MiniSpace.Services.Notifications.Application.Services.Clients;
 using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Reports.Handlers
 {
     public class ReportCancelledHandler : IEventHandler<ReportCancelled>
     {

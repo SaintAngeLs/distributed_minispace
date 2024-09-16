@@ -8,7 +8,7 @@ using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 using Microsoft.Extensions.Logging;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Identity.Handlers
 {
     public class TwoFactorCodeGeneratedHandler : IEventHandler<TwoFactorCodeGenerated>
     {

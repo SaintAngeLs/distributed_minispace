@@ -11,7 +11,7 @@ using MiniSpace.Services.Notifications.Core.Entities;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Services;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Reports.Handlers
 {
     public class ReportReviewStartedHandler : IEventHandler<ReportReviewStarted>
     {

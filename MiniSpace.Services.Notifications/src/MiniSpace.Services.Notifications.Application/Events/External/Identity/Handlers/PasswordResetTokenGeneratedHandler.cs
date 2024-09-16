@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Identity.Handlers
 {
     public class PasswordResetTokenGeneratedHandler : IEventHandler<PasswordResetTokenGenerated>
     {

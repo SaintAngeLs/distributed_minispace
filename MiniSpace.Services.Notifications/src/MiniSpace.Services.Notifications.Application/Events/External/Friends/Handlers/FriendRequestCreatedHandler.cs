@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Friends.Handlers
 {
     public class FriendRequestCreatedHandler : IEventHandler<FriendRequestCreated>
     {

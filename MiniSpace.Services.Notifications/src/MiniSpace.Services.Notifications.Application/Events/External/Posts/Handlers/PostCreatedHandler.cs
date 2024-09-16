@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.SignalR;
 using MiniSpace.Services.Notifications.Application.Hubs;
 using Microsoft.Extensions.Logging;
 
-namespace MiniSpace.Services.Notifications.Application.Events.External.Handlers
+namespace MiniSpace.Services.Notifications.Application.Events.External.Posts.Handlers
 {
     public class PostCreatedHandler : IEventHandler<PostCreated>
     {
