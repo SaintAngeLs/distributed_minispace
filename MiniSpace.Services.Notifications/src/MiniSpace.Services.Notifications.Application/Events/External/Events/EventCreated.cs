@@ -9,6 +9,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External
     public class EventCreated : IEvent
     {
         public Guid EventId { get; set; }
+        /* OrganizerType := { User, Organization} */
         public string OrganizerType { get; set; }  
         public Guid OrganizerId { get; set; }
         public IEnumerable<string> MediaFilesUrls { get; set; }
