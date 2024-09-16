@@ -9,19 +9,19 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
     [ExcludeFromCodeCoverage]
      public class ParticipantDocument
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
 
         public static ParticipantDocument FromEntity(Participant participant)
         {
             return new ParticipantDocument
             {
-                StudentId = participant.StudentId,
+                UserId = participant.UserId,
             };
         }
 
         public Participant ToEntity()
         {
-            return new Participant(StudentId);
+            return new Participant(UserId);
         }
 
     }

@@ -8,21 +8,21 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
     [ExcludeFromCodeCoverage]
     public class RatingDocument
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public int Value { get; set; }
 
         public static RatingDocument FromEntity(Rating rating)
         {
             return new RatingDocument
             {
-                StudentId = rating.StudentId,
+                UserId = rating.UserId,
                 Value = rating.Value
             };
         }
 
         public Rating ToEntity()
         {
-            return new Rating(StudentId, Value);
+            return new Rating(UserId, Value);
         }
     }
 }
