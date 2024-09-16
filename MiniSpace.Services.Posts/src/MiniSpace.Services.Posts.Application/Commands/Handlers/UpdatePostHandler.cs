@@ -44,14 +44,12 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
 
         public async Task HandleAsync(UpdatePost command, CancellationToken cancellationToken = default)
         {
-            // Fetch the post based on its ID
             var post = await _postRepository.GetAsync(command.PostId);
             if (post is null)
             {
                 throw new PostNotFoundException(command.PostId);
             }
 
-            // Check if the identity has the right to update this post
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != post.UserId && identity.Id != post.OrganizationId && !identity.IsAdmin)
             {
@@ -63,7 +61,6 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new UnauthorizedPostOperationException(command.PostId, identity.Id);
             }
 
-            // Validate the state if provided
             State? newState = null;
             if (!string.IsNullOrWhiteSpace(command.State))
             {
@@ -74,7 +71,6 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 newState = parsedState;
             }
 
-            // Validate the visibility if provided
             VisibilityStatus? newVisibility = null;
             if (!string.IsNullOrWhiteSpace(command.Visibility))
             {
@@ -85,14 +81,12 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 newVisibility = parsedVisibility;
             }
 
-            // Validate the media files count
             var mediaFiles = command.MediaFiles.ToList();
             if (mediaFiles.Count > 12)
             {
                 throw new InvalidNumberOfPostMediaFilesException(post.Id, mediaFiles.Count);
             }
 
-            // Update the post fields
             post.Update(command.TextContent, command.MediaFiles, _dateTimeProvider.Now);
 
             if (newState.HasValue)
@@ -107,8 +101,21 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
 
             await _postRepository.UpdateAsync(post);
 
-            // Publish the post updated event
-            await _messageBroker.PublishAsync(new PostUpdated(post.Id, post.MediaFiles.Select(mf => new Guid(mf))));
+            var shouldNotify = true; // Explicitly setting ShouldNotify to true
+
+            var postContext = post.UserId.HasValue ? "UserPage" : post.OrganizationId.HasValue ? "OrganizationPage" : "EventPage";
+
+            await _messageBroker.PublishAsync(new PostUpdated(
+                post.Id,
+                post.UserId,
+                post.OrganizationId,
+                post.EventId,
+                post.TextContent,
+                post.MediaFiles,
+                postContext,
+                post.Visibility.ToString(),
+                shouldNotify
+            ));
         }
     }
 }
