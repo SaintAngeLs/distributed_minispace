@@ -114,8 +114,16 @@ namespace MiniSpace.Services.Posts.Application.Commands.Handlers
                 throw new InvalidPostContextException(command.Context.ToString());
             }
 
-            await _messageBroker.PublishAsync(new PostCreated(command.PostId, post.MediaFiles));
+            await _messageBroker.PublishAsync(new PostCreated(
+                command.PostId,
+                command.UserId,
+                command.OrganizationId,
+                command.EventId,
+                command.TextContent,
+                command.MediaFiles,
+                command.Context.ToString(),  
+                command.Visibility
+            ));
         }
-
     }
 }
