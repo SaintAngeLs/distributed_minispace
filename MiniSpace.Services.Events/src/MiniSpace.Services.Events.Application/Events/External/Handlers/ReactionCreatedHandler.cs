@@ -24,8 +24,6 @@ namespace MiniSpace.Services.Events.Application.Events.External.Handlers
             {
                 WriteIndented = true 
             });
-            Console.WriteLine("Received ReactionCreated event:");
-            Console.WriteLine(eventJson);
 
             var reaction = Reaction.Create(
                 @event.ReactionId,

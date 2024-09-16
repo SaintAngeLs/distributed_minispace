@@ -25,8 +25,7 @@ namespace MiniSpace.Services.Events.Application.Events.External.Handlers
             {
                 WriteIndented = true // Optional: For pretty-printing the JSON
             });
-            Console.WriteLine("Received CommentCreated event:");
-            Console.WriteLine(eventJson);
+   
 
             var comment = new Comment(
                 @event.CommentId,
