@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
