@@ -11,7 +11,10 @@ namespace MiniSpace.Services.Reports.Application.Queries
         public IEnumerable<string> ContextTypes { get; set; }
         public IEnumerable<string> States { get; set; }
         public Guid ReviewerId { get; set; }
+
         public int Page { get; set; } = 1;
-        public int Results { get; set; } = 10;
+        public int Size { get; set; } = 10; 
+        public string SortBy { get; set; } 
+        public string Direction { get; set; } 
     }
 }
