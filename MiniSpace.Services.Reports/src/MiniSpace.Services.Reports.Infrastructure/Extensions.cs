@@ -79,7 +79,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
                 .AddMongoRepository<EventDocument, Guid>("events")
                 .AddMongoRepository<PostDocument, Guid>("posts")
                 .AddMongoRepository<CommentDocument, Guid>("comments")
-                .AddMongoRepository<StudentDocument, Guid>("students")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
