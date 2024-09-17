@@ -11,8 +11,8 @@ namespace MiniSpace.Services.Reports.Core.Repositories
         Task DeleteAsync(Guid id);
         Task<(IEnumerable<Report> reports, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseReportsAsync(
             int pageNumber, int pageSize, IEnumerable<ContextType> contextTypes, IEnumerable<ReportState> states,
-            Guid reviewerId, IEnumerable<string> sortBy, string direction);
+            Guid reviewerId, string sortBy, string direction);
         Task<(IEnumerable<Report> reports, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseUserReportsAsync(
-            int pageNumber, int pageSize, Guid userId, IEnumerable<string> sortBy, string direction);
+            int pageNumber, int pageSize, Guid userId, string sortBy, string direction);
     }
 }
