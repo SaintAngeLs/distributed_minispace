@@ -4,9 +4,9 @@ using MiniSpace.Services.Reports.Core.Wrappers;
 
 namespace MiniSpace.Services.Reports.Application.Queries
 {
-    public class GetStudentReports : IQuery<PagedResponse<IEnumerable<ReportDto>>>
+    public class GetStudentReports : IQuery<PagedResponse<ReportDto>>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public int Page { get; set; }
         public int Results { get; set; }
     }
