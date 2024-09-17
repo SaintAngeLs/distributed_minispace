@@ -27,8 +27,8 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Queries.Handlers
                     query.Page, query.Results, 0);
             }
 
-            var result = await _reportRepository.BrowseUserReportsAsync(query.Page, query.Results, query.UserId, 
-                                                                        Enumerable.Empty<string>(), "dsc");
+            var result = await _reportRepository.BrowseUserReportsAsync(
+                query.Page, query.Results, query.UserId, query.SortBy, query.Direction);
 
             var reports = result.reports.Select(r => new ReportDto(r));
             return new PagedResponse<ReportDto>(reports, result.pageNumber, result.pageSize, result.totalElements);

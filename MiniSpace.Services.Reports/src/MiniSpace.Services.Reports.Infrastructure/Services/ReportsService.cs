@@ -1,11 +1,13 @@
 ﻿using MiniSpace.Services.Reports.Application;
-using MiniSpace.Services.Reports.Application.Commands;
 using MiniSpace.Services.Reports.Application.DTO;
 using MiniSpace.Services.Reports.Application.Exceptions;
+using MiniSpace.Services.Reports.Application.Queries;
 using MiniSpace.Services.Reports.Application.Services;
 using MiniSpace.Services.Reports.Core.Entities;
 using MiniSpace.Services.Reports.Core.Repositories;
 using MiniSpace.Services.Reports.Core.Wrappers;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Reports.Infrastructure.Services
 {
@@ -22,7 +24,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
             _appContext = appContext;
         }
 
-         public async Task<PagedResponse<ReportDto>> BrowseReportsAsync(SearchReports command)
+        public async Task<PagedResponse<ReportDto>> BrowseReportsAsync(SearchReports query)
         {
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && !identity.IsAdmin)
@@ -30,20 +32,19 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
                 throw new UnauthorizedReportSearchAttemptException(identity.Id, identity.Role);
             }
 
-            var contextTypes = command.ContextTypes
+            var contextTypes = query.ContextTypes
                 .Select(ct => _reportValidator.ParseContextType(ct))
                 .ToList();
 
-            var states = command.States
+            var states = query.States
                 .Select(status => _reportValidator.ParseStatus(status))
                 .ToList();
 
-            var pageNumber = command.Pageable.Page < 1 ? 1 : command.Pageable.Page;
-            var pageSize = command.Pageable.Size > 10 ? 10 : command.Pageable.Size;
+            var pageNumber = query.Page < 1 ? 1 : query.Page;
+            var pageSize = query.Size > 10 ? 10 : query.Size;
 
             var result = await _reportRepository.BrowseReportsAsync(
-                pageNumber, pageSize, contextTypes, states, command.ReviewerId, 
-                command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
+                pageNumber, pageSize, contextTypes, states, query.ReviewerId, query.SortBy, query.Direction);
 
             var pagedReports = new PagedResponse<ReportDto>(
                 result.reports.Select(r => new ReportDto(r)),

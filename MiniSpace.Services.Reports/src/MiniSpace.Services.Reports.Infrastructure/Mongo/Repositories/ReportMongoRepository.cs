@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
         
         public async Task<(IEnumerable<Report> reports, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseReportsAsync(int pageNumber, int pageSize, 
             IEnumerable<ContextType> contextTypes, IEnumerable<ReportState> states, Guid reviewerId,
-            IEnumerable<string> sortBy, string direction)
+            string sortBy, string direction)
         {
             var filterDefinition = Extensions.ToFilterDefinition()
                 .AddContextTypesFilter(contextTypes)
@@ -69,7 +69,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
         }
         
         public async Task<(IEnumerable<Report> reports, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseUserReportsAsync(int pageNumber, int pageSize,
-                Guid studentId, IEnumerable<string> sortBy, string direction)
+                Guid studentId, string sortBy, string direction)
         {
             var filterDefinition = Extensions.ToFilterDefinition()
                 .AddStudentIdFilter(studentId);
