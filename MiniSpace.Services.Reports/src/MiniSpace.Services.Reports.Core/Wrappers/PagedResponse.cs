@@ -1,28 +1,32 @@
-﻿namespace MiniSpace.Services.Reports.Core.Wrappers
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MiniSpace.Services.Reports.Core.Wrappers
 {
-    public class PagedResponse<T> : Response<T>
+    public class PagedResponse<T>
     {
+        public IEnumerable<T> Items { get; }
         public int TotalPages { get; }
-        public int TotalElements { get; }
-        public int Size { get; }
-        public int Number { get; }
+        public int TotalItems { get; }
+        public int PageSize { get; }
+        public int Page { get; }
         public bool First { get; }
         public bool Last { get; }
         public bool Empty { get; }
+        public int? NextPage => Page < TotalPages ? Page + 1 : (int?)null;
+        public int? PreviousPage => Page > 1 ? Page - 1 : (int?)null;
 
-        public PagedResponse(T content, int pageNumber, int pageSize, int totalPages, int totalElements)
+        public PagedResponse(IEnumerable<T> items, int page, int pageSize, int totalItems)
         {
-            Content = content;
-            TotalPages = totalPages;
-            TotalElements = totalElements;
-            Size = pageSize;
-            Number = pageNumber;
-            First = pageNumber == 0;
-            Last = pageNumber == totalPages - 1;
-            Empty = totalElements == 0;
-            Succeeded = true;
-            Errors = null;
-            Message = null;
+            Items = items;
+            PageSize = pageSize;
+            TotalItems = totalItems;
+            TotalPages = pageSize > 0 ? (int)Math.Ceiling((decimal)totalItems / pageSize) : 0;
+            Page = page;
+            First = page == 1;
+            Last = page == TotalPages;
+            Empty = !items.Any();
         }
     }
 }
