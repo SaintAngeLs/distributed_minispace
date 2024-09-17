@@ -28,15 +28,11 @@ namespace MiniSpace.Services.Reports.Api
                     .Build())
                 .Configure(app => app
                     .UseInfrastructure()
-                    .UseEndpoints(endpoints => endpoints
-                        .Post<SearchReports>("reports/search", async (cmd, ctx) =>
-                        {
-                            var pagedResult = await ctx.RequestServices.GetService<IReportsService>().BrowseReportsAsync(cmd);
-                            await ctx.Response.WriteJsonAsync(pagedResult);
-                        })
-                    )
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
+                        
+                        .Get<SearchReports, PagedResponse<ReportDto>>("reports/search")
+                        
                         .Post<CreateReport>("reports", afterDispatch: (cmd, ctx) 
                             => ctx.Response.Created($"reports/{cmd.ReportId}"))
                         .Delete<DeleteReport>("reports/{reportId}")
@@ -44,7 +40,7 @@ namespace MiniSpace.Services.Reports.Api
                         .Post<StartReportReview>("reports/{reportId}/start-review")
                         .Post<ResolveReport>("reports/{reportId}/resolve")
                         .Post<RejectReport>("reports/{reportId}/reject")
-                        .Get<GetStudentReports, PagedResponse<IEnumerable<ReportDto>>>("reports/students/{studentId}")
+                        .Get<GetUserReports, PagedResponse<ReportDto>>("reports/students/{studentId}")
                         ))
                 .UseLogging()
                 .Build()
