@@ -87,11 +87,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Friends.H
             await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
             _logger.LogInformation("Sent SignalR notification to all users.");
 
-            // await NotificationHub.SendNotification(_hubContext, @event.InviteeId.ToString(), notificationDto, _logger);
-            // _logger.LogInformation($"Sent SignalR notification to UserId={@event.InviteeId}");
-
             await _messageBroker.PublishAsync(notificationCreatedEvent);
-            _logger.LogInformation($"Published NotificationCreated event for UserId={notification.UserId}");
         }
     }
 }

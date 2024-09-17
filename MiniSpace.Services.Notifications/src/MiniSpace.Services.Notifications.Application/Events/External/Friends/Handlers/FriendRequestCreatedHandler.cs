@@ -106,7 +106,6 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Friends.H
             );
 
             await _messageBroker.PublishAsync(notificationCreatedEvent);
-            _logger.LogInformation($"Published NotificationCreated event for NotificationId={notification.NotificationId}");
         }
     }
 }

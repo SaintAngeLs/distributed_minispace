@@ -92,14 +92,7 @@ namespace MiniSpace.Services.Notifications.Application.Events.External.Friends.H
               await NotificationHub.BroadcastNotification(_hubContext, notificationDto, _logger);
             _logger.LogInformation($"Sent SignalR notification to all users with user id UserId={@event.InviteeId}.");
 
-
-            var serializedEvent = JsonSerializer.Serialize(notificationCreatedEvent, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
-
             await _messageBroker.PublishAsync(notificationCreatedEvent);
         }
-
     }
 }

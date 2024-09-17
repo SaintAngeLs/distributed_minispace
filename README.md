@@ -4,6 +4,10 @@
 # MiniSpace - ✨ Student Life Activity App
 
 [![codecov](https://codecov.io/gh/SaintAngeLs/distributed_minispace/graph/badge.svg?token=SW3T9CN2QS)](https://codecov.io/gh/SaintAngeLs/distributed_minispace)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/SaintAngeLs/distributed_minispace?color=blue&label=Version)
+![GitHub](https://img.shields.io/github/license/SaintAngeLs/distributed_minispace?color=green)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/ci.yml?branch=main)
+![.NET 8.0](https://img.shields.io/badge/.NET-8.0-blueviolet)
 
 **MiniSpace** is a powerful and dynamic application designed to enhance student life by offering a comprehensive platform where students can explore, register, and actively participate in a variety of events. Whether it’s cultural, educational, or social, MiniSpace is your gateway to enriching the academic community’s vibrant life.
 
