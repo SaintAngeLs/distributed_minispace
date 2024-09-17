@@ -51,7 +51,6 @@ namespace MiniSpace.Services.Reports.Infrastructure
             builder.Services.AddTransient<IEventRepository, EventMongoRepository>();
             builder.Services.AddTransient<IPostRepository, PostMongoRepository>();
             builder.Services.AddTransient<ICommentRepository, CommentMongoRepository>();
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddSingleton<IReportValidator, ReportValidator>();

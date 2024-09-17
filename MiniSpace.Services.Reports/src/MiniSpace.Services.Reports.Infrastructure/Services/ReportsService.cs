@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
             _appContext = appContext;
         }
 
-        public async Task<PagedResponse<IEnumerable<ReportDto>>> BrowseReportsAsync(SearchReports command)
+         public async Task<PagedResponse<ReportDto>> BrowseReportsAsync(SearchReports command)
         {
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && !identity.IsAdmin)
@@ -30,27 +30,24 @@ namespace MiniSpace.Services.Reports.Infrastructure.Services
                 throw new UnauthorizedReportSearchAttemptException(identity.Id, identity.Role);
             }
 
-            var contextTypes = new List<ContextType>();
-            foreach (var contextType in command.ContextTypes)
-            {
-                contextTypes.Add(_reportValidator.ParseContextType(contextType));
-            }
-            
-            var states = new List<ReportState>();
-            foreach (var status in command.States)
-            {
-                states.Add(_reportValidator.ParseStatus(status));
-            }
+            var contextTypes = command.ContextTypes
+                .Select(ct => _reportValidator.ParseContextType(ct))
+                .ToList();
+
+            var states = command.States
+                .Select(status => _reportValidator.ParseStatus(status))
+                .ToList();
 
             var pageNumber = command.Pageable.Page < 1 ? 1 : command.Pageable.Page;
             var pageSize = command.Pageable.Size > 10 ? 10 : command.Pageable.Size;
 
-            var result = await _reportRepository.BrowseReportsAsync(pageNumber, pageSize, 
-                contextTypes, states, command.ReviewerId, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
+            var result = await _reportRepository.BrowseReportsAsync(
+                pageNumber, pageSize, contextTypes, states, command.ReviewerId, 
+                command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
 
-            var pagedReports = new PagedResponse<IEnumerable<ReportDto>>(
+            var pagedReports = new PagedResponse<ReportDto>(
                 result.reports.Select(r => new ReportDto(r)),
-                result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
+                result.pageNumber, result.pageSize, result.totalElements);
 
             return pagedReports;
         }

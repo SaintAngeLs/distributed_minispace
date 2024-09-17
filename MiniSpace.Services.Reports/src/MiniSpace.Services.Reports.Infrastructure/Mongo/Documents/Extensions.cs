@@ -68,14 +68,5 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
             {
                 Id = entity.Id,
             };
-        
-        public static StudentDocument AsDocument(this Student entity)
-            => new ()
-            {
-                Id = entity.Id,
-            };
-
-        public static Student AsEntity(this StudentDocument document)
-            => new (document.Id);
     }    
 }

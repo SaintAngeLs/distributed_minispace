@@ -22,9 +22,9 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
             return report?.AsEntity();
         }
         
-        public async Task<IEnumerable<Report>> GetStudentActiveReportsAsync(Guid studentId)
+        public async Task<IEnumerable<Report>> GetUserActiveReportsAsync(Guid userId)
         {
-            var reports = await _repository.FindAsync(r => r.IssuerId == studentId 
+            var reports = await _repository.FindAsync(r => r.IssuerId == userId 
                 && (r.State == ReportState.Submitted || r.State == ReportState.UnderReview));
 
             return reports.Select(r => r.AsEntity());
@@ -68,7 +68,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
                 pagedEvents.totalPages, pagedEvents.totalElements);
         }
         
-        public async Task<(IEnumerable<Report> reports, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseStudentReportsAsync(int pageNumber, int pageSize,
+        public async Task<(IEnumerable<Report> reports, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseUserReportsAsync(int pageNumber, int pageSize,
                 Guid studentId, IEnumerable<string> sortBy, string direction)
         {
             var filterDefinition = Extensions.ToFilterDefinition()
