@@ -6,7 +6,11 @@
 [![codecov](https://codecov.io/gh/SaintAngeLs/distributed_minispace/graph/badge.svg?token=SW3T9CN2QS)](https://codecov.io/gh/SaintAngeLs/distributed_minispace)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/SaintAngeLs/distributed_minispace?color=blue&label=Version)
 ![GitHub](https://img.shields.io/github/license/SaintAngeLs/distributed_minispace?color=green)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/ci.yml?branch=main)
+![Build Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/build_microservices.yml?branch=main)
+![Containers Deploy Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/cloud_deploy.yml?branch=main)
+![Safety Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/codeql.yml?branch=main)
+![Ossar analyser Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/ossaranalyzer.yml?branch=main)
+![Gitlab Sync Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/gitlab_sync.yml?branch=main)
 ![.NET 8.0](https://img.shields.io/badge/.NET-8.0-blueviolet)
 
 **MiniSpace** is a powerful and dynamic application designed to enhance student life by offering a comprehensive platform where students can explore, register, and actively participate in a variety of events. Whether it’s cultural, educational, or social, MiniSpace is your gateway to enriching the academic community’s vibrant life.
