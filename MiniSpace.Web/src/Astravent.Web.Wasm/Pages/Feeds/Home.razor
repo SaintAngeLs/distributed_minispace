@@ -1,0 +1,113 @@
+﻿@page "/home"
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.DTO.Wrappers
+@using Astravent.Web.Wasm.Areas.Posts
+@using Astravent.Web.Wasm.Data.Posts
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@inject IPostsService PostsService
+@inject ISnackbar Snackbar
+@using MudBlazor
+
+<AuthWrapper>
+    <MudContainer>
+        @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Loading, please wait...</MudText>
+            </div>
+        }
+        else
+        {
+            <div class="breadcrumbs-container">
+                <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+            </div>
+            <MudGrid>
+                <!-- Left Side: User Information -->
+                <MudItem xs="12" md="3" lg="3">
+                    <UserInformation UserId="studentId" />
+                </MudItem>
+
+                <!-- Middle Section: Discover What's New -->
+                <MudItem xs="12" md="6" lg="6">
+                    <MudText Typo="Typo.h4" Align="Align.Center">Discover What's New</MudText>
+                    @if (postsLoadingFailed)
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load posts. Please try again later.</MudText>
+                    }
+                    else if (posts != null && posts.Any())
+                    {
+                        <MudList>
+                            @foreach (var post in posts)
+                            {
+                                <MudListItem>
+                                    <PostCard Post="post" />
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center">No activity found</MudText>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/events/search"))">Please join an event first</MudButton>
+                    }
+                </MudItem>
+
+                <!-- Right Side: User Related Content -->
+                <MudItem xs="12" md="3" lg="3">
+                    <UserRelatedContent UserId="studentId" />
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+@code {
+    private IEnumerable<PostDto> posts;
+    private Guid studentId;
+    private bool pageInitialized = false;
+    private bool postsLoadingFailed = false;
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        @* new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts), *@
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdentityService != null && IdentityService.IsAuthenticated)
+        {
+            studentId = IdentityService.GetCurrentUserId();
+            try
+            {
+                var result = await PostsService.GetUserFeedAsync(studentId, 1, 8, "PublishDate", "desc");
+
+                if (result.IsSuccessStatusCode)
+                {
+                    posts = result.Content.Items;
+                }
+                else
+                {
+                    posts = new List<PostDto>(); // Handle error gracefully
+                    postsLoadingFailed = true;
+                    Snackbar.Add($"Error loading posts: {result.ErrorMessage.Reason}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                postsLoadingFailed = true;
+                Snackbar.Add($"Exception occurred: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                pageInitialized = true;
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("");
+        }
+    }
+}
