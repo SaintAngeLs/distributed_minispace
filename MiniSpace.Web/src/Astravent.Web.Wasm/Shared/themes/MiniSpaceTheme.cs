@@ -9,6 +9,7 @@ public static class MiniSpaceTheme
             // Light Mode Colors
             Primary = Colors.Indigo.Darken4,
             Secondary = Colors.Indigo.Darken3,
+            AppbarText = Colors.Indigo.Darken4,
             AppbarBackground = Colors.Shades.White,
             Background = Colors.Grey.Lighten5,
             Surface = "#FFFFFF",

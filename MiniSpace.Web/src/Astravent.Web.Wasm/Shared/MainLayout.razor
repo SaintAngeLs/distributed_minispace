@@ -13,29 +13,84 @@
 <MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="4">
-        <div class="container-fluid d-flex">
-            <div class="d-flex align-items-center">
-                @if (_isUserAuthenticated)
+    <div class="d-flex align-items-center justify-content-between w-100">
+        <!-- Left Side of AppBar -->
+        <div class="d-flex align-items-center">
+            @if (_isUserAuthenticated)
+            {
+                <!-- Drawer Menu for Authenticated User -->
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
+                <MudText Typo="Typo.h4" Class="ms-2" Color="Color.Primary">MiniSpace</MudText>
+            }
+            else
+            {
+                @if (!isPC)
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
-                }
-                else
-                {
+                    <!-- Mobile Version: Drawer Menu for Unauthenticated User -->
                     <MudButton Variant="Variant.Text" OnClick="@ToggleDrawer">
                         <img src="icons/menu-left.svg" alt="Menu" style="height: 24px; width: 24px;" />
                     </MudButton>
+                    <MudText Typo="Typo.h4" Class="ms-2">MiniSpace</MudText>
                 }
-                <span class="ml-2">MiniSpace</span>
-            </div>
-            <MudSpacer />
-            <div class="d-flex justify-content-end">
-                @if (_isUserAuthenticated)
+                else
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@ToggleUserDrawer" />
+                    <!-- Desktop Version: Menu and Navigation Links -->
+                    <MudText Typo="Typo.h4" Class="me-3">MiniSpace</MudText>
+                    <MudButton Variant="Variant.Text" OnClick="ScrollToHome" Class="me-2">
+                        Home
+                    </MudButton>
+                    <MudButton Variant="Variant.Text" OnClick="ScrollToAbout" Class="me-2">
+                        About App
+                    </MudButton>
+
+                    <!-- Dropdown Menu for Unauthenticated Users -->
+                    <MudMenu Label="Open Menu">
+                        <MudMenuItem OnClick="ScrollToConnect">Connect</MudMenuItem>
+                        <MudMenuItem Href="signin">Sign In</MudMenuItem>
+                        <MudMenuItem Href="signup">Sign Up</MudMenuItem>
+                    </MudMenu>
                 }
-            </div>
+            }
         </div>
-    </MudAppBar>
+
+        <!-- Right Side of AppBar with MudSpacer -->
+        <MudSpacer />
+
+        <div class="d-flex align-items-center">
+            @if (_isUserAuthenticated)
+            {
+                <!-- User Avatar/Menu for Authenticated User -->
+                <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@ToggleUserDrawer" />
+            }
+            else
+            {
+                <!-- More Menu for Unauthenticated User -->
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open user menu">
+                    <MudMenuItem Href="signin">Sign In</MudMenuItem>
+                    <MudMenuItem Href="signup">Sign Up</MudMenuItem>
+                </MudMenu>
+            }
+        </div>
+    </div>
+</MudAppBar>
+
+
+    @if (!_isUserAuthenticated && !isPC)
+    {
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Anchor="Anchor.Left" Variant="DrawerVariant.Temporary" OpenMiniOnHover="false">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Menu</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Href="#home" OnClick="ScrollToHome" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+                <MudNavLink Href="#about" OnClick="ScrollToAbout" Icon="@Icons.Material.Filled.Info">About App</MudNavLink>
+                <MudNavLink Href="#connect" OnClick="ScrollToConnect" Icon="@Icons.Material.Filled.ConnectWithoutContact">Connect</MudNavLink>
+                <MudNavLink Href="signin" Icon="@Icons.Material.Filled.Login">Sign In</MudNavLink>
+                <MudNavLink Href="signup" Icon="@Icons.Material.Filled.HowToReg">Sign Up</MudNavLink>
+                <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
+            </MudNavMenu>
+        </MudDrawer>
+    }
 
     @if (_isUserAuthenticated)
     {
@@ -56,30 +111,8 @@
             </MudNavMenu>
         </MudDrawer>
     }
-    else
-    {
-        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Responsive)" OpenMiniOnHover="true">
-            <MudDrawerHeader>
-                <MudText Typo="Typo.h6"> </MudText>
-            </MudDrawerHeader>
-            <MudNavMenu>
-                <MudNavLink Href="#home" OnClick="ScrollToHome" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-                <MudNavLink Href="#about" OnClick="ScrollToAbout" Icon="@Icons.Material.Filled.Info">About App</MudNavLink>
-                <MudNavLink Href="#connect" OnClick="ScrollToConnect" Icon="@Icons.Material.Filled.ConnectWithoutContact">Connect</MudNavLink>
-                <MudNavLink Href="signin" Icon="@Icons.Material.Filled.Login">Sign In</MudNavLink>
-                <MudNavLink Href="signup" Icon="@Icons.Material.Filled.HowToReg">Sign Up</MudNavLink>
-               @* <MudSelect T="string" Value="_themeName" ValueChanged="OnThemeChanged">
-                    <MudSelectItem T="string" Value="@light">Light Theme</MudSelectItem>
-                    <MudSelectItem T="string" Value="@dark">Dark Theme</MudSelectItem>
-                    <MudSelectItem T="string" Value="@system">System Theme</MudSelectItem>
-                </MudSelect> *@
-                <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
 
-
-            </MudNavMenu>
-        </MudDrawer>
-    }
-    @if (_isUserAuthenticated)
+    @if (_isUserAuthenticated )
     {
         <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Temporary)" OpenMiniOnHover="true">
             
@@ -266,7 +299,7 @@
     {
         if (NavigationManager.Uri != NavigationManager.BaseUri)
         {
-            NavigationManager.NavigateTo("/home", true);
+            NavigationManager.NavigateTo("/", true);
         }
         while (NavigationManager.Uri != NavigationManager.BaseUri)
         {

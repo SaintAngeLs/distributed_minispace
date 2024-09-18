@@ -37,6 +37,7 @@ else
 {
     builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 }
+
 // Load HttpClientOptions from configuration
 var httpClientOptions = builder.Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
 
@@ -56,6 +57,7 @@ builder.Services.AddHttpClient<IHttpClient, CustomHttpClient>((serviceProvider, 
 });
 
 // Register services
+
 builder.Services.AddMudServices(); // MudBlazor services
 builder.Services.AddMudMarkdownServices(); // MudBlazor Markdown support
 builder.Services.AddBlazoredLocalStorage(); // Local storage
