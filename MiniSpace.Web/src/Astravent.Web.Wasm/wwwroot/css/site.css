@@ -952,3 +952,88 @@ div.connectionRejected {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
+
+
+/* webassembly loader */
+
+#app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
+    position: relative;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Hide the loader when the app is loaded */
+#app.loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* SVG Loader Style */
+.loading-progress {
+    width: 100px;
+    height: 100px;
+    animation: rotate 2s linear infinite;
+}
+
+.loading-progress circle {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+.outer-circle {
+    stroke: #3f51b5;
+    opacity: 0.2;
+}
+
+.inner-circle {
+    stroke: #ff4081;
+    stroke-dasharray: 251.2; /* Circumference of the circle */
+    stroke-dashoffset: 251.2;
+    animation: dash 1.5s ease-in-out infinite;
+}
+
+/* Text Style */
+.loading-progress-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3f51b5;
+    margin-top: 20px;
+    text-align: center;
+    animation: textFade 1.5s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 251.2;
+    }
+    50% {
+        stroke-dashoffset: 125.6;
+        transform: rotate(45deg);
+    }
+    100% {
+        stroke-dashoffset: 251.2;
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes textFade {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}

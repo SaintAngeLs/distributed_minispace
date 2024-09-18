@@ -17,7 +17,6 @@
     <link href="_content/MudBlazor.Markdown/MudBlazor.Markdown.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
-    <link href="AstraventPwa.styles.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
@@ -29,11 +28,13 @@
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
+        <!-- Animated Loading SVG -->
+        <svg class="loading-progress" viewBox="0 0 100 100">
+            <circle class="outer-circle" r="40%" cx="50%" cy="50%" />
+            <circle class="inner-circle" r="40%" cx="50%" cy="50%" />
         </svg>
-        <div class="loading-progress-text"></div>
+        <!-- Loading Text -->
+        <div class="loading-progress-text">Loading, please wait...</div>
     </div>
 
     <div id="blazor-error-ui">
@@ -169,7 +170,7 @@
 
             communicationConnection.on("ReceiveMessage", function (jsonMessage) {
                 console.log("Message received: ", jsonMessage);
-                DotNet.invokeMethodAsync('Astravent.Web', 'ReceiveMessage', jsonMessage);
+                DotNet.invokeMethodAsync('Astravent.Web.Wasm', 'ReceiveMessage', jsonMessage);
             });
 
             communicationConnection.start().then(function () {
@@ -214,7 +215,7 @@
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        DotNet.invokeMethodAsync('Astravent.Web', 'LoadMoreCommentsAsync')
+                        DotNet.invokeMethodAsync('Astravent.Web.Wasm', 'LoadMoreCommentsAsync')
                             .catch(err => console.error('Error invoking Blazor method:', err));
                     }
                 });
