@@ -650,7 +650,7 @@
         return friends.Any(f => f.FriendId == friend.FriendId);
     }
 
-    private bool ShouldDisplayGallery(Visibility galleryVisibility)
+    private bool ShouldDisplayGallery(DTO.Visibility galleryVisibility)
     {
         return galleryVisibility == Visibility.Everyone || (galleryVisibility == Visibility.Connections && IsFriend(null));
     }

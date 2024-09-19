@@ -28,7 +28,6 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Load appsettings based on the environment
 if (builder.HostEnvironment.IsDevelopment())
 {
     builder.Configuration.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
@@ -38,7 +37,6 @@ else
     builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 }
 
-// Load HttpClientOptions from configuration
 var httpClientOptions = builder.Configuration.GetSection("HttpClientOptions").Get<HttpClientOptions>();
 
 if (httpClientOptions == null || string.IsNullOrEmpty(httpClientOptions.ApiUrl))
@@ -46,31 +44,25 @@ if (httpClientOptions == null || string.IsNullOrEmpty(httpClientOptions.ApiUrl))
     throw new InvalidOperationException("HttpClientOptions must be configured with a valid ApiUrl.");
 }
 
-// Register HttpClientOptions in DI
 builder.Services.AddSingleton(httpClientOptions);
 
-// Custom HttpClient registration with HttpClientOptions
 builder.Services.AddHttpClient<IHttpClient, CustomHttpClient>((serviceProvider, client) =>
 {
     var options = serviceProvider.GetRequiredService<HttpClientOptions>();
     client.BaseAddress = new Uri(options.ApiUrl);
 });
 
-// Register services
 
-builder.Services.AddMudServices(); // MudBlazor services
-builder.Services.AddMudMarkdownServices(); // MudBlazor Markdown support
-builder.Services.AddBlazoredLocalStorage(); // Local storage
+builder.Services.AddMudServices(); 
+builder.Services.AddMudMarkdownServices(); 
+builder.Services.AddBlazoredLocalStorage(); 
 
-// Radzen Dialog and Notification services
 builder.Services.AddScoped<NotificationService>();
 
-// Identity and authentication-related services
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-builder.Services.AddAuthorizationCore(); // For handling authentication/authorization in WebAssembly
+builder.Services.AddAuthorizationCore(); 
 
-// Register other services
 builder.Services.AddScoped<IStudentsService, StudentsService>();
 builder.Services.AddScoped<IEventsService, EventsService>();
 builder.Services.AddScoped<IPostsService, PostsService>();
@@ -84,7 +76,6 @@ builder.Services.AddScoped<ICommentsService, CommentsService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 builder.Services.AddScoped<ICommunicationService, CommunicationService>();
 
-// If SignalR is used, configure it like this
 builder.Services.AddScoped<SignalRService>();
 builder.Services.AddScoped<ChatSignalRService>();
 
