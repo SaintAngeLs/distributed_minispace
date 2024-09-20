@@ -20,7 +20,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 
         public async Task<UserSettings> GetUserSettingsAsync(Guid studentId)
         {
-            var userSettingsDocument = await _repository.GetAsync(x => x.StudentId == studentId);
+            var userSettingsDocument = await _repository.GetAsync(x => x.UserId == studentId);
             return userSettingsDocument?.AsEntity();
         }
 
@@ -32,7 +32,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 
         public async Task UpdateUserSettingsAsync(UserSettings userSettings)
         {
-            var userSettingsDocument = await _repository.GetAsync(x => x.StudentId == userSettings.StudentId);
+            var userSettingsDocument = await _repository.GetAsync(x => x.UserId == userSettings.UserId);
 
             if (userSettingsDocument == null)
             {

@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
                 // Map user settings to UserSettingsDto and include them in the StudentDto
                 studentDto.UserSettings = new UserSettingsDto
                 {
-                    StudentId = userSettings.StudentId,
+                    UserId = userSettings.UserId,
                     CreatedAtVisibility = userSettings.AvailableSettings.CreatedAtVisibility.ToString(),
                     DateOfBirthVisibility = userSettings.AvailableSettings.DateOfBirthVisibility.ToString(),
                     InterestedInEventsVisibility = userSettings.AvailableSettings.InterestedInEventsVisibility.ToString(),

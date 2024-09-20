@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
             return new UserSettingsDto
             {
-                StudentId = userSettings.StudentId,
+                UserId = userSettings.UserId,
                 CreatedAtVisibility = userSettings.AvailableSettings.CreatedAtVisibility.ToString(),
                 DateOfBirthVisibility = userSettings.AvailableSettings.DateOfBirthVisibility.ToString(),
                 InterestedInEventsVisibility = userSettings.AvailableSettings.InterestedInEventsVisibility.ToString(),

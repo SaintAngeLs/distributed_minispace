@@ -124,7 +124,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 
         public static UserNotifications AsEntity(this UserNotificationsDocument document)
             => new UserNotifications(
-                document.StudentId,
+                document.UserId,
                 document.NotificationPreferences
             );
 
@@ -132,7 +132,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             => new UserNotificationsDocument
             {
                 Id = Guid.NewGuid(), // Ensure a unique identifier is set
-                StudentId = entity.StudentId,
+                UserId = entity.UserId,
                 NotificationPreferences = entity.NotificationPreferences
             };
 
@@ -153,7 +153,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             => new UserNotificationsDocument
             {
                 Id = Guid.NewGuid(),
-                StudentId = dto.StudentId,
+                UserId = dto.StudentId,
                 NotificationPreferences = new NotificationPreferences(
                     dto.AccountChanges,
                     dto.SystemLogin,
@@ -189,7 +189,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 
         public static UserSettings AsEntity(this UserSettingsDocument document)
             => new UserSettings(
-                document.StudentId,
+                document.UserId,
                 new UserAvailableSettings(
                     document.AvailableSettings.CreatedAtVisibility,
                     document.AvailableSettings.DateOfBirthVisibility,
@@ -212,8 +212,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
        public static UserSettingsDocument AsDocument(this UserSettings entity)
             => new UserSettingsDocument
             {
-                Id = Guid.NewGuid(), // Ensure a unique identifier is set
-                StudentId = entity.StudentId,
+                Id = Guid.NewGuid(), 
+                UserId = entity.UserId,
                 AvailableSettings = new UserAvailableSettingsDocument
                 {
                     CreatedAtVisibility = entity.AvailableSettings.CreatedAtVisibility,
