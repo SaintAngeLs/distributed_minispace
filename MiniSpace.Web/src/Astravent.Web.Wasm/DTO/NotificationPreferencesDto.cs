@@ -5,7 +5,7 @@ namespace Astravent.Web.Wasm.DTO
 {
     public class NotificationPreferencesDto
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public bool AccountChanges { get; set; }
         public bool SystemLogin { get; set; }
         public bool NewEvent { get; set; }

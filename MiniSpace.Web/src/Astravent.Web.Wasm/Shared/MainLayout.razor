@@ -26,7 +26,6 @@
             {
                 @if (!isPC)
                 {
-                    <!-- Mobile Version: Drawer Menu for Unauthenticated User -->
                     <MudButton Variant="Variant.Text" OnClick="@ToggleDrawer">
                         <img src="icons/menu-left.svg" alt="Menu" style="height: 24px; width: 24px;" />
                     </MudButton>
@@ -34,7 +33,6 @@
                 }
                 else
                 {
-                    <!-- Desktop Version: Menu and Navigation Links -->
                     <MudText Typo="Typo.h4" Class="me-3">MiniSpace</MudText>
                     <MudButton Variant="Variant.Text" OnClick="ScrollToHome" Class="me-2">
                         Home
@@ -43,7 +41,6 @@
                         About App
                     </MudButton>
 
-                    <!-- Dropdown Menu for Unauthenticated Users -->
                     <MudMenu Label="Open Menu">
                         <MudMenuItem OnClick="ScrollToConnect">Connect</MudMenuItem>
                         <MudMenuItem Href="signin">Sign In</MudMenuItem>

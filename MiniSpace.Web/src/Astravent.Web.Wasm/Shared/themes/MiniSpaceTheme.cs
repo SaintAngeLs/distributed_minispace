@@ -6,7 +6,6 @@ public static class MiniSpaceTheme
     {
         Palette = new PaletteLight()
         {
-            // Light Mode Colors
             Primary = Colors.Indigo.Darken4,
             Secondary = Colors.Indigo.Darken3,
             AppbarText = Colors.Indigo.Darken4,
