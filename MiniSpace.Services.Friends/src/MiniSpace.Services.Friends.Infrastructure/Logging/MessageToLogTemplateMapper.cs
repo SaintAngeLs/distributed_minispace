@@ -11,12 +11,6 @@ namespace MiniSpace.Services.Friends.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(AddFriend), new HandlerLogTemplate
-                    {
-                        After = "Friendship added between requester: {RequesterId} and friend: {FriendId}."
-                    }
-                },
-                {
                     typeof(RemoveFriend), new HandlerLogTemplate
                     {
                         After = "Friendship removed between requester: {RequesterId} and friend: {FriendId}."

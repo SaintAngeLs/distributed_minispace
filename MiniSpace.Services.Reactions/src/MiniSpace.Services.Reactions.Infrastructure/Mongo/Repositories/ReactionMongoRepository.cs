@@ -42,5 +42,11 @@ namespace MiniSpace.Services.Reactions.Infrastructure.Mongo.Repositories
         public Task<bool> ExistsAsync(Guid contentId, ReactionContentType contentType, Guid studentId)
             => _repository.ExistsAsync(x => x.ContentId == contentId && x.ContentType == contentType 
                                                                      && x.UserId == studentId);
+
+        public async Task<Reaction> GetByIdAsync(Guid id, Guid userId)
+        {
+            var reaction = await _repository.GetAsync(x => x.Id == id && x.UserId == userId);
+            return reaction?.AsEntity();
+        }
     }    
 }

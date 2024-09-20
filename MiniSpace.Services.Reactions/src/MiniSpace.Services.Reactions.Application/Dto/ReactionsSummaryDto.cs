@@ -11,5 +11,6 @@ namespace MiniSpace.Services.Reactions.Application.Dto
         public ReactionType? DominantReaction { get; set; } = dominant;
         public Guid? AuthUserReactionId { get; set; } = authUserReactionId;
         public ReactionType? AuthUserReactionType { get; set; } = authUserReactionType;
+        public Dictionary<ReactionType, int> ReactionsWithCounts { get; set; } = new Dictionary<ReactionType, int>();    
     }    
 }

@@ -8,7 +8,8 @@ namespace MiniSpace.Services.Identity.Core.Exceptions
         public Guid UserId { get; }
         public string Role { get; }
 
-        public UserCannotBeBannedException(Guid userId, string role) : base($"User with ID: {userId} and Role: {role} cannot be banned.")
+        public UserCannotBeBannedException(Guid userId, string role) : 
+            base($"User with ID: {userId} and Role: {role} cannot be banned.")
         {
             UserId = userId;
             Role = role;

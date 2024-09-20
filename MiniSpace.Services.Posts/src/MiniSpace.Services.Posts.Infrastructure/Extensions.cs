@@ -42,6 +42,8 @@ using MiniSpace.Services.Posts.Infrastructure.Services.Workers;
 using System.Diagnostics.CodeAnalysis;
 using MiniSpace.Services.Events.Infrastructure.Services.Clients;
 using MiniSpace.Services.Posts.Application.Services.Clients;
+using Microsoft.ML;
+using MiniSpace.Services.Events.Infrastructure.Mongo.Repositories;
 
 namespace MiniSpace.Services.Posts.Infrastructure
 {
@@ -56,10 +58,18 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient<IPostsService, PostsService>();
+
             builder.Services.AddTransient<IOrganizationEventPostRepository, OrganizationEventPostMongoRepository>();
             builder.Services.AddTransient<IOrganizationPostRepository, OrganizationPostMongoRepository>();
             builder.Services.AddTransient<IUserEventPostRepository, UserEventPostMongoRepository>();
             builder.Services.AddTransient<IUserPostRepository, UserPostMongoRepository>();
+            builder.Services.AddTransient<IUserCommentsHistoryRepository, UserCommentsHistoryRepository>();
+            builder.Services.AddTransient<IUserReactionsHistoryRepository, UserReactionsHistoryRepository>();
+            builder.Services.AddTransient<IPostsUserViewsRepository, PostsUserViewsMongoRepository>();
+
+            builder.Services.AddSingleton<MLContext>(new MLContext());
+            builder.Services.AddTransient<IPostRecommendationService, PostRecommendationService>();
+
             builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
@@ -86,6 +96,9 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .AddMongoRepository<UserEventPostDocument, Guid>("user_events_posts")
                 .AddMongoRepository<UserPostDocument, Guid>("user_posts")
                 .AddMongoRepository<PostDocument, Guid>("posts")
+                .AddMongoRepository<UserCommentsDocument, Guid>("user_comments_history")
+                .AddMongoRepository<UserReactionDocument, Guid>("user_reactions_history")
+                .AddMongoRepository<UserPostsViewsDocument, Guid>("user_views")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -106,7 +119,9 @@ namespace MiniSpace.Services.Posts.Infrastructure
                 .SubscribeCommand<CreatePost>()
                 .SubscribeCommand<UpdatePostsState>()
                 .SubscribeCommand<ChangePostState>()
-                .SubscribeEvent<MediaFileDeleted>();
+                .SubscribeEvent<MediaFileDeleted>()
+                .SubscribeEvent<CommentCreated>()
+                .SubscribeEvent<ReactionCreated>();
 
             return app;
         }

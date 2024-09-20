@@ -1,3 +1,4 @@
+@page "/organizations/{OrganizationId}/events"
 @inject IEventsService EventsService
 @inject NavigationManager NavigationManager
 @inject IIdentityService IdentityService
@@ -101,7 +102,7 @@
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex);
+            Console.Error.WriteLine(ex); // Log to console for debugging
             Snackbar.Add($"Failed to load events: {ex.Message}", Severity.Error);
         }
         finally
@@ -112,18 +113,34 @@
 
     private async Task LoadEvents()
     {
-        var searchCommand = new SearchEvents
+        try
         {
-            OrganizationId = OrganizationId,
-            Pageable = new PageableDto
+            var searchCommand = new SearchEvents
             {
-                Page = 1,
-                Size = 50
-            }
-        };
+                OrganizationId = OrganizationId,
+                Pageable = new PageableDto
+                {
+                    Page = 1,
+                    Size = 50
+                }
+            };
 
-        var result = await EventsService.SearchEventsAsync(searchCommand);
-        events = result?.Items.ToList() ?? new List<EventDto>();
+            var result = await EventsService.SearchEventsAsync(searchCommand);
+
+            // Debugging: Log result to ensure data is returned
+            Console.WriteLine($"Events fetched: {result?.Items.Count()}");
+
+            events = result?.Items.ToList() ?? new List<EventDto>();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex); // Log to console for debugging
+            Snackbar.Add($"Failed to load events: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private bool CheckIfUserIsAdmin(OrganizationDetailsDto organization)

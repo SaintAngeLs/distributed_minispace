@@ -39,6 +39,8 @@ using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Comments.Infrastructure.Services;
 using System.Diagnostics.CodeAnalysis;
+using MiniSpace.Services.Comments.Application.Services.Clients;
+using MiniSpace.Services.Comments.Infrastructure.Services.Clients;
 
 namespace MiniSpace.Services.Comments.Infrastructure
 {
@@ -53,9 +55,10 @@ namespace MiniSpace.Services.Comments.Infrastructure
             builder.Services.AddTransient<IUserEventsCommentRepository, UserEventsCommentRepository>();
             builder.Services.AddTransient<IUserPostsCommentRepository, UserPostsCommentRepository>();
 
+            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
-            builder.Services.AddTransient<ICommentService, CommentService>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());

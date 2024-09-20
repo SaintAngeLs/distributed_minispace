@@ -131,7 +131,7 @@ app {
 .main-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* header {
@@ -907,4 +907,48 @@ div.connectionRejected {
     width: 100%;
     height: auto;
     border-radius: 8px;
+}
+
+.avatar-overlay {
+    bottom: 40px;
+    left: 16px;
+    border: 3px solid white;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+ /* Mobile-specific styles */
+ @media (max-width: 800px) {
+    .chat-name {
+        display: none !important;
+    }
+ }
+ @media (max-width: 600px) {
+    /* .chat-name {
+        display: none !important;
+    } */
+
+    .conversation-list-container {
+        width: 60px;
+        padding: 0;
+    }
+
+    .conversation-list .MudListItemIcon {
+        margin-right: 0;
+    }
+
+    .chat-container {
+        padding: 0 8px;
+    }
+}
+
+.typing-indicator {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+
+.mud-dialog-blur-backdrop {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }

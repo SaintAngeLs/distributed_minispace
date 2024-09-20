@@ -17,11 +17,11 @@ namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients
             _url = options.Services["students"];
         }
         
-        public Task<StudentDto> GetAsync(Guid id)
-            => _httpClient.GetAsync<StudentDto>($"{_url}/students/{id}");
+        public Task<UserDto> GetAsync(Guid id)
+            => _httpClient.GetAsync<UserDto>($"{_url}/students/{id}");
 
-        public Task<IEnumerable<StudentDto>> GetAllAsync()
-            => _httpClient.GetAsync<IEnumerable<StudentDto>>($"{_url}/students");
+        public Task<IEnumerable<UserDto>> GetAllAsync()
+            => _httpClient.GetAsync<IEnumerable<UserDto>>($"{_url}/students");
 
     }
 }

@@ -2,7 +2,10 @@ using Convey.CQRS.Commands;
 using MiniSpace.Services.Friends.Core.Repositories;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;
+using MiniSpace.Services.Friends.Core.Entities;
+using MiniSpace.Services.Friends.Application.Events.External;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Application.Commands.Handlers
@@ -31,17 +34,17 @@ namespace MiniSpace.Services.Friends.Application.Commands.Handlers
                 throw new FriendshipNotFoundException(command.RequesterId, command.FriendId);
             }
 
-            if (friendRequest.State != Core.Entities.FriendState.Requested)
+             if (friendRequest.State != FriendState.Requested)
             {
-                throw new InvalidOperationException("Friend request is not in the correct state to be declined.");
+                throw new InvalidFriendRequestStateException(command.RequesterId, command.FriendId, friendRequest.State.ToString());
             }
 
             friendRequest.Decline();
-            friendRequest.State = Core.Entities.FriendState.Declined;
+            friendRequest.State = FriendState.Declined;
             await _friendRequestRepository.UpdateAsync(friendRequest);
 
-            // var events = _eventMapper.MapAll(friendRequest.Events);
-            // await _messageBroker.PublishAsync(events.ToArray());
+            var pendingFriendDeclinedEvent = new PendingFriendDeclined(command.RequesterId, command.FriendId);
+            await _messageBroker.PublishAsync(pendingFriendDeclinedEvent);
         }
     }
 }

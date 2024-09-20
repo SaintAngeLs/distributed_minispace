@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Posts.Application;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Dto;
+using MiniSpace.Services.Posts.Application.DTO;
 using MiniSpace.Services.Posts.Application.Queries;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Core.Wrappers;
@@ -39,7 +40,11 @@ namespace MiniSpace.Services.Posts.Api
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetPost, PostDto>("posts/{postId}")
                         .Get<GetPosts, PagedResponse<PostDto>>("posts/search")
+                        .Get<GetUserFeed, PagedResponse<PostDto>>("posts/users/{userId}/feed")
                         .Get<GetOrganizerPosts, IEnumerable<PostDto>>("posts/organizer/{organizerId}")
+                        .Post<ViewPost>("posts/{postId}/view",
+                            afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Get<GetUserPostViews, PagedResponse<ViewDto>>("posts/users/{userId}/views")
                         .Put<UpdatePost>("posts/{postId}")
                         .Delete<DeletePost>("posts/{postId}")
                         .Post<CreatePost>("posts",

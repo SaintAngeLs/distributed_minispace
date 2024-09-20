@@ -7,25 +7,25 @@ namespace MiniSpace.Services.Friends.Core.Entities
     public class Friend : AggregateRoot
     {
         public Guid FriendId { get; private set; }
-        public Guid StudentId { get; private set; }
+        public Guid UserId { get; private set; }
         public FriendState FriendState { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Friend(Guid studentId, Guid friendId, DateTime createdAt, FriendState state)
+        public Friend(Guid userId, Guid friendId, DateTime createdAt, FriendState state)
         {
             Id = Guid.NewGuid();
-            StudentId = studentId;
+            UserId = userId;
             FriendId = friendId;
             CreatedAt = createdAt;
             FriendState = state;
         }
 
-        public static Friend CreateNewFriendship(Guid studentId, Guid friendId)
+        public static Friend CreateNewFriendship(Guid userId, Guid friendId)
         {
-            return new Friend(studentId, friendId, DateTime.UtcNow, FriendState.Accepted);
+            return new Friend(userId, friendId, DateTime.UtcNow, FriendState.Accepted);
         }
 
-        public void InviteFriend(Student inviter, Student invitee)
+        public void InviteFriend(User inviter, User invitee)
         {
             if (FriendState != FriendState.Unknown)
             {
@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Friends.Core.Entities
             AddEvent(new FriendInvited(this, newFriend));
         }
 
-        public void AcceptFriendship(Student friend)
+        public void AcceptFriendship(User friend)
         {
             if (FriendState != FriendState.Requested)
             {
@@ -76,7 +76,7 @@ namespace MiniSpace.Services.Friends.Core.Entities
 
 
 
-         public void RemoveFriend(Student requester, Student friend)
+         public void RemoveFriend(User requester, User friend)
         {
             if (FriendState != FriendState.Accepted)
             {

@@ -6,6 +6,6 @@ namespace MiniSpace.Services.Friends.Application.Queries
 {
     public class GetFriend : IQuery<FriendDto>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
     }    
 }

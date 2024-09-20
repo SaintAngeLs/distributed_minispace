@@ -302,6 +302,88 @@ modules:
       notifications-service:
         localUrl: localhost:5006
         url: notifications-service
+
+
+  communication:
+    path: /communication
+    routes:
+      - upstream: /chats
+        method: POST
+        use: downstream
+        downstream: communication-service/communication/chats
+        auth: true 
+
+      - upstream: /chats/{chatId}/messages
+        method: POST
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages
+        auth: true  
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/users
+        method: PUT
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/users
+        auth: true  
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/messages/{messageId}/status
+        method: PUT
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages/{messageId}/status
+        auth: true  
+        bind:
+          - chatId:{chatId}
+          - messageId:{messageId}
+
+      - upstream: /chats/user/{userId}
+        method: GET
+        use: downstream
+        downstream: communication-service/communication/chats/user/{userId}
+        auth: true 
+        bind:
+          - userId:{userId}
+
+      - upstream: /chats/{chatId}
+        method: GET
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}
+        auth: true 
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/messages
+        method: GET
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages
+        auth: true 
+        bind:
+          - chatId:{chatId}
+
+      - upstream: /chats/{chatId}/{userId}
+        method: DELETE
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/{userId}
+        auth: true 
+        bind:
+          - chatId:{chatId}
+          - userId:{userId}
+
+      - upstream: /chats/{chatId}/messages/{messageId}
+        method: DELETE
+        use: downstream
+        downstream: communication-service/communication/chats/{chatId}/messages/{messageId}
+        auth: true 
+        bind:
+          - chatId:{chatId}
+          - messageId:{messageId}
+
+    services:
+      communication-service:
+        localUrl: localhost:5016
+        url: communication-service
   
 
   students:
@@ -349,6 +431,30 @@ modules:
         downstream: students-service/students/{studentId}/notifications
         auth: true
 
+      - upstream: /profiles/users/{userId}/views/paginated
+        method: GET
+        use: downstream
+        downstream: students-service/students/profiles/users/{userId}/views/paginated
+        auth: true
+        bind:
+          - userId:{userId}
+
+      - upstream: /profiles/users/{userId}/views/viewed
+        method: GET
+        use: downstream
+        downstream: students-service/students/profiles/users/{userId}/views/viewed
+        auth: true
+        bind:
+          - userId:{userId}
+
+      - upstream: /{blockerId}/blocked-users
+        method: GET
+        use: downstream
+        downstream: students-service/students/{blockerId}/blocked-users
+        auth: true
+        bind:
+          - blockerId:{blockerId}
+
       - upstream: /{studentId}
         method: PUT
         use: downstream
@@ -391,6 +497,32 @@ modules:
         use: downstream
         downstream: students-service/students/{studentId}/notifications
         auth: true
+
+      - upstream: /profiles/users/{userProfileId}/view
+        method: POST
+        use: downstream
+        downstream: students-service/students/profiles/users/{userProfileId}/view
+        auth: true
+        bind:
+          - userProfileId:{userProfileId}
+
+      - upstream: /{blockerId}/block-user/{blockedUserId}
+        method: POST
+        use: downstream
+        downstream: students-service/students/{blockerId}/block-user/{blockedUserId}
+        auth: true
+        bind:
+          - blockerId:{blockerId}
+          - blockedUserId:{blockedUserId}
+
+      - upstream: /{blockerId}/unblock-user/{blockedUserId}
+        method: POST
+        use: downstream
+        downstream: students-service/students/{blockerId}/unblock-user/{blockedUserId}
+        auth: true
+        bind:
+          - blockerId:{blockerId}
+          - blockedUserId:{blockedUserId}
 
       - upstream: /{studentId}/languages-and-interests
         method: PUT
@@ -454,6 +586,23 @@ modules:
         downstream: events-service/events/student/{studentId}
         auth: true
 
+      - upstream: /users/{userId}/feed
+        method: GET
+        use: downstream
+        downstream: events-service/events/users/{userId}/feed
+        auth: true
+        bind:
+          - userId:{userId}
+
+      - upstream: /users/{userId}/views/paginated
+        method: GET
+        use: downstream
+        downstream: events-service/events/users/{userId}/views/paginated
+        auth: true
+        bind:
+          - userId:{userId}
+          
+      
       - upstream: /{eventId}
         method: DELETE
         use: downstream
@@ -482,6 +631,14 @@ modules:
         use: downstream
         downstream: events-service/events/{eventId}/show-interest
         auth: true
+
+      - upstream: /{eventId}/view
+        method: POST
+        use: downstream
+        downstream: events-service/events/{eventId}/view
+        auth: true
+        bind:
+          - eventId:{eventId}
 
       - upstream: /{eventId}/show-interest
         method: DELETE
@@ -590,7 +747,7 @@ modules:
           auth: true
 
         - upstream: /search
-          method: POST
+          method: GET
           use: downstream
           downstream: comments-service/comments/search
 
@@ -616,10 +773,20 @@ modules:
           auth: true
 
         - upstream: /{reactionId}
+          method: PUT
+          use: downstream
+          downstream: reactions-service/reactions/{reactionId}
+          auth: true
+          bind:
+            - reactionId: {reactionId}
+
+        - upstream: /{reactionId}
           method: DELETE
           use: downstream
           downstream: reactions-service/reactions/{reactionId}
           auth: true
+          bind:
+            - reactionId: {reactionId}
 
         - upstream: /
           method: GET
@@ -747,6 +914,22 @@ modules:
           downstream: friends-service/friends/requests/sent/{userId}
           auth: true
 
+        - upstream: /{userId}/followers
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/{userId}/followers
+          auth: true
+          bind:
+            - userId: {userId}
+        
+        - upstream: /{userId}/following
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/{userId}/following
+          auth: true
+          bind:
+            - userId: {userId}
+
         - upstream: /requests/{userId}/withdraw
           method: PUT
           use: downstream
@@ -769,6 +952,14 @@ modules:
         method: POST
         use: downstream
         downstream: posts-service/posts
+        auth: true
+
+      - upstream: /users/{userId}/feed
+        method: GET
+        use: downstream
+        downstream: posts-service/posts/users/{userId}/feed
+        bind:
+          - userId:{userId}
         auth: true
 
       - upstream: /search
@@ -798,6 +989,8 @@ modules:
         method: GET
         use: downstream
         downstream: posts-service/posts/{postId}
+        bind:
+          - postId:{postId}
 
       - upstream: /
         method: GET
@@ -898,7 +1091,7 @@ modules:
       - upstream: /users/{userId}/organizations
         method: GET
         use: downstream
-        downstream: organizations-service/users/{userId}/organizations
+        downstream: organizations-service/organizations/users/{userId}/organizations
         auth: true
         bind:
           - userId: {userId}
@@ -910,6 +1103,16 @@ modules:
         auth: true
         bind:
           - organizationId: {organizationId}
+
+      - upstream: /users/{userId}/organizations/follow
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/users/{userId}/organizations/follow
+        auth: true
+        bind:
+          - userId: {userId}
+
+          
       
       - upstream: /{organizationId}/details/gallery-users
         method: GET
@@ -926,6 +1129,13 @@ modules:
         bind:
           - organizationId: {organizationId}
         
+      - upstream: /{organizationId}/requests
+        method: GET
+        use: downstream
+        downstream: organizations-service/organizations/{organizationId}/requests
+        bind:
+          - organizationId: {organizationId}
+
       - upstream: /paginated
         method: GET
         use: downstream

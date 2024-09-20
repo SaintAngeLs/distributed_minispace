@@ -7,11 +7,12 @@ using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Core.Repositories;
+using MiniSpace.Services.Events.Core.Wrappers;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetPaginatedOrganizerEventsHandler : IQueryHandler<GetPaginatedOrganizerEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
+    public class GetPaginatedOrganizerEventsHandler : IQueryHandler<GetPaginatedOrganizerEvents, PagedResponse<EventDto>>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IAppContext _appContext;
@@ -22,7 +23,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             _appContext = appContext;
         }
 
-        public async Task<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>> HandleAsync(GetPaginatedOrganizerEvents query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<EventDto>> HandleAsync(GetPaginatedOrganizerEvents query, CancellationToken cancellationToken)
         {
             var (events, pageNumber, pageSize, totalPages, totalElements) = await _eventRepository.BrowseOrganizerEventsAsync(
                 pageNumber: query.Page,
@@ -39,7 +40,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             var studentId = _appContext.Identity.Id;
             var eventDtos = events.Select(e => e.AsDto(studentId)).ToList();
 
-            return new MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(eventDtos, pageNumber, pageSize, totalElements);
+            return new PagedResponse<EventDto>(eventDtos, pageNumber, pageSize, totalElements);
         }
     }
 }

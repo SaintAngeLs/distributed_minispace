@@ -86,5 +86,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Repositories
                 }
             }
         }
+        
     }
 }

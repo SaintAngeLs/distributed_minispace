@@ -1,17 +1,41 @@
 @using MiniSpace.Web.DTO
-@using MiniSpace.Web.Areas.Students
-@inject IStudentsService StudentsService
+@using MiniSpace.Web.Areas.Events
+@inject IEventsService EventsService
 @using MudBlazor
 
 <MudPaper>
-    <MudText Typo="Typo.h5">Recommendations</MudText>
-    <!-- Add recommendation logic here -->
-    @if (recommendations != null)
+    <MudText Typo="Typo.h5">Event Recommendations</MudText>
+
+    @if (loadingRecommendations)
     {
-        @foreach (var recommendation in recommendations)
-        {
-            <MudText Typo="Typo.body1">@recommendation</MudText>
-        }
+        <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+    }
+    else if (recommendations != null && recommendations.Any())
+    {
+        <MudList>
+            @foreach (var recommendation in recommendations)
+            {
+                <MudListItem Class="mb-2">
+                    <MudCard Elevation="3" Class="d-flex flex-column">
+                        <MudImage 
+                            Src="@(!string.IsNullOrEmpty(recommendation.BannerUrl) ? recommendation.BannerUrl : "/images/default_media_file_image.png")" 
+                            Alt="Event image" 
+                            Style="width: 100%; height: auto;" 
+                        />
+
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6">@recommendation.Name</MudText>
+                            <MudText Typo="Typo.caption" Class="text-muted">@recommendation.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                            <MudText Typo="Typo.body2" Class="mt-1">@recommendation.Description</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudListItem>
+            }
+        </MudList>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1">No recommendations available at the moment.</MudText>
     }
 </MudPaper>
 
@@ -19,17 +43,25 @@
     [Parameter]
     public Guid UserId { get; set; }
 
-    private List<string> recommendations;
+    private List<EventDto> recommendations;
+    private bool loadingRecommendations = true;
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch recommendations based on the user ID
         recommendations = await FetchRecommendationsAsync(UserId);
+        loadingRecommendations = false;
     }
 
-    private Task<List<string>> FetchRecommendationsAsync(Guid userId)
+    private async Task<List<EventDto>> FetchRecommendationsAsync(Guid userId)
     {
-        // Dummy implementation, replace with actual recommendation logic
-        return Task.FromResult(new List<string> { "Event 1", "Event 2", "Event 3" });
+        try
+        {
+            var result = await EventsService.GetUserEventsFeedAsync(userId, pageNumber: 1, pageSize: 10, sortBy: "PublishDate", direction: "asc");
+            return result.Items.ToList();
+        }
+        catch (Exception ex)
+        {
+            return new List<EventDto>();
+        }
     }
 }

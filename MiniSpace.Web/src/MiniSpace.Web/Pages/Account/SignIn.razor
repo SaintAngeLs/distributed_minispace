@@ -11,12 +11,10 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
-
 <style>
     body {
         margin: 0;
-        @* font-family: 'Roboto', sans-serif;
-        background: #f4f4f9; *@
+        background: #f4f4f9;
     }
 
     .split-container {
@@ -68,10 +66,6 @@
     }
 
     .text-center {
-        text-align: center;
-    }
-
-    .input-center {
         text-align: center;
     }
 
@@ -153,6 +147,13 @@
     private string passwordInputIcon = MudBlazor.Icons.Material.Filled.VisibilityOff;
     private bool isTwoFactorRequired = false;
     private Guid userId;
+    private string deviceType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Capture the device type using JavaScript interop
+        deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+    }
 
     private void OnAlertClose()
     {
@@ -178,7 +179,7 @@
     {
         try
         {
-            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
 
             if (response != null && response.Content != null)
             {
@@ -186,14 +187,14 @@
                 {
                     isTwoFactorRequired = true;
                     userId = response.Content.UserId;
-                    twoFactorModel.Code = string.Empty; // Ensure the code is clear
+                    twoFactorModel.Code = string.Empty; 
                     StateHasChanged();
                 }
                 else if (!string.IsNullOrEmpty(response.Content.AccessToken))
                 {
                     await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-                    var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/";
-                    NavigationManager.NavigateTo(nextPage, true);
+                    var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
+                    NavigationManager.NavigateTo(nextPage, forceLoad: true);
                 }
                 else
                 {
@@ -225,7 +226,7 @@
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
                 await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/";
+                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
                 NavigationManager.NavigateTo(nextPage, true);
             }
             else

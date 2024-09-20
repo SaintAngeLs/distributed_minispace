@@ -4,6 +4,7 @@
 @using MudBlazor
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <div class="form-container">
     <div class="sign-in-up-pre-info">
@@ -48,6 +49,13 @@
     private bool rememberMe = false;
     private InputType passwordInputType = InputType.Password;
     private string passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private string deviceType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Capture the device type using JavaScript interop
+        deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+    }
 
     private void OnAlertClose()
     {
@@ -73,10 +81,11 @@
     {
         try
         {
-            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password);
+            // Pass the detected device type to the SignInAsync method
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
-                NavigationManager.NavigateTo("/", true);
+                NavigationManager.NavigateTo("/home", true);
             }
             else
             {

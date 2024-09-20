@@ -8,6 +8,7 @@ using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 using Blazorise;
 using MiniSpace.Web.DTO.Notifications;
+using System.Collections.Concurrent;
 
 namespace MiniSpace.Web.Areas.Notifications
 {
@@ -16,6 +17,9 @@ namespace MiniSpace.Web.Areas.Notifications
         private readonly IHttpClient _httpClient;
         private readonly IIdentityService _identityService;
         
+         private static readonly ConcurrentDictionary<Guid, bool> ConnectedUsers = new();
+
+
         public NotificationsService(IHttpClient httpClient, IIdentityService identityService)
         {
             _httpClient = httpClient;
@@ -91,6 +95,23 @@ namespace MiniSpace.Web.Areas.Notifications
             _httpClient.SetAccessToken(accessToken);
             var url = "notifications";
             await _httpClient.PostAsync<NotificationToUsersDto, HttpResponse<NotificationToUsersDto>>(url, notification);
+        }
+
+         public void AddConnectedUser(Guid userId)
+        {
+            ConnectedUsers[userId] = true;
+        }
+
+        // Method to remove a user from the connected users list
+        public void RemoveConnectedUser(Guid userId)
+        {
+            ConnectedUsers.TryRemove(userId, out _);
+        }
+
+        // Method to check if a user is connected
+        public Task<bool> IsUserConnectedAsync(Guid userId)
+        {
+            return Task.FromResult(ConnectedUsers.ContainsKey(userId));
         }
 
     }

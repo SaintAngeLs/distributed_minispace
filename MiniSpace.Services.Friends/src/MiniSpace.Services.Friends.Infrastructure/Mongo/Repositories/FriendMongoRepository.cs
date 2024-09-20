@@ -32,7 +32,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
             var friend = new FriendDocument
             {
                 Id = Guid.NewGuid(),
-                StudentId = requesterId,
+                UserId = requesterId,
                 FriendId = friendId,
                 CreatedAt = DateTime.UtcNow,
                 State = FriendState.Requested
@@ -58,25 +58,25 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
         public async Task<List<Friend>> GetFriendsAsync(Guid studentId)
         {
-            var documents = await _repository.FindAsync(f => f.StudentId == studentId);
+            var documents = await _repository.FindAsync(f => f.UserId == studentId);
             return documents?.Select(d => d.AsEntity()).ToList();
         }
 
         public async Task<Friend> GetFriendshipAsync(Guid requesterId, Guid friendId)
         {
-            var document = await _repository.GetAsync(f => f.StudentId == requesterId && f.FriendId == friendId);
+            var document = await _repository.GetAsync(f => f.UserId == requesterId && f.FriendId == friendId);
             return document?.AsEntity();
         }
 
         public async Task<bool> IsFriendAsync(Guid studentId, Guid potentialFriendId)
         {
-            var friend = await _repository.GetAsync(f => f.StudentId == studentId && f.FriendId == potentialFriendId);
+            var friend = await _repository.GetAsync(f => f.UserId == studentId && f.FriendId == potentialFriendId);
             return friend != null;
         }
 
         public async Task RemoveFriendAsync(Guid requesterId, Guid friendId)
         {
-            var friend = await _repository.GetAsync(f => f.StudentId == requesterId && f.FriendId == friendId);
+            var friend = await _repository.GetAsync(f => f.UserId == requesterId && f.FriendId == friendId);
             if (friend != null)
             {
                 await _repository.DeleteAsync(friend.Id);
@@ -85,7 +85,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
         public async Task AcceptFriendInvitationAsync(Guid requesterId, Guid friendId)
         {
-            var friend = await _repository.GetAsync(f => f.StudentId == requesterId && f.FriendId == friendId);
+            var friend = await _repository.GetAsync(f => f.UserId == requesterId && f.FriendId == friendId);
             if (friend != null)
             {
                 friend.State = FriendState.Accepted;
@@ -95,7 +95,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
 
         public async Task DeclineFriendInvitationAsync(Guid requesterId, Guid friendId)
         {
-            var friend = await _repository.GetAsync(f => f.StudentId == requesterId && f.FriendId == friendId);
+            var friend = await _repository.GetAsync(f => f.UserId == requesterId && f.FriendId == friendId);
             if (friend != null)
             {
                 friend.State = FriendState.Declined;
@@ -107,7 +107,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
         {
             var newFriend = new FriendDocument
             {
-                StudentId = inviterId,
+                UserId = inviterId,
                 FriendId = inviteeId,
                 CreatedAt = DateTime.UtcNow,
                 State = FriendState.Requested
@@ -137,7 +137,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Repositories
             var document = new FriendDocument
             {
                 Id = friend.Id,
-                StudentId = friend.StudentId,
+                UserId = friend.UserId,
                 FriendId = friend.FriendId,
                 CreatedAt = friend.CreatedAt,
                 State = friend.FriendState

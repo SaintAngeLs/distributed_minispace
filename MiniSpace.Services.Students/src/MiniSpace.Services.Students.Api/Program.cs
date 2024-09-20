@@ -14,6 +14,7 @@ using MiniSpace.Services.Students.Application;
 using MiniSpace.Services.Students.Application.Commands;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
+using MiniSpace.Services.Students.Core.Wrappers;
 using MiniSpace.Services.Students.Infrastructure;
 
 namespace MiniSpace.Services.Students.Api
@@ -39,7 +40,11 @@ namespace MiniSpace.Services.Students.Api
                         .Get<GetStudentWithVisibilitySettings, StudentWithVisibilitySettingsDto>("students/{studentId}/visibility-settings")
                         .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")
                         .Get<GetUserNotificationPreferences, NotificationPreferencesDto>("students/{studentId}/notifications")
-
+                        .Get<GetUserProfileViews, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/paginated")
+                        .Get<GetProfilesViewedByUser, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/viewed") 
+                        .Get<GetBlockedUsers, PagedResponse<BlockedUserDto>>("students/{blockerId}/blocked-users")
+                        
+                        
                         .Put<UpdateStudent>("students/{studentId}")
                         .Put<UpdateUserSettings>("students/{studentId}/settings")
                         .Put<ChangeStudentState>("students/{studentId}/state/{state}",
@@ -47,11 +52,16 @@ namespace MiniSpace.Services.Students.Api
                         .Put<UpdateStudentLanguagesAndInterests>("students/{studentId}/languages-and-interests")
 
                         .Delete<DeleteStudent>("students/{studentId}")
-
+                        
+                        .Post<BlockUser>("students/{blockerId}/block-user/{blockedUserId}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                        .Post<UnblockUser>("students/{blockerId}/unblock-user/{blockedUserId}",
+                            afterDispatch: (cmd, ctx) => ctx.Response.Ok())
+                            
                         .Post<CompleteStudentRegistration>("students",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))  
                         .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")
-                        
+                        .Post<ViewUserProfile>("students/profiles/users/{userProfileId}/view", afterDispatch: (cmd, ctx) => ctx.Response.Ok())                        
                         ))
                 .UseLogging()
                 .Build()

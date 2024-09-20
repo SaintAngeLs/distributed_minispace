@@ -5,9 +5,14 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MiniSpace.Web.Areas.Identity;
+using MiniSpace.Web.Areas.Notifications;
+using MiniSpace.Web.Areas.Students.CommandsDto;
 using MiniSpace.Web.DTO;
 using MiniSpace.Web.DTO.Interests;
 using MiniSpace.Web.DTO.Languages;
+using MiniSpace.Web.DTO.Users;
+using MiniSpace.Web.DTO.Views;
+using MiniSpace.Web.DTO.Wrappers;
 using MiniSpace.Web.HttpClients;
 
 namespace MiniSpace.Web.Areas.Students
@@ -16,6 +21,8 @@ namespace MiniSpace.Web.Areas.Students
     {
         private readonly IHttpClient _httpClient;
         private readonly IIdentityService _identityService;
+
+        private readonly INotificationsService _notificationsService;
 
         public StudentDto StudentDto { get; private set; }
         
@@ -202,6 +209,56 @@ namespace MiniSpace.Web.Areas.Students
             Console.WriteLine($"Sending UpdateStudentLanguagesAndInterests request: {jsonData}");
 
             await _httpClient.PutAsync($"students/{studentId}/languages-and-interests", updateData);
+        }
+
+        public async Task<bool> IsUserOnlineAsync(Guid studentId)
+        {
+            return await _notificationsService.IsUserConnectedAsync(studentId);
+        }
+
+        public async Task ViewUserProfileAsync(Guid userId, Guid userProfileId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var command = new ViewUserProfileCommand(userId, userProfileId);
+            await _httpClient.PostAsync("students/profiles/users/{userProfileId}/view", command);
+        }
+
+        public async Task<PaginatedResponseDto<UserProfileViewDto>> GetUserProfileViewsAsync(Guid userId, int pageNumber, int pageSize)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            
+            var queryString = $"?pageNumber={pageNumber}&pageSize={pageSize}";
+            return await _httpClient.GetAsync<PaginatedResponseDto<UserProfileViewDto>>($"students/profiles/users/{userId}/views/paginated{queryString}");
+        }
+
+         public async Task BlockUserAsync(Guid blockerId, Guid blockedUserId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var command = new { blockerId, blockedUserId };
+            await _httpClient.PostAsync<object, object>($"students/{blockerId}/block-user/{blockedUserId}", command);
+        }
+
+        public async Task UnblockUserAsync(Guid blockerId, Guid blockedUserId)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var command = new { blockerId, blockedUserId };
+            await _httpClient.PostAsync<object, object>($"students/{blockerId}/unblock-user/{blockedUserId}", command);
+        }
+
+        public async Task<PagedResponseDto<BlockedUserDto>> GetBlockedUsersAsync(Guid blockerId, int page, int resultsPerPage)
+        {
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            var queryString = $"?page={page}&resultsPerPage={resultsPerPage}";
+            return await _httpClient.GetAsync<PagedResponseDto<BlockedUserDto>>($"students/{blockerId}/blocked-users{queryString}");
         }
     }
 }

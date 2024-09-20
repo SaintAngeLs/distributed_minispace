@@ -1,18 +1,22 @@
 using Convey.CQRS.Queries;
 using System.Text.Json.Serialization; 
 using MiniSpace.Services.Friends.Application.Dto;
+using MiniSpace.Services.Friends.Core.Wrappers;
 using System.Collections.Generic;
 
 namespace MiniSpace.Services.Friends.Application.Queries
 {
-    public class GetFriendRequests : IQuery<IEnumerable<FriendRequestDto>>, IQuery
+     public class GetFriendRequests : IQuery<PagedResponse<FriendRequestDto>>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
 
-        [JsonConstructor]
-        public GetFriendRequests([property: JsonPropertyName("studentId")] Guid studentId)
+        public GetFriendRequests(Guid userId, int page = 1, int pageSize = 10)
         {
-            StudentId = studentId;
+            UserId = userId;
+            Page = page;
+            PageSize = pageSize;
         }
     }
 }

@@ -17,5 +17,6 @@ namespace MiniSpace.Web.Areas.Notifications
         Task DeleteNotificationAsync(Guid userId, Guid notificationId);
         Task<NotificationDto> GetNotificationByIdAsync(Guid userId, Guid notificationId);
         Task CreateNotificationAsync(NotificationToUsersDto notification);
+        Task<bool> IsUserConnectedAsync(Guid userId);
     }
 }

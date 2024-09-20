@@ -10,10 +10,9 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
     internal static class Extensions
     {
         public static User AsEntity(this UserDocument document)
-            => new User(document.Id, document.Name, document.Email, document.Password, 
-                Enum.Parse<Role>(document.Role, true), document.CreatedAt,
-                document.Permissions
-            )
+        {
+            var user = new User(document.Id, document.Name, document.Email, document.Password, 
+                Enum.Parse<Role>(document.Role, true), document.CreatedAt, document.Permissions)
             {
                 IsEmailVerified = document.IsEmailVerified,
                 EmailVerificationToken = document.EmailVerificationToken,
@@ -21,6 +20,12 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 IsTwoFactorEnabled = document.IsTwoFactorEnabled,
                 TwoFactorSecret = document.TwoFactorSecret
             };
+
+            user.SetOnlineStatus(document.IsOnline, document.DeviceType);
+            user.UpdateLastActive(); 
+
+            return user;
+        }
 
         public static UserDocument AsDocument(this User entity)
             => new UserDocument
@@ -36,7 +41,10 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 EmailVerificationToken = entity.EmailVerificationToken,
                 EmailVerifiedAt = entity.EmailVerifiedAt,
                 IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
-                TwoFactorSecret = entity.TwoFactorSecret
+                TwoFactorSecret = entity.TwoFactorSecret,
+                IsOnline = entity.IsOnline,                     
+                DeviceType = entity.DeviceType,                 
+                LastActive = entity.LastActive 
             };
 
         public static UserDto AsDto(this UserDocument document)
@@ -51,7 +59,10 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 IsEmailVerified = document.IsEmailVerified,
                 EmailVerifiedAt = document.EmailVerifiedAt,
                 IsTwoFactorEnabled = document.IsTwoFactorEnabled,
-                TwoFactorSecret = document.TwoFactorSecret
+                TwoFactorSecret = document.TwoFactorSecret,
+                IsOnline = document.IsOnline,                     
+                DeviceType = document.DeviceType,                 
+                LastActive = document.LastActive
             };
 
         public static RefreshToken AsEntity(this RefreshTokenDocument document)

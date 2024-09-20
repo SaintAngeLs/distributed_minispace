@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Friends.Application.Dto
         public Guid InviteeId { get; set; }
         public DateTime RequestedAt { get; set; }
         public FriendState State { get; set; }
-        public Guid StudentId { get; set; } 
+        public Guid UserId { get; set; } 
 
     }
 }

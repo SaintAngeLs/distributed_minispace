@@ -10,11 +10,12 @@ using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
+using MiniSpace.Services.Events.Core.Wrappers;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetPaginatedSearchEventsHandler : IQueryHandler<GetSearchEvents, MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
+    public class GetPaginatedSearchEventsHandler : IQueryHandler<GetSearchEvents, PagedResponse<EventDto>>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IAppContext _appContext;
@@ -25,14 +26,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             _appContext = appContext;
         }
 
-        public async Task<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>> HandleAsync(GetSearchEvents query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<EventDto>> HandleAsync(GetSearchEvents query, CancellationToken cancellationToken)
         {
-               var jsonOptionsx = new JsonSerializerOptions { WriteIndented = true };
+            var jsonOptionsx = new JsonSerializerOptions { WriteIndented = true };
             var queryJson = JsonSerializer.Serialize(query, jsonOptionsx);
             Console.WriteLine("Query Object: ");
             Console.WriteLine(queryJson);
 
-            // Convert string values to corresponding enum types
             Category? category = null;
             State? state = null;
             EventEngagementType? engagementType = null;
@@ -52,15 +52,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 engagementType = parsedEngagementType;
             }
 
-            // Use PageableDto for pagination and sorting
             var pageNumber = query.Pageable?.Page ?? 1;
             var pageSize = query.Pageable?.Size ?? 10;
 
-            // Handle sorting
             var sortBy = query.Pageable?.Sort?.SortBy ?? Enumerable.Empty<string>();
             var sortDirection = query.Pageable?.Sort?.Direction ?? string.Empty;
 
-            // Fetch the events based on the query parameters
             var (events, returnedPageNumber, returnedPageSize, totalPages, totalElements) = await _eventRepository.BrowseEventsAsync(
                 pageNumber: pageNumber,
                 pageSize: pageSize,
@@ -77,19 +74,16 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
                 direction: sortDirection
             );
 
-            // Map events to DTOs
             var studentId = _appContext.Identity.Id;
             var eventDtos = events.Select(e => e.AsDto(studentId)).ToList();
 
-            var pagedResult = new  MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>(eventDtos, pageNumber, pageSize, totalElements);
+            var pagedResult = new  PagedResponse<EventDto>(eventDtos, pageNumber, pageSize, totalElements);
 
-            // Serialize the result to JSON and log it
             var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
             var jsonResult = JsonSerializer.Serialize(pagedResult, jsonOptions);
             Console.WriteLine("Search Results: ");
             Console.WriteLine(jsonResult);
 
-            // Return the paginated result
             return pagedResult;
         }
     }

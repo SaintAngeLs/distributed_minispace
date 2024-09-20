@@ -3,80 +3,114 @@
 @inject INotificationsService NotificationsService
 @inject NavigationManager NavigationManager
 @using MiniSpace.Web.DTO.Notifications
-@using Radzen
-@using System.Linq
 @inject IIdentityService IdentityService
 @using MudBlazor
+@using System.Collections.Generic
+@using System.Threading.Tasks
 
 <AuthWrapper>
-<div class="breadcrumbs-container">
-    <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
-</div>
-@code {
-    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications)
-    };
-}
-
-<div class="notifications-page-title">
-    <h3>All Notifications</h3>
-</div>
-
-@if (notifications == null)
-{
-    <div style="display: flex; justify-content: center; align-items: center;">
-        <RadzenProgressBarCircular ShowValue="true" ProgressBarStyle="ProgressBarStyle.Light" 
-                                   Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
-            <Template>Loading...</Template>
-        </RadzenProgressBarCircular>
+    <div class="breadcrumbs-container">
+        <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
     </div>
-}
-else if (notifications.Any())
-{
-    <RadzenDataGrid Data="@notifications" TItem="NotificationDto" ColumnWidth="auto" AllowColumnResize="true"
-    AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="@pageSize"
-    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" Count="@totalNotifications"
-    LoadData="@LoadNotifications">
-    <Columns>
-        <RadzenDataGridColumn TItem="NotificationDto" Property="Message" Title="Message">
-            <Template Context="notification">
-                <RadzenLink Path="@($"/notification/{notification.NotificationId}")" Text="@notification.Message" />
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="NotificationDto" Property="CreatedAt" Title="Date" FormatString="{0:dd MMM yyyy}" />
-        <RadzenDataGridColumn TItem="NotificationDto" Property="Status" Title="Read Status">
-            <Template Context="notification">
-                <RadzenToggleButton ButtonStyle="ButtonStyle.Light" ToggleButtonStyle="ButtonStyle.Dark"
-                    Value=@(notification.Status == "Unread")
-                    Text="@(notification.Status == "Unread" ? "Unread" : "Read")"
-                    Change="@(args => UpdateNotificationStatus(notification.UserId, notification.NotificationId, args))"
 
-                    Shade="Shade.Lighter" ToggleShade="Shade.Darker"
-                    Style="margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0" />
+    @code {
+        private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+            new BreadcrumbItem("Notifications", href: "/notifications/all", icon: Icons.Material.Filled.Notifications)
+        };
+    }
 
+    <div class="notifications-page-title">
+        <h3>All Notifications</h3>
+    </div>
 
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="NotificationDto" Context="notification">
-            <Template>
-                <RadzenButton Text="Delete" ButtonStyle="ButtonStyle.Primary"  
-                Style="color: #fff; margin-top: 0px; border-radius: 20px; border: 2px solid #e0e0e0"  
-                Click="@(async () => await DeleteNotification(notification.UserId, notification.NotificationId))" />
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
+    @if (notifications == null)
+    {
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" />
+        </div>
+    }
+    else if (notifications.Any())
+    {
+        <MudContainer MaxWidth="MaxWidth.Large" Class="notification-list">
+            @foreach (var notification in notifications)
+            {
+                <MudPaper Elevation="4" Class="notification-card">
+                    <MudGrid AlignItems="center">
+                        <MudItem xs="9">
+                            <MudNavLink Href="@($"/notification/{notification.NotificationId}")" Style="text-decoration:none;">
+                                <MudText Typo="Typo.h6">@notification.Message</MudText>
+                                <MudText Typo="Typo.caption">@notification.CreatedAt.ToString("MMMM dd, yyyy")</MudText>
+                            </MudNavLink>
+                        </MudItem>
 
-}
-else
-{
-    <p>No notifications found.</p>
-}
+                        <MudItem xs="3" Class="action-buttons">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(async () => await UpdateNotificationStatus(notification.UserId, notification.NotificationId, notification.Status == "Unread" ? "Read" : "Unread"))">
+                                @if (notification.Status == "Unread")
+                                {
+                                    <MudButton>
+                                    <MudIcon Icon="@Icons.Material.Filled.MarkEmailUnread" />
+                                    Mark as Read
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton>
+                                    <MudIcon Icon="@Icons.Material.Filled.MarkEmailRead" />
+                                    Mark as Unread
+                                    </MudButton>
+                                }
+                            </MudButton>
+
+                            <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(async () => await DeleteNotification(notification.UserId, notification.NotificationId))">
+                                <MudIcon Icon="@Icons.Material.Filled.Delete" />
+                                Delete
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            }
+        </MudContainer>
+    }
+    else
+    {
+        <p>No notifications found.</p>
+    }
 </AuthWrapper>
+
+<style>
+    .breadcrumbs-container {
+        margin-bottom: 20px;
+    }
+
+    .notifications-page-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .notification-card {
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+    }
+</style>
+
 @code {
-    private List<NotificationDto> notifications;
+    private List<NotificationDto> notifications = new();
     private int currentPage = 1;
     private int pageSize = 10;
     private int totalNotifications;
@@ -85,8 +119,8 @@ else
     {
         await IdentityService.InitializeAuthenticationState();
         if (IdentityService.IsAuthenticated)
-        { 
-            await LoadNotifications(new LoadDataArgs { Skip = 0, Top = pageSize, OrderBy = "createdAt desc" });
+        {
+            await LoadNotifications();
         }
         else
         {
@@ -94,16 +128,8 @@ else
         }
     }
 
-   
-     private async Task LoadNotifications(LoadDataArgs args)
+    private async Task LoadNotifications()
     {
-        
-        var skip = args.Skip ?? 0;
-        var top = args.Top ?? pageSize;
-
-        currentPage = (skip / top) + 1;
-        pageSize = top;
-
         var userId = IdentityService.GetCurrentUserId();
         var response = await NotificationsService.GetNotificationsByUserAsync(userId, page: currentPage, pageSize: pageSize, sortOrder: "desc", status: null);
 
@@ -111,45 +137,25 @@ else
         {
             notifications = response.Results;
             totalNotifications = response.Total;
-            StateHasChanged(); 
+            StateHasChanged();
         }
     }
 
-
-   private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, bool isUnread)
+    private async Task UpdateNotificationStatus(Guid userId, Guid notificationId, string newStatus)
     {
-        string newStatus = isUnread ? "Unread" : "Read";
         await NotificationsService.UpdateNotificationStatusAsync(userId, notificationId, newStatus);
-
-        // Refresh the notifications to reflect the change
-        var notification = notifications.FirstOrDefault(n => n.NotificationId == notificationId);
+        var notification = notifications.Find(n => n.NotificationId == notificationId);
         if (notification != null)
         {
             notification.Status = newStatus;
-            await LoadNotifications(new LoadDataArgs { Skip = (currentPage - 1) * pageSize, Top = pageSize, OrderBy = "createdAt desc" });
-            StateHasChanged(); //
-            await OnInitializedAsync();
-        }
-        else
-        {
-            StateHasChanged(); // This will force the UI to update if for some reason the notification is not found
-            await OnInitializedAsync();
+            StateHasChanged();
         }
     }
 
-
-
-
-   private async Task DeleteNotification(Guid userId, Guid notificationId)
+    private async Task DeleteNotification(Guid userId, Guid notificationId)
     {
         await NotificationsService.DeleteNotificationAsync(userId, notificationId);
-        // Use FindIndex to locate the specific notification and remove it if found
-        int index = notifications.FindIndex(n => n.NotificationId == notificationId);
-        if (index != -1)
-        {
-            notifications.RemoveAt(index);
-            StateHasChanged(); // Update UI to reflect the removal
-        }
+        notifications.RemoveAll(n => n.NotificationId == notificationId);
+        StateHasChanged();
     }
-
 }

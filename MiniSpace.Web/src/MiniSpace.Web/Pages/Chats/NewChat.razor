@@ -1,0 +1,302 @@
+@page "/chats/new"
+@using MiniSpace.Web.HttpClients
+@using MiniSpace.Web.Areas.Friends
+@using MiniSpace.Web.DTO
+@inject IIdentityService IdentityService
+@inject IFriendsService FriendsService
+@inject ICommunicationService CommunicationService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@using MudBlazor
+
+<AuthWrapper>
+    <MudContainer>
+        <div class="breadcrumbs-container">
+            <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+        </div>
+
+        <div style="display: flex;">
+            <div class="left-panel">
+                <div class="search-bar">
+                    <MudTextField @bind-Value="searchTerm" Placeholder="Search friends..." Style="width: 75%;" />
+                    <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@SearchFriends" Style="margin-left: 10px; width: 23%;">
+                        <MudIcon Icon="@Icons.Material.Filled.Search" />
+                        <span class="button-text">Search</span>
+                    </MudButton>
+                </div>
+
+                @if (!pageInitialized)
+                {
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <MudProgressCircular Indeterminate="true" Size="Size.Large" />
+                    </div>
+                }
+                else if (friends != null && friends.Any())
+                {
+                    foreach (var friend in friends)
+                    {
+                        <div class="friend-card" @onclick="@(() => StartChatWithFriend(friend.FriendId, friend.StudentDetails.FirstName + " " + friend.StudentDetails.LastName))">
+                            <div class="friend-row">
+                                <img src="@GetProfileImageUrl(friend.StudentDetails.ProfileImageUrl)" alt="Friend Image" class="friend-img" onerror="this.onerror=null;this.src='images/default_profile_image.webp';">
+                                <div class="friend-info">
+                                    <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
+                                    <p>@friend.StudentDetails.Email</p>
+                                </div>
+                                <div class="buttons">
+                                    <MudButton Variant="MudBlazor.Variant.Outlined" Class="action-button">
+                                        <MudIcon Icon="@Icons.Material.Filled.Chat" />
+                                        <span class="button-text">Start Chat</span>
+                                    </MudButton>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (hasMorePages)
+                    {
+                        <MudButton Variant="MudBlazor.Variant.Text" OnClick="@LoadMoreFriends" Style="width: 100%;">
+                            <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
+                            <span>Load More</span>
+                        </MudButton>
+                    }
+                }
+                else
+                {
+                    <p>No friends to show. Start connecting now!</p>
+                }
+            </div>
+        </div>
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .notification-block {
+        position: fixed; 
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        max-width: 300px;
+    }
+
+    .main-container { 
+        overflow: visible; 
+        display: flex;   
+        align-items: 
+        flex-start; 
+    }
+
+    .left-panel {  
+        width: 100%;   
+        overflow-y: auto; 
+    }
+
+    .right-panel {
+        width: 70%; 
+        padding: 25px;
+        position: sticky;
+        top: 100px; 
+        background-color: white; 
+    }
+
+    .left-panel, .right-panel {
+        background-color: #f7f7f7; 
+        border-radius: 8px;
+        
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    }
+    .search-bar {
+        display: flex; 
+        margin-bottom: 20px; 
+        }
+    
+    .card-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .friend-card {
+        display: flex;
+        background-color: #ffffff;
+        margin-bottom: 1rem !important;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+        align-items: center;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .friend-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+
+    .friend-row {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .friend-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #007BFF;
+        margin-right: 20px;
+    }
+
+    .friend-info {
+        flex: 2;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        margin-left: auto;
+    }
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .button-text {
+        display: inline-block;
+        margin-left: 8px;
+    }
+
+    .search-bar input:focus {
+        outline: none;
+        border: 2px solid #0056b3;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    }
+
+</style>
+
+@code {
+    private List<FriendDto> friends = new List<FriendDto>();
+    private string searchTerm;
+    private bool pageInitialized;
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalFriends;
+    private bool hasMorePages => friends.Count < totalFriends;
+    
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Chats", href: "/chats", icon: Icons.Material.Filled.Chat),
+        new BreadcrumbItem("New Chat", href: "/chats/new", disabled: true, icon: Icons.Material.Filled.AddComment),
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IdentityService.InitializeAuthenticationState();
+        if (IdentityService.IsAuthenticated)
+        {
+            await LoadFriends();
+            pageInitialized = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private string GetProfileImageUrl(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "images/default_profile_image.webp" : profileImageUrl;
+    }
+
+    private async Task StartChatWithFriend(Guid friendId, string friendName)
+    {
+        try
+        {
+            // Check if the chat already exists
+            var userId = IdentityService.GetCurrentUserId();
+            var existingChat = await CommunicationService.FindExistingChatAsync(userId, friendId);
+
+            if (existingChat != null)
+            {
+                // If chat exists, navigate to it
+                Console.WriteLine("Navigating to existing chat...");
+                NavigationManager.NavigateTo($"/chats/{existingChat.Id}");
+            }
+            else
+            {
+                // If no chat exists, create a new one
+                var command = new CreateChatCommand(
+                    chatId: Guid.NewGuid(),
+                    participantIds: new List<Guid> { userId, friendId },
+                    chatName: $"Chat with {friendName}"
+                );
+
+                var response = await CommunicationService.CreateChatAsync(command);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"You have started a chat with {friendName}.", Severity.Success);
+                    NavigationManager.NavigateTo($"/chats/{response.Content}");
+                }
+                else
+                {
+                    Snackbar.Add("An error occurred while creating the chat.", Severity.Error);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void SearchFriends()
+    {
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+            friends = friends.Where(f => f.StudentDetails.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || f.StudentDetails.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else
+        {
+            ReloadFriends().Wait();
+        }
+        StateHasChanged();
+    }
+
+    private async Task ReloadFriends()
+    {
+        currentPage = 1;
+        friends.Clear();
+        await LoadFriends();
+    }
+
+    private async Task LoadFriends()
+    {
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            var result = await FriendsService.GetAllFriendsAsync(studentId, currentPage, pageSize);
+            if (result != null)
+            {
+                friends.AddRange(result.Items);
+                totalFriends = result.TotalItems;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to Load Friends: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task LoadMoreFriends()
+    {
+        currentPage++;
+        await LoadFriends();
+    }
+}

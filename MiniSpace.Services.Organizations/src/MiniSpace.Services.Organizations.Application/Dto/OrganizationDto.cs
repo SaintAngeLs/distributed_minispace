@@ -23,6 +23,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
         public string Email { get; set; }
 
         public IEnumerable<UserDto> Users { get; set; }
+        public OrganizationSettingsDto Settings { get; set; }
 
         public OrganizationDto()
         {
@@ -47,6 +48,7 @@ namespace MiniSpace.Services.Organizations.Application.DTO
 
             // Convert each User entity to a UserDto
             Users = organization.Users?.Select(user => new UserDto(user)).ToList();
+            Settings = organization.Settings != null ? new OrganizationSettingsDto(organization.Settings) : null;
         }
     }
 }

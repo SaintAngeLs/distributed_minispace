@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using Convey.CQRS.Queries;
 using MiniSpace.Services.Events.Application.DTO;
+using MiniSpace.Services.Events.Core.Wrappers;
 
 namespace MiniSpace.Services.Events.Application.Queries
 {
-    public class GetSearchEvents : IQuery<MiniSpace.Services.Events.Application.DTO.PagedResult<EventDto>>
+    public class GetSearchEvents : IQuery<PagedResponse<EventDto>>
     {
         public string Name { get; set; }
         public string Organizer { get; set; }

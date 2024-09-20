@@ -30,9 +30,21 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
         public async Task AddAsync(Comment comment)
         {
             var filter = Builders<UserEventCommentDocument>.Filter.Eq(d => d.UserEventId, comment.ContextId);
-            var update = Builders<UserEventCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument());
 
-            await _repository.Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            var update = Builders<UserEventCommentDocument>.Update.Combine(
+                Builders<UserEventCommentDocument>.Update.Push(d => d.Comments, comment.ToDocument()), 
+                Builders<UserEventCommentDocument>.Update.SetOnInsert(d => d.UserEventId, comment.ContextId), 
+                Builders<UserEventCommentDocument>.Update.SetOnInsert(d => d.Id, Guid.NewGuid())
+            );
+
+            var options = new UpdateOptions { IsUpsert = true };
+            var result = await _repository.Collection.UpdateOneAsync(filter, update, options);
+
+            if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            {
+                // Handle the case whre the update or insert did not succeed
+                Console.Error.WriteLine("Failed to add or update the comment.");
+            }
         }
 
         public async Task UpdateAsync(Comment comment)
@@ -45,7 +57,8 @@ namespace MiniSpace.Services.Comments.Infrastructure.Mongo.Repositories
             var update = Builders<UserEventCommentDocument>.Update
                 .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.TextContent)}", comment.TextContent)
                 .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.LastUpdatedAt)}", comment.LastUpdatedAt)
-                .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted);
+                .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.IsDeleted)}", comment.IsDeleted)
+                .Set($"{nameof(UserEventCommentDocument.Comments)}.$.{nameof(CommentDocument.Likes)}", comment.Likes);
 
             await _repository.Collection.UpdateOneAsync(filter, update);
         }

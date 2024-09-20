@@ -9,9 +9,9 @@ using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Application.Services.Clients;
-using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
+using MiniSpace.Services.Events.Core.Wrappers;
 
 namespace MiniSpace.Services.Events.Infrastructure.Services
 {
@@ -32,7 +32,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             _appContext = appContext;
         }
 
-        public async Task<PagedResponse<IEnumerable<EventDto>>> BrowseEventsAsync(SearchEvents command)
+        public async Task<PagedResponse<EventDto>> BrowseEventsAsync(SearchEvents command)
         {
             var dateFrom = DateTime.MinValue;
             var dateTo = DateTime.MinValue;
@@ -40,24 +40,25 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
             State? state = null;
             EventEngagementType? friendsEngagementType = null;
             IEnumerable<Guid> organizations = new List<Guid>();
-            if(command.DateFrom != string.Empty)
+
+            if (command.DateFrom != string.Empty)
             {
-                dateFrom =_eventValidator.ParseDate(command.DateFrom, "DateFrom");
+                dateFrom = _eventValidator.ParseDate(command.DateFrom, "DateFrom");
             }
-            if(command.DateTo != string.Empty)
+            if (command.DateTo != string.Empty)
             {
                 dateTo = _eventValidator.ParseDate(command.DateTo, "DateTo");
             }
-            if(command.Category != string.Empty)
+            if (command.Category != string.Empty)
             {
                 category = _eventValidator.ParseCategory(command.Category);
             }
-            if(command.State != string.Empty)
+            if (command.State != string.Empty)
             {
                 state = _eventValidator.ParseState(command.State);
                 state = _eventValidator.RestrictState(state);
             }
-            if(command.FriendsEngagementType != string.Empty)
+            if (command.FriendsEngagementType != string.Empty)
             {
                 friendsEngagementType = _eventValidator.ParseEngagementType(command.FriendsEngagementType);
             }
@@ -66,49 +67,61 @@ namespace MiniSpace.Services.Events.Infrastructure.Services
                 organizations = await _organizationsServiceClient
                     .GetAllChildrenOrganizations(command.OrganizationId) ?? new List<Guid>();
             }
+
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
-            
+
             var result = await _eventRepository.BrowseEventsAsync(
                 pageNumber, pageSize, command.Name, command.Organizer, dateFrom, dateTo, category, state, organizations,
                 command.Friends, friendsEngagementType, command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction);
-            
+
             var identity = _appContext.Identity;
-            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, identity.Id)), 
-                result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
+            var pagedEvents = new PagedResponse<EventDto>(
+                result.events.Select(e => new EventDto(e, identity.Id)),
+                result.pageNumber,
+                result.pageSize,
+                result.totalElements
+            );
 
             return pagedEvents;
         }
-        
-        public async Task<PagedResponse<IEnumerable<EventDto>>> BrowseOrganizerEventsAsync(SearchOrganizerEvents command)
+
+        public async Task<PagedResponse<EventDto>> BrowseOrganizerEventsAsync(SearchOrganizerEvents command)
         {
             var identity = _appContext.Identity;
-            if(identity.IsAuthenticated && identity.Id != command.OrganizerId && !identity.IsAdmin)
+            if (identity.IsAuthenticated && identity.Id != command.OrganizerId && !identity.IsAdmin)
             {
                 throw new UnauthorizedOrganizerEventsAccessException(command.OrganizerId, identity.Id);
             }
+
             var dateFrom = DateTime.MinValue;
             var dateTo = DateTime.MinValue;
             State? state = null;
-            if(command.DateFrom != string.Empty)
+
+            if (command.DateFrom != string.Empty)
             {
-                dateFrom =_eventValidator.ParseDate(command.DateFrom, "DateFrom");
+                dateFrom = _eventValidator.ParseDate(command.DateFrom, "DateFrom");
             }
-            if(command.DateTo != string.Empty)
+            if (command.DateTo != string.Empty)
             {
                 dateTo = _eventValidator.ParseDate(command.DateTo, "DateTo");
             }
-            if(command.State != string.Empty)
+            if (command.State != string.Empty)
             {
                 state = _eventValidator.ParseState(command.State);
             }
+
             (int pageNumber, int pageSize) = _eventValidator.PageFilter(command.Pageable.Page, command.Pageable.Size);
-            
+
             var result = await _eventRepository.BrowseOrganizerEventsAsync(
-                pageNumber, pageSize, command.Name, command.OrganizerId, dateFrom, dateTo, 
+                pageNumber, pageSize, command.Name, command.OrganizerId, dateFrom, dateTo,
                 command.Pageable.Sort.SortBy, command.Pageable.Sort.Direction, state);
-            
-            var pagedEvents = new PagedResponse<IEnumerable<EventDto>>(result.events.Select(e => new EventDto(e, _appContext.Identity.Id)), 
-                result.pageNumber, result.pageSize, result.totalPages, result.totalElements);
+
+            var pagedEvents = new PagedResponse<EventDto>(
+                result.events.Select(e => new EventDto(e, _appContext.Identity.Id)),
+                result.pageNumber,
+                result.pageSize,
+                result.totalElements
+            );
 
             return pagedEvents;
         }

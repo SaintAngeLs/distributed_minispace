@@ -54,9 +54,14 @@ namespace MiniSpace.Services.Students.Infrastructure
             builder.Services.AddTransient<IUserNotificationPreferencesRepository, UserNotificationPreferencesRepository>();
             builder.Services.AddTransient<IUserSettingsRepository, UserSettingsRepository>();
             builder.Services.AddTransient<IUserGalleryRepository, UserGalleryRepository>();
+            builder.Services.AddTransient<IUserProfileViewsForUserRepository, UserProfileViewsRepository>();
+            builder.Services.AddTransient<IUserViewingProfilesRepository, UserViewingProfilesRepository>();
+            builder.Services.AddTransient<IBlockedUsersRepository, BlockedUsersMongoRepository>();
+
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();
             builder.Services.AddTransient<IMessageBroker, MessageBroker>();
+            builder.Services.AddTransient<IDeviceInfoService, DeviceInfoService>();
             builder.Services.AddTransient<IAppContextFactory, AppContextFactory>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
@@ -81,6 +86,9 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMongoRepository<UserNotificationsDocument, Guid>("user-notifications")
                 .AddMongoRepository<UserSettingsDocument, Guid>("user-settings")
                 .AddMongoRepository<UserGalleryDocument, Guid>("user-gellery")
+                .AddMongoRepository<UserProfileViewsDocument, Guid>("user_profile_views")
+                .AddMongoRepository<UserViewingProfilesDocument, Guid>("user_viewing_profiles")
+                .AddMongoRepository<BlockedUsersDocument, Guid>("blocked_users")
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
