@@ -292,7 +292,7 @@ html, body {
 
 .breadcrumbs-container {
     padding: 12px 24px;
-    background-color: #f9f9f9; 
+    background-color: var(--mud-palette-background-gray);
     border-radius: 5px; 
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin: 20px 0 20px 0 !important; 
@@ -961,7 +961,7 @@ div.connectionRejected {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     position: relative;
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
