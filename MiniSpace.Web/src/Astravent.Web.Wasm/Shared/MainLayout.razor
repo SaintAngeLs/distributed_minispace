@@ -12,6 +12,15 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
+     @if (_isLoading)
+    {
+        <div class="loading-overlay">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Astravent...</MudText>
+        </div>
+    }
+    else
+    {
     <MudAppBar Elevation="4">
     <div class="d-flex align-items-center justify-content-between w-100">
         <!-- Left Side of AppBar -->
@@ -188,7 +197,7 @@
         </div>
         <FooterComponent />
     </MudMainContent>
-    
+    }
 </MudLayout>
 
 <MudDialog />
@@ -203,34 +212,40 @@
     private Guid _studentId;
     private string _studentState;
     private string _userAvatar;
+    private bool _isLoading = true;
 
     [Inject] IJSRuntime JSRuntime { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+    if (firstRender)
     {
-        if (firstRender)
+        _isLoading = true; // Start loading
+        _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
+
+        if (_isUserAuthenticated)
         {
-            _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
-            if (_isUserAuthenticated)
+            var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto);
+            if (userDto != null)
             {
-                var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto); 
-                if (userDto != null)
+                _userName = userDto.Name;
+                _userEmail = userDto.Email;
+                _studentId = userDto.Id;
+                var studentDto = await StudentsService.GetStudentAsync(_studentId);
+                if (studentDto != null)
                 {
-                    _userName = userDto.Name;
-                    _userEmail = userDto.Email; 
-                    _studentId = userDto.Id;
-                    var studentDto = await StudentsService.GetStudentAsync(_studentId);
-                    if (studentDto != null)
-                    {
-                        _studentState = studentDto.State;
-                        _userAvatar = studentDto.ProfileImageUrl; 
-                    }
+                    _studentState = studentDto.State;
+                    _userAvatar = studentDto.ProfileImageUrl;
                 }
             }
-            await UpdateScreenSize();
-            StateHasChanged();
         }
+
+        await UpdateScreenSize();
+        _isLoading = false; // Finish loading
+        StateHasChanged(); // Trigger UI update
     }
+}
+
 
     [JSInvokable]
     public async Task UpdateScreenSize()
