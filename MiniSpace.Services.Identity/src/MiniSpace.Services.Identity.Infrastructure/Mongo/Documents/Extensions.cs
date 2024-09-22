@@ -21,12 +21,14 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 TwoFactorSecret = document.TwoFactorSecret
             };
 
+            // Setting the online status and IP address
             user.SetOnlineStatus(document.IsOnline, document.DeviceType);
-            user.UpdateLastActive(); 
+            user.UpdateLastActive();
 
             return user;
         }
 
+        // Convert User Entity to UserDocument
         public static UserDocument AsDocument(this User entity)
             => new UserDocument
             {
@@ -44,7 +46,9 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 TwoFactorSecret = entity.TwoFactorSecret,
                 IsOnline = entity.IsOnline,                     
                 DeviceType = entity.DeviceType,                 
-                LastActive = entity.LastActive 
+                LastActive = entity.LastActive,
+
+                IpAddress = entity.IpAddress
             };
 
         public static UserDto AsDto(this UserDocument document)
@@ -62,12 +66,16 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 TwoFactorSecret = document.TwoFactorSecret,
                 IsOnline = document.IsOnline,                     
                 DeviceType = document.DeviceType,                 
-                LastActive = document.LastActive
+                LastActive = document.LastActive,
+
+                IpAddress = document.IpAddress
             };
 
+        // Convert RefreshTokenDocument to RefreshToken Entity
         public static RefreshToken AsEntity(this RefreshTokenDocument document)
             => new RefreshToken(document.Id, document.UserId, document.Token, document.CreatedAt, document.RevokedAt);
         
+        // Convert RefreshToken Entity to RefreshTokenDocument
         public static RefreshTokenDocument AsDocument(this RefreshToken entity)
             => new RefreshTokenDocument
             {
@@ -78,6 +86,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 RevokedAt = entity.RevokedAt
             };
 
+        // Convert UserResetToken Entity to UserResetTokenDto
         public static UserResetTokenDto AsDto(this UserResetToken userResetToken)
             => new UserResetTokenDto
             {
@@ -86,14 +95,16 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 ResetTokenExpires = userResetToken.ResetTokenExpires
             };
 
-       public static UserResetToken AsEntity(this UserResetTokenDocument document)
+        // Convert UserResetTokenDocument to UserResetToken Entity
+        public static UserResetToken AsEntity(this UserResetTokenDocument document)
             => new UserResetToken(
                 document.UserId,
                 document.ResetToken,
                 document.ResetTokenExpires ?? DateTime.MinValue
             );
 
-       public static UserResetTokenDocument AsDocument(this UserResetToken userResetToken)
+        // Convert UserResetToken Entity to UserResetTokenDocument
+        public static UserResetTokenDocument AsDocument(this UserResetToken userResetToken)
         {
             if (userResetToken == null)
             {

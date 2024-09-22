@@ -24,5 +24,6 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
         public bool IsOnline { get; set; }
         public string DeviceType { get; set; } 
         public DateTime? LastActive { get; set; }
+        public string IpAddress { get; set; } 
     }
 }
