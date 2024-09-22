@@ -8,12 +8,13 @@ namespace MiniSpace.Services.Identity.Application.Commands
         public string Email { get; set; }
         public string Password { get; set; }
         public string DeviceType { get; set; }  
-
-        public SignIn(string email, string password, string deviceType)
+        public string IpAddress { get; set; }  
+        public SignIn(string email, string password, string deviceType, string ipAddress)
         {
             Email = email;
             Password = password;
             DeviceType = deviceType;  
+            IpAddress = ipAddress;
         }
     }
 }

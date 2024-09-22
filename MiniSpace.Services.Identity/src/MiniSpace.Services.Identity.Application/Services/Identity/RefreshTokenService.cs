@@ -49,7 +49,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             var user = await _userRepository.GetAsync(token.UserId);
             if (user != null)
             {
-                user.SetOnlineStatus(false, null);
+                // user.SetOnlineStatus(false, null);
                 await _userRepository.UpdateAsync(user);
             }
         }
@@ -68,7 +68,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
                 if (user != null)
                 {
-                    user.SetOnlineStatus(false, null);
+                    // user.SetOnlineStatus(false, null);
                     await _userRepository.UpdateAsync(user);
                 }
 

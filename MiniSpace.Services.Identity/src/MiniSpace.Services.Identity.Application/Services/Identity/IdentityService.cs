@@ -95,7 +95,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 claims.Add("permissions", user.Permissions);
             }
 
-            user.SetOnlineStatus(true, command.DeviceType);  
+            user.SetOnlineStatus(true, command.DeviceType, command.IpAddress);
             await _userRepository.UpdateAsync(user);
 
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
@@ -103,11 +103,15 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
             auth.IsOnline = true;
             auth.DeviceType = command.DeviceType;
+            auth.IpAddress = command.IpAddress; 
+            Console.WriteLine($"IPAddress {command.IpAddress}");
+            Console.WriteLine(JsonSerializer.Serialize(auth));
 
-            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, command.IpAddress));
 
             return auth;
         }
+
 
         public async Task SignUpAsync(SignUp command)
         {
@@ -320,23 +324,40 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
-            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role));
+            auth.DeviceType = command.DeviceType;
+            auth.IpAddress = command.IpAddress;  // Assuming IpAddress is part of the command
+
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, command.IpAddress));
+
             return auth;
         }
 
         public async Task UpdateUserStatusAsync(UpdateUserStatus command)
         {
             var user = await _userRepository.GetAsync(command.UserId);
+            
             if (user == null)
             {
+                _logger.LogError($"User with id {command.UserId} not found.");
                 throw new UserNotFoundException(command.UserId);
             }
 
-            user.SetOnlineStatus(command.IsOnline, command.DeviceType);
-            await _userRepository.UpdateAsync(user);
+            try
+            {
+                user.SetOnlineStatus(command.IsOnline, command.DeviceType);
 
-            _logger.LogInformation($"Updated status for user {command.UserId}: Online = {command.IsOnline}, DeviceType = {command.DeviceType}");
+                user.UpdateLastActive();
+
+                await _userRepository.UpdateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error updating status for user {command.UserId}: {ex.Message}");
+                throw;
+            }
         }
+
+
 
     }
 }

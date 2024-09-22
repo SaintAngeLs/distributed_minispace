@@ -9,11 +9,15 @@ namespace MiniSpace.Services.Identity.Application.Events
     {
         public Guid UserId { get; }
         public Role Role { get; }
+        public string DeviceType { get; }  
+        public string IpAddress { get; } 
 
-        public SignedIn(Guid userId, Role role)
+        public SignedIn(Guid userId, Role role, string deviceType, string ipAddress)
         {
             UserId = userId;
             Role = role;
+            DeviceType = deviceType;  
+            IpAddress = ipAddress;
         }
     }
 }

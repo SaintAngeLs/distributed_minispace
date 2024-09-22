@@ -7,11 +7,15 @@ namespace MiniSpace.Services.Identity.Application.Commands
     {
         public Guid UserId { get; }
         public string Code { get; }
+        public string DeviceType { get; }
+        public string IpAddress { get; }
 
-        public VerifyTwoFactorCode(Guid userId, string code)
+        public VerifyTwoFactorCode(Guid userId, string code, string deviceType, string ipAddress)
         {
             UserId = userId;
             Code = code ?? throw new ArgumentNullException(nameof(code));
+            DeviceType = deviceType ?? throw new ArgumentNullException(nameof(deviceType));
+            IpAddress = ipAddress ?? throw new ArgumentNullException(nameof(ipAddress));
         }
     }
 }
