@@ -177,6 +177,12 @@ modules:
         downstream: identity-service/refresh-tokens/revoke
         auth: false
 
+      - upstream: /users/status
+        method: PUT
+        use: downstream
+        downstream: identity-service/users/status
+        auth: false
+
     services:
       identity-service:
         localUrl: localhost:5004
