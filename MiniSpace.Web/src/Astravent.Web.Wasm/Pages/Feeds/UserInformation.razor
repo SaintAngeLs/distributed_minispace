@@ -14,11 +14,7 @@
         <MudItem xs="12">
             <MudCard Class="profile-card">
                 <MudCardContent>
-                    @if (loadingProfile)
-                    {
-                        <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
-                    }
-                    else if (profileLoadFailed)
+                    @if (profileLoadFailed)
                     {
                         <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load user profile. Please try again later.</MudText>
                     }
@@ -34,6 +30,10 @@
                             </div>
                         </div>
                     }
+                    else
+                    {
+                        <MudPaper Class="loading-placeholder profile-placeholder"></MudPaper>
+                    }
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -43,12 +43,6 @@
         {
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load education details.</MudText>
-            </MudItem>
-        }
-        else if (loadingEducation)
-        {
-            <MudItem xs="12">
-                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
             </MudItem>
         }
         else if (student?.Education != null && student.Education.Any())
@@ -69,18 +63,18 @@
                 </MudCard>
             </MudItem>
         }
+        else
+        {
+            <MudItem xs="12">
+                <MudPaper Class="loading-placeholder"></MudPaper>
+            </MudItem>
+        }
 
         <!-- Work Experience Section -->
         @if (workLoadFailed)
         {
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load work experience.</MudText>
-            </MudItem>
-        }
-        else if (loadingWork)
-        {
-            <MudItem xs="12">
-                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
             </MudItem>
         }
         else if (student?.Work != null && student.Work.Any())
@@ -101,18 +95,18 @@
                 </MudCard>
             </MudItem>
         }
+        else
+        {
+            <MudItem xs="12">
+                <MudPaper Class="loading-placeholder"></MudPaper>
+            </MudItem>
+        }
 
         <!-- Languages and Interests Section -->
         @if (languagesLoadFailed)
         {
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load languages and interests.</MudText>
-            </MudItem>
-        }
-        else if (loadingLanguages)
-        {
-            <MudItem xs="12">
-                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
             </MudItem>
         }
         else if ((student?.Languages != null && student.Languages.Any()) || (student?.Interests != null && student.Interests.Any()))
@@ -148,6 +142,12 @@
                 </MudCard>
             </MudItem>
         }
+        else
+        {
+            <MudItem xs="12">
+                <MudPaper Class="loading-placeholder"></MudPaper>
+            </MudItem>
+        }
 
         <!-- Events Section -->
         @if (eventsLoadFailed)
@@ -159,7 +159,7 @@
         else if (loadingEvents)
         {
             <MudItem xs="12">
-                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudPaper Class="loading-placeholder event-placeholder"></MudPaper>
             </MudItem>
         }
         else if (InterestedInEventsDetails.Any() || SignedUpEventsDetails.Any())
@@ -203,41 +203,17 @@
     private List<EventDto> SignedUpEventsDetails = new List<EventDto>();
 
     // Individual section loading and error state flags
-    private bool loadingProfile = true;
     private bool profileLoadFailed = false;
-
-    private bool loadingEducation = true;
     private bool educationLoadFailed = false;
-
-    private bool loadingWork = true;
     private bool workLoadFailed = false;
-
-    private bool loadingLanguages = true;
     private bool languagesLoadFailed = false;
-
     private bool loadingEvents = true;
     private bool eventsLoadFailed = false;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadProfileAsync();
-
-        if (!profileLoadFailed)
-        {
-            await Task.WhenAll(
-                LoadEducationAsync(),
-                LoadWorkExperienceAsync(),
-                LoadLanguagesAndInterestsAsync(),
-                LoadEventsAsync()
-            );
-        }
-        else
-        {
-            loadingEducation = false;
-            loadingWork = false;
-            loadingLanguages = false;
-            loadingEvents = false;
-        }
+        await Task.WhenAll(LoadEventsAsync(), LoadEducationAsync(), LoadWorkExperienceAsync(), LoadLanguagesAndInterestsAsync());
     }
 
     private async Task LoadProfileAsync()
@@ -251,26 +227,18 @@
             profileLoadFailed = true;
             Snackbar.Add($"Error loading user profile: {ex.Message}", Severity.Error);
         }
-        finally
-        {
-            loadingProfile = false;
-        }
     }
 
     private async Task LoadEducationAsync()
     {
         try
         {
-            // Assume request here to fetch education details
+            // Assume the education details are part of the student data
         }
         catch (Exception ex)
         {
             educationLoadFailed = true;
             Snackbar.Add($"Error loading education details: {ex.Message}", Severity.Error);
-        }
-        finally
-        {
-            loadingEducation = false;
         }
     }
 
@@ -278,16 +246,12 @@
     {
         try
         {
-            // Assume request here to fetch work details
+            // Assume work details are part of the student data
         }
         catch (Exception ex)
         {
             workLoadFailed = true;
             Snackbar.Add($"Error loading work experience: {ex.Message}", Severity.Error);
-        }
-        finally
-        {
-            loadingWork = false;
         }
     }
 
@@ -295,16 +259,12 @@
     {
         try
         {
-            // Assume request here to fetch languages and interests
+            // Assume languages and interests are part of the student data
         }
         catch (Exception ex)
         {
             languagesLoadFailed = true;
             Snackbar.Add($"Error loading languages and interests: {ex.Message}", Severity.Error);
-        }
-        finally
-        {
-            loadingLanguages = false;
         }
     }
 
@@ -312,56 +272,22 @@
     {
         try
         {
-            if (student.InterestedInEvents != null && student.InterestedInEvents.Any())
+            if (student?.InterestedInEvents != null)
             {
                 foreach (var eventId in student.InterestedInEvents)
                 {
-                    try
-                    {
-                        var eventDetail = await EventsService.GetEventAsync(eventId);
-                        if (eventDetail != null)
-                        {
-                            InterestedInEventsDetails.Add(eventDetail);
-                        }
-                        else
-                        {
-                            Snackbar.Add($"Event details not found for event ID: {eventId}", Severity.Warning);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Snackbar.Add($"Error loading event details for event ID {eventId}: {ex.Message}", Severity.Error);
-                    }
+                    var eventDetail = await EventsService.GetEventAsync(eventId);
+                    InterestedInEventsDetails.Add(eventDetail);
                 }
             }
 
-            if (student.SignedUpEvents != null && student.SignedUpEvents.Any())
+            if (student?.SignedUpEvents != null)
             {
                 foreach (var eventId in student.SignedUpEvents)
                 {
-                    try
-                    {
-                        var eventDetail = await EventsService.GetEventAsync(eventId);
-                        if (eventDetail != null)
-                        {
-                            SignedUpEventsDetails.Add(eventDetail);
-                        }
-                        else
-                        {
-                            Snackbar.Add($"Signed up event details not found for event ID: {eventId}", Severity.Warning);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Snackbar.Add($"Error loading signed up event for event ID {eventId}: {ex.Message}", Severity.Error);
-                    }
+                    var eventDetail = await EventsService.GetEventAsync(eventId);
+                    SignedUpEventsDetails.Add(eventDetail);
                 }
-            }
-
-            if (!InterestedInEventsDetails.Any() && !SignedUpEventsDetails.Any())
-            {
-                eventsLoadFailed = true;
-                Snackbar.Add("No events found for this user.", Severity.Warning);
             }
         }
         catch (Exception ex)
@@ -378,14 +304,7 @@
     private string GetProfileImage()
     {
         var defaultImage = "images/default_profile_image.webp";
-        var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
-
-        if (string.IsNullOrEmpty(student?.ProfileImageUrl) || !validExtensions.Contains(System.IO.Path.GetExtension(student.ProfileImageUrl)?.ToLower()))
-        {
-            return defaultImage;
-        }
-
-        return student.ProfileImageUrl;
+        return !string.IsNullOrEmpty(student?.ProfileImageUrl) ? student.ProfileImageUrl : defaultImage;
     }
 
     private void NavigateToProfileSettings()
@@ -403,9 +322,27 @@
     .profile-paper {
         margin: 30px auto;
         max-width: 1200px;
-        background-color: var(--mud-palette-surface);;
+        background-color: var(--mud-palette-surface);
         border-radius: 12px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-placeholder {
+        width: 100%;
+        height: 200px;
+        background-color: var(--mud-palette-background);
+    }
+
+    .loading-placeholder {
+        height: 150px;
+        background-color: var(--mud-palette-background);
+        border-radius: 8px;
+    }
+
+    .event-placeholder {
+        height: 100px;
+        background-color: var(--mud-palette-background);
+        border-radius: 8px;
     }
 
     .profile-header {
@@ -470,9 +407,9 @@
 
     .skill-interest-text {
         word-wrap: break-word;
-        white-space: normal;
-        display: flex;
-        flex-wrap: wrap;
+        white-space: normal; 
+        display: flex; 
+        flex-wrap: wrap; 
     }
 
     .info-card {

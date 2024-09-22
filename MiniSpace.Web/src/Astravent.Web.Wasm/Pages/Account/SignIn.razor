@@ -10,6 +10,7 @@
 @inject IErrorMapperService ErrorMapperService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject IIPAddressService IPAddressService
 
 <style>
     body {
@@ -147,10 +148,12 @@
     private bool isTwoFactorRequired = false;
     private Guid userId;
     private string deviceType;
+    private string  ipAddress;
 
     protected override async Task OnInitializedAsync()
     {
         // Capture the device type using JavaScript interop
+        ipAddress = await IPAddressService.GetClientIpAddressAsync();
         deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
     }
 
@@ -178,7 +181,11 @@
     {
         try
         {
-            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
+            var deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+
+            var ipAddress = await IPAddressService.GetClientIpAddressAsync();  // Use the service to get the IP
+
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType, ipAddress);
 
             if (response != null && response.Content != null)
             {
@@ -221,7 +228,15 @@
     {
         try
         {
-            var response = await IdentityService.VerifyTwoFactorCodeAsync(userId, twoFactorModel.Code);
+            // Capture the device type using JavaScript interop
+            var deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+
+            // Capture the IP address using the IPAddressService
+            var ipAddress = await IPAddressService.GetClientIpAddressAsync();
+
+            // Call the VerifyTwoFactorCodeAsync with the device type and IP address
+            var response = await IdentityService.VerifyTwoFactorCodeAsync(userId, twoFactorModel.Code, deviceType, ipAddress);
+
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
                 await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
@@ -242,4 +257,24 @@
             StateHasChanged();
         }
     }
+
+
+    @* private async Task<string> GetIpAddressAsync()
+    {
+        try
+        {
+            var response = await HttpClient.GetStringAsync("https://api.ipify.org?format=json");
+            var ipAddress = JsonSerializer.Deserialize<IpResponse>(response)?.Ip;
+            return ipAddress ?? "Unknown";
+        }
+        catch
+        {
+            return "Unknown";
+        }
+    }
+
+    private class IpResponse
+    {
+        public string Ip { get; set; }
+    } *@
 }

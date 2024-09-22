@@ -59,8 +59,13 @@
             }
         </div>
 
-        <!-- Right Side of AppBar with MudSpacer -->
         <MudSpacer />
+         @if (_isUserAuthenticated)
+        {
+            <MudSpacer />
+            <MudTextField T="string" @bind-Value="_searchQuery" Placeholder="Search here..." Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"  />
+            <MudSpacer />
+        }
 
         <div class="d-flex align-items-center">
             @if (_isUserAuthenticated)
@@ -130,7 +135,7 @@
                 <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
                 <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
 
-                <MudNavGroup Title="Events" Icon="@Icons.Material.Filled.Event" Expanded="true">
+                <MudNavGroup Title="Events" Icon="@Icons.Material.Filled.Event" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="events/following" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
                     <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
                     <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
@@ -138,41 +143,41 @@
                     <MudNavLink Href="events/recommended-events" Icon="@Icons.Material.Filled.Assignment">Recommended Events</MudNavLink>
                 </MudNavGroup>
 
-                <MudNavGroup Title="Posts" Icon="@Icons.Material.Filled.Event" Expanded="true">
+                <MudNavGroup Title="Posts" Icon="@Icons.Material.Filled.Event" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="posts/my" Icon="@Icons.Material.Filled.Bookmark">My posts</MudNavLink>
                     <MudNavLink Href="posts/create" Icon="@Icons.Material.Filled.FindInPage">Create</MudNavLink>
                     <MudNavLink Href="posts/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
                 </MudNavGroup>
 
-                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
                     <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
                     <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
                     <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
                 </MudNavGroup>
                 
-                <MudNavGroup Title="Organizations" Icon="@Icons.Material.Filled.Business" Expanded="true">
+                <MudNavGroup Title="Organizations" Icon="@Icons.Material.Filled.Business" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="organizations/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
                     <MudNavLink Href="organizations/my" Icon="@Icons.Material.Filled.Home">My Organizations</MudNavLink>
                     <MudNavLink Href="organizations/following" Icon="@Icons.Material.Filled.Group">Organizations I Follow</MudNavLink>
                 </MudNavGroup>
 
-                <MudNavGroup Title="Chats" Icon="@Icons.Material.Filled.Chat" Expanded="true">
+                <MudNavGroup Title="Chats" Icon="@Icons.Material.Filled.Chat" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="chats/all" Icon="@Icons.Material.Filled.ChatBubbleOutline">All Chats</MudNavLink>
                     <MudNavLink Href="chats/new" Icon="@Icons.Material.Filled.AddComment">New Chat</MudNavLink>
                     <MudNavLink Href="chats/history" Icon="@Icons.Material.Filled.History">Chat History</MudNavLink>
                 </MudNavGroup>
 
-                <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true">
+                <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
                     <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
                     <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>
                 </MudNavGroup>
                 
-                <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
+                <MudNavLink Href="reports" Icon="@Icons.Material.Filled.AssignmentLate" >Reports</MudNavLink>
                 @if (IdentityService.GetCurrentUserRole() == "admin")
                 {
-                    <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true">
+                    <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                         <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
                         <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
                         <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
@@ -213,6 +218,7 @@
     private string _studentState;
     private string _userAvatar;
     private bool _isLoading = true;
+    private string _searchQuery;
 
     [Inject] IJSRuntime JSRuntime { get; set; }
 
@@ -286,8 +292,21 @@
 
     async Task SignOut()
     {
+        if (_isUserAuthenticated && IdentityService.UserDto != null)
+        {
+            try
+            {
+                await IdentityService.UpdateStatus(IdentityService.UserDto.Id, isOnline: false, deviceType: "web");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating user status to offline: {ex.Message}");
+            }
+        }
+
         await localStorage.ClearAsync();
         await IdentityService.Logout();
+
         StateHasChanged();
         NavigationManager.NavigateTo("signin", forceLoad: true);
     }
@@ -334,3 +353,9 @@
    
     
 }
+
+<style>
+    .mud-nav-link {
+        padding: 8px 5px 8px 5px;
+    }
+</style>

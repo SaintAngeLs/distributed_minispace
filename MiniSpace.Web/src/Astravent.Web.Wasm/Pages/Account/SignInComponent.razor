@@ -5,6 +5,7 @@
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject IIPAddressService IPAddressService
 
 <div class="form-container">
     <div class="sign-in-up-pre-info">
@@ -53,7 +54,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Capture the device type using JavaScript interop
         deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
     }
 
@@ -81,8 +81,12 @@
     {
         try
         {
-            // Pass the detected device type to the SignInAsync method
-            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
+            // Get the device type and IP address
+            var ipAddress = await IPAddressService.GetClientIpAddressAsync();
+
+            // Pass the detected device type and IP address to the SignInAsync method
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType, ipAddress);
+
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
                 NavigationManager.NavigateTo("/home", true);

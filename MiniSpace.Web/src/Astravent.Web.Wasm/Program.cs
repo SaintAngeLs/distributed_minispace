@@ -23,6 +23,7 @@ using Astravent.Web.Wasm.Areas.Reports;
 using MudBlazor;
 using Astravent.Web.Wasm.Areas.Identity;
 using Astravent.Web.Wasm.HttpClients;
+using Astravent.Web.Wasm.Utilities;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -75,6 +76,7 @@ builder.Services.AddScoped<IReactionsService, ReactionsService>();
 builder.Services.AddScoped<ICommentsService, CommentsService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 builder.Services.AddScoped<ICommunicationService, CommunicationService>();
+builder.Services.AddScoped<IIPAddressService, IPAddressService>();
 
 builder.Services.AddScoped<SignalRService>();
 builder.Services.AddScoped<ChatSignalRService>();

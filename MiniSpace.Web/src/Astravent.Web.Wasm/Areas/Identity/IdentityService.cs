@@ -48,10 +48,10 @@ namespace Astravent.Web.Wasm.Areas.Identity
                 new { firstName, lastName, email, password, role, permissions });
         }
 
-        public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType)
+        public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType, string ipAddress)
         {
             var response = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", 
-                new { email, password, deviceType });
+                new { email, password, deviceType, ipAddress });
 
             if (response.Content != null)
             {
@@ -59,7 +59,6 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
                 if (JwtDto.IsTwoFactorRequired)
                 {
-                    // Indicate that 2FA is required
                     return response;
                 }
 
@@ -79,7 +78,6 @@ namespace Astravent.Web.Wasm.Areas.Identity
             }
             return response;
         }
-
 
         public async Task Logout()
         {
@@ -402,9 +400,9 @@ namespace Astravent.Web.Wasm.Areas.Identity
             await _httpClient.PostAsync("identity/2fa/disable", new { UserId = userId });
         }
 
-        public async Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code)
+        public async Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code, string deviceType, string ipAddress)
         {
-            var payload = new { userId, code };
+            var payload = new { userId, code, deviceType, ipAddress };
             var response = await _httpClient.PostAsync<object, JwtDto>("identity/2fa/verify-code", payload);
             if (response.Content != null)
             {
@@ -419,6 +417,20 @@ namespace Astravent.Web.Wasm.Areas.Identity
                 Email = payloadClaims.Claims.FirstOrDefault(c => c.Type == "e-mail")?.Value;
                 IsAuthenticated = true;
             }
+            return response;
+        }
+
+        public async Task<HttpResponse<object>> UpdateStatus(Guid userId, bool isOnline, string deviceType)
+        {
+            var payload = new { userId, isOnline, deviceType};
+            
+            var response = await _httpClient.PutAsync<object, object>("identity/users/status", payload);
+
+            if (response.ErrorMessage != null)
+            {
+                throw new InvalidOperationException($"Error updating user status: {response.ErrorMessage.Reason}");
+            }
+
             return response;
         }
 

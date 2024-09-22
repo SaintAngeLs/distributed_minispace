@@ -236,6 +236,48 @@
                 observer.observe(lastChild);
             }
         };
+
+        window.getClientIPAddress = function () {
+            return new Promise(function (resolve, reject) {
+                // Initialize an empty RTCPeerConnection
+                var peerConnection = new RTCPeerConnection();
+                var localIPs = {};
+
+                // Function to extract the IP address
+                function handleCandidate(candidate) {
+                    var ipRegex = /([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/;
+                    var result = ipRegex.exec(candidate);
+                    if (result) {
+                        var ipAddress = result[1];
+                        if (!localIPs[ipAddress]) {
+                            localIPs[ipAddress] = true;
+                            resolve(ipAddress);
+                        }
+                    }
+                }
+
+                // Listen for candidate events
+                peerConnection.onicecandidate = function (event) {
+                    if (event.candidate) {
+                        handleCandidate(event.candidate.candidate);
+                    }
+                };
+
+                // Create a data channel to trigger the gathering of ICE candidates
+                peerConnection.createDataChannel("");
+                peerConnection.createOffer()
+                    .then(function (offer) {
+                        return peerConnection.setLocalDescription(offer);
+                    })
+                    .catch(reject);
+
+                // Stop gathering after a delay if we haven't found any IP addresses
+                setTimeout(function () {
+                    reject("Could not retrieve IP address");
+                }, 1000);
+            });
+        };
+
     </script>
 </body>
 
