@@ -326,5 +326,11 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             AddEvent(new StudentOnlineStatusChanged(this));
         }
+
+        public void UpdateLastActive()
+        {
+            LastActive = DateTime.UtcNow;
+            AddEvent(new StudentLastActiveUpdated(this));
+        }
     }
 }
