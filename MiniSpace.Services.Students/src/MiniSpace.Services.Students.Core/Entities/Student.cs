@@ -30,6 +30,10 @@ namespace MiniSpace.Services.Students.Core.Entities
         public string PhoneNumber { get; private set; }
         public string Country { get; private set; }
         public string City { get; private set; }
+
+        public bool IsOnline { get; private set; }
+        public string DeviceType { get; private set; }
+        public DateTime? LastActive { get; private set; }
         public IEnumerable<Language> Languages
         {
             get => _languages;
@@ -70,7 +74,8 @@ namespace MiniSpace.Services.Students.Core.Entities
             string bannerUrl, IEnumerable<Education> education, IEnumerable<Work> work,
             IEnumerable<Language> languages, IEnumerable<Interest> interests,
             bool isTwoFactorEnabled, string twoFactorSecret, string contactEmail,
-            string phoneNumber, string country, string city)
+            string phoneNumber, string country, string city,
+            bool isOnline = false, string deviceType = null, DateTime? lastActive = null)
         {
             Id = id;
             Email = email;
@@ -96,6 +101,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             PhoneNumber = phoneNumber;
             Country = country;
             City = city;
+            IsOnline = isOnline;
+            DeviceType = deviceType;
+            LastActive = lastActive;
         }
 
         public void SetIncomplete() => SetState(State.Incomplete);
@@ -308,6 +316,15 @@ namespace MiniSpace.Services.Students.Core.Entities
         {
             EmailNotifications = emailNotifications;
             AddEvent(new StudentUpdated(this));
+        }
+
+        public void SetOnlineStatus(bool isOnline, string deviceType)
+        {
+            IsOnline = isOnline;
+            DeviceType = isOnline ? deviceType : null; 
+            LastActive = DateTime.UtcNow;
+
+            AddEvent(new StudentOnlineStatusChanged(this));
         }
     }
 }
