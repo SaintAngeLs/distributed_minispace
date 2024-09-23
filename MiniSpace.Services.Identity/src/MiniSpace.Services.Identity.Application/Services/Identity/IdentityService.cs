@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Identity.Application.Commands;
 using MiniSpace.Services.Identity.Application.DTO;
 using MiniSpace.Services.Identity.Application.Events;
-using MiniSpace.Services.Identity.Application.Events.Rejected;
 using MiniSpace.Services.Identity.Application.Exceptions;
 using MiniSpace.Services.Identity.Core.Entities;
 using MiniSpace.Services.Identity.Core.Exceptions;
@@ -33,13 +32,19 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         private readonly ITwoFactorSecretTokenService _twoFactorSecretTokenService;
         private readonly ITwoFactorCodeService _twoFactorCodeService;
         private readonly ILogger<IdentityService> _logger;
+        private readonly IIPAddressService _ipAddressService;
 
-        public IdentityService(IUserRepository userRepository, IPasswordService passwordService,
-            IJwtProvider jwtProvider, IRefreshTokenService refreshTokenService,
-            IMessageBroker messageBroker, IUserResetTokenRepository userResetTokenRepository,
+        public IdentityService(
+            IUserRepository userRepository, 
+            IPasswordService passwordService,
+            IJwtProvider jwtProvider, 
+            IRefreshTokenService refreshTokenService,
+            IMessageBroker messageBroker, 
+            IUserResetTokenRepository userResetTokenRepository,
             IVerificationTokenService verificationTokenService, 
             ITwoFactorSecretTokenService twoFactorSecretTokenService,
-            ITwoFactorCodeService  twoFactorCodeService,
+            ITwoFactorCodeService twoFactorCodeService,
+            IIPAddressService ipAddressService,
             ILogger<IdentityService> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -51,6 +56,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _verificationTokenService = verificationTokenService ?? throw new ArgumentNullException(nameof(verificationTokenService));
             _twoFactorSecretTokenService = twoFactorSecretTokenService ?? throw new ArgumentNullException(nameof(twoFactorSecretTokenService));
             _twoFactorCodeService = twoFactorCodeService ?? throw new ArgumentNullException(nameof(twoFactorCodeService));
+            _ipAddressService = ipAddressService ?? throw new ArgumentNullException(nameof(ipAddressService)); 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -62,6 +68,9 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
 
         public async Task<AuthDto> SignInAsync(SignIn command)
         {
+            var ipAddress = _ipAddressService.GetIPAddress();  
+            Console.WriteLine(ipAddress); 
+
             if (!EmailRegex.IsMatch(command.Email))
             {
                 throw new InvalidEmailException(command.Email);
@@ -95,23 +104,22 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 claims.Add("permissions", user.Permissions);
             }
 
-            user.SetOnlineStatus(true, command.DeviceType, command.IpAddress);
+            user.SetOnlineStatus(true, command.DeviceType, ipAddress);
             await _userRepository.UpdateAsync(user);
 
             var auth = _jwtProvider.Create(user.Id, user.Role, claims: claims);
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
-
+            auth.UserId = user.Id;
             auth.IsOnline = true;
             auth.DeviceType = command.DeviceType;
-            auth.IpAddress = command.IpAddress; 
-            Console.WriteLine($"IPAddress {command.IpAddress}");
+            auth.IpAddress = ipAddress;
+
             Console.WriteLine(JsonSerializer.Serialize(auth));
 
-            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, command.IpAddress));
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, ipAddress)); 
 
             return auth;
         }
-
 
         public async Task SignUpAsync(SignUp command)
         {
@@ -122,7 +130,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             }
 
             var user = await _userRepository.GetAsync(command.Email);
-            if (user is {})
+            if (user is not null)
             {
                 _logger.LogError($"Email already in use: {command.Email}");
                 throw new EmailInUseException(command.Email);
@@ -248,7 +256,6 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             await _messageBroker.PublishAsync(new EmailVerified(user.Id, user.Email, DateTime.UtcNow));
         }
 
-
         public async Task EnableTwoFactorAsync(EnableTwoFactor command)
         {
             var user = await _userRepository.GetAsync(command.UserId);
@@ -325,9 +332,9 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             auth.RefreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
             auth.DeviceType = command.DeviceType;
-            auth.IpAddress = command.IpAddress;  // Assuming IpAddress is part of the command
+            auth.IpAddress = _ipAddressService.GetIPAddress(); 
 
-            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, command.IpAddress));
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, auth.IpAddress));
 
             return auth;
         }
@@ -345,7 +352,6 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             try
             {
                 user.SetOnlineStatus(command.IsOnline, command.DeviceType);
-
                 user.UpdateLastActive();
 
                 await _userRepository.UpdateAsync(user);
@@ -356,8 +362,5 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 throw;
             }
         }
-
-
-
     }
 }
