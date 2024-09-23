@@ -69,7 +69,6 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         public async Task<AuthDto> SignInAsync(SignIn command)
         {
             var ipAddress = _ipAddressService.GetIPAddress();  
-            Console.WriteLine(ipAddress); 
 
             if (!EmailRegex.IsMatch(command.Email))
             {
@@ -114,12 +113,11 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             auth.DeviceType = command.DeviceType;
             auth.IpAddress = ipAddress;
 
-            Console.WriteLine(JsonSerializer.Serialize(auth));
-
             await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, ipAddress)); 
 
             return auth;
         }
+
 
         public async Task SignUpAsync(SignUp command)
         {
