@@ -19,10 +19,12 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public DateTime? UpdatedAt { get; private set; }
         public PostContext Context { get; private set; }
         public VisibilityStatus Visibility { get; private set; } 
+        public PostType Type { get; private set; }
+        public string Title { get; private set; }
 
         public Post(Guid id, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
             IEnumerable<string> mediaFiles, DateTime createdAt, State state, PostContext context, DateTime? publishDate,
-            VisibilityStatus visibility = VisibilityStatus.Visible, DateTime? updatedAt = null)
+            PostType type, string title = null, VisibilityStatus visibility = VisibilityStatus.Visible, DateTime? updatedAt = null)
         {
             Id = id;
             UserId = userId;
@@ -35,9 +37,30 @@ namespace MiniSpace.Services.Posts.Core.Entities
             State = state;
             PublishDate = publishDate;
             Context = context;
+            Type = type;
+            Title = title;
             Visibility = visibility;
 
             AddEvent(new PostCreatedEvent(Id));
+        }
+
+
+        public static Post CreateBlogPost(Guid id, Guid userId, string title, string textContent,
+            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
+        {
+            CheckTextContent(id, textContent);
+
+            return new Post(id, userId, null, null, textContent, mediaFiles, createdAt, state, PostContext.UserPage, 
+                publishDate ?? createdAt, PostType.BlogPost, title, visibility);
+        }
+
+        public static Post CreateSocialPost(Guid id, Guid userId, string textContent,
+            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
+        {
+            CheckTextContent(id, textContent);
+
+            return new Post(id, userId, null, null, textContent, mediaFiles, createdAt, state, PostContext.UserPage, 
+                publishDate ?? createdAt, PostType.SocialPost, null, visibility);
         }
 
         public void SetToBePublished(DateTime publishDate, DateTime now)
@@ -81,7 +104,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
             AddEvent(new PostVisibilityChangedEvent(Id, visibility, now));
         }
 
-
         public bool UpdateState(DateTime now)
         {
             if (State == State.ToBePublished && PublishDate <= now)
@@ -117,34 +139,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
             }
         }
 
-        public static Post CreateForUser(Guid id, Guid userId, string textContent,
-            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
-        {
-            CheckTextContent(id, textContent);
-
-            return new Post(id, userId, null, null, textContent, mediaFiles, createdAt, state, PostContext.UserPage,
-                publishDate ?? createdAt, visibility);
-        }
-
-        public static Post CreateForOrganization(Guid id, Guid organizationId, Guid? userId, string textContent,
-            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
-        {
-            CheckTextContent(id, textContent);
-
-            return new Post(id, userId, organizationId, null, textContent, mediaFiles, createdAt, state, PostContext.OrganizationPage,
-                publishDate ?? createdAt, visibility);
-        }
-
-        public static Post CreateForEvent(Guid id, Guid eventId, Guid? userId, Guid? organizationId, string textContent,
-            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility = VisibilityStatus.Visible)
-        {
-            CheckTextContent(id, textContent);
-
-            return new Post(id, userId, organizationId, eventId, textContent, mediaFiles, createdAt, state, PostContext.EventPage,
-                publishDate ?? createdAt, visibility);
-        }
-
-
         public void Update(string textContent, IEnumerable<string> mediaFiles, DateTime now)
         {
             CheckTextContent(Id, textContent);
@@ -165,7 +159,6 @@ namespace MiniSpace.Services.Posts.Core.Entities
 
             MediaFiles = MediaFiles.Where(mf => mf != mediaFileUrl).ToList();
             UpdatedAt = now;
-
         }
 
         private static void CheckTextContent(AggregateId id, string textContent)
