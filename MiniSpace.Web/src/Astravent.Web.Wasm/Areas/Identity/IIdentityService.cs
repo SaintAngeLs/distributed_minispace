@@ -13,7 +13,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
         bool IsAuthenticated { get; set; }
         Task<UserDto> GetAccountAsync(JwtDto jwtDto);
         Task<HttpResponse<object>> SignUpAsync(string firstName, string lastName, string email, string password, string role = "user", IEnumerable<string> permissions = null);
-        Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType, string ipAddress);
+        Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType);
         Task Logout();
         Task<string> GetAccessTokenAsync();
         Task InitializeAuthenticationState();
@@ -34,7 +34,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
         Task EnableTwoFactorAsync(Guid userId, string secret);
         Task DisableTwoFactorAsync(Guid userId);
-        Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code, string deviceType, string ipAddress);
+        Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code, string deviceType);
         Task<HttpResponse<object>> UpdateStatus(Guid userId, bool isOnline, string deviceType);
     }
 }

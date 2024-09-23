@@ -5,7 +5,6 @@
 @inject IIdentityService IdentityService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@inject IIPAddressService IPAddressService
 
 <div class="form-container">
     <div class="sign-in-up-pre-info">
@@ -81,11 +80,7 @@
     {
         try
         {
-            // Get the device type and IP address
-            var ipAddress = await IPAddressService.GetClientIpAddressAsync();
-
-            // Pass the detected device type and IP address to the SignInAsync method
-            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType, ipAddress);
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
 
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {

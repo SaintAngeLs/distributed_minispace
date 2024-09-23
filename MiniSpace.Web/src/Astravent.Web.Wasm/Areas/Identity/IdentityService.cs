@@ -48,10 +48,10 @@ namespace Astravent.Web.Wasm.Areas.Identity
                 new { firstName, lastName, email, password, role, permissions });
         }
 
-        public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType, string ipAddress)
+        public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType)
         {
             var response = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", 
-                new { email, password, deviceType, ipAddress });
+                new { email, password, deviceType });
 
             if (response.Content != null)
             {
@@ -400,9 +400,9 @@ namespace Astravent.Web.Wasm.Areas.Identity
             await _httpClient.PostAsync("identity/2fa/disable", new { UserId = userId });
         }
 
-        public async Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code, string deviceType, string ipAddress)
+        public async Task<HttpResponse<JwtDto>> VerifyTwoFactorCodeAsync(Guid userId, string code, string deviceType)
         {
-            var payload = new { userId, code, deviceType, ipAddress };
+            var payload = new { userId, code, deviceType };
             var response = await _httpClient.PostAsync<object, JwtDto>("identity/2fa/verify-code", payload);
             if (response.Content != null)
             {
