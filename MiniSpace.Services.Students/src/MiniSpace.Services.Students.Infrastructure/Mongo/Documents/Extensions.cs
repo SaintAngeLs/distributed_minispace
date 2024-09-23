@@ -33,7 +33,10 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.ContactEmail,
                 document.PhoneNumber,
                 document.Country,
-                document.City
+                document.City,
+                document.IsOnline,
+                document.DeviceType,
+                document.LastActive  
             );
 
         public static StudentDocument AsDocument(this Student entity)
@@ -77,6 +80,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 PhoneNumber = entity.PhoneNumber,
                 Country = entity.Country,
                 City = entity.City,
+                IsOnline = entity.IsOnline,
+                DeviceType = entity.DeviceType,
+                LastActive = entity.LastActive
             };
 
         public static StudentDto AsDto(this StudentDocument document)
@@ -120,6 +126,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 PhoneNumber = document.PhoneNumber,
                 Country = document.Country,
                 City = document.City,
+                IsOnline = document.IsOnline,
+                DeviceType = document.DeviceType,
+                LastActive = document.LastActive
             };
 
         public static UserNotifications AsEntity(this UserNotificationsDocument document)
