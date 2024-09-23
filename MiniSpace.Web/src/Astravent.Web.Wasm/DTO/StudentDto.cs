@@ -38,5 +38,9 @@ namespace Astravent.Web.Wasm.DTO
         public bool IsInvitationPending { get; set; } 
         public bool InvitationSent { get; set; }
         public bool Selected { get; set; }
+
+        public bool IsOnline { get; set; }  
+        public string DeviceType { get; set; }  
+        public DateTime? LastActive { get; set; }
     }    
 }
