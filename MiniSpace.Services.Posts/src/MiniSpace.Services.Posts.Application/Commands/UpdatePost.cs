@@ -17,9 +17,27 @@ namespace MiniSpace.Services.Posts.Application.Commands
         public DateTime? PublishDate { get; }
         public PostContext Context { get; }
         public string Visibility { get; } 
+        public string PostType { get; }
+        public string Title { get; }
 
-        public UpdatePost(Guid postId, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
-            IEnumerable<string> mediaFiles, string state, DateTime? publishDate, PostContext context, string visibility)
+        public Guid? PageOwnerId { get; }
+        public string PageOwnerType { get; }
+
+        public UpdatePost(
+            Guid postId, 
+            Guid? userId, 
+            Guid? organizationId, 
+            Guid? eventId, 
+            string textContent,
+            IEnumerable<string> mediaFiles, 
+            string state, 
+            DateTime? publishDate, 
+            PostContext context, 
+            string visibility,
+            string postType,
+            string title = null,
+            Guid? pageOwnerId = null, 
+            string pageOwnerType = "User") 
         {
             PostId = postId;
             UserId = userId;
@@ -30,7 +48,11 @@ namespace MiniSpace.Services.Posts.Application.Commands
             State = state;
             PublishDate = publishDate;
             Context = context;
-            Visibility = visibility;  
+            Visibility = visibility;
+            PostType = postType;
+            Title = title;
+            PageOwnerId = pageOwnerId;
+            PageOwnerType = pageOwnerType;
         }
     }
 }
