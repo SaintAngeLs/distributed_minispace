@@ -51,6 +51,8 @@ namespace MiniSpace.Services.Posts.Api
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"posts/{cmd.PostId}"))
                         .Put<ChangePostState>("posts/{postId}/state/{state}",
                             afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Post<RepostCommand>("posts/{originalPostId}/repost", 
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"posts/{cmd.RepostedPostId}/reposted"))
                     ))
                 .UseLogging()
                 .Build()
