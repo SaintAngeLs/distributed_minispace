@@ -355,7 +355,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
             return repost;
         }
 
-         public async Task DeletePostAsync(DeletePost command)
+        public async Task DeletePostAsync(DeletePost command)
         {
             Post post = null;
 
@@ -414,5 +414,6 @@ namespace MiniSpace.Services.Posts.Infrastructure.Services
                 default:
                     throw new InvalidPostContextException(command.Context);
             }
+        }
     }
 }
