@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
 {
     public class Post : AggregateRoot
     {
-        public Guid? UserId { get; private set; }           
+        public Guid? UserId { get; private set; }
         public Guid? OrganizationId { get; private set; }
         public Guid? EventId { get; private set; }
         public string TextContent { get; private set; }
@@ -23,14 +23,19 @@ namespace MiniSpace.Services.Posts.Core.Entities
         public string Title { get; private set; }
 
         // New fields to track the page ownership
-        public Guid? PageOwnerId { get; private set; }         // Owner of the page where the post is published (could be User or Organization)
-        public PageOwnerType PageOwnerType { get; private set; }  // Specifies if the page belongs to a user or an organization
+        public Guid? PageOwnerId { get; private set; } // Owner of the page where the post is published (could be User or Organization)
+        public PageOwnerType PageOwnerType { get; private set; } // Specifies if the page belongs to a user or an organization
+
+        // New fields to track reposts
+        public Guid? OriginalPostId { get; private set; }
+        public bool IsRepost => OriginalPostId.HasValue;
 
         // Constructor
         public Post(Guid id, Guid? userId, Guid? organizationId, Guid? eventId, string textContent,
             IEnumerable<string> mediaFiles, DateTime createdAt, State state, PostContext context, DateTime? publishDate,
             PostType type, string title = null, VisibilityStatus visibility = VisibilityStatus.Visible,
-            DateTime? updatedAt = null, Guid? pageOwnerId = null, PageOwnerType pageOwnerType = PageOwnerType.User)
+            DateTime? updatedAt = null, Guid? pageOwnerId = null, PageOwnerType pageOwnerType = PageOwnerType.User, 
+            Guid? originalPostId = null)
         {
             Id = id;
             UserId = userId;
@@ -48,6 +53,7 @@ namespace MiniSpace.Services.Posts.Core.Entities
             Visibility = visibility;
             PageOwnerId = pageOwnerId;
             PageOwnerType = pageOwnerType;
+            OriginalPostId = originalPostId;
 
             AddEvent(new PostCreatedEvent(Id));
         }
@@ -92,6 +98,20 @@ namespace MiniSpace.Services.Posts.Core.Entities
 
             return new Post(id, userId, organizationId, eventId, textContent, mediaFiles, createdAt, state, PostContext.EventPage,
                 publishDate ?? createdAt, PostType.SocialPost, title: null, visibility, updatedAt: null, pageOwnerId: organizationId, pageOwnerType: PageOwnerType.Organization);
+        }
+
+        // Factory method for repost
+        public static Post CreateRepost(Guid id, Guid userId, Post originalPost, DateTime createdAt, State state)
+        {
+            if (originalPost == null)
+            {
+                throw new InvalidPostStateException("Original post cannot be null.");
+            }
+
+            return new Post(id, userId, null, originalPost.EventId, originalPost.TextContent, originalPost.MediaFiles, 
+                createdAt, state, originalPost.Context, publishDate: createdAt, originalPost.Type, 
+                originalPost.Title, originalPost.Visibility, pageOwnerId: userId, pageOwnerType: PageOwnerType.User, 
+                originalPostId: originalPost.Id);
         }
 
         // Methods to manage post state
@@ -195,6 +215,17 @@ namespace MiniSpace.Services.Posts.Core.Entities
             UpdatedAt = now;
         }
 
+        // Repost the post
+        public void Repost(Guid userId, DateTime now)
+        {
+            if (IsRepost)
+            {
+                throw new InvalidPostStateException("Cannot repost a repost.");
+            }
+
+            AddEvent(new PostRepostedEvent(Id, userId, OriginalPostId ?? Id, now));
+        }
+
         // Validation Methods
         private static void CheckTextContent(AggregateId id, string textContent, PostType postType)
         {
@@ -215,3 +246,4 @@ namespace MiniSpace.Services.Posts.Core.Entities
         }
     }
 }
+
