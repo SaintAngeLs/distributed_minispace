@@ -244,6 +244,27 @@ namespace MiniSpace.Services.Posts.Core.Entities
                 throw new InvalidPostPublishDateException(id, state, publishDate, now);
             }
         }
+
+        public static Post CreateForUser(Guid id, Guid userId, string textContent, IEnumerable<string> mediaFiles,
+            DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility)
+        {
+            return new Post(id, userId, null, null, textContent, mediaFiles, createdAt, state, PostContext.UserPage,
+                publishDate ?? createdAt, PostType.SocialPost, visibility: visibility, pageOwnerId: userId, pageOwnerType: PageOwnerType.User);
+        }
+
+        public static Post CreateForOrganization(Guid id, Guid organizationId, Guid? userId, string textContent,
+            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility)
+        {
+            return new Post(id, userId, organizationId, null, textContent, mediaFiles, createdAt, state, PostContext.OrganizationPage,
+                publishDate ?? createdAt, PostType.SocialPost, visibility: visibility, pageOwnerId: organizationId, pageOwnerType: PageOwnerType.Organization);
+        }
+
+        public static Post CreateForEvent(Guid id, Guid eventId, Guid? userId, Guid? organizationId, string textContent,
+            IEnumerable<string> mediaFiles, DateTime createdAt, State state, DateTime? publishDate, VisibilityStatus visibility)
+        {
+            return new Post(id, userId, organizationId, eventId, textContent, mediaFiles, createdAt, state, PostContext.EventPage,
+                publishDate ?? createdAt, PostType.SocialPost, visibility: visibility, pageOwnerId: organizationId ?? userId, pageOwnerType: organizationId.HasValue ? PageOwnerType.Organization : PageOwnerType.User);
+        }
     }
 }
 
