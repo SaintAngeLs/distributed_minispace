@@ -960,6 +960,14 @@ modules:
         downstream: posts-service/posts
         auth: true
 
+      - upstream: /{originalPostId}/repost
+        method: POST
+        use: downstream
+        downstream: posts-service/posts/{originalPostId}/repost
+        auth: true
+        bind:
+          - originalPostId:{originalPostId}
+
       - upstream: /users/{userId}/feed
         method: GET
         use: downstream
