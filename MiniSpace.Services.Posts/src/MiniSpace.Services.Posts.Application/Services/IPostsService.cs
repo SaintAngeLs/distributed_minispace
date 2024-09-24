@@ -11,5 +11,7 @@ namespace MiniSpace.Services.Posts.Application.Services
         Task<PagedResponse<PostDto>> BrowsePostsAsync(BrowseRequest request);
         Task<Post> CreatePostAsync(CreatePost command);
         Task<Post> UpdatePostAsync(UpdatePost command);
+        Task<Post> RepostPostAsync(RepostCommand command);
+        Task DeletePostAsync(DeletePost command);
     }
 }
