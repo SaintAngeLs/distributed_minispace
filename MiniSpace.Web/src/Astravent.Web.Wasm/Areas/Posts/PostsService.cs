@@ -41,6 +41,12 @@ namespace Astravent.Web.Wasm.Areas.Posts
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
             return _httpClient.PostAsync<CreatePostCommand, object>("posts", command);
         }
+
+        public Task<HttpResponse<object>> RepostPostAsync(RepostCommand command)
+        {
+            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            return _httpClient.PostAsync<RepostCommand, object>("posts/repost", command);
+        }
         
         public async Task<HttpResponse<PagedResponseDto<PostDto>>> SearchPostsAsync(SearchPosts searchPosts)
         {
@@ -119,10 +125,10 @@ namespace Astravent.Web.Wasm.Areas.Posts
             return _httpClient.GetAsync<IEnumerable<PostDto>>($"posts?eventId={eventId}");
         }
 
-        public Task<HttpResponse<object>> UpdatePostAsync(Guid postId, string textContent, IEnumerable<Guid> mediaFiles)
+        public Task<HttpResponse<object>> UpdatePostAsync(UpdatePostCommand command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"posts/{postId}", new {postId, textContent, mediaFiles});
+            return _httpClient.PutAsync<UpdatePostCommand, object>($"posts/{command.PostId}", command);
         }
     }
 }

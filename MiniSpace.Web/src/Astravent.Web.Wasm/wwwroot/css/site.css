@@ -521,7 +521,7 @@ html, body {
 
 
 
-#components-reconnect-modal {
+/* #components-reconnect-modal {
     display: none;
     position: fixed;
     top: 0px;
@@ -650,7 +650,6 @@ div.connectionRejected {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Adding unique delays for a cascading spiral effect */
 .circle:nth-child(1) { animation-delay: 0s; }
 .circle:nth-child(2) { animation-delay: 0.25s; }
 .circle:nth-child(3) { animation-delay: 0.5s; }
@@ -663,7 +662,6 @@ div.connectionRejected {
 .circle:nth-child(10) { animation-delay: 2.25s; }
 .circle:nth-child(11) { animation-delay: 2.5s; }
 
-/* Keyframes for modern spiral movement with scaling, rotation, and color changes */
 @keyframes modernSpiral {
     0% {
         transform: translate(-150px, 0) scale(0.5) rotate(0deg);
@@ -712,7 +710,7 @@ div.connectionRejected {
         opacity: 0;
         background-color: #3498db;
     }
-}
+} */
 
 /* Text loading dots animation */
 .loading {
@@ -955,15 +953,14 @@ div.connectionRejected {
 
 
 /* webassembly loader */
-
 #app {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    /* background-color: #ffffff; */
     position: relative;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 /* Hide the loader when the app is loaded */
@@ -977,54 +974,36 @@ div.connectionRejected {
 .loading-progress {
     width: 100px;
     height: 100px;
-    animation: rotate 2s linear infinite;
 }
 
 .loading-progress circle {
     fill: none;
-    stroke-width: 8;
+    stroke-width: 5;
     stroke-linecap: round;
-}
-
-.outer-circle {
     stroke: #3f51b5;
-    opacity: 0.2;
-}
-
-.inner-circle {
-    stroke: #ff4081;
-    stroke-dasharray: 251.2; /* Circumference of the circle */
-    stroke-dashoffset: 251.2;
-    animation: dash 1.5s ease-in-out infinite;
+    stroke-dasharray: 188.4; /* Circumference of the circle */
+    stroke-dashoffset: 188.4;
+    animation: dashSpin 0.5s linear infinite;
 }
 
 /* Text Style */
 .loading-progress-text {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
     color: #3f51b5;
-    margin-top: 20px;
+    margin-top: 10px;
     text-align: center;
-    animation: textFade 1.5s ease-in-out infinite;
+    animation: textFade 0.8s ease-in-out infinite;
 }
 
 /* Animations */
-@keyframes rotate {
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes dash {
+@keyframes dashSpin {
     0% {
-        stroke-dashoffset: 251.2;
-    }
-    50% {
-        stroke-dashoffset: 125.6;
-        transform: rotate(45deg);
+        stroke-dashoffset: 188.4;
+        transform: rotate(0deg);
     }
     100% {
-        stroke-dashoffset: 251.2;
+        stroke-dashoffset: 0;
         transform: rotate(360deg);
     }
 }

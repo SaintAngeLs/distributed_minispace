@@ -4,7 +4,7 @@ using Astravent.Web.Wasm.DTO.Enums.Posts;
 
 namespace Astravent.Web.Wasm.Areas.Posts.CommandsDto
 {
-    public class CreatePostCommand
+    public class UpdatePostCommand
     {
         public Guid PostId { get; set; }
         public Guid? UserId { get; set; }
