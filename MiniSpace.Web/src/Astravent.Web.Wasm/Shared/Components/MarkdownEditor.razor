@@ -1,10 +1,8 @@
 @using MudBlazor
 
 <MudPaper Class="pa-4" Style="background-color:#f9f9f9; border-radius: 12px;">
-    <!-- Markdown TextField for Input -->
     <MudTextField @bind-Value="MarkdownText" Label="Markdown Text" Multiline="true" Lines="10" FullWidth Immediate="true" Class="mb-2" Required="true" id="markdown-editor" />
 
-    <!-- Toolbar with Buttons in a Row -->
     <MudGrid Class="mt-2" Gutter="2">
         <MudItem>
             <MudButton OnClick="@(async () => await ApplyMarkdown("bold"))" Color="Color.Primary" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.FormatBold" Class="toolbar-btn">
@@ -33,10 +31,9 @@
         </MudItem>
     </MudGrid>
 
-    <!-- Styles for a modern toolbar -->
     <style>
         .toolbar-btn {
-            margin: 0 6px;
+            margin: 0 2px;
             min-width: 48px;
             height: 36px;
         }

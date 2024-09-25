@@ -1,0 +1,72 @@
+@inject IStudentsService StudentsService
+@inject IJSRuntime JSRuntime
+@using MudBlazor
+
+@code {
+    [Parameter] public PostType PostType { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string TextContent { get; set; }
+    [Parameter] public List<FilePreview> MediaFiles { get; set; } = new();
+    [Parameter] public Guid UserId { get; set; }
+
+    private StudentDto student;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Use StudentsService (the injected instance) instead of IStudentsService
+        student = await StudentsService.GetStudentAsync(UserId);
+    }
+}
+
+<MudPaper Class="pa-4">
+    <MudStack Direction="Row" Spacing="1">
+        <MudAvatar Image="@(student?.ProfileImageUrl)" Size="Size.Medium" />
+        <MudText Typo="Typo.subtitle1">@student?.FirstName @student?.LastName</MudText>
+    </MudStack>
+    <MudText Typo="Typo.body2" Class="mt-2">Posted at: @DateTime.Now.ToString("g")</MudText>
+
+    @if (PostType == PostType.BlogPost)
+    {
+        <MudText Typo="Typo.h6" Class="mt-2">Title: @Title</MudText>
+        <MudMarkdown Value="@TextContent" />
+    }
+    else if (PostType == PostType.SocialPost)
+    {
+        <MudMarkdown Value="@TextContent" />
+    }
+
+    @if (MediaFiles.Any())
+    {
+        <MudGrid Class="mt-4">
+            @foreach (var file in MediaFiles)
+            {
+                <MudItem xs="12" sm="6">
+                    <MudCard>
+                        @if (file.IsImage)
+                        {
+                            <MudCardMedia Image="@file.Url" Title="Image" AspectRatio="16:9" />
+                        }
+                        else if (file.IsVideo)
+                        {
+                            <MudCardMedia AspectRatio="16:9">
+                                <video width="100%" controls>
+                                    <source src="@file.Url" type="@file.ContentType" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </MudCardMedia>
+                        }
+                        else if (file.IsPdf)
+                        {
+                            <MudCardContent>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.PictureAsPdf" 
+                                    OnClick="@(async () => await JSRuntime.InvokeVoidAsync("open", file.Url, "_blank"))">
+                                    View PDF
+                                </MudButton>
+                            </MudCardContent>
+                        }
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudPaper>

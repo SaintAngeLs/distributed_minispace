@@ -14,49 +14,12 @@
         <MudItem xs="12" md="6">
             <MudPaper Class="pa-4">
                 <MudText Typo="Typo.h5">Post Preview</MudText>
-                @if (postType == PostType.BlogPost)
-                {
-                    <MudText Typo="Typo.h6" Class="mt-2">Title: @title</MudText>
-                    <MudMarkdown MarkupContent="@textContent" />
-                }
-                else if (postType == PostType.SocialPost)
-                {
-                    <MudMarkdown MarkupContent="@textContent" />
-                    @if (mediaFilesPreviews.Any())
-                    {
-                        <MudText Typo="Typo.h6" Class="mt-4">Uploaded Files</MudText>
-                        <MudGrid>
-                            @foreach (var filePreview in mediaFilesPreviews)
-                            {
-                                <MudItem xs="12" sm="6">
-                                    <MudCard>
-                                        @if (filePreview.IsImage)
-                                        {
-                                            <MudCardMedia Image="@filePreview.Url" Title="Media Preview" AspectRatio="16:9" />
-                                        }
-                                        else if (filePreview.IsVideo)
-                                        {
-                                            <MudCardMedia AspectRatio="16:9">
-                                                <video width="100%" controls>
-                                                    <source src="@filePreview.Url" type="@filePreview.ContentType">
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            </MudCardMedia>
-                                        }
-                                        else if (filePreview.IsPdf)
-                                        {
-                                            <MudCardContent>
-                                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
-                                                    View PDF
-                                                </MudButton>
-                                            </MudCardContent>
-                                        }
-                                    </MudCard>
-                                </MudItem>
-                            }
-                        </MudGrid>
-                    }
-                }
+                <PostPreview 
+                    PostType="@postType" 
+                    Title="@title" 
+                    TextContent="@textContent" 
+                    MediaFiles="@mediaFilesPreviews" 
+                    UserId="@IdentityService.GetCurrentUserId()" />
             </MudPaper>
         </MudItem>
 
@@ -76,8 +39,6 @@
                     {
                         <MudText Typo="Typo.subtitle1" Class="mt-4">Blog Post Details</MudText>
                         <MudTextField @bind-Value="title" Label="Post Title" FullWidth Immediate="true" Required="true" />
-                        
-                        <!-- Custom MarkdownEditor for Blog Post Content -->
                         <MarkdownEditor @bind-MarkdownText="textContent" />
                         
                         <MudSelect T="PostContext" @bind-Value="postContext" Label="Post Context" Required="true" FullWidth Class="mt-4">
@@ -100,13 +61,13 @@
 
                     <!-- Post State and Visibility -->
                     <MudSelect T="string" @bind-Value="state" Label="State" Required="true" FullWidth Class="mt-4">
-                        <MudSelectItem T="string" Value="@("InDraft")">Draft</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("Published")">Published</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("InDraft")>Draft</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("Published")>Published</MudSelectItem>
                     </MudSelect>
 
                     <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true" FullWidth Class="mt-4">
-                        <MudSelectItem T="string" Value="@("Visible")">Visible</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("Invisible")">Invisible</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("Visible")>Visible</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("Invisible")>Invisible</MudSelectItem>
                     </MudSelect>
 
                     <MudDatePicker @bind-Date="publishDate" Label="Publish Date" Class="mt-4" />
@@ -125,14 +86,14 @@
     private MudForm form;
     private string textContent = "## Markdown Content\n";
     private string title;
-    private List<FilePreview> mediaFilesPreviews = new();
+    public List<FilePreview> mediaFilesPreviews = new();
     private List<string> uploadedMediaUrls = new List<string>();
     private string state = "InDraft";
     private string visibility = "Visible";
     private DateTime? publishDate = DateTime.Now;
     private bool isUploading = false;
-    private PostType postType = PostType.SocialPost; // Default to Social Post
-    private PostContext postContext = PostContext.UserPage; // Default context
+    private PostType postType = PostType.SocialPost;
+    private PostContext postContext = PostContext.UserPage;
 
     private async Task UploadMediaFilesClick()
     {
@@ -205,7 +166,7 @@
                 State = state,
                 Visibility = visibility,
                 PublishDate = publishDate,
-                Context = postContext // The context now reflects UserPage, OrganizationPage, or EventPage
+                Context = postContext
             };
 
             var response = await PostsService.CreatePostAsync(command);
@@ -226,12 +187,4 @@
         NavigationManager.NavigateTo("/posts/my");
     }
 
-    private class FilePreview
-    {
-        public string Url { get; set; }
-        public string ContentType { get; set; }
-        public bool IsImage { get; set; }
-        public bool IsVideo { get; set; }
-        public bool IsPdf { get; set; }
-    }
 }
