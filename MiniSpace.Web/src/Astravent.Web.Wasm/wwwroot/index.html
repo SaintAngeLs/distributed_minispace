@@ -22,11 +22,7 @@
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link href="_content/Blazorise.Icons.FontAwesome/v6/css/all.min.css" rel="stylesheet">
-
-    <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
-    <link href="_content/Blazorise.Bootstrap5/blazorise.bootstrap5.css" rel="stylesheet" />
-
+   
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
     <link href="_content/MudBlazor.Markdown/MudBlazor.Markdown.min.css" rel="stylesheet" />
     
@@ -275,6 +271,11 @@
                     reject("Could not retrieve IP address");
                 }, 1000);
             });
+        };
+
+        window.getSelectedText = (elementId) => {
+            const textArea = document.getElementById(elementId);
+            return textArea.value.substring(textArea.selectionStart, textArea.selectionEnd);
         };
 
     </script>

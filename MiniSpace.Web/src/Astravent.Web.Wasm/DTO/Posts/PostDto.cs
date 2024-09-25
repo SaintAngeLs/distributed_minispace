@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Astravent.Web.Wasm.DTO
+namespace Astravent.Web.Wasm.DTO.Posts
 {
     public class PostDto
     {

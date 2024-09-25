@@ -9,6 +9,7 @@ using Astravent.Web.Wasm.Data.Events;
 using Astravent.Web.Wasm.Data.Posts;
 using Astravent.Web.Wasm.DTO;
 using Astravent.Web.Wasm.DTO.Enums.Posts;
+using Astravent.Web.Wasm.DTO.Posts;
 using Astravent.Web.Wasm.DTO.Wrappers;
 using Astravent.Web.Wasm.HttpClients;
 

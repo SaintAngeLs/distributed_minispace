@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Astravent.Web.Wasm.Areas.Posts.CommandsDto;
 using Astravent.Web.Wasm.Data.Posts;
 using Astravent.Web.Wasm.DTO;
+using Astravent.Web.Wasm.DTO.Posts;
 using Astravent.Web.Wasm.DTO.Wrappers;
 using Astravent.Web.Wasm.HttpClients;
 

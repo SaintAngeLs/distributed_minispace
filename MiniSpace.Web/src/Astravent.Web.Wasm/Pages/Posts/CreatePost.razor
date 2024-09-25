@@ -1,6 +1,5 @@
 @page "/posts/create"
 @inject IPostsService PostsService
-@inject IEventsService EventsService
 @inject IIdentityService IdentityService
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
@@ -8,89 +7,132 @@
 @using Astravent.Web.Wasm.Areas.Posts.CommandsDto
 @using Astravent.Web.Wasm.DTO.Enums.Posts
 @using MudBlazor
-@using System.IO
-@using Microsoft.AspNetCore.Components.Forms
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
-    <MudCard>
-        <MudCardHeader>
-            <MudText Typo="Typo.h5">Create a New Post</MudText>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudForm @ref="form" @onsubmit="HandleSubmit">
-                <MudTextField @bind-Value="textContent" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
-                <MudMarkdown Value="@textContent" />
-
-                <MudButton Color="Color.Primary" Variant="Variant.Outlined" OnClick="UploadMediaFilesClick" StartIcon="@Icons.Material.Filled.Upload">
-                    Upload Media Files
-                </MudButton>
-                <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
-
-                @if (mediaFilesPreviews.Any())
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    <MudGrid>
+        <!-- Left Side: Post Preview (Public Information) -->
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h5">Post Preview</MudText>
+                @if (postType == PostType.BlogPost)
                 {
-                    <MudText Typo="Typo.h6" Class="mt-4">Uploaded Files Preview</MudText>
-                    <MudGrid>
-                        @foreach (var filePreview in mediaFilesPreviews)
-                        {
-                            <MudItem xs="12" sm="6">
-                                <MudCard>
-                                    @if (filePreview.IsImage)
-                                    {
-                                        <MudCardMedia Image="@filePreview.Url" Title="Media Preview" AspectRatio="16:9" />
-                                    }
-                                    else if (filePreview.IsVideo)
-                                    {
-                                        <MudCardMedia AspectRatio="16:9">
-                                            <video width="100%" controls>
-                                                <source src="@filePreview.Url" type="@filePreview.ContentType">
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        </MudCardMedia>
-                                    }
-                                    else if (filePreview.IsPdf)
-                                    {
-                                        <MudCardContent>
-                                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
-                                                View PDF
-                                            </MudButton>
-                                        </MudCardContent>
-                                    }
-                                </MudCard>
-                            </MudItem>
-                        }
-                    </MudGrid>
+                    <MudText Typo="Typo.h6" Class="mt-2">Title: @title</MudText>
+                    <MudMarkdown MarkupContent="@textContent" />
                 }
+                else if (postType == PostType.SocialPost)
+                {
+                    <MudMarkdown MarkupContent="@textContent" />
+                    @if (mediaFilesPreviews.Any())
+                    {
+                        <MudText Typo="Typo.h6" Class="mt-4">Uploaded Files</MudText>
+                        <MudGrid>
+                            @foreach (var filePreview in mediaFilesPreviews)
+                            {
+                                <MudItem xs="12" sm="6">
+                                    <MudCard>
+                                        @if (filePreview.IsImage)
+                                        {
+                                            <MudCardMedia Image="@filePreview.Url" Title="Media Preview" AspectRatio="16:9" />
+                                        }
+                                        else if (filePreview.IsVideo)
+                                        {
+                                            <MudCardMedia AspectRatio="16:9">
+                                                <video width="100%" controls>
+                                                    <source src="@filePreview.Url" type="@filePreview.ContentType">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </MudCardMedia>
+                                        }
+                                        else if (filePreview.IsPdf)
+                                        {
+                                            <MudCardContent>
+                                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
+                                                    View PDF
+                                                </MudButton>
+                                            </MudCardContent>
+                                        }
+                                    </MudCard>
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    }
+                }
+            </MudPaper>
+        </MudItem>
 
-                <MudSelect T="string" @bind-Value="state" Label="State" Required="true" Class="mt-4">
-                    <MudSelectItem T="string" Value="@("InDraft")">Draft</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Published")">Published</MudSelectItem>
-                </MudSelect>
+        <!-- Right Side: Post Configuration (Administration) -->
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h5">Post Configuration</MudText>
+                <MudForm @ref="form" @onsubmit="HandleSubmit">
+                    <!-- Post Type Selection -->
+                    <MudSelect T="PostType" @bind-Value="postType" Label="Post Type" Required="true" FullWidth Class="mt-2">
+                        <MudSelectItem T="PostType" Value="PostType.BlogPost">Blog Post</MudSelectItem>
+                        <MudSelectItem T="PostType" Value="PostType.SocialPost">Social Post</MudSelectItem>
+                    </MudSelect>
 
-                <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true" Class="mt-4">
-                    <MudSelectItem T="string" Value="@("Visible")">Visible</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Invisible")">Invisible</MudSelectItem>
-                </MudSelect>
+                    <!-- Blog Post Specific Fields -->
+                    @if (postType == PostType.BlogPost)
+                    {
+                        <MudText Typo="Typo.subtitle1" Class="mt-4">Blog Post Details</MudText>
+                        <MudTextField @bind-Value="title" Label="Post Title" FullWidth Immediate="true" Required="true" />
+                        
+                        <!-- Custom MarkdownEditor for Blog Post Content -->
+                        <MarkdownEditor @bind-MarkdownText="textContent" />
+                        
+                        <MudSelect T="PostContext" @bind-Value="postContext" Label="Post Context" Required="true" FullWidth Class="mt-4">
+                            <MudSelectItem T="PostContext" Value="PostContext.UserPage">User Page</MudSelectItem>
+                            <MudSelectItem T="PostContext" Value="PostContext.OrganizationPage">Organization Page</MudSelectItem>
+                            <MudSelectItem T="PostContext" Value="PostContext.EventPage">Event Page</MudSelectItem>
+                        </MudSelect>
+                    }
 
-                <MudDatePicker @bind-Date="publishDate" Label="Publish Date" Class="mt-4" />
+                    <!-- Social Post Specific Fields -->
+                    @if (postType == PostType.SocialPost)
+                    {
+                        <MudText Typo="Typo.subtitle1" Class="mt-4">Social Post Details</MudText>
+                        <MudTextField @bind-Value="textContent" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+                        <MudButton Color="Color.Primary" Variant="Variant.Outlined" OnClick="UploadMediaFilesClick" StartIcon="@Icons.Material.Filled.Upload" Class="mt-4">
+                            Upload Media Files
+                        </MudButton>
+                        <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
+                    }
 
-                <MudStack Direction="Row" Spacing="2" Class="mt-4">
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" Type="Submit" StartIcon="@Icons.Material.Filled.Check">Create Post</MudButton>
-                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
-                </MudStack>
-            </MudForm>
-        </MudCardContent>
-    </MudCard>
+                    <!-- Post State and Visibility -->
+                    <MudSelect T="string" @bind-Value="state" Label="State" Required="true" FullWidth Class="mt-4">
+                        <MudSelectItem T="string" Value="@("InDraft")">Draft</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Published")">Published</MudSelectItem>
+                    </MudSelect>
+
+                    <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true" FullWidth Class="mt-4">
+                        <MudSelectItem T="string" Value="@("Visible")">Visible</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Invisible")">Invisible</MudSelectItem>
+                    </MudSelect>
+
+                    <MudDatePicker @bind-Date="publishDate" Label="Publish Date" Class="mt-4" />
+
+                    <MudStack Direction="Row" Spacing="2" Class="mt-4">
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" Type="Submit" StartIcon="@Icons.Material.Filled.Check">Create Post</MudButton>
+                        <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
+                    </MudStack>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
 </MudContainer>
 
 @code {
     private MudForm form;
-    private string textContent;
+    private string textContent = "## Markdown Content\n";
+    private string title;
     private List<FilePreview> mediaFilesPreviews = new();
     private List<string> uploadedMediaUrls = new List<string>();
     private string state = "InDraft";
     private string visibility = "Visible";
     private DateTime? publishDate = DateTime.Now;
     private bool isUploading = false;
+    private PostType postType = PostType.SocialPost; // Default to Social Post
+    private PostContext postContext = PostContext.UserPage; // Default context
 
     private async Task UploadMediaFilesClick()
     {
@@ -163,7 +205,7 @@
                 State = state,
                 Visibility = visibility,
                 PublishDate = publishDate,
-                Context = PostContext.UserPage
+                Context = postContext // The context now reflects UserPage, OrganizationPage, or EventPage
             };
 
             var response = await PostsService.CreatePostAsync(command);
