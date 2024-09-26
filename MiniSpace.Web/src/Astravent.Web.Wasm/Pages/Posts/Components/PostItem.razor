@@ -1,6 +1,7 @@
 @using Astravent.Web.Wasm.Pages.Reports.Dialogs
 @inject NavigationManager NavigationManager
 
+<!-- Post Card -->
 <MudCard Class="post-card mb-4" Elevation="2">
     <MudCardHeader>
         <!-- Avatar with @onclick event to navigate to user profile -->
@@ -16,13 +17,27 @@
     </MudCardHeader>
 
     <MudCardContent>
+        <!-- Post Content -->
         <MudMarkdown Value="@Post.TextContent" />
 
-        @if (Post.MediaFiles != null && Post.MediaFiles.Any())
+        @if (Post.MediaFiles != null && Post.MediaFiles.Count() == 1)
         {
             <MudImage Src="@Post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
         }
-
+        else if (Post.MediaFiles != null && Post.MediaFiles.Any())
+        {
+            <MudCarousel Class="mt-2"  Style="height:400px;"  TData="string" AutoCycle="false">
+                @foreach (var image in Post.MediaFiles)
+                {
+                    <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="bounceIn" CustomTransitionExit="bounceOut">
+                        <div class="d-flex" style="width:100%;">
+                        <MudImage Src="@image" Alt="Post image" Style="width: 100%; " />
+                        </div>
+                    </MudCarouselItem>
+                }
+            </MudCarousel>
+        }
+        <!-- Reactions Summary -->
         @if (ReactionsSummaries.TryGetValue(Post.Id, out var reactionsSummary))
         {
             <ReactionsSummary Summary="@reactionsSummary" />
@@ -31,6 +46,7 @@
 
     <MudDivider />
 
+    <!-- Card Actions -->
     <MudCardActions Class="d-flex justify-space-between">
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => OnViewPost.InvokeAsync(Post.Id))">
             <MudIcon Icon="@Icons.Material.Filled.Visibility" Class="mr-1" /> View
@@ -72,9 +88,9 @@
                 </MudMenuItem>
             </ChildContent>
         </MudMenu>
-
     </MudCardActions>
 
+    <!-- Comment Section -->
     @if (isCommentSectionVisible)
     {
         <CommentSection Post="Post" OnSubmitComment="OnSubmitComment" />
