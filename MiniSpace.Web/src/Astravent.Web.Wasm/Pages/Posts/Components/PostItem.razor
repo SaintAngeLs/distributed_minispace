@@ -4,12 +4,10 @@
 <!-- Post Card -->
 <MudCard Class="post-card mb-4" Elevation="2">
     <MudCardHeader>
-        <!-- Avatar with @onclick event to navigate to user profile -->
         <CardHeaderAvatar>
             <MudAvatar Size="Size.Large" Image="@UserProfileImage" @onclick="NavigateToUserProfile" Class="cursor-pointer" />
         </CardHeaderAvatar>
 
-        <!-- Username with @onclick event to navigate to user profile -->
         <CardHeaderContent>
             <MudText Typo="Typo.subtitle1" Class="mb-1 cursor-pointer" @onclick="NavigateToUserProfile">@Username</MudText>
             <MudText Typo="Typo.caption" Class="text-muted">@PostDate</MudText>
@@ -17,7 +15,6 @@
     </MudCardHeader>
 
     <MudCardContent>
-        <!-- Post Content -->
         <MudMarkdown Value="@Post.TextContent" />
 
         @if (Post.MediaFiles != null && Post.MediaFiles.Count() == 1)
@@ -26,18 +23,18 @@
         }
         else if (Post.MediaFiles != null && Post.MediaFiles.Any())
         {
-            <MudCarousel Class="mt-2"  Style="height:400px;"  TData="string" AutoCycle="false">
+            <MudCarousel Class="mt-2" Style="height:500px;" TData="string" AutoCycle="false">
                 @foreach (var image in Post.MediaFiles)
                 {
                     <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="bounceIn" CustomTransitionExit="bounceOut">
-                        <div class="d-flex" style="width:100%;">
-                        <MudImage Src="@image" Alt="Post image" Style="width: 100%; " />
+                        <div class="d-flex justify-center align-center" style="height: 100%; width: 100%; background-color: #f5f5f5;">
+                            <MudImage Src="@image" Alt="Post image" Style="max-height: 100%; max-width: 100%; object-fit: cover;" />
                         </div>
                     </MudCarouselItem>
                 }
             </MudCarousel>
+
         }
-        <!-- Reactions Summary -->
         @if (ReactionsSummaries.TryGetValue(Post.Id, out var reactionsSummary))
         {
             <ReactionsSummary Summary="@reactionsSummary" />
