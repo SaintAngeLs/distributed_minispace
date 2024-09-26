@@ -1,0 +1,27 @@
+@using Astravent.Web.Wasm.DTO
+
+<MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" CloseOnSelection="true">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Text" Color="Color.Secondary">
+            <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Class="mr-1" /> React
+        </MudButton>
+    </ActivatorContent>
+    <ChildContent>
+        @foreach (var reactionType in Enum.GetValues(typeof(ReactionType)).Cast<ReactionType>())
+        {
+            <MudMenuItem OnClick="() => HandleReaction(reactionType)" Class="d-flex align-center">
+                <MudIcon Icon="@reactionType.GetReactionIcon()" Class="mr-2" /> @reactionType.GetReactionText()
+            </MudMenuItem>
+        }
+    </ChildContent>
+</MudMenu>
+
+@code {
+    [Parameter] public PostDto Post { get; set; }
+    [Parameter] public EventCallback<(Guid, ReactionType)> OnReact { get; set; }
+
+    private void HandleReaction(ReactionType reactionType)
+    {
+        OnReact.InvokeAsync((Post.Id, reactionType));
+    }
+}

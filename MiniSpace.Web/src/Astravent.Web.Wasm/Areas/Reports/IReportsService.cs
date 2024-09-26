@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Astravent.Web.Wasm.Areas.Reports.CommandsDto;
 using Astravent.Web.Wasm.DTO;
 using Astravent.Web.Wasm.DTO.Wrappers;
 using Astravent.Web.Wasm.HttpClients;
@@ -12,8 +13,7 @@ namespace Astravent.Web.Wasm.Areas.Reports
         Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> SearchReportsAsync(
             IEnumerable<string> contextTypes, IEnumerable<string> states, Guid reviewerId, PageableDto pageable);
         
-        Task<HttpResponse<object>> CreateReportAsync(Guid reportId, Guid issuerId, Guid targetId, Guid targetOwnerId,
-            string contextType, string category, string reason);
+        Task<HttpResponse<object>> CreateReportAsync(CreateReportCommand command);
         
         Task DeleteReportAsync(Guid reportId);
         
@@ -25,7 +25,7 @@ namespace Astravent.Web.Wasm.Areas.Reports
         
         Task<HttpResponse<object>> RejectReportAsync(Guid reportId);
 
-        Task<PagedResponseDto<IEnumerable<ReportDto>>> GetStudentReportsAsync(Guid studentId,
+        Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> GetStudentReportsAsync(Guid studentId,
             int page, int results);
     }
 }

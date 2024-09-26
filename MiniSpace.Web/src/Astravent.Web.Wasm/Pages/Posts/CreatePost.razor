@@ -17,7 +17,7 @@
                 <PostPreview 
                     PostType="@postType" 
                     Title="@title" 
-                    TextContent="@textContent" 
+                    TextContent="@textContent"
                     MediaFiles="@mediaFilesPreviews" 
                     UserId="@IdentityService.GetCurrentUserId()" />
             </MudPaper>
@@ -39,24 +39,30 @@
                     {
                         <MudText Typo="Typo.subtitle1" Class="mt-4">Blog Post Details</MudText>
                         <MudTextField @bind-Value="title" Label="Post Title" FullWidth Immediate="true" Required="true" />
-                        <MarkdownEditor @bind-MarkdownText="textContent" />
-                        
+
+                        <!-- Bind MarkdownText to textContent (no need for explicit MarkdownTextChanged) -->
+                        <MarkdownEditor @bind-MarkdownText="textContent" CharacterLimit="40000" />
+
                         <MudSelect T="PostContext" @bind-Value="postContext" Label="Post Context" Required="true" FullWidth Class="mt-4">
                             <MudSelectItem T="PostContext" Value="PostContext.UserPage">User Page</MudSelectItem>
                             <MudSelectItem T="PostContext" Value="PostContext.OrganizationPage">Organization Page</MudSelectItem>
                             <MudSelectItem T="PostContext" Value="PostContext.EventPage">Event Page</MudSelectItem>
                         </MudSelect>
+
+                        <MudProgressLinear Value="@(textContent.Length * 100 / 40000)" Color="Color.Primary" Class="mt-2"/>
                     }
 
                     <!-- Social Post Specific Fields -->
                     @if (postType == PostType.SocialPost)
                     {
                         <MudText Typo="Typo.subtitle1" Class="mt-4">Social Post Details</MudText>
-                        <MudTextField @bind-Value="textContent" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+                        <MarkdownEditor @bind-MarkdownText="textContent" CharacterLimit="5000" />
                         <MudButton Color="Color.Primary" Variant="Variant.Outlined" OnClick="UploadMediaFilesClick" StartIcon="@Icons.Material.Filled.Upload" Class="mt-4">
                             Upload Media Files
                         </MudButton>
                         <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
+
+                        <MudProgressLinear Value="@(textContent.Length * 100 / 5000)" Color="Color.Secondary" Class="mt-2"/>
                     }
 
                     <!-- Post State and Visibility -->
@@ -73,7 +79,7 @@
                     <MudDatePicker @bind-Date="publishDate" Label="Publish Date" Class="mt-4" />
 
                     <MudStack Direction="Row" Spacing="2" Class="mt-4">
-                        <MudButton Color="Color.Primary" Variant="Variant.Filled" Type="Submit" StartIcon="@Icons.Material.Filled.Check">Create Post</MudButton>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="HandleSubmit" StartIcon="@Icons.Material.Filled.Check">Create Post</MudButton>
                         <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
                     </MudStack>
                 </MudForm>
@@ -84,7 +90,7 @@
 
 @code {
     private MudForm form;
-    private string textContent = "## Markdown Content\n";
+    private string textContent = "## Markdown Content\n"; // This is the dynamic content
     private string title;
     public List<FilePreview> mediaFilesPreviews = new();
     private List<string> uploadedMediaUrls = new List<string>();
@@ -94,7 +100,9 @@
     private bool isUploading = false;
     private PostType postType = PostType.SocialPost;
     private PostContext postContext = PostContext.UserPage;
+    private bool formIsValid = false;
 
+    // Upload files method
     private async Task UploadMediaFilesClick()
     {
         await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputMediaFiles').click()");
@@ -155,8 +163,16 @@
 
     private async Task HandleSubmit()
     {
+        // Validate the form
+        await form.Validate();
         if (form.IsValid)
         {
+            if ((postType == PostType.BlogPost && textContent.Length > 40000) || (postType == PostType.SocialPost && textContent.Length > 5000))
+            {
+                Console.WriteLine("Post exceeds maximum character limit.");
+                return;
+            }
+
             var command = new CreatePostCommand
             {
                 PostId = Guid.NewGuid(),
@@ -166,7 +182,9 @@
                 State = state,
                 Visibility = visibility,
                 PublishDate = publishDate,
-                Context = postContext
+                Context = postContext,
+                PostType = postType.ToString(),
+                Title = title
             };
 
             var response = await PostsService.CreatePostAsync(command);
@@ -180,11 +198,14 @@
                 Console.WriteLine("Failed to create post: " + response.ErrorMessage?.Reason);
             }
         }
+        else
+        {
+            formIsValid = false;
+        }
     }
 
     private void HandleCancel()
     {
         NavigationManager.NavigateTo("/posts/my");
     }
-
 }

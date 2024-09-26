@@ -13,7 +13,8 @@ namespace Astravent.Web.Wasm.Areas.Comments.CommandsDto
         public Guid ParentId { get; set; }
         public PageableDto Pageable { get; set; }
 
-        public SearchSubCommentsCommand(Guid contextId, string commentContext, Guid parentId, PageableDto pageable)
+        public SearchSubCommentsCommand(Guid contextId, string commentContext, 
+                        Guid parentId, PageableDto pageable)
         {
             ContextId = contextId;
             CommentContext = commentContext;

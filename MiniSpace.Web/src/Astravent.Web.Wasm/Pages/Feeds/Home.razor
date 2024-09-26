@@ -1,11 +1,13 @@
 ﻿@page "/home"
 @using Astravent.Web.Wasm.DTO
 @using Astravent.Web.Wasm.DTO.Wrappers
-@using Astravent.Web.Wasm.Areas.Posts
-@using Astravent.Web.Wasm.Data.Posts
+@using Astravent.Web.Wasm.Pages.Posts.Components
 @inject NavigationManager NavigationManager
 @inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
 @inject IPostsService PostsService
+@inject IReactionsService ReactionsService
+@inject ICommentsService CommentsService
 @inject ISnackbar Snackbar
 @using MudBlazor
 
@@ -38,14 +40,23 @@
                     }
                     else if (posts != null && posts.Any())
                     {
-                        <MudList>
+                        <MudGrid Justify="Justify.Center">
                             @foreach (var post in posts)
                             {
-                                <MudListItem>
-                                    <PostCard Post="post" />
-                                </MudListItem>
+                                <MudItem xs="12">
+                                    <PostItem 
+                                        Post="@post"
+                                        Username="@GetCachedUserName(post.UserId)"
+                                        UserProfileImage="@GetCachedUserAvatar(post.UserId)"
+                                        PostDate="@post.CreatedAt.ToString("g")"
+                                        ReactionsSummaries="@reactionsSummaries"
+                                        OnViewPost="NavigateToPostDetails"
+                                        OnReaction="HandleReaction"
+                                        OnSubmitComment="SubmitCommentAsync"
+                                    />
+                                </MudItem>
                             }
-                        </MudList>
+                        </MudGrid>
                     }
                     else
                     {
@@ -68,11 +79,15 @@
     private Guid studentId;
     private bool pageInitialized = false;
     private bool postsLoadingFailed = false;
-
+    private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new();
+    
+    // Cache for user names and avatars
+    private Dictionary<Guid, string> userNames = new();
+    private Dictionary<Guid, string> userAvatars = new();
+    
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
-        @* new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts), *@
     };
 
     protected override async Task OnInitializedAsync()
@@ -80,34 +95,168 @@
         if (IdentityService != null && IdentityService.IsAuthenticated)
         {
             studentId = IdentityService.GetCurrentUserId();
-            try
-            {
-                var result = await PostsService.GetUserFeedAsync(studentId, 1, 8, "PublishDate", "desc");
-
-                if (result.IsSuccessStatusCode)
-                {
-                    posts = result.Content.Items;
-                }
-                else
-                {
-                    posts = new List<PostDto>(); // Handle error gracefully
-                    postsLoadingFailed = true;
-                    Snackbar.Add($"Error loading posts: {result.ErrorMessage.Reason}", Severity.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                postsLoadingFailed = true;
-                Snackbar.Add($"Exception occurred: {ex.Message}", Severity.Error);
-            }
-            finally
-            {
-                pageInitialized = true;
-            }
+            await LoadPostsAsync();
+            pageInitialized = true;
         }
         else
         {
             NavigationManager.NavigateTo("");
+        }
+    }
+
+    private async Task LoadPostsAsync()
+    {
+        try
+        {
+            var result = await PostsService.GetUserFeedAsync(studentId, 1, 8, "PublishDate", "desc");
+
+            if (result.IsSuccessStatusCode)
+            {
+                posts = result.Content.Items;
+
+                foreach (var post in posts)
+                {
+                    // Ensure post.UserId has a value before using it
+                    if (post.UserId.HasValue)
+                    {
+                        var userId = post.UserId.Value;
+
+                        // Load reactions summary for each post
+                        reactionsSummaries[post.Id] = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
+
+                        // Asynchronously load and cache user names and avatars
+                        if (!userNames.ContainsKey(userId))
+                        {
+                            var student = await StudentsService.GetStudentAsync(userId);
+                            if (student != null)
+                            {
+                                userNames[userId] = $"{student.FirstName} {student.LastName}";
+                                userAvatars[userId] = student.ProfileImageUrl ?? string.Empty;
+                            }
+                            else
+                            {
+                                userNames[userId] = "Unknown User";
+                                userAvatars[userId] = string.Empty;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                posts = new List<PostDto>(); // Handle error gracefully
+                postsLoadingFailed = true;
+                Snackbar.Add($"Error loading posts: {result.ErrorMessage.Reason}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            postsLoadingFailed = true;
+            Snackbar.Add($"Exception occurred: {ex.Message}", Severity.Error);
+        }
+    }
+
+    // Method to get cached user name
+    private string GetCachedUserName(Guid? userId)
+    {
+        if (userId.HasValue && userNames.ContainsKey(userId.Value))
+        {
+            return userNames[userId.Value];
+        }
+        return "Unknown User";
+    }
+
+    // Method to get cached user avatar
+    private string GetCachedUserAvatar(Guid? userId)
+    {
+        if (userId.HasValue && userAvatars.ContainsKey(userId.Value))
+        {
+            return userAvatars[userId.Value];
+        }
+        return string.Empty;
+    }
+
+    private async Task HandleReaction((Guid postId, ReactionType reactionType) reactionInfo)
+    {
+        var (postId, reactionType) = reactionInfo;
+
+        var reactions = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
+        var existingReaction = reactions.FirstOrDefault(r => r.UserId == IdentityService.GetCurrentUserId());
+
+        if (existingReaction != null)
+        {
+            var updateReaction = new UpdateReactionDto
+            {
+                ReactionId = existingReaction.Id,
+                UserId = IdentityService.GetCurrentUserId(),
+                NewReactionType = reactionType.ToString(),
+                ContentType = "Post",
+                TargetType = "User"
+            };
+
+            await ReactionsService.UpdateReactionAsync(updateReaction);
+        }
+        else
+        {
+            var createReaction = new CreateReactionDto
+            {
+                UserId = IdentityService.GetCurrentUserId(),
+                ContentId = postId,
+                ContentType = "Post",
+                ReactionType = reactionType.ToString(),
+                TargetType = "User"
+            };
+
+            await ReactionsService.CreateReactionAsync(createReaction);
+        }
+
+        reactionsSummaries[postId] = await ReactionsService.GetReactionsSummaryAsync(postId, ReactionContentType.Post);
+    }
+
+    private async Task SubmitCommentAsync((PostDto post, string commentText) commentInfo)
+    {
+        var (post, commentText) = commentInfo;
+        if (string.IsNullOrWhiteSpace(commentText))
+        {
+            Snackbar.Add("Comment cannot be empty.", Severity.Warning);
+            return;
+        }
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: post.Id,
+            commentContext: DetermineCommentContext(post).ToString(),
+            userId: IdentityService.GetCurrentUserId(),
+            parentId: Guid.Empty,
+            textContent: commentText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Comment added successfully!", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add($"Failed to add comment: {response.ErrorMessage?.Reason}", Severity.Error);
+        }
+    }
+
+    private void NavigateToPostDetails(Guid postId)
+    {
+        NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+
+    private CommentContext DetermineCommentContext(PostDto post)
+    {
+        if (post.OrganizationId.HasValue)
+        {
+            return post.EventId.HasValue ? CommentContext.OrganizationEvent : CommentContext.OrganizationPost;
+        }
+        else
+        {
+            return post.EventId.HasValue ? CommentContext.UserEvent : CommentContext.UserPost;
         }
     }
 }

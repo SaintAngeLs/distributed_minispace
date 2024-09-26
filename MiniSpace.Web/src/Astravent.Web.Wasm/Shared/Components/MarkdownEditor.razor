@@ -3,6 +3,12 @@
 <MudPaper Class="pa-4" Style="background-color:#f9f9f9; border-radius: 12px;">
     <MudTextField @bind-Value="MarkdownText" Label="Markdown Text" Multiline="true" Lines="10" FullWidth Immediate="true" Class="mb-2" Required="true" id="markdown-editor" />
 
+    <!-- Display the character counter and highlight if limit exceeded -->
+    <MudText Typo="Typo.caption" Style="@GetCharacterCounterStyle()">
+        @($"Characters: {MarkdownText.Length}/{CharacterLimit}")
+    </MudText>
+    <MudProgressLinear Value="@(MarkdownText.Length * 100 / CharacterLimit)" Color="@GetProgressColor()" Class="mt-2" />
+
     <MudGrid Class="mt-2" Gutter="2">
         <MudItem>
             <MudButton OnClick="@(async () => await ApplyMarkdown("bold"))" Color="Color.Primary" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.FormatBold" Class="toolbar-btn">
@@ -29,7 +35,30 @@
                 Code
             </MudButton>
         </MudItem>
+
+        <!-- Emoji Picker Button -->
+        <MudItem>
+            <MudButton OnClick="ToggleEmojiPicker" Color="Color.Secondary" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.EmojiEmotions" Class="toolbar-btn">
+                Emoji
+            </MudButton>
+        </MudItem>
     </MudGrid>
+
+    <!-- Emoji Picker Popover -->
+    <MudPopover Open="@IsEmojiPickerOpen" CloseOnOutsideClick="true">
+        <MudPaper Class="pa-2" Style="max-width: 300px; max-height: 300px; overflow-y: auto;">
+            <MudGrid Gutter="2">
+                @foreach (var emoji in EmojiList.Emojis) 
+                {
+                    <MudItem xs="3">
+                        <MudButton Class="emoji-btn" OnClick="@(() => InsertEmoji(emoji))">
+                            @emoji
+                        </MudButton>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudPaper>
+    </MudPopover>
 
     <style>
         .toolbar-btn {
@@ -42,6 +71,12 @@
             font-size: 1rem;
             border-radius: 8px;
         }
+
+        .emoji-btn {
+            font-size: 1.5rem;
+            min-width: 40px;
+            height: 40px;
+        }
     </style>
 </MudPaper>
 
@@ -50,10 +85,29 @@
     public string MarkdownText { get; set; } = string.Empty;
 
     [Parameter]
+    public int CharacterLimit { get; set; } = 5000; // Default limit
+
+    [Parameter]
     public EventCallback<string> MarkdownTextChanged { get; set; }
 
     [Inject]
     IJSRuntime JSRuntime { get; set; }
+
+    private bool IsEmojiPickerOpen { get; set; } = false;
+
+    // Toggle emoji picker
+    private void ToggleEmojiPicker()
+    {
+        IsEmojiPickerOpen = !IsEmojiPickerOpen;
+    }
+
+    // Insert emoji into the MarkdownText
+    private void InsertEmoji(string emoji)
+    {
+        MarkdownText += emoji;
+        IsEmojiPickerOpen = false;
+        MarkdownTextChanged.InvokeAsync(MarkdownText);
+    }
 
     // JavaScript interop to manipulate selected text
     private async Task ApplyMarkdown(string action)
@@ -93,5 +147,17 @@
         }
 
         MarkdownTextChanged.InvokeAsync(MarkdownText);
+    }
+
+    // Get the style for the character counter based on the character limit
+    private string GetCharacterCounterStyle()
+    {
+        return MarkdownText.Length > CharacterLimit ? "color:red;" : "color:gray;";
+    }
+
+    // Get the color of the progress bar
+    private Color GetProgressColor()
+    {
+        return MarkdownText.Length > CharacterLimit ? Color.Error : Color.Primary;
     }
 }

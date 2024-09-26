@@ -22,5 +22,22 @@ namespace Astravent.Web.Wasm.DTO.Comments
                 IsDeleted = comment.IsDeleted
             };
         }
+
+        public static CommentDto ToCommentDto(this ReplyDto reply)
+        {
+            if (reply == null)
+                throw new ArgumentNullException(nameof(reply));
+
+            return new CommentDto
+            {
+                Id = reply.Id,
+                ParentId = reply.ParentId,
+                UserId = reply.UserId,
+                TextContent = reply.TextContent,
+                CreatedAt = reply.CreatedAt,
+                IsDeleted = reply.IsDeleted,
+                Replies = new List<ReplyDto>() 
+            };
+        }
     }
 }

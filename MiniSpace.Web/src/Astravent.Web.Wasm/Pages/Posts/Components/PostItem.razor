@@ -1,0 +1,146 @@
+@using Astravent.Web.Wasm.Pages.Reports.Dialogs
+@inject NavigationManager NavigationManager
+
+<MudCard Class="post-card mb-4" Elevation="2">
+    <MudCardHeader>
+        <!-- Avatar with @onclick event to navigate to user profile -->
+        <CardHeaderAvatar>
+            <MudAvatar Size="Size.Large" Image="@UserProfileImage" @onclick="NavigateToUserProfile" Class="cursor-pointer" />
+        </CardHeaderAvatar>
+
+        <!-- Username with @onclick event to navigate to user profile -->
+        <CardHeaderContent>
+            <MudText Typo="Typo.subtitle1" Class="mb-1 cursor-pointer" @onclick="NavigateToUserProfile">@Username</MudText>
+            <MudText Typo="Typo.caption" Class="text-muted">@PostDate</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardContent>
+        <MudMarkdown Value="@Post.TextContent" />
+
+        @if (Post.MediaFiles != null && Post.MediaFiles.Any())
+        {
+            <MudImage Src="@Post.MediaFiles.First()" Alt="Post image" Class="mt-2" Style="width: 100%;" />
+        }
+
+        @if (ReactionsSummaries.TryGetValue(Post.Id, out var reactionsSummary))
+        {
+            <ReactionsSummary Summary="@reactionsSummary" />
+        }
+    </MudCardContent>
+
+    <MudDivider />
+
+    <MudCardActions Class="d-flex justify-space-between">
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => OnViewPost.InvokeAsync(Post.Id))">
+            <MudIcon Icon="@Icons.Material.Filled.Visibility" Class="mr-1" /> View
+        </MudButton>
+
+        <ReactionsMenu Post="Post" OnReact="OnReaction" />
+
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="ToggleCommentSection">
+            <MudIcon Icon="@Icons.Material.Filled.Comment" Class="mr-1" /> Comment
+        </MudButton>
+
+        <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="OpenReportDialog">
+            <MudIcon Icon="@Icons.Material.Filled.Report" Class="mr-1" /> Report
+        </MudButton>
+
+        <!-- Share Button with Social Media Menu -->
+        <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" CloseOnSelection="true">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">
+                    <MudIcon Icon="@Icons.Material.Filled.Share" Class="mr-1" /> Share
+                </MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                <!-- Facebook Share -->
+                <MudMenuItem OnClick="@(() => SharePost("facebook"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.Facebook" Class="mr-2" /> Facebook
+                </MudMenuItem>
+                <!-- X (Twitter) Share -->
+                <MudMenuItem OnClick="@(() => SharePost("twitter"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.Twitter" Class="mr-2" /> X (Twitter)
+                </MudMenuItem>
+                <!-- WhatsApp Share -->
+                <MudMenuItem OnClick="@(() => SharePost("whatsapp"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.WhatsApp" Class="mr-2" /> WhatsApp
+                </MudMenuItem>
+                <!-- LinkedIn Share -->
+                <MudMenuItem OnClick="@(() => SharePost("linkedin"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.LinkedIn" Class="mr-2" /> LinkedIn
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+
+    </MudCardActions>
+
+    @if (isCommentSectionVisible)
+    {
+        <CommentSection Post="Post" OnSubmitComment="OnSubmitComment" />
+    }
+</MudCard>
+
+@code {
+    [Parameter] public PostDto Post { get; set; }
+    [Parameter] public string Username { get; set; }
+    [Parameter] public string UserProfileImage { get; set; }
+    [Parameter] public string PostDate { get; set; }
+    [Parameter] public Dictionary<Guid, ReactionsSummaryDto> ReactionsSummaries { get; set; } = new();
+    [Parameter] public EventCallback<Guid> OnViewPost { get; set; }
+    [Parameter] public EventCallback<(Guid, ReactionType)> OnReaction { get; set; }
+    [Parameter] public EventCallback<(PostDto, string)> OnSubmitComment { get; set; }
+
+    [Inject] public IDialogService DialogService { get; set; }
+    [Inject] public IIdentityService IdentityService { get; set; }
+
+    private bool isCommentSectionVisible;
+
+    private void ToggleCommentSection()
+    {
+        isCommentSectionVisible = !isCommentSectionVisible;
+    }
+
+    private void OpenReportDialog()
+    {
+        var parameters = new DialogParameters
+        {
+            { "Post", Post },
+            { "Username", Username },
+            { "UserProfileImage", UserProfileImage },
+            { "IssuerId", IdentityService.GetCurrentUserId() }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small };
+
+        DialogService.Show<PostReportDialog>("Report Post", parameters, options);
+    }
+
+    private void SharePost(string platform)
+    {
+        var postUrl = NavigationManager.Uri;
+        var postTitle = Uri.EscapeDataString(Post.TextContent);
+
+        string shareUrl = platform switch
+        {
+            "facebook" => $"https://www.facebook.com/sharer/sharer.php?u={postUrl}",
+            "twitter" => $"https://twitter.com/intent/tweet?text={postTitle}&url={postUrl}",
+            "whatsapp" => $"https://wa.me/?text={postTitle}%20{postUrl}",
+            "linkedin" => $"https://www.linkedin.com/shareArticle?mini=true&url={postUrl}&title={postTitle}",
+            _ => ""
+        };
+
+        if (!string.IsNullOrEmpty(shareUrl))
+        {
+            NavigationManager.NavigateTo(shareUrl, true);
+        }
+    }
+
+    private void NavigateToUserProfile()
+    {
+        if (Post.UserId.HasValue)
+        {
+            NavigationManager.NavigateTo($"/user-details/{Post.UserId.Value}");
+        }
+    }
+}

@@ -1,0 +1,193 @@
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.DTO.Comments
+@inject ICommentsService CommentsService
+@inject IStudentsService StudentsService
+
+<MudListItem>
+    <MudGrid justify-start AlignItems="Center">
+        <MudItem xs="1" Class="pr-2">
+            <MudAvatar Size="Size.Small" Image="@GetUserAvatar(Comment.UserId)" />
+        </MudItem>
+        <MudItem xs="11">
+            <MudText Typo="Typo.subtitle2">@GetUserName(Comment.UserId)</MudText>
+            <MudText Typo="Typo.body2">@Comment.TextContent</MudText>
+            <MudText Typo="Typo.caption" Class="text-muted">@Comment.CreatedAt.ToString("g")</MudText>
+
+            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="ToggleReplySection">
+                <MudIcon Icon="@Icons.Material.Filled.Reply" Class="mr-1" /> Reply
+            </MudButton>
+
+            @if (isReplySectionVisible)
+            {
+                <MudTextField @bind-Value="newReplyText" Placeholder="Write a reply..." Variant="Variant.Outlined" FullWidth="true" Class="mt-2" />
+                <MudButton Color="Color.Primary" OnClick="SubmitReply">Submit Reply</MudButton>
+
+                @if (isLoadingReplies)
+                {
+                    <MudProgressCircular Indeterminate="true" />
+                }
+                else if (replies.Any())
+                {
+                    <MudList Class="pl-4">
+                        @foreach (var reply in replies)
+                        {
+                            <CommentItem Comment="@reply" Post="Post" UserId="UserId" />
+                        }
+                    </MudList>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2" Class="text-muted">No replies available.</MudText>
+                }
+            }
+        </MudItem>
+    </MudGrid>
+</MudListItem>
+
+@code {
+    [Parameter] public CommentDto Comment { get; set; }
+    [Parameter] public PostDto Post { get; set; }
+    [Parameter] public Guid UserId { get; set; }
+
+    private string newReplyText = string.Empty;
+    private bool isReplySectionVisible = false;
+    private bool isLoadingReplies = false;
+    private List<CommentDto> replies = new();  // Use CommentDto instead of ReplyDto
+    private Dictionary<Guid, StudentDto> studentsCache = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Ensure user details are loaded when the component is initialized
+        if (!studentsCache.ContainsKey(Comment.UserId))
+        {
+            var student = await StudentsService.GetStudentAsync(Comment.UserId);
+            if (student != null)
+            {
+                studentsCache[Comment.UserId] = student;
+            }
+        }
+    }
+
+    private string GetUserAvatar(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return studentsCache[userId.Value].ProfileImageUrl ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    private string GetUserName(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return $"{studentsCache[userId.Value].FirstName} {studentsCache[userId.Value].LastName}";
+        }
+        return "Unknown User";
+    }
+
+    private void ToggleReplySection()
+    {
+        isReplySectionVisible = !isReplySectionVisible;
+        if (isReplySectionVisible)
+        {
+            LoadRepliesAsync();
+        }
+    }
+
+    private async Task SubmitReply()
+    {
+        if (string.IsNullOrWhiteSpace(newReplyText))
+        {
+            return;
+        }
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: Post.Id,
+            commentContext: DetermineCommentContext(Post).ToString(),
+            userId: UserId,
+            parentId: Comment.Id,
+            textContent: newReplyText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+        if (response.IsSuccessStatusCode)
+        {
+            newReplyText = string.Empty;
+            await LoadRepliesAsync();
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+
+    private async Task LoadRepliesAsync()
+    {
+        isLoadingReplies = true;
+
+        try
+        {
+            var command = new SearchSubCommentsCommand(
+                Post.Id,
+                DetermineCommentContext(Post).ToString(),
+                Comment.Id,
+                new PageableDto
+                {
+                    Page = 1,
+                    Size = 10,
+                    Sort = new SortDto
+                    {
+                        SortBy = new[] { "CreatedAt" },
+                        Direction = "asc"
+                    }
+                }
+            );
+
+            var response = await CommentsService.SearchSubCommentsAsync(command);
+            if (response != null && response.IsSuccessStatusCode)
+            {
+                replies = response.Content.Items.ToList();  // Store as CommentDto
+
+                // Fetch user details for replies
+                foreach (var reply in replies)
+                {
+                    if (!studentsCache.ContainsKey(reply.UserId))
+                    {
+                        var student = await StudentsService.GetStudentAsync(reply.UserId);
+                        if (student != null)
+                        {
+                            studentsCache[reply.UserId] = student;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                replies = new List<CommentDto>();  // Initialize replies to an empty list if response fails
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions during loading of replies
+            Console.Error.WriteLine($"Failed to load replies: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingReplies = false;
+        }
+    }
+
+    private CommentContext DetermineCommentContext(PostDto post)
+    {
+        if (post.OrganizationId.HasValue)
+        {
+            return post.EventId.HasValue ? CommentContext.OrganizationEvent : CommentContext.OrganizationPost;
+        }
+        else
+        {
+            return post.EventId.HasValue ? CommentContext.UserEvent : CommentContext.UserPost;
+        }
+    }
+}

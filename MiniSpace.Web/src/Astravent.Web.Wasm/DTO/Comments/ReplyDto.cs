@@ -27,5 +27,6 @@ namespace Astravent.Web.Wasm.DTO.Comments
             CreatedAt = reply.CreatedAt;
             IsDeleted = reply.IsDeleted;
         }
+        
     }
 }

@@ -13,18 +13,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Use StudentsService (the injected instance) instead of IStudentsService
+        // Fetch the student data based on the user ID
         student = await StudentsService.GetStudentAsync(UserId);
     }
+
+    // Helper methods to return student information (in case it's useful for multiple posts)
+    private string GetUserAvatar(Guid userId) => student?.ProfileImageUrl;
+    private string GetUserName(Guid userId) => $"{student?.FirstName} {student?.LastName}";
 }
 
 <MudPaper Class="pa-4">
-    <MudStack Direction="Row" Spacing="1">
-        <MudAvatar Image="@(student?.ProfileImageUrl)" Size="Size.Medium" />
-        <MudText Typo="Typo.subtitle1">@student?.FirstName @student?.LastName</MudText>
-    </MudStack>
-    <MudText Typo="Typo.body2" Class="mt-2">Posted at: @DateTime.Now.ToString("g")</MudText>
+    <!-- User Info: Avatar and Name in a Row with Post Date -->
+    <MudGrid>
+        <MudItem Class="d-flex justify-center" xs="2" lg="1">
+            <!-- User Avatar -->
+            <MudAvatar Size="Size.Large" Image="@GetUserAvatar(UserId)" />
+        </MudItem>
+        <MudItem xs="10" lg="11">
+            <!-- Username -->
+            <MudText Typo="Typo.subtitle1" Class="mb-1">@GetUserName(UserId)</MudText>
+            <!-- Post Date -->
+            <MudText Typo="Typo.caption" Class="text-muted">Posted at: @DateTime.Now.ToString("g")</MudText>
+        </MudItem>
+    </MudGrid>
 
+    <!-- Post Content -->
     @if (PostType == PostType.BlogPost)
     {
         <MudText Typo="Typo.h6" Class="mt-2">Title: @Title</MudText>
@@ -35,6 +48,7 @@
         <MudMarkdown Value="@TextContent" />
     }
 
+    <!-- Media Files Section -->
     @if (MediaFiles.Any())
     {
         <MudGrid Class="mt-4">
@@ -58,8 +72,8 @@
                         else if (file.IsPdf)
                         {
                             <MudCardContent>
-                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.PictureAsPdf" 
-                                    OnClick="@(async () => await JSRuntime.InvokeVoidAsync("open", file.Url, "_blank"))">
+                                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.PictureAsPdf"
+                                           OnClick="@(async () => await JSRuntime.InvokeVoidAsync("open", file.Url, "_blank"))">
                                     View PDF
                                 </MudButton>
                             </MudCardContent>
