@@ -176,7 +176,9 @@
                             <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventAvailable" /> Interested in:</MudText>
                             @foreach (var eventDetail in InterestedInEventsDetails)
                             {
-                                <MudText Typo="Typo.body2">@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                                <MudLink Href="@($"/events/event/{eventDetail.Id}")" Style="text-decoration: none;">
+                                    <div>@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</div>
+                                </MudLink>
                             }
                         }
                         @if (SignedUpEventsDetails.Any())
@@ -184,7 +186,9 @@
                             <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventNote" /> Signed Up for:</MudText>
                             @foreach (var eventDetail in SignedUpEventsDetails)
                             {
-                                <MudText Typo="Typo.body2">@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                                <MudLink Href="@($"/events/event/{eventDetail.Id}")" Style="text-decoration: none;">
+                                    <div>@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</div>
+                                </MudLink>
                             }
                         }
                     </MudCardContent>
@@ -320,7 +324,7 @@
 
 <style>
     .profile-paper {
-        margin: 30px auto;
+        margin: 10px auto;
         max-width: 1200px;
         background-color: var(--mud-palette-surface);
         border-radius: 12px;

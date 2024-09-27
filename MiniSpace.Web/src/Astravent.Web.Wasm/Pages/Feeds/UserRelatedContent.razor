@@ -15,6 +15,7 @@
         <MudList>
             @foreach (var recommendation in recommendations)
             {
+                <MudLink Href="@($"/events/event/{recommendation.Id}")" Style="text-decoration: none;">
                 <MudListItem Class="mb-2">
                     <MudCard Elevation="3" Class="d-flex flex-column">
                         <MudImage 
@@ -30,6 +31,7 @@
                         </MudCardContent>
                     </MudCard>
                 </MudListItem>
+                </MudLink>
             }
         </MudList>
     }
