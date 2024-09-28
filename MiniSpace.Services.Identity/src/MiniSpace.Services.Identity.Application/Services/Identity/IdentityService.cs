@@ -63,6 +63,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         public async Task<UserDto> GetAsync(Guid id)
         {
             var user = await _userRepository.GetAsync(id);
+            Console.WriteLine(JsonSerializer.Serialize(user));
             return user is null ? null : new UserDto(user);
         }
 

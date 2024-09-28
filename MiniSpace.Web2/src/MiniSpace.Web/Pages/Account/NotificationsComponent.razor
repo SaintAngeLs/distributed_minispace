@@ -1,0 +1,75 @@
+@page "/notifications-preferences"
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@using MiniSpace.Web.DTO
+@using MudBlazor
+@using System.Text.Json
+
+<MudText Typo="Typo.h6" GutterBottom="true">Notifications</MudText>
+@if (IsLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    <MudStack>
+        <MudSwitch @bind-Checked="StudentWithGalleryImagesDto.Student.EmailNotifications" Label="Email Notifications" Color="Color.Primary" />
+        @if (StudentWithGalleryImagesDto.Student.EmailNotifications)
+        {
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary" />
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.SystemLogin" Label="System Login" Color="Color.Primary" />
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.NewEvent" Label="New Event" Color="Color.Primary" />
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" Color="Color.Primary" />
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.EventNotifications" Label="Event Notifications" Color="Color.Primary" />
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" Color="Color.Primary" />
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.PostsNotifications" Label="Posts Notifications" Color="Color.Primary" />
+            <MudSwitch @bind-Checked="NotificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary" />
+        }
+    </MudStack>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveNotificationPreferencesAsync">Save preferences</MudButton>
+}
+
+@code {
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    public NotificationPreferencesDto NotificationPreferencesDto { get; set; }
+
+    [Parameter]
+    public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            StudentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+            NotificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task SaveNotificationPreferencesAsync()
+    {
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, NotificationPreferencesDto, StudentWithGalleryImagesDto.Student.EmailNotifications);
+            Console.WriteLine("Notification preferences updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving notification preferences: {ex.Message}");
+        }
+    }
+}

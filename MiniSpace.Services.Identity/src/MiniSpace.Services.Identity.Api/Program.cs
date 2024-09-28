@@ -128,6 +128,7 @@ namespace MiniSpace.Services.Identity.Api
         private static async Task GetUserAsync(Guid id, HttpContext context)
         {
             var user = await context.RequestServices.GetService<IIdentityService>().GetAsync(id);
+            Console.WriteLine(user.ToString());
             if (user is null)
             {
                 context.Response.StatusCode = 404;
