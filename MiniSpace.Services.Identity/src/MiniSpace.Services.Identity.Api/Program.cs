@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Auth;
-using Convey.Secrets.Vault;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
+using Paralax;
+using Paralax.Auth;
+using Paralax.Secrets.Vault;
+using Paralax.Logging;
+using Paralax.Types;
+using Paralax.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +15,7 @@ using MiniSpace.Services.Identity.Application.Commands;
 using MiniSpace.Services.Identity.Application.Queries;
 using MiniSpace.Services.Identity.Application.Services;
 using MiniSpace.Services.Identity.Infrastructure;
+using Paralax.Core;
 
 namespace MiniSpace.Services.Identity.Api
 {
@@ -23,7 +24,7 @@ namespace MiniSpace.Services.Identity.Api
         public static async Task Main(string[] args)
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
-                    .AddConvey()
+                    .AddParalax()
                     .AddWebApi()
                     .AddApplication()
                     .AddInfrastructure()

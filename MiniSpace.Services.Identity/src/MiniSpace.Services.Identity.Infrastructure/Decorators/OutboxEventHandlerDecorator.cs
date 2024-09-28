@@ -1,10 +1,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Events;
-using Convey.MessageBrokers;
-using Convey.MessageBrokers.Outbox;
-using Convey.Types;
+using Paralax.Core;
+using Paralax.CQRS.Events;
+using Paralax.MessageBrokers;
+using Paralax.MessageBrokers.Outbox;
+using Paralax.Types;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Decorators
 {
@@ -31,7 +33,7 @@ namespace MiniSpace.Services.Identity.Infrastructure.Decorators
                 : messageProperties.MessageId;
         }
 
-        public Task HandleAsync(TEvent @event)
+        public Task HandleAsync(TEvent @event, CancellationToken cancellationToken)
             => _enabled
                 ? _outbox.HandleAsync(_messageId, () => _handler.HandleAsync(@event))
                 : _handler.HandleAsync(@event);

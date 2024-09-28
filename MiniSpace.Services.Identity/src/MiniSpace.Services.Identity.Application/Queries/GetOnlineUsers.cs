@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Identity.Application.DTO;
 
 namespace MiniSpace.Services.Identity.Application.Queries

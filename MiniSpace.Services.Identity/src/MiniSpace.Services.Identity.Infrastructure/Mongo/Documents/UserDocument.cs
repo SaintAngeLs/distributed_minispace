@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Convey.Types;
+using Paralax.Types;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
 {

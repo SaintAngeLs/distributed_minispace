@@ -1,9 +1,9 @@
 using System;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 
 namespace MiniSpace.Services.Identity.Application.Events
 {
-    [Contract]
+    
     public class TokenRefreshed : IEvent
     {
         public Guid UserId { get; }

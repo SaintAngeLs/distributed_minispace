@@ -232,6 +232,8 @@
         if (_isUserAuthenticated)
         {
             var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto);
+            Console.WriteLine($"UserDto: {userDto}");
+           
             if (userDto != null)
             {
                 _userName = userDto.Name;

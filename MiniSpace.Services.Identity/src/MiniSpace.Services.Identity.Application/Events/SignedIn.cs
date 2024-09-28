@@ -1,10 +1,10 @@
 using System;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Identity.Core.Entities;
 
 namespace MiniSpace.Services.Identity.Application.Events
 {
-    [Contract]
+    
     public class SignedIn : IEvent
     {
         public Guid UserId { get; }

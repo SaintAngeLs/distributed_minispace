@@ -32,13 +32,15 @@ namespace Astravent.Web.Wasm.Areas.Identity
             _navigationManager = navigationManager;
         }
         
-        public Task<UserDto> GetAccountAsync(JwtDto jwtDto)
+        public async Task<UserDto> GetAccountAsync(JwtDto jwtDto)
         {
             if (jwtDto == null || string.IsNullOrEmpty(jwtDto.AccessToken))
                 throw new ArgumentNullException(nameof(jwtDto), "JWT DTO or Access Token is null");
 
             _httpClient.SetAccessToken(jwtDto.AccessToken);
-            return _httpClient.GetAsync<UserDto>("identity/me");
+            var response = _httpClient.GetAsync<UserDto>("identity/me");
+            Console.WriteLine($"GetAccountAsync response: {response}");
+            return await response;
         }
 
         public async Task<HttpResponse<object>> SignUpAsync(string firstName, string lastName, string email, string password, string role = "user",
@@ -115,8 +117,10 @@ namespace Astravent.Web.Wasm.Areas.Identity
         {
             var payload = new { refreshToken };
             var response = await _httpClient.PostAsync<object, object>("identity/refresh-tokens/revoke", payload);
+            Console.WriteLine($"Refresh token revocation response: {response}");
             if (response.ErrorMessage != null)
             {
+                Console.WriteLine($"Error revoking refresh token: {response.ErrorMessage.Reason}");
                 throw new InvalidOperationException($"Error revoking refresh token: {response.ErrorMessage.Reason}");
             }
         }
