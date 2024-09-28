@@ -38,9 +38,9 @@ namespace Astravent.Web.Wasm.Areas.Identity
                 throw new ArgumentNullException(nameof(jwtDto), "JWT DTO or Access Token is null");
 
             _httpClient.SetAccessToken(jwtDto.AccessToken);
-            var response = _httpClient.GetAsync<UserDto>("identity/me");
-            Console.WriteLine($"GetAccountAsync response: {response}");
-            return await response;
+            var response = await _httpClient.GetAsync<UserDto>("identity/me");
+            Console.WriteLine($"User fetched successfully: {JsonSerializer.Serialize(response)}");
+            return response;
         }
 
         public async Task<HttpResponse<object>> SignUpAsync(string firstName, string lastName, string email, string password, string role = "user",
@@ -52,12 +52,16 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
         public async Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType)
         {
+            try
+{
             var response = await _httpClient.PostAsync<object, JwtDto>("identity/sign-in", 
                 new { email, password, deviceType });
 
             if (response.Content != null)
             {
                 JwtDto = response.Content;
+
+                Console.WriteLine(response);
 
                 if (JwtDto.IsTwoFactorRequired)
                 {
@@ -79,6 +83,13 @@ namespace Astravent.Web.Wasm.Areas.Identity
                 throw new InvalidOperationException("Failed to sign in. No JWT token received.");
             }
             return response;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred during sign-in: " + ex.Message);
+                return null;
+            }
         }
 
         public async Task Logout()
@@ -301,10 +312,42 @@ namespace Astravent.Web.Wasm.Areas.Identity
         {
             if (UserDto != null && UserDto.Id != Guid.Empty)
             {
+                Console.WriteLine($"User ID: {UserDto.Id}");
                 return UserDto.Id;
             }
-            throw new InvalidOperationException("No user is currently logged in.");
+            else
+            {
+                Console.WriteLine("User ID is null or empty");
+                return GetCurrentUserIdFromJwtAsync().GetAwaiter().GetResult();
+            }
         }
+
+        public async Task<Guid> GetCurrentUserIdFromJwtAsync()
+        {
+            string jwtTokenJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+            if (string.IsNullOrEmpty(jwtTokenJson))
+            {
+                throw new InvalidOperationException("No JWT token found in local storage.");
+            }
+
+            JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtTokenJson);
+            if (jwtDto == null || string.IsNullOrEmpty(jwtDto.AccessToken))
+            {
+                throw new InvalidOperationException("JWT token is invalid or missing.");
+            }
+
+            var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "sub");
+            if (userIdClaim != null)
+            {   
+                return Guid.Parse(userIdClaim.Value);
+            }
+
+            throw new InvalidOperationException("User ID claim not found in JWT token.");
+        }
+
+
+        
 
         public string GetCurrentUserRole()
         {

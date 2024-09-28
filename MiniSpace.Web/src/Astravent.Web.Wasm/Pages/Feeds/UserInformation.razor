@@ -7,6 +7,8 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @using MudBlazor
+@inject IIdentityService IdentityService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudPaper Class="profile-paper">
     <MudGrid>
@@ -216,10 +218,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProfileAsync();
-        await Task.WhenAll(LoadEventsAsync(), LoadEducationAsync(), LoadWorkExperienceAsync(), LoadLanguagesAndInterestsAsync());
-    }
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        Console.WriteLine($"User ID: {UserId}");
+        var user = authState.User;
+        Console.WriteLine($"User authenticated: {user.Identity.IsAuthenticated}");
 
+        if (user.Identity.IsAuthenticated)
+        {
+            var userId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            if (userId != null)
+            {
+                UserId = userId;
+                await LoadProfileAsync();
+                await Task.WhenAll(LoadEventsAsync(), LoadEducationAsync(), LoadWorkExperienceAsync(), LoadLanguagesAndInterestsAsync());
+            }
+            else
+            {
+                profileLoadFailed = true;
+                Snackbar.Add("Failed to obtain user ID from claims.", Severity.Error);
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
     private async Task LoadProfileAsync()
     {
         try

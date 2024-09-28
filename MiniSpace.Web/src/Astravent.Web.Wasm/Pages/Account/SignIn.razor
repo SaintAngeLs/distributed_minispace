@@ -180,6 +180,7 @@
             var deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
 
             var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
+            
 
             if (response != null && response.Content != null)
             {

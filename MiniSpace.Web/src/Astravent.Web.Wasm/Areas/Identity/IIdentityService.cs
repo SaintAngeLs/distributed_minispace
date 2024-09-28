@@ -20,6 +20,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
         Task<bool> CheckIfUserIsAuthenticated();
         Task<bool> IsTokenValid();
         public Guid GetCurrentUserId();
+        Task<Guid> GetCurrentUserIdFromJwtAsync();
         public string GetCurrentUserRole();
         
         Task GrantOrganizerRightsAsync(Guid userId);

@@ -6,7 +6,7 @@
 @inject NavigationManager NavigationManager
 @using Blazored.LocalStorage
 @inject ILocalStorageService localStorage
-@inject AuthenticationStateProvider authenticationStateProvider
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" @bind-IsDarkMode="@_isDarkMode"/>
 <MudDialogProvider />
@@ -195,7 +195,7 @@
             @if (_isUserAuthenticated)
             {
                 <div style="max-width: 300px; align-self: stretch; padding: 10px;" class="notification-component">
-                    <NotificationComponent />
+                    <NotificationComponent UserId="@_userId" />
                 </div>
             }
                
@@ -212,6 +212,7 @@
     private bool _userDrawerOpen = false;
     private bool isPC = true;
     private bool _isUserAuthenticated;
+     private Guid _userId;
     private string _userName;
     private string _userEmail;
     private Guid _studentId;
@@ -222,16 +223,42 @@
 
     [Inject] IJSRuntime JSRuntime { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isUserAuthenticated = authState.User.Identity.IsAuthenticated;
+
+
+        if (_isUserAuthenticated)
+        {
+            StateHasChanged(); 
+            Console.WriteLine($"User authenticated: {_isUserAuthenticated} in OnInitializedAsync");
+
+             try
+            {
+                _userId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+                Console.WriteLine($"User ID retrieved: {_userId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving user ID: {ex.Message}");
+            }
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
 {
     if (firstRender)
     {
         _isLoading = true; // Start loading
-        _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated();
+        @* _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated(); *@
+      
+        _isUserAuthenticated = IdentityService.IsAuthenticated;
 
         if (_isUserAuthenticated)
         {
-            var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto);
+            StateHasChanged(); 
+            @* var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto);
             Console.WriteLine($"UserDto: {userDto}");
            
             if (userDto != null)
@@ -245,7 +272,7 @@
                     _studentState = studentDto.State;
                     _userAvatar = studentDto.ProfileImageUrl;
                 }
-            }
+            } *@
         }
 
         await UpdateScreenSize();

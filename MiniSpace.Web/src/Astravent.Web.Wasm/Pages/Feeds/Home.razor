@@ -10,6 +10,7 @@
 @inject ICommentsService CommentsService
 @inject ISnackbar Snackbar
 @using MudBlazor
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <AuthWrapper>
     <MudContainer>
@@ -28,9 +29,10 @@
             <MudGrid>
                 <!-- Left Side: User Information -->
                 <MudItem xs="12" md="3" lg="3">
-                    <UserInformation UserId="studentId" />
+                    <UserInformation UserId="@studentId" />
                 </MudItem>
 
+                <!-- Center: Post Stream -->
                 <MudItem xs="12" md="6" lg="6">
                     @if (postsLoadingFailed)
                     {
@@ -65,7 +67,7 @@
 
                 <!-- Right Side: User Related Content -->
                 <MudItem xs="12" md="3" lg="3">
-                    <UserRelatedContent UserId="studentId" />
+                    <UserRelatedContent UserId="@studentId" />
                 </MudItem>
             </MudGrid>
         }
@@ -77,12 +79,12 @@
     private Guid studentId;
     private bool pageInitialized = false;
     private bool postsLoadingFailed = false;
-    private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new();
-    
+    private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new Dictionary<Guid, ReactionsSummaryDto>();
+
     // Cache for user names and avatars
-    private Dictionary<Guid, string> userNames = new();
-    private Dictionary<Guid, string> userAvatars = new();
-    
+    private Dictionary<Guid, string> userNames = new Dictionary<Guid, string>();
+    private Dictionary<Guid, string> userAvatars = new Dictionary<Guid, string>();
+
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
         new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
@@ -90,15 +92,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (IdentityService != null && IdentityService.IsAuthenticated)
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        
+        var user = authState.User;
+        Console.WriteLine($"User authenticated: {user.Identity.IsAuthenticated}");
+        if (user.Identity.IsAuthenticated)
         {
-            studentId = IdentityService.GetCurrentUserId();
+            
+            studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
             await LoadPostsAsync();
             pageInitialized = true;
         }
         else
         {
-            NavigationManager.NavigateTo("");
+            NavigationManager.NavigateTo("/signin");
         }
     }
 
@@ -111,38 +118,25 @@
             if (result.IsSuccessStatusCode)
             {
                 posts = result.Content.Items;
+                var postIds = posts.Select(p => p.Id).ToList();
+                reactionsSummaries = await ReactionsService.GetReactionsSummariesAsync(postIds, ReactionContentType.Post);
 
-                foreach (var post in posts)
+                var userIds = posts.Select(p => p.UserId).Where(id => id.HasValue).Select(id => id.Value).Distinct().ToList();
+                foreach (var userId in userIds)
                 {
-                    // Ensure post.UserId has a value before using it
-                    if (post.UserId.HasValue)
+                    if (!userNames.ContainsKey(userId))
                     {
-                        var userId = post.UserId.Value;
-
-                        // Load reactions summary for each post
-                        reactionsSummaries[post.Id] = await ReactionsService.GetReactionsSummaryAsync(post.Id, ReactionContentType.Post);
-
-                        // Asynchronously load and cache user names and avatars
-                        if (!userNames.ContainsKey(userId))
+                        var user = await StudentsService.GetStudentAsync(userId);
+                        if (user != null)
                         {
-                            var student = await StudentsService.GetStudentAsync(userId);
-                            if (student != null)
-                            {
-                                userNames[userId] = $"{student.FirstName} {student.LastName}";
-                                userAvatars[userId] = student.ProfileImageUrl ?? string.Empty;
-                            }
-                            else
-                            {
-                                userNames[userId] = "Unknown User";
-                                userAvatars[userId] = string.Empty;
-                            }
+                            userNames[userId] = $"{user.FirstName} {user.LastName}";
+                            userAvatars[userId] = user.ProfileImageUrl ?? string.Empty;
                         }
                     }
                 }
             }
             else
             {
-                posts = new List<PostDto>(); // Handle error gracefully
                 postsLoadingFailed = true;
                 Snackbar.Add($"Error loading posts: {result.ErrorMessage.Reason}", Severity.Error);
             }
@@ -153,7 +147,6 @@
             Snackbar.Add($"Exception occurred: {ex.Message}", Severity.Error);
         }
     }
-
     // Method to get cached user name
     private string GetCachedUserName(Guid? userId)
     {

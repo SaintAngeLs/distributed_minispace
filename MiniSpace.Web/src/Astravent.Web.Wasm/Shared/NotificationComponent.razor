@@ -7,52 +7,62 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @inject ILogger<SignalRService> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-@if (!showNotifications)
-{
-    <div class="notification-toggle-container" @onclick="ToggleNotifications" style="position: fixed; top: 10%; right: 10px; z-index: 1001;">
-        <div class="notification-circle circle1">
-            N
-            @if (hasNewNotification)
+
+<CascadingAuthenticationState>
+<AuthorizeView>
+    <Authorized>
+     
+            @if (!showNotifications)
             {
-                <div class="notification-new-circle"></div>
+                <div class="notification-toggle-container" @onclick="ToggleNotifications">
+                    <div class="notification-circle circle1">
+                        N
+                        @if (hasNewNotification)
+                        {
+                            <div class="notification-new-circle"></div>
+                        }
+                    </div>
+                    <div class="notification-circle circle2"></div>
+                    <div class="notification-circle circle3"></div>
+                </div>
             }
-        </div>
-        <div class="notification-circle circle2"></div>
-        <div class="notification-circle circle3"></div>
-    </div>
-}
 
-<div class="notification-panel @(!showNotifications ? "hidden" : "")">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
-        <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px; margin: 0;">Notifications</h3>
-        <button @onclick="ToggleNotifications" style="background: none; border: none; color: #30445F; font-size: 1.5em;">&times;</button>
-    </div>
-    <div class="notification-content" style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px; overflow-y: auto; max-height: 70vh;">
-        @if (notifications != null && notifications.Any())
-        {
-            <ul style="list-style: none; padding: 0; margin: 0;">
-                @foreach (var notification in notifications)
-                {
-                    <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)"
-                        class="notification-item"
-                        style="padding: 8px 12px; border-bottom: 1px solid #dee2e6; cursor: pointer;">
-                        <span style="display: block; color: #333; margin-bottom: 4px;">
-                            @RenderHtml(TruncateMessage(notification.Message))
-                        </span>
-                        <span style="display: block; font-size: 0.8em; color: #666;">
-                            @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
-                        </span>
-                    </li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p style="text-align: center; color: #888;">No new notifications.</p>
-        }
-    </div>
-</div>
+            <div class="notification-panel @(!showNotifications ? "hidden" : "")">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+                    <h3 style="background-color: #30445F; color: white; padding: 10px; border-radius: 5px; margin: 0;">Notifications</h3>
+                    <button @onclick="ToggleNotifications" style="background: none; border: none; color: #30445F; font-size: 1.5em;">&times;</button>
+                </div>
+                <div class="notification-content" style="border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-top: 10px; overflow-y: auto; max-height: 70vh;">
+                    @if (notifications != null && notifications.Any())
+                    {
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            @foreach (var notification in notifications)
+                            {
+                                <li @onclick="() => NavigateToNotificationDetail(notification.NotificationId)"
+                                    class="notification-item"
+                                    style="padding: 8px 12px; border-bottom: 1px solid #dee2e6; cursor: pointer;">
+                                    <span style="display: block; color: #333; margin-bottom: 4px;">
+                                        @RenderHtml(TruncateMessage(notification.Message))
+                                    </span>
+                                    <span style="display: block; font-size: 0.8em; color: #666;">
+                                        @notification.CreatedAt.ToLocalTime().ToString("f", CultureInfo.CurrentUICulture)
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p style="text-align: center; color: #888;">No new notifications.</p>
+                    }
+                </div>
+            </div>
+ 
+    </Authorized>
+</AuthorizeView>
+</CascadingAuthenticationState>
 
 <style>
 .notification-toggle-container {
@@ -131,6 +141,9 @@
 </style>
 
 @code {
+    [Parameter]
+    public Guid UserId { get; set; }
+
     private List<NotificationDto> notifications = new List<NotificationDto>();
     private SignalRService SignalRService;
     private Guid userId;
@@ -139,42 +152,48 @@
 
     protected override async Task OnInitializedAsync()
     {
-        userId = IdentityService.GetCurrentUserId();
-        SignalRService = new SignalRService(NavigationManager, IdentityService);
-
-        SignalRService.NotificationReceived += OnNotificationReceived;
-
-        await SignalRService.StartAsync(userId);  
-
-        await JSRuntime.InvokeVoidAsync("setUserId", userId.ToString());
-
-        await LoadNotifications();
+        Console.WriteLine($"NotificationComponent Initialized  for the {UserId}");
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        
+            SignalRService = new SignalRService(NavigationManager, IdentityService);
+            SignalRService.NotificationReceived += OnNotificationReceived;
+            await SignalRService.StartAsync(UserId);
+            await LoadNotifications();
+        
     }
+
+
 
     private async Task LoadNotifications()
     {
-        try
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
         {
-            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, pageSize: 15, sortOrder: "desc", status: "Unread");
-            notifications = paginatedResponse.Results;
+            try
+            {
+                var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(UserId, pageSize: 15, sortOrder: "desc", status: "Unread");
+                notifications = paginatedResponse.Results;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Error loading notifications: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            Logger.LogError($"Error loading notifications: {ex.Message}");
-        }
-    }
+}
+
 
     private void OnNotificationReceived(NotificationDto notification)
     {
-        Logger.LogInformation($"Received notification for user {notification.UserId}");
-        if (notification.UserId == userId)
+        var authState = AuthenticationStateProvider.GetAuthenticationStateAsync().Result;
+        if (authState.User.Identity.IsAuthenticated)
         {
-            notifications.Insert(0, notification); // Add to the top of the list
+            notifications.Insert(0, notification);
             hasNewNotification = true;
-            InvokeAsync(StateHasChanged); // Ensure the UI updates
+            InvokeAsync(StateHasChanged);
             PlayNotificationSound();
         }
     }
+
 
     private void PlayNotificationSound()
     {
@@ -200,14 +219,19 @@
         }
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        SignalRService.NotificationReceived -= OnNotificationReceived;
-        await SignalRService.StopAsync();
-    }
-
     private MarkupString RenderHtml(string htmlContent)
     {
         return new MarkupString(htmlContent);
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            SignalRService.NotificationReceived -= OnNotificationReceived;
+            await SignalRService.StopAsync();
+        }
+    }
+
 }

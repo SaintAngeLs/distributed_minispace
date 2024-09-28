@@ -12,6 +12,7 @@ namespace Astravent.Web.Wasm.Areas.Reactions
     {
         Task<IEnumerable<ReactionDto>> GetReactionsAsync(Guid contentId, ReactionContentType contentType);
         Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType);
+        Task<Dictionary<Guid, ReactionsSummaryDto>> GetReactionsSummariesAsync(IEnumerable<Guid> contentIds, ReactionContentType contentType);
         Task<HttpResponse<object>> CreateReactionAsync(CreateReactionDto command);
         Task<HttpResponse<object>> UpdateReactionAsync(UpdateReactionDto command);
         Task DeleteReactionAsync(Guid reactionId);

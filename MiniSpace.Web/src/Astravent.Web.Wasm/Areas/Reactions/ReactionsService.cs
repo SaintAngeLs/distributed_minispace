@@ -31,6 +31,17 @@ namespace Astravent.Web.Wasm.Areas.Reactions
             return _httpClient.GetAsync<ReactionsSummaryDto>($"reactions/summary?contentId={contentId}&contentType={contentType}");
         }
 
+        public async Task<Dictionary<Guid, ReactionsSummaryDto>> GetReactionsSummariesAsync(IEnumerable<Guid> contentIds, ReactionContentType contentType)
+        {
+            var summaries = new Dictionary<Guid, ReactionsSummaryDto>();
+            foreach (var id in contentIds)
+            {
+                summaries[id] = await _httpClient.GetAsync<ReactionsSummaryDto>($"reactions/summary?contentId={id}&contentType={contentType}");
+            }
+            return summaries;
+        }
+
+
         public Task<HttpResponse<object>> CreateReactionAsync(CreateReactionDto command)
         {
             _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
