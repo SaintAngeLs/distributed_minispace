@@ -231,7 +231,7 @@
 
         if (_isUserAuthenticated)
         {
-            var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto);
+            @* var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto);
             if (userDto != null)
             {
                 _userName = userDto.Name;
@@ -243,7 +243,7 @@
                     _studentState = studentDto.State;
                     _userAvatar = studentDto.ProfileImageUrl;
                 }
-            }
+            } *@
         }
 
         await UpdateScreenSize();
