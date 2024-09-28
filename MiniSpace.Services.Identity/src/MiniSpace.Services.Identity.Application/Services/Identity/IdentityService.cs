@@ -113,7 +113,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             auth.DeviceType = command.DeviceType;
             auth.IpAddress = ipAddress;
 
-            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, ipAddress)); 
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role.ToString(), command.DeviceType, ipAddress)); 
 
             return auth;
         }
@@ -332,7 +332,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             auth.DeviceType = command.DeviceType;
             auth.IpAddress = _ipAddressService.GetIPAddress(); 
 
-            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role, command.DeviceType, auth.IpAddress));
+            await _messageBroker.PublishAsync(new SignedIn(user.Id, user.Role.ToString(), command.DeviceType, auth.IpAddress));
 
             return auth;
         }
