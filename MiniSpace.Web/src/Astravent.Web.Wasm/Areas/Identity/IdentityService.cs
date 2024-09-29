@@ -136,60 +136,66 @@ namespace Astravent.Web.Wasm.Areas.Identity
             }
         }
 
-        public async Task<string> GetAccessTokenAsync()
+       public async Task<string> GetAccessTokenAsync()
+{
+    // Retrieve the JWT DTO stored in local storage
+    var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+
+    // If the JWT is not empty, deserialize it
+    if (!string.IsNullOrEmpty(jwtDtoJson))
+    {
+        JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
+
+        // Check if the deserialized object is valid
+        if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
         {
-            var jwtDtoJson = await _localStorage.GetItemAsStringAsync("jwtDto");
+            var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
 
-            if (!string.IsNullOrEmpty(jwtDtoJson))
+            // Check if the token is still valid
+            if (jwtToken.ValidTo > DateTime.UtcNow)
             {
-                JwtDto jwtDto = JsonSerializer.Deserialize<JwtDto>(jwtDtoJson);
-
-                if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.AccessToken))
+                return jwtDto.AccessToken; // Token is valid, return it
+            }
+            else
+            {
+                // Token is expired, check for refresh token
+                if (!string.IsNullOrEmpty(jwtDto.RefreshToken))
                 {
-                    var jwtToken = _jwtHandler.ReadJwtToken(jwtDto.AccessToken);
+                    try
+                    {
+                        // Attempt to refresh the token using the refresh token
+                        JwtDto newJwtDto = await RefreshAccessToken(jwtDto.RefreshToken);
 
-                    if (jwtToken.ValidTo > DateTime.UtcNow)
-                    {
-                        return jwtDto.AccessToken;
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(jwtDto.RefreshToken))
+                        if (newJwtDto != null)
                         {
-                            try
-                            {
-                                JwtDto newJwtDto = await RefreshAccessToken(jwtDto.RefreshToken);
+                            // Store the new JWT in local storage
+                            var newJwtDtoJson = JsonSerializer.Serialize(newJwtDto);
+                            await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
 
-                                if (newJwtDto != null)
-                                {
-                                    var newJwtDtoJson = JsonSerializer.Serialize(newJwtDto);
-
-                                    await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
-
-                                    return newJwtDto.AccessToken;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                await _localStorage.RemoveItemAsync("jwtDto");
-
-                                _navigationManager.NavigateTo("signin", forceLoad: true);
-
-                                throw new InvalidOperationException("Failed to refresh token: " + ex.Message);
-                            }
+                            return newJwtDto.AccessToken; // Return the new access token
                         }
-
+                    }
+                    catch (Exception ex)
+                    {
+                        // If refresh fails, clear the local storage and navigate to sign-in
                         await _localStorage.RemoveItemAsync("jwtDto");
-
                         _navigationManager.NavigateTo("signin", forceLoad: true);
-
-                        throw new InvalidOperationException("Session expired, please login again.");
+                        throw new InvalidOperationException("Failed to refresh token: " + ex.Message);
                     }
                 }
-            }
 
-            throw new InvalidOperationException("Authentication required.");
+                // If no valid token or refresh token, clear local storage and redirect
+                await _localStorage.RemoveItemAsync("jwtDto");
+                _navigationManager.NavigateTo("signin", forceLoad: true);
+                throw new InvalidOperationException("Session expired, please login again.");
+            }
         }
+    }
+
+    // If no JWT found, throw an exception
+    throw new InvalidOperationException("Authentication required.");
+}
+
 
         public async Task InitializeAuthenticationState()
         {

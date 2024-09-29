@@ -88,8 +88,10 @@ namespace Astravent.Web.Wasm.Areas.Posts
         public async Task<HttpResponse<PagedResponseDto<PostDto>>> GetUserFeedAsync(Guid userId, int pageNumber, 
             int pageSize, string sortBy = "PublishDate", string direction = "asc")
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            
+            _httpClient.SetAccessToken(accessToken);
+            
             var query = HttpUtility.ParseQueryString(string.Empty);
             query["PageNumber"] = pageNumber.ToString();
             query["PageSize"] = pageSize.ToString();
@@ -113,6 +115,60 @@ namespace Astravent.Web.Wasm.Areas.Posts
                 });
             }
         }
+
+        public async Task<HttpResponse<PagedResponseDto<PostDto>>> GetCurrentUserFeedAsync(int pageNumber, 
+            int pageSize, string sortBy = "PublishDate", string direction = "asc")
+        {
+            Guid userId;
+
+            try
+            {
+                userId = await _identityService.GetCurrentUserIdFromJwtAsync();
+                if (userId == Guid.Empty)
+                {
+                    throw new InvalidOperationException("User ID could not be retrieved.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to get current user ID: {ex.Message}");
+                return new HttpResponse<PagedResponseDto<PostDto>>(new ErrorMessage
+                {
+                    Code = ex.Message,
+                    Reason = "User not authenticated or ID could not be retrieved."
+                });
+            }
+
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            
+            _httpClient.SetAccessToken(accessToken);
+
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["PageNumber"] = pageNumber.ToString();
+            query["PageSize"] = pageSize.ToString();
+            query["SortBy"] = sortBy;
+            query["Direction"] = direction;
+
+            string queryString = query.ToString();
+            string url = $"posts/users/{userId}/feed?{queryString}";
+
+            try
+            {
+                var result = await _httpClient.GetAsync<PagedResponseDto<PostDto>>(url);
+                return new HttpResponse<PagedResponseDto<PostDto>>(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching user feed: {ex.Message}");
+                return new HttpResponse<PagedResponseDto<PostDto>>(new ErrorMessage
+                {
+                    Code = ex.Message,
+                    Reason = ex.Message
+                });
+            }
+        }
+
+
 
 
         public Task DeletePostAsync(Guid postId)

@@ -223,63 +223,50 @@
 
     [Inject] IJSRuntime JSRuntime { get; set; }
 
-    protected override async Task OnInitializedAsync()
+     protected override async Task OnInitializedAsync()
     {
+        _isLoading = true;
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _isUserAuthenticated = authState.User.Identity.IsAuthenticated;
 
-
         if (_isUserAuthenticated)
         {
-            StateHasChanged(); 
-            Console.WriteLine($"User authenticated: {_isUserAuthenticated} in OnInitializedAsync");
-
-             try
+            try
             {
                 _userId = await IdentityService.GetCurrentUserIdFromJwtAsync();
-                Console.WriteLine($"User ID retrieved: {_userId}");
+
+                var studentDto = await StudentsService.GetStudentAsync(_userId);
+                _userName = $"{studentDto.FirstName} {studentDto.LastName}";
+                _userAvatar = studentDto.ProfileImageUrl; 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error retrieving user ID: {ex.Message}");
+                Console.WriteLine($"Error initializing user data: {ex.Message}");
             }
         }
+
+        _isLoading = false;
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
-{
-    if (firstRender)
     {
-        _isLoading = true; // Start loading
-        @* _isUserAuthenticated = await IdentityService.CheckIfUserIsAuthenticated(); *@
-      
-        _isUserAuthenticated = IdentityService.IsAuthenticated;
-
-        if (_isUserAuthenticated)
+        if (firstRender)
         {
-            StateHasChanged(); 
-            @* var userDto = await IdentityService.GetAccountAsync(IdentityService.JwtDto);
-            Console.WriteLine($"UserDto: {userDto}");
-           
-            if (userDto != null)
-            {
-                _userName = userDto.Name;
-                _userEmail = userDto.Email;
-                _studentId = userDto.Id;
-                var studentDto = await StudentsService.GetStudentAsync(_studentId);
-                if (studentDto != null)
-                {
-                    _studentState = studentDto.State;
-                    _userAvatar = studentDto.ProfileImageUrl;
-                }
-            } *@
-        }
+            _isLoading = true;
+        
+            _isUserAuthenticated = IdentityService.IsAuthenticated;
 
-        await UpdateScreenSize();
-        _isLoading = false; // Finish loading
-        StateHasChanged(); // Trigger UI update
+            if (_isUserAuthenticated)
+            {
+                StateHasChanged(); 
+            }
+
+            await UpdateScreenSize();
+            _isLoading = false; // Finish loading
+            StateHasChanged(); // Trigger UI update
+        }
     }
-}
 
 
     [JSInvokable]

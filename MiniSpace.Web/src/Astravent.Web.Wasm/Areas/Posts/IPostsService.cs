@@ -19,6 +19,9 @@ namespace Astravent.Web.Wasm.Areas.Posts
         Task<HttpResponse<PagedResponseDto<PostDto>>> SearchPostsAsync(SearchPosts searchPosts);
         Task<HttpResponse<PagedResponseDto<PostDto>>> GetUserFeedAsync(Guid userId, int pageNumber, 
                 int pageSize, string sortBy = "PublishDate", string direction = "asc");
+
+        Task<HttpResponse<PagedResponseDto<PostDto>>> GetCurrentUserFeedAsync(int pageNumber, 
+            int pageSize, string sortBy = "PublishDate", string direction = "asc");
         Task DeletePostAsync(Guid postId);
         Task<IEnumerable<PostDto>> GetPostsAsync(Guid eventId);
         Task<HttpResponse<object>> UpdatePostAsync(UpdatePostCommand command);

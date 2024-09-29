@@ -165,7 +165,8 @@ namespace Astravent.Web.Wasm.Areas.Events
 
         public async Task<PagedResult<EventDto>> GetUserEventsFeedAsync(Guid userId, int pageNumber, int pageSize, string sortBy, string direction)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             var queryString = $"?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={HttpUtility.UrlEncode(sortBy)}&direction={HttpUtility.UrlEncode(direction)}";
             return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/users/{userId}/feed{queryString}");
         }

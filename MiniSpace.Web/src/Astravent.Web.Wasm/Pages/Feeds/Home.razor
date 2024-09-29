@@ -10,6 +10,7 @@
 @inject ICommentsService CommentsService
 @inject ISnackbar Snackbar
 @using MudBlazor
+@inject IIdentityService IdentityService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <AuthWrapper>
@@ -93,14 +94,15 @@
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        await LoadPostsAsync();
         
         var user = authState.User;
-        Console.WriteLine($"User authenticated: {user.Identity.IsAuthenticated}");
+        
         if (user.Identity.IsAuthenticated)
         {
-            
+            Console.WriteLine($"User authenticated for the home component: {user.Identity.IsAuthenticated}");
             studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
-            await LoadPostsAsync();
+            
             pageInitialized = true;
         }
         else
@@ -111,10 +113,10 @@
 
     private async Task LoadPostsAsync()
     {
-        try
-        {
-            var result = await PostsService.GetUserFeedAsync(studentId, 1, 8, "PublishDate", "desc");
-
+            
+            Console.WriteLine("Loading posts... async");
+            var result = await PostsService.GetCurrentUserFeedAsync(1, 8, "PublishDate", "desc");
+            Console.WriteLine($"Posts loaded: {result.IsSuccessStatusCode}");
             if (result.IsSuccessStatusCode)
             {
                 posts = result.Content.Items;
@@ -129,7 +131,6 @@
                         var user = await StudentsService.GetStudentAsync(userId);
                         if (user != null)
                         {
-                            userNames[userId] = $"{user.FirstName} {user.LastName}";
                             userAvatars[userId] = user.ProfileImageUrl ?? string.Empty;
                         }
                     }
@@ -138,14 +139,10 @@
             else
             {
                 postsLoadingFailed = true;
+                Console.WriteLine($"Error loading posts: {result.ErrorMessage.Reason}");
                 Snackbar.Add($"Error loading posts: {result.ErrorMessage.Reason}", Severity.Error);
             }
-        }
-        catch (Exception ex)
-        {
-            postsLoadingFailed = true;
-            Snackbar.Add($"Exception occurred: {ex.Message}", Severity.Error);
-        }
+       
     }
     // Method to get cached user name
     private string GetCachedUserName(Guid? userId)
