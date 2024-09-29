@@ -16,6 +16,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
         Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType);
         Task Logout();
         Task<string> GetAccessTokenAsync();
+        Task<JwtDto> RefreshAccessToken(string refreshToken);
         Task InitializeAuthenticationState();
         Task<bool> CheckIfUserIsAuthenticated();
         Task<bool> IsTokenValid();

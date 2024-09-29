@@ -30,7 +30,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
             string storedToken = await _localStorage.GetItemAsStringAsync("jwtDto");
             if (!string.IsNullOrEmpty(storedToken))
             {
-                var jwtDto = System.Text.Json.JsonSerializer.Deserialize<JwtDto>(storedToken);
+                var jwtDto = JsonSerializer.Deserialize<JwtDto>(storedToken);
                 if (jwtDto != null && ValidateToken(jwtDto.AccessToken))
                 {
                     var claims = ParseClaimsFromJwt(jwtDto.AccessToken);
@@ -38,10 +38,31 @@ namespace Astravent.Web.Wasm.Areas.Identity
                     var user = new ClaimsPrincipal(identity);
                     return new AuthenticationState(user);
                 }
+                else if (jwtDto != null && !string.IsNullOrEmpty(jwtDto.RefreshToken))
+                {
+                    try
+                    {
+                        var newJwtDto = await _identityService.RefreshAccessToken(jwtDto.RefreshToken);
+                        if (newJwtDto != null)
+                        {
+                            var newJwtDtoJson = JsonSerializer.Serialize(newJwtDto);
+                            await _localStorage.SetItemAsStringAsync("jwtDto", newJwtDtoJson);
+                            var claims = ParseClaimsFromJwt(newJwtDto.AccessToken);
+                            var identity = new ClaimsIdentity(claims, "jwtAuthType");
+                            var user = new ClaimsPrincipal(identity);
+                            return new AuthenticationState(user);
+                        }
+                    }
+                    catch
+                    {
+                        await _localStorage.RemoveItemAsync("jwtDto");
+                        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                    }
+                }
             }
-
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
+
 
         private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
         {

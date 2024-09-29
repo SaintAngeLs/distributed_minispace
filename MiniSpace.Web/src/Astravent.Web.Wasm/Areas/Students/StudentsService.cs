@@ -51,10 +51,11 @@ namespace Astravent.Web.Wasm.Areas.Students
             return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
         }
 
-        public Task<PaginatedResponseDto<StudentDto>> GetStudentsAsync()
+        public async Task<PaginatedResponseDto<StudentDto>> GetStudentsAsync()
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>("students");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>("students");
         }
 
          public async Task UpdateStudentAsync(

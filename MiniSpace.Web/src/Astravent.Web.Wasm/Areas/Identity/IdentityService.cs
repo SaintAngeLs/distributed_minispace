@@ -107,7 +107,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
             _navigationManager.NavigateTo("signin", forceLoad: true);
         }
         
-        private async Task<JwtDto> RefreshAccessToken(string refreshToken)
+        public async Task<JwtDto> RefreshAccessToken(string refreshToken)
         {
             var payload = new { refreshToken };
             var response = await _httpClient.PostAsync<object, JwtDto>("identity/refresh-tokens/use", payload);

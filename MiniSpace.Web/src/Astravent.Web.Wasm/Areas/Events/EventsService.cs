@@ -9,6 +9,7 @@ using Astravent.Web.Wasm.DTO.Wrappers;
 using Astravent.Web.Wasm.Areas.PagedResult;
 using System.Web;
 using System.Linq;
+using Blazorise;
 
 namespace Astravent.Web.Wasm.Areas.Events
 {
@@ -23,69 +24,80 @@ namespace Astravent.Web.Wasm.Areas.Events
             _identityService = identityService;
         }
         
-        public Task<EventDto> GetEventAsync(Guid eventId)
+        public async Task<EventDto> GetEventAsync(Guid eventId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<EventDto>($"events/{eventId}");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<EventDto>($"events/{eventId}");
         }
 
-        public Task<HttpResponse<object>> CreateEventAsync(CreateEventCommand command)
+        public async Task<HttpResponse<object>> CreateEventAsync(CreateEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<CreateEventCommand, object>("events", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<CreateEventCommand, object>("events", command);
         }
 
-        public Task<HttpResponse<object>> UpdateEventAsync(UpdateEventCommand command)
+        public async Task<HttpResponse<object>> UpdateEventAsync(UpdateEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<UpdateEventCommand, object>($"events/{command.EventId}", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PutAsync<UpdateEventCommand, object>($"events/{command.EventId}", command);
         }
 
-        public Task DeleteEventAsync(Guid eventId)
+        public async Task DeleteEventAsync(Guid eventId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{eventId}");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"events/{eventId}");
         }
 
-        public Task SignUpToEventAsync(SignUpToEventCommand command)
+        public async Task SignUpToEventAsync(SignUpToEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync($"events/{command.EventId}/sign-up", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.PostAsync($"events/{command.EventId}/sign-up", command);
         }
 
-        public Task CancelSignUpToEventAsync(CancelSignUpToEventCommand command)
+        public async Task CancelSignUpToEventAsync(CancelSignUpToEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{command.EventId}/sign-up", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"events/{command.EventId}/sign-up", command);
         }
 
-        public Task ShowInterestInEventAsync(ShowInterestInEventCommand command)
+        public async Task ShowInterestInEventAsync(ShowInterestInEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync($"events/{command.EventId}/show-interest", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.PostAsync($"events/{command.EventId}/show-interest", command);
         }
 
-        public Task CancelInterestInEventAsync(CancelInterestInEventCommand command)
+        public async Task CancelInterestInEventAsync(CancelInterestInEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{command.EventId}/show-interest", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"events/{command.EventId}/show-interest", command);
         }
 
-        public Task RateEventAsync(RateEventCommand command)
+        public async Task RateEventAsync(RateEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync($"events/{command.EventId}/rate", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.PostAsync($"events/{command.EventId}/rate", command);
         }
 
-        public Task<EventRatingDto> GetEventRatingAsync(Guid eventId)
+        public async Task<EventRatingDto> GetEventRatingAsync(Guid eventId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<EventRatingDto>($"events/{eventId}/rating");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<EventRatingDto>($"events/{eventId}/rating");
         }
 
-        public Task<PagedResult<EventDto>> SearchEventsAsync(SearchEvents command)
+        public async Task<PagedResult<EventDto>> SearchEventsAsync(SearchEvents command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
 
             var queryParams = new List<string>();
 
@@ -118,39 +130,44 @@ namespace Astravent.Web.Wasm.Areas.Events
 
             var queryString = "?" + string.Join("&", queryParams);
             
-            return _httpClient.GetAsync<PagedResult<EventDto>>($"events/search{queryString}");
+            return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/search{queryString}");
         }
 
 
 
-        public Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(SearchOrganizerEvents command)
+        public async Task<HttpResponse<PagedResult<IEnumerable<EventDto>>>> SearchOrganizerEventsAsync(SearchOrganizerEvents command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<SearchOrganizerEvents, PagedResult<IEnumerable<EventDto>>>("events/search/organizer", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<SearchOrganizerEvents, PagedResult<IEnumerable<EventDto>>>("events/search/organizer", command);
         }
 
-        public Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId)
+        public async Task<EventParticipantsDto> GetEventParticipantsAsync(Guid eventId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<EventParticipantsDto>($"events/{eventId}/participants");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<EventParticipantsDto>($"events/{eventId}/participants");
         }
 
-        public Task AddEventParticipantAsync(Guid eventId, Guid studentId, string studentName)
+        public async Task AddEventParticipantAsync(Guid eventId, Guid studentId, string studentName)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync($"events/{eventId}/participants", new {eventId, studentId, studentName});
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.PostAsync($"events/{eventId}/participants", new {eventId, studentId, studentName});
         }
 
-        public Task RemoveEventParticipantAsync(Guid eventId, Guid participantId)
+        public async Task RemoveEventParticipantAsync(Guid eventId, Guid participantId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"events/{eventId}/participants?participantId={participantId}");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"events/{eventId}/participants?participantId={participantId}");
         }
 
-        public Task<PagedResult<EventDto>> GetPaginatedEventsAsync(int page, int pageSize)
+        public async Task<PagedResult<EventDto>> GetPaginatedEventsAsync(int page, int pageSize)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<PagedResult<EventDto>>($"events/paginated?page={page}&pageSize={pageSize}");
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/paginated?page={page}&pageSize={pageSize}");
         }
         public async Task<PagedResult<EventDto>> GetMyEventsAsync(Guid organizerId, int page, int pageSize)
         {
@@ -159,7 +176,8 @@ namespace Astravent.Web.Wasm.Areas.Events
 
         public async Task<PagedResult<EventDto>> GetUserEventsAsync(Guid userId, int page, int pageSize, string engagementType)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/users/{userId}?engagementType={engagementType}&page={page}&pageSize={pageSize}");
         }
 
@@ -171,10 +189,11 @@ namespace Astravent.Web.Wasm.Areas.Events
             return await _httpClient.GetAsync<PagedResult<EventDto>>($"events/users/{userId}/feed{queryString}");
         }
 
-        public Task ViewEventAsync(ViewEventCommand command)
+        public async Task ViewEventAsync(ViewEventCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<ViewEventCommand, object>($"events/{command.EventId}/view", command);
+            var accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.PostAsync<ViewEventCommand, object>($"events/{command.EventId}/view", command);
         }
 
     }
