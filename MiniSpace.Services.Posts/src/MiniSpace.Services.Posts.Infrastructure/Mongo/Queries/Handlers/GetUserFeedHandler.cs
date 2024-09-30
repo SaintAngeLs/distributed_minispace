@@ -44,11 +44,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<PagedResponse<PostDto>> HandleAsync(GetUserFeed query, CancellationToken cancellationToken)
         {
-            //  Console.WriteLine($"Query Parameters - UserId: {query.UserId}, PageNumber: {query.PageNumber}, PageSize: {query.PageSize}, SortBy: {query.SortBy}, Direction: {query.Direction}");
+             Console.WriteLine($"Query Parameters - UserId: {query.UserId}, PageNumber: {query.PageNumber}, PageSize: {query.PageSize}, SortBy: {query.SortBy}, Direction: {query.Direction}");
     
 
 
             var user = await _studentsServiceClient.GetStudentByIdAsync(query.UserId);
+
+    //         var serializedUser = JsonConvert.SerializeObject(user, Formatting.Indented);
+    // Console.WriteLine($"Retrieved User Object: {serializedUser}");
 
             var allPostsRequest = new BrowseRequest
             {
@@ -57,6 +60,9 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             };
 
             var allPostsResult = await _postsService.BrowsePostsAsync(allPostsRequest);
+
+    //         var serializedAllPostsResult = JsonConvert.SerializeObject(allPostsResult, Formatting.Indented);
+    // Console.WriteLine($"Retrieved All posts Object: {serializedAllPostsResult}");
 
             if (allPostsResult == null || !allPostsResult.Items.Any())
             {
@@ -82,10 +88,20 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 
             var combinedPosts = CombineRankedAndUnrankedPosts(rankedPosts, allPostsResult.Items);
 
-            var pagedPosts = combinedPosts
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .ToList();
+//             var serializedCombinedPosts = JsonConvert.SerializeObject(combinedPosts, Formatting.Indented);
+
+// // Output the serialized result to the console
+// Console.WriteLine($"Combined Posts Object: {serializedCombinedPosts}");
+
+            var totalPosts = combinedPosts.Count();
+_logger.LogInformation("Total posts: {TotalPosts}, PageNumber: {PageNumber}, PageSize: {PageSize}, Skip: {Skip}", 
+    totalPosts, query.PageNumber, query.PageSize, (query.PageNumber - 1) * query.PageSize);
+
+var pagedPosts = combinedPosts
+    .Skip((query.PageNumber - 1) * query.PageSize)
+    .Take(query.PageSize)
+    .ToList();
+
 
             _logger.LogInformation("User {UserId} feed generated with {PostCount} posts.", query.UserId, pagedPosts.Count);
 
