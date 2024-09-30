@@ -1,4 +1,4 @@
-using Convey.Logging.CQRS;
+using Paralax.Logging.CQRS;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Commands;
 using MiniSpace.Services.Notifications.Application.Events.External;

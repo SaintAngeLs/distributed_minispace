@@ -1,5 +1,5 @@
 using System;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Dto;
 using MiniSpace.Services.Notifications.Application.Hubs;

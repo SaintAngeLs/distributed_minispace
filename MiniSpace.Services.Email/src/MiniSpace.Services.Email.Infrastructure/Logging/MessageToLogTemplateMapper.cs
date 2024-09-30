@@ -1,4 +1,4 @@
-using Convey.Logging.CQRS;
+using Paralax.Logging.CQRS;
 using MiniSpace.Services.Email.Application.Commands;
 using MiniSpace.Services.Email.Application.Events;
 using MiniSpace.Services.Email.Application.Events.External;

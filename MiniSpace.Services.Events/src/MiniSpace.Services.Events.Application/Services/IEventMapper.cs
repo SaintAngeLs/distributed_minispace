@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Events.Core;
 
 namespace MiniSpace.Services.Events.Application.Services

@@ -8,10 +8,10 @@
 
   
   <!-- <ItemGroup>
-    <PackageReference Include="Convey" Version="0.4.*" />
-    <PackageReference Include="Convey.Logging" Version="0.4.*" />
-    <PackageReference Include="Convey.WebApi" Version="0.4.*" />
-    <PackageReference Include="Convey.WebApi.CQRS" Version="0.4.*" />
+    <PackageReference Include="Paralax" Version="0.4.*" />
+    <PackageReference Include="Paralax.Logging" Version="0.4.*" />
+    <PackageReference Include="Paralax.WebApi" Version="0.4.*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="0.4.*" />
   </ItemGroup> -->
 
 

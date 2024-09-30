@@ -1,4 +1,4 @@
-using Convey.Logging.CQRS;
+using Paralax.Logging.CQRS;
 using MiniSpace.Services.MediaFiles.Application.Commands;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Logging

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
+using Paralax;
+using Paralax.Logging;
+using Paralax.Types;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +17,7 @@ using MiniSpace.Services.MediaFiles.Application.Queries;
 using MiniSpace.Services.MediaFiles.Application.Services;
 using MiniSpace.Services.MediaFiles.Infrastructure;
 using DotNetEnv;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using System.Text;
 
 namespace MiniSpace.Services.MediaFiles.Api
@@ -30,7 +30,7 @@ namespace MiniSpace.Services.MediaFiles.Api
 
             await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
-                    .AddConvey()
+                    .AddParalax()
                     .AddWebApi()
                     .AddApplication()
                     .AddInfrastructure()

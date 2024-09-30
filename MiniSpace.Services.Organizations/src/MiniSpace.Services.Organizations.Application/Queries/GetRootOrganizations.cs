@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Queries;
+﻿using Paralax.CQRS.Queries;
 using MiniSpace.Services.Organizations.Application.DTO;
 using System.Diagnostics.CodeAnalysis;
 

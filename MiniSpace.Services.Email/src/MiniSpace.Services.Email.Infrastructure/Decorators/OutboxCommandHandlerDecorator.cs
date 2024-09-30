@@ -1,7 +1,7 @@
-using Convey.CQRS.Commands;
-using Convey.MessageBrokers;
-using Convey.MessageBrokers.Outbox;
-using Convey.Types;
+using Paralax.CQRS.Commands;
+using Paralax.MessageBrokers;
+using Paralax.MessageBrokers.Outbox;
+using Paralax.Types;
 
 namespace MiniSpace.Services.Email.Infrastructure.Decorators
 {

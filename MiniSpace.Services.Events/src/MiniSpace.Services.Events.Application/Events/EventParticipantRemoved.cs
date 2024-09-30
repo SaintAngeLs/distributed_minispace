@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Convey.CQRS.Events;
-using Convey.MessageBrokers;
+using Paralax.CQRS.Events;
+using Paralax.MessageBrokers;
 
 namespace MiniSpace.Services.Events.Application.Events
 {

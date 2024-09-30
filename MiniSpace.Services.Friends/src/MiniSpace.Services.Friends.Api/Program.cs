@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Convey;
-using Convey.CQRS.Commands;
-using Convey.CQRS.Queries;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
+using Paralax;
+using Paralax.CQRS.Commands;
+using Paralax.CQRS.Queries;
+using Paralax.Logging;
+using Paralax.Types;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,7 +27,7 @@ namespace MiniSpace.Services.Friends.Api
         public static async Task Main(string[] args)
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
-                    .AddConvey()
+                    .AddParalax()
                     .AddWebApi()
                     .AddApplication()
                     .AddInfrastructure()

@@ -5,7 +5,7 @@ using Paralax.CQRS.Queries;
 using Paralax.Logging;
 using Paralax.Types;
 using Paralax.WebApi;
-using Paralax.WebApi.CQRS;
+using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

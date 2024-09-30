@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 
 namespace MiniSpace.Services.Email.Application.Events
 {

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Services.Clients;

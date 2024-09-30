@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Repositories;
 using MiniSpace.Services.Reactions.Infrastructure.Mongo.Documents;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Convey.Logging.CQRS;
+using Paralax.Logging.CQRS;
 using MiniSpace.Services.Events.Application.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Events.External;

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Comments.Application.Dto;
 
 namespace MiniSpace.Services.Comments.Application.Queries

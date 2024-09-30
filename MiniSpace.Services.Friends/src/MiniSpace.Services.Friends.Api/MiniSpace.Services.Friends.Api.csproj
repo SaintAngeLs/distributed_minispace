@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Convey" Version="1.1.448" />
-    <PackageReference Include="Convey.Logging" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
+    <PackageReference Include="Paralax" Version="*" />
+    <PackageReference Include="Paralax.Logging" Version="*" />
+    <PackageReference Include="Paralax.WebApi" Version="*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
   </ItemGroup>  
 
   <ItemGroup>

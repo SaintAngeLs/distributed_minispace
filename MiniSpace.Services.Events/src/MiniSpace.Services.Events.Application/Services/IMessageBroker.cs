@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 
 namespace MiniSpace.Services.Events.Application.Services
 {

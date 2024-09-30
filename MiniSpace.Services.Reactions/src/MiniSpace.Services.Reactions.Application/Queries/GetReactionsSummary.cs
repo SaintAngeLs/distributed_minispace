@@ -1,6 +1,6 @@
 
 using System.Diagnostics.CodeAnalysis;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Reactions.Application.Dto;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Exceptions;

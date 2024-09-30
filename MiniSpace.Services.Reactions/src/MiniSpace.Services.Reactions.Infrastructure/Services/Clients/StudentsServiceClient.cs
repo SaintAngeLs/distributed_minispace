@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Convey.HTTP;
+using Paralax.HTTP;
 using MiniSpace.Services.Reactions.Application.Services.Clients;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Services.Clients

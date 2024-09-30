@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Events;
+﻿using Paralax.CQRS.Events;
 using System;
 using System.Diagnostics.CodeAnalysis;
 

@@ -1,14 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey;
-using Convey.CQRS.Commands;
-using Convey.CQRS.Events;
+using Paralax;
+using Paralax.CQRS.Commands;
+using Paralax.CQRS.Events;
 
 namespace MiniSpace.Services.Reactions.Application
 {
     [ExcludeFromCodeCoverage]
     public static class Extensions
     {
-        public static IConveyBuilder AddApplication(this IConveyBuilder builder)
+        public static IParalaxBuilder AddApplication(this IParalaxBuilder builder)
             => builder
                 .AddCommandHandlers()
                 .AddEventHandlers()

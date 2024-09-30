@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
-using Convey;
-using Convey.WebApi.Exceptions;
+using Paralax;
+using Paralax.WebApi.Exceptions;
 using MiniSpace.Services.Communication.Application.Exceptions;
 using MiniSpace.Services.Communication.Core.Exceptions;
 

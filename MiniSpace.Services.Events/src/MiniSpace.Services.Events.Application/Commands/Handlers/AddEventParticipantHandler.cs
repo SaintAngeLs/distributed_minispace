@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;

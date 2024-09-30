@@ -24,7 +24,7 @@ using Paralax.Security;
 using Paralax.Tracing.Jaeger;
 using Paralax.Tracing.Jaeger.RabbitMQ;
 using Paralax.WebApi;
-using Paralax.WebApi.CQRS;
+using Paralax.CQRS.WebApi;
 using Paralax.WebApi.Swagger;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

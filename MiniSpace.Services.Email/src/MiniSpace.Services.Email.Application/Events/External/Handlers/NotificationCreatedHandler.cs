@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Convey.CQRS.Events;
-using Convey.MessageBrokers;
+using Paralax.CQRS.Events;
+using Paralax.MessageBrokers;
 using MiniSpace.Services.Email.Core.Entities;
 using MiniSpace.Services.Email.Application.Services;
 using MiniSpace.Services.Email.Application.Services.Clients;

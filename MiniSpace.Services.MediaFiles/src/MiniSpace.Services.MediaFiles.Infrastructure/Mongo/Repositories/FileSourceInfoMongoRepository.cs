@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.MediaFiles.Core.Entities;
 using MiniSpace.Services.MediaFiles.Core.Repositories;
 using MiniSpace.Services.MediaFiles.Infrastructure.Mongo.Documents;
