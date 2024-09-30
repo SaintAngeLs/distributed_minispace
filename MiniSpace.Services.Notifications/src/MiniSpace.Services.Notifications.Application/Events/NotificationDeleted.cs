@@ -3,7 +3,6 @@ using Paralax.MessageBrokers;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External
 {
-    [Contract]
     public class NotificationDeleted : IEvent
     {
         public Guid UserId { get; }

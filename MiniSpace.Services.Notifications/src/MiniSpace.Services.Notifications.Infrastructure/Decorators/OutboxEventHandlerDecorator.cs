@@ -1,3 +1,4 @@
+using Paralax.Core;
 using Paralax.CQRS.Events;
 using Paralax.MessageBrokers;
 using Paralax.MessageBrokers.Outbox;

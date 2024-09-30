@@ -3,7 +3,6 @@ using Paralax.MessageBrokers;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Friends
 {
-   [Contract]
     public class FriendRequestSent : IEvent
     {
         public Guid InviterId { get; }

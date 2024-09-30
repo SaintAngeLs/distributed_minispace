@@ -3,7 +3,6 @@ using Paralax.MessageBrokers;
 
 namespace MiniSpace.Services.Notifications.Application.Events.External.Friends
 {
-    [Contract]
     public class PendingFriendAccepted : IEvent
     {
         public Guid RequesterId { get; }

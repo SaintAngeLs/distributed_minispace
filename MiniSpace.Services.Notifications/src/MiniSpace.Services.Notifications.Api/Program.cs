@@ -18,6 +18,7 @@ using MiniSpace.Services.Notifications.Application.Queries;
 using MiniSpace.Services.Notifications.Infrastructure;
 using MiniSpace.Services.Notifications.Application.Hubs;
 using Paralax.Types;
+using Paralax.Core;
 
 
 
