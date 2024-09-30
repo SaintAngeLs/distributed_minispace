@@ -1,5 +1,5 @@
-using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Queries;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;

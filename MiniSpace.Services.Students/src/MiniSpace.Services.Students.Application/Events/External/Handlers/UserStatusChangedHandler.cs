@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Students.Core.Repositories;
 using System.Threading.Tasks;

@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Convey;
-using Convey.CQRS.Queries;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
+using Paralax;
+using Paralax.CQRS.Queries;
+using Paralax.Logging;
+using Paralax.Types;
+using Paralax.WebApi;
+using Paralax.WebApi.CQRS;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +17,9 @@ using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Core.Wrappers;
 using MiniSpace.Services.Students.Infrastructure;
-using Microsoft.AspNetCore.Builder; 
+using Microsoft.AspNetCore.Builder;
+using Paralax.CQRS.WebApi;
+using Paralax.Core;
 
 namespace MiniSpace.Services.Students.Api
 {
@@ -27,7 +29,7 @@ namespace MiniSpace.Services.Students.Api
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => 
                 {
-                    services.AddConvey()
+                    services.AddParalax()
                             .AddWebApi()
                             .AddApplication()
                             .AddInfrastructure();

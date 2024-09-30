@@ -1,7 +1,7 @@
 using Grpc.Core;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Application.Dto;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
