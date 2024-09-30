@@ -19,6 +19,9 @@ using MiniSpace.Services.Friends.Application.Dto;
 // using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Friends.Application.Queries;
 using MiniSpace.Services.Friends.Infrastructure;
+using Paralax.Types;
+using Paralax.Core;
+
 
 namespace MiniSpace.Services.Friends.Api
 {
@@ -49,18 +52,6 @@ namespace MiniSpace.Services.Friends.Api
                         .Get<GetFollowing, PagedResponse<UserFriendsDto>>("friends/{userId}/following")
 
                         .Put<SentFriendRequestWithdraw>("friends/requests/{userId}/withdraw", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
-
-                        
-                        // .Get<IEnumerable<FriendDto>>("friends/{studentId}", 
-                        //     ctx => new GetFriends { StudentId = Guid.Parse(ctx.Request.RouteValues["studentId"].ToString()) }, 
-                        //     (query, ctx) => ctx.Response.WriteAsJsonAsync(query), // Correctly define delegate with parameters
-                        //     afterDispatch: ctx => ctx.Response.Ok())
-                       
-                        // .Get("friends/requests/sent", ctx =>
-                        // {
-                        //     var query = new GetSentFriendRequests { StudentId = ctx.User.GetUserId() }; 
-                        //     return ctx.QueryDispatcher.QueryAsync(query);
-                        // }, afterDispatch: ctx => ctx.Response.WriteAsJsonAsync(ctx.Result))
                         .Delete<RemoveFriend>("friends/{requesterId}/{friendId}/remove")
                        )) 
                 .UseLogging()

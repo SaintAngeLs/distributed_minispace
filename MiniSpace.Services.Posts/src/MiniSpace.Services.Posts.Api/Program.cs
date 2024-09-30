@@ -19,6 +19,8 @@ using MiniSpace.Services.Posts.Application.Queries;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Core.Wrappers;
 using MiniSpace.Services.Posts.Infrastructure;
+using Paralax.Types;
+
 
 namespace MiniSpace.Services.Posts.Api
 {

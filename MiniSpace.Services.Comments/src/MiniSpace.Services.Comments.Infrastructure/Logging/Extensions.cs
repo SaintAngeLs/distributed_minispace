@@ -1,5 +1,5 @@
 using Paralax;
-using Paralax.Logging.CQRS;
+using Paralax.CQRS.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Comments.Application.Commands;
 using System.Diagnostics.CodeAnalysis;

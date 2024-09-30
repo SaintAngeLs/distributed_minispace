@@ -20,7 +20,7 @@ using Paralax.Tracing.Jaeger;
 using Paralax.Tracing.Jaeger.RabbitMQ;
 using Paralax.WebApi;
 using Paralax.CQRS.WebApi;
-using Paralax.Security.WebApi;
+using Paralax.WebApi.Security;
 using Paralax.WebApi.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -60,14 +60,7 @@ namespace MiniSpace.Services.MediaFiles.Infrastructure
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
-            builder.Services.AddSingleton<IGridFSService, GridFSService>(serviceProvider =>
-            {
-                var mongoDbOptions = serviceProvider.GetRequiredService<MongoDbOptions>();
-                var mongoClient = new MongoClient(mongoDbOptions.ConnectionString);
-                var database = mongoClient.GetDatabase(mongoDbOptions.Database);
-                return new GridFSService(database);
-            });
-            
+                       
             var awsOptions = new AwsOptions
             {
                 AccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID"),

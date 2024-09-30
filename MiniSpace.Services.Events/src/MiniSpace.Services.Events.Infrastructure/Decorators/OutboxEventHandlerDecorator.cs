@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Paralax.Core;
 using Paralax.CQRS.Events;
 using Paralax.MessageBrokers;
 using Paralax.MessageBrokers.Outbox;

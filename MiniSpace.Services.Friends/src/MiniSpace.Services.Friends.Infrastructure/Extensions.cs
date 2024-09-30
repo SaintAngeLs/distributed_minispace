@@ -20,7 +20,7 @@ using Paralax.Tracing.Jaeger;
 using Paralax.Tracing.Jaeger.RabbitMQ;
 using Paralax.WebApi;
 using Paralax.CQRS.WebApi;
-using Paralax.Security.WebApi;
+using Paralax.WebApi.Security;
 using Paralax.WebApi.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -41,7 +41,7 @@ using MiniSpace.Services.Friends.Infrastructure.Services;
 using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
 using MiniSpace.Services.Friends.Application.Services.Clients;
-using Paralax.Logging.CQRS;
+using Paralax.CQRS.Logging;
 
 namespace MiniSpace.Services.Friends.Infrastructure
 {

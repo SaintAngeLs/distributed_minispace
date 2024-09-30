@@ -1,10 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\MiniSpace.Services.Organizations.Application\MiniSpace.Services.Organizations.Application.csproj" />
-    <ProjectReference Include="..\MiniSpace.Services.Organizations.Core\MiniSpace.Services.Organizations.Core.csproj" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -19,7 +14,7 @@
     <PackageReference Include="Paralax.HTTP" Version="*" />
     <PackageReference Include="Paralax.LoadBalancing.Fabio" Version="*" />
     <PackageReference Include="Paralax.Logging" Version="*" />
-    <PackageReference Include="Paralax.Logging.CQRS" Version="*" />
+    <PackageReference Include="Paralax.CQRS.Logging" Version="*" />
     <PackageReference Include="Paralax.MessageBrokers" Version="*" />
     <PackageReference Include="Paralax.MessageBrokers.CQRS" Version="*" />
     <PackageReference Include="Paralax.MessageBrokers.Outbox" Version="*" />
@@ -33,13 +28,25 @@
     <PackageReference Include="Paralax.Tracing.Jaeger" Version="*" />
     <PackageReference Include="Paralax.Tracing.Jaeger.RabbitMQ" Version="*" />
     <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
-    <PackageReference Include="Paralax.Security.WebApi" Version="*" />
+    <PackageReference Include="Paralax.WebApi.Security" Version="*" />
     <PackageReference Include="Paralax.WebApi.Swagger" Version="*" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
     <PackageReference Include="Grpc.Tools" Version="2.65.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniSpace.Services.Organizations.Application\MiniSpace.Services.Organizations.Application.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Organizations.Core\MiniSpace.Services.Organizations.Core.csproj" />
   </ItemGroup>
 
 </Project>

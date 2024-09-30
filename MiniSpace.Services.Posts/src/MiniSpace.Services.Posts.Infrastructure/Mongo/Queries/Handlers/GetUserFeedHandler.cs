@@ -44,7 +44,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<PagedResponse<PostDto>> HandleAsync(GetUserFeed query, CancellationToken cancellationToken)
         {
-             Console.WriteLine($"Query Parameters - UserId: {query.UserId}, PageNumber: {query.PageNumber}, PageSize: {query.PageSize}, SortBy: {query.SortBy}, Direction: {query.Direction}");
+            //  Console.WriteLine($"Query Parameters - UserId: {query.UserId}, PageNumber: {query.PageNumber}, PageSize: {query.PageSize}, SortBy: {query.SortBy}, Direction: {query.Direction}");
     
 
 

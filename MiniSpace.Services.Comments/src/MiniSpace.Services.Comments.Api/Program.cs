@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Paralax;
 using Paralax.Secrets.Vault;
 using Paralax.Logging;
-using Paralax.Types;
 using Paralax.WebApi;
 using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
@@ -18,6 +17,7 @@ using MiniSpace.Services.Comments.Application.Queries;
 using MiniSpace.Services.Comments.Application.Services;
 using MiniSpace.Services.Comments.Infrastructure;
 using MiniSpace.Services.Comments.Core.Wrappers;
+using Paralax.Core;
 
 namespace MiniSpace.Services.Identity.Api
 {

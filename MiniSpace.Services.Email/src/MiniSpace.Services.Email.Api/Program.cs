@@ -14,6 +14,8 @@ using MiniSpace.Services.Email.Application.Commands;
 using MiniSpace.Services.Email.Application.Dto;
 using MiniSpace.Services.Email.Application.Queries;
 using MiniSpace.Services.Email.Infrastructure;
+using Paralax.Types;
+
 
 namespace MiniSpace.Services.Email.Api
 {

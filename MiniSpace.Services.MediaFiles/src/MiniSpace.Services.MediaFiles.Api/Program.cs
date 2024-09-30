@@ -19,6 +19,9 @@ using MiniSpace.Services.MediaFiles.Infrastructure;
 using DotNetEnv;
 using Paralax.CQRS.Commands;
 using System.Text;
+using Paralax.Types;
+using Paralax.Core;
+
 
 namespace MiniSpace.Services.MediaFiles.Api
 {

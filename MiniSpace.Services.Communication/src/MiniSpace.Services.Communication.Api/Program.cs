@@ -20,6 +20,8 @@ using MiniSpace.Services.Communication.Infrastructure;
 using MiniSpace.Services.Communication.Application.Hubs;
 using MiniSpace.Services.Communication.Core.Wrappers;
 using System;
+using Paralax.Types;
+
 
 namespace MiniSpace.Services.Communication.Api
 {

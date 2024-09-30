@@ -20,7 +20,7 @@ using Paralax.Tracing.Jaeger;
 using Paralax.Tracing.Jaeger.RabbitMQ;
 using Paralax.WebApi;
 using Paralax.CQRS.WebApi;
-using Paralax.Security.WebApi;
+using Paralax.WebApi.Security;
 using Paralax.WebApi.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

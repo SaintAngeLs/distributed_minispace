@@ -1,7 +1,7 @@
+using Paralax.Core;
 using Paralax.CQRS.Events;
 using Paralax.MessageBrokers;
 using Paralax.MessageBrokers.Outbox;
-using Paralax.Types;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Comments.Infrastructure.Decorators
