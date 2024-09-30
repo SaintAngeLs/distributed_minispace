@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Queries;
 using MiniSpace.Services.Posts.Application.Services;
@@ -44,7 +44,9 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<PagedResponse<PostDto>> HandleAsync(GetUserFeed query, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Handling GetUserFeed query: {Query}", JsonConvert.SerializeObject(query));
+             Console.WriteLine($"Query Parameters - UserId: {query.UserId}, PageNumber: {query.PageNumber}, PageSize: {query.PageSize}, SortBy: {query.SortBy}, Direction: {query.Direction}");
+    
+
 
             var user = await _studentsServiceClient.GetStudentByIdAsync(query.UserId);
 

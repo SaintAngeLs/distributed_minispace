@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Events;
+﻿using Paralax.CQRS.Events;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Core.Repositories;
 

@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Posts.Application.Events;
 using MiniSpace.Services.Posts.Application.Services;
 using System.Threading;

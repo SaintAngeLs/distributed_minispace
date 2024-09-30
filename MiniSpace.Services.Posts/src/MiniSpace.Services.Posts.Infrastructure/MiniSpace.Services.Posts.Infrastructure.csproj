@@ -6,31 +6,36 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Convey" Version="1.1.448" />
-    <PackageReference Include="Convey.Auth" Version="1.1.448" />
-    <PackageReference Include="Convey.CQRS.Queries" Version="1.1.448" />
-    <PackageReference Include="Convey.Discovery.Consul" Version="1.1.448" />
-    <PackageReference Include="Convey.HTTP" Version="1.1.448" />
-    <PackageReference Include="Convey.LoadBalancing.Fabio" Version="1.1.448" />
-    <PackageReference Include="Convey.Logging" Version="1.1.448" />
-    <PackageReference Include="Convey.Logging.CQRS" Version="1.1.448" />
-    <PackageReference Include="Convey.MessageBrokers" Version="1.1.448" />
-    <PackageReference Include="Convey.MessageBrokers.CQRS" Version="1.1.448" />
-    <PackageReference Include="Convey.MessageBrokers.Outbox" Version="1.1.448" />
-    <PackageReference Include="Convey.MessageBrokers.Outbox.Mongo" Version="1.1.448" />
-    <PackageReference Include="Convey.MessageBrokers.RabbitMQ" Version="1.1.448" />
-    <PackageReference Include="Convey.Metrics.AppMetrics" Version="1.1.448" />
-    <PackageReference Include="Convey.Persistence.MongoDB" Version="1.1.448" />
-    <PackageReference Include="Convey.Persistence.Redis" Version="1.1.448" />
-    <PackageReference Include="Convey.Secrets.Vault" Version="1.1.448" />
-    <PackageReference Include="Convey.Security" Version="1.1.448" />
-    <PackageReference Include="Convey.Tracing.Jaeger" Version="1.1.448" />
-    <PackageReference Include="Convey.Tracing.Jaeger.RabbitMQ" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi.Security" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi.Swagger" Version="1.1.448" />
+   <ItemGroup>
+    <PackageReference Include="Paralax" Version="*" />
+    <PackageReference Include="Paralax.Auth" Version="*" />
+    <PackageReference Include="Paralax.CQRS.Queries" Version="*" />
+    <PackageReference Include="Paralax.Discovery.Consul" Version="*" />
+    <PackageReference Include="Paralax.HTTP" Version="*" />
+    <PackageReference Include="Paralax.LoadBalancing.Fabio" Version="*" />
+    <PackageReference Include="Paralax.Logging" Version="*" />
+    <PackageReference Include="Paralax.CQRS.Logging" Version="*" />
+    <PackageReference Include="Paralax.MessageBrokers" Version="*" />
+    <PackageReference Include="Paralax.MessageBrokers.CQRS" Version="*" />
+    <PackageReference Include="Paralax.MessageBrokers.Outbox" Version="*" />
+    <PackageReference Include="Paralax.MessageBrokers.Outbox.Mongo" Version="*" />
+    <PackageReference Include="Paralax.MessageBrokers.RabbitMQ" Version="*" />
+    <PackageReference Include="Paralax.Metrics.AppMetrics" Version="*" />
+    <PackageReference Include="Paralax.Persistence.MongoDB" Version="*" />
+    <PackageReference Include="Paralax.Persistence.Redis" Version="*" />
+    <PackageReference Include="Paralax.Secrets.Vault" Version="*" />
+    <PackageReference Include="Paralax.Security" Version="*" />
+    <PackageReference Include="Paralax.Tracing.Jaeger" Version="*" />
+    <PackageReference Include="Paralax.Tracing.Jaeger.RabbitMQ" Version="*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
+    <PackageReference Include="Paralax.WebApi.Security" Version="*" />
+    <PackageReference Include="Paralax.WebApi.Swagger" Version="*" />
     <PackageReference Include="Microsoft.ML" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

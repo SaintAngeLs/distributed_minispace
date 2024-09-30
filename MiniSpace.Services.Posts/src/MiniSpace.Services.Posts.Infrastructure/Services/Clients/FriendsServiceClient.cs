@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Convey.HTTP;
+using Paralax.HTTP;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.Services.Clients;
 

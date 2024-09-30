@@ -135,7 +135,23 @@ namespace MiniSpace.Services.Identity.Api
                 return;
             }
 
-            await context.Response.WriteJsonAsync(user);
+             await context.Response.WriteJsonAsync(new
+            {
+                Id = user.Id, // Ensure this is directly a Guid, not wrapped
+                user.Name,
+                user.Email,
+                Role = user.Role.ToString(),
+                user.CreatedAt,
+                Permissions = user.Permissions,
+                user.IsEmailVerified,
+                user.EmailVerifiedAt,
+                user.IsTwoFactorEnabled,
+                user.TwoFactorSecret,
+                user.IsOnline,
+                user.DeviceType,
+                user.LastActive,
+                user.IpAddress
+            });
         }
     }
 }
