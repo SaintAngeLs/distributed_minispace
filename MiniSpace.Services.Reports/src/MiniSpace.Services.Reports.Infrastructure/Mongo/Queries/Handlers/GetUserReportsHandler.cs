@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Queries;
+﻿using Paralax.CQRS.Queries;
 using MiniSpace.Services.Reports.Application;
 using MiniSpace.Services.Reports.Application.DTO;
 using MiniSpace.Services.Reports.Application.Queries;

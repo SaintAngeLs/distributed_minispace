@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Events;
+﻿using Paralax.CQRS.Events;
 using MiniSpace.Services.Reports.Application.Exceptions;
 using MiniSpace.Services.Reports.Core.Entities;
 using MiniSpace.Services.Reports.Core.Repositories;
