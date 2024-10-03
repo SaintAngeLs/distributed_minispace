@@ -13,13 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -37,13 +42,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -61,13 +71,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -85,13 +100,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -109,13 +129,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -133,13 +158,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -157,13 +187,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -181,13 +216,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -205,13 +245,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -229,13 +274,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -253,13 +303,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -277,13 +332,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -301,13 +361,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -325,13 +390,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '3.1.x'
-      - name: Install .NET 8.0.401
+      - name: Install .NET 8.x
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401
+          sudo apt-get install -y dotnet-sdk-8.0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
