@@ -19,7 +19,7 @@ jobs:
       - name: Install .NET 8.0.401
         run: |
           sudo apt-get update
-          sudo apt-get install -y dotnet-sdk-8.0.401.401
+          sudo apt-get install -y dotnet-sdk-8.0.401
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
