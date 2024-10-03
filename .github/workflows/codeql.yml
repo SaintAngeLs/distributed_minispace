@@ -20,7 +20,7 @@ jobs:
           fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
