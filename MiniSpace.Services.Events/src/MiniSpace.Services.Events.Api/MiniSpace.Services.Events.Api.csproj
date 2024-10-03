@@ -7,14 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Convey" Version="1.1.448" />
-    <PackageReference Include="Convey.Logging" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
-  </ItemGroup>  
+    <PackageReference Include="Paralax" Version="*" />
+    <PackageReference Include="Paralax.Logging" Version="*" />
+    <PackageReference Include="Paralax.WebApi" Version="*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
+  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MiniSpace.Services.Events.Infrastructure\MiniSpace.Services.Events.Infrastructure.csproj" />
+    <ProjectReference Include="..\MiniSpace.Services.Events.Infrastructure\MiniSpace.Services.Events.Infrastructure.csproj"/>
+    
   </ItemGroup>
 
 </Project>

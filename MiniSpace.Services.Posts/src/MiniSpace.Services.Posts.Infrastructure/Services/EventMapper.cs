@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Core;
 using MiniSpace.Services.Posts.Core.Events;

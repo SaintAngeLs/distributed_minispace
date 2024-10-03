@@ -1,4 +1,4 @@
-using Convey.Logging.CQRS;
+using Paralax.CQRS.Logging;
 using MiniSpace.Services.Organizations.Application.Commands;
 using System;
 using System.Collections.Generic;

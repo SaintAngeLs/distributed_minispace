@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
+using Paralax;
+using Paralax.Logging;
+using Paralax.Types;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +20,8 @@ using MiniSpace.Services.Communication.Infrastructure;
 using MiniSpace.Services.Communication.Application.Hubs;
 using MiniSpace.Services.Communication.Core.Wrappers;
 using System;
+using Paralax.Types;
+
 
 namespace MiniSpace.Services.Communication.Api
 {
@@ -29,7 +31,7 @@ namespace MiniSpace.Services.Communication.Api
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services =>
                 {
-                    services.AddConvey()
+                    services.AddParalax()
                             .AddWebApi()
                             .AddApplication()
                             .AddInfrastructure();

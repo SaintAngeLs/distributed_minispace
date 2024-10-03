@@ -13,7 +13,7 @@ using MiniSpace.Services.Comments.Core.Repositories;
 using MiniSpace.Services.Comments.Application.Commands.Handlers;
 using MiniSpace.Services.Comments.Application.Commands;
 using MiniSpace.Services.Comments.Infrastructure.Contexts;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using System.Threading;
 using System.Security.Claims;
 using FluentAssertions;

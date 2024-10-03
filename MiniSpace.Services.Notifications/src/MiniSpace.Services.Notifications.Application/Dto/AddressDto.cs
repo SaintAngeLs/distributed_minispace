@@ -14,15 +14,5 @@ namespace MiniSpace.Services.Notifications.Application.Dto
         public AddressDto()
         {
         }
-        
-        // public AddressDto(Address address)
-        // {
-        //     BuildingName = address.BuildingName;
-        //     Street = address.Street;
-        //     BuildingNumber = address.BuildingNumber;
-        //     ApartmentNumber = address.ApartmentNumber;
-        //     City = address.City;
-        //     ZipCode = address.ZipCode;
-        // }
     }
 }

@@ -1,0 +1,145 @@
+@page "/blocked-users"
+@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@using Astravent.Web.Wasm.DTO.Users
+@using Astravent.Web.Wasm.Models.BlockedUsers
+@using MudBlazor
+@using System.Collections.Generic
+@using System.Threading.Tasks
+
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="blocked-users-container">
+    <MudText Typo="Typo.h4" GutterBottom="true">Blocked Users</MudText>
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else
+    {
+        @if (blockedUsers?.Any() == true)
+        {
+            @foreach (var user in blockedUsers)
+            {
+                <MudCard Class="blocked-user-card" Elevation="4">
+                    <MudCardContent>
+                        <MudGrid AlignItems="center">
+                            <MudItem xs="8">
+                                <MudNavLink Href="@($"/user-details/{user.BlockedUserId}")" Style="text-decoration:none;">
+                                    <MudGrid AlignItems="center" Class="justify-start">
+                                        <MudItem xs="4" md="2">
+                                            <MudAvatar Image="@user.ProfileImageUrl" Size="Size.Large" />
+                                        </MudItem>
+                                        <MudItem xs="8" md="6">
+                                            <MudText Typo="Typo.h6">@user.FullName</MudText>
+                                            <MudText Typo="Typo.body2">Blocked on: @user.BlockedAt.ToString("MMMM dd, yyyy")</MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudNavLink>
+                            </MudItem>
+                            <MudItem xs="4" Class="text-right">
+                                <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="async (e) => await UnblockUser(user.BlockedUserId)" Class="unblock-button">
+                                        Unblock
+                                    </MudButton>
+                                </div>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            }
+        }
+        else
+        {
+            <MudText Typo="Typo.subtitle1">You have no blocked users.</MudText>
+        }
+    }
+</MudContainer>
+
+<style>
+    .blocked-users-container {
+        padding: 10px;
+    }
+
+    .blocked-user-card {
+        width: 100%;
+        margin-bottom: 16px;
+        padding: 6px;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .blocked-user-card:hover {
+        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .unblock-button {
+        width: auto;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+</style>
+
+@code {
+    private List<BlockedUserViewModel> blockedUsers = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        await LoadBlockedUsersAsync();
+        isLoading = false;
+    }
+
+    private async Task LoadBlockedUsersAsync()
+    {
+        try
+        {
+            var currentUserId = IdentityService.GetCurrentUserId();
+            var response = await StudentsService.GetBlockedUsersAsync(currentUserId, 1, 10);
+            var blockedUserIds = response.Items.Select(bu => bu.BlockedUserId).ToList();
+
+            foreach (var blockedUserId in blockedUserIds)
+            {
+                var student = await StudentsService.GetStudentAsync(blockedUserId);
+                if (student != null)
+                {
+                    blockedUsers.Add(new BlockedUserViewModel
+                    {
+                        BlockedUserId = blockedUserId,
+                        FullName = $"{student.FirstName} {student.LastName}",
+                        ProfileImageUrl = GetProfileImageUrl(student.ProfileImageUrl),
+                        BlockedAt = response.Items.First(bu => bu.BlockedUserId == blockedUserId).BlockedAt
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading blocked users: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task UnblockUser(Guid blockedUserId)
+    {
+        try
+        {
+            var currentUserId = IdentityService.GetCurrentUserId();
+            await StudentsService.UnblockUserAsync(currentUserId, blockedUserId);
+            blockedUsers.RemoveAll(u => u.BlockedUserId == blockedUserId);
+            Snackbar.Add("User has been unblocked successfully.", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error unblocking user: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string GetProfileImageUrl(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "images/default_profile_image.webp" : profileImageUrl;
+    }
+}

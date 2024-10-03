@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Convey.Auth;
+using Paralax.Auth;
 using MiniSpace.Services.Identity.Application.DTO;
 using MiniSpace.Services.Identity.Application.Services;
 using MiniSpace.Services.Identity.Core.Entities;

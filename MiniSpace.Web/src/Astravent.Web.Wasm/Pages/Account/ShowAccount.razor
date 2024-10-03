@@ -1,0 +1,449 @@
+@page "/account"
+@using System.Globalization
+@using Astravent.Web.Wasm.Shared
+@using Astravent.Web.Wasm.Areas.Students
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.Areas.MediaFiles
+@using Astravent.Web.Wasm.DTO.Types
+@using MudBlazor
+@using System.IO
+@using System.Text.Json
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IMediaFilesService MediaFilesService
+@inject NavigationManager NavigationManager
+
+<AuthWrapper>
+    <MudContainer Class="account-container">
+    <div class="breadcrumbs-container">
+        <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+    </div>
+
+    
+        <MudGrid>
+            <MudItem xs="12" sm="4" md="3">
+                <MudNavMenu Elevation="1">
+                    <MudNavLink OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavLink>
+                    <MudNavLink OnClick="() => SetActiveTabIndex(7)" Icon="@Icons.Material.Filled.Block">Blocked Users</MudNavLink> 
+                </MudNavMenu>
+            </MudItem>
+            <MudItem xs="12" sm="8" md="9">
+                <MudPaper Elevation="1" Class="content-panel">
+                    @if (activeTabIndex == 0)
+                    {
+                        <ProfileComponent IsLoading="isLoading" File="file" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync"  IsUploading="isUploading" />
+                    }
+                    else if (activeTabIndex == 1)
+                    {
+                        <SecurityComponent IsLoading="isLoading" IsTwoFactorEnabled="isTwoFactorEnabled" TwoFactorSecret="@(string.IsNullOrEmpty(twoFactorSecret) || twoFactorSecret == "twoFactorSecret" ? null : twoFactorSecret)" ToggleTwoFactor="ToggleTwoFactor" />
+                    }
+                    else if (activeTabIndex == 2)
+                    {
+                        <NotificationsComponent IsLoading="isLoading" NotificationPreferencesDto="notificationPreferencesDto" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" />
+                    }
+                    else if (activeTabIndex == 3)
+                    {
+                        <PrivacyComponent IsLoading="isLoading" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync" />
+                    }
+                    else if (activeTabIndex == 4)
+                    {
+                        <MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
+                                    <MudSelect T="string" Label="Select Languages" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedLanguages" SelectedValuesChanged="OnSelectedLanguagesChanged">
+                                        @foreach (var language in Enum.GetValues(typeof(Language)).Cast<Language>())
+                                        {
+                                            <MudSelectItem Value="@language.ToString()">@language.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
+                                    <MudSelect T="string" Label="Select Interests" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedInterests" SelectedValuesChanged="OnSelectedInterestsChanged">
+                                        @foreach (var interest in Enum.GetValues(typeof(Interest)).Cast<Interest>())
+                                        {
+                                            <MudSelectItem Value="@interest.ToString()">@interest.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">Save Changes</MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    }
+                    else if (activeTabIndex == 5)
+                    {
+                        <GalleryComponent IsLoading="@isLoading" StudentWithGalleryImagesDto="@studentWithGalleryImagesDto" />
+                    }
+                    else if (activeTabIndex == 6)
+                    {
+                        <UserSettingsComponent IsLoading="isLoading" AvailableSettingsDto="availableSettingsDto" SaveUserSettingsAsync="SaveUserSettingsAsync" />
+                    }
+                    else if (activeTabIndex == 7) 
+                    {
+                        <BlockedListComponent />
+                    }
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
+    }
+
+    .navigation-panel {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .content-panel {
+        padding: 20px;
+    }
+
+    .mud-tabs {
+        margin-top: 20px;
+    }
+
+    .mud-tabpanel {
+        padding: 20px;
+    }
+
+    .mud-text-field {
+        margin-bottom: 10px;
+    }
+
+    .mud-switch {
+        margin-bottom: 10px.
+    }
+
+    .image-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center.
+        justify-content: center.
+        width: 100%.
+    }
+
+    .profile-image {
+        height: 150px.
+        width: 150px.
+    }
+
+    textarea.mud-input-slot.mud-input-root.mud-input-root-outlined {
+        padding: 10px !important.
+    }
+    .mud-input>input.mud-input-root {
+        padding: 10px !important.
+    }
+
+    .button-margins {
+        margin: 10px 0 !important.
+    }
+</style>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+    };
+
+    private int activeTabIndex = 0;
+    private bool isTwoFactorEnabled;
+    private string twoFactorSecret;
+    private bool isLoading = true;
+    private bool isUploading = false;
+    private IBrowserFile file;
+    private long maxFileSize = 10 * 1024 * 1024;
+    private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
+    private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
+    private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
+
+    private HashSet<string> selectedLanguages = new HashSet<string>();
+    private HashSet<string> selectedInterests = new HashSet<string>(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                var studentId = IdentityService.GetCurrentUserId();
+                studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+                var studentDto = studentWithGalleryImagesDto.Student;
+
+                var studentDtoJson = JsonSerializer.Serialize(studentDto, new JsonSerializerOptions { WriteIndented = true });
+                Console.WriteLine($"StudentDto object: {studentDtoJson}");
+
+                if (studentDto.EmailNotifications)
+                {
+                    notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
+                    Console.WriteLine(JsonSerializer.Serialize(notificationPreferencesDto));
+                }
+                isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
+                twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
+
+                availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
+
+                selectedLanguages = new HashSet<string>(studentDto.Languages); 
+                selectedInterests = new HashSet<string>(studentDto.Interests);
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void OnSelectedLanguagesChanged(IEnumerable<string> languages)
+    {
+        selectedLanguages = new HashSet<string>(languages);
+    }
+
+    private void OnSelectedInterestsChanged(IEnumerable<string> interests) 
+    {
+        selectedInterests = new HashSet<string>(interests);
+    }
+
+    private async Task SaveChanges()
+    {
+        var studentDto = studentWithGalleryImagesDto.Student;
+        studentDto.Languages = selectedLanguages.ToList(); 
+        studentDto.Interests = selectedInterests.ToList();
+
+        await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
+            studentDto.Id,
+            studentDto.Languages,
+            studentDto.Interests
+        );
+
+        await StudentsService.UpdateStudentDto(studentDto.Id);
+        StateHasChanged();
+    }
+
+    private async Task SaveChangesAsync()
+    {
+        try
+        {
+            var studentDto = studentWithGalleryImagesDto.Student;
+
+            foreach (var education in studentDto.Education)
+            {
+                Console.WriteLine($"Education StartDate: {education.StartDate}, EndDate: {education.EndDate}");
+            }
+
+            foreach (var work in studentDto.Work)
+            {
+                Console.WriteLine($"Work StartDate: {work.StartDate}, EndDate: {work.EndDate}");
+            }
+
+
+            // Ensure that StartDate and EndDate are handled correctly
+            foreach (var education in studentDto.Education)
+            {
+                education.StartDate = education.StartDate != DateTime.MinValue ? education.StartDate : null;
+                education.EndDate = education.EndDate != DateTime.MinValue ? education.EndDate : null;
+            }
+
+            foreach (var work in studentDto.Work)
+            {
+                work.StartDate = work.StartDate != DateTime.MinValue ? work.StartDate : null;
+                work.EndDate = work.EndDate != DateTime.MinValue ? work.EndDate : null;
+            }
+
+            var updateStudentData = new
+            {
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                studentDto.Education,
+                studentDto.Work,
+                studentDto.PhoneNumber,
+                studentDto.Country,
+                studentDto.City,
+                studentDto.DateOfBirth,
+                IsTwoFactorEnabled = isTwoFactorEnabled,
+                TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
+            };
+
+            var jsonData = JsonSerializer.Serialize(updateStudentData);
+            Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
+
+            await StudentsService.UpdateStudentAsync(
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                isTwoFactorEnabled,
+                !isTwoFactorEnabled,
+                isTwoFactorEnabled ? twoFactorSecret : null,
+                studentDto.Education,
+                studentDto.Work,
+                studentDto.PhoneNumber,
+                studentDto.Country,
+                studentDto.City,
+                studentDto.DateOfBirth
+            );
+
+            if (studentDto.EmailNotifications)
+            {
+                await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto, studentDto.EmailNotifications);
+            }
+
+            await StudentsService.UpdateUserSettingsAsync(studentDto.Id, availableSettingsDto);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+
+ 
+
+
+
+    private async Task SaveTwoFactorSettingsAsync()
+    {
+        try
+        {
+            if (isTwoFactorEnabled)
+            {
+                if (string.IsNullOrEmpty(twoFactorSecret))
+                {
+                    throw new InvalidOperationException("Secret token must be generated before enabling 2FA.");
+                }
+
+                await IdentityService.EnableTwoFactorAsync(IdentityService.GetCurrentUserId(), twoFactorSecret);
+            }
+            else
+            {
+                await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving 2FA settings: {ex.Message}");
+        }
+    }
+
+    private async Task ToggleTwoFactor(bool enabled)
+    {
+        isTwoFactorEnabled = enabled;
+        if (!enabled)
+        {
+            await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
+            twoFactorSecret = null;
+        }
+        else
+        {
+            twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
+        }
+        StateHasChanged();
+    }
+
+    private async Task GenerateTwoFactorSecret()
+    {
+        var userId = IdentityService.GetCurrentUserId();
+        twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(userId);
+        StateHasChanged();
+    }
+
+    private async Task SaveNotificationPreferencesAsync()
+    {
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, notificationPreferencesDto, studentWithGalleryImagesDto.Student.EmailNotifications);
+            Console.WriteLine("Notification preferences updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving notification preferences: {ex.Message}");
+        }
+    }
+
+    private async Task SaveUserSettingsAsync()
+{
+    try
+    {
+        var studentId = IdentityService.GetCurrentUserId();
+        
+        @* var jsonSettings = JsonSerializer.Serialize(availableSettingsDto, new JsonSerializerOptions { WriteIndented = true });
+
+        Console.WriteLine("Sending the following settings to the student service:");
+        Console.WriteLine(jsonSettings); *@
+
+        await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
+
+        Console.WriteLine("Student settings updated successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error saving user settings: {ex.Message}");
+    }
+}
+
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
+    }
+
+    private static async Task<byte[]> ReadFully(Stream input)
+    {
+        byte[] buffer = new byte[16 * 1024];
+        using (MemoryStream ms = new MemoryStream())
+        {
+            int read;
+            while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+            return ms.ToArray();
+        }
+    }
+}

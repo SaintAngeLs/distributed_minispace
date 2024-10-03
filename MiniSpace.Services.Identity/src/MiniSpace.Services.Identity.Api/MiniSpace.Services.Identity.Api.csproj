@@ -6,12 +6,14 @@
     <RootNamespace>MiniSpace.Services.Identity.Api</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Convey" Version="0.4.*" />
-    <PackageReference Include="Convey.Logging" Version="0.4.*" />
-    <PackageReference Include="Convey.WebApi" Version="0.4.*" />
-    <PackageReference Include="Convey.WebApi.CQRS" Version="0.4.*" />
-  </ItemGroup>
+  
+  <!-- <ItemGroup>
+    <PackageReference Include="Paralax" Version="0.4.*" />
+    <PackageReference Include="Paralax.Logging" Version="0.4.*" />
+    <PackageReference Include="Paralax.WebApi" Version="0.4.*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="0.4.*" />
+  </ItemGroup> -->
+
 
   <ItemGroup>
     <ProjectReference Include="..\MiniSpace.Services.Identity.Infrastructure\MiniSpace.Services.Identity.Infrastructure.csproj" />
@@ -19,6 +21,13 @@
 
   <ItemGroup>
     <Content Include="certs\**" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Paralax" Version="*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
+    <PackageReference Include="Paralax.Logging" Version="*" />
+    <PackageReference Include="Paralax.WebApi" Version="*" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 
 namespace MiniSpace.Services.Students.Application.Queries
 {
-    public interface IPagedGetStudentsQuery : Convey.CQRS.Queries.IPagedQuery
+    public interface IPagedGetStudentsQuery : Paralax.CQRS.Queries.IPagedQuery
     {
         new int Page { get; set; }
         new int ResultsPerPage { get; set; }

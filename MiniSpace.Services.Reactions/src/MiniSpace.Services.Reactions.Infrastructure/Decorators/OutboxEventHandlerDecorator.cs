@@ -1,8 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.CQRS.Events;
-using Convey.MessageBrokers;
-using Convey.MessageBrokers.Outbox;
-using Convey.Types;
+using Paralax.Core;
+using Paralax.CQRS.Events;
+using Paralax.MessageBrokers;
+using Paralax.MessageBrokers.Outbox;
+using Paralax.Types;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Decorators
 {

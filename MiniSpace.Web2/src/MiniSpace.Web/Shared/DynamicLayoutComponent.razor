@@ -1,0 +1,37 @@
+@* @inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<CascadingValue Value="this">
+    @if (_layoutComponent != null)
+    {
+        @(_layoutComponent)
+    }
+</CascadingValue>
+
+@code {
+    private RenderFragment _layoutComponent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            _layoutComponent = builder =>
+            {
+                builder.OpenComponent(0, typeof(AuthenticatedLayout));
+                builder.CloseComponent();
+            };
+        }
+        else
+        {
+            _layoutComponent = builder =>
+            {
+                builder.OpenComponent(0, typeof(NotAuthenticatedLayout));
+                builder.CloseComponent();
+            };
+        }
+    }
+
+    
+} *@

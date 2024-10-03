@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Events;
+﻿using Paralax.CQRS.Events;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application.Events

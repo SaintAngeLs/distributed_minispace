@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Communication.Application.Dto;
 using MiniSpace.Services.Communication.Application.Queries;
 using MiniSpace.Services.Communication.Core.Repositories;

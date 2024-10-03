@@ -1,5 +1,5 @@
-using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Queries;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Email.Application.Dto;
 using MiniSpace.Services.Email.Application.Queries;
 using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;

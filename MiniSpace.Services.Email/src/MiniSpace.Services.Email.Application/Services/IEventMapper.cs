@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Email.Core.Events;
 
 namespace MiniSpace.Services.Email.Application.Services

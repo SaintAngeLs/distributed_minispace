@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Identity.Application.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
+using System.Threading;
 
 namespace MiniSpace.Services.Identity.Application.Commands.Handlers
 {
@@ -16,7 +18,7 @@ namespace MiniSpace.Services.Identity.Application.Commands.Handlers
             _logger = logger;
         }
 
-        public async Task HandleAsync(VerifyEmail command)
+        public async Task HandleAsync(VerifyEmail command, CancellationToken cancellationToken)
         {
             await _identityService.VerifyEmailAsync(command);
             _logger.LogInformation($"Email verification for token: {command.Token}, email: {command.Email}, and hashed token: {command.HashedToken} processed.");

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Events.Application.DTO;
 
 namespace MiniSpace.Services.Events.Application.Commands

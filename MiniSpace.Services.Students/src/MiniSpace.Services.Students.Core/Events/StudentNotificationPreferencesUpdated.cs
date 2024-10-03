@@ -5,12 +5,12 @@ namespace MiniSpace.Services.Students.Core.Events
 {
     public class StudentNotificationPreferencesUpdated : IDomainEvent
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public NotificationPreferences NotificationPreferences { get; }
 
         public StudentNotificationPreferencesUpdated(UserNotifications userNotifications)
         {
-            StudentId = userNotifications.StudentId;
+            UserId = userNotifications.UserId;
             NotificationPreferences = userNotifications.NotificationPreferences;
         }
     }

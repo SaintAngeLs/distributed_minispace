@@ -1,0 +1,8 @@
+<div class="reconnect-message">
+    <p>XXXXXXXXXXXXXXXXXXXAttempting to reconnect to the server: @CurrentAttempt of @MaxAttempts...</p>
+</div>
+
+@code {
+    [Parameter] public int CurrentAttempt { get; set; }
+    [Parameter] public int MaxAttempts { get; set; }
+}

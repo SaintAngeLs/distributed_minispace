@@ -12,11 +12,11 @@ using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
 public class PeriodicNotificationCleanupService : BackgroundService
 {
     private readonly ILogger<PeriodicNotificationCleanupService> _logger;
-    private readonly IExtendedStudentNotificationsRepository _notificationsRepository;
+    private readonly IExtendedUserNotificationsRepository _notificationsRepository;
     private readonly IStudentsServiceClient _studentsServiceClient;
 
     public PeriodicNotificationCleanupService(ILogger<PeriodicNotificationCleanupService> logger, 
-                                              IExtendedStudentNotificationsRepository notificationsRepository,
+                                              IExtendedUserNotificationsRepository notificationsRepository,
                                               IStudentsServiceClient studentsServiceClient) 
     {
         _logger = logger;
@@ -54,8 +54,8 @@ public class PeriodicNotificationCleanupService : BackgroundService
                     _logger.LogInformation($"Removing all notifications for student {studentId} due to excessive count: {count}.");
                     
                     
-                    var filter = Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentId);
-                    var update = Builders<StudentNotificationsDocument>.Update.Set(doc => doc.Notifications, new List<NotificationDocument>());
+                    var filter = Builders<UserNotificationsDocument>.Filter.Eq(doc => doc.UserId, studentId);
+                    var update = Builders<UserNotificationsDocument>.Update.Set(doc => doc.Notifications, new List<NotificationDocument>());
                     var result = await _notificationsRepository.BulkUpdateAsync(filter, update);
 
                     _logger.LogInformation($"All notifications for student {studentId} have been removed. Total removed: {result.ModifiedCount}");
@@ -64,12 +64,12 @@ public class PeriodicNotificationCleanupService : BackgroundService
                 {
                     _logger.LogInformation($"Cleaning up old notifications for student {studentId}. Total current count: {count}.");
 
-                    var filter = Builders<StudentNotificationsDocument>.Filter.And(
-                        Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentId),
-                        Builders<StudentNotificationsDocument>.Filter.Lt("Notifications.CreatedAt", cutoffDate)
+                    var filter = Builders<UserNotificationsDocument>.Filter.And(
+                        Builders<UserNotificationsDocument>.Filter.Eq(doc => doc.UserId, studentId),
+                        Builders<UserNotificationsDocument>.Filter.Lt("Notifications.CreatedAt", cutoffDate)
                     );
 
-                    var update = Builders<StudentNotificationsDocument>.Update.PullFilter(
+                    var update = Builders<UserNotificationsDocument>.Update.PullFilter(
                         n => n.Notifications, n => n.CreatedAt < cutoffDate);
 
                     var result = await _notificationsRepository.BulkUpdateAsync(filter, update);

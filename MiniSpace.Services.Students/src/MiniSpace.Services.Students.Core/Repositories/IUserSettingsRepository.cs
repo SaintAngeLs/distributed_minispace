@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Students.Core.Repositories
 {
     public interface IUserSettingsRepository
     {
-        Task<UserSettings> GetUserSettingsAsync(Guid studentId);
+        Task<UserSettings> GetUserSettingsAsync(Guid userId);
         Task AddUserSettingsAsync(UserSettings userSettings);
         Task UpdateUserSettingsAsync(UserSettings userSettings);
     }

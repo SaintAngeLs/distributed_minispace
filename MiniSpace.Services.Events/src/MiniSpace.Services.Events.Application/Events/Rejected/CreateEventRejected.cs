@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MiniSpace.Services.Events.Core.Entities;
 

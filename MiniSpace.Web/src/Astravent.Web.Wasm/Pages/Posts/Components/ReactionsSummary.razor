@@ -1,0 +1,22 @@
+@using Astravent.Web.Wasm.DTO
+
+<MudGrid Class="mt-2" GutterSize="0" AlignItems="Center" Spacing="3">
+    @foreach (var reaction in Summary.ReactionsWithCounts.OrderByDescending(r => r.Value))
+    {
+        <MudItem Class="d-flex align-center">
+            <MudIcon Icon="@(reaction.Key.GetReactionIcon())" Class="mr-1" />
+            <MudText Typo="Typo.overline">
+                @reaction.Value
+            </MudText>
+        </MudItem>
+    }
+    <MudItem Class="ml-2">
+        <MudText Typo="Typo.subtitle2">
+            Total: @Summary.NumberOfReactions
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public ReactionsSummaryDto Summary { get; set; }
+}

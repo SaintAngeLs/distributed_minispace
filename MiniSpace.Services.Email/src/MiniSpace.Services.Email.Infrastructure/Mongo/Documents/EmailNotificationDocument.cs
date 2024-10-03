@@ -1,4 +1,4 @@
-using Convey.Types;
+using Paralax.Types;
 using MiniSpace.Services.Email.Core.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;

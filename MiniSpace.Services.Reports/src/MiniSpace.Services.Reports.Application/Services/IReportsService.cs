@@ -1,11 +1,12 @@
 ﻿using MiniSpace.Services.Reports.Application.Commands;
 using MiniSpace.Services.Reports.Application.DTO;
+using MiniSpace.Services.Reports.Application.Queries;
 using MiniSpace.Services.Reports.Core.Wrappers;
 
 namespace MiniSpace.Services.Reports.Application.Services
 {
     public interface IReportsService
     {
-        Task<PagedResponse<IEnumerable<ReportDto>>> BrowseReportsAsync(SearchReports command);
+        Task<PagedResponse<ReportDto>> BrowseReportsAsync(SearchReports query);
     }
 }

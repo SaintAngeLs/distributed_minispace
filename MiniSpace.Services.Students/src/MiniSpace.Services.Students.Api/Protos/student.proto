@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option csharp_namespace = "MiniSpace.Services.Students.Grpc";
+
+service StudentService {
+  rpc GetStudent (GetStudentRequest) returns (StudentResponse);
+  rpc GetPaginatedStudents (GetPaginatedStudentsRequest) returns (GetPaginatedStudentsResponse);
+}
+
+message GetStudentRequest {
+  string student_id = 1;
+}
+
+message StudentResponse {
+  string student_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string profile_image_url = 5;
+  string description = 6;
+}
+
+message GetPaginatedStudentsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message GetPaginatedStudentsResponse {
+  repeated StudentResponse students = 1;
+  int32 total_count = 2;
+  int32 page_size = 3;
+  int32 current_page = 4;
+  string next_page_url = 5;
+  string prev_page_url = 6;
+}

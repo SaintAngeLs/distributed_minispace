@@ -1,0 +1,26 @@
+﻿@using Radzen
+@inject Radzen.DialogService DialogService
+
+@if (!string.IsNullOrEmpty(Base64Image))
+{
+    <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto" >
+        <RadzenImage Path="@(GetImage())" AlternateText="base64 image" style="max-width: 100%; max-height: 100%;" 
+                     class="rz-m-auto"/>
+    </RadzenStack>
+}
+
+@code {
+    [Parameter]
+    public string Base64Image { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        StateHasChanged();
+    }
+    
+    private string GetImage()
+    {
+        return $"data:image/webp;base64,{Base64Image}";
+    }
+}

@@ -1,5 +1,5 @@
 using System.Net.Mime;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using Microsoft.AspNetCore.Connections;
 using MiniSpace.Services.Reactions.Core.Entities;
 

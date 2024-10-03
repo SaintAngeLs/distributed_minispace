@@ -14,5 +14,6 @@ namespace MiniSpace.Services.Identity.Application.DTO
         public Guid UserId { get; set; }
         public bool IsOnline { get; set; }
         public string DeviceType { get; set; }
+        public string IpAddress { get; set; } 
     }
 }

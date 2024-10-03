@@ -1,5 +1,5 @@
 using System;
-using Convey.Types;
+using Paralax.Types;
 using MiniSpace.Services.Events.Core.Entities;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents

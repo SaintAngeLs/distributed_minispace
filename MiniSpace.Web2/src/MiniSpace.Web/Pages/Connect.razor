@@ -1,0 +1,57 @@
+@using MudBlazor
+@inject NavigationManager NavigationManager
+
+<div class="connect-section">
+    <video autoplay loop muted class="video-background">
+        <source src="videos/video-component/video_1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <MudContainer MaxWidth="MaxWidth.False" Class="connect-container" Style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; position: relative; z-index: 2;">
+        <MudText Typo="Typo.h3" Class="connect-title" Style="color: white; margin-bottom: 2rem; animation: fadeInUp 1s ease-out;">
+            Connect with Your World
+        </MudText>
+        <MudText Typo="Typo.body1" Style="color: white; max-width: 600px; text-align: center; margin-bottom: 2rem; animation: fadeInUp 1s ease-out; animation-delay: 0.5s;">
+            Join MiniSpace today and start exploring, sharing, and connecting like never before. Create your account or login to dive into the experience.
+        </MudText>
+        <div class="button-group" Style="animation: fadeInUp 1s ease-out; animation-delay: 1s;">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="mud-button-connect" OnClick="@GoToRegister">
+                Create Account
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Large" Class="mud-button-connect" OnClick="@GoToLogin">
+                Login
+            </MudButton>
+        </div>
+    </MudContainer>
+</div>
+
+@code {
+    private void GoToRegister()
+    {
+        NavigationManager.NavigateTo("/signup");
+    }
+
+    private void GoToLogin()
+    {
+        NavigationManager.NavigateTo("/signin");
+    }
+}
+
+<style>
+    .connect-section {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .video-background {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: 1;
+    }
+</style>

@@ -5,6 +5,6 @@
         Event,
         Post,
         Comment,
-        StudentProfile
+        UserProfile
     }
 }

@@ -1,4 +1,4 @@
-using Convey.Types;
+using Paralax.Types;
 using MiniSpace.Services.Students.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -33,5 +33,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public string PhoneNumber { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
+
+        public bool IsOnline { get; set; }               
+        public string DeviceType { get; set; }
+        public DateTime? LastActive { get; set; } 
     }
 }

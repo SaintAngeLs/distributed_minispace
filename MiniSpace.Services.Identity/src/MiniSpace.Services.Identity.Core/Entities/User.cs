@@ -22,6 +22,9 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public string DeviceType { get; private set; }     
         public DateTime? LastActive { get; private set; }  
 
+        // Private setter to prevent direct assignment
+        public string IpAddress { get; private set; } 
+
         public User(Guid id, string name, string email, string password, Role role, DateTime createdAt,
             IEnumerable<string> permissions = null)
         {
@@ -55,7 +58,8 @@ namespace MiniSpace.Services.Identity.Core.Entities
 
             IsOnline = false;
             DeviceType = null;
-            LastActive = DateTime.UtcNow;  
+            LastActive = DateTime.UtcNow;
+            IpAddress = null;  // IpAddress starts as null
         }
 
         internal User(Guid id, string name, string email, string password, Role role, DateTime createdAt,
@@ -70,13 +74,21 @@ namespace MiniSpace.Services.Identity.Core.Entities
             TwoFactorSecret = twoFactorSecret;
         }
 
+        public void SetOnlineStatus(bool isOnline, string deviceType, string ipAddress)
+        {
+            IsOnline = isOnline;
+            DeviceType = isOnline ? deviceType : null;  
+            LastActive = DateTime.UtcNow;
+            SetIpAddress(ipAddress); 
+        }
+
         public void SetOnlineStatus(bool isOnline, string deviceType)
         {
             IsOnline = isOnline;
             DeviceType = isOnline ? deviceType : null;  
             LastActive = DateTime.UtcNow;
         }
-
+        
         public void UpdateLastActive()
         {
             LastActive = DateTime.UtcNow;
@@ -149,6 +161,17 @@ namespace MiniSpace.Services.Identity.Core.Entities
         public void SetTwoFactorSecret(string secret)
         {
             TwoFactorSecret = secret;
+        }
+
+        // New method to set the IP address, throwing an exception if it's invalid
+        public void SetIpAddress(string ipAddress)
+        {
+            if (string.IsNullOrWhiteSpace(ipAddress))
+            {
+                throw new InvalidIpAddressException("IP address cannot be null or empty.");
+            }
+
+            IpAddress = ipAddress;
         }
     }
 

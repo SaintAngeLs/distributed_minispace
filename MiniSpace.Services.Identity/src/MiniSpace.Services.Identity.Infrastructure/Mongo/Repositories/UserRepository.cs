@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Identity.Core.Entities;
 using MiniSpace.Services.Identity.Core.Repositories;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;

@@ -1,5 +1,5 @@
-﻿using Convey.CQRS.Events;
-using Convey.MessageBrokers;
+﻿using Paralax.CQRS.Events;
+using Paralax.MessageBrokers;
 using System;
 
 namespace MiniSpace.Services.Students.Application.Events.External

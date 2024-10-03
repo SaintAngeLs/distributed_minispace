@@ -4,7 +4,7 @@ using MongoDB.Driver;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Core.Repositories;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 {

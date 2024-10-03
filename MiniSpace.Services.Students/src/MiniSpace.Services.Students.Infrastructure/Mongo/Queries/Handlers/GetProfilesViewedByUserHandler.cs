@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Core.Repositories;
 using MiniSpace.Services.Students.Core.Wrappers;

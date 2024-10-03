@@ -6,6 +6,6 @@ namespace MiniSpace.Services.Events.Application.DTO
     [ExcludeFromCodeCoverage]
     public class ParticipantDto
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

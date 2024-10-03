@@ -1,4 +1,4 @@
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 
 namespace MiniSpace.Services.Email.Application.Queries
 {

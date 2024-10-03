@@ -1,0 +1,162 @@
+@page "/organizations/my"
+@inject IOrganizationsService OrganizationsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IIdentityService IdentityService
+@using MudBlazor
+@using MiniSpace.Web.DTO.Organizations
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
+
+<AuthWrapper>
+    <MudContainer>
+        <MudText Typo="Typo.h5" GutterBottom="true">My Organizations</MudText>
+
+        <MudPaper Elevation="1" Class="pa-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="CreateOrganization">
+                Create Organization
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.AccountTree" OnClick="ViewTree">
+                View Tree
+            </MudButton>
+
+            <MudGrid Class="mt-4">
+                @if (_isLoading)
+                {
+                    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                }
+                else if (_organizations != null && _organizations.Any())
+                {
+                    @foreach (var organization in _organizations)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Class="ma-2">
+                                <MudCardContent>
+                                    <MudImage Src="@GetOrganizationBanner(organization.BannerUrl)" Alt="Organization Banner" Style="width: 100%; height: 180px;" />
+                                    <MudAvatar Image="@GetOrganizationImage(organization.ImageUrl)" Size="Size.Large" Class="avatar-overlay" />
+                                    <MudText Typo="Typo.h6" Class="mt-4">@organization.Name</MudText>
+                                    <MudText Typo="Typo.body2">@organization.Description</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Primary">Users: @organization.UserCount</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Outlined" OnClick="() => NavigateToOrganization(organization.Id)">
+                                        View
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    }
+                }
+                else
+                {
+                    <MudText>No organizations found.</MudText>
+                }
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudPagination @bind-SelectedPage="_currentPage" PageSizeOptions="@pageSizeOptions" PageSize="@_pageSize" 
+                           TotalItems="@_totalItems" OnPageChanged="OnPageChanged" />
+
+            <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">
+                Page @_currentPage of @_totalPages
+            </MudText>
+        </MudPaper>
+    </MudContainer>
+</AuthWrapper>
+
+@code {
+    private bool _isLoading = true;
+    private List<OrganizationDto> _organizations = new List<OrganizationDto>();
+    private int _currentPage = 1;
+    private int _pageSize = 10;
+    private int _totalPages;
+    private int _totalItems;
+
+    // Define pageSizeOptions array
+    private readonly int[] pageSizeOptions = { 6, 10, 15, 20 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                await LoadOrganizationsAsync();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load organizations: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task LoadOrganizationsAsync()
+    {
+        try
+        {
+            var userId = IdentityService.GetCurrentUserId();
+            var pagedOrganizations = await OrganizationsService.GetPaginatedUserOrganizationsAsync(userId, _currentPage, _pageSize);
+
+            _organizations = pagedOrganizations?.Items?.ToList() ?? new List<OrganizationDto>();
+            _totalPages = pagedOrganizations?.TotalPages ?? 0;
+            _totalItems = pagedOrganizations?.TotalItems ?? 0;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading organizations: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task OnPageChanged(int page)
+    {
+        _currentPage = page;
+        await LoadOrganizationsAsync();
+    }
+
+    private string GetOrganizationImage(string imageUrl)
+    {
+        return string.IsNullOrEmpty(imageUrl)
+            ? "/images/default_organization_profile_image.png"
+            : imageUrl;
+    }
+
+    private string GetOrganizationBanner(string bannerUrl)
+    {
+        return string.IsNullOrEmpty(bannerUrl)
+            ? "/images/default_banner_image.png"
+            : bannerUrl;
+    }
+
+    private void CreateOrganization()
+    {
+        NavigationManager.NavigateTo("/organizations/create");
+    }
+
+    private void NavigateToOrganization(Guid organizationId)
+    {
+        NavigationManager.NavigateTo($"/organizations/details/{organizationId}");
+    }
+    
+    private void ViewTree()
+    {
+        NavigationManager.NavigateTo("/organizations/tree");
+    }
+}
