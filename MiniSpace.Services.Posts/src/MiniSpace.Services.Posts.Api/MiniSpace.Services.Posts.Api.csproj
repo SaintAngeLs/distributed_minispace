@@ -9,18 +9,18 @@
   <ItemGroup>
     <PackageReference Include="Paralax" Version="*" />
     <PackageReference Include="Paralax.Logging" Version="*" />
-    <!-- <PackageReference Include="Paralax.WebApi" Version="*" /> -->
-    <!-- <PackageReference Include="Paralax.CQRS.WebApi" Version="*" /> -->
+    <PackageReference Include="Paralax.WebApi" Version="*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MiniSpace.Services.Posts.Infrastructure\MiniSpace.Services.Posts.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <ProjectReference Include="../../../Paralax/src/Paralax.CQRS.WebApi/src/Paralax.CQRS.WebApi/Paralax.CQRS.WebApi.csproj" AdditionalProperties="TargetFramework=net8.0" />
     <ProjectReference Include="../../../Paralax/src/Paralax.WebApi/src/Paralax.WebApi/Paralax.WebApi.csproj" AdditionalProperties="TargetFramework=net8.0" />
-  </ItemGroup>
+  </ItemGroup> -->
   
 
 </Project>
