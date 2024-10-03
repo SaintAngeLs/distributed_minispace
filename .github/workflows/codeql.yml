@@ -25,6 +25,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
+      - name: Set globalization invariant mode
+        run: |
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
