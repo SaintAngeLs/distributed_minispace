@@ -131,7 +131,7 @@ The Complex System Diagram offers a detailed view of MiniSpace's infrastructure 
 - **Components**: [MudBlazor](https://mudblazor.com/) - Enhances the user interface with modern and responsive design elements.
 
 ## 💻 Backend
-- **Framework**: Built with [Convey](https://github.com/snatch-dev/Convey), a framework optimized for .NET microservices.
+- **Framework**: Built with [Paralax](https://github.com/itsharppro/Paralax), a framework optimized for .NET microservices.
 - **Architecture**: Microservice architecture, orchestrated-choreographical hybrid Saga pattern, utilizing the CQRS pattern with complex event sourcing to enhance performance and scalability.
 - **Services**:
   ### ✅ Identity Service
@@ -171,7 +171,7 @@ The Complex System Diagram offers a detailed view of MiniSpace's infrastructure 
   Configured to handle email communications, including notifications, event updates, and user communications via the event bus of the notification service.
 
   ### ✅ API Gateway
-  Uses [Ntrada](https://github.com/snatch-dev/Ntrada) for efficient routing and management of requests across multiple services through a unified entry point.
+  Uses [Nuar](https://github.com/itsharppro/Nuar) for efficient routing and management of requests across multiple services through a unified entry point.
 
 ## 🛠️ Infrastructure
 - [**MongoDB**](https://www.mongodb.com/products/platform/cloud) - NoSQL, document-oriented database for scalable storage.
