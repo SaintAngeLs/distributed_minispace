@@ -11,7 +11,7 @@
     <PackageReference Include="Paralax.Auth" Version="*" />
     <PackageReference Include="Paralax.CQRS.Queries" Version="*" />
     <PackageReference Include="Paralax.Discovery.Consul" Version="*" />
-    <PackageReference Include="Paralax.HTTP" Version="*" />
+    <!-- <PackageReference Include="Paralax.HTTP" Version="*" /> -->
     <PackageReference Include="Paralax.LoadBalancing.Fabio" Version="*" />
     <PackageReference Include="Paralax.Logging" Version="*" />
     <PackageReference Include="Paralax.CQRS.Logging" Version="*" />
@@ -27,7 +27,7 @@
     <PackageReference Include="Paralax.Security" Version="*" />
     <PackageReference Include="Paralax.Tracing.Jaeger" Version="*" />
     <PackageReference Include="Paralax.Tracing.Jaeger.RabbitMQ" Version="*" />
-    <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
+    <!-- <PackageReference Include="Paralax.CQRS.WebApi" Version="*" /> -->
     <PackageReference Include="Paralax.WebApi.Security" Version="*" />
     <PackageReference Include="Paralax.WebApi.Swagger" Version="*" />
     <PackageReference Include="Microsoft.ML" Version="2.0.0" />
@@ -42,9 +42,9 @@
     <ProjectReference Include="..\MiniSpace.Services.Posts.Application\MiniSpace.Services.Posts.Application.csproj" />
   </ItemGroup>
 
-  <!-- <ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="../../../Paralax/src/Paralax.HTTP/src/Paralax.HTTP/Paralax.HTTP.csproj" AdditionalProperties="TargetFramework=net8.0" />
      <ProjectReference Include="../../../Paralax/src/Paralax.CQRS.WebApi/src/Paralax.CQRS.WebApi/Paralax.CQRS.WebApi.csproj" AdditionalProperties="TargetFramework=net8.0" />
-  </ItemGroup> -->
+  </ItemGroup>
 
 </Project>
