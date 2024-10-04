@@ -75,13 +75,12 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
             if (requesterId == Guid.Empty)
             {
-                return; // Optionally handle the case where the requester ID is invalid
+                return;
             }
 
             await _httpClient.DeleteAsync($"friends/{requesterId}/{friendId}/remove");
         }
 
-        // New method to get all students without pagination or filters
         public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
         {
             if (_httpClient == null) throw new InvalidOperationException("HTTP client is not initialized.");
@@ -93,7 +92,6 @@ namespace Astravent.Web.Wasm.Areas.Friends
             return await _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
         }
 
-        // New method to get paginated students with optional search term
         public async Task<PaginatedResponseDto<StudentDto>> GetAllStudentsAsync(int page = 1, int pageSize = 10, string searchTerm = null)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();

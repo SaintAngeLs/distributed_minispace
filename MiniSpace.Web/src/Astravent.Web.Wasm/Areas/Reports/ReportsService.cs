@@ -21,10 +21,11 @@ namespace Astravent.Web.Wasm.Areas.Reports
             _identityService = identityService;
         }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> SearchReportsAsync(
+        public async Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> SearchReportsAsync(
             IEnumerable<string> contextTypes, IEnumerable<string> states, Guid reviewerId, PageableDto pageable)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
 
             var queryParams = new List<string>();
 
@@ -57,52 +58,59 @@ namespace Astravent.Web.Wasm.Areas.Reports
 
             var queryString = string.Join("&", queryParams);
 
-            return _httpClient.GetAsync<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>>(
+            return await _httpClient.GetAsync<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>>(
                 $"reports/search?{queryString}");
         }
 
-        public Task<HttpResponse<object>> CreateReportAsync(CreateReportCommand command)
+        public async Task<HttpResponse<object>> CreateReportAsync(CreateReportCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("reports", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>("reports", command);
         }
 
-        public Task DeleteReportAsync(Guid reportId)
+        public async Task DeleteReportAsync(Guid reportId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"reports/{reportId}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"reports/{reportId}");
         }
 
-        public Task<HttpResponse<object>> CancelReportAsync(Guid reportId)
+        public async Task<HttpResponse<object>> CancelReportAsync(Guid reportId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>($"reports/{reportId}/cancel", new { reportId });
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>($"reports/{reportId}/cancel", new { reportId });
         }
 
-        public Task<HttpResponse<object>> StartReportReviewAsync(Guid reportId, Guid reviewerId)
+        public async Task<HttpResponse<object>> StartReportReviewAsync(Guid reportId, Guid reviewerId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>($"reports/{reportId}/start-review",
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>($"reports/{reportId}/start-review",
                 new { reportId, reviewerId });
         }
 
-        public Task<HttpResponse<object>> ResolveReportAsync(Guid reportId)
+        public async Task<HttpResponse<object>> ResolveReportAsync(Guid reportId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>($"reports/{reportId}/resolve", new { reportId });
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>($"reports/{reportId}/resolve", new { reportId });
         }
 
-        public Task<HttpResponse<object>> RejectReportAsync(Guid reportId)
+        public async Task<HttpResponse<object>> RejectReportAsync(Guid reportId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>($"reports/{reportId}/reject", new { reportId });
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>($"reports/{reportId}/reject", new { reportId });
         }
 
-        public Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> GetStudentReportsAsync(Guid studentId,
+        public async Task<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>> GetStudentReportsAsync(Guid studentId,
             int page, int results)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>>(
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<HttpResponse<PagedResponseDto<IEnumerable<ReportDto>>>>(
                 $"reports/students/{studentId}?page={page}&results={results}");
         }
     }

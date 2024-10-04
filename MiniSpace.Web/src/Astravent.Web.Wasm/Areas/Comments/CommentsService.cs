@@ -22,14 +22,13 @@ namespace Astravent.Web.Wasm.Areas.Comments
             _identityService = identityService;
         }
 
-        public Task<PagedResponseDto<CommentDto>> SearchRootCommentsAsync(SearchRootCommentsCommand command)
+        public async Task<PagedResponseDto<CommentDto>> SearchRootCommentsAsync(SearchRootCommentsCommand command)
         {
             var queryString = ToQueryString(command);
 
-            // Log the query string to the console
             Console.WriteLine($"Sending request with query string: comments/search{queryString}");
 
-            return _httpClient.GetAsync<PagedResponseDto<CommentDto>>($"comments/search{queryString}");
+            return await _httpClient.GetAsync<PagedResponseDto<CommentDto>>($"comments/search{queryString}");
         }
 
 
@@ -39,7 +38,6 @@ namespace Astravent.Web.Wasm.Areas.Comments
             query["ContextId"] = command.ContextId.ToString();
             query["CommentContext"] = command.CommentContext;
 
-            // Flatten the PageableDto into individual query parameters
             if (command.Pageable != null)
             {
                 query["Page"] = command.Pageable.Page.ToString();
@@ -47,7 +45,6 @@ namespace Astravent.Web.Wasm.Areas.Comments
                 
                 if (command.Pageable.Sort != null)
                 {
-                    // Pass SortBy as a comma-separated list
                     if (command.Pageable.Sort.SortBy != null && command.Pageable.Sort.SortBy.Any())
                     {
                         query["SortBy"] = string.Join(",", command.Pageable.Sort.SortBy);
@@ -65,39 +62,44 @@ namespace Astravent.Web.Wasm.Areas.Comments
             return _httpClient.PostAsync<SearchSubCommentsCommand, PagedResponseDto<CommentDto>>("comments/search", command);
         }
         
-        public Task<CommentDto> GetCommentAsync(Guid commentId)
+        public async Task<CommentDto> GetCommentAsync(Guid commentId)
         {
-            return _httpClient.GetAsync<CommentDto>($"comments/{commentId}");
+            return await _httpClient.GetAsync<CommentDto>($"comments/{commentId}");
         }
         
-        public Task<HttpResponse<object>> CreateCommentAsync(CreateCommentCommand command)
+        public async Task<HttpResponse<object>> CreateCommentAsync(CreateCommentCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("comments", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>("comments", command);
         }
 
-        public Task<HttpResponse<object>> UpdateCommentAsync(UpdateCommentCommand command)
+        public async Task<HttpResponse<object>> UpdateCommentAsync(UpdateCommentCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"comments/{command.CommentId}", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PutAsync<object, object>($"comments/{command.CommentId}", command);
         }
 
-        public Task DeleteCommentAsync(Guid commentId)
+        public async Task DeleteCommentAsync(Guid commentId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"comments/{commentId}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"comments/{commentId}");
         }
 
-        public Task<HttpResponse<object>> AddLikeAsync(AddLikeDto command)
+        public async Task<HttpResponse<object>> AddLikeAsync(AddLikeDto command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>($"comments/{command.CommentId}/like", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>($"comments/{command.CommentId}/like", command);
         }
 
-        public Task DeleteLikeAsync(Guid commentId)
+        public async Task DeleteLikeAsync(Guid commentId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"comments/{commentId}/like");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"comments/{commentId}/like");
         }
     }    
 }

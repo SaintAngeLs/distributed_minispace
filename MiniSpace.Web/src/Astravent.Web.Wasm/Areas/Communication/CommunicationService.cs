@@ -52,31 +52,36 @@ namespace Astravent.Web.Wasm.Areas.Communication
 
         public async Task<ChatDto> GetChatByIdAsync(Guid chatId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<ChatDto>($"communication/chats/{chatId}");
         }
 
         public async Task<IEnumerable<MessageDto>> GetMessagesForChatAsync(Guid chatId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             return await _httpClient.GetAsync<IEnumerable<MessageDto>>($"communication/chats/{chatId}/messages");
         }
 
         public async Task<HttpResponse<Guid>> CreateChatAsync(CreateChatCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             return await _httpClient.PostAsync<CreateChatCommand, Guid>("communication/chats", command);
         }
 
         public async Task AddUserToChatAsync(Guid chatId, Guid userId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             await _httpClient.PutAsync<object>($"communication/chats/{chatId}/users", new { chatId, userId });
         }
 
          public async Task DeleteChatAsync(Guid chatId, Guid userId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             var command = new DeleteChatCommand(chatId, userId); 
             await _httpClient.DeleteAsync($"communication/chats/{chatId}/{userId}", command); 
         }
@@ -84,19 +89,22 @@ namespace Astravent.Web.Wasm.Areas.Communication
 
         public async Task<HttpResponse<object>> SendMessageAsync(SendMessageCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             return await _httpClient.PostAsync<SendMessageCommand, object>($"communication/chats/{command.ChatId}/messages", command);
         }
 
         public async Task<HttpResponse<object>> UpdateMessageStatusAsync(UpdateMessageStatusCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             return await _httpClient.PutAsync<UpdateMessageStatusCommand, object>($"communication/chats/{command.ChatId}/messages/{command.MessageId}/status", command);
         }
 
         public async Task DeleteMessageAsync(Guid chatId, Guid messageId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
             await _httpClient.DeleteAsync($"communication/chats/{chatId}/messages/{messageId}");
         }
     }

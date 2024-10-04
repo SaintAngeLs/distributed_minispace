@@ -31,27 +31,31 @@ namespace Astravent.Web.Wasm.Areas.Posts
             return _httpClient.GetAsync<PostDto>($"posts/{postId}");
         }
         
-        public Task ChangePostStateAsync(Guid postId, string state, DateTime publishDate)
+        public async Task ChangePostStateAsync(Guid postId, string state, DateTime publishDate)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync($"posts/{postId}/state/{state}", new {postId, state, publishDate});
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.PutAsync($"posts/{postId}/state/{state}", new {postId, state, publishDate});
         }
         
-        public Task<HttpResponse<object>> CreatePostAsync(CreatePostCommand command)
+        public async Task<HttpResponse<object>> CreatePostAsync(CreatePostCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<CreatePostCommand, object>("posts", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<CreatePostCommand, object>("posts", command);
         }
 
-        public Task<HttpResponse<object>> RepostPostAsync(RepostCommand command)
+        public async Task<HttpResponse<object>> RepostPostAsync(RepostCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<RepostCommand, object>("posts/repost", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<RepostCommand, object>("posts/repost", command);
         }
         
         public async Task<HttpResponse<PagedResponseDto<PostDto>>> SearchPostsAsync(SearchPosts searchPosts)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
 
             var query = HttpUtility.ParseQueryString(string.Empty);
             if (searchPosts.UserId.HasValue)
@@ -171,21 +175,23 @@ namespace Astravent.Web.Wasm.Areas.Posts
 
 
 
-        public Task DeletePostAsync(Guid postId)
+        public async Task DeletePostAsync(Guid postId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"posts/{postId}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"posts/{postId}");
         }
 
-        public Task<IEnumerable<PostDto>> GetPostsAsync(Guid eventId)
+        public async Task<IEnumerable<PostDto>> GetPostsAsync(Guid eventId)
         {
-            return _httpClient.GetAsync<IEnumerable<PostDto>>($"posts?eventId={eventId}");
+            return await _httpClient.GetAsync<IEnumerable<PostDto>>($"posts?eventId={eventId}");
         }
 
-        public Task<HttpResponse<object>> UpdatePostAsync(UpdatePostCommand command)
+        public async Task<HttpResponse<object>> UpdatePostAsync(UpdatePostCommand command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<UpdatePostCommand, object>($"posts/{command.PostId}", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PutAsync<UpdatePostCommand, object>($"posts/{command.PostId}", command);
         }
     }
 }

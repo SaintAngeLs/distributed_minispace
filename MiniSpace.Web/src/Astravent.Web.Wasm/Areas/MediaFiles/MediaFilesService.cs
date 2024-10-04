@@ -18,17 +18,17 @@ namespace Astravent.Web.Wasm.Areas.MediaFiles
             _identityService = identityService;
         }
         
-        public Task<FileDto> GetFileAsync(Guid fileId)
+        public async Task<FileDto> GetFileAsync(Guid fileId)
         {
-            return _httpClient.GetAsync<FileDto>($"media-files/{fileId}");
+            return await _httpClient.GetAsync<FileDto>($"media-files/{fileId}");
         }
         
-        public Task<FileDto> GetOriginalFileAsync(Guid fileId)
+        public async Task<FileDto> GetOriginalFileAsync(Guid fileId)
         {
-            return _httpClient.GetAsync<FileDto>($"media-files/{fileId}/original");
+            return await _httpClient.GetAsync<FileDto>($"media-files/{fileId}/original");
         }
 
-        public Task<HttpResponse<FileUploadResponseDto>> UploadMediaFileAsync(
+        public async Task<HttpResponse<FileUploadResponseDto>> UploadMediaFileAsync(
             Guid sourceId, 
             string sourceType, 
             Guid uploaderId, 
@@ -36,7 +36,8 @@ namespace Astravent.Web.Wasm.Areas.MediaFiles
             string fileContentType, 
             byte[] fileData)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
 
             var requestBody = new
             {
@@ -49,10 +50,10 @@ namespace Astravent.Web.Wasm.Areas.MediaFiles
                 FileData = fileData
             };
 
-            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
+            return await _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
         }
 
-        public Task<HttpResponse<GeneralFileUploadResponseDto>> UploadFileAsync(
+        public async Task<HttpResponse<GeneralFileUploadResponseDto>> UploadFileAsync(
             Guid sourceId, 
             string sourceType, 
             Guid uploaderId, 
@@ -60,7 +61,8 @@ namespace Astravent.Web.Wasm.Areas.MediaFiles
             string fileContentType, 
             byte[] fileData)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
 
             var requestBody = new
             {
@@ -73,17 +75,18 @@ namespace Astravent.Web.Wasm.Areas.MediaFiles
                 FileData = fileData
             };
 
-            return _httpClient.PostAsync<object, GeneralFileUploadResponseDto>("media-files/files", requestBody);
+            return await _httpClient.PostAsync<object, GeneralFileUploadResponseDto>("media-files/files", requestBody);
         }
         
-        public Task DeleteMediaFileAsync(string fileUrl)
+        public async Task DeleteMediaFileAsync(string fileUrl)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", 
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"media-files/delete/{Uri.EscapeDataString(fileUrl)}", 
             new { MediaFileUrl = fileUrl });
         }
 
-        public Task<HttpResponse<FileUploadResponseDto>> UploadOrganizationImageAsync(
+        public async Task<HttpResponse<FileUploadResponseDto>> UploadOrganizationImageAsync(
             Guid organizationId,
             string sourceType,
             Guid uploaderId,
@@ -91,7 +94,8 @@ namespace Astravent.Web.Wasm.Areas.MediaFiles
             string fileContentType,
             byte[] fileData)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
 
             var requestBody = new
             {
@@ -104,7 +108,7 @@ namespace Astravent.Web.Wasm.Areas.MediaFiles
                 FileData = fileData
             };
 
-            return _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
+            return await _httpClient.PostAsync<object, FileUploadResponseDto>("media-files", requestBody);
         }
 
       

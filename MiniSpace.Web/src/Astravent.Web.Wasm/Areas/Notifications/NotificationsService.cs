@@ -31,18 +31,10 @@ namespace Astravent.Web.Wasm.Areas.Notifications
             _httpClient.SetAccessToken(accessToken);
             var url = $"notifications/{userId}?page={page}&pageSize={pageSize}&sortOrder={sortOrder}";
 
-            // Fetch the paginated response from the server
             var response = await _httpClient.GetAsync<PaginatedResponseDto<NotificationDto>>(url);
 
             return response;
         }
-
-        // public async Task<NotificationDto> CreateNotificationAsync(NotificationDto notification)
-        // {
-        //     string accessToken = await _identityService.GetAccessTokenAsync();
-        //     _httpClient.SetAccessToken(accessToken);
-        //     return await _httpClient.PostAsync<NotificationDto, NotificationDto>("notifications", notification);
-        // }
 
         public async Task UpdateNotificationStatusAsync(Guid userId, Guid notificationId, string status)
         {
@@ -96,18 +88,15 @@ namespace Astravent.Web.Wasm.Areas.Notifications
             await _httpClient.PostAsync<NotificationToUsersDto, HttpResponse<NotificationToUsersDto>>(url, notification);
         }
 
-         public void AddConnectedUser(Guid userId)
+        public void AddConnectedUser(Guid userId)
         {
             ConnectedUsers[userId] = true;
         }
 
-        // Method to remove a user from the connected users list
         public void RemoveConnectedUser(Guid userId)
         {
             ConnectedUsers.TryRemove(userId, out _);
         }
-
-        // Method to check if a user is connected
         public Task<bool> IsUserConnectedAsync(Guid userId)
         {
             return Task.FromResult(ConnectedUsers.ContainsKey(userId));

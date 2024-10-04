@@ -12,9 +12,20 @@
 @inject IStudentsService StudentsService
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <AuthWrapper>
     <MudContainer Class="account-container">
+
+         @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Loading, please wait...</MudText>
+            </div>
+        }
+        else
+        {
     <div class="breadcrumbs-container">
         <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
     </div>
@@ -100,6 +111,7 @@
                 </MudPaper>
             </MudItem>
         </MudGrid>
+        }
     </MudContainer>
 </AuthWrapper>
 
@@ -116,6 +128,7 @@
 
     .content-panel {
         padding: 20px;
+        min-height: 80vh;
     }
 
     .mud-tabs {
@@ -172,6 +185,7 @@
     private bool isLoading = true;
     private bool isUploading = false;
     private IBrowserFile file;
+    private bool pageInitialized = false;
     private long maxFileSize = 10 * 1024 * 1024;
     private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
@@ -182,48 +196,27 @@
 
     protected override async Task OnInitializedAsync()
     {
-        isLoading = true;
-        StateHasChanged();
+       var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-        try
+        if (user.Identity.IsAuthenticated)
         {
-            await IdentityService.InitializeAuthenticationState();
+            Console.WriteLine($"User authenticated for the account component: {user.Identity.IsAuthenticated}");
+            
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
 
-            if (IdentityService.IsAuthenticated)
-            {
-                var studentId = IdentityService.GetCurrentUserId();
-                studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
-                var studentDto = studentWithGalleryImagesDto.Student;
+            studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+            notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
+            availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
+            selectedLanguages = new HashSet<string>(studentWithGalleryImagesDto.Student.Languages);
+            selectedInterests = new HashSet<string>(studentWithGalleryImagesDto.Student.Interests);
 
-                var studentDtoJson = JsonSerializer.Serialize(studentDto, new JsonSerializerOptions { WriteIndented = true });
-                Console.WriteLine($"StudentDto object: {studentDtoJson}");
-
-                if (studentDto.EmailNotifications)
-                {
-                    notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
-                    Console.WriteLine(JsonSerializer.Serialize(notificationPreferencesDto));
-                }
-                isTwoFactorEnabled = studentDto.IsTwoFactorEnabled;
-                twoFactorSecret = studentDto.IsTwoFactorEnabled ? studentDto.TwoFactorSecret : null;
-
-                availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
-
-                selectedLanguages = new HashSet<string>(studentDto.Languages); 
-                selectedInterests = new HashSet<string>(studentDto.Interests);
-            }
-            else
-            {
-                NavigationManager.NavigateTo("/login");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        finally
-        {
+            pageInitialized = true;
             isLoading = false;
-            StateHasChanged();
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
         }
     }
 

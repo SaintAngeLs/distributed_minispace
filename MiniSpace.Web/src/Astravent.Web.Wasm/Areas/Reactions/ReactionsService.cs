@@ -20,15 +20,16 @@ namespace Astravent.Web.Wasm.Areas.Reactions
             _identityService = identityService;
         }
         
-        public Task<IEnumerable<ReactionDto>> GetReactionsAsync(Guid contentId, ReactionContentType contentType)
+        public async Task<IEnumerable<ReactionDto>> GetReactionsAsync(Guid contentId, ReactionContentType contentType)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.GetAsync<IEnumerable<ReactionDto>>($"reactions?contentId={contentId}&contentType={contentType}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.GetAsync<IEnumerable<ReactionDto>>($"reactions?contentId={contentId}&contentType={contentType}");
         }
 
-        public Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType)
+        public async Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid contentId, ReactionContentType contentType)
         {
-            return _httpClient.GetAsync<ReactionsSummaryDto>($"reactions/summary?contentId={contentId}&contentType={contentType}");
+            return await _httpClient.GetAsync<ReactionsSummaryDto>($"reactions/summary?contentId={contentId}&contentType={contentType}");
         }
 
         public async Task<Dictionary<Guid, ReactionsSummaryDto>> GetReactionsSummariesAsync(IEnumerable<Guid> contentIds, ReactionContentType contentType)
@@ -42,24 +43,25 @@ namespace Astravent.Web.Wasm.Areas.Reactions
         }
 
 
-        public Task<HttpResponse<object>> CreateReactionAsync(CreateReactionDto command)
+        public async Task<HttpResponse<object>> CreateReactionAsync(CreateReactionDto command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PostAsync<object, object>("reactions", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PostAsync<object, object>("reactions", command);
         }
 
-        public Task<HttpResponse<object>> UpdateReactionAsync(UpdateReactionDto command)
+        public async Task<HttpResponse<object>> UpdateReactionAsync(UpdateReactionDto command)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.PutAsync<object, object>($"reactions/{command.ReactionId}", command);
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            return await _httpClient.PutAsync<object, object>($"reactions/{command.ReactionId}", command);
         }
 
-
-
-        public Task DeleteReactionAsync(Guid reactionId)
+        public async Task DeleteReactionAsync(Guid reactionId)
         {
-            _httpClient.SetAccessToken(_identityService.JwtDto.AccessToken);
-            return _httpClient.DeleteAsync($"reactions/{reactionId}");
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+            await _httpClient.DeleteAsync($"reactions/{reactionId}");
         }
     }    
 }

@@ -29,8 +29,8 @@ public static class MiniSpaceTheme
             Primary = Colors.Indigo.Darken1,
             Secondary = Colors.Blue.Darken4,
             AppbarBackground = "#1F1F1F", // Dark app bar
-            Background = "#0d0f17", // Very dark background
-            Surface = "#212121", // Slightly lighter surface color
+            Background = "#000", // Very dark background
+            Surface = "#202124", // Slightly lighter surface color
             DrawerBackground = "#1B1B1B", // Dark drawer background
             Dark = "#000000", // Dark drawer background
             DrawerText = Colors.Grey.Lighten2,

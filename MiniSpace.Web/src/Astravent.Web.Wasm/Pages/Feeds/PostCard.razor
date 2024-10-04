@@ -414,10 +414,14 @@
     {
         if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
         {
-            return studentsCache[userId.Value].ProfileImageUrl ?? string.Empty;
+            return !string.IsNullOrEmpty(studentsCache[userId.Value].ProfileImageUrl) 
+                ? studentsCache[userId.Value].ProfileImageUrl 
+                : "images/default_profile_image.webp";
         }
-        return string.Empty;
+        
+        return "images/default_profile_image.webp";
     }
+
 
     private string GetUserName(Guid? userId)
     {

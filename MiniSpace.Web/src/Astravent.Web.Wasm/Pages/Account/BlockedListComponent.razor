@@ -97,7 +97,7 @@
     {
         try
         {
-            var currentUserId = IdentityService.GetCurrentUserId();
+            var currentUserId = await IdentityService.GetCurrentUserIdFromJwtAsync();
             var response = await StudentsService.GetBlockedUsersAsync(currentUserId, 1, 10);
             var blockedUserIds = response.Items.Select(bu => bu.BlockedUserId).ToList();
 
