@@ -1,0 +1,15 @@
+@using MudBlazor
+@code {
+    [Parameter] public int TotalItems { get; set; }
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int PageSize { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+    [Parameter] public int[] PageSizeOptions { get; set; }
+
+    private Task HandlePageChanged(int page)
+    {
+        return OnPageChanged.InvokeAsync(page);
+    }
+}
+
+<MudPagination @bind-SelectedPage="CurrentPage" PageSizeOptions="PageSizeOptions" PageSize="PageSize" TotalItems="TotalItems" OnPageChanged="HandlePageChanged" />

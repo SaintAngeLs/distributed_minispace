@@ -1,0 +1,53 @@
+@using MudBlazor
+@code {
+    [Parameter] public EventCallback OnSearch { get; set; }
+    [Parameter] public string SearchQuery { get; set; }
+    [Parameter] public EventCallback<string> SearchQueryChanged { get; set; }
+    [Parameter] public string SelectedCategory { get; set; }
+    [Parameter] public EventCallback<string> SelectedCategoryChanged { get; set; }
+    [Parameter] public decimal? MinPrice { get; set; }
+    [Parameter] public EventCallback<decimal?> MinPriceChanged { get; set; }
+    [Parameter] public decimal? MaxPrice { get; set; }
+    [Parameter] public EventCallback<decimal?> MaxPriceChanged { get; set; }
+    [Parameter] public DateTime? StartDate { get; set; }
+    [Parameter] public EventCallback<DateTime?> StartDateChanged { get; set; }
+    [Parameter] public DateTime? EndDate { get; set; }
+    [Parameter] public EventCallback<DateTime?> EndDateChanged { get; set; }
+
+    private async Task PerformSearch()
+    {
+        await OnSearch.InvokeAsync();
+    }
+}
+
+<MudGrid Spacing="2">
+    <MudItem xs="12" md="6">
+        <MudTextField Label="Search Events" @bind-Value="SearchQuery" Placeholder="Search by event name..."
+                      Adornment="Adornment.Start" Icon="@Icons.Material.Filled.Search" OnAdornmentClick="PerformSearch"
+                      Immediate="true" Margin="Margin.Dense" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSelect T="string" Label="Category" @bind-Value="SelectedCategory">
+            <MudSelectItem T="string" Value="null">All</MudSelectItem>
+            @foreach (var category in Enum.GetValues(typeof(Category)).Cast<Category>())
+            {
+                <MudSelectItem T="string" Value="@category.ToString()">@category</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudTextField T="decimal?" Label="Minimum Price" @bind-Value="MinPrice" Placeholder="Minimum Price" Margin="Margin.Dense" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudTextField T="decimal?" Label="Maximum Price" @bind-Value="MaxPrice" Placeholder="Maximum Price" Margin="Margin.Dense" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudDatePicker Label="Start Date" @bind-Date="StartDate" Margin="Margin.Dense" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudDatePicker Label="End Date" @bind-Date="EndDate" Margin="Margin.Dense" />
+    </MudItem>
+    <MudItem xs="12" md="12">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PerformSearch">Search</MudButton>
+    </MudItem>
+</MudGrid>

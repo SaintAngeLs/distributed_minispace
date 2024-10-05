@@ -1,0 +1,131 @@
+@page "/event-item"
+@inject IStudentsService StudentsService
+@inject IOrganizationsService OrganizationsService
+
+@code {
+    [Parameter] public EventDto Event { get; set; }
+    [Parameter] public EventCallback<Guid> OnViewEvent { get; set; }
+    [Parameter] public EventCallback<Guid> OnSignUpToEvent { get; set; }
+    [Parameter] public EventCallback<Guid> OnShowInterestInEvent { get; set; }
+
+    private string organizerName;
+    private string organizerImageUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrganizerDetails();
+    }
+
+    private async Task LoadOrganizerDetails()
+    {
+        if (Event.Organizer.OrganizerType == OrganizerType.Organization)
+        {
+            // Fetch organization details
+            var organization = await OrganizationsService.GetOrganizationAsync(Event.Organizer.OrganizationId.Value);
+            organizerName = organization.Name;
+            organizerImageUrl = !string.IsNullOrEmpty(organization.ImageUrl) 
+                                ? organization.ImageUrl 
+                                : "/images/org_avatar_placeholder.png";
+        }
+        else if (Event.Organizer.UserId.HasValue)
+        {
+            // Fetch user details
+            var user = await StudentsService.GetStudentAsync(Event.Organizer.UserId.Value);
+            organizerName = $"{user.FirstName} {user.LastName}";
+            organizerImageUrl = !string.IsNullOrEmpty(user.ProfileImageUrl) 
+                                ? user.ProfileImageUrl 
+                                : "/images/user_avatar_placeholder.png";
+        }
+    }
+
+    private void ViewEvent() => OnViewEvent.InvokeAsync(Event.Id);
+    private void SignUpToEvent() => OnSignUpToEvent.InvokeAsync(Event.Id);
+    private void ShowInterestInEvent() => OnShowInterestInEvent.InvokeAsync(Event.Id);
+}
+
+<MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px;">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <!-- Organizer Avatar -->
+            <CardHeaderAvatar>
+                <MudAvatar Image="@organizerImageUrl" Color="Color.Secondary">O</MudAvatar>
+            </CardHeaderAvatar>
+            
+            <!-- Organizer Name -->
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">@organizerName</MudText>
+                <MudText Typo="Typo.body2">@GetOrganizerDescription()</MudText>
+            </CardHeaderContent>
+            
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Default" /> <!-- Report event action -->
+            </CardHeaderActions>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardMedia Image="@GetBannerUrl(Event)" Alt="@Event.Name" Style="height: 180px;" />
+
+    <MudCardContent>
+        <MudText Typo="Typo.h6">@Event.Name</MudText>
+        <MudText Typo="Typo.body2" Color="Color.Secondary">@Event.Category</MudText>
+        <MudText Typo="Typo.body2">Starts: @Event.StartDate.ToString("MMMM dd, yyyy")</MudText>
+        <MudText Typo="Typo.body2">Ends: @Event.EndDate.ToString("MMMM dd, yyyy")</MudText>
+        <MudText Typo="Typo.body2">
+            <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1rem;" /> Interested: @Event.InterestedStudents
+        </MudText>
+        <MudText Typo="Typo.body2">
+            <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" /> Signed Up: @Event.SignedUpStudents
+        </MudText>
+    </MudCardContent>
+
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ViewEvent">
+            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" /> 
+            <MudText Typo="Typo.h6">View Details</MudText>
+        </MudButton>
+    </MudCardActions>
+
+    <!-- Sign Up and Show Interest Actions -->
+    <MudCardActions>
+        @if (Event.IsSignedUp)
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" Style="font-size: 1rem;" />
+                <MudText Typo="Typo.h6">Signed Up</MudText>
+            </MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="SignUpToEvent">
+                <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" />
+                <MudText Typo="Typo.h6">Sign Up</MudText>
+            </MudButton>
+        }
+
+        @if (Event.IsInterested)
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                <MudIcon Icon="@Icons.Material.Filled.ThumbUpAlt" Style="font-size: 1rem;" />
+                <MudText Typo="Typo.h6">Interested</MudText>
+            </MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="ShowInterestInEvent">
+                <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1rem;" />
+                <MudText Typo="Typo.h6">Show Interest</MudText>
+            </MudButton>
+        }
+    </MudCardActions>
+</MudCard>
+
+@code {
+    private string GetBannerUrl(EventDto eventDto) => eventDto?.BannerUrl ?? "/images/default_media_file_image.png";
+
+    private string GetOrganizerDescription()
+    {
+        return Event.Organizer.OrganizerType == OrganizerType.Organization 
+            ? "Organization Event" 
+            : "User Event";
+    }
+}

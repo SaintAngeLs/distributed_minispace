@@ -1,0 +1,189 @@
+@page "/events/search"
+@inject IEventsService EventsService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@using Astravent.Web.Wasm.DTO.Events
+@using Astravent.Web.Wasm.Pages.Events.Components
+
+
+<AuthWrapper>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+        <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-4">Explore Events</MudText>
+
+        <!-- Filters and Search -->
+        <SearchFilters SearchQuery="@searchQuery" SearchQueryChanged="@((string val) => searchQuery = val)"
+               SelectedCategory="@selectedCategory" SelectedCategoryChanged="@((string val) => selectedCategory = val)"
+               MinPrice="@minPrice" MinPriceChanged="@((decimal? val) => minPrice = val)"
+               MaxPrice="@maxPrice" MaxPriceChanged="@((decimal? val) => maxPrice = val)"
+               StartDate="@startDate" StartDateChanged="@((DateTime? val) => startDate = val)"
+               EndDate="@endDate" EndDateChanged="@((DateTime? val) => endDate = val)"
+               OnSearch="PerformSearch" />
+
+        <!-- Event List -->
+        <EventList Events="events" OnViewEvent="ViewEvent" OnSignUpToEvent="SignUpToEvent" OnShowInterestInEvent="ShowInterestInEvent" />
+
+        <!-- Pagination -->
+        <Pagination TotalItems="@totalItems" CurrentPage="@currentPage" PageSize="@pageSize"
+                    PageSizeOptions="@pageSizeOptions" OnPageChanged="OnPageChanged" />
+    </MudContainer>
+</AuthWrapper>
+
+<MudSnackbarProvider />
+
+@code {
+    private List<EventDto> events = new();
+    private int totalItems;
+    private int currentPage = 1;
+    private int pageSize = 9;
+    private string searchQuery = string.Empty;
+    private string selectedCategory = null;
+    private decimal? minPrice;
+    private decimal? maxPrice;
+    private DateTime? startDate;
+    private DateTime? endDate;
+    private readonly int[] pageSizeOptions = { 6, 9, 12 };
+    private bool _isAuthenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IdentityService.InitializeAuthenticationState();
+        _isAuthenticated = IdentityService.IsAuthenticated;
+        if (_isAuthenticated)
+        {
+            await LoadEvents();
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin", forceLoad: true);
+        }
+    }
+ 
+    private async Task LoadEvents()
+    {
+        try
+        {
+            // Check if filters are applied
+            if (string.IsNullOrWhiteSpace(searchQuery) && selectedCategory == null && !minPrice.HasValue && !maxPrice.HasValue && !startDate.HasValue && !endDate.HasValue)
+            {
+                // No filters applied, load all events paginated
+                var paginatedResult = await EventsService.GetPaginatedEventsAsync(currentPage, pageSize);
+                if (paginatedResult != null)
+                {
+                    events = paginatedResult.Items.ToList();
+                    totalItems = paginatedResult.TotalItems;
+                }
+                else
+                {
+                    events = new List<EventDto>();
+                    totalItems = 0;
+                    Snackbar.Add("No events found or failed to load events.", Severity.Warning);
+                }
+            }
+            else
+            {
+                // Filters applied, use search command
+                var command = new SearchEvents
+                {
+                    Name = searchQuery,
+                    Category = selectedCategory,
+                    DateFrom = startDate?.ToString("yyyy-MM-dd"),
+                    DateTo = endDate?.ToString("yyyy-MM-dd"),
+                    Pageable = new PageableDto
+                    {
+                        Page = currentPage,
+                        Size = pageSize
+                    }
+                };
+
+                var pagedResult = await EventsService.SearchEventsAsync(command);
+                if (pagedResult != null)
+                {
+                    events = pagedResult.Items.ToList();
+                    totalItems = pagedResult.TotalItems;
+                }
+                else
+                {
+                    events = new List<EventDto>();
+                    totalItems = 0;
+                    Snackbar.Add("No events found or failed to load events.", Severity.Warning);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task PerformSearch()
+    {
+        currentPage = 1;
+        await LoadEvents();
+    }
+
+    private async Task OnPageChanged(int page)
+    {
+        currentPage = page;
+        await LoadEvents();
+    }
+
+    private void ViewEvent(Guid eventId)
+    {
+        NavigationManager.NavigateTo($"/events/event/{eventId}");
+    }
+
+    private async Task SignUpToEvent(Guid eventId)
+    {
+        if (!_isAuthenticated)
+        {
+            Snackbar.Add("Please sign in to sign up for events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new SignUpToEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.SignUpToEventAsync(command);
+            Snackbar.Add("Successfully signed up for the event.", Severity.Success);
+            await LoadEvents(); // Refresh events to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while signing up: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ShowInterestInEvent(Guid eventId)
+    {
+        if (!_isAuthenticated)
+        {
+            Snackbar.Add("Please sign in to show interest in events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new ShowInterestInEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.ShowInterestInEventAsync(command);
+            Snackbar.Add("Your interest in the event has been noted.", Severity.Info);
+            await LoadEvents(); // Refresh events to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while showing interest: {ex.Message}", Severity.Error);
+        }
+    }
+}
