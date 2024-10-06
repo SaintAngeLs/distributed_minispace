@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Ntrada;
-using Ntrada.Extensions.RabbitMq;
+using Nuar;
+using Nuar.RabbitMq;
 using OpenTracing;
 
 namespace MiniSpace.APIGateway.Infrastructure

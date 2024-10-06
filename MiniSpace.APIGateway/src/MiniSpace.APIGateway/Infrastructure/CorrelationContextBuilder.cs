@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
-using Ntrada;
-using Ntrada.Extensions.RabbitMq;
+using Nuar;
+using Nuar.RabbitMq;
 using OpenTracing;
 
 namespace MiniSpace.APIGateway.Infrastructure

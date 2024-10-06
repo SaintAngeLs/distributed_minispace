@@ -6,7 +6,7 @@
     <RootNamespace>MiniSpace.APIGateway</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <PackageReference Include="Convey.Logging" Version="0.4.*" />
     <PackageReference Include="Convey.Metrics.AppMetrics" Version="0.4.*" />
     <PackageReference Include="Convey.Security" Version="0.4.*" />
@@ -18,17 +18,40 @@
     <PackageReference Include="Ntrada.Extensions.RabbitMq" Version="0.4.*" />
     <PackageReference Include="Ntrada.Extensions.Swagger" Version="0.4.*" />
     <PackageReference Include="Ntrada.Extensions.Tracing" Version="0.4.*" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <ItemGroup>
-    <None Remove="ntrada.yml" />
+    <PackageReference Include="NetEscapades.Configuration.Yaml" Version="3.1.0" />
+    <PackageReference Include="Paralax.Logging" Version="*" />
+    <PackageReference Include="Paralax.Metrics.AppMetrics" Version="*" />
+    <PackageReference Include="Paralax.Security" Version="*" />
+    <PackageReference Include="Nuar" Version="*" />
+    <PackageReference Include="Nuar.Cors" Version="*" />
+    <PackageReference Include="Nuar.CustomErrors" Version="*" />
+    <PackageReference Include="Nuar.Jwt" Version="*" />
+    <PackageReference Include="Nuar.RabbitMq" Version="*" />
+    <PackageReference Include="Nuar.Swagger" Version="*" />
+    <PackageReference Include="Nuar.Tracing" Version="*" />
+  </ItemGroup>
+  <!-- <ItemGroup>
+    <ProjectReference Include="../Nuar/src/Nuar/src/Nuar/Nuar.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.Cors/src/Nuar.Cors/Nuar.Cors.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.CustomErrors/src/Nuar.CustomErrors/Nuar.CustomErrors.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.JWT/src/Nuar.JWT/Nuar.JWT.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.RabbitMQ/src/Nuar.RabbitMQ/Nuar.RabbitMQ.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.Swagger/src/Nuar.Swagger/Nuar.Swagger.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.Tracing/src/Nuar.Tracing/Nuar.Tracing.csproj" />
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <None Remove="nuar.yml" />
     <Content Include="ntrada-async.docker.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ntrada.docker.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ntrada.yml">
+    <Content Include="nuar.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Remove="ntrada-async.yml" />

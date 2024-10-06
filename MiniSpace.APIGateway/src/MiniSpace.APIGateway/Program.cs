@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Logging;
-using Convey.Metrics.AppMetrics;
-using Convey.Security;
+using Paralax;
+using Paralax.Logging;
+using Paralax.Metrics.AppMetrics;
+using Paralax.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Ntrada;
-using Ntrada.Extensions.RabbitMq;
-using Ntrada.Hooks;
+using Nuar;
+using Nuar.RabbitMq;
+using Nuar.Hooks;
 using MiniSpace.APIGateway.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 namespace MiniSpace.APIGateway
 {
@@ -25,27 +26,33 @@ namespace MiniSpace.APIGateway
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
+                    webBuilder.CaptureStartupErrors(true);
                     webBuilder.ConfigureAppConfiguration(builder =>
+                    {
+                        const string extension = "yml";
+                        var ntradaConfig = Environment.GetEnvironmentVariable("NTRADA_CONFIG");
+                        var configPath = args?.FirstOrDefault() ?? ntradaConfig ?? $"nuar.{extension}";
+                        if (!configPath.EndsWith($".{extension}"))
                         {
-                            const string extension = "yml";
-                            var ntradaConfig = Environment.GetEnvironmentVariable("NTRADA_CONFIG");
-                            var configPath = args?.FirstOrDefault() ?? ntradaConfig ?? $"ntrada.{extension}";
-                            if (!configPath.EndsWith($".{extension}"))
-                            {
-                                configPath += $".{extension}";
-                            }
+                            configPath += $".{extension}";
+                        }
 
-                            builder.AddYamlFile(configPath, false);
-                        })
-                        .ConfigureServices(services => services.AddNtrada()
-                            .AddSingleton<IContextBuilder, CorrelationContextBuilder>()
-                            .AddSingleton<ISpanContextBuilder, SpanContextBuilder>()
-                            .AddSingleton<IHttpRequestHook, HttpRequestHook>()
-                            .AddConvey()
-                            .AddMetrics()
-                            .AddSecurity())
-                        .Configure(app => app.UseNtrada())
-                        .UseLogging();
+                        builder.AddYamlFile(configPath, false);
+                    })
+                    .ConfigureServices(services => services.AddNuar()
+                        .AddSingleton<IContextBuilder, CorrelationContextBuilder>()
+                        .AddSingleton<ISpanContextBuilder, SpanContextBuilder>()
+                        .AddSingleton<IHttpRequestHook, HttpRequestHook>()
+                        .AddParalax()
+                        .AddMetrics()
+                        .AddSecurity())
+                    .Configure(app =>
+                    {
+                        app.UseNuar(); 
+                    })
+                    .UseLogging();
                 });
+
     }
 }

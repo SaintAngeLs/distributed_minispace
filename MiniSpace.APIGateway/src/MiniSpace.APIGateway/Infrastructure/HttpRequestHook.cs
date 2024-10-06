@@ -1,9 +1,9 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Ntrada;
-using Ntrada.Extensions.RabbitMq;
-using Ntrada.Hooks;
+using Nuar;
+using Nuar.RabbitMq;
+using Nuar.Hooks;
 
 namespace MiniSpace.APIGateway.Infrastructure
 {
