@@ -65,10 +65,11 @@ namespace MiniSpace.Services.Organizations.Api
                         {
                             await ctx.Response.NoContent();
                         })
+                        .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
                     )
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
+                        
                         .Get<GetOrganizationDetails, OrganizationDetailsDto>("organizations/{organizationId}/details")
                         .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
                         .Get<GetChildrenOrganizations, PagedResult<OrganizationDto>>("organizations/{organizationId}/children")
