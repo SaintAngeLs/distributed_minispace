@@ -5,12 +5,12 @@ namespace MiniSpace.Services.Students.Core.Entities
 {
     public class UserNotifications : AggregateRoot
     {
-        public Guid StudentId { get; private set; }
+        public Guid UserId { get; private set; }
         public NotificationPreferences NotificationPreferences { get; private set; }
 
-        public UserNotifications(Guid studentId, NotificationPreferences notificationPreferences)
+        public UserNotifications(Guid userId, NotificationPreferences notificationPreferences)
         {
-            StudentId = studentId;
+            UserId = userId;
             NotificationPreferences = notificationPreferences ?? new NotificationPreferences();
         }
 

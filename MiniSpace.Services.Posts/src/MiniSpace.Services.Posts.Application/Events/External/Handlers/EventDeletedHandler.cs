@@ -1,5 +1,5 @@
-using Convey.CQRS.Commands;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Commands;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;

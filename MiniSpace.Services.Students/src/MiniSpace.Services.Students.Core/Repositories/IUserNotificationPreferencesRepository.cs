@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Students.Core.Repositories
 {
     public interface IUserNotificationPreferencesRepository
     {
-        Task<NotificationPreferences> GetNotificationPreferencesAsync(Guid studentId);
-        Task UpdateNotificationPreferencesAsync(Guid studentId, NotificationPreferences notificationPreferences);
+        Task<NotificationPreferences> GetNotificationPreferencesAsync(Guid userId);
+        Task UpdateNotificationPreferencesAsync(Guid userId, NotificationPreferences notificationPreferences);
     }
 }

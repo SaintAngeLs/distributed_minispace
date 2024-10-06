@@ -1,5 +1,5 @@
 using System;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Posts.Application.Dto;
 using MiniSpace.Services.Posts.Application.DTO;
 using MiniSpace.Services.Posts.Core.Wrappers;

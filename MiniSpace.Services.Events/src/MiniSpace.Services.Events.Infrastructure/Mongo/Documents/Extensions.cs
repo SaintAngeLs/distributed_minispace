@@ -32,9 +32,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 UpdatedAt = document.UpdatedAt,
                 Visibility = document.Visibility, 
                 Settings = document.Settings.AsDto(),
-                IsSignedUp = document.SignedUpStudents.Any(x => x.StudentId == studentId),
-                IsInterested = document.InterestedStudents.Any(x => x.StudentId == studentId),
-                StudentRating = document.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value,
+                IsSignedUp = document.SignedUpStudents.Any(x => x.UserId == studentId),
+                IsInterested = document.InterestedStudents.Any(x => x.UserId == studentId),
+                StudentRating = document.Ratings.FirstOrDefault(x => x.UserId == studentId)?.Value,
                 FriendsInterestedIn = Enumerable.Empty<ParticipantDto>(),
                 FriendsSignedUp = Enumerable.Empty<ParticipantDto>()
             };
@@ -62,9 +62,9 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 UpdatedAt = @event.UpdatedAt,
                 Visibility = @event.Visibility,
                 Settings = new EventSettingsDto(@event.Settings),
-                IsSignedUp = @event.SignedUpParticipants.Any(x => x.StudentId == studentId),
-                IsInterested = @event.InterestedParticipants.Any(x => x.StudentId == studentId),
-                StudentRating = @event.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value,
+                IsSignedUp = @event.SignedUpParticipants.Any(x => x.UserId == studentId),
+                IsInterested = @event.InterestedParticipants.Any(x => x.UserId == studentId),
+                StudentRating = @event.Ratings.FirstOrDefault(x => x.UserId == studentId)?.Value,
                 FriendsInterestedIn = Enumerable.Empty<ParticipantDto>(), 
                 FriendsSignedUp = Enumerable.Empty<ParticipantDto>()  
             };
@@ -103,10 +103,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         {
             var eventDto = document.AsDto(studentId);
             eventDto.FriendsInterestedIn = document.InterestedStudents
-                .Where(x => friends.Any(f => f.FriendId == x.StudentId))
+                .Where(x => friends.Any(f => f.FriendId == x.UserId))
                 .Select(p => p.AsDto());
             eventDto.FriendsSignedUp = document.SignedUpStudents
-                .Where(x => friends.Any(f => f.FriendId == x.StudentId))
+                .Where(x => friends.Any(f => f.FriendId == x.UserId))
                 .Select(p => p.AsDto());
             return eventDto;
         }
@@ -148,7 +148,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         {
             return new ParticipantDto
             {
-                StudentId = document.StudentId
+                UserId = document.UserId
             };
         }
 
@@ -156,14 +156,14 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         {
             return new ParticipantDocument
             {
-                StudentId = entity.StudentId
+                UserId = entity.UserId
             };
         }
 
         public static ParticipantDto ToDto(this ParticipantDocument document)
             => new ParticipantDto
             {
-                StudentId = document.StudentId,
+                UserId = document.UserId,
             };
 
             
@@ -229,17 +229,17 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
             };
 
         public static Participant AsEntity(this ParticipantDocument document)
-            => new (document.StudentId);
+            => new (document.UserId);
 
         public static RatingDto AsRatingDto(this RatingDocument document)
             => new ()
             {
-                StudentId = document.StudentId,
+                StudentId = document.UserId,
                 Value = document.Value
             };
 
         public static Rating AsEntity(this RatingDocument document)
-            => new (document.StudentId, document.Value);
+            => new (document.UserId, document.Value);
 
         
         public static CommentDocument AsDocument(this Comment comment)

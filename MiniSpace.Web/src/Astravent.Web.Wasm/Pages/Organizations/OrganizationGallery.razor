@@ -1,0 +1,242 @@
+@page "/organizations/{OrganizationId:guid}/gallery"
+@inject IOrganizationsService OrganizationsService
+@inject IIdentityService IdentityService
+@inject IMediaFilesService MediaFilesService
+@inject IJSRuntime JSRuntime
+@using Astravent.Web.Wasm.Utilities
+@inject NavigationManager NavigationManager
+@using Astravent.Web.Wasm.DTO.Organizations
+@using System.IO
+@using MudBlazor
+
+<MudText Typo="Typo.h6" GutterBottom="true">Organization Gallery</MudText>
+@if (IsLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    <!-- Button to upload new images -->
+    <div class="upload-button-container">
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   Class="upload-button"
+                   for="file-input">
+            Upload New Image
+        </MudButton>
+        <InputFile id="file-input" OnChange="@(async e => await OpenCropper(e, Guid.NewGuid()))" style="display: none;" accept=".jpeg,.png,.jpg" />
+    </div>
+
+    @if (GalleryImages == null || !GalleryImages.Any())
+    {
+        <MudText Color="Color.Error">No images found in the gallery.</MudText>
+    }
+    else
+    {
+        <!-- Responsive grid for displaying gallery images -->
+        <MudGrid>
+            @foreach (var image in GalleryImages)
+            {
+                <MudItem xs="6" md="4" lg="3">
+                    <div class="gallery-item">
+                        <MudImage Class="gallery-image" Src="@image.ImageUrl" Alt="Gallery image" />
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Secondary"
+                                   StartIcon="@Icons.Material.Filled.Delete"
+                                   Class="delete-button"
+                                   OnClick="@(async () => await RemoveImage(image.ImageId))">
+                            Remove
+                        </MudButton>
+                    </div>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+}
+<!-- Modal for image cropping -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="cropper-container" class="img-container"></div>
+                @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                {
+                    <div id="cropped-image-container" class="img-container">
+                        <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Display cropped image -->
+@if (!string.IsNullOrEmpty(CroppedImageBase64))
+{
+    <div class="cropped-image-preview">
+        <MudText Typo="Typo.subtitle1">Cropped Image Preview:</MudText>
+        <img src="@CroppedImageBase64" style="max-width: 100%;" />
+    </div>
+}
+
+@code {
+    [Parameter] public Guid OrganizationId { get; set; }
+    private List<GalleryImageDto> GalleryImages { get; set; }
+    private bool IsLoading { get; set; } = true;
+    private bool IsUploading { get; set; } = false;
+    private string CroppedImageBase64 { get; set; }
+    private IBrowserFile croppedImageFile;
+    private Guid currentImageId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            IsLoading = true;
+
+            // Fetch organization details along with gallery and users
+            var organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+            GalleryImages = organizationGalleryUsers?.Gallery?.ToList() ?? new List<GalleryImageDto>();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            GalleryImages = null;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", DotNetObjectReference.Create(this));
+        }
+    }
+
+    private async Task OpenCropper(InputFileChangeEventArgs e, Guid imageId)
+    {
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var inputFile = e.File;
+        currentImageId = imageId;
+
+        if (inputFile != null)
+        {
+            if (inputFile.Size > maxAllowedSize)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
+                return;
+            }
+
+            using var stream = inputFile.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+            var base64Image = Convert.ToBase64String(buffer);
+            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image, "profile");
+        }
+    }
+
+    private void CloseCropper()
+    {
+        JSRuntime.InvokeVoidAsync("hideCropperModal");
+    }
+
+    [JSInvokable]
+    public void ReceiveCroppedImage(string base64Image)
+    {
+        if (!string.IsNullOrEmpty(base64Image))
+        {
+            CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
+            var buffer = Convert.FromBase64String(base64Image);
+            var lastModified = DateTimeOffset.Now;
+            croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
+            StateHasChanged();
+        }
+    }
+
+    private async Task SaveCroppedImage()
+    {
+        if (croppedImageFile != null)
+        {
+            IsUploading = true;
+            StateHasChanged();
+
+            try
+            {
+                byte[] fileData;
+                using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+                using (var ms = new MemoryStream())
+                {
+                    await stream.CopyToAsync(ms);
+                    fileData = ms.ToArray();
+                }
+
+                var response = await MediaFilesService.UploadOrganizationImageAsync(
+                    OrganizationId,
+                    "OrganizationGalleryImage",
+                    IdentityService.GetCurrentUserId(),
+                    $"gallery_image_{currentImageId}.png",
+                    croppedImageFile.ContentType,
+                    fileData);
+
+                // Refresh the gallery images after successful upload
+                if (response.IsSuccessStatusCode)
+                {
+                    var organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+                    GalleryImages = organizationGalleryUsers?.Gallery?.ToList() ?? new List<GalleryImageDto>();
+                }
+
+                StateHasChanged();
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
+            }
+
+            IsUploading = false;
+            StateHasChanged();
+            CloseCropper();
+        }
+    }
+
+    private async Task RemoveImage(Guid imageId)
+    {
+        IsUploading = true;
+        StateHasChanged();
+
+        try
+        {
+            var imageUrl = GalleryImages.FirstOrDefault(img => img.ImageId == imageId)?.ImageUrl;
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                await MediaFilesService.DeleteMediaFileAsync(imageUrl);
+                GalleryImages.RemoveAll(img => img.ImageId == imageId);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred while removing the image: {ex.Message}");
+        }
+
+        IsUploading = false;
+        StateHasChanged();
+    }
+}

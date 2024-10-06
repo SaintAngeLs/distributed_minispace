@@ -1,5 +1,5 @@
-using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Queries;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
                 return null;
             }
 
-            var settingsDocument = await _settingsRepository.GetAsync(s => s.StudentId == query.StudentId);
+            var settingsDocument = await _settingsRepository.GetAsync(s => s.UserId == query.StudentId);
             if (settingsDocument == null)
             {
                 return null;

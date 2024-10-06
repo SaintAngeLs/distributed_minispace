@@ -1,4 +1,4 @@
-﻿using Convey.Types;
+﻿using Paralax.Types;
 
 namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Documents
 {

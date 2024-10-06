@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Notifications.Core.Repositories;
 using MiniSpace.Services.Notifications.Application.Exceptions;
 using MiniSpace.Services.Notifications.Core.Entities;
@@ -10,9 +10,9 @@ using System.Text.Json;
 namespace MiniSpace.Services.Notifications.Application.Commands.Handlers {
     public class UpdateNotificationStatusHandler : ICommandHandler<UpdateNotificationStatus>
     {
-        private readonly IStudentNotificationsRepository _studentNotificationsRepository;
+        private readonly IUserNotificationsRepository _studentNotificationsRepository;
 
-        public UpdateNotificationStatusHandler(IStudentNotificationsRepository studentNotificationsRepository)
+        public UpdateNotificationStatusHandler(IUserNotificationsRepository studentNotificationsRepository)
         {
             _studentNotificationsRepository = studentNotificationsRepository;
         }

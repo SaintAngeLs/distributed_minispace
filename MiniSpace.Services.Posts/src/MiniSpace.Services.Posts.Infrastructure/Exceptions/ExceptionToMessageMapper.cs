@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.MessageBrokers.RabbitMQ;
+using Paralax.MessageBrokers.RabbitMQ;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Events.Rejected;
 using MiniSpace.Services.Posts.Application.Exceptions;

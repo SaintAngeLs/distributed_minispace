@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Friends.Application.Commands;
 using MiniSpace.Services.Friends.Core.Events;
 

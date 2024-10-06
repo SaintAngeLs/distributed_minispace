@@ -12,11 +12,11 @@ using MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories;
 public class DailyNotificationCleanupService : BackgroundService
 {
     private readonly ILogger<DailyNotificationCleanupService> _logger;
-    private readonly IExtendedStudentNotificationsRepository _notificationsRepository;
+    private readonly IExtendedUserNotificationsRepository _notificationsRepository;
     private readonly IStudentsServiceClient _studentsServiceClient;
 
     public DailyNotificationCleanupService(ILogger<DailyNotificationCleanupService> logger, 
-                                           IExtendedStudentNotificationsRepository notificationsRepository,
+                                           IExtendedUserNotificationsRepository notificationsRepository,
                                            IStudentsServiceClient studentsServiceClient) 
     {
         _logger = logger;
@@ -42,12 +42,12 @@ public class DailyNotificationCleanupService : BackgroundService
             foreach (var student in allStudents)
             {
                 var studentId = student.Id;
-                var filter = Builders<StudentNotificationsDocument>.Filter.And(
-                    Builders<StudentNotificationsDocument>.Filter.Eq(doc => doc.StudentId, studentId),
-                    Builders<StudentNotificationsDocument>.Filter.ElemMatch(n => n.Notifications, n => n.Status == "Read")
+                var filter = Builders<UserNotificationsDocument>.Filter.And(
+                    Builders<UserNotificationsDocument>.Filter.Eq(doc => doc.UserId, studentId),
+                    Builders<UserNotificationsDocument>.Filter.ElemMatch(n => n.Notifications, n => n.Status == "Read")
                 );
 
-                var update = Builders<StudentNotificationsDocument>.Update.PullFilter(
+                var update = Builders<UserNotificationsDocument>.Update.PullFilter(
                     n => n.Notifications, n => n.Status == "Read");
 
                 var result = await _notificationsRepository.BulkUpdateAsync(filter, update);

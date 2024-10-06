@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
 using System;

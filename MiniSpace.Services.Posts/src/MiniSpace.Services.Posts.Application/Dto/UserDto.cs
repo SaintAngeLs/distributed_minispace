@@ -32,5 +32,9 @@ namespace MiniSpace.Services.Posts.Application.Dto
         public IEnumerable<Guid> SignedUpEvents { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
+
+        public bool IsOnline { get; set; }           
+        public string DeviceType { get; set; }
+        public DateTime? LastActive { get; set; } 
     }
 }

@@ -1,0 +1,128 @@
+@page "/organizations/following"
+@inject IOrganizationsService OrganizationsService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@using MudBlazor
+@using Astravent.Web.Wasm.DTO.Organizations
+@using System.Threading.Tasks
+
+<AuthWrapper>
+    <MudContainer>
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h4" GutterBottom="true">Organizations You're Following</MudText>
+
+            <MudTextField @bind-Value="_searchQuery" Placeholder="Search followed organizations..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Immediate="true" OnKeyUp="@(async (e) => await SearchOrganizations())" />
+
+            <MudGrid Class="mt-4">
+                @if (_organizations != null && _organizations.Any())
+                {
+                    @foreach (var organization in _organizations)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Class="ma-2" Style="height: 100%;">
+                                <MudCardContent>
+                                    <MudImage Src="@GetOrganizationBanner(organization.OrganizationDetails.BannerUrl)" Alt="Organization Banner" Style="width: 100%; height: 180px;" />
+                                    <MudAvatar Image="@GetOrganizationImage(organization.OrganizationDetails.ImageUrl)" Size="Size.Large" Class="avatar-overlay" />
+                                    <MudText Typo="Typo.h6" Class="mt-4">@organization.OrganizationDetails.Name</MudText>
+                                    <MudText Typo="Typo.body2" Class="mb-2">@organization.OrganizationDetails.Description</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Primary">Users: @organization.Users.Count()</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToOrganization(organization.OrganizationDetails.Id)">
+                                        View
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    }
+                }
+                else if (_organizations == null)
+                {
+                    <MudText Typo="Typo.subtitle1" Color="Color.Secondary">Loading followed organizations...</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.subtitle1" Color="Color.Secondary">No followed organizations found.</MudText>
+                }
+            </MudGrid>
+        </MudPaper>
+    </MudContainer>
+</AuthWrapper>
+
+@code {
+    private string _searchQuery = string.Empty;
+    private IEnumerable<OrganizationGalleryUsersDto> _organizations;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _isLoading = true;
+
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                await SearchOrganizations();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during initialization: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task SearchOrganizations()
+    {
+        try
+        {
+            _isLoading = true;
+            var followedOrganizations = await OrganizationsService.GetUserFollowedOrganizationsAsync(IdentityService.UserDto.Id);
+
+            if (!string.IsNullOrEmpty(_searchQuery))
+            {
+                _organizations = followedOrganizations.Where(o => o.OrganizationDetails.Name.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase));
+            }
+            else
+            {
+                _organizations = followedOrganizations;
+            }
+
+            _isLoading = false;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching followed organizations: {ex.Message}");
+            _isLoading = false;
+        }
+    }
+
+    private void NavigateToOrganization(Guid organizationId)
+    {
+        NavigationManager.NavigateTo($"/organizations/details/{organizationId}");
+    }
+
+    private string GetOrganizationImage(string imageUrl)
+    {
+        return string.IsNullOrEmpty(imageUrl) 
+            ? "/images/default_organization_profile_image.png" 
+            : imageUrl;
+    }
+
+    private string GetOrganizationBanner(string bannerUrl)
+    {
+        return string.IsNullOrEmpty(bannerUrl)
+            ? "/images/default_banner_image.png"
+            : bannerUrl;
+    }
+}

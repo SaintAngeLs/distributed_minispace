@@ -36,5 +36,9 @@ namespace MiniSpace.Services.Students.Application.Dto
         public UserSettingsDto UserSettings { get; set; }
 
         public List<GalleryImageDto> GalleryOfImageUrls { get; set; }
+
+        public bool IsOnline { get; set; }           
+        public string DeviceType { get; set; }
+        public DateTime? LastActive { get; set; } 
     }
 }

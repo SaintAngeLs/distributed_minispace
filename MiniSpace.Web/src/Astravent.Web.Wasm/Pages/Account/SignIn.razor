@@ -1,0 +1,251 @@
+@page "/signin"
+@using Astravent.Web.Wasm.Models.Identity
+@using Astravent.Web.Wasm.Areas.Identity
+@using Astravent.Web.Wasm.Areas.Students
+@using Astravent.Web.Wasm.Areas.Http
+@using MudBlazor
+@using MudBlazor.Extensions
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IErrorMapperService ErrorMapperService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<style>
+    body {
+        margin: 0;
+    }
+
+    .split-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .left-side, .right-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .left-side {
+        background: black;
+        position: relative;
+    }
+
+    .right-side {
+        margin-top: 5rem !important;
+    }
+
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 400px;
+        background: var(--mud-palette-surface);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    a, button {
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    a:hover, button:hover {
+        color: #007BFF;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .code-input {
+        width: 100%;
+        text-align: center;
+    }
+</style>
+
+<div class="split-container">
+    <div class="left-side">
+        <video id="videoPlayer" autoplay muted loop>
+            <source src="videos/video-component/video_1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="right-side">
+        <div class="form-container">
+            <div class="sign-in-up-pre-info">
+                <h2>Welcome to MiniSpace</h2>
+                <p>Please sign in to access your account and manage your details.</p>
+                <h3>@(isTwoFactorRequired ? "Enter 2FA Code" : "Sign In")</h3>
+            </div>
+            @if (showError)
+            {
+                <MudAlert Severity="Severity.Error" OnClose="OnAlertClose">
+                    @errorMessage
+                </MudAlert>
+            }
+            @if (isTwoFactorRequired)
+            {
+                <EditForm Model="@twoFactorModel" OnValidSubmit="HandleTwoFactor">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="twoFactorModel.Code" Label="2FA Code" MaxLength="6" Class="code-input" Variant="Variant.Outlined" Required="true" RequiredError="Code is required" />
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-center">
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </EditForm>
+            }
+            else
+            {
+                <EditForm Model="@signInModel" OnValidSubmit="HandleSignIn">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="signInModel.Email" Label="Email" Variant="Variant.Outlined" Required="true" RequiredError="Email is required" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="signInModel.Password" Label="Password" Variant="Variant.Outlined" 
+                                          InputType="@passwordInputType" Adornment="Adornment.End" AdornmentIcon="@passwordInputIcon" 
+                                          OnAdornmentClick="TogglePasswordVisibility" Required="true" RequiredError="Password is required" />
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-space-between align-center">
+                            <MudCheckBox @bind-Checked="rememberMe" Label="Remember me?" Color="Color.Primary" />
+                            <MudLink Href="/forgot-password">Forgot Password?</MudLink>
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-center">
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Sign In</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </EditForm>
+                <div class="text-center" style="margin-top: 3rem;">
+                    <MudLink Href="/signup">Create Account</MudLink>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private SignInModel signInModel = new SignInModel();
+    private TwoFactorModel twoFactorModel = new TwoFactorModel();
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    private bool rememberMe = false;
+    private MudBlazor.InputType passwordInputType = MudBlazor.InputType.Password;
+    private string passwordInputIcon = MudBlazor.Icons.Material.Filled.VisibilityOff;
+    private bool isTwoFactorRequired = false;
+    private Guid userId;
+    private string deviceType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+    }
+
+    private void OnAlertClose()
+    {
+        showError = false;
+        errorMessage = string.Empty;
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        if (passwordInputType == MudBlazor.InputType.Password)
+        {
+            passwordInputType = MudBlazor.InputType.Text;
+            passwordInputIcon = MudBlazor.Icons.Material.Filled.Visibility;
+        }
+        else
+        {
+            passwordInputType = MudBlazor.InputType.Password;
+            passwordInputIcon = MudBlazor.Icons.Material.Filled.VisibilityOff;
+        }
+    }
+
+    private async Task HandleSignIn()
+    {
+        try
+        {
+            var deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+
+            var response = await IdentityService.SignInAsync(signInModel.Email, signInModel.Password, deviceType);
+            
+
+            if (response != null && response.Content != null)
+            {
+                if (response.Content.IsTwoFactorRequired)
+                {
+                    isTwoFactorRequired = true;
+                    userId = response.Content.UserId;
+                    twoFactorModel.Code = string.Empty; 
+                    StateHasChanged();
+                }
+                else if (!string.IsNullOrEmpty(response.Content.AccessToken))
+                {
+                    await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+                    var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
+                    NavigationManager.NavigateTo(nextPage, forceLoad: true);
+                }
+                else
+                {
+                    showError = true;
+                    errorMessage = $"Error during sign in: {response?.ErrorMessage?.Reason ?? "Unknown error"}";
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                showError = true;
+                errorMessage = $"Error during sign in: {response?.ErrorMessage?.Reason ?? "Unknown error"}";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            showError = true;
+            errorMessage = $"An unexpected error occurred: {ex.Message} or User not found in our database.";
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleTwoFactor()
+    {
+        try
+        {
+            var deviceType = await JSRuntime.InvokeAsync<string>("getDeviceType");
+
+            var response = await IdentityService.VerifyTwoFactorCodeAsync(userId, twoFactorModel.Code, deviceType);
+
+            if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
+            {
+                await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
+                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
+                NavigationManager.NavigateTo(nextPage, true);
+            }
+            else
+            {
+                showError = true;
+                errorMessage = $"Error during 2FA verification: {response?.ErrorMessage?.Reason ?? "Unknown error"}";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            showError = true;
+            errorMessage = $"Error during 2FA verification: {ex.Message}";
+            StateHasChanged();
+        }
+    }
+
+}

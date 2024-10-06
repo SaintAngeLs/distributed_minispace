@@ -1,4 +1,4 @@
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MongoDB.Driver;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;

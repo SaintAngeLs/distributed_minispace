@@ -23,6 +23,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Remove global.json (if exists)
+      run: |
+        if [ -f "global.json" ]; then
+          rm global.json
+        fi
     - name: Run OSSAR
       uses: github/ossar-action@v1
       id: ossar

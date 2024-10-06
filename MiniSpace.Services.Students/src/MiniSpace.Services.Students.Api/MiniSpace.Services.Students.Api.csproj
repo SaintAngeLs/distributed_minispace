@@ -7,14 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Convey" Version="1.1.448" />
-    <PackageReference Include="Convey.Logging" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi" Version="1.1.448" />
-    <PackageReference Include="Convey.WebApi.CQRS" Version="1.1.448" />
+    <PackageReference Include="Paralax" Version="*" />
+    <PackageReference Include="Paralax.Logging" Version="*" />
+    <PackageReference Include="Paralax.WebApi" Version="*" />
+    <PackageReference Include="Paralax.CQRS.WebApi" Version="*" />
+    <PackageReference Include="Google.Protobuf" Version="3.28.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.66.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>  
+
+    <ItemGroup>
+      <Protobuf Include="Protos/student.proto" GrpcServices="Server" />
+    </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MiniSpace.Services.Students.Infrastructure\MiniSpace.Services.Students.Infrastructure.csproj" />
   </ItemGroup>
 
+ <!-- <ItemGroup>
+    <ProjectReference Include="../Paralax/src/Paralax.WebApi/src/Paralax.WebApi/Paralax.WebApi.csproj" AdditionalProperties="TargetFramework=net8.0" />
+    <ProjectReference Include="../Paralax/src/Paralax.CQRS.WebApi/src/Paralax.CQRS.WebApi/Paralax.CQRS.WebApi.csproj" AdditionalProperties="TargetFramework=net8.0" />
+  </ItemGroup> -->
 </Project>

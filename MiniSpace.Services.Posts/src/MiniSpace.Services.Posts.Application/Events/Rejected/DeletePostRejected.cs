@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 
 namespace MiniSpace.Services.Posts.Application.Events.Rejected
 {

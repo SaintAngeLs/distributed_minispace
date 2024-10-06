@@ -1,15 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey;
-using Convey.Logging.CQRS;
+using Paralax;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Posts.Application.Commands;
+using Paralax.CQRS.Logging;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Logging
 {
     [ExcludeFromCodeCoverage]
     internal static class Extensions
     {
-        public static IConveyBuilder AddHandlersLogging(this IConveyBuilder builder)
+        public static IParalaxBuilder AddHandlersLogging(this IParalaxBuilder builder)
         {
             var assembly = typeof(UpdatePost).Assembly;
             

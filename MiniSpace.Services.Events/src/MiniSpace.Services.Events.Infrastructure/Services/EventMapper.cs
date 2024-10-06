@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Events.Application.Services;
 using MiniSpace.Services.Events.Core;
 

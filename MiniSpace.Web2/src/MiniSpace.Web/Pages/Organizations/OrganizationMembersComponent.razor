@@ -1,0 +1,94 @@
+@page "/organizations/{OrganizationId:guid}/members"
+@inject IOrganizationsService OrganizationsService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@using MiniSpace.Web.DTO.Organizations
+@using MudBlazor
+@using MiniSpace.Web.DTO
+
+<MudContainer Class="pa-4">
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Class="my-4" />
+    }
+    else if (members == null || !members.Any())
+    {
+        <MudText Color="Color.Warning">No members found in this organization.</MudText>
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var member in members)
+            {
+                <MudItem xs="12">
+                    <MudCard Class="mb-4">
+                        <MudCardContent>
+                            <MudGrid>
+                                <MudItem xs="12" sm="3">
+                                    <MudAvatar Size="Size.Large" Image="@GetUserProfileImage(member.ProfileImageUrl)" />
+                                </MudItem>
+                                <MudItem xs="12" sm="9" Class="d-flex flex-column justify-center">
+                                    <MudText Typo="Typo.h5">@member.FirstName @member.LastName</MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToProfile(member.Id)">
+                                View Profile
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    private List<StudentDto> members;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        try
+        {
+            var organizationDetails = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+            if (organizationDetails?.Users != null)
+            {
+                members = new List<StudentDto>();
+                foreach (var user in organizationDetails.Users)
+                {
+                    var student = await StudentsService.GetStudentAsync(user.Id);
+                    if (student != null)
+                    {
+                        members.Add(student);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add("Failed to load members.", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetUserProfileImage(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "/images/default_profile_image.png" : profileImageUrl;
+    }
+
+    private void NavigateToProfile(Guid memberId)
+    {
+        NavigationManager.NavigateTo($"/user-details/{memberId}");
+    }
+}

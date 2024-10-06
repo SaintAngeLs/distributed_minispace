@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Email.Core.Entities;
 using MiniSpace.Services.Email.Core.Repositories;
 using MiniSpace.Services.Email.Infrastructure.Mongo.Documents;

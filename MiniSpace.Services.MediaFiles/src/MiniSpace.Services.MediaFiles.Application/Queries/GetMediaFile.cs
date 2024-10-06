@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Queries;
+﻿using Paralax.CQRS.Queries;
 using Microsoft.AspNetCore.Mvc;
 using MiniSpace.Services.MediaFiles.Application.Dto;
 

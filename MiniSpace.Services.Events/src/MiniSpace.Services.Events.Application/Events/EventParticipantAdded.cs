@@ -1,6 +1,6 @@
 ﻿using System;
-using Convey.CQRS.Events;
-using Convey.MessageBrokers;
+using Paralax.CQRS.Events;
+using Paralax.MessageBrokers;
 
 namespace MiniSpace.Services.Events.Application.Events
 {
@@ -8,13 +8,11 @@ namespace MiniSpace.Services.Events.Application.Events
     {
         public Guid EventId { get; }
         public Guid ParticipantId { get; }
-        public string ParticipantName { get; }
 
-        public EventParticipantAdded(Guid eventId, Guid participantId, string participantName)
+        public EventParticipantAdded(Guid eventId, Guid participantId)
         {
             EventId = eventId;
             ParticipantId = participantId;
-            ParticipantName = participantName;
         }
     }
 }

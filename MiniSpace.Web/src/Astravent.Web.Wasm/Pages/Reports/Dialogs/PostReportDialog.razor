@@ -1,0 +1,106 @@
+<MudDialog MaxWidth="MaxWidth.Small">
+    <TitleContent>Report Post</TitleContent>
+
+    <DialogContent>
+        <!-- Displaying the post preview at the top -->
+        @if (Post != null && !string.IsNullOrEmpty(Username))
+        {
+            <MudCard Class="post-preview mb-4" Elevation="1">
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="2">
+                            <MudAvatar Size="Size.Medium" Image="@UserProfileImage" />
+                        </MudItem>
+                        <MudItem xs="10">
+                            <MudText Typo="Typo.subtitle1">@Username</MudText>
+                            <MudText Typo="Typo.caption" Class="text-muted">@Post.CreatedAt.ToString("g")</MudText>
+                        </MudItem>
+                    </MudGrid>
+                    <MudMarkdown Value="@Post.TextContent" />
+                    @if (Post.MediaFiles != null && Post.MediaFiles.Any())
+                    {
+                        <MudImage Src="@Post.MediaFiles.First()" Alt="Post Image" Style="width: 100%;" />
+                    }
+                </MudCardContent>
+            </MudCard>
+
+            <!-- Report Category Selection -->
+            <MudSelect T="ReportCategory" @bind-Value="selectedCategory" Label="Select Report Category" Variant="Variant.Filled" Required="true" FullWidth="true">
+                @foreach (ReportCategory category in Enum.GetValues(typeof(ReportCategory)))
+                {
+                    <MudSelectItem T="ReportCategory" Value="@category">@ReportCategoryExtensions.GetReportCategoryText(category)</MudSelectItem>
+                }
+            </MudSelect>
+
+            <!-- Reason Input Section -->
+            <MudText Typo="Typo.body1" Class="mt-3">You are reporting the post by @Username. Please provide the reason for your report below:</MudText>
+            <MudTextField @bind-Value="reason" Label="Reason" Variant="Variant.Filled" FullWidth="true" Required="true" />
+        }
+        else
+        {
+            <MudText Typo="Typo.body1">Unable to load post details. Please try again.</MudText>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="SubmitReport" Color="Color.Error" Variant="Variant.Filled">Submit Report</MudButton>
+        <MudButton OnClick="Cancel" Color="Color.Primary" Variant="Variant.Text">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public PostDto Post { get; set; }
+    [Parameter] public string Username { get; set; }
+    [Parameter] public string UserProfileImage { get; set; }
+    [Parameter] public Guid IssuerId { get; set; }
+
+    [Inject] public IReportsService ReportsService { get; set; }
+    [Inject] public ISnackbar Snackbar { get; set; }
+
+    private ReportCategory selectedCategory = ReportCategory.Spam; // Default selection
+    private string reason = string.Empty;
+
+    private async Task SubmitReport()
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            Snackbar.Add("Please provide a reason for your report.", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            var reportCommand = new CreateReportCommand(
+                reportId: Guid.NewGuid(),
+                issuerId: IssuerId, // Use IssuerId parameter
+                targetId: Post.Id,
+                targetOwnerId: Post.UserId.GetValueOrDefault(),
+                contextType: "Post",
+                category: ReportCategoryExtensions.GetReportCategoryText(selectedCategory), // Use selected category
+                reason: reason
+            );
+
+            var response = await ReportsService.CreateReportAsync(reportCommand);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Report submitted successfully.", Severity.Success);
+                MudDialog.Close();
+            }
+            else
+            {
+                Snackbar.Add("Failed to submit the report.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            Snackbar.Add("An error occurred while submitting the report.", Severity.Error);
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

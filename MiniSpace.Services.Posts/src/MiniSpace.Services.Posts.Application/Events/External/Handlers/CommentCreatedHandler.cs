@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Posts.Application.Events.External;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;

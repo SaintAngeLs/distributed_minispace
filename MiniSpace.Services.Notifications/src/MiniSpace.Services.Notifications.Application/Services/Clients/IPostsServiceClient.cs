@@ -1,4 +1,4 @@
-using MiniSpace.Services.Notifications.Application.Dto;
+using MiniSpace.Services.Notifications.Application.Dto.Posts;
 
 namespace MiniSpace.Services.Notifications.Application.Services.Clients
 {

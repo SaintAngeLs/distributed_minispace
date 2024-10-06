@@ -1,8 +1,8 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 
 namespace MiniSpace.Services.Identity.Application.Commands
 {
-    [Contract]
+
     public class VerifyEmail : ICommand
     {
         public string Token { get; }

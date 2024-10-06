@@ -1,5 +1,5 @@
-using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Queries;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Core.Repositories;
@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
                 // Map user settings to UserSettingsDto and include them in the StudentDto
                 studentDto.UserSettings = new UserSettingsDto
                 {
-                    StudentId = userSettings.StudentId,
+                    UserId = userSettings.UserId,
                     CreatedAtVisibility = userSettings.AvailableSettings.CreatedAtVisibility.ToString(),
                     DateOfBirthVisibility = userSettings.AvailableSettings.DateOfBirthVisibility.ToString(),
                     InterestedInEventsVisibility = userSettings.AvailableSettings.InterestedInEventsVisibility.ToString(),

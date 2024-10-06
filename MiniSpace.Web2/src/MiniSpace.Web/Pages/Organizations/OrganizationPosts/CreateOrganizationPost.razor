@@ -1,0 +1,197 @@
+@page "/organizations/{OrganizationId:guid}/posts/create"
+@inject IPostsService PostsService
+@inject IMediaFilesService MediaFilesService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
+@using MiniSpace.Web.Areas.Posts.CommandsDto
+@using MiniSpace.Web.DTO.Enums.Posts
+@using MudBlazor
+@using System.IO
+
+@using Microsoft.AspNetCore.Components.Forms
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">Create a New Post for Organization</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudForm @ref="form" @onsubmit="HandleSubmit">
+                <MudTextField @bind-Value="textContent" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+                <MudMarkdown Value="@textContent" />
+                
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UploadMediaFilesClick">
+                    Upload Media Files
+                </MudButton>
+                <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
+
+                @if (mediaFilesPreviews.Any())
+                {
+                    <div class="mt-4">
+                        <MudText Typo="Typo.h6">Uploaded Files Preview</MudText>
+                        <MudGrid>
+                            @foreach (var filePreview in mediaFilesPreviews)
+                            {
+                                <MudItem xs="12" sm="6">
+                                    <MudCard>
+                                        @if (filePreview.IsImage)
+                                        {
+                                            <MudCardMedia ImageSource="@filePreview.Url" Title="Media Preview" />
+                                        }
+                                        else if (filePreview.IsVideo)
+                                        {
+                                            <video width="100%" height="200" controls>
+                                                <source src="@filePreview.Url" type="@filePreview.ContentType">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        }
+                                        else if (filePreview.IsPdf)
+                                        {
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
+                                                View PDF
+                                            </MudButton>
+                                        }
+                                    </MudCard>
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    </div>
+                }
+
+                <MudSelect T="string" @bind-Value="state" Label="State" Required="true">
+                    <MudSelectItem T="string" Value="@("InDraft")">Draft</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Published")">Published</MudSelectItem>
+                </MudSelect>
+
+                <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true">
+                    <MudSelectItem T="string" Value="@("Visible")">Visible</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Invisible")">Invisible</MudSelectItem>
+                </MudSelect>
+
+                <MudDatePicker @bind-Date="publishDate" Label="Publish Date" />
+
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(async () => await HandleSubmit())">Create Post</MudButton>
+                <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel">Cancel</MudButton>
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    private MudForm form;
+    private string textContent;
+    private List<FilePreview> mediaFilesPreviews = new();
+    private List<string> uploadedMediaUrls = new List<string>();
+    private string state = "InDraft";
+    private string visibility = "Visible";
+    private DateTime? publishDate = DateTime.Now;
+    private bool isUploading = false;
+
+    private async Task UploadMediaFilesClick()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputMediaFiles').click()");
+    }
+
+    private async Task UploadMediaFiles(InputFileChangeEventArgs e)
+    {
+        isUploading = true;
+        StateHasChanged();
+
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in files)
+        {
+            if (file.Size > maxAllowedSize)
+            {
+                Snackbar.Add($"File {file.Name} exceeds the allowed size limit.", Severity.Error);
+                continue;
+            }
+
+            using var stream = file.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+
+            var response = await MediaFilesService.UploadFileAsync(
+                sourceId: OrganizationId,  // Use OrganizationId here
+                sourceType: "PostFileOrganization",  // Different source type for organization
+                uploaderId: IdentityService.GetCurrentUserId(),
+                fileName: file.Name,
+                fileContentType: file.ContentType,
+                fileData: buffer);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var uploadedUrl = response.Content.FileUrl;
+                uploadedMediaUrls.Add(uploadedUrl);
+
+                mediaFilesPreviews.Add(new FilePreview
+                {
+                    Url = uploadedUrl,
+                    ContentType = file.ContentType,
+                    IsImage = file.ContentType.StartsWith("image/"),
+                    IsVideo = file.ContentType.StartsWith("video/"),
+                    IsPdf = file.ContentType.EndsWith("pdf")
+                });
+            }
+            else
+            {
+                Snackbar.Add($"Failed to upload file {file.Name}: {response.ErrorMessage?.Reason}", Severity.Error);
+            }
+        }
+
+        isUploading = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (form.IsValid)
+        {
+            var command = new CreatePostCommand
+            {
+                PostId = Guid.NewGuid(),
+                UserId = IdentityService.GetCurrentUserId(),
+                TextContent = textContent,
+                MediaFiles = uploadedMediaUrls.ToArray(),
+                State = state,
+                Visibility = visibility,
+                PublishDate = publishDate,
+                OrganizationId = OrganizationId,  
+                Context = PostContext.OrganizationPage 
+            };
+
+            var response = await PostsService.CreatePostAsync(command);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Post created successfully.", Severity.Success);
+                NavigationManager.NavigateTo($"/organizations/{OrganizationId}/posts");
+            }
+            else
+            {
+                Snackbar.Add($"Failed to create post: {response.ErrorMessage?.Reason}", Severity.Error);
+            }
+        }
+    }
+
+    private void HandleCancel()
+    {
+        NavigationManager.NavigateTo($"/organizations/{OrganizationId}/posts");
+    }
+
+    private class FilePreview
+    {
+        public string Url { get; set; }
+        public string ContentType { get; set; }
+        public bool IsImage { get; set; }
+        public bool IsVideo { get; set; }
+        public bool IsPdf { get; set; }
+    }
+}

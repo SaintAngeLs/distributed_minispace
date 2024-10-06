@@ -5,9 +5,10 @@ using MongoDB.Driver;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Mongo.Repositories
 {
-    public interface IExtendedStudentNotificationsRepository : IStudentNotificationsRepository
+    public interface IExtendedUserNotificationsRepository : IUserNotificationsRepository
     {
-        Task<UpdateResult> BulkUpdateAsync(FilterDefinition<StudentNotificationsDocument> filter, UpdateDefinition<StudentNotificationsDocument> update);
+        Task<UpdateResult> BulkUpdateAsync(FilterDefinition<UserNotificationsDocument> filter, 
+                                            UpdateDefinition<UserNotificationsDocument> update);
         Task<int> GetNotificationCount(Guid studentId);
         Task<List<NotificationDocument>> GetRecentNotifications(Guid studentId, int count);
     }

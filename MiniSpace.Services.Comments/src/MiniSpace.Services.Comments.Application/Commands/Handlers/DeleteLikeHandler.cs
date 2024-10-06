@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Comments.Application.Events;
 using MiniSpace.Services.Comments.Application.Exceptions;
 using MiniSpace.Services.Comments.Application.Services;
@@ -42,7 +42,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             comment.UnLike(identity.Id);
             await _commentRepository.UpdateAsync(comment);
 
-            await _messageBroker.PublishAsync(new CommentUpdated(command.CommentId));
+            // await _messageBroker.PublishAsync(new CommentUpdated(command.CommentId));
         }
     }
 }

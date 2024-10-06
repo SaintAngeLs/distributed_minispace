@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Queries;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Comments.Application.Dto;
 using MiniSpace.Services.Comments.Application.Queries;
 using MiniSpace.Services.Comments.Infrastructure.Mongo.Documents;

@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Reactions.Application.Exceptions;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MiniSpace.Services.Reactions.Core.Repositories;

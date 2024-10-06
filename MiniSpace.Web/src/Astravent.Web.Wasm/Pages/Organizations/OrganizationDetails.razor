@@ -1,0 +1,201 @@
+@page "/organizations/details/{OrganizationId:guid}"
+@inject IOrganizationsService OrganizationsService
+@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@using Astravent.Web.Wasm.DTO.Organizations
+@using Astravent.Web.Wasm.DTO.Enums
+@using MudBlazor
+
+<AuthWrapper>
+<MudContainer Class="pa-0">
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Class="my-4" />
+    }
+    else if (organizationGalleryUsers == null)
+    {
+        <MudText Color="Color.Error">Failed to load organization details.</MudText>
+    }
+    else
+    {
+        <MudPaper Class="pa-0">
+            <!-- Banner Image -->
+            <MudImage 
+                Src="@GetBannerUrl()" 
+                Alt="Banner" 
+                Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" 
+            />
+
+            <!-- Profile Image and Organization Name -->
+            <div style="position: relative; text-align: center; margin-top: -60px;">
+                <MudImage 
+                    Src="@GetProfileImageUrl()" 
+                    Alt="Profile Image" 
+                    Style="height: 120px; width: 120px; object-fit: cover; 
+                           border-radius: 50%; 
+                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+                           border: 4px solid white;" 
+                />
+            </div>
+
+            <MudText Typo="Typo.h6" Class="mt-3" Align="Align.Center">
+                @organizationGalleryUsers.OrganizationDetails.Name
+            </MudText>
+            
+            <!-- Edit Button (Visible to Admins Only) -->
+            <MudStack Row="true" Style="margin-top: 20px;">
+                <MudSpacer />
+                @if (isAdmin)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" OnClick="EditOrganization" Size="Size.Small">
+                        Edit
+                    </MudButton>
+                }
+            </MudStack>
+        </MudPaper>
+
+        <!-- Navigation and Content -->
+        <MudGrid Class="mt-4">
+            <!-- Menu on the Left -->
+            <MudItem xs="12" md="3">
+                <MudNavMenu>
+                    <MudNavLink @onclick="() => NavigateToFeed()" Match="NavLinkMatch.All">Feed</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(1)" Match="NavLinkMatch.All">Overview</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(2)" Match="NavLinkMatch.All">Posts</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(3)" Match="NavLinkMatch.All">Events</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(4)" Match="NavLinkMatch.All">Members</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(5)" Match="NavLinkMatch.All">Requests</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(6)" Match="NavLinkMatch.All">Suborganizations</MudNavLink>
+                    <MudNavLink @onclick="() => LoadTabContent(7)" Match="NavLinkMatch.All">Gallery</MudNavLink>
+                </MudNavMenu>
+            </MudItem>
+
+            <!-- Content on the Right -->
+            <MudItem xs="12" md="9">
+                <MudPaper Class="pa-4">
+                    @if (selectedTabIndex == 1)
+                    {
+                        <OverviewComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 2)
+                    {
+                        <OrganizationPostsComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 3)
+                    {
+                        <EventsComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 4)
+                    {
+                        <OrganizationMembersComponent OrganizationId="@OrganizationId" />
+                    }
+                     else if (selectedTabIndex == 5)
+                    {
+                        <OrganizationRequestsComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 6)
+                    {
+                        <SubOrganizationsComponent OrganizationId="@OrganizationId" />
+                    }
+                    else if (selectedTabIndex == 7)
+                    {
+                        <OrganizationGalleryComponent OrganizationId="@OrganizationId" />
+                    }
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+</AuthWrapper>
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    private OrganizationGalleryUsersDto organizationGalleryUsers;
+    private bool isAdmin;
+    private bool isLoading = true;
+    private int selectedTabIndex = 1;
+
+    private string defaultBannerImage = "/images/default_banner_image.png";
+    private string defaultProfileImage = "/images/default_organization_profile_image.png";
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                organizationGalleryUsers = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+                isAdmin = CheckIfUserIsAdminOrHasPermissions();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            organizationGalleryUsers = null; 
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private bool CheckIfUserIsAdminOrHasPermissions()
+    {
+        var currentUserId = IdentityService.GetCurrentUserId();
+
+        if (organizationGalleryUsers?.OrganizationDetails?.OwnerId == currentUserId)
+        {
+            return true;
+        }
+
+        var currentUserRole = organizationGalleryUsers?.Users?
+            .FirstOrDefault(u => u.Id == currentUserId)?.Role;
+
+        if (currentUserRole != null)
+        {
+            return currentUserRole.Permissions.TryGetValue(Permission.EditOrganizationDetails, out bool canEdit) && canEdit ||
+                   currentUserRole.Permissions.TryGetValue(Permission.UpdateOrganizationImage, out bool canUpdateImage) && canUpdateImage;
+        }
+
+        return false;
+    }
+
+    private string GetBannerUrl()
+    {
+        return !string.IsNullOrWhiteSpace(organizationGalleryUsers?.OrganizationDetails?.BannerUrl) 
+            ? organizationGalleryUsers.OrganizationDetails.BannerUrl 
+            : defaultBannerImage;
+    }
+
+    private string GetProfileImageUrl()
+    {
+        return !string.IsNullOrWhiteSpace(organizationGalleryUsers?.OrganizationDetails?.ImageUrl) 
+            ? organizationGalleryUsers.OrganizationDetails.ImageUrl 
+            : defaultProfileImage;
+    }
+
+    private void LoadTabContent(int index)
+    {
+        selectedTabIndex = index;
+    }
+
+    private void NavigateToFeed()
+    {
+        NavigationManager.NavigateTo($"/organizations/{OrganizationId}/feed");
+    }
+    private void EditOrganization()
+    {
+        NavigationManager.NavigateTo($"/organizations/edit/{OrganizationId}");
+    }
+}

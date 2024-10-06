@@ -1,4 +1,4 @@
-using Convey.Types;
+using Paralax.Types;
 using MiniSpace.Services.Friends.Core.Entities;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Documents

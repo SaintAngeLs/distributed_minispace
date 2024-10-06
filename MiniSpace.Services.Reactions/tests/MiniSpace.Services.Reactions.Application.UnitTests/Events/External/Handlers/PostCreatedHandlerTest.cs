@@ -15,7 +15,7 @@ using FluentAssertions;
 using MiniSpace.Services.Reactions.Application.Events.External.Handlers;
 using MiniSpace.Services.Reactions.Application.Events.External;
 using System.ComponentModel.Design;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Reactions.Application.Events;
 
 namespace MiniSpace.Services.Reactions.Application.UnitTests.Events.External.Handlers

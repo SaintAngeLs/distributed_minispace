@@ -1,4 +1,4 @@
-using Convey.MessageBrokers.RabbitMQ;
+using Paralax.MessageBrokers.RabbitMQ;
 
 namespace MiniSpace.Services.MediaFiles.Infrastructure.Exceptions
 {

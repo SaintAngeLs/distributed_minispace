@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Convey.HTTP;
+using Paralax.HTTP;
 using MiniSpace.Services.Communication.Application.Dto;
 using MiniSpace.Services.Communication.Application.Queries;
 using MiniSpace.Services.Communication.Application.Services.Clients;

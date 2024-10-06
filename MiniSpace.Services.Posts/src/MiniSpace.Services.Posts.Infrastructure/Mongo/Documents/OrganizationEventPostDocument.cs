@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.Types;
+using Paralax.Types;
 using System;
 using System.Collections.Generic;
 

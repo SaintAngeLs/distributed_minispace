@@ -1,0 +1,112 @@
+@using Astravent.Web.Wasm.DTO
+@inject ICommentsService CommentsService
+@inject IStudentsService StudentsService
+
+<MudCardContent>
+    <MudTextField @bind-Value="newCommentText" Placeholder="Write a comment..." Variant="Variant.Outlined" FullWidth="true" />
+    <MudButton Color="Color.Primary" OnClick="SubmitComment">Submit</MudButton>
+    
+    @if (comments.Any())
+    {
+        <MudList>
+            @foreach (var comment in comments.Where(c => c.ParentId == Guid.Empty))
+            {
+                <CommentItem Comment="comment" Post="Post" UserId="UserId" />
+            }
+        </MudList>
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" Class="text-muted">No comments available.</MudText>
+    }
+</MudCardContent>
+
+@code {
+    [Parameter] public PostDto Post { get; set; }
+    [Parameter] public Guid UserId { get; set; }
+    [Parameter] public EventCallback<(PostDto, string)> OnSubmitComment { get; set; } // Add the missing parameter
+
+    private string newCommentText = string.Empty;
+    private List<CommentDto> comments = new();
+    private Dictionary<Guid, StudentDto> studentsCache = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCommentsForPostAsync();
+    }
+
+    private async Task LoadCommentsForPostAsync()
+    {
+        var command = new SearchRootCommentsCommand(
+            contextId: Post.Id,
+            commentContext: DetermineCommentContext(Post).ToString(),
+            pageable: new PageableDto
+            {
+                Page = 1,
+                Size = 10,
+                Sort = new SortDto
+                {
+                    SortBy = new[] { "CreatedAt" },
+                    Direction = "asc"
+                }
+            }
+        );
+
+        var response = await CommentsService.SearchRootCommentsAsync(command);
+        comments = response.Items?.ToList() ?? new List<CommentDto>();
+
+        foreach (var comment in comments)
+        {
+            if (!studentsCache.ContainsKey(comment.UserId))
+            {
+                var student = await StudentsService.GetStudentAsync(comment.UserId);
+                if (student != null)
+                {
+                    studentsCache[comment.UserId] = student;
+                }
+            }
+
+            if (comment.Replies != null)
+            {
+                foreach (var reply in comment.Replies)
+                {
+                    if (!studentsCache.ContainsKey(reply.UserId))
+                    {
+                        var replyAuthor = await StudentsService.GetStudentAsync(reply.UserId);
+                        if (replyAuthor != null)
+                        {
+                            studentsCache[reply.UserId] = replyAuthor;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private CommentContext DetermineCommentContext(PostDto post)
+    {
+        if (post.OrganizationId.HasValue)
+        {
+            return post.EventId.HasValue ? CommentContext.OrganizationEvent : CommentContext.OrganizationPost;
+        }
+        else
+        {
+            return post.EventId.HasValue ? CommentContext.UserEvent : CommentContext.UserPost;
+        }
+    }
+
+    private async Task SubmitComment()
+    {
+        if (string.IsNullOrWhiteSpace(newCommentText))
+        {
+            // Notify user about empty comment
+            return;
+        }
+
+        // Trigger the callback to notify the parent component
+        await OnSubmitComment.InvokeAsync((Post, newCommentText));
+
+        // Clear the text field after submitting the comment
+        newCommentText = string.Empty;
+    }
+}

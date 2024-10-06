@@ -1,0 +1,148 @@
+@page "/organizations/overview/{OrganizationId:guid}"
+@inject IOrganizationsService OrganizationsService
+@inject IEventsService EventsService
+@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
+@inject ISnackbar Snackbar
+@using Astravent.Web.Wasm.DTO.Organizations
+@using Astravent.Web.Wasm.DTO
+@using MudBlazor
+
+<AuthWrapper>
+    <MudContainer Class="pa-0">
+        @if (isLoading)
+        {
+            <MudProgressCircular Indeterminate="true" Class="my-4" />
+        }
+        else if (organization == null)
+        {
+            <MudText Color="Color.Error">Failed to load organization overview.</MudText>
+        }
+        else
+        {
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h4" Align="Align.Center">@organization.OrganizationDetails.Name</MudText>
+                <MudDivider Class="my-4"/>
+
+                <MudText Typo="Typo.h6">Description</MudText>
+                <MudText Class="mb-4">@organization.OrganizationDetails.Description</MudText>
+
+                <MudDivider Class="my-4"/>
+
+                <MudText Typo="Typo.h6">General Information</MudText>
+                <MudText>User Count: @organization.Users.Count()</MudText>
+                <MudText>Total Events: @events.Count()</MudText>
+
+                <MudDivider Class="my-4"/>
+
+                <MudText Typo="Typo.h6">Members</MudText>
+                <MudGrid>
+                    @foreach (var student in students)
+                    {
+                        <MudItem xs="12">
+                            <MudCard Class="mb-4">
+                                <MudCardContent Class="d-flex align-items-center">
+                                    <MudAvatar Size="Size.Large" Image="@GetUserProfileImage(student.ProfileImageUrl)" />
+                                    <MudText Typo="Typo.h5" Class="ml-4">@student.FirstName @student.LastName</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToProfile(student.Id)">
+                                        View Profile
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+
+                <MudDivider Class="my-4"/>
+
+                <MudText Typo="Typo.h6">Gallery</MudText>
+                <MudGrid>
+                    @foreach (var image in organization.Gallery)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard>
+                                <MudCardMedia Src="@image.ImageUrl" Alt="Gallery Image" />
+                                <MudCardContent>
+                                    <MudText Align="Align.Center">@image.DateAdded.ToShortDateString()</MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+
+                <MudDivider Class="my-4"/>
+
+                <MudText Typo="Typo.h6">Events</MudText>
+                <MudList Dense="true">
+                    @foreach (var eventItem in events)
+                    {
+                        <MudListItem>
+                            <MudText>@eventItem.Name</MudText>
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    private OrganizationGalleryUsersDto organization;
+    private IEnumerable<EventDto> events;
+    private List<StudentDto> students = new List<StudentDto>();
+    private bool isLoading = true;
+
+    [Inject] private NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+            if (IdentityService.IsAuthenticated)
+            {
+                organization = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+                var eventsResult = await EventsService.SearchEventsAsync(new SearchEvents { OrganizationId = OrganizationId });
+                events = eventsResult.Items;
+
+                foreach (var user in organization.Users)
+                {
+                    var student = await StudentsService.GetStudentAsync(user.Id);
+                    if (student != null)
+                    {
+                        students.Add(student);
+                    }
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add("Failed to load organization overview.", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetUserProfileImage(string profileImageUrl)
+    {
+        return string.IsNullOrEmpty(profileImageUrl) ? "/images/default_profile_image.png" : profileImageUrl;
+    }
+
+    private void NavigateToProfile(Guid studentId)
+    {
+        NavigationManager.NavigateTo($"/user-details/{studentId}");
+    }
+}

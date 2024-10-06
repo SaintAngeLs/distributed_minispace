@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Convey.HTTP;
+using Paralax.HTTP;
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Application.Services.Clients;
 

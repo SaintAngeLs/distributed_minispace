@@ -1,0 +1,23 @@
+@page "/greeting"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IIdentityService IdentityService
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+
+<h1>Greeting</h1>
+
+
+@if (email != null)
+{
+    <p>Hello, @email!</p>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private string email;
+
+   
+}

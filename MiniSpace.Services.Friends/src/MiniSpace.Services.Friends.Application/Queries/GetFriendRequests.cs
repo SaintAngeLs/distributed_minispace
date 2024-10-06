@@ -1,4 +1,4 @@
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using System.Text.Json.Serialization; 
 using MiniSpace.Services.Friends.Application.Dto;
 using MiniSpace.Services.Friends.Core.Wrappers;

@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.Logging.CQRS;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Events;
 using MiniSpace.Services.Posts.Application.Events.External;
+using Paralax.CQRS.Logging;
 
 namespace MiniSpace.Services.Posts.Infrastructure.Logging
 {

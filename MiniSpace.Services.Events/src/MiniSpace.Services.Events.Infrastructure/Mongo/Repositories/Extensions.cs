@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using MiniSpace.Services.Events.Core.Entities;
 using MiniSpace.Services.Events.Infrastructure.Mongo.Documents;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
@@ -156,13 +155,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
             if (friendsEngagementType != null)  
             {
                 filterDefinition &= friendsEngagementType == EventEngagementType.InterestedIn 
-                    ? FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.StudentId))
-                    : FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.StudentId));
+                    ? FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.UserId))
+                    : FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.UserId));
             }
             else
             {
-                var interestedFilter = FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.StudentId));
-                var signedUpFilter = FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.StudentId));
+                var interestedFilter = FilterDefinitionBuilder.ElemMatch(x => x.InterestedStudents, s => friends.Contains(s.UserId));
+                var signedUpFilter = FilterDefinitionBuilder.ElemMatch(x => x.SignedUpStudents, s => friends.Contains(s.UserId));
                 filterDefinition &= FilterDefinitionBuilder.Or(interestedFilter, signedUpFilter);
             }
 
@@ -172,13 +171,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
         public static FilterDefinition<EventDocument> AddOrganizationsIdFilter(this FilterDefinition<EventDocument> filterDefinition,
             IEnumerable<Guid> organizationsEnumerable)
         {
-            var organizations = organizationsEnumerable.ToList();
+            var organizations = organizationsEnumerable.Select(id => id.ToString()).ToList(); // Convert Guid to string
 
             if (organizations.Count > 0)
             {
                 var organizationFilter = Builders<EventDocument>.Filter.And(
                     Builders<EventDocument>.Filter.Ne(e => e.Organizer.OrganizationId, null),
-                    Builders<EventDocument>.Filter.In(e => (Guid)e.Organizer.OrganizationId, organizations)
+                    Builders<EventDocument>.Filter.In("Organizer.OrganizationId", organizations) 
                 );
 
                 filterDefinition &= organizationFilter;
@@ -186,6 +185,7 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
 
             return filterDefinition;
         }
+
         
         public static FilterDefinition<EventDocument> AddEventIdFilter(this FilterDefinition<EventDocument> filterDefinition,
             IEnumerable<Guid> eventIds)

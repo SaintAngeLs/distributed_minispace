@@ -1,5 +1,5 @@
 using System;
-using Convey.Types;
+using Paralax.Types;
 
 namespace MiniSpace.Services.Email.Infrastructure.Mongo.Documents
 {

@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Students.Application.Exceptions;
 using MiniSpace.Services.Students.Application.Services;
@@ -67,7 +67,10 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                 string.Empty, // ContactEmail
                 string.Empty, // PhoneNumber,
                 string.Empty, // Country
-                string.Empty // City 
+                string.Empty, // City
+                false, // IsOnline (default to offline)
+                string.Empty, // DeviceType (default)
+                null // LastActive (default to null)
             );
 
             await _studentRepository.AddAsync(newStudent);

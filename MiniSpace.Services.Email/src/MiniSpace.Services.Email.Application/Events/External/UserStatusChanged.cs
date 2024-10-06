@@ -1,5 +1,5 @@
-using Convey.CQRS.Events;
-using Convey.MessageBrokers;
+using Paralax.CQRS.Events;
+using Paralax.MessageBrokers;
 using MiniSpace.Services.Email.Core.Entities;
 
 namespace MiniSpace.Services.Email.Application.Events.External

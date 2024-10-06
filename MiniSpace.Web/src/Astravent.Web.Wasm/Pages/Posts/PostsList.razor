@@ -1,0 +1,224 @@
+@page "/posts/search"
+@inject IPostsService PostsService
+@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
+@inject IReactionsService ReactionsService
+@inject ICommentsService CommentsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.DTO.Wrappers
+@using MudBlazor
+@using Astravent.Web.Wasm.Pages.Posts.Components
+@inject IDialogService DialogService
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Class="my-4" />
+    }
+    else if (!posts.Any())
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center">No posts available.</MudText>
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center">
+            @foreach (var post in posts)
+            {
+                <MudItem xs="12">
+                    <PostItem 
+                        Post="@post"
+                        Username="@GetUserName(post.UserId)"
+                        UserProfileImage="@GetUserAvatar(post.UserId)"
+                        PostDate="@post.CreatedAt.ToString("g")"
+                        ReactionsSummaries="@reactionsSummaries"
+                        OnViewPost="NavigateToPostDetails"
+                        OnReaction="HandleReaction"
+                        OnSubmitComment="SubmitCommentAsync"
+                    />
+                </MudItem>
+            }
+        </MudGrid>
+        <MudGrid Justify="Justify.Center" Class="mt-4">
+            <MudItem>
+                <MudPagination @bind-CurrentPage="currentPage" TotalItems="@totalItems" ItemsPerPage="pageSize" OnPageChanged="OnPageChanged" />
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    private List<PostDto> posts = new();
+    private Dictionary<Guid, StudentDto> studentsCache = new();
+    private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new();
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalItems = 0;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                await LoadPostsAsync();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load posts: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadPostsAsync()
+    {
+        var searchParams = new SearchPosts
+        {
+            Pageable = new PageableDto
+            {
+                Page = currentPage,
+                Size = pageSize,
+                Sort = new SortDto
+                {
+                    SortBy = new[] { "CreatedAt" },
+                    Direction = "desc"
+                }
+            }
+        };
+
+        var response = await PostsService.SearchPostsAsync(searchParams);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = response.Content;
+
+            posts = result?.Items?.ToList() ?? new List<PostDto>();
+            totalItems = result.TotalItems;
+
+            foreach (var post in posts)
+            {
+                if (post.UserId.HasValue && !studentsCache.ContainsKey(post.UserId.Value))
+                {
+                    var student = await StudentsService.GetStudentAsync(post.UserId.Value);
+                    if (student != null)
+                    {
+                        studentsCache[post.UserId.Value] = student;
+                    }
+                }
+
+                // Get reactions summary for each post and store it in the dictionary
+                reactionsSummaries[post.Id] = await GetReactionsSummaryAsync(post.Id);
+            }
+        }
+        else
+        {
+            Snackbar.Add("No posts found.", Severity.Warning);
+            posts = new List<PostDto>();
+        }
+    }
+
+    private string GetUserAvatar(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return studentsCache[userId.Value].ProfileImageUrl ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    private string GetUserName(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return $"{studentsCache[userId.Value].FirstName} {studentsCache[userId.Value].LastName}";
+        }
+        return "Unknown User";
+    }
+
+    private async Task OnPageChanged(int newPage)
+    {
+        currentPage = newPage;
+        await LoadPostsAsync();
+    }
+
+    private async Task<ReactionsSummaryDto> GetReactionsSummaryAsync(Guid postId)
+    {
+        return await ReactionsService.GetReactionsSummaryAsync(postId, ReactionContentType.Post);
+    }
+
+    private void NavigateToPostDetails(Guid postId)
+    {
+        NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+
+    private async Task HandleReaction((Guid postId, ReactionType reactionType) reactionInfo)
+    {
+        var (postId, reactionType) = reactionInfo;
+        var existingReaction = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
+
+        var command = new UpdateReactionDto
+        {
+            ReactionId = existingReaction.FirstOrDefault()?.Id ?? Guid.NewGuid(),
+            UserId = IdentityService.GetCurrentUserId(),
+            NewReactionType = reactionType.ToString(),
+            ContentType = "Post",
+            TargetType = "User"
+        };
+
+        var result = await ReactionsService.UpdateReactionAsync(command);
+        if (result.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Reaction updated successfully!", Severity.Success);
+            await LoadPostsAsync();
+        }
+        else
+        {
+            Snackbar.Add($"Failed to update reaction: {result.ErrorMessage?.Reason}", Severity.Error);
+        }
+    }
+
+    private async Task SubmitCommentAsync((PostDto post, string commentText) commentInfo)
+    {
+        var (post, commentText) = commentInfo;
+        if (string.IsNullOrWhiteSpace(commentText))
+        {
+            Snackbar.Add("Comment cannot be empty.", Severity.Warning);
+            return;
+        }
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: post.Id,
+            commentContext: "UserPost",
+            userId: IdentityService.GetCurrentUserId(),
+            parentId: Guid.Empty,
+            textContent: commentText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Comment added successfully!", Severity.Success);
+            await LoadPostsAsync();
+        }
+        else
+        {
+            Snackbar.Add($"Failed to add comment: {response.ErrorMessage?.Reason}", Severity.Error);
+        }
+    }
+}

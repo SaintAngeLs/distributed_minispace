@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Friends.Core.Repositories;
 using MiniSpace.Services.Friends.Application.Exceptions;
 using MiniSpace.Services.Friends.Application.Services;

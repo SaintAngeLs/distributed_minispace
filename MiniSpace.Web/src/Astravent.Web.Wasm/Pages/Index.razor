@@ -1,0 +1,130 @@
+﻿@page "/"
+@using MudBlazor
+@inject NavigationManager NavigationManager
+
+<MudLayout Class="landing-page container">
+    <MudContainer MaxWidth="MaxWidth.False" Class="split-screen" Style="display: flex; align-items: center; justify-content: center; height: 80vh; margin-left: auto; margin-right: auto;" id="home">
+        <MudGrid Style="width: 100%;">
+            <MudItem xs="12" md="12" xl="12" Class="carousel-section" Style="display: flex;">
+                <MudCarousel @bind-SelectedIndex="@activeIndex" Class="mud-width-full" Style="height: 50vh;" ShowArrows="@arrows" ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+                    @foreach (var img in images)
+                    {
+                        <MudCarouselItem>
+                            <div style="height: 100%; background-image: url('@img'); background-size: cover; background-position: center;"></div>
+                        </MudCarouselItem>
+                    }
+                </MudCarousel>
+                <MudItem xs="12" md="6" xl="6" Class="carousel-section" Style="display: flex; flex-direction: column;">
+                    @foreach (var img in images2)
+                    {
+                        <MudCarousel Class="mud-width-full" Style="height: 50vh; flex: 1;" 
+                            ShowArrows="false" 
+                            ShowBullets="false" 
+                            EnableSwipeGesture="@enableSwipeGesture"
+                            AutoCycle="@autocycle" TData="object">
+                            <MudCarouselItem>
+                                <div style="height: 100%; background-image: url('@img'); background-size: cover; background-position: center;"></div>
+                            </MudCarouselItem>
+                        </MudCarousel>
+                    }
+                </MudItem>
+            </MudItem>
+            <div class="content-section" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                <h1 class="mini-space-title" style="font-size: 3rem; font-weight: bold; color: #555; margin-bottom: 0.5rem;">Welcome to Mini Space</h1>
+                <h2 class="welcome-title" style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">@titles[activeIndex]</h2>
+                <p class="welcome-tagline" style="color: #555; margin-bottom: 2rem;">@descriptions[activeIndex]</p>
+                <RadzenButton class="button primary large filled" Style="background-color: steelblue" Click=@(() => NavigationManager.NavigateTo("events/search"))>Get Started</RadzenButton>
+            </div>
+
+        </MudGrid>
+    </MudContainer>
+
+    <MudContainer Class="text-center features" Style="padding-top: 2rem; padding-bottom: 2rem;">
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="4">
+                <FeatureCard Icon="@Icons.Material.Filled.ChatBubble" Title="Connect & Communicate" Description="Engage with your community through posts, comments, and live chats."/>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <FeatureCard Icon="@Icons.Material.Filled.Event" Title="Events & Activities" Description="Discover and participate in events and activities that match your interests."/>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <FeatureCard Icon="@Icons.Material.Filled.PhotoCamera" Title="Share Moments" Description="Capture and share your most memorable moments with friends and followers."/>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+
+
+    <div id="about">
+        <AboutApp />
+    </div>
+
+    <div id="connect">
+        <Connect /> 
+    </div>
+
+</MudLayout>
+
+<Style>
+    .content-section {
+    text-align: center;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.mini-space-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.welcome-tagline {
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.button {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff; 
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+</Style>
+
+@code {
+    private int activeIndex = 0;
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    private bool autocycle = true;
+    private MudBlazor.Transition transition = MudBlazor.Transition.Slide; 
+    private List<string> images = new List<string> { "images/mini_1.webp", "images/pw_1.webp", "images/pw_2.webp" };
+    private List<string> images2 = new List<string> { "images/students_1.webp", "images/students_2.webp", "images/students_3.webp" };
+    private List<string> titles = new List<string> { "Exploration", "Connection", "Sharing" };
+    private List<string> descriptions = new List<string> {
+        "Explore new places and meet new people on MiniSpace.",
+        "Connect with friends and family, share your experiences.",
+        "Share your adventures and stories with a global audience."
+    };
+
+    
+}

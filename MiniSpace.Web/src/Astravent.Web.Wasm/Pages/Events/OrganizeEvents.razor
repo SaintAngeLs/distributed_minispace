@@ -1,0 +1,513 @@
+@page "/events/organize"
+@using Astravent.Web.Wasm.Areas.Events
+@using Astravent.Web.Wasm.Areas.Events.CommandsDto
+@using Astravent.Web.Wasm.DTO.Enums
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.Utilities
+@inject IEventsService EventsService
+@inject ISnackbar Snackbar
+@inject IMediaFilesService MediaFilesService
+@inject IIdentityService IdentityService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@using MudBlazor
+@using System.IO
+@using System.Text.Json;
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h5">Organize Event</MudText>
+
+    @if (IsUploading)
+    {
+        <div class="loading-overlay">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Uploading Files, please wait...</MudText>
+        </div>
+    }
+    else
+    {
+        <MudItem xs="12" md="8" Class="my-auto">
+            <MudForm Model="newEvent" @ref="form">
+                <MudTimeline TimelinePosition="TimelinePosition.Start">
+                    <!-- General Information Section -->
+                    <MudTimelineItem Icon="@Icons.Material.Filled.Info" Title="General Information" Color="Color.Primary">
+                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">General Information</MudText>
+                        <MudTextField Label="Event Name" @bind-Value="newEvent.Name" FullWidth Required="true" />
+
+                        <MudText Typo="Typo.body2">Event Description</MudText>
+                        <MudTextField @bind-Value="newEvent.Description" Label="Description" Multiline="true" Lines="5" FullWidth Immediate="true" Required="true" />
+
+                        <!-- Markdown Preview -->
+                        <MudMarkdown Value="@newEvent.Description" />
+                        <!-- Start Date and Time -->
+                        <MudDatePicker Label="Start Date" @bind-Date="startDateTemp" Required="true" />
+                        <MudTimePicker Label="Start Time" @bind-Time="startTimeTemp" Required="true" MinuteSelectionStep="5" />
+
+                        <!-- End Date and Time -->
+                        <MudDatePicker Label="End Date" @bind-Date="endDateTemp" Required="true" />
+                        <MudTimePicker Label="End Time" @bind-Time="endTimeTemp" Required="true" MinuteSelectionStep="5" />
+
+                        <MudSelect T="string" Label="Category" @bind-Value="newEvent.Category" Required="true">
+                            @foreach (var category in Enum.GetNames(typeof(Category)))
+                            {
+                                <MudSelectItem T="string" Value="category">@category</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Capacity" @bind-Value="newEvent.Capacity" Type="number" Required="true" />
+                        <MudSelect T="string" Label="Organizer Type" @bind-Value="newEvent.OrganizerType" Required="true">
+                            @foreach (var organizerType in Enum.GetNames(typeof(OrganizerType)))
+                            {
+                                <MudSelectItem T="string" Value="organizerType">@organizerType</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <!-- Publish Date and Time -->
+                        <MudDatePicker Label="Publish Date" @bind-Date="publishDateTemp" FullWidth />
+                        <MudTimePicker Label="Publish Time" @bind-Time="publishTimeTemp" MinuteSelectionStep="5" />
+                    </MudTimelineItem>
+
+                    <!-- Define Location Checkbox -->
+                    <MudTimelineItem Icon="@Icons.Material.Filled.LocationOn" Title="Location" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
+                        <MudCheckBox Label="Define Location" @bind-Checked="IsLocationDefined" />
+                        @if (IsLocationDefined)
+                        {
+                            <!-- Address Section -->
+                            <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Location</MudText>
+                            <MudTextField Label="Building Name" @bind-Value="newEvent.BuildingName" FullWidth />
+                            <MudTextField Label="Street" @bind-Value="newEvent.Street" FullWidth />
+                            <MudTextField Label="Building Number" @bind-Value="newEvent.BuildingNumber" FullWidth />
+                            <MudTextField Label="Apartment Number" @bind-Value="newEvent.ApartmentNumber" FullWidth />
+                            <MudTextField Label="City" @bind-Value="newEvent.City" FullWidth Required="true" />
+                            <MudTextField Label="Zip Code" @bind-Value="newEvent.ZipCode" FullWidth Required="true" />
+                            <MudTextField Label="Country" @bind-Value="newEvent.Country" FullWidth Required="true" />
+                        }
+                    </MudTimelineItem>
+
+                    <!-- Payment Section -->
+                    <MudTimelineItem Icon="@Icons.Material.Filled.Payment" Title="Payment" Color="Color.Primary">
+                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Payment</MudText>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.RequiresPayment">Requires Payment</MudCheckBox>
+
+                        @if (newEvent.Settings.RequiresPayment)
+                        {
+                            <MudTextField Label="Fee" @bind-Value="newEvent.Fee" Type="number" />
+                            <MudSelect T="string" Label="Payment Method" @bind-Value="newEvent.Settings.PaymentMethod" FullWidth>
+                                @foreach (var method in Enum.GetNames(typeof(PaymentMethod)))
+                                {
+                                    <MudSelectItem T="string" Value="method">@method</MudSelectItem>
+                                }
+                            </MudSelect>
+                            <MudTextField Label="Payment Receiver Details" @bind-Value="newEvent.Settings.PaymentReceiverDetails" FullWidth />
+                            <MudTextField Label="Payment Gateway" @bind-Value="newEvent.Settings.PaymentGateway" FullWidth />
+                            <MudTextField Label="Max Tickets Per Person" @bind-Value="newEvent.Settings.MaxTicketsPerPerson" Type="number" />
+                            <MudTextField Label="Ticket Price" @bind-Value="newEvent.Settings.TicketPrice" Type="number" />
+                        }
+                    </MudTimelineItem>
+
+                    <!-- Media and Visibility Section -->
+                    <MudTimelineItem Icon="@Icons.Material.Filled.Photo" Title="Media and Visibility" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
+                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Media and Visibility</MudText>
+
+                        <MudText Label="Banner Image" />
+                        <MudImage Src="@GetBannerUrl()" Alt="Banner Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
+                        <InputFile id="fileInputBanner" OnChange="@(async e => await OpenCropper(e, "banner"))" style="display: none;" accept=".jpeg,.png,.jpg" />
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadBannerClick">
+                            Upload Banner Image
+                        </MudButton>
+
+                        <MudText Label="Media Files" />
+                        <div>
+                            @foreach (var filePreview in mediaFilesPreviews)
+                            {
+                                @if (filePreview.IsImage)
+                                {
+                                    <MudImage Src="@filePreview.Url" Alt="Media File Preview" Style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
+                                }
+                                else if (filePreview.IsVideo)
+                                {
+                                    <video width="100%" height="200" controls style="border-radius: 8px;">
+                                        <source src="@filePreview.Url" type="@filePreview.ContentType">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                }
+                                else if (filePreview.IsPdf)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="@(async () => await JSRuntime.InvokeVoidAsync("window.open", filePreview.Url, "_blank"))">
+                                        View PDF
+                                    </MudButton>
+                                }
+                            }
+                        </div>
+
+                        <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UploadMediaFilesClick">
+                            Upload Media Files
+                        </MudButton>
+
+                        <MudSelect T="string" Label="Visibility" @bind-Value="newEvent.Visibility" Required="true">
+                            @foreach (var visibility in Enum.GetNames(typeof(EventVisibility)))
+                            {
+                                <MudSelectItem T="string" Value="visibility">@visibility</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTimelineItem>
+
+                    <!-- Additional Settings Section -->
+                    <MudTimelineItem Icon="@Icons.Material.Filled.Settings" Title="Additional Settings" TimelineAlign="TimelineAlign.End" Color="Color.Primary">
+                        <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Additional Settings</MudText>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.RequiresApproval">Requires Approval</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.IsOnlineEvent">Is Online Event</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.IsPrivate">Is Private</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.RequiresRSVP">Requires RSVP</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.AllowsGuests">Allows Guests</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.ShowAttendeesPublicly">Show Attendees Publicly</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.SendReminders">Send Reminders</MudCheckBox>
+                        <MudTextField Label="Reminder Days Before" @bind-Value="newEvent.Settings.ReminderDaysBefore" Type="number" />
+                        <MudCheckBox @bind-Checked="newEvent.Settings.EnableChat">Enable Chat</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.AllowComments">Allow Comments</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.IssueTickets">Issue Tickets</MudCheckBox>
+                        <MudCheckBox @bind-Checked="newEvent.Settings.RecordEvent">Record Event</MudCheckBox>
+                        <MudTextField Label="Custom Terms and Conditions" @bind-Value="newEvent.Settings.CustomTermsAndConditions" FullWidth Multiline="true" />
+                    </MudTimelineItem>
+
+                </MudTimeline>
+
+                <!-- Submission Section -->
+                <MudDivider Class="mb-4">Submit</MudDivider>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateEvent">Create Event</MudButton>
+
+            </MudForm>
+        </MudItem>
+    }
+</MudPaper>
+
+<MudSnackbarProvider />
+
+<!-- Bootstrap Modal for Cropper -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="cropper-container" class="img-container"></div>
+                @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                {
+                    <div id="cropped-image-container" class="img-container">
+                        <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                    </div>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CreateEventCommand newEvent = new CreateEventCommand();
+    private MudForm form;
+
+    private string bannerPreviewUrl;
+    private List<FilePreview> mediaFilesPreviews = new();
+    private string CroppedImageBase64;
+
+    private IBrowserFile croppedImageFile;
+    private IReadOnlyList<IBrowserFile> mediaFiles;
+    private bool IsUploading { get; set; } = false;
+    private string currentImageType = string.Empty;
+
+    private string defaultBannerImage = "/images/default_banner_image.png";
+    private string defaultMediaFileImage = "/images/default_media_file_image.png";
+
+    private DateTime? startDateTemp;
+    private TimeSpan? startTimeTemp;
+    private DateTime? endDateTemp;
+    private TimeSpan? endTimeTemp;
+    private DateTime? publishDateTemp;
+    private TimeSpan? publishTimeTemp;
+    private bool IsLoading { get; set; } = true;
+    private bool IsLocationDefined { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        try
+        {
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                newEvent.OrganizerId = IdentityService.GetCurrentUserId();
+                newEvent.OrganizerType = "User"; // OrganizerType is set to "User" by default
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add($"Failed to initialize authentication state: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", DotNetObjectReference.Create(this));
+        }
+    }
+
+    private async Task UploadBannerClick()
+    {
+        // Ensure the element is available in the DOM before triggering the click
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputBanner').click()");
+    }
+
+    private async Task UploadMediaFilesClick()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputMediaFiles').click()");
+    }
+
+    private async Task OpenCropper(InputFileChangeEventArgs e, string imageType)
+    {
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var inputFile = e.File;
+        currentImageType = imageType;
+
+        if (inputFile != null)
+        {
+            if (inputFile.Size > maxAllowedSize)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
+                return;
+            }
+
+            using var stream = inputFile.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+            var base64Image = Convert.ToBase64String(buffer);
+            await JSRuntime.InvokeVoidAsync("displayImageAndInitializeCropper", base64Image, imageType);
+        }
+    }
+
+    private void CloseCropper()
+    {
+        JSRuntime.InvokeVoidAsync("hideCropperModal");
+    }
+
+    [JSInvokable]
+    public void ReceiveCroppedImage(string base64Image)
+    {
+        if (!string.IsNullOrEmpty(base64Image))
+        {
+            CroppedImageBase64 = $"data:image/png;base64,{base64Image}";
+            var buffer = Convert.FromBase64String(base64Image);
+            var lastModified = DateTimeOffset.Now;
+            croppedImageFile = new BrowserFile(buffer, "cropped-image.png", "image/png", lastModified);
+            StateHasChanged();
+        }
+    }
+
+    private async Task SaveCroppedImage()
+    {
+        if (croppedImageFile != null)
+        {
+            IsUploading = true;
+            StateHasChanged();
+
+            try
+            {
+                byte[] fileData;
+                using (var stream = croppedImageFile.OpenReadStream(croppedImageFile.Size))
+                using (var ms = new MemoryStream())
+                {
+                    await stream.CopyToAsync(ms);
+                    fileData = ms.ToArray();
+                }
+
+                string imageType = "EventBanner";
+                var response = await MediaFilesService.UploadMediaFileAsync(
+                    sourceId: newEvent.EventId,
+                    sourceType: imageType,
+                    uploaderId: IdentityService.GetCurrentUserId(),
+                    fileName: $"{newEvent.Name}_{currentImageType}.png",
+                    fileContentType: croppedImageFile.ContentType,
+                    fileData: fileData
+                );
+
+                var responseDto = response?.Content;
+
+                if (response.IsSuccessStatusCode && responseDto != null)
+                {
+                    var uploadedUrl = responseDto.ProcessedUrl;
+                    if (!string.IsNullOrWhiteSpace(uploadedUrl))
+                    {
+                        bannerPreviewUrl = uploadedUrl;
+                        newEvent.BannerUrl = bannerPreviewUrl;
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        await JSRuntime.InvokeVoidAsync("alert", "Uploaded URL is null or empty.");
+                    }
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Failed to upload the image.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                IsUploading = false;
+                StateHasChanged();
+            }
+
+            CloseCropper();
+        }
+    }
+
+    private async Task UploadMediaFiles(InputFileChangeEventArgs e)
+    {
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        mediaFiles = e.GetMultipleFiles();
+
+        foreach (var file in mediaFiles)
+        {
+            if (file.Size > maxAllowedSize)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"File size exceeds the allowed limit of {maxAllowedSize / (1024 * 1024)} MB.");
+                return;
+            }
+        }
+
+        foreach (var file in mediaFiles)
+        {
+            using var stream = file.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+
+            var response = await MediaFilesService.UploadFileAsync(
+                sourceId: newEvent.EventId,
+                sourceType: "EventFile",  
+                uploaderId: IdentityService.GetCurrentUserId(),
+                fileName: file.Name,
+                fileContentType: file.ContentType,
+                fileData: buffer
+            );
+
+            var responseDto = response.Content;
+
+            if (response.IsSuccessStatusCode && responseDto != null)
+            {
+                var uploadedUrl = responseDto.FileUrl;
+                if (!string.IsNullOrWhiteSpace(uploadedUrl))
+                {
+                    mediaFilesPreviews.Add(new FilePreview
+                    {
+                        Url = uploadedUrl,
+                        ContentType = file.ContentType,
+                        IsImage = file.ContentType.StartsWith("image/"),
+                        IsVideo = file.ContentType.StartsWith("video/"),
+                        IsPdf = file.ContentType.EndsWith("pdf")
+                    });
+                    ((List<string>)newEvent.MediaFilesUrl).Add(uploadedUrl);
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Uploaded URL is null or empty.");
+                }
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Failed to upload {file.Name}.");
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task CreateEvent()
+    {
+        newEvent.OrganizerId = IdentityService.GetCurrentUserId();
+
+        if (startDateTemp.HasValue && startTimeTemp.HasValue)
+        {
+            newEvent.StartDate = (startDateTemp.Value.Date + startTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (endDateTemp.HasValue && endTimeTemp.HasValue)
+        {
+            newEvent.EndDate = (endDateTemp.Value.Date + endTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (publishDateTemp.HasValue && publishTimeTemp.HasValue)
+        {
+            newEvent.PublishDate = (publishDateTemp.Value.Date + publishTimeTemp.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+        }
+
+        if (!IsLocationDefined)
+        {
+            newEvent.BuildingName = null;
+            newEvent.Street = null;
+            newEvent.BuildingNumber = null;
+            newEvent.ApartmentNumber = null;
+            newEvent.City = null;
+            newEvent.ZipCode = null;
+            newEvent.Country = null;
+        }
+
+        await form.Validate();
+        if (form.IsValid)
+        {
+            var formDataJson = JsonSerializer.Serialize(newEvent, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Form data to be sent:");
+            Console.WriteLine(formDataJson);
+
+            var response = await EventsService.CreateEventAsync(newEvent);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Event created successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Failed to create event. Please try again.", Severity.Error);
+            }
+        }
+    }
+
+    private string GetBannerUrl()
+    {
+        return !string.IsNullOrWhiteSpace(bannerPreviewUrl) ? bannerPreviewUrl : defaultBannerImage;
+    }
+
+    private class FilePreview
+    {
+        public string Url { get; set; }
+        public string ContentType { get; set; }
+        public bool IsImage { get; set; }
+        public bool IsVideo { get; set; }
+        public bool IsPdf { get; set; }
+    }
+}

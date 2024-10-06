@@ -1,5 +1,5 @@
 using System;
-using Convey.Types;
+using Paralax.Types;
 using MiniSpace.Services.Reactions.Core.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;

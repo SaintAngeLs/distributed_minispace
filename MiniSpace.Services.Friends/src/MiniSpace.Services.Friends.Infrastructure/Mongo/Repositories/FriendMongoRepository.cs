@@ -1,4 +1,4 @@
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Friends.Core.Entities;
 using MiniSpace.Services.Friends.Core.Repositories;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;

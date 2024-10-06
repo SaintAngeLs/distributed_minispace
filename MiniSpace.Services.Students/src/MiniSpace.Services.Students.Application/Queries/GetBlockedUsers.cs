@@ -1,4 +1,4 @@
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Core.Wrappers;
 using System.Diagnostics.CodeAnalysis;

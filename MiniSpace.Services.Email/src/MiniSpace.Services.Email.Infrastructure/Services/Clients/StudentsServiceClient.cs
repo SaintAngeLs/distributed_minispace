@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Convey.HTTP;
+using Paralax.HTTP;
 using MiniSpace.Services.Email.Application.Dto;
 using MiniSpace.Services.Email.Application.Services.Clients;
 

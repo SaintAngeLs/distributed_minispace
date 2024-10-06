@@ -1,4 +1,4 @@
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MongoDB.Driver;
 using MiniSpace.Services.Students.Core.Entities;
 using MiniSpace.Services.Students.Core.Repositories;
@@ -21,20 +21,20 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 
         public async Task<NotificationPreferences> GetNotificationPreferencesAsync(Guid studentId)
         {
-            var userNotificationsDocument = await _repository.GetAsync(x => x.StudentId == studentId);
+            var userNotificationsDocument = await _repository.GetAsync(x => x.UserId == studentId);
             return userNotificationsDocument?.NotificationPreferences;
         }
 
         public async Task UpdateNotificationPreferencesAsync(Guid studentId, NotificationPreferences notificationPreferences)
         {
-            var userNotificationsDocument = await _repository.GetAsync(x => x.StudentId == studentId);
+            var userNotificationsDocument = await _repository.GetAsync(x => x.UserId == studentId);
 
             if (userNotificationsDocument == null)
             {
                 userNotificationsDocument = new UserNotificationsDocument
                 {
                     Id = Guid.NewGuid(),
-                    StudentId = studentId,
+                    UserId = studentId,
                     NotificationPreferences = notificationPreferences
                 };
 

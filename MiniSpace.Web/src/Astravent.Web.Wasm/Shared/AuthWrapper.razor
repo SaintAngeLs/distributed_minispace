@@ -1,0 +1,39 @@
+@page "/auth-wrapper"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+@if (isLoading)
+{
+    <div>Loading...</div>
+}
+else if (!isAuthenticated)
+{
+    <div>Redirecting to sign-in...</div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    private bool isLoading = true;
+    private bool isAuthenticated = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isAuthenticated = authState.User.Identity.IsAuthenticated;
+
+        if (!isAuthenticated)
+        {
+            NavigationManager.NavigateTo("/signin", true);
+        }
+        else
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}

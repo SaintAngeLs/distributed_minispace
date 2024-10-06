@@ -1,6 +1,6 @@
-﻿using Convey;
-using Convey.CQRS.Commands;
-using Convey.CQRS.Events;
+﻿using Paralax;
+using Paralax.CQRS.Commands;
+using Paralax.CQRS.Events;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MiniSpace.Services.Events.Application
@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Events.Application
     [ExcludeFromCodeCoverage]
     public static class Extensions
     {
-        public static IConveyBuilder AddApplication(this IConveyBuilder builder)
+        public static IParalaxBuilder AddApplication(this IParalaxBuilder builder)
             => builder
                 .AddCommandHandlers()
                 .AddEventHandlers()

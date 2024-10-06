@@ -116,9 +116,9 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public void AddParticipant(Participant participant)
         {
-            if (SignedUpParticipants.Any(p => p.StudentId == participant.StudentId))
+            if (SignedUpParticipants.Any(p => p.UserId == participant.UserId))
             {
-                throw new StudentAlreadySignedUpException(participant.StudentId, Id);
+                throw new StudentAlreadySignedUpException(participant.UserId, Id);
             }
 
             if (SignedUpParticipants.Count() >= Capacity)
@@ -147,7 +147,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public void RemoveParticipant(Guid studentId)
         {
-            var participant = _signedUpParticipants.SingleOrDefault(p => p.StudentId == studentId);
+            var participant = _signedUpParticipants.SingleOrDefault(p => p.UserId == studentId);
             if (participant is null)
             {
                 throw new StudentNotSignedUpException(studentId, Id);
@@ -180,9 +180,9 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public void ShowParticipantInterest(Participant participant)
         {
-            if (InterestedParticipants.Any(p => p.StudentId == participant.StudentId))
+            if (InterestedParticipants.Any(p => p.UserId == participant.UserId))
             {
-                throw new StudentAlreadyInterestedInEventException(participant.StudentId, Id);
+                throw new StudentAlreadyInterestedInEventException(participant.UserId, Id);
             }
 
             _interestedParticipants.Add(participant);
@@ -190,7 +190,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public void CancelInterest(Guid studentId)
         {
-            var participant = _interestedParticipants.SingleOrDefault(p => p.StudentId == studentId);
+            var participant = _interestedParticipants.SingleOrDefault(p => p.UserId == studentId);
             if (participant is null)
             {
                 throw new StudentNotInterestedInEventException(studentId, Id);
@@ -206,7 +206,7 @@ namespace MiniSpace.Services.Events.Core.Entities
                 throw new InvalidEventState(Id, State.Archived, State);
             }
 
-            if (_signedUpParticipants.All(p => p.StudentId != studentId))
+            if (_signedUpParticipants.All(p => p.UserId != studentId))
             {
                 throw new StudentNotSignedUpForEventException(Id, studentId);
             }
@@ -216,7 +216,7 @@ namespace MiniSpace.Services.Events.Core.Entities
                 throw new InvalidRatingValueException(rating);
             }
 
-            if (_ratings.Any(r => r.StudentId == studentId))
+            if (_ratings.Any(r => r.UserId == studentId))
             {
                 throw new StudentAlreadyRatedException(studentId, Id);
             }
@@ -226,7 +226,7 @@ namespace MiniSpace.Services.Events.Core.Entities
 
         public void CancelRate(Guid studentId)
         {
-            var rating = _ratings.SingleOrDefault(r => r.StudentId == studentId);
+            var rating = _ratings.SingleOrDefault(r => r.UserId == studentId);
             if (rating is null)
             {
                 throw new StudentNotRatedEventException(studentId, Id);

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Auth;
-using Convey.Secrets.Vault;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
+using Paralax;
+using Paralax.Auth;
+using Paralax.Secrets.Vault;
+using Paralax.Logging;
+using Paralax.Types;
+using Paralax.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +15,7 @@ using MiniSpace.Services.Identity.Application.Commands;
 using MiniSpace.Services.Identity.Application.Queries;
 using MiniSpace.Services.Identity.Application.Services;
 using MiniSpace.Services.Identity.Infrastructure;
+using Paralax.Core;
 
 namespace MiniSpace.Services.Identity.Api
 {
@@ -23,7 +24,7 @@ namespace MiniSpace.Services.Identity.Api
         public static async Task Main(string[] args)
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
-                    .AddConvey()
+                    .AddParalax()
                     .AddWebApi()
                     .AddApplication()
                     .AddInfrastructure()
@@ -127,13 +128,30 @@ namespace MiniSpace.Services.Identity.Api
         private static async Task GetUserAsync(Guid id, HttpContext context)
         {
             var user = await context.RequestServices.GetService<IIdentityService>().GetAsync(id);
+            Console.WriteLine(user.ToString());
             if (user is null)
             {
                 context.Response.StatusCode = 404;
                 return;
             }
 
-            await context.Response.WriteJsonAsync(user);
+             await context.Response.WriteJsonAsync(new
+            {
+                Id = user.Id, // Ensure this is directly a Guid, not wrapped
+                user.Name,
+                user.Email,
+                Role = user.Role.ToString(),
+                user.CreatedAt,
+                Permissions = user.Permissions,
+                user.IsEmailVerified,
+                user.EmailVerifiedAt,
+                user.IsTwoFactorEnabled,
+                user.TwoFactorSecret,
+                user.IsOnline,
+                user.DeviceType,
+                user.LastActive,
+                user.IpAddress
+            });
         }
     }
 }

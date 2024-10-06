@@ -1,0 +1,51 @@
+name: Automatic Issue Responder
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  issue-response:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post a thank you comment on the new issue
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const issueTitle = context.payload.issue.title;
+            const owner = context.payload.repository.owner.login;
+            const repo = context.payload.repository.name;
+
+            github.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              body: `
+              🌟 **Thank you for your contribution to Astravent!** 🌟
+
+              We truly appreciate your effort in helping improve our distributed project. Every issue helps make Astravent better, and your feedback brings us closer to providing a more robust and seamless experience for all.
+
+              Our team, including the code owners, has been notified and will carefully review your issue. In the meantime, if you have any additional context or updates to share, feel free to add them to this thread.
+
+              We're excited to see where your contribution leads! 🚀
+
+              Stay awesome,  
+              The Astravent Team
+              `
+            });
+
+      - name: Notify the code owner via issue comment
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const codeOwner = "CODEOWNER_USERNAME"; // Replace with the GitHub username of the code owner
+
+            // Notify the code owner by mentioning them in the issue comment
+            github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `@${codeOwner}, a new issue (#${issueNumber}) has been created and may require your attention.`
+            });

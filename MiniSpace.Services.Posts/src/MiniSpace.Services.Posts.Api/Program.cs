@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
+using Paralax;
+using Paralax.Logging;
+using Paralax.Core;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +19,8 @@ using MiniSpace.Services.Posts.Application.Queries;
 using MiniSpace.Services.Posts.Application.Services;
 using MiniSpace.Services.Posts.Core.Wrappers;
 using MiniSpace.Services.Posts.Infrastructure;
+using Paralax.Types;
+
 
 namespace MiniSpace.Services.Posts.Api
 {
@@ -28,7 +30,7 @@ namespace MiniSpace.Services.Posts.Api
         public static async Task Main(string[] args)
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
-                    .AddConvey()
+                    .AddParalax()
                     .AddWebApi()
                     .AddApplication()
                     .AddInfrastructure()
@@ -51,6 +53,8 @@ namespace MiniSpace.Services.Posts.Api
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"posts/{cmd.PostId}"))
                         .Put<ChangePostState>("posts/{postId}/state/{state}",
                             afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
+                        .Post<RepostCommand>("posts/{originalPostId}/repost", 
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"posts/{cmd.RepostedPostId}/reposted"))
                     ))
                 .UseLogging()
                 .Build()

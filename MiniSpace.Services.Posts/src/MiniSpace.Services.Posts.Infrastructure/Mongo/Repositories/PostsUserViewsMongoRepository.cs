@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Core.Repositories;
 using MiniSpace.Services.Posts.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Posts.Core.Entities;

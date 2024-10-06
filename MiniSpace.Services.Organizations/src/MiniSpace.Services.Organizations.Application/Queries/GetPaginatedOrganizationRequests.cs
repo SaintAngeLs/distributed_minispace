@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Organizations.Application.DTO;
 
 namespace MiniSpace.Services.Organizations.Application.Queries

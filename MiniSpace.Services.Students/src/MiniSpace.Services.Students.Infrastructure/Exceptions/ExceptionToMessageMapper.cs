@@ -1,4 +1,4 @@
-using Convey.MessageBrokers.RabbitMQ;
+using Paralax.MessageBrokers.RabbitMQ;
 using MiniSpace.Services.Students.Application.Commands;
 using MiniSpace.Services.Students.Application.Events.Rejected;
 using MiniSpace.Services.Students.Application.Events.External;

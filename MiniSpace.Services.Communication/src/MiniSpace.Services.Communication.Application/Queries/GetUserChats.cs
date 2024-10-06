@@ -1,4 +1,4 @@
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Communication.Application.Dto;
 using System;
 using MiniSpace.Services.Communication.Core.Wrappers;

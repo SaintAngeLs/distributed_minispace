@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Commands;
+﻿using Paralax.CQRS.Commands;
 using MiniSpace.Services.Reports.Application.Events;
 using MiniSpace.Services.Reports.Application.Exceptions;
 using MiniSpace.Services.Reports.Application.Services;
@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Reports.Application.Commands.Handlers
             var contextType = _reportValidator.ParseContextType(command.ContextType);
             var category = _reportValidator.ParseCategory(command.Category);
             _reportValidator.ValidateReason(command.Reason);
-            var activeStudentReports = await _reportRepository.GetStudentActiveReportsAsync(command.IssuerId);
+            var activeStudentReports = await _reportRepository.GetUserActiveReportsAsync(command.IssuerId);
             _reportValidator.ValidateActiveReports(activeStudentReports.Count());
 
             var report = Report.Create(command.ReportId, command.IssuerId, command.TargetId, command.TargetOwnerId,

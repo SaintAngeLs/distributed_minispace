@@ -1,4 +1,4 @@
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Friends.Application.Dto;
 using System.Collections.Generic;
 

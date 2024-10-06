@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.MediaFiles.Application.Events;
 using MiniSpace.Services.MediaFiles.Application.Exceptions;
 using MiniSpace.Services.MediaFiles.Application.Services;

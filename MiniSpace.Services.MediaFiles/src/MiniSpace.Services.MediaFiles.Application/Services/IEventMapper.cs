@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.MediaFiles.Core.Events;
 
 namespace MiniSpace.Services.MediaFiles.Application.Services

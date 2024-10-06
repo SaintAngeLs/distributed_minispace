@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Identity.Application.Services;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace MiniSpace.Services.Identity.Application.Commands.Handlers
 {
@@ -16,7 +17,7 @@ namespace MiniSpace.Services.Identity.Application.Commands.Handlers
             _logger = logger;
         }
 
-        public async Task HandleAsync(GenerateTwoFactorSecret command)
+        public async Task HandleAsync(GenerateTwoFactorSecret command, CancellationToken cancellationToken = default)   
         {
             var secret = await _identityService.GenerateTwoFactorSecretAsync(command);
             _logger.LogInformation($"Generated a new two-factor authentication secret for user ID: {command.UserId}");

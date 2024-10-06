@@ -1,0 +1,211 @@
+@page "/posts/create"
+@inject IPostsService PostsService
+@inject IIdentityService IdentityService
+@inject IMediaFilesService MediaFilesService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@using Astravent.Web.Wasm.Areas.Posts.CommandsDto
+@using Astravent.Web.Wasm.DTO.Enums.Posts
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    <MudGrid>
+        <!-- Left Side: Post Preview (Public Information) -->
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h5">Post Preview</MudText>
+                <PostPreview 
+                    PostType="@postType" 
+                    Title="@title" 
+                    TextContent="@textContent"
+                    MediaFiles="@mediaFilesPreviews" 
+                    UserId="@IdentityService.GetCurrentUserId()" />
+            </MudPaper>
+        </MudItem>
+
+        <!-- Right Side: Post Configuration (Administration) -->
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h5">Post Configuration</MudText>
+                <MudForm @ref="form" @onsubmit="HandleSubmit">
+                    <!-- Post Type Selection -->
+                    <MudSelect T="PostType" @bind-Value="postType" Label="Post Type" Required="true" FullWidth Class="mt-2">
+                        <MudSelectItem T="PostType" Value="PostType.BlogPost">Blog Post</MudSelectItem>
+                        <MudSelectItem T="PostType" Value="PostType.SocialPost">Social Post</MudSelectItem>
+                    </MudSelect>
+
+                    <!-- Blog Post Specific Fields -->
+                    @if (postType == PostType.BlogPost)
+                    {
+                        <MudText Typo="Typo.subtitle1" Class="mt-4">Blog Post Details</MudText>
+                        <MudTextField @bind-Value="title" Label="Post Title" FullWidth Immediate="true" Required="true" />
+
+                        <!-- Bind MarkdownText to textContent (no need for explicit MarkdownTextChanged) -->
+                        <MarkdownEditor @bind-MarkdownText="textContent" CharacterLimit="40000" />
+
+                        <MudSelect T="PostContext" @bind-Value="postContext" Label="Post Context" Required="true" FullWidth Class="mt-4">
+                            <MudSelectItem T="PostContext" Value="PostContext.UserPage">User Page</MudSelectItem>
+                            <MudSelectItem T="PostContext" Value="PostContext.OrganizationPage">Organization Page</MudSelectItem>
+                            <MudSelectItem T="PostContext" Value="PostContext.EventPage">Event Page</MudSelectItem>
+                        </MudSelect>
+
+                        <MudProgressLinear Value="@(textContent.Length * 100 / 40000)" Color="Color.Primary" Class="mt-2"/>
+                    }
+
+                    <!-- Social Post Specific Fields -->
+                    @if (postType == PostType.SocialPost)
+                    {
+                        <MudText Typo="Typo.subtitle1" Class="mt-4">Social Post Details</MudText>
+                        <MarkdownEditor @bind-MarkdownText="textContent" CharacterLimit="5000" />
+                        <MudButton Color="Color.Primary" Variant="Variant.Outlined" OnClick="UploadMediaFilesClick" StartIcon="@Icons.Material.Filled.Upload" Class="mt-4">
+                            Upload Media Files
+                        </MudButton>
+                        <InputFile id="fileInputMediaFiles" OnChange="@(async e => await UploadMediaFiles(e))" Multiple="true" style="display: none;" accept=".jpeg,.png,.jpg,.mp4,.pdf" />
+
+                        <MudProgressLinear Value="@(textContent.Length * 100 / 5000)" Color="Color.Secondary" Class="mt-2"/>
+                    }
+
+                    <!-- Post State and Visibility -->
+                    <MudSelect T="string" @bind-Value="state" Label="State" Required="true" FullWidth Class="mt-4">
+                        <MudSelectItem T="string" Value=@("InDraft")>Draft</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("Published")>Published</MudSelectItem>
+                    </MudSelect>
+
+                    <MudSelect T="string" @bind-Value="visibility" Label="Visibility" Required="true" FullWidth Class="mt-4">
+                        <MudSelectItem T="string" Value=@("Visible")>Visible</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("Invisible")>Invisible</MudSelectItem>
+                    </MudSelect>
+
+                    <MudDatePicker @bind-Date="publishDate" Label="Publish Date" Class="mt-4" />
+
+                    <MudStack Direction="Row" Spacing="2" Class="mt-4">
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="HandleSubmit" StartIcon="@Icons.Material.Filled.Check">Create Post</MudButton>
+                        <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="HandleCancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
+                    </MudStack>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private MudForm form;
+    private string textContent = "## Markdown Content\n"; // This is the dynamic content
+    private string title;
+    public List<FilePreview> mediaFilesPreviews = new();
+    private List<string> uploadedMediaUrls = new List<string>();
+    private string state = "InDraft";
+    private string visibility = "Visible";
+    private DateTime? publishDate = DateTime.Now;
+    private bool isUploading = false;
+    private PostType postType = PostType.SocialPost;
+    private PostContext postContext = PostContext.UserPage;
+    private bool formIsValid = false;
+
+    // Upload files method
+    private async Task UploadMediaFilesClick()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInputMediaFiles').click()");
+    }
+
+    private async Task UploadMediaFiles(InputFileChangeEventArgs e)
+    {
+        isUploading = true;
+        StateHasChanged();
+
+        const long maxAllowedSize = 10 * 1024 * 1024;
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in files)
+        {
+            if (file.Size > maxAllowedSize)
+            {
+                Console.WriteLine($"File {file.Name} exceeds the allowed size limit.");
+                continue;
+            }
+
+            using var stream = file.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var buffer = ms.ToArray();
+
+            var response = await MediaFilesService.UploadFileAsync(
+                sourceId: Guid.NewGuid(),
+                sourceType: "PostFileUser",
+                uploaderId: IdentityService.GetCurrentUserId(),
+                fileName: file.Name,
+                fileContentType: file.ContentType,
+                fileData: buffer);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var uploadedUrl = response.Content.FileUrl;
+                uploadedMediaUrls.Add(uploadedUrl);
+
+                mediaFilesPreviews.Add(new FilePreview
+                {
+                    Url = uploadedUrl,
+                    ContentType = file.ContentType,
+                    IsImage = file.ContentType.StartsWith("image/"),
+                    IsVideo = file.ContentType.StartsWith("video/"),
+                    IsPdf = file.ContentType.EndsWith("pdf")
+                });
+            }
+            else
+            {
+                Console.WriteLine($"Failed to upload file {file.Name}: {response.ErrorMessage?.Reason}");
+            }
+        }
+
+        isUploading = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleSubmit()
+    {
+        // Validate the form
+        await form.Validate();
+        if (form.IsValid)
+        {
+            if ((postType == PostType.BlogPost && textContent.Length > 40000) || (postType == PostType.SocialPost && textContent.Length > 5000))
+            {
+                Console.WriteLine("Post exceeds maximum character limit.");
+                return;
+            }
+
+            var command = new CreatePostCommand
+            {
+                PostId = Guid.NewGuid(),
+                UserId = IdentityService.GetCurrentUserId(),
+                TextContent = textContent,
+                MediaFiles = uploadedMediaUrls.ToArray(),
+                State = state,
+                Visibility = visibility,
+                PublishDate = publishDate,
+                Context = postContext,
+                PostType = postType.ToString(),
+                Title = title
+            };
+
+            var response = await PostsService.CreatePostAsync(command);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/posts/my");
+            }
+            else
+            {
+                Console.WriteLine("Failed to create post: " + response.ErrorMessage?.Reason);
+            }
+        }
+        else
+        {
+            formIsValid = false;
+        }
+    }
+
+    private void HandleCancel()
+    {
+        NavigationManager.NavigateTo("/posts/my");
+    }
+}

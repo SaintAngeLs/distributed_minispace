@@ -5,12 +5,12 @@ namespace MiniSpace.Services.Students.Core.Entities
 {
     public class UserSettings : AggregateRoot
     {
-        public Guid StudentId { get; private set; }
+        public Guid UserId { get; private set; }
         public UserAvailableSettings AvailableSettings { get; private set; }
 
-        public UserSettings(Guid studentId, UserAvailableSettings availableSettings)
+        public UserSettings(Guid userId, UserAvailableSettings availableSettings)
         {
-            StudentId = studentId;
+            UserId = userId;
             AvailableSettings = availableSettings ?? new UserAvailableSettings();
         }
 

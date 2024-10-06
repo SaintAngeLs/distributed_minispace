@@ -1,6 +1,6 @@
-using Convey.Logging.CQRS;
 using MiniSpace.Services.Reports.Application.Commands;
 using MiniSpace.Services.Reports.Application.Events.External;
+using Paralax.CQRS.Logging;
 
 namespace MiniSpace.Services.Reports.Infrastructure.Logging
 {

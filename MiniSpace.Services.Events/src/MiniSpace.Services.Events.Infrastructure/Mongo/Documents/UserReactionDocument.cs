@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Convey.Types;
+using Paralax.Types;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents

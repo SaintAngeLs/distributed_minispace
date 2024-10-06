@@ -20,6 +20,11 @@ namespace MiniSpace.Services.Posts.Application.Dto
         public DateTime? UpdatedAt { get; set; }
         public string Context { get; set; }
         public string Visibility { get; set; }
+        
+        public Guid? PageOwnerId { get; set; }
+        public string PageOwnerType { get; set; }
+        public Guid? OriginalPostId { get; set; }
+        public bool IsRepost { get; set; }
 
         public PostDto()
         {
@@ -38,7 +43,12 @@ namespace MiniSpace.Services.Posts.Application.Dto
             CreatedAt = post.CreatedAt;
             UpdatedAt = post.UpdatedAt;
             Context = post.Context.ToString();
-            Visibility = post.Visibility.ToString(); 
+            Visibility = post.Visibility.ToString();
+            
+            PageOwnerId = post.PageOwnerId;
+            PageOwnerType = post.PageOwnerType.ToString();
+            OriginalPostId = post.OriginalPostId;
+            IsRepost = post.IsRepost;
         }
     }
 }

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 
 namespace MiniSpace.Services.Identity.Application.Commands
 {
-    [Contract]
     public class SignUp : ICommand
     {
         public Guid UserId { get; }
@@ -26,5 +25,6 @@ namespace MiniSpace.Services.Identity.Application.Commands
             Role = role;
             Permissions = permissions;
         }
+
     }
 }

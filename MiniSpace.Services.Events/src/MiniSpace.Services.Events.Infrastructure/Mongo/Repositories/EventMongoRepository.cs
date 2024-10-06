@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Wrappers;
 using MiniSpace.Services.Events.Core.Entities;

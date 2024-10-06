@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Secrets.Vault;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
+using Paralax;
+using Paralax.Secrets.Vault;
+using Paralax.Logging;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +17,7 @@ using MiniSpace.Services.Comments.Application.Queries;
 using MiniSpace.Services.Comments.Application.Services;
 using MiniSpace.Services.Comments.Infrastructure;
 using MiniSpace.Services.Comments.Core.Wrappers;
+using Paralax.Core;
 
 namespace MiniSpace.Services.Identity.Api
 {
@@ -27,7 +27,7 @@ namespace MiniSpace.Services.Identity.Api
         public static async Task Main(string[] args)
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
-                    .AddConvey()
+                    .AddParalax()
                     .AddWebApi()
                     .AddApplication()
                     .AddInfrastructure()

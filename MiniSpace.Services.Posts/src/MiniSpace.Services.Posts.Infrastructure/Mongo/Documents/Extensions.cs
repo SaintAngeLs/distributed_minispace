@@ -8,21 +8,24 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
     public static class Extensions
     {
         public static Post AsEntity(this PostDocument document)
-        => new Post(
-            document.Id,
-            document.UserId,
-            document.OrganizationId,
-            document.EventId,
-            document.TextContent,
-            document.MediaFiles,
-            document.CreatedAt,
-            document.State,
-            document.Context,
-            document.PublishDate,
-            document.Visibility,  
-            document.UpdatedAt);
-
-                   
+            => new Post(
+                document.Id,
+                document.UserId,
+                document.OrganizationId,
+                document.EventId,
+                document.TextContent,
+                document.MediaFiles,
+                document.CreatedAt,
+                document.State,
+                document.Context,
+                document.PublishDate,
+                document.Type,
+                document.Title,
+                document.Visibility,
+                document.UpdatedAt,
+                document.PageOwnerId,
+                document.PageOwnerType,
+                document.OriginalPostId);
 
         public static PostDocument AsDocument(this Post entity)
             => new PostDocument()
@@ -38,7 +41,12 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 State = entity.State,
                 PublishDate = entity.PublishDate,
                 Context = entity.Context,
-                Visibility = entity.Visibility 
+                Visibility = entity.Visibility,
+                Type = entity.Type,
+                Title = entity.Title,
+                PageOwnerId = entity.PageOwnerId,
+                PageOwnerType = entity.PageOwnerType,
+                OriginalPostId = entity.OriginalPostId
             };
 
         public static PostDto AsDto(this PostDocument document)
@@ -54,7 +62,10 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 UpdatedAt = document.UpdatedAt,
                 State = document.State.ToString().ToLowerInvariant(),
                 PublishDate = document.PublishDate,
-                Visibility = document.Visibility.ToString().ToLowerInvariant() 
+                Visibility = document.Visibility.ToString().ToLowerInvariant(),
+                PageOwnerId = document.PageOwnerId,
+                PageOwnerType = document.PageOwnerType.ToString().ToLowerInvariant(),
+                OriginalPostId = document.OriginalPostId
             };
 
         public static PostDto AsDto(this Post post)
@@ -71,7 +82,10 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Documents
                 UpdatedAt = post.UpdatedAt,
                 State = post.State.ToString().ToLowerInvariant(),
                 PublishDate = post.PublishDate,
-                Visibility = post.Visibility.ToString().ToLowerInvariant()
+                Visibility = post.Visibility.ToString().ToLowerInvariant(),
+                PageOwnerId = post.PageOwnerId,
+                PageOwnerType = post.PageOwnerType.ToString().ToLowerInvariant(),
+                OriginalPostId = post.OriginalPostId
             };
         }
 

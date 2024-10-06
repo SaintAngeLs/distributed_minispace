@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Events.Core.Repositories;
 
 namespace MiniSpace.Services.Events.Application.Events.External.Handlers

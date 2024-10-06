@@ -1,12 +1,12 @@
 using Xunit;
 using Moq;
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Convey.MessageBrokers;
-using Convey.MessageBrokers.Outbox;
-using Convey.MessageBrokers.RabbitMQ;
+using Paralax.MessageBrokers;
+using Paralax.MessageBrokers.Outbox;
+using Paralax.MessageBrokers.RabbitMQ;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OpenTracing;

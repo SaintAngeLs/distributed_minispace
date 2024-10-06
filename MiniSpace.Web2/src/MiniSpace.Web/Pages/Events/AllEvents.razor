@@ -1,0 +1,281 @@
+@page "/events/search"
+@inject IEventsService EventsService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@using MudBlazor
+@using MiniSpace.Web.Areas.Events.CommandsDto
+@using MiniSpace.Web.DTO.Wrappers
+@using MiniSpace.Web.DTO.Events
+
+<AuthWrapper>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+        <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-4">Explore Events</MudText>
+
+        <MudGrid Spacing="2">
+            <MudItem xs="12" md="6">
+                <MudTextField Label="Search Events" @bind-Value="searchQuery" Placeholder="Search by event name..." 
+                              Adornment="Adornment.Start" Icon="@Icons.Material.Filled.Search" OnAdornmentClick="PerformSearch" 
+                              Immediate="true" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudSelect T="string" Label="Category" @bind-Value="selectedCategory">
+                    <MudSelectItem T="string" Value="null">All</MudSelectItem>
+                    @foreach (var category in Enum.GetValues(typeof(Category)).Cast<Category>())
+                    {
+                        <MudSelectItem T="string" Value="@category.ToString()">@category</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="decimal?" Label="Minimum Price" @bind-Value="minPrice" Placeholder="Minimum Price" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="decimal?" Label="Maximum Price" @bind-Value="maxPrice" Placeholder="Maximum Price" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudDatePicker Label="Start Date" @bind-Date="startDate" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudDatePicker Label="End Date" @bind-Date="endDate" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" md="12">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PerformSearch">Search</MudButton>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid Spacing="3" Class="mt-4">
+            @if (events?.Any() ?? false)
+            {
+                @foreach (var eventDto in events)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px;">
+                            <MudCardMedia Image="@GetBannerUrl(eventDto)" Alt="@eventDto.Name" Style="height: 180px;" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.h6">@eventDto.Name</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">@eventDto.Category</MudText>
+                                <MudText Typo="Typo.body2">Starts: @eventDto.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                                <MudText Typo="Typo.body2">Ends: @eventDto.EndDate.ToString("MMMM dd, yyyy")</MudText>
+                                <MudText Typo="Typo.body2"> 
+                                    <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"  Style="font-size: 1em;" /> 
+                                    Interested: @eventDto.InterestedStudents
+                                </MudText>
+                                <MudText Typo="Typo.body2">
+                                    <MudIcon Icon="@Icons.Material.Filled.HowToReg"  Style="font-size: 1rem;" /> 
+                                    Signed Up: @eventDto.SignedUpStudents
+                                </MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
+                                    <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight"  Style="font-size: 1rem;" /> 
+                                    @* View Details *@
+                                </MudButton>
+                                @if (eventDto.IsSignedUp)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                                        <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" Style="font-size: 1rem;" />
+                                        Signed Up
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="() => SignUpToEvent(eventDto.Id)">
+                                        <MudIcon Icon="@Icons.Material.Filled.HowToReg"  Style="font-size: 1rem;" /> 
+                                        Sign Up
+                                    </MudButton>
+                                }
+                                @if (eventDto.IsInterested)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                                        <MudIcon Icon="@Icons.Material.Filled.ThumbUpAlt" Style="font-size: 1rem;" />
+                                        Interested
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="() => ShowInterestInEvent(eventDto.Id)">
+                                        <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"  Style="font-size: 1rem;" /> 
+                                        Show Interest
+                                    </MudButton>
+                                }
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            }
+            else
+            {
+                <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center" Class="mt-6">No events found.</MudText>
+            }
+        </MudGrid>
+
+        <MudDivider Class="my-4" />
+
+        <MudPagination @bind-SelectedPage="currentPage" PageSizeOptions="@pageSizeOptions" PageSize="pageSize" 
+                       TotalItems="totalItems" OnPageChanged="OnPageChanged" />
+    </MudContainer>
+</AuthWrapper>
+
+<MudSnackbarProvider />
+
+@code {
+    private List<EventDto> events = new();
+    private int totalItems;
+    private int currentPage = 1;
+    private int pageSize = 9;
+    private string searchQuery = string.Empty;
+    private string selectedCategory = null;
+    private decimal? minPrice;
+    private decimal? maxPrice;
+    private DateTime? startDate;
+    private DateTime? endDate;
+    private readonly int[] pageSizeOptions = { 6, 9, 12 };
+    private bool _isAuthenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IdentityService.InitializeAuthenticationState();
+
+        _isAuthenticated = IdentityService.IsAuthenticated;
+        if (_isAuthenticated)
+        {
+            await LoadEvents();
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin", forceLoad: true);
+        }
+    }
+ 
+    private async Task LoadEvents()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(searchQuery) && selectedCategory == null && !minPrice.HasValue && !maxPrice.HasValue && !startDate.HasValue && !endDate.HasValue)
+            {
+                var paginatedResult = await EventsService.GetPaginatedEventsAsync(currentPage, pageSize);
+                if (paginatedResult != null)
+                {
+                    events = paginatedResult.Items.ToList();
+                    totalItems = paginatedResult.TotalItems;
+                }
+                else
+                {
+                    events = new List<EventDto>();
+                    totalItems = 0;
+                    Snackbar.Add("No events found or failed to load events.", Severity.Warning);
+                }
+            }
+            else
+            {
+                var command = new SearchEvents
+                {
+                    Name = searchQuery,
+                    Category = selectedCategory,
+                    DateFrom = startDate?.ToString("yyyy-MM-dd"),
+                    DateTo = endDate?.ToString("yyyy-MM-dd"),
+                    Pageable = new PageableDto
+                    {
+                        Page = currentPage,
+                        Size = pageSize
+                    }
+                };
+
+                var pagedResult = await EventsService.SearchEventsAsync(command);
+                if (pagedResult != null)
+                {
+                    events = pagedResult.Items.ToList();
+                    totalItems = pagedResult.TotalItems;
+                }
+                else
+                {
+                    events = new List<EventDto>();
+                    totalItems = 0;
+                    Snackbar.Add("No events found or failed to load events.", Severity.Warning);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+        }
+    }
+
+
+    private async Task PerformSearch()
+    {
+        currentPage = 1;
+        await LoadEvents();
+    }
+
+    private async Task OnPageChanged(int page)
+    {
+        currentPage = page;
+        await LoadEvents();
+    }
+
+    private void ViewEvent(Guid eventId)
+    {
+        NavigationManager.NavigateTo($"/events/event/{eventId}");
+    }
+
+    private async Task SignUpToEvent(Guid eventId)
+    {
+        if (!_isAuthenticated)
+        {
+            Snackbar.Add("Please sign in to sign up for events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new SignUpToEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.SignUpToEventAsync(command);
+            Snackbar.Add("Successfully signed up for the event.", Severity.Success);
+            await LoadEvents(); // Refresh events to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while signing up: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ShowInterestInEvent(Guid eventId)
+    {
+        if (!_isAuthenticated)
+        {
+            Snackbar.Add("Please sign in to show interest in events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new ShowInterestInEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.ShowInterestInEventAsync(command);
+            Snackbar.Add("Your interest in the event has been noted.", Severity.Info);
+            await LoadEvents(); // Refresh events to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while showing interest: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string GetBannerUrl(EventDto eventDto)
+    {
+        return eventDto != null && !string.IsNullOrWhiteSpace(eventDto.BannerUrl) ? eventDto.BannerUrl : "/images/default_media_file_image.png";
+    }
+}

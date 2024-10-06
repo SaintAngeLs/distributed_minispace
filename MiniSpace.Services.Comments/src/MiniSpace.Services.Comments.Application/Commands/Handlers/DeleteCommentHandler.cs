@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Comments.Application.Exceptions;
 using MiniSpace.Services.Comments.Application.Services;
 using MiniSpace.Services.Comments.Core.Entities;
@@ -94,7 +94,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
                     break;
             }
 
-            await _messageBroker.PublishAsync(new CommentDeleted(command.CommentId));
+            // await _messageBroker.PublishAsync(new CommentDeleted(command.CommentId));
         }
     }
 }

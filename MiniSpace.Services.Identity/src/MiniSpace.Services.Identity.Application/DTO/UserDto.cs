@@ -23,6 +23,8 @@ namespace MiniSpace.Services.Identity.Application.DTO
         public string DeviceType { get; set; }
         public DateTime? LastActive { get; set; }
 
+        public string IpAddress { get; set; }
+
         public UserDto() { }
 
         public UserDto(User user)
@@ -41,6 +43,8 @@ namespace MiniSpace.Services.Identity.Application.DTO
             IsOnline = user.IsOnline;
             DeviceType = user.DeviceType;
             LastActive = user.LastActive;
+
+            IpAddress = user.IpAddress;
         }
     }
 }

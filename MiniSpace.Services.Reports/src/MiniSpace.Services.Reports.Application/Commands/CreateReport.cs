@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Commands;
+﻿using Paralax.CQRS.Commands;
 using MiniSpace.Services.Reports.Core.Entities;
 
 namespace MiniSpace.Services.Reports.Application.Commands

@@ -8,6 +8,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
     public static class Extensions
     {
         private static readonly FilterDefinitionBuilder<ReportDocument> FilterDefinitionBuilder = Builders<ReportDocument>.Filter;
+        
         public static async Task<(int totalPages, int totalElements, IReadOnlyList<TDocument> data)> AggregateByPage<TDocument>(
             this IMongoCollection<TDocument> collection,
             FilterDefinition<TDocument> filterDefinition,
@@ -29,7 +30,6 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
                     PipelineStageDefinitionBuilder.Limit<TDocument>(pageSize),
                 }));
 
-
             var aggregation = await collection.Aggregate()
                 .Match(filterDefinition)
                 .Facet(countFacet, dataFacet)
@@ -45,8 +45,8 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
             {
                 return (0, 0, Array.Empty<TDocument>());
             }
+            
             var totalPages = (int)Math.Ceiling((double)count / pageSize);
-
             var data = aggregation.First()
                 .Facets.First(x => x.Name == "data")
                 .Output<TDocument>();
@@ -56,33 +56,29 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
 
         public static FilterDefinition<ReportDocument> ToFilterDefinition()
         {
-            var filterDefinition = FilterDefinitionBuilder.Empty;
+            return FilterDefinitionBuilder.Empty;
+        }
 
-            return filterDefinition;
-        }
-        
-        public static FilterDefinition<ReportDocument> AddContextTypesFilter (this FilterDefinition<ReportDocument> filterDefinition, 
-            IEnumerable<ContextType> contextTypesEnumerable)
+        public static FilterDefinition<ReportDocument> AddContextTypesFilter(this FilterDefinition<ReportDocument> filterDefinition, IEnumerable<ContextType> contextTypes)
         {
-            var contextTypes = contextTypesEnumerable.ToList();
-            if(contextTypes.Any())
+            var contextTypesList = contextTypes.ToList();
+            if (contextTypesList.Any())
             {
-                filterDefinition &= FilterDefinitionBuilder.In(x => x.ContextType, contextTypes);
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.ContextType, contextTypesList);
             }
             return filterDefinition;
         }
-        
-        public static FilterDefinition<ReportDocument> AddStatesFilter (this FilterDefinition<ReportDocument> filterDefinition, 
-            IEnumerable<ReportState> statesEnumerable)
+
+        public static FilterDefinition<ReportDocument> AddStatesFilter(this FilterDefinition<ReportDocument> filterDefinition, IEnumerable<ReportState> states)
         {
-            var states = statesEnumerable.ToList();
-            if(states.Count != 0)
+            var statesList = states.ToList();
+            if (statesList.Any())
             {
-                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, states);
+                filterDefinition &= FilterDefinitionBuilder.In(x => x.State, statesList);
             }
             return filterDefinition;
         }
-        
+
         public static FilterDefinition<ReportDocument> AddReviewerIdFilter(this FilterDefinition<ReportDocument> filterDefinition, Guid reviewerId)
         {
             if (reviewerId != Guid.Empty)
@@ -91,27 +87,27 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
             }
             return filterDefinition;
         }
-        
+
         public static FilterDefinition<ReportDocument> AddStudentIdFilter(this FilterDefinition<ReportDocument> filterDefinition, Guid studentId)
         {
             filterDefinition &= FilterDefinitionBuilder.Eq(x => x.IssuerId, studentId);
             return filterDefinition;
         }
 
-        public static SortDefinition<ReportDocument> ToSortDefinition(IEnumerable<string> sortByArguments, string direction)
+        public static SortDefinition<ReportDocument> ToSortDefinition(string sortBy, string direction)
         {
-            var sort = sortByArguments.ToList();
-            if(sort.Count == 0)
-            {
-                sort.Add("UpdatedAt");
-            }
             var sortDefinitionBuilder = Builders<ReportDocument>.Sort;
-            var sortDefinition = sort
-                .Select(sortBy => direction == "asc"
-                    ? sortDefinitionBuilder.Ascending(sortBy)
-                    : sortDefinitionBuilder.Descending(sortBy));
-            var sortCombined = sortDefinitionBuilder.Combine(sortDefinition);
-            return sortCombined;
+
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                sortBy = "UpdatedAt";
+            }
+
+            var sortDefinition = direction == "asc"
+                ? sortDefinitionBuilder.Ascending(sortBy)
+                : sortDefinitionBuilder.Descending(sortBy);
+
+            return sortDefinition;
         }
     }
 }

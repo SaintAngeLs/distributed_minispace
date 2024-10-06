@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Queries;
+using Paralax.CQRS.Queries;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Queries;
 using MiniSpace.Services.Events.Application.Services;

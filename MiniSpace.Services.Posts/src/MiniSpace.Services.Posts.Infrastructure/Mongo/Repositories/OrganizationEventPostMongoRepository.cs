@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Posts.Core.Entities;
 using MiniSpace.Services.Posts.Core.Repositories;
 using MiniSpace.Services.Posts.Core.Requests;

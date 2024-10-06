@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Students.Application.Dto;
 using System;
 using System.Collections.Generic;

@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Queries;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Events.Application;
 using MiniSpace.Services.Events.Application.DTO;
 using MiniSpace.Services.Events.Application.Events;
@@ -20,19 +20,17 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
     public class GetEventHandler : IQueryHandler<GetEvent, EventDto>
     {
         private readonly IMongoRepository<EventDocument, Guid> _eventRepository;
-        private readonly IFriendsServiceClient _friendsServiceClient;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
 
         public GetEventHandler(IMongoRepository<EventDocument, Guid> eventRepository, 
-            IFriendsServiceClient friendsServiceClient, IAppContext appContext, IMessageBroker messageBroker)
+                            IAppContext appContext, IMessageBroker messageBroker)
         {
             _eventRepository = eventRepository;
-            _friendsServiceClient = friendsServiceClient;
             _appContext = appContext;
             _messageBroker = messageBroker;
         }
-        
+
         public async Task<EventDto> HandleAsync(GetEvent query, CancellationToken cancellationToken)
         {
             var document = await _eventRepository.GetAsync(p => p.Id == query.EventId);
@@ -40,29 +38,13 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Queries.Handlers
             {
                 return null;
             }
-            
-            var identity = _appContext.Identity;
-            var friends = Enumerable.Empty<FriendDto>();
 
-            if (identity.IsAuthenticated)
-            {
-                try
-                {
-                    var userFriends = await _friendsServiceClient.GetAsync(identity.Id);
-                    if (userFriends != null && userFriends.Any())
-                    {
-                        friends = userFriends.SelectMany(uf => uf.Friends);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine($"Error fetching friends: {ex.Message}");
-                    throw new ApplicationException("An error occurred while fetching friends data.", ex);
-                }
-            }
+            var identity = _appContext.Identity;
 
             await _messageBroker.PublishAsync(new EventViewed(query.EventId));
-            return document.AsDtoWithFriends(identity.Id, friends);
+
+            return document.AsDto(identity.Id);
         }
     }
+
 }

@@ -1,4 +1,4 @@
-﻿using Convey.CQRS.Events;
+﻿using Paralax.CQRS.Events;
 using MiniSpace.Services.Students.Core.Repositories;
 using System;
 using System.Linq;

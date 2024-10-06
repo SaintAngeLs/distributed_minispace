@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Email.Core.Repositories;
 using MiniSpace.Services.Email.Core.Entities;
 using System;

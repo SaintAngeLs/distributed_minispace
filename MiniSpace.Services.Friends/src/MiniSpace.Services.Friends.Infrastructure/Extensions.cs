@@ -1,27 +1,27 @@
 using System.Text;
-using Convey;
-using Convey.CQRS.Commands;
-using Convey.CQRS.Events;
-using Convey.CQRS.Queries;
-using Convey.Discovery.Consul;
-using Convey.Docs.Swagger;
-using Convey.HTTP;
-using Convey.LoadBalancing.Fabio;
-using Convey.MessageBrokers;
-using Convey.MessageBrokers.CQRS;
-using Convey.MessageBrokers.Outbox;
-using Convey.MessageBrokers.Outbox.Mongo;
-using Convey.MessageBrokers.RabbitMQ;
-using Convey.Metrics.AppMetrics;
-using Convey.Persistence.MongoDB;
-using Convey.Persistence.Redis;
-using Convey.Security;
-using Convey.Tracing.Jaeger;
-using Convey.Tracing.Jaeger.RabbitMQ;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
-using Convey.WebApi.Security;
-using Convey.WebApi.Swagger;
+using Paralax;
+using Paralax.CQRS.Commands;
+using Paralax.CQRS.Events;
+using Paralax.CQRS.Queries;
+using Paralax.Discovery.Consul;
+using Paralax.Docs.Swagger;
+using Paralax.HTTP;
+using Paralax.LoadBalancing.Fabio;
+using Paralax.MessageBrokers;
+using Paralax.MessageBrokers.CQRS;
+using Paralax.MessageBrokers.Outbox;
+using Paralax.MessageBrokers.Outbox.Mongo;
+using Paralax.MessageBrokers.RabbitMQ;
+using Paralax.Metrics.AppMetrics;
+using Paralax.Persistence.MongoDB;
+using Paralax.Persistence.Redis;
+using Paralax.Security;
+using Paralax.Tracing.Jaeger;
+using Paralax.Tracing.Jaeger.RabbitMQ;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
+using Paralax.WebApi.Security;
+using Paralax.WebApi.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,13 +41,13 @@ using MiniSpace.Services.Friends.Infrastructure.Services;
 using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Notifications.Infrastructure.Services.Clients;
 using MiniSpace.Services.Friends.Application.Services.Clients;
-using Convey.Logging.CQRS;
+using Paralax.CQRS.Logging;
 
 namespace MiniSpace.Services.Friends.Infrastructure
 {
     public static class Extensions
     {
-        public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
+        public static IParalaxBuilder AddInfrastructure(this IParalaxBuilder builder)
         {
             builder.Services.AddTransient<IFriendRepository, FriendMongoRepository>();
             builder.Services.AddTransient<IFriendRequestRepository, FriendRequestMongoRepository>();
@@ -92,7 +92,7 @@ namespace MiniSpace.Services.Friends.Infrastructure
             app.UseErrorHandler()
                 .UseSwaggerDocs()
                 .UseJaeger()
-                .UseConvey()
+                .UseParalax()
                 .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseCertificateAuthentication()

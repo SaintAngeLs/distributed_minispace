@@ -4,6 +4,15 @@
 # MiniSpace - ✨ Student Life Activity App
 
 [![codecov](https://codecov.io/gh/SaintAngeLs/distributed_minispace/graph/badge.svg?token=SW3T9CN2QS)](https://codecov.io/gh/SaintAngeLs/distributed_minispace)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/SaintAngeLs/distributed_minispace?color=blue&label=Version)
+![GitHub](https://img.shields.io/github/license/SaintAngeLs/distributed_minispace?color=green)
+![.NET 8.0](https://img.shields.io/badge/.NET-8.0-blueviolet)
+![Build Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/build_microservices.yml?branch=main)
+![Containers Deploy Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/cloud_deploy.yml?branch=main)
+![Safety Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/codeql.yml?branch=main)
+![Ossar analyser Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/ossaranalyzer.yml?branch=main)
+![Gitlab Sync Status](https://img.shields.io/github/actions/workflow/status/SaintAngeLs/distributed_minispace/gitlab_sync.yml?branch=main)
+
 
 **MiniSpace** is a powerful and dynamic application designed to enhance student life by offering a comprehensive platform where students can explore, register, and actively participate in a variety of events. Whether it’s cultural, educational, or social, MiniSpace is your gateway to enriching the academic community’s vibrant life.
 
@@ -122,7 +131,7 @@ The Complex System Diagram offers a detailed view of MiniSpace's infrastructure 
 - **Components**: [MudBlazor](https://mudblazor.com/) - Enhances the user interface with modern and responsive design elements.
 
 ## 💻 Backend
-- **Framework**: Built with [Convey](https://github.com/snatch-dev/Convey), a framework optimized for .NET microservices.
+- **Framework**: Built with [Paralax](https://github.com/itsharppro/Paralax), a framework optimized for .NET microservices.
 - **Architecture**: Microservice architecture, orchestrated-choreographical hybrid Saga pattern, utilizing the CQRS pattern with complex event sourcing to enhance performance and scalability.
 - **Services**:
   ### ✅ Identity Service
@@ -162,7 +171,7 @@ The Complex System Diagram offers a detailed view of MiniSpace's infrastructure 
   Configured to handle email communications, including notifications, event updates, and user communications via the event bus of the notification service.
 
   ### ✅ API Gateway
-  Uses [Ntrada](https://github.com/snatch-dev/Ntrada) for efficient routing and management of requests across multiple services through a unified entry point.
+  Uses [Nuar](https://github.com/itsharppro/Nuar) for efficient routing and management of requests across multiple services through a unified entry point.
 
 ## 🛠️ Infrastructure
 - [**MongoDB**](https://www.mongodb.com/products/platform/cloud) - NoSQL, document-oriented database for scalable storage.

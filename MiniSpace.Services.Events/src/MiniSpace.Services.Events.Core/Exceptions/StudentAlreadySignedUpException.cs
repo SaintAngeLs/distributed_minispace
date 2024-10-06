@@ -5,13 +5,13 @@ namespace MiniSpace.Services.Events.Core.Exceptions
     public class StudentAlreadySignedUpException : DomainException
     {
         public override string Code { get; } = "student_already_signed_up";
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public Guid EventId { get; }
 
-        public StudentAlreadySignedUpException(Guid studentId, Guid eventId) : base(
-            $"Student with ID: {studentId} already signed up to event with ID: {eventId}.")
+        public StudentAlreadySignedUpException(Guid userId, Guid eventId) : base(
+            $"Student with ID: {userId} already signed up to event with ID: {eventId}.")
         {
-            StudentId = studentId;
+            UserId = userId;
             EventId = eventId;
         }
     }

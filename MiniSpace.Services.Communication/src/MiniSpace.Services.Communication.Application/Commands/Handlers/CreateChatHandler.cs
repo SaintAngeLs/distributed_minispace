@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Communication.Application.Commands;
 using MiniSpace.Services.Communication.Application.Services;

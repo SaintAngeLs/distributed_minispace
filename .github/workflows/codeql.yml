@@ -13,13 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get update && sudo apt-get install -y libicu-dev
+      - name: Set globalization invariant mode
+        run: |
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -37,9 +47,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
@@ -61,9 +76,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
@@ -85,13 +105,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -109,13 +136,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -133,13 +167,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -157,13 +198,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -181,13 +229,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -205,13 +260,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -229,13 +291,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -253,13 +322,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -277,13 +353,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -301,13 +384,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -325,13 +415,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Remove global.json (if exists)
+        run: |
+          if [ -f "global.json" ]; then
+            rm global.json
+          fi
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: '8.x'
       - name: Install .NET 8.x
         run: |
           sudo apt-get update
           sudo apt-get install -y dotnet-sdk-8.0
+      - name: Install ICU package
+        run: sudo apt-get install -y libicu-dev
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:

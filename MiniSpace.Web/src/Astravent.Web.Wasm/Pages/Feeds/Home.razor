@@ -1,0 +1,250 @@
+﻿@page "/home"
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.DTO.Wrappers
+@using Astravent.Web.Wasm.Pages.Posts.Components
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IPostsService PostsService
+@inject IReactionsService ReactionsService
+@inject ICommentsService CommentsService
+@inject ISnackbar Snackbar
+@using MudBlazor
+@inject IIdentityService IdentityService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthWrapper>
+    <MudContainer>
+        @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Loading, please wait...</MudText>
+            </div>
+        }
+        else
+        {
+            <div class="breadcrumbs-container">
+                <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+            </div>
+            <MudGrid>
+                <!-- Left Side: User Information -->
+                <MudItem xs="12" md="3" lg="3">
+                    <UserInformation UserId="@studentId" />
+                </MudItem>
+
+                <!-- Center: Post Stream -->
+                <MudItem xs="12" md="6" lg="6">
+                    @if (postsLoadingFailed)
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load posts. Please try again later.</MudText>
+                    }
+                    else if (posts != null && posts.Any())
+                    {
+                        <MudGrid Justify="Justify.Center">
+                            @foreach (var post in posts)
+                            {
+                                <MudItem xs="12">
+                                    <PostItem 
+                                        Post="@post"
+                                        Username="@GetCachedUserName(post.UserId)"
+                                        UserProfileImage="@GetCachedUserAvatar(post.UserId)"
+                                        PostDate="@post.CreatedAt.ToString("g")"
+                                        ReactionsSummaries="@reactionsSummaries"
+                                        OnViewPost="NavigateToPostDetails"
+                                        OnReaction="HandleReaction"
+                                        OnSubmitComment="SubmitCommentAsync"
+                                    />
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center">No activity found</MudText>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/events/search"))">Please join an event first</MudButton>
+                    }
+                </MudItem>
+
+                <!-- Right Side: User Related Content -->
+                <MudItem xs="12" md="3" lg="3">
+                    <UserRelatedContent UserId="@studentId" />
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+@code {
+    private IEnumerable<PostDto> posts;
+    private Guid studentId;
+    private bool pageInitialized = false;
+    private bool postsLoadingFailed = false;
+    private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new Dictionary<Guid, ReactionsSummaryDto>();
+
+    // Cache for user names and avatars
+    private Dictionary<Guid, string> userNames = new Dictionary<Guid, string>();
+    private Dictionary<Guid, string> userAvatars = new Dictionary<Guid, string>();
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        await LoadPostsAsync();
+        
+        var user = authState.User;
+        
+        if (user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine($"User authenticated for the home component: {user.Identity.IsAuthenticated}");
+            studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            
+            pageInitialized = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
+
+    private async Task LoadPostsAsync()
+    {
+            
+            Console.WriteLine("Loading posts... async");
+            var result = await PostsService.GetCurrentUserFeedAsync(1, 8, "PublishDate", "desc");
+            Console.WriteLine($"Posts loaded: {result.IsSuccessStatusCode}");
+            if (result.IsSuccessStatusCode)
+            {
+                posts = result.Content.Items;
+                var postIds = posts.Select(p => p.Id).ToList();
+                reactionsSummaries = await ReactionsService.GetReactionsSummariesAsync(postIds, ReactionContentType.Post);
+
+                var userIds = posts.Select(p => p.UserId).Where(id => id.HasValue).Select(id => id.Value).Distinct().ToList();
+                foreach (var userId in userIds)
+                {
+                    if (!userNames.ContainsKey(userId))
+                    {
+                        var user = await StudentsService.GetStudentAsync(userId);
+                        if (user != null)
+                        {
+                            userAvatars[userId] = user.ProfileImageUrl ?? string.Empty;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                postsLoadingFailed = true;
+                Console.WriteLine($"Error loading posts: {result.ErrorMessage.Reason}");
+                Snackbar.Add($"Error loading posts: {result.ErrorMessage.Reason}", Severity.Error);
+            }
+       
+    }
+    // Method to get cached user name
+    private string GetCachedUserName(Guid? userId)
+    {
+        if (userId.HasValue && userNames.ContainsKey(userId.Value))
+        {
+            return userNames[userId.Value];
+        }
+        return "Unknown User";
+    }
+
+    // Method to get cached user avatar
+    private string GetCachedUserAvatar(Guid? userId)
+    {
+        if (userId.HasValue && userAvatars.ContainsKey(userId.Value))
+        {
+            return userAvatars[userId.Value];
+        }
+        return string.Empty;
+    }
+
+    private async Task HandleReaction((Guid postId, ReactionType reactionType) reactionInfo)
+    {
+        var (postId, reactionType) = reactionInfo;
+
+        var reactions = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
+        var existingReaction = reactions.FirstOrDefault(r => r.UserId == IdentityService.GetCurrentUserId());
+
+        if (existingReaction != null)
+        {
+            var updateReaction = new UpdateReactionDto
+            {
+                ReactionId = existingReaction.Id,
+                UserId = IdentityService.GetCurrentUserId(),
+                NewReactionType = reactionType.ToString(),
+                ContentType = "Post",
+                TargetType = "User"
+            };
+
+            await ReactionsService.UpdateReactionAsync(updateReaction);
+        }
+        else
+        {
+            var createReaction = new CreateReactionDto
+            {
+                UserId = IdentityService.GetCurrentUserId(),
+                ContentId = postId,
+                ContentType = "Post",
+                ReactionType = reactionType.ToString(),
+                TargetType = "User"
+            };
+
+            await ReactionsService.CreateReactionAsync(createReaction);
+        }
+
+        reactionsSummaries[postId] = await ReactionsService.GetReactionsSummaryAsync(postId, ReactionContentType.Post);
+    }
+
+    private async Task SubmitCommentAsync((PostDto post, string commentText) commentInfo)
+    {
+        var (post, commentText) = commentInfo;
+        if (string.IsNullOrWhiteSpace(commentText))
+        {
+            Snackbar.Add("Comment cannot be empty.", Severity.Warning);
+            return;
+        }
+
+        var command = new CreateCommentCommand(
+            commentId: Guid.NewGuid(),
+            contextId: post.Id,
+            commentContext: DetermineCommentContext(post).ToString(),
+            userId: IdentityService.GetCurrentUserId(),
+            parentId: Guid.Empty,
+            textContent: commentText
+        );
+
+        var response = await CommentsService.CreateCommentAsync(command);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Comment added successfully!", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add($"Failed to add comment: {response.ErrorMessage?.Reason}", Severity.Error);
+        }
+    }
+
+    private void NavigateToPostDetails(Guid postId)
+    {
+        NavigationManager.NavigateTo($"/posts/details/{postId}");
+    }
+
+    private CommentContext DetermineCommentContext(PostDto post)
+    {
+        if (post.OrganizationId.HasValue)
+        {
+            return post.EventId.HasValue ? CommentContext.OrganizationEvent : CommentContext.OrganizationPost;
+        }
+        else
+        {
+            return post.EventId.HasValue ? CommentContext.UserEvent : CommentContext.UserPost;
+        }
+    }
+}

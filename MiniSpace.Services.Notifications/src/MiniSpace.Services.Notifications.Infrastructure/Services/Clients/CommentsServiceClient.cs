@@ -2,8 +2,8 @@ using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Convey.HTTP;
-using MiniSpace.Services.Notifications.Application.Dto;
+using Paralax.HTTP;
+using MiniSpace.Services.Notifications.Application.Dto.Comments;
 using MiniSpace.Services.Notifications.Application.Services.Clients;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Services.Clients

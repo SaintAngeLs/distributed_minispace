@@ -1,0 +1,31 @@
+@page "/privacy"
+@inject IIdentityService IdentityService
+@using MudBlazor
+
+<MudText Typo="Typo.h6" GutterBottom="true">Privacy</MudText>
+@if (IsLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    <MudStack>
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.ContactEmail" Label="Contact Email" HelperText="Your contact email" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.PhoneNumber" Label="Phone Number" HelperText="Your phone number" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Country" Label="Country" HelperText="Your country" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.City" Label="City" HelperText="Your city" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudDatePicker @bind-Date="StudentWithGalleryImagesDto.Student.DateOfBirth" Label="Date of Birth" HelperText="Your date of birth" Margin="Margin.Dense" />
+    </MudStack>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveChangesAsync">Save privacy</MudButton>
+}
+
+@code {
+    [Parameter]
+    public bool IsLoading { get; set; }
+    
+    [Parameter]
+    public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }
+
+    [Parameter]
+    public EventCallback SaveChangesAsync { get; set; }
+}

@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 
 namespace MiniSpace.Services.Students.Application.Services
 {
