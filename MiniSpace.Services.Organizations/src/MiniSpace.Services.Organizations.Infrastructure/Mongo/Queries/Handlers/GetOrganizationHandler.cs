@@ -24,7 +24,6 @@ namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 
             if (organization == null)
             {
-                Console.WriteLine("Organization not found.");
                 return null;
             }
 
