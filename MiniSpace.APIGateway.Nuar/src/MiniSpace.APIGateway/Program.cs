@@ -13,6 +13,7 @@ using Nuar;
 using Nuar.RabbitMq;
 using Nuar.Hooks;
 using MiniSpace.APIGateway.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 namespace MiniSpace.APIGateway
 {
@@ -46,7 +47,10 @@ namespace MiniSpace.APIGateway
                         .AddParalax()
                         .AddMetrics()
                         .AddSecurity())
-                    .Configure(app => app.UseNuar())
+                    .Configure(app =>
+                    {
+                        app.UseNuar(); 
+                    })
                     .UseLogging();
                 });
 

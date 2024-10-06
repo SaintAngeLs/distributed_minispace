@@ -33,6 +33,15 @@
     <PackageReference Include="Nuar.Swagger" Version="*" />
     <PackageReference Include="Nuar.Tracing" Version="*" />
   </ItemGroup>
+  <!-- <ItemGroup>
+    <ProjectReference Include="../Nuar/src/Nuar/src/Nuar/Nuar.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.Cors/src/Nuar.Cors/Nuar.Cors.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.CustomErrors/src/Nuar.CustomErrors/Nuar.CustomErrors.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.JWT/src/Nuar.JWT/Nuar.JWT.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.RabbitMQ/src/Nuar.RabbitMQ/Nuar.RabbitMQ.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.Swagger/src/Nuar.Swagger/Nuar.Swagger.csproj" />
+    <ProjectReference Include="../Nuar/src/Nuar.Tracing/src/Nuar.Tracing/Nuar.Tracing.csproj" />
+  </ItemGroup> -->
 
   <ItemGroup>
     <None Remove="nuar.yml" />

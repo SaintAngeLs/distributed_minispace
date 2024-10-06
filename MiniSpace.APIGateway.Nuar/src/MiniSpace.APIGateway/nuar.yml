@@ -42,12 +42,7 @@ extensions:
       - Trace-ID
       - Total-Count
 
-  jwt:
-    issuerSigningKey: Gtn9vBDB5RCDLJSMqZQQmN75J8hgzbQwWkcD8jMIXnvCLAmlL0QVacUAbyootWihMrPIz
-    validIssuer: minispace
-    validateAudience: false
-    validateIssuer: false
-    validateLifetime: false
+
 
   swagger:
     name: MiniSpace
@@ -64,6 +59,14 @@ extensions:
     maxPacketSize: 0
     sampler: const
     useEmptyTracer: false
+
+  jwt:
+    issuerSigningKey: Gtn9vBDB5RCDLJSMqZQQmN75J8hgzbQwWkcD8jMIXnvCLAmlL0QVacUAbyootWihMrPIz
+    validIssuer: minispace
+    validateAudience: false
+    validateIssuer: false
+    validateLifetime: false
+    validateIssuerSigningKey: true
 
 modules:
   home:
@@ -1081,6 +1084,8 @@ modules:
         method: GET
         use: downstream
         downstream: organizations-service/organizations/{organizationId}
+        bind:
+          - organizationId: {organizationId}
 
       - upstream: /{organizationId}/details
         method: GET

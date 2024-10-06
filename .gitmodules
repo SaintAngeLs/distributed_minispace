@@ -1,0 +1,3 @@
+[submodule "MiniSpace.APIGateway.Nuar/src/Nuar"]
+	path = MiniSpace.APIGateway.Nuar/src/Nuar
+	url = https://github.com/itsharppro/Nuar.git
