@@ -1,32 +1,33 @@
 ﻿using Paralax.CQRS.Queries;
-using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Organizations.Application.DTO;
 using MiniSpace.Services.Organizations.Application.Queries;
-using MiniSpace.Services.Organizations.Infrastructure.Mongo.Documents;
+using MiniSpace.Services.Organizations.Core.Repositories;
 using System.Diagnostics.CodeAnalysis;
-
+using MiniSpace.Services.Organizations.Core.Entities; // Ensure this is imported
+using System;
 
 namespace MiniSpace.Services.Organizations.Infrastructure.Mongo.Queries.Handlers
 {
     [ExcludeFromCodeCoverage]
-     public class GetOrganizationHandler : IQueryHandler<GetOrganization, OrganizationDto>
+    public class GetOrganizationHandler : IQueryHandler<GetOrganization, OrganizationDto>
     {
-        private readonly IMongoRepository<OrganizationDocument, Guid> _repository;
+        private readonly IOrganizationRepository _organizationRepository;
 
-        public GetOrganizationHandler(IMongoRepository<OrganizationDocument, Guid> repository)
+        public GetOrganizationHandler(IOrganizationRepository organizationRepository)
         {
-            _repository = repository;
+            _organizationRepository = organizationRepository;
         }
 
         public async Task<OrganizationDto> HandleAsync(GetOrganization query, CancellationToken cancellationToken)
         {
-            var organizationDocument = await _repository.GetAsync(o => o.Id == query.OrganizationId);
-            if (organizationDocument == null)
+            var organization = await _organizationRepository.GetAsync(query.OrganizationId);
+
+            if (organization == null)
             {
+                Console.WriteLine("Organization not found.");
                 return null;
             }
 
-            var organization = organizationDocument.AsEntity();
             return new OrganizationDto(organization);
         }
     }

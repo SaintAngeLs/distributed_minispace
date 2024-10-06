@@ -30,8 +30,10 @@ namespace MiniSpace.Services.Organizations.Api
                     .AddApplication()
                     .AddInfrastructure()
                     .Build())
+                    
                 .Configure(app => app
                     .UseInfrastructure()
+                    
                     .UseEndpoints(endpoints => endpoints
                         .Post<CreateOrganization>("organizations", async (cmd, ctx) =>
                         {
@@ -61,15 +63,15 @@ namespace MiniSpace.Services.Organizations.Api
                         {
                             await ctx.Response.NoContent();
                         })
-                        .Delete<DeleteOrganization>("organizations/{organizationId}", async (cmd, ctx) =>
+                        .Delete<DeleteOrganization>("organizations/{organizationId}/delete", async (cmd, ctx) =>
                         {
                             await ctx.Response.NoContent();
                         })
-                        .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
+                        
                     )
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        
+                        .Get<GetOrganization, OrganizationDto>("organizations/{organizationId}")
                         .Get<GetOrganizationDetails, OrganizationDetailsDto>("organizations/{organizationId}/details")
                         .Get<GetRootOrganizations, IEnumerable<OrganizationDto>>("organizations/root")
                         .Get<GetChildrenOrganizations, PagedResult<OrganizationDto>>("organizations/{organizationId}/children")
