@@ -1160,10 +1160,10 @@ modules:
         use: downstream
         downstream: organizations-service/organizations/paginated
 
-      - upstream: /{organizationId}
+      - upstream: /{organizationId}/delete
         method: DELETE
         use: downstream
-        downstream: organizations-service/organizations/{organizationId}
+        downstream: organizations-service/organizations/{organizationId}/delete
         auth: true
 
       - upstream: /{organizationId}/children
