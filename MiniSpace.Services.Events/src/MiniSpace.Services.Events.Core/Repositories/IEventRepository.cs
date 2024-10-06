@@ -23,5 +23,7 @@ namespace MiniSpace.Services.Events.Core.Repositories
             IEnumerable<string> sortBy, string direction, State? state);
         Task<(IEnumerable<Event> events, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseStudentEventsAsync(
             int pageNumber, int pageSize, IEnumerable<Guid> eventIds, IEnumerable<string> sortBy, string direction);
+        Task<IEnumerable<Event>> GetEventsToBePublishedAsync(DateTime now);
+        Task<IEnumerable<Event>> GetEventsToArchiveAsync(DateTime now);
     }
 }

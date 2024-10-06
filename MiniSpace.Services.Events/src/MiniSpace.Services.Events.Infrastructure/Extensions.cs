@@ -80,7 +80,8 @@ namespace MiniSpace.Services.Events.Infrastructure
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
             builder.Services.AddSingleton<MLContext>();
-            builder.Services.AddHostedService<EventStateUpdaterWorker>();
+            builder.Services.AddHostedService<EventArchiverWorker>();
+            builder.Services.AddHostedService<EventPublisherWorker>();
 
             return builder
                 .AddErrorHandler<ExceptionToResponseMapper>()

@@ -104,6 +104,24 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Repositories
                 pagedEvents.totalPages, pagedEvents.totalElements);
         }
 
+         public async Task<IEnumerable<Event>> GetEventsToBePublishedAsync(DateTime now)
+        {
+            var events = await _repository.Collection.AsQueryable()
+                .Where(e => e.State == State.ToBePublished && e.PublishDate <= now)
+                .ToListAsync();
+
+            return events.Select(e => e.AsEntity());
+        }
+
+        public async Task<IEnumerable<Event>> GetEventsToArchiveAsync(DateTime now)
+        {
+            var events = await _repository.Collection.AsQueryable()
+                .Where(e => e.State == State.Published && e.EndDate <= now)
+                .ToListAsync();
+
+            return events.Select(e => e.AsEntity());
+        }
+
         public Task AddAsync(Event @event) => _repository.AddAsync(@event.AsDocument());
         public Task UpdateAsync(Event @event) => _repository.UpdateAsync(@event.AsDocument());
         public Task DeleteAsync(Guid id) => _repository.DeleteAsync(id);
