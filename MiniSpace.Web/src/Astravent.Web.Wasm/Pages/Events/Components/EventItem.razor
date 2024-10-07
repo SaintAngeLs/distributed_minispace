@@ -1,6 +1,9 @@
 @page "/event-item"
 @inject IStudentsService StudentsService
 @inject IOrganizationsService OrganizationsService
+@using Astravent.Web.Wasm.Pages.Reports.Dialogs
+@inject IDialogService DialogService
+@inject IIdentityService IdentityService
 
 @code {
     [Parameter] public EventDto Event { get; set; }
@@ -20,47 +23,62 @@
     {
         if (Event.Organizer.OrganizerType == OrganizerType.Organization)
         {
-            // Fetch organization details
             var organization = await OrganizationsService.GetOrganizationAsync(Event.Organizer.OrganizationId.Value);
             organizerName = organization.Name;
             organizerImageUrl = !string.IsNullOrEmpty(organization.ImageUrl) 
                                 ? organization.ImageUrl 
-                                : "/images/org_avatar_placeholder.png";
+                                : "/images/default_profile_image.webp";
         }
         else if (Event.Organizer.UserId.HasValue)
         {
-            // Fetch user details
             var user = await StudentsService.GetStudentAsync(Event.Organizer.UserId.Value);
             organizerName = $"{user.FirstName} {user.LastName}";
             organizerImageUrl = !string.IsNullOrEmpty(user.ProfileImageUrl) 
                                 ? user.ProfileImageUrl 
-                                : "/images/user_avatar_placeholder.png";
+                                : "/images/default_profile_image.webp";
         }
     }
 
     private void ViewEvent() => OnViewEvent.InvokeAsync(Event.Id);
     private void SignUpToEvent() => OnSignUpToEvent.InvokeAsync(Event.Id);
     private void ShowInterestInEvent() => OnShowInterestInEvent.InvokeAsync(Event.Id);
+
+    private async Task OpenReportDialog()
+    {
+        var issuerId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+
+        var parameters = new DialogParameters
+        {
+            { "Event", Event },
+            { "EventName", Event.Name },
+            { "EventImage", GetBannerUrl(Event) },
+            { "IssuerId", issuerId },
+            { "OrganizerName", organizerName },
+            { "OrganizerImage", organizerImageUrl }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small };
+
+        DialogService.Show<EventReportDialog>("Report Event", parameters, options);
+    }
 }
 
 <MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px;">
     <MudCardHeader>
+        <!-- Organizer Avatar -->
+        <CardHeaderAvatar>
+            <MudAvatar Image="@organizerImageUrl" Color="Color.Secondary"></MudAvatar>
+        </CardHeaderAvatar>
+        
+        <!-- Organizer Name -->
         <CardHeaderContent>
-            <!-- Organizer Avatar -->
-            <CardHeaderAvatar>
-                <MudAvatar Image="@organizerImageUrl" Color="Color.Secondary">O</MudAvatar>
-            </CardHeaderAvatar>
-            
-            <!-- Organizer Name -->
-            <CardHeaderContent>
-                <MudText Typo="Typo.body1">@organizerName</MudText>
-                <MudText Typo="Typo.body2">@GetOrganizerDescription()</MudText>
-            </CardHeaderContent>
-            
-            <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Default" /> <!-- Report event action -->
-            </CardHeaderActions>
+            <MudText Typo="Typo.body1">@organizerName</MudText>
+            <MudText Typo="Typo.body2">@GetOrganizerDescription()</MudText>
         </CardHeaderContent>
+        
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Default" OnClick="OpenReportDialog" />
+        </CardHeaderActions>
     </MudCardHeader>
 
     <MudCardMedia Image="@GetBannerUrl(Event)" Alt="@Event.Name" Style="height: 180px;" />
@@ -80,7 +98,7 @@
 
     <MudCardActions>
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ViewEvent">
-            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" /> 
+            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" />
             <MudText Typo="Typo.h6">View Details</MudText>
         </MudButton>
     </MudCardActions>
@@ -120,7 +138,13 @@
 </MudCard>
 
 @code {
-    private string GetBannerUrl(EventDto eventDto) => eventDto?.BannerUrl ?? "/images/default_media_file_image.png";
+    private string GetBannerUrl(EventDto eventDto)
+    {
+        return !string.IsNullOrEmpty(eventDto?.BannerUrl)
+            ? eventDto.BannerUrl 
+            : "/images/default_media_file_image.png";
+    }
+
 
     private string GetOrganizerDescription()
     {

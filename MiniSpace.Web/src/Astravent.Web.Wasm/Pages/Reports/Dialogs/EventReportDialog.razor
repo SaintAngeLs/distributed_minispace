@@ -1,0 +1,144 @@
+<MudDialog MaxWidth="MaxWidth.Small">
+    <TitleContent>Report Event</TitleContent>
+
+    <DialogContent>
+        @if (Event != null)
+        {
+            <MudCard Class="event-preview mb-4" Elevation="1">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudAvatar Image="@GetEventImage(EventImage)" Size="Size.Medium" />
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.subtitle1">@EventName</MudText>
+                        <MudText Typo="Typo.caption" Class="text-muted">@Event.StartDate.ToString("MMMM dd, yyyy h:mm tt")</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+
+                <MudCardMedia Image="@GetEventImage(EventImage)" Alt="@EventName" Style="height: 180px;" />
+
+                <MudCardContent>
+                    <MudText Typo="Typo.body1">@Event.Description</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">@Event.Category</MudText>
+                    <MudText Typo="Typo.body2">Ends: @Event.EndDate.ToString("MMMM dd, yyyy h:mm tt")</MudText>
+                    <MudText Typo="Typo.body2">
+                        <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1rem;" /> Interested: @Event.InterestedStudents
+                    </MudText>
+                    <MudText Typo="Typo.body2">
+                        <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" /> Signed Up: @Event.SignedUpStudents
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+
+            <!-- Organizer Information -->
+            <MudCard Class="organizer-info mb-4" Elevation="1">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudAvatar Image="@GetProfileImage(OrganizerImage)" Size="Size.Medium" />
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.subtitle2">Organized by: @OrganizerName</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+            </MudCard>
+
+            <!-- Report Category Selection -->
+            <MudSelect T="ReportCategory" @bind-Value="selectedCategory" Label="Select Report Category" Variant="Variant.Filled" Required="true" FullWidth="true">
+                @foreach (ReportCategory category in Enum.GetValues(typeof(ReportCategory)))
+                {
+                    <MudSelectItem T="ReportCategory" Value="@category">@ReportCategoryExtensions.GetReportCategoryText(category)</MudSelectItem>
+                }
+            </MudSelect>
+
+            <!-- Reason Input Section -->
+            <MudText Typo="Typo.body1" Class="mt-3">You are reporting the event '@EventName'. Please provide the reason for your report below:</MudText>
+            <MudTextField @bind-Value="reason" Label="Reason" Variant="Variant.Filled" FullWidth="true" Required="true" />
+        }
+        else
+        {
+            <MudText Typo="Typo.body1">Unable to load event details. Please try again.</MudText>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="SubmitReport" Color="Color.Error" Variant="Variant.Filled">Submit Report</MudButton>
+        <MudButton OnClick="Cancel" Color="Color.Primary" Variant="Variant.Text">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public EventDto Event { get; set; }
+    [Parameter] public string EventName { get; set; }
+    [Parameter] public string EventImage { get; set; }
+    [Parameter] public Guid IssuerId { get; set; }
+    [Parameter] public string OrganizerName { get; set; }
+    [Parameter] public string OrganizerImage { get; set; }
+
+    [Inject] public IReportsService ReportsService { get; set; }
+    [Inject] public ISnackbar Snackbar { get; set; }
+
+    private ReportCategory selectedCategory = ReportCategory.Spam;
+    private string reason = string.Empty;
+
+    private string DefaultProfileImage = "/images/default_profile_image.webp";
+    private string DefaultEventImage = "/images/default_media_file_image.png";
+
+    private async Task SubmitReport()
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            Snackbar.Add("Please provide a reason for your report.", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            var reportCommand = new CreateReportCommand(
+                reportId: Guid.NewGuid(),
+                issuerId: IssuerId, 
+                targetId: Event.Id,
+                targetOwnerId: GetOrganizerId(), 
+                contextType: "Event",
+                category: ReportCategoryExtensions.GetReportCategoryText(selectedCategory), 
+                reason: reason
+            );
+
+            var response = await ReportsService.CreateReportAsync(reportCommand);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Report submitted successfully.", Severity.Success);
+                MudDialog.Close();
+            }
+            else
+            {
+                Snackbar.Add("Failed to submit the report.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            Snackbar.Add("An error occurred while submitting the report.", Severity.Error);
+        }
+    }
+
+    private Guid GetOrganizerId()
+    {
+        return Event.Organizer.UserId ?? Event.Organizer.OrganizationId ?? Guid.Empty;
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private string GetEventImage(string eventImage)
+    {
+        return string.IsNullOrEmpty(eventImage) ? DefaultEventImage : eventImage;
+    }
+
+    private string GetProfileImage(string profileImage)
+    {
+        return string.IsNullOrEmpty(profileImage) ? DefaultProfileImage : profileImage;
+    }
+}
