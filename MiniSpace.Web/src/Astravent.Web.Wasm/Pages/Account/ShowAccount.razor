@@ -34,14 +34,14 @@
         <MudGrid>
             <MudItem xs="12" sm="4" md="3">
                 <MudNavMenu Elevation="1">
-                    <MudNavLink OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security">Security</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip">Privacy</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language">Languages & Interests</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary">Gallery</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings">User Settings</MudNavLink>
-                    <MudNavLink OnClick="() => SetActiveTabIndex(7)" Icon="@Icons.Material.Filled.Block">Blocked Users</MudNavLink> 
+                    <MudNavLink Class="@GetNavLinkClass(0)" OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person" DisableRipple="true">Profile</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(1)" OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security" DisableRipple="true">Security</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(2)" OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications" DisableRipple="true">Notifications</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(3)" OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip" DisableRipple="true">Privacy</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(4)" OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language" DisableRipple="true">Languages & Interests</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(5)" OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary" DisableRipple="true">Gallery</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(6)" OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings" DisableRipple="true">User Settings</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(7)" OnClick="() => SetActiveTabIndex(7)" Icon="@Icons.Material.Filled.Block" DisableRipple="true">Blocked Users</MudNavLink> 
                 </MudNavMenu>
             </MudItem>
             <MudItem xs="12" sm="8" md="9">
@@ -169,6 +169,12 @@
 
     .button-margins {
         margin: 10px 0 !important.
+    }
+
+     .mud-nav-link.active {
+        background-color: #e0e0e0; 
+        font-weight: bold; 
+        color: #3f51b5;
     }
 </style>
 
@@ -335,10 +341,6 @@
     }
 
 
- 
-
-
-
     private async Task SaveTwoFactorSettingsAsync()
     {
         try
@@ -400,25 +402,25 @@
     }
 
     private async Task SaveUserSettingsAsync()
-{
-    try
     {
-        var studentId = IdentityService.GetCurrentUserId();
-        
-        @* var jsonSettings = JsonSerializer.Serialize(availableSettingsDto, new JsonSerializerOptions { WriteIndented = true });
+        try
+        {
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            if (studentId == Guid.Empty)
+            {
+                throw new InvalidOperationException("Unable to retrieve the current user's ID.");
+            }
 
-        Console.WriteLine("Sending the following settings to the student service:");
-        Console.WriteLine(jsonSettings); *@
+            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
 
-        await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
-
-        Console.WriteLine("Student settings updated successfully.");
+            Console.WriteLine("Student settings updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving user settings: {ex.Message}");
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error saving user settings: {ex.Message}");
-    }
-}
+
 
 
     private void SetActiveTabIndex(int index)
@@ -438,5 +440,10 @@
             }
             return ms.ToArray();
         }
+    }
+
+    private string GetNavLinkClass(int index)
+    {
+        return activeTabIndex == index ? "mud-nav-link active" : "mud-nav-link";
     }
 }
