@@ -17,6 +17,18 @@ namespace MiniSpace.Services.Students.Core.Entities
         public Visibility ProfileImageVisibility { get; private set; }
         public Visibility BannerImageVisibility { get; private set; }
         public Visibility GalleryVisibility { get; private set; }
+
+        public Visibility ConnectionVisibility { get; private set; }
+        public Visibility FollowersVisibility { get; private set; }
+        public Visibility FollowingVisibility { get; private set; }
+        public Visibility MyPostsVisibility { get; private set; }
+        public Visibility ConnectionsPostsVisibility { get; private set; }
+        public Visibility MyRepostsVisibility { get; private set; }
+        public Visibility RepostsOfMyConnectionsVisibility { get; private set; }
+
+        public Visibility OrganizationIAmCreatorVisibility { get; private set; }
+        public Visibility OrganizationIFollowVisibility { get; private set; }
+
         public FrontendVersion FrontendVersion { get; private set; }
         public PreferredLanguage PreferredLanguage { get; private set; }
 
@@ -35,6 +47,17 @@ namespace MiniSpace.Services.Students.Core.Entities
             ProfileImageVisibility = Visibility.Everyone;
             BannerImageVisibility = Visibility.Everyone;
             GalleryVisibility = Visibility.Everyone;
+
+            ConnectionVisibility = Visibility.Everyone;
+            FollowersVisibility = Visibility.Everyone;
+            FollowingVisibility = Visibility.Everyone;
+            MyPostsVisibility = Visibility.Everyone;
+            ConnectionsPostsVisibility = Visibility.Everyone;
+            MyRepostsVisibility = Visibility.Everyone;
+            RepostsOfMyConnectionsVisibility = Visibility.Everyone;
+            OrganizationIAmCreatorVisibility = Visibility.Everyone;
+            OrganizationIFollowVisibility = Visibility.Everyone;
+
             FrontendVersion = FrontendVersion.Default;
             PreferredLanguage = PreferredLanguage.English;
         }
@@ -43,7 +66,11 @@ namespace MiniSpace.Services.Students.Core.Entities
                                      Visibility signedUpEventsVisibility, Visibility educationVisibility, Visibility workPositionVisibility,
                                      Visibility languagesVisibility, Visibility interestsVisibility, Visibility contactEmailVisibility,
                                      Visibility phoneNumberVisibility, Visibility profileImageVisibility, Visibility bannerImageVisibility,
-                                     Visibility galleryVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
+                                     Visibility galleryVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage,
+                                     Visibility connectionVisibility, Visibility followersVisibility, Visibility followingVisibility,
+                                     Visibility myPostsVisibility, Visibility connectionsPostsVisibility, Visibility myRepostsVisibility,
+                                     Visibility repostsOfMyConnectionsVisibility, Visibility organizationIAmCreatorVisibility,
+                                     Visibility organizationIFollowVisibility)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -58,6 +85,17 @@ namespace MiniSpace.Services.Students.Core.Entities
             ProfileImageVisibility = profileImageVisibility;
             BannerImageVisibility = bannerImageVisibility;
             GalleryVisibility = galleryVisibility;
+
+            ConnectionVisibility = connectionVisibility;
+            FollowersVisibility = followersVisibility;
+            FollowingVisibility = followingVisibility;
+            MyPostsVisibility = myPostsVisibility;
+            ConnectionsPostsVisibility = connectionsPostsVisibility;
+            MyRepostsVisibility = myRepostsVisibility;
+            RepostsOfMyConnectionsVisibility = repostsOfMyConnectionsVisibility;
+            OrganizationIAmCreatorVisibility = organizationIAmCreatorVisibility;
+            OrganizationIFollowVisibility = organizationIFollowVisibility;
+
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
         }
@@ -66,7 +104,11 @@ namespace MiniSpace.Services.Students.Core.Entities
                                    Visibility signedUpEventsVisibility, Visibility educationVisibility, Visibility workPositionVisibility,
                                    Visibility languagesVisibility, Visibility interestsVisibility, Visibility contactEmailVisibility,
                                    Visibility phoneNumberVisibility, Visibility profileImageVisibility, Visibility bannerImageVisibility,
-                                   Visibility galleryVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage)
+                                   Visibility galleryVisibility, FrontendVersion frontendVersion, PreferredLanguage preferredLanguage,
+                                   Visibility connectionVisibility, Visibility followersVisibility, Visibility followingVisibility,
+                                   Visibility myPostsVisibility, Visibility connectionsPostsVisibility, Visibility myRepostsVisibility,
+                                   Visibility repostsOfMyConnectionsVisibility, Visibility organizationIAmCreatorVisibility,
+                                   Visibility organizationIFollowVisibility)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -81,6 +123,17 @@ namespace MiniSpace.Services.Students.Core.Entities
             ProfileImageVisibility = profileImageVisibility;
             BannerImageVisibility = bannerImageVisibility;
             GalleryVisibility = galleryVisibility;
+
+            ConnectionVisibility = connectionVisibility;
+            FollowersVisibility = followersVisibility;
+            FollowingVisibility = followingVisibility;
+            MyPostsVisibility = myPostsVisibility;
+            ConnectionsPostsVisibility = connectionsPostsVisibility;
+            MyRepostsVisibility = myRepostsVisibility;
+            RepostsOfMyConnectionsVisibility = repostsOfMyConnectionsVisibility;
+            OrganizationIAmCreatorVisibility = organizationIAmCreatorVisibility;
+            OrganizationIFollowVisibility = organizationIFollowVisibility;
+
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
         }
