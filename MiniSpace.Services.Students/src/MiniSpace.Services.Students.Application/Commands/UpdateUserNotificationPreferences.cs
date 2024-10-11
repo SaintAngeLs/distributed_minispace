@@ -5,7 +5,7 @@ namespace MiniSpace.Services.Students.Application.Commands
 {
     public class UpdateUserNotificationPreferences : ICommand
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public bool EmailNotifications { get; set; }
         
         public bool SystemLogin { get; set; }
@@ -23,12 +23,18 @@ namespace MiniSpace.Services.Students.Application.Commands
         public bool PostsOfPeopleIFollowNotification { get; set; }
         public bool EventNotificationForPeopleIFollow { get; set; }
 
-        public UpdateUserNotificationPreferences(Guid studentId, bool emailNotifications, bool systemLogin, bool interestBasedEvents, 
+        // New properties for friend requests and post notifications
+        public bool NewFriendsRequests { get; set; }
+        public bool MyRequestsAccepted { get; set; }
+        public bool FriendsPostsNotifications { get; set; }
+
+        public UpdateUserNotificationPreferences(Guid userId, bool emailNotifications, bool systemLogin, bool interestBasedEvents, 
             bool eventNotifications, bool commentsNotifications, bool postsNotifications, bool eventRecommendation, 
             bool friendsRecommendation, bool friendsPosts, bool postsRecommendation, bool eventsIAmInterestedInNotification, 
-            bool eventsIAmSignedUpToNotification, bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow)
+            bool eventsIAmSignedUpToNotification, bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow,
+            bool newFriendsRequests, bool myRequestsAccepted, bool friendsPostsNotifications)
         {
-            StudentId = studentId;
+            UserId = userId;
             EmailNotifications = emailNotifications;
             SystemLogin = systemLogin;
             InterestBasedEvents = interestBasedEvents;
@@ -44,6 +50,10 @@ namespace MiniSpace.Services.Students.Application.Commands
             EventsIAmSignedUpToNotification = eventsIAmSignedUpToNotification;
             PostsOfPeopleIFollowNotification = postsOfPeopleIFollowNotification;
             EventNotificationForPeopleIFollow = eventNotificationForPeopleIFollow;
+
+            NewFriendsRequests = newFriendsRequests;
+            MyRequestsAccepted = myRequestsAccepted;
+            FriendsPostsNotifications = friendsPostsNotifications;
         }
     }
 }

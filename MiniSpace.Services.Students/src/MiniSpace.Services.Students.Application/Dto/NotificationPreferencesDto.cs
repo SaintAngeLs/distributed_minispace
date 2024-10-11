@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Students.Application.Dto
     [ExcludeFromCodeCoverage]
     public class NotificationPreferencesDto
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public bool SystemLogin { get; set; }
         public bool InterestBasedEvents { get; set; }
         public bool EventNotifications { get; set; }
@@ -21,6 +21,10 @@ namespace MiniSpace.Services.Students.Application.Dto
         public bool EventsIAmSignedUpToNotification { get; set; }
         public bool PostsOfPeopleIFollowNotification { get; set; }
         public bool EventNotificationForPeopleIFollow { get; set; }
+
+        public bool NewFriendsRequests { get; set; }
+        public bool MyRequestsAccepted { get; set; }
+        public bool FriendsPostsNotifications { get; set; }
 
         public NotificationPreferencesDto()
         {
@@ -38,15 +42,20 @@ namespace MiniSpace.Services.Students.Application.Dto
             EventsIAmSignedUpToNotification = false;
             PostsOfPeopleIFollowNotification = false;
             EventNotificationForPeopleIFollow = false;
+
+            NewFriendsRequests = false;
+            MyRequestsAccepted = false;
+            FriendsPostsNotifications = false;
         }
 
-        public NotificationPreferencesDto(Guid studentId, bool systemLogin, bool interestBasedEvents, bool eventNotifications,
+        public NotificationPreferencesDto(Guid userId, bool systemLogin, bool interestBasedEvents, bool eventNotifications,
                                           bool commentsNotifications, bool postsNotifications, bool eventRecommendation,
                                           bool friendsRecommendation, bool friendsPosts, bool postsRecommendation,
                                           bool eventsIAmInterestedInNotification, bool eventsIAmSignedUpToNotification,
-                                          bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow)
+                                          bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow,
+                                          bool newFriendsRequests, bool myRequestsAccepted, bool friendsPostsNotifications)
         {
-            StudentId = studentId;
+            UserId = userId;
             SystemLogin = systemLogin;
             InterestBasedEvents = interestBasedEvents;
             EventNotifications = eventNotifications;
@@ -61,6 +70,10 @@ namespace MiniSpace.Services.Students.Application.Dto
             EventsIAmSignedUpToNotification = eventsIAmSignedUpToNotification;
             PostsOfPeopleIFollowNotification = postsOfPeopleIFollowNotification;
             EventNotificationForPeopleIFollow = eventNotificationForPeopleIFollow;
+
+            NewFriendsRequests = newFriendsRequests;
+            MyRequestsAccepted = myRequestsAccepted;
+            FriendsPostsNotifications = friendsPostsNotifications;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var commandJson = JsonSerializer.Serialize(command);
             Console.WriteLine($"Received UpdateUserNotificationPreferences command: {commandJson}");
 
-            // Create the updated NotificationPreferences object
+            // Create the updated NotificationPreferences object, including new properties
             var notificationPreferences = new NotificationPreferences(
                 command.SystemLogin,
                 command.InterestBasedEvents,
@@ -38,12 +38,15 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 command.EventsIAmInterestedInNotification,
                 command.EventsIAmSignedUpToNotification,
                 command.PostsOfPeopleIFollowNotification,
-                command.EventNotificationForPeopleIFollow
+                command.EventNotificationForPeopleIFollow,
+                command.NewFriendsRequests, 
+                command.MyRequestsAccepted, 
+                command.FriendsPostsNotifications 
             );
 
-            await _userNotificationPreferencesRepository.UpdateNotificationPreferencesAsync(command.StudentId, notificationPreferences);
+            await _userNotificationPreferencesRepository.UpdateNotificationPreferencesAsync(command.UserId, notificationPreferences);
 
-            var student = await _studentRepository.GetAsync(command.StudentId);
+            var student = await _studentRepository.GetAsync(command.UserId);
             if (student != null)
             {
                 student.SetEmailNotifications(command.EmailNotifications);
