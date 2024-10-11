@@ -38,7 +38,6 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             Console.WriteLine("Received UpdateUserSettings command:");
             Console.WriteLine(commandJson);
 
-
             var student = await _studentRepository.GetAsync(command.StudentId);
             if (student == null)
             {
@@ -66,7 +65,16 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 Enum.Parse<Visibility>(command.BannerImageVisibility, true),
                 Enum.Parse<Visibility>(command.GalleryVisibility, true),
                 Enum.Parse<FrontendVersion>(command.FrontendVersion, true),
-                Enum.Parse<PreferredLanguage>(command.PreferredLanguage, true)
+                Enum.Parse<PreferredLanguage>(command.PreferredLanguage, true),
+                Enum.Parse<Visibility>(command.ConnectionVisibility, true),
+                Enum.Parse<Visibility>(command.FollowersVisibility, true),
+                Enum.Parse<Visibility>(command.FollowingVisibility, true),
+                Enum.Parse<Visibility>(command.MyPostsVisibility, true),
+                Enum.Parse<Visibility>(command.ConnectionsPostsVisibility, true),
+                Enum.Parse<Visibility>(command.MyRepostsVisibility, true),
+                Enum.Parse<Visibility>(command.RepostsOfMyConnectionsVisibility, true),
+                Enum.Parse<Visibility>(command.OrganizationIAmCreatorVisibility, true),
+                Enum.Parse<Visibility>(command.OrganizationIFollowVisibility, true)
             );
 
             userSettings.UpdateSettings(availableSettings);

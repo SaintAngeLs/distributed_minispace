@@ -19,6 +19,17 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string ProfileImageVisibility { get; set; }
         public string BannerImageVisibility { get; set; }
         public string GalleryVisibility { get; set; }
+
+        public string ConnectionVisibility { get; set; }
+        public string FollowersVisibility { get; set; }
+        public string FollowingVisibility { get; set; }
+        public string MyPostsVisibility { get; set; }
+        public string ConnectionsPostsVisibility { get; set; }
+        public string MyRepostsVisibility { get; set; }
+        public string RepostsOfMyConnectionsVisibility { get; set; }
+        public string OrganizationIAmCreatorVisibility { get; set; }
+        public string OrganizationIFollowVisibility { get; set; }
+
         public string PreferredLanguage { get; set; }
         public string FrontendVersion { get; set; }
 
@@ -28,7 +39,12 @@ namespace MiniSpace.Services.Students.Application.Commands
                                   string languagesVisibility, string interestsVisibility, 
                                   string contactEmailVisibility, string phoneNumberVisibility, 
                                   string profileImageVisibility, string bannerImageVisibility, 
-                                  string galleryVisibility, string preferredLanguage, string frontendVersion)
+                                  string galleryVisibility, string preferredLanguage, string frontendVersion,
+                                  string connectionVisibility, string followersVisibility, 
+                                  string followingVisibility, string myPostsVisibility, 
+                                  string connectionsPostsVisibility, string myRepostsVisibility, 
+                                  string repostsOfMyConnectionsVisibility, 
+                                  string organizationIAmCreatorVisibility, string organizationIFollowVisibility)
         {
             StudentId = studentId;
             CreatedAtVisibility = createdAtVisibility;
@@ -44,6 +60,17 @@ namespace MiniSpace.Services.Students.Application.Commands
             ProfileImageVisibility = profileImageVisibility;
             BannerImageVisibility = bannerImageVisibility;
             GalleryVisibility = galleryVisibility;
+
+            ConnectionVisibility = connectionVisibility;
+            FollowersVisibility = followersVisibility;
+            FollowingVisibility = followingVisibility;
+            MyPostsVisibility = myPostsVisibility;
+            ConnectionsPostsVisibility = connectionsPostsVisibility;
+            MyRepostsVisibility = myRepostsVisibility;
+            RepostsOfMyConnectionsVisibility = repostsOfMyConnectionsVisibility;
+            OrganizationIAmCreatorVisibility = organizationIAmCreatorVisibility;
+            OrganizationIFollowVisibility = organizationIFollowVisibility;
+
             PreferredLanguage = preferredLanguage;
             FrontendVersion = frontendVersion;
         }
