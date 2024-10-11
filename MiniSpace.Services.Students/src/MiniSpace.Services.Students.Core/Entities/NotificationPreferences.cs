@@ -19,7 +19,6 @@ namespace MiniSpace.Services.Students.Core.Entities
         public bool PostsOfPeopleIFollowNotification { get; private set; }
         public bool EventNotificationForPeopleIFollow { get; private set; }
 
-        // New properties for notifications
         public bool NewFriendsRequests { get; private set; }
         public bool MyRequestsAccepted { get; private set; }
         public bool FriendsPostsNotifications { get; private set; }
