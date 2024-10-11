@@ -148,14 +148,19 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public static NotificationPreferencesDto AsDto(this NotificationPreferences notificationPreferences)
             => new NotificationPreferencesDto
             {
-                AccountChanges = notificationPreferences.AccountChanges,
                 SystemLogin = notificationPreferences.SystemLogin,
-                NewEvent = notificationPreferences.NewEvent,
                 InterestBasedEvents = notificationPreferences.InterestBasedEvents,
                 EventNotifications = notificationPreferences.EventNotifications,
                 CommentsNotifications = notificationPreferences.CommentsNotifications,
                 PostsNotifications = notificationPreferences.PostsNotifications,
-                FriendsNotifications = notificationPreferences.FriendsNotifications
+                EventRecommendation = notificationPreferences.EventRecommendation,
+                FriendsRecommendation = notificationPreferences.FriendsRecommendation,
+                FriendsPosts = notificationPreferences.FriendsPosts,
+                PostsRecommendation = notificationPreferences.PostsRecommendation,
+                EventsIAmInterestedInNotification = notificationPreferences.EventsIAmInterestedInNotification,
+                EventsIAmSignedUpToNotification = notificationPreferences.EventsIAmSignedUpToNotification,
+                PostsOfPeopleIFollowNotification = notificationPreferences.PostsOfPeopleIFollowNotification,
+                EventNotificationForPeopleIFollow = notificationPreferences.EventNotificationForPeopleIFollow
             };
 
         public static UserNotificationsDocument AsDocument(this NotificationPreferencesDto dto)
@@ -164,14 +169,19 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 Id = Guid.NewGuid(),
                 UserId = dto.StudentId,
                 NotificationPreferences = new NotificationPreferences(
-                    dto.AccountChanges,
                     dto.SystemLogin,
-                    dto.NewEvent,
                     dto.InterestBasedEvents,
                     dto.EventNotifications,
                     dto.CommentsNotifications,
                     dto.PostsNotifications,
-                    dto.FriendsNotifications
+                    dto.EventRecommendation,
+                    dto.FriendsRecommendation,
+                    dto.FriendsPosts,
+                    dto.PostsRecommendation,
+                    dto.EventsIAmInterestedInNotification,
+                    dto.EventsIAmSignedUpToNotification,
+                    dto.PostsOfPeopleIFollowNotification,
+                    dto.EventNotificationForPeopleIFollow
                 )
             };
 
