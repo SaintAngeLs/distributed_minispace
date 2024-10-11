@@ -214,7 +214,17 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     document.AvailableSettings.BannerImageVisibility, 
                     document.AvailableSettings.GalleryVisibility,  
                     document.AvailableSettings.FrontendVersion,
-                    document.AvailableSettings.PreferredLanguage
+                    document.AvailableSettings.PreferredLanguage,
+                    
+                    document.AvailableSettings.ConnectionVisibility,
+                    document.AvailableSettings.FollowersVisibility,
+                    document.AvailableSettings.FollowingVisibility,
+                    document.AvailableSettings.MyPostsVisibility,
+                    document.AvailableSettings.ConnectionsPostsVisibility,
+                    document.AvailableSettings.MyRepostsVisibility,
+                    document.AvailableSettings.RepostsOfMyConnectionsVisibility,
+                    document.AvailableSettings.OrganizationIAmCreatorVisibility,
+                    document.AvailableSettings.OrganizationIFollowVisibility
                 )
             );
 
@@ -238,6 +248,17 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     ProfileImageVisibility = entity.AvailableSettings.ProfileImageVisibility, 
                     BannerImageVisibility = entity.AvailableSettings.BannerImageVisibility,   
                     GalleryVisibility = entity.AvailableSettings.GalleryVisibility,           
+
+                    ConnectionVisibility = entity.AvailableSettings.ConnectionVisibility,
+                    FollowersVisibility = entity.AvailableSettings.FollowersVisibility,
+                    FollowingVisibility = entity.AvailableSettings.FollowingVisibility,
+                    MyPostsVisibility = entity.AvailableSettings.MyPostsVisibility,
+                    ConnectionsPostsVisibility = entity.AvailableSettings.ConnectionsPostsVisibility,
+                    MyRepostsVisibility = entity.AvailableSettings.MyRepostsVisibility,
+                    RepostsOfMyConnectionsVisibility = entity.AvailableSettings.RepostsOfMyConnectionsVisibility,
+                    OrganizationIAmCreatorVisibility = entity.AvailableSettings.OrganizationIAmCreatorVisibility,
+                    OrganizationIFollowVisibility = entity.AvailableSettings.OrganizationIFollowVisibility,
+
                     FrontendVersion = entity.AvailableSettings.FrontendVersion,
                     PreferredLanguage = entity.AvailableSettings.PreferredLanguage
                 }

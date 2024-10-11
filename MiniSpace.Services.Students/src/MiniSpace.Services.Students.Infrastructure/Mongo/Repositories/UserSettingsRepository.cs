@@ -55,7 +55,18 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
                     PhoneNumberVisibility = userSettings.AvailableSettings.PhoneNumberVisibility,
                     ProfileImageVisibility = userSettings.AvailableSettings.ProfileImageVisibility,
                     BannerImageVisibility = userSettings.AvailableSettings.BannerImageVisibility,
-                    GalleryVisibility = userSettings.AvailableSettings.GalleryVisibility,       
+                    GalleryVisibility = userSettings.AvailableSettings.GalleryVisibility,
+
+                    ConnectionVisibility = userSettings.AvailableSettings.ConnectionVisibility,
+                    FollowersVisibility = userSettings.AvailableSettings.FollowersVisibility,
+                    FollowingVisibility = userSettings.AvailableSettings.FollowingVisibility,
+                    MyPostsVisibility = userSettings.AvailableSettings.MyPostsVisibility,
+                    ConnectionsPostsVisibility = userSettings.AvailableSettings.ConnectionsPostsVisibility,
+                    MyRepostsVisibility = userSettings.AvailableSettings.MyRepostsVisibility,
+                    RepostsOfMyConnectionsVisibility = userSettings.AvailableSettings.RepostsOfMyConnectionsVisibility,
+                    OrganizationIAmCreatorVisibility = userSettings.AvailableSettings.OrganizationIAmCreatorVisibility,
+                    OrganizationIFollowVisibility = userSettings.AvailableSettings.OrganizationIFollowVisibility,
+
                     FrontendVersion = userSettings.AvailableSettings.FrontendVersion,
                     PreferredLanguage = userSettings.AvailableSettings.PreferredLanguage
                 };
