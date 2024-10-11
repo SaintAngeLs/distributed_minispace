@@ -2,6 +2,7 @@
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 @using Astravent.Web.Wasm.DTO
 @using MudBlazor
 @using System.Text.Json
@@ -45,13 +46,13 @@ else
         IsLoading = true;
         try
         {
-            var studentId = IdentityService.GetCurrentUserId();
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync(); // Correct method to get user ID from JWT
             StudentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
             NotificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Snackbar.Add($"Error loading preferences: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -63,13 +64,13 @@ else
     {
         try
         {
-            var studentId = IdentityService.GetCurrentUserId();
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync(); // Correct method to get user ID from JWT
             await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, NotificationPreferencesDto, StudentWithGalleryImagesDto.Student.EmailNotifications);
-            Console.WriteLine("Notification preferences updated successfully.");
+            Snackbar.Add("Notification preferences updated successfully.", Severity.Success);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving notification preferences: {ex.Message}");
+            Snackbar.Add($"Error saving notification preferences: {ex.Message}", Severity.Error);
         }
     }
 }

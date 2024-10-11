@@ -144,9 +144,6 @@ namespace Astravent.Web.Wasm.Areas.Students
                 preferencesDto.FriendsNotifications
             };
 
-            var jsonData = JsonSerializer.Serialize(updatePreferencesData);
-            Console.WriteLine($"Sending UpdateUserNotificationPreferences request: {jsonData}");
-
             await _httpClient.PostAsync($"students/{studentId}/notifications", updatePreferencesData);
         }
 

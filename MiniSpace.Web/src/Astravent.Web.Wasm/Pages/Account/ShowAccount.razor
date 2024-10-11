@@ -13,6 +13,7 @@
 @inject IMediaFilesService MediaFilesService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
 
 <AuthWrapper>
     <MudContainer Class="account-container">
@@ -56,7 +57,7 @@
                     }
                     else if (activeTabIndex == 2)
                     {
-                        <NotificationsComponent IsLoading="isLoading" NotificationPreferencesDto="notificationPreferencesDto" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" />
+                        <NotificationsSettingsComponent IsLoading="isLoading" NotificationPreferencesDto="notificationPreferencesDto" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" />
                     }
                     else if (activeTabIndex == 3)
                     {
@@ -238,17 +239,26 @@
 
     private async Task SaveChanges()
     {
-        var studentDto = studentWithGalleryImagesDto.Student;
-        studentDto.Languages = selectedLanguages.ToList(); 
-        studentDto.Interests = selectedInterests.ToList();
+        try
+        {
+            var studentDto = studentWithGalleryImagesDto.Student;
+            studentDto.Languages = selectedLanguages.ToList(); 
+            studentDto.Interests = selectedInterests.ToList();
 
-        await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
-            studentDto.Id,
-            studentDto.Languages,
-            studentDto.Interests
-        );
+            await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
+                studentDto.Id,
+                studentDto.Languages,
+                studentDto.Interests
+            );
 
-        await StudentsService.UpdateStudentDto(studentDto.Id);
+            await StudentsService.UpdateStudentDto(studentDto.Id);
+            Snackbar.Add("Changes saved successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to save changes: {ex.Message}", Severity.Error);
+        }
+
         StateHasChanged();
     }
 
@@ -258,18 +268,7 @@
         {
             var studentDto = studentWithGalleryImagesDto.Student;
 
-            foreach (var education in studentDto.Education)
-            {
-                Console.WriteLine($"Education StartDate: {education.StartDate}, EndDate: {education.EndDate}");
-            }
-
-            foreach (var work in studentDto.Work)
-            {
-                Console.WriteLine($"Work StartDate: {work.StartDate}, EndDate: {work.EndDate}");
-            }
-
-
-            // Ensure that StartDate and EndDate are handled correctly
+            // Handle dates for Education and Work
             foreach (var education in studentDto.Education)
             {
                 education.StartDate = education.StartDate != DateTime.MinValue ? education.StartDate : null;
@@ -282,30 +281,7 @@
                 work.EndDate = work.EndDate != DateTime.MinValue ? work.EndDate : null;
             }
 
-            var updateStudentData = new
-            {
-                studentDto.Id,
-                studentDto.FirstName,
-                studentDto.LastName,
-                studentDto.ProfileImageUrl,
-                studentDto.Description,
-                studentDto.EmailNotifications,
-                studentDto.ContactEmail,
-                studentDto.Languages,
-                studentDto.Interests,
-                studentDto.Education,
-                studentDto.Work,
-                studentDto.PhoneNumber,
-                studentDto.Country,
-                studentDto.City,
-                studentDto.DateOfBirth,
-                IsTwoFactorEnabled = isTwoFactorEnabled,
-                TwoFactorSecret = isTwoFactorEnabled ? twoFactorSecret : null
-            };
-
-            var jsonData = JsonSerializer.Serialize(updateStudentData);
-            Console.WriteLine($"Sending UpdateStudent request: {jsonData}");
-
+            // Update student details
             await StudentsService.UpdateStudentAsync(
                 studentDto.Id,
                 studentDto.FirstName,
@@ -327,19 +303,23 @@
                 studentDto.DateOfBirth
             );
 
+            // Update notification preferences
             if (studentDto.EmailNotifications)
             {
                 await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto, studentDto.EmailNotifications);
             }
 
             await StudentsService.UpdateUserSettingsAsync(studentDto.Id, availableSettingsDto);
+
+            Snackbar.Add("Profile updated successfully.", Severity.Success);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Snackbar.Add($"Failed to update profile: {ex.Message}", Severity.Error);
         }
-    }
 
+        StateHasChanged();
+    }
 
     private async Task SaveTwoFactorSettingsAsync()
     {
@@ -358,33 +338,37 @@
             {
                 await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
             }
+
+            Snackbar.Add("Two-factor authentication settings updated successfully.", Severity.Success);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving 2FA settings: {ex.Message}");
+            Snackbar.Add($"Failed to update two-factor authentication settings: {ex.Message}", Severity.Error);
         }
     }
 
     private async Task ToggleTwoFactor(bool enabled)
     {
-        isTwoFactorEnabled = enabled;
-        if (!enabled)
+        try
         {
-            await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
-            twoFactorSecret = null;
-        }
-        else
-        {
-            twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
-        }
-        StateHasChanged();
-    }
+            isTwoFactorEnabled = enabled;
+            if (!enabled)
+            {
+                await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
+                twoFactorSecret = null;
+            }
+            else
+            {
+                twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
+            }
 
-    private async Task GenerateTwoFactorSecret()
-    {
-        var userId = IdentityService.GetCurrentUserId();
-        twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(userId);
-        StateHasChanged();
+            Snackbar.Add("Two-factor authentication toggled successfully.", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to toggle two-factor authentication: {ex.Message}", Severity.Error);
+        }
     }
 
     private async Task SaveNotificationPreferencesAsync()
@@ -393,11 +377,11 @@
         {
             var studentId = IdentityService.GetCurrentUserId();
             await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, notificationPreferencesDto, studentWithGalleryImagesDto.Student.EmailNotifications);
-            Console.WriteLine("Notification preferences updated successfully.");
+            Snackbar.Add("Notification preferences updated successfully.", Severity.Success);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving notification preferences: {ex.Message}");
+            Snackbar.Add($"Failed to update notification preferences: {ex.Message}", Severity.Error);
         }
     }
 
@@ -412,16 +396,13 @@
             }
 
             await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
-
-            Console.WriteLine("Student settings updated successfully.");
+            Snackbar.Add("User settings updated successfully.", Severity.Success);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving user settings: {ex.Message}");
+            Snackbar.Add($"Failed to update user settings: {ex.Message}", Severity.Error);
         }
     }
-
-
 
     private void SetActiveTabIndex(int index)
     {

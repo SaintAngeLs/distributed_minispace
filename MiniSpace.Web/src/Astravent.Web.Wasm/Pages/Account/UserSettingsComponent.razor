@@ -9,130 +9,174 @@
 }
 else
 {
-    <MudGrid>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" Margin="Margin.Dense">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility" Margin="Margin.Dense">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.InterestedInEventsVisibility" Label="Interested In Events Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.SignedUpEventsVisibility" Label="Signed Up Events Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.EducationVisibility" Label="Education Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.WorkPositionVisibility" Label="Work Position Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.LanguagesVisibility" Label="Languages Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.InterestsVisibility" Label="Interests Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.ContactEmailVisibility" Label="Contact Email Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.PhoneNumberVisibility" Label="Phone Number Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
+    <MudExpansionPanels>
+        <!-- Personal Information Settings -->
+        <MudExpansionPanel IsInitiallyExpanded="true" Text="Personal Information Settings">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.CreatedAtVisibility" Label="Created At Visibility" 
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.DateOfBirthVisibility" Label="Date of Birth Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.ContactEmailVisibility" Label="Contact Email Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.PhoneNumberVisibility" Label="Phone Number Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudExpansionPanel>
 
-         <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.ProfileImageVisibility" Label="Profile Image Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.BannerImageVisibility" Label="Banner Image Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.GalleryVisibility" Label="Gallery Visibility">
-                @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
-                {
-                    <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        
-        <MudItem xs="12" sm="6">
-            <MudSelect T="PreferredLanguage" @bind-Value="AvailableSettingsDto.PreferredLanguage" Label="Preferred Language" HelperText="Preferred language for the interface">
-                @foreach (PreferredLanguage language in Enum.GetValues(typeof(PreferredLanguage)))
-                {
-                    <MudSelectItem Value="@language">@language</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudSelect T="FrontendVersion" @bind-Value="AvailableSettingsDto.FrontendVersion" Label="Frontend Version">
-                @foreach (FrontendVersion version in Enum.GetValues(typeof(FrontendVersion)))
-                {
-                    <MudSelectItem Value="@version">@version</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-    </MudGrid>
+        <!-- Events and Work Settings -->
+        <MudExpansionPanel IsInitiallyExpanded="true" Text="Events and Work Settings">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.InterestedInEventsVisibility" Label="Interested In Events Visibility" 
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.SignedUpEventsVisibility" Label="Signed Up Events Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.EducationVisibility" Label="Education Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.WorkPositionVisibility" Label="Work Position Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudExpansionPanel>
+
+        <!-- Language and Interests Settings -->
+        <MudExpansionPanel IsInitiallyExpanded="false" Text="Language and Interests Settings">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.LanguagesVisibility" Label="Languages Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.InterestsVisibility" Label="Interests Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudExpansionPanel>
+
+        <!-- Profile and Gallery Settings -->
+        <MudExpansionPanel IsInitiallyExpanded="false" Text="Profile and Gallery Settings">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.ProfileImageVisibility" Label="Profile Image Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.BannerImageVisibility" Label="Banner Image Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.GalleryVisibility" Label="Gallery Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudExpansionPanel>
+
+        <!-- Interface Settings -->
+        <MudExpansionPanel IsInitiallyExpanded="false" Text="Interface Settings">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="PreferredLanguage" @bind-Value="AvailableSettingsDto.PreferredLanguage" Label="Preferred Language" HelperText="Preferred language for the interface"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (PreferredLanguage language in Enum.GetValues(typeof(PreferredLanguage)))
+                        {
+                            <MudSelectItem Value="@language">@language</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="FrontendVersion" @bind-Value="AvailableSettingsDto.FrontendVersion" Label="Frontend Version" 
+                        HelperText="Choose the frontend display mode (Auto, Dark, Light, etc.) that best suits your preference." 
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (FrontendVersion version in Enum.GetValues(typeof(FrontendVersion)))
+                        {
+                            <MudSelectItem Value="@version">@version</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveUserSettingsAsync">Save Settings</MudButton>
 }
 
