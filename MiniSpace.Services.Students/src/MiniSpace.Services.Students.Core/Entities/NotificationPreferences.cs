@@ -19,6 +19,11 @@ namespace MiniSpace.Services.Students.Core.Entities
         public bool PostsOfPeopleIFollowNotification { get; private set; }
         public bool EventNotificationForPeopleIFollow { get; private set; }
 
+        // New properties for notifications
+        public bool NewFriendsRequests { get; private set; }
+        public bool MyRequestsAccepted { get; private set; }
+        public bool FriendsPostsNotifications { get; private set; }
+
         public NotificationPreferences()
         {
             SystemLogin = false;
@@ -35,13 +40,18 @@ namespace MiniSpace.Services.Students.Core.Entities
             EventsIAmSignedUpToNotification = false;
             PostsOfPeopleIFollowNotification = false;
             EventNotificationForPeopleIFollow = false;
+
+            NewFriendsRequests = false;
+            MyRequestsAccepted = false;
+            FriendsPostsNotifications = false;
         }
 
         public NotificationPreferences(bool systemLogin, bool interestBasedEvents, bool eventNotifications,
                                        bool commentsNotifications, bool postsNotifications, bool eventRecommendation,
                                        bool friendsRecommendation, bool friendsPosts, bool postsRecommendation,
                                        bool eventsIAmInterestedInNotification, bool eventsIAmSignedUpToNotification,
-                                       bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow)
+                                       bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow,
+                                       bool newFriendsRequests, bool myRequestsAccepted, bool friendsPostsNotifications)
         {
             SystemLogin = systemLogin;
             InterestBasedEvents = interestBasedEvents;
@@ -57,13 +67,18 @@ namespace MiniSpace.Services.Students.Core.Entities
             EventsIAmSignedUpToNotification = eventsIAmSignedUpToNotification;
             PostsOfPeopleIFollowNotification = postsOfPeopleIFollowNotification;
             EventNotificationForPeopleIFollow = eventNotificationForPeopleIFollow;
+
+            NewFriendsRequests = newFriendsRequests;
+            MyRequestsAccepted = myRequestsAccepted;
+            FriendsPostsNotifications = friendsPostsNotifications;
         }
 
         public void UpdatePreferences(bool systemLogin, bool interestBasedEvents, bool eventNotifications,
                                       bool commentsNotifications, bool postsNotifications, bool eventRecommendation,
                                       bool friendsRecommendation, bool friendsPosts, bool postsRecommendation,
                                       bool eventsIAmInterestedInNotification, bool eventsIAmSignedUpToNotification,
-                                      bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow)
+                                      bool postsOfPeopleIFollowNotification, bool eventNotificationForPeopleIFollow,
+                                      bool newFriendsRequests, bool myRequestsAccepted, bool friendsPostsNotifications)
         {
             SystemLogin = systemLogin;
             InterestBasedEvents = interestBasedEvents;
@@ -79,6 +94,10 @@ namespace MiniSpace.Services.Students.Core.Entities
             EventsIAmSignedUpToNotification = eventsIAmSignedUpToNotification;
             PostsOfPeopleIFollowNotification = postsOfPeopleIFollowNotification;
             EventNotificationForPeopleIFollow = eventNotificationForPeopleIFollow;
+
+            NewFriendsRequests = newFriendsRequests;
+            MyRequestsAccepted = myRequestsAccepted;
+            FriendsPostsNotifications = friendsPostsNotifications;
         }
     }
 }
