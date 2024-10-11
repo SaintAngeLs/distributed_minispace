@@ -140,7 +140,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public static UserNotificationsDocument AsDocument(this UserNotifications entity)
             => new UserNotificationsDocument
             {
-                Id = Guid.NewGuid(), // Ensure a unique identifier is set
+                Id = Guid.NewGuid(), 
                 UserId = entity.UserId,
                 NotificationPreferences = entity.NotificationPreferences
             };
