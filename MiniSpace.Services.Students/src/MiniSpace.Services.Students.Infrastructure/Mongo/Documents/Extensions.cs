@@ -146,28 +146,32 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             };
 
         public static NotificationPreferencesDto AsDto(this NotificationPreferences notificationPreferences)
-            => new NotificationPreferencesDto
-            {
-                SystemLogin = notificationPreferences.SystemLogin,
-                InterestBasedEvents = notificationPreferences.InterestBasedEvents,
-                EventNotifications = notificationPreferences.EventNotifications,
-                CommentsNotifications = notificationPreferences.CommentsNotifications,
-                PostsNotifications = notificationPreferences.PostsNotifications,
-                EventRecommendation = notificationPreferences.EventRecommendation,
-                FriendsRecommendation = notificationPreferences.FriendsRecommendation,
-                FriendsPosts = notificationPreferences.FriendsPosts,
-                PostsRecommendation = notificationPreferences.PostsRecommendation,
-                EventsIAmInterestedInNotification = notificationPreferences.EventsIAmInterestedInNotification,
-                EventsIAmSignedUpToNotification = notificationPreferences.EventsIAmSignedUpToNotification,
-                PostsOfPeopleIFollowNotification = notificationPreferences.PostsOfPeopleIFollowNotification,
-                EventNotificationForPeopleIFollow = notificationPreferences.EventNotificationForPeopleIFollow
-            };
+        => new NotificationPreferencesDto
+        {
+            SystemLogin = notificationPreferences.SystemLogin,
+            InterestBasedEvents = notificationPreferences.InterestBasedEvents,
+            EventNotifications = notificationPreferences.EventNotifications,
+            CommentsNotifications = notificationPreferences.CommentsNotifications,
+            PostsNotifications = notificationPreferences.PostsNotifications,
+            EventRecommendation = notificationPreferences.EventRecommendation,
+            FriendsRecommendation = notificationPreferences.FriendsRecommendation,
+            FriendsPosts = notificationPreferences.FriendsPosts,
+            PostsRecommendation = notificationPreferences.PostsRecommendation,
+            EventsIAmInterestedInNotification = notificationPreferences.EventsIAmInterestedInNotification,
+            EventsIAmSignedUpToNotification = notificationPreferences.EventsIAmSignedUpToNotification,
+            PostsOfPeopleIFollowNotification = notificationPreferences.PostsOfPeopleIFollowNotification,
+            EventNotificationForPeopleIFollow = notificationPreferences.EventNotificationForPeopleIFollow,
+
+            NewFriendsRequests = notificationPreferences.NewFriendsRequests,
+            MyRequestsAccepted = notificationPreferences.MyRequestsAccepted,
+            FriendsPostsNotifications = notificationPreferences.FriendsPostsNotifications
+        };
 
         public static UserNotificationsDocument AsDocument(this NotificationPreferencesDto dto)
             => new UserNotificationsDocument
             {
                 Id = Guid.NewGuid(),
-                UserId = dto.StudentId,
+                UserId = dto.UserId,
                 NotificationPreferences = new NotificationPreferences(
                     dto.SystemLogin,
                     dto.InterestBasedEvents,
@@ -181,7 +185,11 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     dto.EventsIAmInterestedInNotification,
                     dto.EventsIAmSignedUpToNotification,
                     dto.PostsOfPeopleIFollowNotification,
-                    dto.EventNotificationForPeopleIFollow
+                    dto.EventNotificationForPeopleIFollow,
+
+                    dto.NewFriendsRequests,
+                    dto.MyRequestsAccepted,
+                    dto.FriendsPostsNotifications
                 )
             };
 
