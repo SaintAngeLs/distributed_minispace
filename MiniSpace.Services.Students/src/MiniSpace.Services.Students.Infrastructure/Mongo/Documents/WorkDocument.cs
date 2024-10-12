@@ -9,6 +9,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
     [ExcludeFromCodeCoverage]
     public class WorkDocument
     {
+        public Guid OrganizationId { get; set; }
         public string Company { get; set; }
         public string Position { get; set; }
         public DateTime StartDate { get; set; }

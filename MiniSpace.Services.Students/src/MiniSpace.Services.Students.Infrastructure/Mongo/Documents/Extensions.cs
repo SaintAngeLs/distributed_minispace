@@ -24,9 +24,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.InterestedInEvents,
                 document.SignedUpEvents,
                 document.BannerUrl,
-                document.Education.Select(e => new Education(e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)),
-                document.Work.Select(w => new Work(w.Company, w.Position, w.StartDate, w.EndDate, w.Description)),
-                document.Languages.Select(l => Enum.Parse<Language>(l.ToString())).ToList(), // Convert string to enum
+                document.Education.Select(e => new Education(e.OrganizationId, e.InstitutionName, e.Degree, e.StartDate, e.EndDate, e.Description)),
+                document.Work.Select(w => new Work(w.OrganizationId, w.Company, w.Position, w.StartDate, w.EndDate, w.Description)),
+                document.Languages.Select(l => Enum.Parse<Language>(l.ToString())).ToList(), 
                 document.Interests.Select(i => Enum.Parse<Interest>(i.ToString())).ToList(),
                 document.IsTwoFactorEnabled,
                 document.TwoFactorSecret,
@@ -58,6 +58,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 BannerUrl = entity.BannerUrl,
                 Education = entity.Education.Select(e => new EducationDocument
                 {
+                    OrganizationId = e.OrganizationId,
                     InstitutionName = e.InstitutionName,
                     Degree = e.Degree,
                     StartDate = e.StartDate,
@@ -66,6 +67,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 }),
                 Work = entity.Work.Select(w => new WorkDocument
                 {
+                    OrganizationId = w.OrganizationId,
                     Company = w.Company,
                     Position = w.Position,
                     StartDate = w.StartDate,
@@ -104,6 +106,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 BannerUrl = document.BannerUrl,
                 Education = document.Education.Select(e => new EducationDto
                 {
+                    OrganizationId = e.OrganizationId,
                     InstitutionName = e.InstitutionName,
                     Degree = e.Degree,
                     StartDate = e.StartDate,
@@ -112,6 +115,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 }),
                 Work = document.Work.Select(w => new WorkDto
                 {
+                    OrganizationId = w.OrganizationId,
                     Company = w.Company,
                     Position = w.Position,
                     StartDate = w.StartDate,

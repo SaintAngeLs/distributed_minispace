@@ -9,6 +9,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
     [ExcludeFromCodeCoverage]
     public class EducationDocument
     {
+        public Guid OrganizationId { get; set; }
         public string InstitutionName { get; set; }
         public string Degree { get; set; }
         public DateTime StartDate { get; set; }
