@@ -175,7 +175,7 @@
 
     private void ShareEvent(string platform)
     {
-        var eventUrl = NavigationManager.Uri; 
+        var eventUrl = NavigationManager.BaseUri + $"events/event/{Event.Id}";
         var eventTitle = Uri.EscapeDataString(Event.Name);
 
         string shareUrl = platform switch
@@ -192,6 +192,7 @@
             NavigationManager.NavigateTo(shareUrl, true);
         }
     }
+
 
 
     private void InviteToEvent()

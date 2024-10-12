@@ -6,9 +6,9 @@ public static class MiniSpaceTheme
     {
         Palette = new PaletteLight()
         {
-            Primary = Colors.Indigo.Darken4,
-            Secondary = Colors.Indigo.Darken3,
-            AppbarText = Colors.Indigo.Darken4,
+            Primary = Colors.Blue.Darken4,
+            Secondary = Colors.Blue.Darken3,
+            AppbarText = Colors.Blue.Darken4,
             AppbarBackground = Colors.Shades.White,
             Background = Colors.Grey.Lighten5,
             Surface = "#FFFFFF",
@@ -16,7 +16,7 @@ public static class MiniSpaceTheme
             DrawerText = Colors.Grey.Darken3,
             TextPrimary = Colors.Shades.Black,
             TextSecondary = Colors.Grey.Darken2,
-            ActionDefault = Colors.Indigo.Lighten1,
+            ActionDefault = Colors.Blue.Lighten1,
             ActionDisabled = Colors.Grey.Lighten2,
             Success = Colors.Green.Default,
             Warning = Colors.Orange.Default,
@@ -26,7 +26,7 @@ public static class MiniSpaceTheme
         PaletteDark = new PaletteDark()
         {
             // Dark Mode Colors
-            Primary = Colors.Indigo.Darken1,
+            Primary = Colors.Blue.Darken1,
             Secondary = Colors.Blue.Darken4,
             AppbarBackground = "#1F1F1F", // Dark app bar
             Background = "#000", // Very dark background
@@ -36,7 +36,7 @@ public static class MiniSpaceTheme
             DrawerText = Colors.Grey.Lighten2,
             TextPrimary = Colors.Shades.White,
             TextSecondary = Colors.Grey.Lighten2,
-            ActionDefault = Colors.Indigo.Accent2,
+            ActionDefault = Colors.Blue.Accent2,
             ActionDisabled = Colors.BlueGrey.Darken3,
             Success = Colors.Green.Accent3,
             Warning = Colors.Orange.Accent3,

@@ -126,10 +126,21 @@ else
 
                             <!-- Action Buttons -->
                             <MudItem xs="12" Class="d-flex justify-content-end">
-                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Business" OnClick="@(() => OpenAssociateOrganizationDialog("Education", education))"
-                                        Disabled="@(education.OrganizationId != Guid.Empty)" Class="mr-2">
-                                    Associate with Organization
-                                </MudButton>
+                                @if (education.OrganizationId != Guid.Empty)
+                                {
+                                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" OnClick="@(() => OpenAssociateOrganizationDialog("Education", education))"
+                                            Class="mr-2">
+                                        Edit Association
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Business" OnClick="@(() => OpenAssociateOrganizationDialog("Education", education))"
+                                            Class="mr-2">
+                                        Associate with Organization
+                                    </MudButton>
+                                }
+
                                 <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => RemoveEducation(education)">
                                     Remove
                                 </MudButton>
@@ -171,10 +182,21 @@ else
 
                             <!-- Action Buttons -->
                             <MudItem xs="12" Class="d-flex justify-content-end">
-                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Business" OnClick="@(() => OpenAssociateOrganizationDialog("Work", work))"
-                                        Disabled="@(work.OrganizationId != Guid.Empty)" Class="mr-2">
-                                    Associate with Organization
-                                </MudButton>
+                                @if (work.OrganizationId != Guid.Empty)
+                                {
+                                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" OnClick="@(() => OpenAssociateOrganizationDialog("Work", work))"
+                                            Class="mr-2">
+                                        Edit Association
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Business" OnClick="@(() => OpenAssociateOrganizationDialog("Work", work))"
+                                            Class="mr-2">
+                                        Associate with Organization
+                                    </MudButton>
+                                }
+
                                 <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => RemoveWorkExperience(work)">
                                     Remove
                                 </MudButton>
@@ -186,6 +208,7 @@ else
                     Add Work Experience
                 </MudButton>
             </MudItem>
+
 
         </MudItem>
     </MudGrid>
@@ -251,11 +274,9 @@ else
     [Parameter] public bool IsUploading { get; set; }
     [Inject] public IDialogService DialogService { get; set; }
     private string CroppedImageBase64 { get; set; }
-    
 
     private IBrowserFile croppedImageFile;
     private string currentImageType = string.Empty;
-
     private Dictionary<Guid, string> _organizationImages = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -263,21 +284,29 @@ else
         if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", DotNetObjectReference.Create(this));
+            await LoadOrganizationImagesAsync();
         }
-        await LoadOrganizationImagesAsync();
     }
 
     private async Task LoadOrganizationImagesAsync()
     {
         foreach (var education in StudentWithGalleryImagesDto.Student.Education)
         {
-            _organizationImages[education.OrganizationId] = await GetOrganizationImage(education.OrganizationId);
+            if (education.OrganizationId != Guid.Empty)
+            {
+                _organizationImages[education.OrganizationId] = await GetOrganizationImage(education.OrganizationId);
+            }
         }
 
         foreach (var work in StudentWithGalleryImagesDto.Student.Work)
         {
-            _organizationImages[work.OrganizationId] = await GetOrganizationImage(work.OrganizationId);
+            if (work.OrganizationId != Guid.Empty)
+            {
+                _organizationImages[work.OrganizationId] = await GetOrganizationImage(work.OrganizationId);
+            }
         }
+
+        StateHasChanged(); // Ensure the UI updates after loading images
     }
 
     private string GetImage()
@@ -431,7 +460,6 @@ else
         StateHasChanged();
     }
 
-
     private void AddWorkExperience()
     {
         var workList = StudentWithGalleryImagesDto.Student.Work.ToList();
@@ -449,7 +477,6 @@ else
         StateHasChanged();
     }
 
-
     private void RemoveWorkExperience(WorkDto work)
     {
         var workList = StudentWithGalleryImagesDto.Student.Work.ToList();
@@ -459,31 +486,29 @@ else
     }
 
     private async Task SaveProfile()
-{
-    var studentDto = StudentWithGalleryImagesDto.Student;
-
-    try
     {
-        // Log Education JSON
-        var educationJson = JsonSerializer.Serialize(studentDto.Education, new JsonSerializerOptions { WriteIndented = true });
-        Console.WriteLine("Education Data (Before Sending):");
-        Console.WriteLine(educationJson);
+        var studentDto = StudentWithGalleryImagesDto.Student;
 
-        // Log Work JSON
-        var workJson = JsonSerializer.Serialize(studentDto.Work, new JsonSerializerOptions { WriteIndented = true });
-        Console.WriteLine("Work Data (Before Sending):");
-        Console.WriteLine(workJson);
+        try
+        {
+            // Log Education JSON
+            var educationJson = JsonSerializer.Serialize(studentDto.Education, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Education Data (Before Sending):");
+            Console.WriteLine(educationJson);
 
-        // Proceed to save changes
-        await SaveChangesAsync.InvokeAsync(null);
+            // Log Work JSON
+            var workJson = JsonSerializer.Serialize(studentDto.Work, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Work Data (Before Sending):");
+            Console.WriteLine(workJson);
+
+            // Proceed to save changes
+            await SaveChangesAsync.InvokeAsync(null);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"An error occurred: {ex.Message}");
-    }
-}
-
-
 
     private async Task OpenAssociateOrganizationDialog(string type, object entity)
     {
@@ -512,10 +537,13 @@ else
                 work.OrganizationId = organization.Id;
                 work.Company = organization.Name;
             }
+
+            // Reload organization images after updating the associations
+            await LoadOrganizationImagesAsync();
         }
     }
 
-     private async Task<string> GetOrganizationImage(Guid organizationId)
+    private async Task<string> GetOrganizationImage(Guid organizationId)
     {
         if (organizationId == Guid.Empty)
         {
