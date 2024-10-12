@@ -1,0 +1,110 @@
+@inject IOrganizationsService OrganizationsService
+@inject ISnackbar Snackbar
+
+<MudDialog MaxWidth="MaxWidth.Medium">
+    <TitleContent>
+        <MudText Typo="Typo.h6" GutterBottom="true">Associate with Organization</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <!-- Search Field -->
+        <MudTextField @bind-Value="SearchQuery" Label="Search for an Organization" Variant="Variant.Filled" Margin="Margin.Dense" Immediate="true"
+                      Placeholder="Enter organization name" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"
+                      OnAdornmentClick="PerformSearch" Class="mb-4" />
+
+        <!-- Organization Cards Grid -->
+        <MudGrid GutterSize="3">
+            @if (Organizations?.Any() == true)
+            {
+                @foreach (var org in Organizations)
+                {
+                    <!-- Organization Card -->
+                    <MudItem xs="12" sm="6" md="4">
+                        <div  @onclick="@(() => SelectOrganization(org))">
+                        <MudCard Class="organization-card mud-hover" Style="cursor: pointer; margin-bottom: 16px;">
+                            <MudCardContent>
+                                <MudGrid GutterSize="2">
+                                    <MudItem xs="3">
+                                        <MudAvatar Image="@org.ImageUrl" Size="Size.Medium" Class="rounded-circle" />
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        <MudText Typo="Typo.subtitle2">@org.Name</MudText>
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">@org.City, @org.Country</MudText>
+                                    </MudItem>
+                                </MudGrid>
+                                <MudText Typo="Typo.body2" Class="mt-2" Color="Color.Secondary">
+                                    @TruncateDescription(org.Description, 80)
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                        </div>
+                    </MudItem>
+                }
+            }
+            else
+            {
+                <MudText Typo="Typo.body1" Color="Color.Info">No organizations found. Try a different search.</MudText>
+            }
+        </MudGrid>
+
+        <!-- Manual Entry Button -->
+        <MudButton OnClick="AddCustomOrganization" Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Class="mt-4">
+            Enter Organization Manually
+        </MudButton>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="CloseDialog" Color="Color.Primary" Variant="Variant.Text">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string Type { get; set; } // "Education" or "Work"
+    [Parameter] public object Entity { get; set; } // The associated entity (EducationDto or WorkDto)
+
+    private string SearchQuery { get; set; } = string.Empty;
+    private IEnumerable<OrganizationDto> Organizations { get; set; } = new List<OrganizationDto>();
+
+    // Fetch organizations based on search query
+    private async Task PerformSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            var pagedResult = await OrganizationsService.GetPaginatedOrganizationsAsync(1, 10, SearchQuery);
+            Organizations = pagedResult.Items;
+        }
+    }
+
+    // This method gets called when the organization is selected
+    private void SelectOrganization(OrganizationDto organization)
+    {
+        MudDialog.Close(DialogResult.Ok(organization)); // Return the selected organization as dialog result
+    }
+
+    // This method adds a custom organization manually
+    private void AddCustomOrganization()
+    {
+        var customOrganization = new OrganizationDto
+        {
+            Name = SearchQuery
+        };
+        MudDialog.Close(DialogResult.Ok(customOrganization));
+    }
+
+    // Close the dialog without selecting an organization
+    private void CloseDialog()
+    {
+        MudDialog.Cancel();
+    }
+
+    // Helper method to truncate text descriptions
+    private string TruncateDescription(string description, int maxLength)
+    {
+        if (string.IsNullOrEmpty(description))
+        {
+            return string.Empty;
+        }
+        return description.Length <= maxLength ? description : description.Substring(0, maxLength) + "...";
+    }
+}

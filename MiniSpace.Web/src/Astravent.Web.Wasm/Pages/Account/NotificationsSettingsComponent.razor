@@ -7,7 +7,8 @@
 @using MudBlazor
 @using System.Text.Json
 
-<MudText Typo="Typo.h4" GutterBottom="true">Notifications</MudText>
+<MudText Typo="Typo.h4" GutterBottom="true">Notification Preferences</MudText>
+
 @if (IsLoading)
 {
     <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
@@ -15,20 +16,49 @@
 else
 {
     <MudStack>
-        <MudSwitch @bind-Checked="StudentWithGalleryImagesDto.Student.EmailNotifications" Label="Email Notifications" Color="Color.Primary" />
+        <MudSwitch @bind-Checked="StudentWithGalleryImagesDto.Student.EmailNotifications" Label="Enable Email Notifications" Color="Color.Primary" />
+
         @if (StudentWithGalleryImagesDto.Student.EmailNotifications)
         {
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.AccountChanges" Label="Account Changes" Color="Color.Primary" />
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.SystemLogin" Label="System Login" Color="Color.Primary" />
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.NewEvent" Label="New Event" Color="Color.Primary" />
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.InterestBasedEvents" Label="Interest Based Events" Color="Color.Primary" />
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.EventNotifications" Label="Event Notifications" Color="Color.Primary" />
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.CommentsNotifications" Label="Comments Notifications" Color="Color.Primary" />
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.PostsNotifications" Label="Posts Notifications" Color="Color.Primary" />
-            <MudSwitch @bind-Checked="NotificationPreferencesDto.FriendsNotifications" Label="Friends Notifications" Color="Color.Primary" />
+            <MudPaper Class="p-3">
+                <MudText Typo="Typo.h5" GutterBottom="true">Account & Security</MudText>
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.SystemLogin" Label="System Login Notifications" Color="Color.Primary" />
+            </MudPaper>
+
+            <MudPaper Class="p-3 mt-3">
+                <MudText Typo="Typo.h5" GutterBottom="true">Event Notifications</MudText>
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.InterestBasedEvents" Label="Interest-Based Events" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.EventNotifications" Label="General Event Notifications" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.EventsIAmInterestedInNotification" Label="Events I'm Interested In" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.EventsIAmSignedUpToNotification" Label="Events I'm Signed Up To" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.EventNotificationForPeopleIFollow" Label="Event Notifications for People I Follow" Color="Color.Primary" />
+            </MudPaper>
+
+            <MudPaper Class="p-3 mt-3">
+                <MudText Typo="Typo.h5" GutterBottom="true">Post Notifications</MudText>
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.PostsNotifications" Label="My Posts Notifications" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.CommentsNotifications" Label="Comments on My Posts" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.FriendsPosts" Label="Friends' Posts" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.FriendsPostsNotifications" Label="Friends' Posts Notifications" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.PostsRecommendation" Label="Post Recommendations" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.PostsOfPeopleIFollowNotification" Label="Posts of People I Follow" Color="Color.Primary" />
+            </MudPaper>
+
+            <MudPaper Class="p-3 mt-3">
+                <MudText Typo="Typo.h5" GutterBottom="true">Friends & Requests</MudText>
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.NewFriendsRequests" Label="New Friend Requests" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.MyRequestsAccepted" Label="My Requests Accepted" Color="Color.Primary" />
+            </MudPaper>
+
+            <MudPaper Class="p-3 mt-3">
+                <MudText Typo="Typo.h5" GutterBottom="true">Recommendations</MudText>
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.EventRecommendation" Label="Event Recommendations" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="NotificationPreferencesDto.FriendsRecommendation" Label="Friends Recommendations" Color="Color.Primary" />
+            </MudPaper>
         }
     </MudStack>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveNotificationPreferencesAsync">Save preferences</MudButton>
+
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveNotificationPreferencesAsync" Class="mt-3">Save Preferences</MudButton>
 }
 
 @code {
@@ -46,7 +76,7 @@ else
         IsLoading = true;
         try
         {
-            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync(); // Correct method to get user ID from JWT
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
             StudentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
             NotificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
         }
@@ -64,7 +94,7 @@ else
     {
         try
         {
-            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync(); // Correct method to get user ID from JWT
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
             await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, NotificationPreferencesDto, StudentWithGalleryImagesDto.Student.EmailNotifications);
             Snackbar.Add("Notification preferences updated successfully.", Severity.Success);
         }

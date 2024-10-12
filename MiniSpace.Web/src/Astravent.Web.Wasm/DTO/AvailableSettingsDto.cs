@@ -12,9 +12,20 @@ namespace Astravent.Web.Wasm.DTO
         public Visibility InterestsVisibility { get; set; }
         public Visibility ContactEmailVisibility { get; set; }
         public Visibility PhoneNumberVisibility { get; set; }
-        public Visibility ProfileImageVisibility { get; set; }  
-        public Visibility BannerImageVisibility { get; set; } 
-        public Visibility GalleryVisibility { get; set; }   
+        public Visibility ProfileImageVisibility { get; set; }
+        public Visibility BannerImageVisibility { get; set; }
+        public Visibility GalleryVisibility { get; set; }
+
+        public Visibility ConnectionVisibility { get; set; }
+        public Visibility FollowersVisibility { get; set; }
+        public Visibility FollowingVisibility { get; set; }
+        public Visibility MyPostsVisibility { get; set; }
+        public Visibility ConnectionsPostsVisibility { get; set; }
+        public Visibility MyRepostsVisibility { get; set; }
+        public Visibility RepostsOfMyConnectionsVisibility { get; set; }
+        public Visibility OrganizationIAmCreatorVisibility { get; set; }
+        public Visibility OrganizationIFollowVisibility { get; set; }
+
         public PreferredLanguage PreferredLanguage { get; set; }
         public FrontendVersion FrontendVersion { get; set; }
     }

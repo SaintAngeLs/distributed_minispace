@@ -4,6 +4,7 @@
 @using Astravent.Web.Wasm.Pages.Reports.Dialogs
 @inject IDialogService DialogService
 @inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
 
 @code {
     [Parameter] public EventDto Event { get; set; }
@@ -77,7 +78,26 @@
         </CardHeaderContent>
         
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Default" OnClick="OpenReportDialog" />
+            <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open event menu" Color="Color.Default">
+                <MudMenuItem OnClick="@(() => ShareEvent("facebook"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.Facebook" /> Share on Facebook
+                </MudMenuItem>
+                <MudMenuItem OnClick="@(() => ShareEvent("twitter"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.Twitter" /> Share on Twitter
+                </MudMenuItem>
+                <MudMenuItem OnClick="@(() => ShareEvent("whatsapp"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.WhatsApp" /> Share on WhatsApp
+                </MudMenuItem>
+                <MudMenuItem OnClick="@(() => ShareEvent("linkedin"))">
+                    <MudIcon Icon="@Icons.Custom.Brands.LinkedIn" /> Share on LinkedIn
+                </MudMenuItem>
+                <MudMenuItem OnClick="InviteToEvent">
+                    <MudIcon Icon="@Icons.Material.Filled.PersonAdd" /> Invite
+                </MudMenuItem>
+                <MudMenuItem OnClick="OpenReportDialog">
+                    <MudIcon Icon="@Icons.Material.Filled.Report" /> Report
+                </MudMenuItem>
+            </MudMenu>
         </CardHeaderActions>
     </MudCardHeader>
 
@@ -151,5 +171,31 @@
         return Event.Organizer.OrganizerType == OrganizerType.Organization 
             ? "Organization Event" 
             : "User Event";
+    }
+
+    private void ShareEvent(string platform)
+    {
+        var eventUrl = NavigationManager.Uri; 
+        var eventTitle = Uri.EscapeDataString(Event.Name);
+
+        string shareUrl = platform switch
+        {
+            "facebook" => $"https://www.facebook.com/sharer/sharer.php?u={eventUrl}",
+            "twitter" => $"https://twitter.com/intent/tweet?text={eventTitle}&url={eventUrl}",
+            "whatsapp" => $"https://wa.me/?text={eventTitle}%20{eventUrl}",
+            "linkedin" => $"https://www.linkedin.com/shareArticle?mini=true&url={eventUrl}&title={eventTitle}",
+            _ => ""
+        };
+
+        if (!string.IsNullOrEmpty(shareUrl))
+        {
+            NavigationManager.NavigateTo(shareUrl, true);
+        }
+    }
+
+
+    private void InviteToEvent()
+    {
+        // Logic to invite others to the event
     }
 }

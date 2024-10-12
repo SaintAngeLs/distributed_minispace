@@ -134,18 +134,28 @@ namespace Astravent.Web.Wasm.Areas.Students
             {
                 studentId,
                 emailNotifications,
-                preferencesDto.AccountChanges,
                 preferencesDto.SystemLogin,
-                preferencesDto.NewEvent,
                 preferencesDto.InterestBasedEvents,
                 preferencesDto.EventNotifications,
                 preferencesDto.CommentsNotifications,
                 preferencesDto.PostsNotifications,
-                preferencesDto.FriendsNotifications
+                preferencesDto.EventRecommendation,
+                preferencesDto.FriendsRecommendation,
+                preferencesDto.FriendsPosts,
+                preferencesDto.PostsRecommendation,
+                preferencesDto.EventsIAmInterestedInNotification,
+                preferencesDto.EventsIAmSignedUpToNotification,
+                preferencesDto.PostsOfPeopleIFollowNotification,
+                preferencesDto.EventNotificationForPeopleIFollow,
+                preferencesDto.NewFriendsRequests,
+                preferencesDto.MyRequestsAccepted,
+                preferencesDto.FriendsPostsNotifications
             };
 
             await _httpClient.PostAsync($"students/{studentId}/notifications", updatePreferencesData);
         }
+
+
 
         public async Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId)
         {
@@ -172,9 +182,18 @@ namespace Astravent.Web.Wasm.Areas.Students
                 InterestsVisibility = availableSettings.InterestsVisibility.ToString(),
                 ContactEmailVisibility = availableSettings.ContactEmailVisibility.ToString(),
                 PhoneNumberVisibility = availableSettings.PhoneNumberVisibility.ToString(),
-                ProfileImageVisibility = availableSettings.ProfileImageVisibility.ToString(),  
-                BannerImageVisibility = availableSettings.BannerImageVisibility.ToString(),    
-                GalleryVisibility = availableSettings.GalleryVisibility.ToString(),          
+                ProfileImageVisibility = availableSettings.ProfileImageVisibility.ToString(),
+                BannerImageVisibility = availableSettings.BannerImageVisibility.ToString(),
+                GalleryVisibility = availableSettings.GalleryVisibility.ToString(),
+                ConnectionVisibility = availableSettings.ConnectionVisibility.ToString(),
+                FollowersVisibility = availableSettings.FollowersVisibility.ToString(),
+                FollowingVisibility = availableSettings.FollowingVisibility.ToString(),
+                MyPostsVisibility = availableSettings.MyPostsVisibility.ToString(),
+                ConnectionsPostsVisibility = availableSettings.ConnectionsPostsVisibility.ToString(),
+                MyRepostsVisibility = availableSettings.MyRepostsVisibility.ToString(),
+                RepostsOfMyConnectionsVisibility = availableSettings.RepostsOfMyConnectionsVisibility.ToString(),
+                OrganizationIAmCreatorVisibility = availableSettings.OrganizationIAmCreatorVisibility.ToString(),
+                OrganizationIFollowVisibility = availableSettings.OrganizationIFollowVisibility.ToString(),
                 PreferredLanguage = availableSettings.PreferredLanguage.ToString(),
                 FrontendVersion = availableSettings.FrontendVersion.ToString()
             };
