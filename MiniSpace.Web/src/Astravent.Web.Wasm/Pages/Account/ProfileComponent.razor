@@ -102,46 +102,42 @@ else
                 <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Education</MudText>
                 @foreach (var education in StudentWithGalleryImagesDto.Student.Education)
                 {
-                    <MudPaper Class=" mb-3">
-                        <MudGrid>
-                            <MudItem xs="2">
-                                <MudAvatar Image="@GetOrganizationImageSafe(education.OrganizationId)" Size="Size.Medium" Class="rounded-circle" />
+                    <MudPaper Elevation="3" Class="pa-3 mb-3 rounded-lg" Style="border-left: 4px solid #3f51b5;">
+                        <MudGrid GutterSize="2">
+                            <!-- Organization Avatar and Details -->
+                            <MudItem xs="3" md="2" Class="d-flex align-items-center justify-content-center">
+                                <MudAvatar Image="@GetOrganizationImageSafe(education.OrganizationId)" Size="Size.Large" Class="rounded-circle" />
                             </MudItem>
-                            <MudItem xs="12" md="12">
-                                <MudTextField @bind-Value="education.InstitutionName" Label="Institution Name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                            <MudItem xs="9" md="10">
+                                <MudText Typo="Typo.subtitle1" Class="mb-1" Bold="true">@education.InstitutionName</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">@education.Degree</MudText>
                             </MudItem>
 
-                            <MudItem xs="12" md="12">
-                                <MudTextField @bind-Value="education.Degree" Label="Degree" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                            </MudItem>
-                            
-                            <MudItem xs="12" md="12">
+                            <!-- Dates and Description -->
+                            <MudItem xs="6">
                                 <MudDatePicker T="DateTime?" Label="Start Date" @bind-Date="education.StartDate" Editable="true" DisableToolbar="true" AutoClose="true" />
                             </MudItem>
-
-                            <MudItem xs="12" md="12">
+                            <MudItem xs="6">
                                 <MudDatePicker T="DateTime?" Label="End Date" @bind-Date="education.EndDate" Editable="true" DisableToolbar="true" AutoClose="true" />
                             </MudItem>
-
-                            <MudItem xs="12" md="12">
+                            <MudItem xs="12">
                                 <MudTextField @bind-Value="education.Description" Label="Description" Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
                             </MudItem>
-                            
-                            <MudItem xs="12" md="12" class="d-flex justify-content-center align-items-center">
-                                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Business"
-                                        OnClick="@(() => OpenAssociateOrganizationDialog("Education", education))"
-                                        Disabled="@(education.OrganizationId != Guid.Empty)">
+
+                            <!-- Action Buttons -->
+                            <MudItem xs="12" Class="d-flex justify-content-end">
+                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Business" OnClick="@(() => OpenAssociateOrganizationDialog("Education", education))"
+                                        Disabled="@(education.OrganizationId != Guid.Empty)" Class="mr-2">
                                     Associate with Organization
                                 </MudButton>
-                                <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"
-                                        OnClick="() => RemoveEducation(education)">
+                                <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => RemoveEducation(education)">
                                     Remove
                                 </MudButton>
                             </MudItem>
                         </MudGrid>
                     </MudPaper>
                 }
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddEducation">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddEducation" Class="mt-3">
                     Add Education
                 </MudButton>
             </MudItem>
@@ -151,49 +147,46 @@ else
                 <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Work Experience</MudText>
                 @foreach (var work in StudentWithGalleryImagesDto.Student.Work)
                 {
-                    <MudPaper Class="pa-3 mb-3">
-                        <MudGrid>
-                            <MudItem xs="2">
-                                <MudAvatar Image="@GetOrganizationImageSafe(work.OrganizationId)" Size="Size.Medium" Class="rounded-circle" />
+                    <MudPaper Elevation="3" Class="pa-3 mb-3 rounded-lg" Style="border-left: 4px solid #ff9800;">
+                        <MudGrid GutterSize="2">
+                            <!-- Organization Avatar and Details -->
+                            <MudItem xs="3" md="2" Class="d-flex align-items-center justify-content-center">
+                                <MudAvatar Image="@GetOrganizationImageSafe(work.OrganizationId)" Size="Size.Large" Class="rounded-circle" />
                             </MudItem>
-                            <MudItem xs="12" md="12">
-                                <MudTextField @bind-Value="work.Company" Label="Company" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                            </MudItem>
-                            
-                            <MudItem xs="12" md="12">
-                                <MudTextField @bind-Value="work.Position" Label="Position" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                            <MudItem xs="9" md="10">
+                                <MudText Typo="Typo.subtitle1" Class="mb-1" Bold="true">@work.Company</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">@work.Position</MudText>
                             </MudItem>
 
-                            <MudItem xs="12" md="12">
+                            <!-- Dates and Description -->
+                            <MudItem xs="6">
                                 <MudDatePicker T="DateTime?" Label="Start Date" @bind-Date="work.StartDate" Editable="true" DisableToolbar="true" AutoClose="true" />
                             </MudItem>
-                            
-                            <MudItem xs="12" md="12">
+                            <MudItem xs="6">
                                 <MudDatePicker T="DateTime?" Label="End Date" @bind-Date="work.EndDate" Editable="true" DisableToolbar="true" AutoClose="true" />
                             </MudItem>
-
-                            <MudItem xs="12" md="12">
+                            <MudItem xs="12">
                                 <MudTextField @bind-Value="work.Description" Label="Description" Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
                             </MudItem>
 
-                            <MudItem xs="12" md="12" class="d-flex justify-content-center align-items-center">
-                                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Business"
-                                        OnClick="@(() => OpenAssociateOrganizationDialog("Work", work))"
-                                        Disabled="@(work.OrganizationId != Guid.Empty)">
+                            <!-- Action Buttons -->
+                            <MudItem xs="12" Class="d-flex justify-content-end">
+                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Business" OnClick="@(() => OpenAssociateOrganizationDialog("Work", work))"
+                                        Disabled="@(work.OrganizationId != Guid.Empty)" Class="mr-2">
                                     Associate with Organization
                                 </MudButton>
-                                <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"
-                                        OnClick="() => RemoveWorkExperience(work)">
+                                <MudButton Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => RemoveWorkExperience(work)">
                                     Remove
                                 </MudButton>
                             </MudItem>
                         </MudGrid>
                     </MudPaper>
                 }
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddWorkExperience">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AddWorkExperience" Class="mt-3">
                     Add Work Experience
                 </MudButton>
             </MudItem>
+
         </MudItem>
     </MudGrid>
 
