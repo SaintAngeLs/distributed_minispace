@@ -7,6 +7,7 @@ namespace MiniSpace.Services.Students.Application.Dto
     [ExcludeFromCodeCoverage]
     public class WorkDto
     {
+        public Guid OrganizationId { get; set; } 
         public string Company { get; set; }
         public string Position { get; set; }
         public DateTime StartDate { get; set; }

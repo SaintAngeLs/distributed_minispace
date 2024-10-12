@@ -24,7 +24,6 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var commandJson = JsonSerializer.Serialize(command);
             Console.WriteLine($"Received UpdateUserNotificationPreferences command: {commandJson}");
 
-            // Create the updated NotificationPreferences object, including new properties
             var notificationPreferences = new NotificationPreferences(
                 command.SystemLogin,
                 command.InterestBasedEvents,

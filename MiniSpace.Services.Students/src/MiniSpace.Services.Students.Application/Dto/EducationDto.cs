@@ -7,6 +7,7 @@ namespace MiniSpace.Services.Students.Application.Dto
     [ExcludeFromCodeCoverage]
     public class EducationDto
     {
+        public Guid OrganizationId { get; set; } 
         public string InstitutionName { get; set; }
         public string Degree { get; set; }
         public DateTime StartDate { get; set; }
