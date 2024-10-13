@@ -14,10 +14,12 @@
 
     private string organizerName;
     private string organizerImageUrl;
+    private bool isLoading = true; // Track loading state
 
     protected override async Task OnInitializedAsync()
     {
         await LoadOrganizerDetails();
+        isLoading = false; // Stop loading once details are loaded
     }
 
     private async Task LoadOrganizerDetails()
@@ -64,97 +66,116 @@
     }
 }
 
-<MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px;">
-    <MudCardHeader>
-        <!-- Organizer Avatar -->
-        <CardHeaderAvatar>
-            <MudAvatar Image="@organizerImageUrl" Color="Color.Secondary"></MudAvatar>
-        </CardHeaderAvatar>
-        
-        <!-- Organizer Name -->
-        <CardHeaderContent>
-            <MudText Typo="Typo.body1">@organizerName</MudText>
-            <MudText Typo="Typo.body2">@GetOrganizerDescription()</MudText>
-        </CardHeaderContent>
-        
-        <CardHeaderActions>
-            <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open event menu" Color="Color.Default">
-                <MudMenuItem OnClick="@(() => ShareEvent("facebook"))">
-                    <MudIcon Icon="@Icons.Custom.Brands.Facebook" /> Share on Facebook
-                </MudMenuItem>
-                <MudMenuItem OnClick="@(() => ShareEvent("twitter"))">
-                    <MudIcon Icon="@Icons.Custom.Brands.Twitter" /> Share on Twitter
-                </MudMenuItem>
-                <MudMenuItem OnClick="@(() => ShareEvent("whatsapp"))">
-                    <MudIcon Icon="@Icons.Custom.Brands.WhatsApp" /> Share on WhatsApp
-                </MudMenuItem>
-                <MudMenuItem OnClick="@(() => ShareEvent("linkedin"))">
-                    <MudIcon Icon="@Icons.Custom.Brands.LinkedIn" /> Share on LinkedIn
-                </MudMenuItem>
-                <MudMenuItem OnClick="InviteToEvent">
-                    <MudIcon Icon="@Icons.Material.Filled.PersonAdd" /> Invite
-                </MudMenuItem>
-                <MudMenuItem OnClick="OpenReportDialog">
-                    <MudIcon Icon="@Icons.Material.Filled.Report" /> Report
-                </MudMenuItem>
-            </MudMenu>
-        </CardHeaderActions>
-    </MudCardHeader>
+<!-- Event Item Card with Skeletons -->
+<MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px; position:relative;">
+    @if (isLoading)
+    {
+        <!-- Show Skeletons when loading -->
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="180px" />
+        <MudCardContent>
+            <MudSkeleton Width="30%" Height="42px;" />
+            <MudSkeleton Width="80%" />
+            <MudSkeleton Width="100%" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudSkeleton Width="64px" Height="40px" />
+            <MudSkeleton Width="105px" Height="40px" />
+        </MudCardActions>
+    }
+    else
+    {
+        <!-- Show actual event details once loading is complete -->
+        <MudCardHeader>
+            <!-- Organizer Avatar -->
+            <CardHeaderAvatar>
+                <MudAvatar Image="@organizerImageUrl" Color="Color.Secondary"></MudAvatar>
+            </CardHeaderAvatar>
 
-    <MudCardMedia Image="@GetBannerUrl(Event)" Alt="@Event.Name" Style="height: 180px;" />
+            <!-- Organizer Name -->
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">@organizerName</MudText>
+                <MudText Typo="Typo.body2">@GetOrganizerDescription()</MudText>
+            </CardHeaderContent>
 
-    <MudCardContent>
-        <MudText Typo="Typo.h6">@Event.Name</MudText>
-        <MudText Typo="Typo.body2" Color="Color.Secondary">@Event.Category</MudText>
-        <MudText Typo="Typo.body2">Starts: @Event.StartDate.ToString("MMMM dd, yyyy")</MudText>
-        <MudText Typo="Typo.body2">Ends: @Event.EndDate.ToString("MMMM dd, yyyy")</MudText>
-        <MudText Typo="Typo.body2">
-            <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1rem;" /> Interested: @Event.InterestedStudents
-        </MudText>
-        <MudText Typo="Typo.body2">
-            <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" /> Signed Up: @Event.SignedUpStudents
-        </MudText>
-    </MudCardContent>
+            <CardHeaderActions>
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open event menu" Color="Color.Default">
+                    <MudMenuItem OnClick="@(() => ShareEvent("facebook"))">
+                        <MudIcon Icon="@Icons.Custom.Brands.Facebook" /> Share on Facebook
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ShareEvent("twitter"))">
+                        <MudIcon Icon="@Icons.Custom.Brands.Twitter" /> Share on Twitter
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ShareEvent("whatsapp"))">
+                        <MudIcon Icon="@Icons.Custom.Brands.WhatsApp" /> Share on WhatsApp
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ShareEvent("linkedin"))">
+                        <MudIcon Icon="@Icons.Custom.Brands.LinkedIn" /> Share on LinkedIn
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="InviteToEvent">
+                        <MudIcon Icon="@Icons.Material.Filled.PersonAdd" /> Invite
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="OpenReportDialog">
+                        <MudIcon Icon="@Icons.Material.Filled.Report" /> Report
+                    </MudMenuItem>
+                </MudMenu>
+            </CardHeaderActions>
+        </MudCardHeader>
 
-    <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ViewEvent">
-            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" />
-            <MudText Typo="Typo.h6">View Details</MudText>
-        </MudButton>
-    </MudCardActions>
+        <MudCardMedia Image="@GetBannerUrl(Event)" Alt="@Event.Name" Style="height: 180px;" />
 
-    <!-- Sign Up and Show Interest Actions -->
-    <MudCardActions>
-        @if (Event.IsSignedUp)
-        {
-            <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
-                <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" Style="font-size: 1rem;" />
-                <MudText Typo="Typo.h6">Signed Up</MudText>
+        <MudCardContent>
+            <MudText Typo="Typo.h6">@Event.Name</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">@Event.Category</MudText>
+            <MudText Typo="Typo.body2">Starts: @Event.StartDate.ToString("MMMM dd, yyyy")</MudText>
+            <MudText Typo="Typo.body2">Ends: @Event.EndDate.ToString("MMMM dd, yyyy")</MudText>
+            <MudText Typo="Typo.body2">
+                <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1rem;" /> Interested: @Event.InterestedStudents
+            </MudText>
+            <MudText Typo="Typo.body2">
+                <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" /> Signed Up: @Event.SignedUpStudents
+            </MudText>
+        </MudCardContent>
+
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ViewEvent">
+                <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" />
+                <MudText Typo="Typo.h6">View Details</MudText>
             </MudButton>
-        }
-        else
-        {
-            <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="SignUpToEvent">
-                <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" />
-                <MudText Typo="Typo.h6">Sign Up</MudText>
-            </MudButton>
-        }
+        </MudCardActions>
 
-        @if (Event.IsInterested)
-        {
-            <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
-                <MudIcon Icon="@Icons.Material.Filled.ThumbUpAlt" Style="font-size: 1rem;" />
-                <MudText Typo="Typo.h6">Interested</MudText>
-            </MudButton>
-        }
-        else
-        {
-            <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="ShowInterestInEvent">
-                <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1rem;" />
-                <MudText Typo="Typo.h6">Show Interest</MudText>
-            </MudButton>
-        }
-    </MudCardActions>
+        <!-- Sign Up and Show Interest Actions -->
+        <MudCardActions>
+            @if (Event.IsSignedUp)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" Style="font-size: 1rem;" />
+                    <MudText Typo="Typo.h6">Signed Up</MudText>
+                </MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="SignUpToEvent">
+                    <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" />
+                    <MudText Typo="Typo.h6">Sign Up</MudText>
+                </MudButton>
+            }
+
+            @if (Event.IsInterested)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
+                    <MudIcon Icon="@Icons.Material.Filled.ThumbUpAlt" Style="font-size: 1rem;" />
+                    <MudText Typo="Typo.h6">Interested</MudText>
+                </MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="ShowInterestInEvent">
+                    <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1rem;" />
+                    <MudText Typo="Typo.h6">Show Interest</MudText>
+                </MudButton>
+            }
+        </MudCardActions>
+    }
 </MudCard>
 
 @code {
@@ -164,7 +185,6 @@
             ? eventDto.BannerUrl 
             : "/images/default_media_file_image.png";
     }
-
 
     private string GetOrganizerDescription()
     {
@@ -192,8 +212,6 @@
             NavigationManager.NavigateTo(shareUrl, true);
         }
     }
-
-
 
     private void InviteToEvent()
     {

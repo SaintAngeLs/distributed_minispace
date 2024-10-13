@@ -5,7 +5,7 @@
 @inject IIdentityService IdentityService
 @using Astravent.Web.Wasm.DTO.Events
 @using Astravent.Web.Wasm.Pages.Events.Components
-
+@using MudBlazor
 
 <AuthWrapper>
     <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
@@ -21,7 +21,35 @@
                OnSearch="PerformSearch" />
 
         <!-- Event List -->
-        <EventList Events="events" OnViewEvent="ViewEvent" OnSignUpToEvent="SignUpToEvent" OnShowInterestInEvent="ShowInterestInEvent" />
+        @if (isLoading)
+        {
+            <MudGrid Spacing="3">
+                @for (int i = 0; i < 6; i++) // Placeholder skeletons while loading
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Class="my-2" Style="position:relative;">
+                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+                            <MudCardContent>
+                                <MudSkeleton Width="30%" Height="42px;" />
+                                <MudSkeleton Width="80%" />
+                                <MudSkeleton Width="100%" />
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+                                <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
+                            </MudCardActions>
+                            <MudOverlay Visible="true" DarkBackground="true" Absolute="true">
+                                <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+                            </MudOverlay>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+        else
+        {
+            <EventList Events="events" OnViewEvent="ViewEvent" OnSignUpToEvent="SignUpToEvent" OnShowInterestInEvent="ShowInterestInEvent" />
+        }
 
         <!-- Pagination -->
         <Pagination TotalItems="@totalItems" CurrentPage="@currentPage" PageSize="@pageSize"
@@ -44,6 +72,7 @@
     private DateTime? endDate;
     private readonly int[] pageSizeOptions = { 6, 9, 12 };
     private bool _isAuthenticated;
+    private bool isLoading = false;  // Loading indicator flag
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,12 +90,11 @@
  
     private async Task LoadEvents()
     {
+        isLoading = true; // Start loading
         try
         {
-            // Check if filters are applied
             if (string.IsNullOrWhiteSpace(searchQuery) && selectedCategory == null && !minPrice.HasValue && !maxPrice.HasValue && !startDate.HasValue && !endDate.HasValue)
             {
-                // No filters applied, load all events paginated
                 var paginatedResult = await EventsService.GetPaginatedEventsAsync(currentPage, pageSize);
                 if (paginatedResult != null)
                 {
@@ -82,7 +110,6 @@
             }
             else
             {
-                // Filters applied, use search command
                 var command = new SearchEvents
                 {
                     Name = searchQuery,
@@ -113,6 +140,10 @@
         catch (Exception ex)
         {
             Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false; // Stop loading
         }
     }
 
@@ -152,7 +183,7 @@
 
             await EventsService.SignUpToEventAsync(command);
             Snackbar.Add("Successfully signed up for the event.", Severity.Success);
-            await LoadEvents(); // Refresh events to reflect the updated status
+            await LoadEvents(); 
         }
         catch (Exception ex)
         {
