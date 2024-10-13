@@ -28,8 +28,11 @@
             @if (_isUserAuthenticated)
             {
                 <!-- Drawer Menu for Authenticated User -->
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
-                <MudText Typo="Typo.h4" Class="ms-2" Color="Color.Primary">MiniSpace</MudText>
+                @* @if(!isPC)
+                { *@
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
+                @* } *@
+                <MudText Typo="Typo.h4" Class="ms-2" Color="Color.Primary">Astravent</MudText>
             }
             else
             {
@@ -38,11 +41,11 @@
                     <MudButton Variant="Variant.Text" OnClick="@ToggleDrawer">
                         <img src="icons/menu-left.svg" alt="Menu" style="height: 24px; width: 24px;" />
                     </MudButton>
-                    <MudText Typo="Typo.h4" Class="ms-2">MiniSpace</MudText>
+                    <MudText Typo="Typo.h4" Class="ms-2">Astravent</MudText>
                 }
                 else
                 {
-                    <MudText Typo="Typo.h4" Class="me-3">MiniSpace</MudText>
+                    <MudText Typo="Typo.h4" Class="me-3">Astravent</MudText>
                     <MudButton Variant="Variant.Text" OnClick="ScrollToHome" Class="me-2">
                         Home
                     </MudButton>
@@ -125,17 +128,18 @@
 
     @if (_isUserAuthenticated )
     {
+        
         <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Class="drawer" Anchor="Anchor.Left" Variant="@(isPC ? DrawerVariant.Mini : DrawerVariant.Temporary)" OpenMiniOnHover="true">
             
-                <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">Menu</MudText>
-                </MudDrawerHeader>
+            <MudDrawerHeader>
+               
+            </MudDrawerHeader>
             
             <MudNavMenu>
                 <MudNavLink Href="home" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
                 <MudNavLink Href="account" Icon="@Icons.Material.Filled.AccountBox">Account</MudNavLink>
 
-                <MudNavGroup Title="Events" Icon="@Icons.Material.Filled.Event" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                <MudNavGroup Title="Events" Icon="@Icons.Material.Filled.Event" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="events/following" Icon="@Icons.Material.Filled.Bookmark">Follow</MudNavLink>
                     <MudNavLink Href="events/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
                     <MudNavLink Href="events/organize" Icon="@Icons.Material.Filled.Assignment">Organize</MudNavLink>
@@ -149,14 +153,14 @@
                     <MudNavLink Href="posts/search" Icon="@Icons.Material.Filled.FindInPage">Search</MudNavLink>
                 </MudNavGroup>
 
-                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                <MudNavGroup Title="Friends" Icon="@Icons.Material.Filled.Group" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="friends/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
                     <MudNavLink Href="friends" Icon="@Icons.Material.Filled.Group">Friends</MudNavLink>
                     <MudNavLink Href="friends/requests" Icon="@Icons.Material.Filled.MailOutline">Requests</MudNavLink>
                     <MudNavLink Href="friends/sent-requests" Icon="@Icons.Material.Filled.CompareArrows">Sent Requests</MudNavLink>
                 </MudNavGroup>
                 
-                <MudNavGroup Title="Organizations" Icon="@Icons.Material.Filled.Business" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                <MudNavGroup Title="Organizations" Icon="@Icons.Material.Filled.Business" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="organizations/search" Icon="@Icons.Material.Filled.Search">Search</MudNavLink>
                     <MudNavLink Href="organizations/my" Icon="@Icons.Material.Filled.Home">My Organizations</MudNavLink>
                     <MudNavLink Href="organizations/following" Icon="@Icons.Material.Filled.Group">Organizations I Follow</MudNavLink>
@@ -168,7 +172,7 @@
                     <MudNavLink Href="chats/history" Icon="@Icons.Material.Filled.History">Chat History</MudNavLink>
                 </MudNavGroup>
 
-                <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="false" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
+                <MudNavGroup Title="Notifications" Icon="@Icons.Material.Filled.Send" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
                     <MudNavLink Href="notifications/all" Icon="@Icons.Material.Filled.Accessibility">All</MudNavLink>
                     <MudNavLink Href="notifications/new" Icon="@Icons.Material.Filled.Send">New</MudNavLink>
                     <MudNavLink Href="notifications/history" Icon="@Icons.Material.Filled.History">History</MudNavLink>

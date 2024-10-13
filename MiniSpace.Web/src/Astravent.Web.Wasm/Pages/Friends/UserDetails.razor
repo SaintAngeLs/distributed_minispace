@@ -54,8 +54,11 @@
                 </MudGrid>
             </MudPaper>
 
+            
+
             <MudGrid Class="profile-content">
                 <MudItem xs="12" sm="8">
+                    <MudDivider />
                     <MudText Typo="Typo.h3">@student.FirstName @student.LastName</MudText>
 
                     @if (!string.IsNullOrWhiteSpace(student.Description))
@@ -441,7 +444,7 @@
     }
 
     .profile-content {
-        padding-top: 80px;
+        padding-top: 100px;
         margin-bottom: 20px;
     }
 
