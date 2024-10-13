@@ -9,7 +9,9 @@
         </CardHeaderAvatar>
 
         <CardHeaderContent>
-            <MudText Typo="Typo.subtitle1" Class="mb-1 cursor-pointer" @onclick="NavigateToUserProfile">@Username</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mb-1 cursor-pointer" @onclick="NavigateToUserProfile">
+                @($"{FirstName} {LastName}")
+            </MudText>
             <MudText Typo="Typo.caption" Class="text-muted">@PostDate</MudText>
         </CardHeaderContent>
     </MudCardHeader>
@@ -89,7 +91,8 @@
 
 @code {
     [Parameter] public PostDto Post { get; set; }
-    [Parameter] public string Username { get; set; }
+    [Parameter] public string FirstName { get; set; }
+    [Parameter] public string LastName { get; set; }
     [Parameter] public string UserProfileImage { get; set; }
     [Parameter] public string PostDate { get; set; }
     [Parameter] public Dictionary<Guid, ReactionsSummaryDto> ReactionsSummaries { get; set; } = new();
@@ -102,7 +105,6 @@
 
     private bool isCommentSectionVisible;
 
-    // Property to determine which image to show
     private string DisplayedUserProfileImage => string.IsNullOrEmpty(UserProfileImage) ? "images/default_profile_image.webp" : UserProfileImage;
 
     private void ToggleCommentSection()
@@ -115,7 +117,7 @@
         var parameters = new DialogParameters
         {
             { "Post", Post },
-            { "Username", Username },
+            { "Username", $"{FirstName} {LastName}" },
             { "UserProfileImage", DisplayedUserProfileImage },
             { "IssuerId", IdentityService.GetCurrentUserIdFromJwtAsync() }
         };

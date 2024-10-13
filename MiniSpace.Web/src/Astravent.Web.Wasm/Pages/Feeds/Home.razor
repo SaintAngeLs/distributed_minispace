@@ -47,7 +47,8 @@
                                 <MudItem xs="12">
                                     <PostItem 
                                         Post="@post"
-                                        Username="@GetCachedUserName(post.UserId)"
+                                        FirstName="@GetCachedUserFirstName(post.UserId)"
+                                        LastName="@GetCachedUserLastName(post.UserId)"
                                         UserProfileImage="@GetCachedUserAvatar(post.UserId)"
                                         PostDate="@post.CreatedAt.ToString("g")"
                                         ReactionsSummaries="@reactionsSummaries"
@@ -83,7 +84,8 @@
     private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new Dictionary<Guid, ReactionsSummaryDto>();
 
     // Cache for user names and avatars
-    private Dictionary<Guid, string> userNames = new Dictionary<Guid, string>();
+    private Dictionary<Guid, string> userFirstNames = new Dictionary<Guid, string>();
+    private Dictionary<Guid, string> userLastNames = new Dictionary<Guid, string>();
     private Dictionary<Guid, string> userAvatars = new Dictionary<Guid, string>();
 
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
@@ -126,11 +128,13 @@
                 var userIds = posts.Select(p => p.UserId).Where(id => id.HasValue).Select(id => id.Value).Distinct().ToList();
                 foreach (var userId in userIds)
                 {
-                    if (!userNames.ContainsKey(userId))
+                     if (!userFirstNames.ContainsKey(userId))
                     {
                         var user = await StudentsService.GetStudentAsync(userId);
                         if (user != null)
                         {
+                            userFirstNames[userId] = user.FirstName ?? "Unknown";
+                            userLastNames[userId] = user.LastName ?? "User";
                             userAvatars[userId] = user.ProfileImageUrl ?? string.Empty;
                         }
                     }
@@ -144,15 +148,7 @@
             }
        
     }
-    // Method to get cached user name
-    private string GetCachedUserName(Guid? userId)
-    {
-        if (userId.HasValue && userNames.ContainsKey(userId.Value))
-        {
-            return userNames[userId.Value];
-        }
-        return "Unknown User";
-    }
+
 
     // Method to get cached user avatar
     private string GetCachedUserAvatar(Guid? userId)
@@ -162,6 +158,24 @@
             return userAvatars[userId.Value];
         }
         return string.Empty;
+    }
+
+    private string GetCachedUserFirstName(Guid? userId)
+    {
+        if (userId.HasValue && userFirstNames.ContainsKey(userId.Value))
+        {
+            return userFirstNames[userId.Value];
+        }
+        return "Unknown";
+    }
+
+    private string GetCachedUserLastName(Guid? userId)
+    {
+        if (userId.HasValue && userLastNames.ContainsKey(userId.Value))
+        {
+            return userLastNames[userId.Value];
+        }
+        return "User";
     }
 
     private async Task HandleReaction((Guid postId, ReactionType reactionType) reactionInfo)

@@ -32,7 +32,8 @@
                 <MudItem xs="12">
                     <PostItem 
                         Post="@post"
-                        Username="@GetUserName(post.UserId)"
+                        FirstName="@GetUserFirstName(post.UserId)"
+                        LastName="@GetUserLastName(post.UserId)"
                         UserProfileImage="@GetUserAvatar(post.UserId)"
                         PostDate="@post.CreatedAt.ToString("g")"
                         ReactionsSummaries="@reactionsSummaries"
@@ -67,7 +68,6 @@
         {
             isLoading = true;
 
-            // Initialize the authentication and get the current user ID
             await IdentityService.InitializeAuthenticationState();
 
             if (IdentityService.IsAuthenticated)
@@ -172,13 +172,22 @@
         return string.Empty;
     }
 
-    private string GetUserName(Guid? userId)
+    private string GetUserFirstName(Guid? userId)
     {
         if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
         {
-            return $"{studentsCache[userId.Value].FirstName} {studentsCache[userId.Value].LastName}";
+            return studentsCache[userId.Value].FirstName ?? "Unknown";
         }
-        return "Unknown User";
+        return "Unknown";
+    }
+
+    private string GetUserLastName(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return studentsCache[userId.Value].LastName ?? "User";
+        }
+        return "User";
     }
 
     private async Task OnPageChanged(int newPage)

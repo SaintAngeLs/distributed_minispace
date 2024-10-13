@@ -29,7 +29,8 @@
                 <MudItem xs="12">
                     <PostItem 
                         Post="@post"
-                        Username="@GetUserName(post.UserId)"
+                        FirstName="@GetUserFirstName(post.UserId)"
+                        LastName="@GetUserLastName(post.UserId)"
                         UserProfileImage="@GetUserAvatar(post.UserId)"
                         PostDate="@post.CreatedAt.ToString("g")"
                         ReactionsSummaries="@reactionsSummaries"
@@ -221,4 +222,23 @@
             Snackbar.Add($"Failed to add comment: {response.ErrorMessage?.Reason}", Severity.Error);
         }
     }
+
+    private string GetUserFirstName(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return studentsCache[userId.Value].FirstName ?? "Unknown";
+        }
+        return "Unknown";
+    }
+
+    private string GetUserLastName(Guid? userId)
+    {
+        if (userId.HasValue && studentsCache.ContainsKey(userId.Value))
+        {
+            return studentsCache[userId.Value].LastName ?? "User";
+        }
+        return "User";
+    }
+
 }
