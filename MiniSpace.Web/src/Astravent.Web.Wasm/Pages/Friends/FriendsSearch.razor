@@ -35,13 +35,23 @@
                 @foreach (var student in students)
                 {
                     <MudItem xs="12">
-                        <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; background-color: #f7f9fa; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
+                        <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
                             <MudGrid>
                                 <MudItem xs="2" Class="d-flex justify-content-center align-items-center">
                                     <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Alt="Student Image" Size="Size.Large" Class="border border-primary" />
                                 </MudItem>
                                 <MudItem xs="10">
                                     <MudText Typo="Typo.h6" Class="mb-0" Style="font-weight: bold;">@($"{student.FirstName} {student.LastName}")</MudText>
+                                      @if (student.LastWorkExperience != null)
+                                        {
+                                            <MudText Typo="Typo.subtitle2">
+                                                @($"{student.LastWorkExperience.Position} in {student.LastWorkExperience.Company}")
+                                            </MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText Typo="Typo.subtitle2"> </MudText>
+                                        }
                                     <MudButtonGroup>
                                         @if (student.Id != IdentityService.GetCurrentUserId() && !(sentRequests?.Any(r => r.InviteeId == student.Id) ?? false) && !(allFriends?.Any(f => f.FriendId == student.Id) ?? false))
                                         {
@@ -134,7 +144,7 @@
 
     .friend-card {
         display: flex;
-        background-color: #ffffff;
+        background-color: var(--mud-palette-background-gray);
         margin-bottom: 1rem !important;
         border: 1px solid #ddd;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);

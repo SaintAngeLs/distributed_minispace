@@ -25,6 +25,7 @@ namespace Astravent.Web.Wasm.DTO
         public List<string> Interests { get; set; } 
         public IEnumerable<EducationDto> Education { get; set; }
         public IEnumerable<WorkDto> Work { get; set; }
+        public WorkDto LastWorkExperience => Work?.OrderByDescending(w => w.StartDate).FirstOrDefault();
         public bool IsTwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
