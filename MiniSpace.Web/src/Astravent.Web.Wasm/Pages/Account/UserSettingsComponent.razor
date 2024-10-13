@@ -9,6 +9,7 @@
 }
 else
 {
+    
     <MudExpansionPanels>
 
         <!-- Personal Information Settings -->
@@ -214,7 +215,10 @@ else
         </MudExpansionPanel>
     </MudExpansionPanels>
 
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveUserSettingsAsync">Save Settings</MudButton>
+    @* <div style="height: 200px; display: flex; justify-content: flex-end; align-items: flex-end; padding: 10px;"> *@
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveUserSettingsAsync">Save Settings</MudButton>
+    @* </div> *@
+
 }
 
 @code {
