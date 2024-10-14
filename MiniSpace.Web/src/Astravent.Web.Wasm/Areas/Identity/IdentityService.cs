@@ -402,11 +402,9 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
             try
             {
-                // Decode token to extract user ID (pseudo-code, replace with your actual token decoding logic)
                 var userId = DecodeToken(token);
                 Console.WriteLine($"Decoded UserId: {userId}");
 
-                // Proceed with password reset
                 var response = await _httpClient.PostAsync<object, object>("identity/password/reset", new { UserId = userId, Token = token, Email = email, NewPassword = newPassword });
                 
                 return response;

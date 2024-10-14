@@ -37,10 +37,10 @@
                     <MudItem xs="12">
                         <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
                             <MudGrid>
-                                <MudItem xs="2" Class="d-flex justify-content-center align-items-center">
+                                <MudItem xs="1" md="1" Class="d-flex justify-content-center align-items-center">
                                     <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Alt="Student Image" Size="Size.Large" Class="border border-primary" />
                                 </MudItem>
-                                <MudItem xs="10">
+                                <MudItem xs="8" md="8">
                                     <MudText Typo="Typo.h6" Class="mb-0" Style="font-weight: bold;">@($"{student.FirstName} {student.LastName}")</MudText>
                                       @if (student.LastWorkExperience != null)
                                         {
@@ -52,6 +52,8 @@
                                         {
                                             <MudText Typo="Typo.subtitle2"> </MudText>
                                         }
+                                </MudItem>
+                                <MudItem xs="2" md="2">
                                     <MudButtonGroup>
                                         @if (student.Id != IdentityService.GetCurrentUserId() && !(sentRequests?.Any(r => r.InviteeId == student.Id) ?? false) && !(allFriends?.Any(f => f.FriendId == student.Id) ?? false))
                                         {
