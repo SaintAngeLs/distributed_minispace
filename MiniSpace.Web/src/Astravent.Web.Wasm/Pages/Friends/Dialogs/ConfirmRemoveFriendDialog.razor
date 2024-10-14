@@ -1,0 +1,28 @@
+<MudDialog MaxWidth="MaxWidth.Small">
+    <TitleContent>Confirm Friend Removal</TitleContent>
+
+    <DialogContent>
+        <MudText Typo="Typo.subtitle1">@ContentText</MudText>
+    </DialogContent>
+
+    <DialogActions>
+        <MudSpacer />
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="ConfirmRemove">Yes, Remove</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Outlined" OnClick="CancelRemove">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string ContentText { get; set; } = "Are you sure you want to remove this friend?";
+
+    private async Task ConfirmRemove()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task CancelRemove()
+    {
+        MudDialog.Cancel();
+    }
+}

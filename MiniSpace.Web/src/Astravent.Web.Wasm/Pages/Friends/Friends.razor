@@ -2,11 +2,12 @@
 @using Astravent.Web.Wasm.HttpClients
 @using Astravent.Web.Wasm.Areas.Friends
 @using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.Pages.Friends.Dialogs
 @inject IIdentityService IdentityService
 @inject IFriendsService FriendsService
 @inject NavigationManager NavigationManager
-@inject Radzen.NotificationService NotificationService
-@inject Radzen.DialogService DialogService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @using MudBlazor
 
 
@@ -227,18 +228,34 @@
     {
         await FriendsService.RemoveFriendAsync(friendId);
         friends = friends.Where(f => f.FriendId != friendId).ToList();
-        NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Friend Removed", "You have removed a friend.", 5000);
+        Snackbar.Add("Friend removed successfully.", Severity.Warning);
         StateHasChanged();
     }
 
     private async Task ConfirmRemoveFriend(Guid friendId)
     {
-        var confirm = await DialogService.Confirm("Are you sure you want to remove this friend?", "Confirm Removal", new Radzen.ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
-        if (confirm.HasValue && confirm.Value)
+        var parameters = new DialogParameters
+        {
+            { "ContentText", "Are you sure you want to remove this friend?" }
+        };
+
+        var options = new DialogOptions 
+        { 
+            CloseButton = true, 
+            MaxWidth = MaxWidth.Small 
+        };
+
+        // Show the confirmation dialog
+        var dialog = DialogService.Show<ConfirmRemoveFriendDialog>("Confirm Friend Removal", parameters, options);
+        var result = await dialog.Result;
+
+        // Proceed with removal if confirmed
+        if (!result.Cancelled)
         {
             await RemoveFriend(friendId);
         }
     }
+
 
     private void SearchFriends()
     {
@@ -275,7 +292,7 @@
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Friends", $"An error occurred: {ex.Message}", 5000);
+            Snackbar.Add($"Failed to load friends: {ex.Message}", Severity.Error);
         }
     }
 
