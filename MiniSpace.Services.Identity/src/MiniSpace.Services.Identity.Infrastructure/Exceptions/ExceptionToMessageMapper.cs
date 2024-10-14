@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Convey.MessageBrokers.RabbitMQ;
+using Paralax.MessageBrokers.RabbitMQ;
 using MiniSpace.Services.Identity.Application.Commands;
 using MiniSpace.Services.Identity.Application.Events.Rejected;
 using MiniSpace.Services.Identity.Application.Exceptions;

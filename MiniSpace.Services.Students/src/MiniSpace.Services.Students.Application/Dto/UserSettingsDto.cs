@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Students.Application.Dto
     [ExcludeFromCodeCoverage]
     public class UserSettingsDto
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public string CreatedAtVisibility { get; set; }
         public string DateOfBirthVisibility { get; set; }
         public string InterestedInEventsVisibility { get; set; }

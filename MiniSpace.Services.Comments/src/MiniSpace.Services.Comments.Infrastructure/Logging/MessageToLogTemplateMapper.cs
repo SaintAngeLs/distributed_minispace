@@ -1,4 +1,4 @@
-using Convey.Logging.CQRS;
+using Paralax.CQRS.Logging;
 using MiniSpace.Services.Comments.Application.Commands;
 using MiniSpace.Services.Comments.Application.Events;
 using MiniSpace.Services.Comments.Application.Events.External;

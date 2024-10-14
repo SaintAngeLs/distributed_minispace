@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using MiniSpace.Services.Organizations.Core.Repositories;
 using System.Text.Json;
 using System.Threading;

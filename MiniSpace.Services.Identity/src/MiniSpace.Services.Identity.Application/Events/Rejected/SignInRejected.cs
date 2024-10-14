@@ -1,8 +1,8 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 
 namespace MiniSpace.Services.Identity.Application.Events.Rejected
 {
-    [Contract]
+    
     public class SignInRejected : IRejectedEvent
     {
         public string Email { get; }

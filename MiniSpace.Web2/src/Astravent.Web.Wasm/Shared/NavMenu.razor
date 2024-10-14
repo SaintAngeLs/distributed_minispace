@@ -1,0 +1,68 @@
+@* @inject HttpClient Http *@
+@inject IIdentityService IdentityService
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+@* <div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">MiniSpace.Web</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        @if (isUserAuthenticated)
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="account">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Your Account
+                </NavLink>
+            </li>
+        }
+        <li class="nav-item px-3">
+            <InputCheckbox id="is-user-authenticated" class="form-control" hidden="true"
+                           @bind-Value="isUserAuthenticated" />
+        </li>
+    </ul>
+</div> *@
+
+@code {
+    private bool isUserAuthenticated;
+    private bool collapseNavMenu = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        @* isUserAuthenticated = await LocalStorage.GetItemAsync<bool>("isAuthenticated");
+        NavigationManager.LocationChanged += HandleLocationChanged; *@
+    }
+
+    private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        @* InvokeAsync(() =>
+        {
+            isUserAuthenticated = LocalStorage.GetItemAsync<bool>("isAuthenticated").Result;
+            StateHasChanged();
+        }); *@
+    }
+
+    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    
+    @* void LocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    } *@
+}    
+
+

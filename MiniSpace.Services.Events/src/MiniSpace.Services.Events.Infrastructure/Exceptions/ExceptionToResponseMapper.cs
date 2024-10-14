@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using Convey;
-using Convey.WebApi.Exceptions;
+using Paralax;
+using Paralax.WebApi.Exceptions;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Core.Exceptions;
 

@@ -1,0 +1,37 @@
+@using MudBlazor
+
+<MudPopover Open="@IsEmojiPickerOpen" CloseOnOutsideClick="true">
+    <MudPaper Class="pa-2" Style="max-width: 300px; max-height: 300px; overflow-y: auto;">
+        <MudGrid Gutter="2">
+            @foreach (var emoji in EmojiList.Emojis)
+            {
+                <MudItem xs="3">
+                    <MudButton Class="emoji-btn" OnClick="@(() => SelectEmoji(emoji))">
+                        @emoji
+                    </MudButton>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudPaper>
+</MudPopover>
+
+<MudButton Color="Color.Secondary" OnClick="ToggleEmojiPicker" StartIcon="@Icons.Material.Filled.EmojiEmotions">
+    Emoji
+</MudButton>
+
+@code {
+    [Parameter] public EventCallback<string> OnEmojiSelected { get; set; }
+
+    private bool IsEmojiPickerOpen { get; set; }
+
+    private void ToggleEmojiPicker()
+    {
+        IsEmojiPickerOpen = !IsEmojiPickerOpen;
+    }
+
+    private void SelectEmoji(string emoji)
+    {
+        IsEmojiPickerOpen = false;
+        OnEmojiSelected.InvokeAsync(emoji);
+    }
+}

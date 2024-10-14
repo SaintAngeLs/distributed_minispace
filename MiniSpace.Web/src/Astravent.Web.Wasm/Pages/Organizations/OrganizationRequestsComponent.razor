@@ -1,0 +1,164 @@
+@page "/organizations/{OrganizationId:guid}/requests"
+@using MudBlazor
+@inject ISnackbar Snackbar
+@inject IOrganizationsService OrganizationsService
+@inject IStudentsService StudentsService
+
+@code {
+    [Parameter]
+    public Guid OrganizationId { get; set; }
+
+    private List<OrganizationRequestDto> requests = new List<OrganizationRequestDto>();
+    private Dictionary<Guid, StudentDto> users = new Dictionary<Guid, StudentDto>();
+    private bool isLoading = true;
+    private int page = 1;
+    private int pageSize = 10;
+    private int totalItems;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRequests();
+    }
+
+    private async Task LoadRequests()
+    {
+        isLoading = true;
+        try
+        {
+            var result = await OrganizationsService.GetOrganizationRequestsAsync(OrganizationId, page, pageSize);
+            if (result != null)
+            {
+                requests = result.Items.ToList();
+                totalItems = result.TotalItems;
+
+                foreach (var request in requests)
+                {
+                    if (!users.ContainsKey(request.UserId))
+                    {
+                        var user = await StudentsService.GetStudentAsync(request.UserId);
+                        if (user != null)
+                        {
+                            users[request.UserId] = user;
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add("Failed to load organization requests.", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task AcceptRequest(Guid requestId)
+    {
+        try
+        {
+            await OrganizationsService.AcceptFollowRequestAsync(OrganizationId, requestId);
+            Snackbar.Add("Request accepted successfully.", Severity.Success);
+            await LoadRequests();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add("Failed to accept request.", Severity.Error);
+        }
+    }
+
+    private async Task RejectRequest(Guid requestId)
+    {
+        try
+        {
+            await OrganizationsService.RejectFollowRequestAsync(OrganizationId, requestId, "Request rejected by admin.");
+            Snackbar.Add("Request rejected successfully.", Severity.Success);
+            await LoadRequests();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add("Failed to reject request.", Severity.Error);
+        }
+    }
+
+    private void OnPageChanged(int newPage)
+    {
+        page = newPage + 1; // Adjust to handle MudTablePager's zero-based index
+        _ = LoadRequests();
+    }
+
+    private string GetUserAvatar(Guid userId)
+    {
+        return users.ContainsKey(userId) && !string.IsNullOrEmpty(users[userId]?.ProfileImageUrl)
+            ? users[userId].ProfileImageUrl
+            : "/images/default_profile_image.png";
+    }
+}
+
+<MudContainer Class="pa-4">
+    @if (isLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Class="my-4" />
+    }
+    else if (requests == null || !requests.Any())
+    {
+        <MudText Color="Color.Warning">No requests found for this organization.</MudText>
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var request in requests)
+            {
+                <MudItem xs="12">
+                    <MudCard Class="mb-4">
+                        <MudCardContent>
+                            <MudGrid>
+                                <MudItem xs="12" md="8" Class="d-flex align-items-center">
+                                    <MudGrid>
+                                        <MudItem xs="12" sm="2" md="2">
+                                            <MudAvatar Size="Size.Large" Image="@GetUserAvatar(request.UserId)" />
+                                        </MudItem>
+                                        <MudItem xs="12" sm="10" md="10" Class="d-flex flex-column justify-center">
+                                            <MudText Typo="Typo.h6">
+                                                @users[request.UserId]?.FirstName @users[request.UserId]?.LastName
+                                            </MudText>
+                                            <MudText Typo="Typo.body2" Class="text-muted">
+                                                Requested on @request.RequestDate.ToString("g")
+                                            </MudText>
+                                            <MudText Typo="Typo.caption" Color="Color.Primary">
+                                                @request.State
+                                            </MudText>
+                                            <MudText Typo="Typo.body1">
+                                                Reason: @request.Reason
+                                            </MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                                <MudItem xs="12" md="4" Class="d-flex align-center justify-center">
+                                    <MudStack Row="true" Spacing="2">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="@(() => AcceptRequest(request.RequestId))">
+                                            Accept
+                                        </MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@(() => RejectRequest(request.RequestId))">
+                                            Reject
+                                        </MudButton>
+                                    </MudStack>
+                                </MudItem>
+                            </MudGrid>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 20 }"
+                       PageSize="@pageSize"
+                       PageIndex="@("@page - 1")"
+                       TotalItems="@totalItems"
+                       OnPageChanged="OnPageChanged" />
+    }
+</MudContainer>

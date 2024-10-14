@@ -1,5 +1,5 @@
 using System.Reflection.Metadata;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using MiniSpace.Services.Reactions.Core.Entities;
 

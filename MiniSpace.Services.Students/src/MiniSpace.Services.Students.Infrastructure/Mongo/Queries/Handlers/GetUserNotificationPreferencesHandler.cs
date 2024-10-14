@@ -1,5 +1,5 @@
-using Convey.CQRS.Queries;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Queries;
+using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Students.Application.Dto;
 using MiniSpace.Services.Students.Application.Queries;
 using MiniSpace.Services.Students.Infrastructure.Mongo.Documents;
@@ -21,7 +21,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<NotificationPreferencesDto> HandleAsync(GetUserNotificationPreferences query, CancellationToken cancellationToken)
         {
-            var userNotificationsDocument = await _repository.GetAsync(x => x.StudentId == query.StudentId);
+            var userNotificationsDocument = await _repository.GetAsync(x => x.UserId == query.StudentId);
             return userNotificationsDocument?.NotificationPreferences.AsDto();
         }
     }

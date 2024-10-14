@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Convey.Types;
+using Paralax.Types;
 
 namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
 {
@@ -24,5 +24,6 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
         public bool IsOnline { get; set; }
         public string DeviceType { get; set; } 
         public DateTime? LastActive { get; set; }
+        public string IpAddress { get; set; } 
     }
 }

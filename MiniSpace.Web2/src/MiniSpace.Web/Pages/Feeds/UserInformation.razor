@@ -1,0 +1,500 @@
+@page "/user-information/{UserId:guid}"
+@using MiniSpace.Web.DTO
+@using MiniSpace.Web.Areas.Students
+@using MiniSpace.Web.Areas.Events
+@inject IStudentsService StudentsService
+@inject IEventsService EventsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@using MudBlazor
+
+<MudPaper Class="profile-paper">
+    <MudGrid>
+        <!-- Profile Section -->
+        <MudItem xs="12">
+            <MudCard Class="profile-card">
+                <MudCardContent>
+                    @if (loadingProfile)
+                    {
+                        <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                    }
+                    else if (profileLoadFailed)
+                    {
+                        <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load user profile. Please try again later.</MudText>
+                    }
+                    else if (student != null)
+                    {
+                        <div class="profile-header">
+                            <MudAvatar Image="@GetProfileImage()" Style="height:150px; width:150px;" Class="profile-avatar" />
+                            <div class="profile-info">
+                                <MudText Typo="Typo.h4" Class="profile-name">@($"{student.FirstName} {student.LastName}")</MudText>
+                                <MudText Typo="Typo.subtitle1" Class="profile-description">@student.Description</MudText>
+                                <MudButton Variant="MudBlazor.Variant.Filled" Color="MudBlazor.Color.Primary" OnClick="@NavigateToProfileSettings">Edit Profile</MudButton>
+                                <MudButton Variant="MudBlazor.Variant.Outlined" Color="MudBlazor.Color.Primary" OnClick="@NavigateToPublicProfile">Public Profile</MudButton>
+                            </div>
+                        </div>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <!-- Education Section -->
+        @if (educationLoadFailed)
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load education details.</MudText>
+            </MudItem>
+        }
+        else if (loadingEducation)
+        {
+            <MudItem xs="12">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            </MudItem>
+        }
+        else if (student?.Education != null && student.Education.Any())
+        {
+            <MudItem xs="12">
+                <MudCard Class="info-card modern-card">
+                    <MudCardHeader>
+                        <MudIcon Icon="@Icons.Material.Filled.School" Class="icon-margin" />
+                        <MudText Typo="Typo.h6">Education</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @foreach (var education in student.Education)
+                        {
+                            <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.School" /> @education.Degree at @education.InstitutionName</MudText>
+                            <MudText Typo="Typo.caption" Class="text-muted">@education.StartDate?.ToString("MMMM yyyy") - @education.EndDate?.ToString("MMMM yyyy")</MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+
+        <!-- Work Experience Section -->
+        @if (workLoadFailed)
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load work experience.</MudText>
+            </MudItem>
+        }
+        else if (loadingWork)
+        {
+            <MudItem xs="12">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            </MudItem>
+        }
+        else if (student?.Work != null && student.Work.Any())
+        {
+            <MudItem xs="12">
+                <MudCard Class="info-card modern-card">
+                    <MudCardHeader>
+                        <MudIcon Icon="@Icons.Material.Filled.Work" Class="icon-margin" />
+                        <MudText Typo="Typo.h6">Work Experience</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @foreach (var work in student.Work)
+                        {
+                            <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.BusinessCenter" /> @work.Position at @work.Company</MudText>
+                            <MudText Typo="Typo.caption" Class="text-muted">@work.StartDate?.ToString("MMMM yyyy") - @work.EndDate?.ToString("MMMM yyyy")</MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+
+        <!-- Languages and Interests Section -->
+        @if (languagesLoadFailed)
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load languages and interests.</MudText>
+            </MudItem>
+        }
+        else if (loadingLanguages)
+        {
+            <MudItem xs="12">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            </MudItem>
+        }
+        else if ((student?.Languages != null && student.Languages.Any()) || (student?.Interests != null && student.Interests.Any()))
+        {
+            <MudItem xs="12">
+                <MudCard Class="info-card modern-card">
+                    <MudCardHeader>
+                        <MudIcon Icon="@Icons.Material.Filled.Interests" Class="icon-margin" />
+                        <MudText Typo="Typo.h6">Skills and Interests</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (student.Languages != null && student.Languages.Any())
+                        {
+                            <MudText Typo="Typo.body2" Class="skill-interest-text">
+                                <MudIcon Icon="@Icons.Material.Filled.Language" /> Languages:
+                                @foreach (var language in student.Languages)
+                                {
+                                    <span class="skill-interest-item" style="font-size:@GetRandomFontSize()px;">@language</span>
+                                }
+                            </MudText>
+                        }
+                        @if (student.Interests != null && student.Interests.Any())
+                        {
+                            <MudText Typo="Typo.body2" Class="skill-interest-text">
+                                <MudIcon Icon="@Icons.Material.Filled.Star" /> Interests:
+                                @foreach (var interest in student.Interests)
+                                {
+                                    <span class="skill-interest-item" style="font-size:@GetRandomFontSize()px;">@interest</span>
+                                }
+                            </MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+
+        <!-- Events Section -->
+        @if (eventsLoadFailed)
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load events.</MudText>
+            </MudItem>
+        }
+        else if (loadingEvents)
+        {
+            <MudItem xs="12">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+            </MudItem>
+        }
+        else if (InterestedInEventsDetails.Any() || SignedUpEventsDetails.Any())
+        {
+            <MudItem xs="12">
+                <MudCard Class="info-card modern-card">
+                    <MudCardHeader>
+                        <MudIcon Icon="@Icons.Material.Filled.Event" Class="icon-margin" />
+                        <MudText Typo="Typo.h6">Events</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (InterestedInEventsDetails.Any())
+                        {
+                            <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventAvailable" /> Interested in:</MudText>
+                            @foreach (var eventDetail in InterestedInEventsDetails)
+                            {
+                                <MudText Typo="Typo.body2">@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                            }
+                        }
+                        @if (SignedUpEventsDetails.Any())
+                        {
+                            <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.EventNote" /> Signed Up for:</MudText>
+                            @foreach (var eventDetail in SignedUpEventsDetails)
+                            {
+                                <MudText Typo="Typo.body2">@eventDetail.Name - @eventDetail.StartDate.ToString("MMMM dd, yyyy")</MudText>
+                            }
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    private StudentDto student;
+    private List<EventDto> InterestedInEventsDetails = new List<EventDto>();
+    private List<EventDto> SignedUpEventsDetails = new List<EventDto>();
+
+    // Individual section loading and error state flags
+    private bool loadingProfile = true;
+    private bool profileLoadFailed = false;
+
+    private bool loadingEducation = true;
+    private bool educationLoadFailed = false;
+
+    private bool loadingWork = true;
+    private bool workLoadFailed = false;
+
+    private bool loadingLanguages = true;
+    private bool languagesLoadFailed = false;
+
+    private bool loadingEvents = true;
+    private bool eventsLoadFailed = false;
+
+    private static readonly Random random = new Random();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfileAsync();
+
+        if (!profileLoadFailed)
+        {
+            await Task.WhenAll(
+                LoadEducationAsync(),
+                LoadWorkExperienceAsync(),
+                LoadLanguagesAndInterestsAsync(),
+                LoadEventsAsync()
+            );
+        }
+        else
+        {
+            loadingEducation = false;
+            loadingWork = false;
+            loadingLanguages = false;
+            loadingEvents = false;
+        }
+    }
+
+    private async Task LoadProfileAsync()
+    {
+        try
+        {
+            student = await StudentsService.GetStudentAsync(UserId);
+        }
+        catch (Exception ex)
+        {
+            profileLoadFailed = true;
+            Snackbar.Add($"Error loading user profile: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            loadingProfile = false;
+        }
+    }
+
+    private async Task LoadEducationAsync()
+    {
+        try
+        {
+        }
+        catch (Exception ex)
+        {
+            educationLoadFailed = true;
+            Snackbar.Add($"Error loading education details: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            loadingEducation = false;
+        }
+    }
+
+    private async Task LoadWorkExperienceAsync()
+    {
+        try
+        {
+        }
+        catch (Exception ex)
+        {
+            workLoadFailed = true;
+            Snackbar.Add($"Error loading work experience: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            loadingWork = false;
+        }
+    }
+
+    private async Task LoadLanguagesAndInterestsAsync()
+    {
+        try
+        {
+        }
+        catch (Exception ex)
+        {
+            languagesLoadFailed = true;
+            Snackbar.Add($"Error loading languages and interests: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            loadingLanguages = false;
+        }
+    }
+
+    private async Task LoadEventsAsync()
+    {
+        try
+        {
+            if (student.InterestedInEvents != null && student.InterestedInEvents.Any())
+            {
+                foreach (var eventId in student.InterestedInEvents)
+                {
+                    try
+                    {
+                        var eventDetail = await EventsService.GetEventAsync(eventId);
+                        if (eventDetail != null)
+                        {
+                            InterestedInEventsDetails.Add(eventDetail);
+                        }
+                        else
+                        {
+                            Snackbar.Add($"Event details not found for event ID: {eventId}", Severity.Warning);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Snackbar.Add($"Error loading event details for event ID {eventId}: {ex.Message}", Severity.Error);
+                    }
+                }
+            }
+
+            if (student.SignedUpEvents != null && student.SignedUpEvents.Any())
+            {
+                foreach (var eventId in student.SignedUpEvents)
+                {
+                    try
+                    {
+                        var eventDetail = await EventsService.GetEventAsync(eventId);
+                        if (eventDetail != null)
+                        {
+                            SignedUpEventsDetails.Add(eventDetail);
+                        }
+                        else
+                        {
+                            Snackbar.Add($"Signed up event details not found for event ID: {eventId}", Severity.Warning);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Snackbar.Add($"Error loading signed up event for event ID {eventId}: {ex.Message}", Severity.Error);
+                    }
+                }
+            }
+
+            if (!InterestedInEventsDetails.Any() && !SignedUpEventsDetails.Any())
+            {
+                eventsLoadFailed = true;
+                Snackbar.Add("No events found for this user.", Severity.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            eventsLoadFailed = true;
+            Snackbar.Add($"Error loading events: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            loadingEvents = false;
+        }
+    }
+
+    private string GetProfileImage()
+    {
+        var defaultImage = "images/default_profile_image.webp";
+        var validExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+
+        if (string.IsNullOrEmpty(student?.ProfileImageUrl) || !validExtensions.Contains(System.IO.Path.GetExtension(student.ProfileImageUrl)?.ToLower()))
+        {
+            return defaultImage;
+        }
+
+        return student.ProfileImageUrl;
+    }
+
+    private void NavigateToProfileSettings()
+    {
+        NavigationManager.NavigateTo("/account");
+    }
+
+    private void NavigateToPublicProfile()
+    {
+        NavigationManager.NavigateTo($"/user-details/{UserId}");
+    }
+
+    
+
+    private int GetRandomFontSize()
+    {
+        return random.Next(14, 24);
+    }
+}
+
+
+
+<style>
+    .profile-paper {
+        margin: 30px auto;
+        max-width: 1200px;
+        background-color: #f7f9fc;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        border: 3px solid #e0e0e0;
+    }
+
+    .profile-info {
+        margin-top: 15px;
+    }
+
+    .profile-name {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+
+    .profile-description {
+        color: #34495e;
+    }
+
+    .info-card {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .modern-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+    }
+
+    .icon-margin {
+        margin-right: 10px;
+        color: #2c3e50;
+    }
+
+    a {
+        color: #1e88e5;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .text-muted {
+        color: #7f8c8d;
+    }
+
+    .skill-interest-text {
+        word-wrap: break-word;
+        white-space: normal; 
+        display: flex; 
+        flex-wrap: wrap; 
+    }
+
+    .skill-interest-item {
+        margin-right: 8px;
+        margin-bottom: 8px; 
+        background-color: #f5f5f5; 
+        padding: 2px 6px; 
+        border-radius: 4px; 
+        line-height: 1.2; /* Ensures good vertical spacing */
+        display: inline-block;
+        max-width: 100%; /* Ensures item stays within container */
+    }
+
+    .info-card {
+        padding: 16px;
+    }
+</style>

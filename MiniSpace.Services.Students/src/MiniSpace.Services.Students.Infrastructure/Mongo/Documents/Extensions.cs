@@ -33,7 +33,10 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.ContactEmail,
                 document.PhoneNumber,
                 document.Country,
-                document.City
+                document.City,
+                document.IsOnline,
+                document.DeviceType,
+                document.LastActive  
             );
 
         public static StudentDocument AsDocument(this Student entity)
@@ -77,6 +80,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 PhoneNumber = entity.PhoneNumber,
                 Country = entity.Country,
                 City = entity.City,
+                IsOnline = entity.IsOnline,
+                DeviceType = entity.DeviceType,
+                LastActive = entity.LastActive
             };
 
         public static StudentDto AsDto(this StudentDocument document)
@@ -120,11 +126,14 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 PhoneNumber = document.PhoneNumber,
                 Country = document.Country,
                 City = document.City,
+                IsOnline = document.IsOnline,
+                DeviceType = document.DeviceType,
+                LastActive = document.LastActive
             };
 
         public static UserNotifications AsEntity(this UserNotificationsDocument document)
             => new UserNotifications(
-                document.StudentId,
+                document.UserId,
                 document.NotificationPreferences
             );
 
@@ -132,7 +141,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             => new UserNotificationsDocument
             {
                 Id = Guid.NewGuid(), // Ensure a unique identifier is set
-                StudentId = entity.StudentId,
+                UserId = entity.UserId,
                 NotificationPreferences = entity.NotificationPreferences
             };
 
@@ -153,7 +162,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
             => new UserNotificationsDocument
             {
                 Id = Guid.NewGuid(),
-                StudentId = dto.StudentId,
+                UserId = dto.StudentId,
                 NotificationPreferences = new NotificationPreferences(
                     dto.AccountChanges,
                     dto.SystemLogin,
@@ -189,7 +198,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 
         public static UserSettings AsEntity(this UserSettingsDocument document)
             => new UserSettings(
-                document.StudentId,
+                document.UserId,
                 new UserAvailableSettings(
                     document.AvailableSettings.CreatedAtVisibility,
                     document.AvailableSettings.DateOfBirthVisibility,
@@ -212,8 +221,8 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
        public static UserSettingsDocument AsDocument(this UserSettings entity)
             => new UserSettingsDocument
             {
-                Id = Guid.NewGuid(), // Ensure a unique identifier is set
-                StudentId = entity.StudentId,
+                Id = Guid.NewGuid(), 
+                UserId = entity.UserId,
                 AvailableSettings = new UserAvailableSettingsDocument
                 {
                     CreatedAtVisibility = entity.AvailableSettings.CreatedAtVisibility,

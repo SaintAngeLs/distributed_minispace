@@ -1,0 +1,242 @@
+@page "/organizations/edit/{OrganizationId:guid}/roles"
+@inject IOrganizationsService OrganizationsService
+@inject IIdentityService IdentityService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@using Astravent.Web.Wasm.DTO.Organizations
+@using Astravent.Web.Wasm.DTO.Enums
+@using MudBlazor
+
+@code {
+    [Parameter] public Guid OrganizationId { get; set; }
+    private OrganizationGalleryUsersDto organizationData;
+    private List<RoleDto> organizationRoles = new();
+    private RoleDto newRole = new RoleDto { Permissions = new Dictionary<Permission, bool>() };
+    private RoleDto editingRole;
+    private bool isLoading = true;
+    private bool isEditing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        try
+        {
+            if (OrganizationId == Guid.Empty)
+            {
+                throw new ArgumentException("Invalid OrganizationId");
+            }
+
+            await IdentityService.InitializeAuthenticationState();
+
+            if (IdentityService.IsAuthenticated)
+            {
+                organizationData = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
+
+                if (organizationData?.OrganizationDetails != null)
+                {
+                    organizationRoles = organizationData.OrganizationDetails.Roles.ToList();
+                }
+
+                foreach (Permission permission in Enum.GetValues(typeof(Permission)))
+                {
+                    newRole.Permissions.Add(permission, false);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Failed to load organization roles.", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void StartEditing(RoleDto role)
+    {
+        isEditing = true;
+        editingRole = new RoleDto
+        {
+            Id = role.Id,
+            Name = role.Name,
+            Description = role.Description,
+            Permissions = new Dictionary<Permission, bool>(role.Permissions)
+        };
+    }
+
+    private void CancelEditing()
+    {
+        isEditing = false;
+        editingRole = null;
+    }
+
+    private async Task SaveRole()
+    {
+        try
+        {
+            if (OrganizationId == Guid.Empty)
+            {
+                throw new ArgumentException("Invalid OrganizationId");
+            }
+
+            if (isEditing)
+            {
+                var command = new UpdateRolePermissionsCommand(
+                    organizationId: OrganizationId,
+                    roleId: editingRole.Id,
+                    roleName: editingRole.Name,
+                    description: editingRole.Description,
+                    permissions: editingRole.Permissions.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value)
+                );
+
+                var response = await OrganizationsService.UpdateRolePermissionsAsync(OrganizationId, editingRole.Id, command);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Role updated successfully.", Severity.Success);
+                    var roleToUpdate = organizationRoles.FirstOrDefault(r => r.Id == editingRole.Id);
+                    if (roleToUpdate != null)
+                    {
+                        roleToUpdate.Name = editingRole.Name;
+                        roleToUpdate.Description = editingRole.Description;
+                        roleToUpdate.Permissions = new Dictionary<Permission, bool>(editingRole.Permissions);
+                    }
+                    CancelEditing();
+                }
+                else
+                {
+                    Snackbar.Add("Failed to update role.", Severity.Error);
+                }
+            }
+            else
+            {
+                var command = new CreateOrganizationRoleCommand(
+                    organizationId: OrganizationId,
+                    roleName: newRole.Name,
+                    description: newRole.Description,
+                    permissions: newRole.Permissions.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value)
+                );
+
+                var response = await OrganizationsService.CreateOrganizationRoleAsync(OrganizationId, command);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Role created successfully.", Severity.Success);
+                    organizationRoles.Add(newRole);
+                    newRole = new RoleDto { Permissions = new Dictionary<Permission, bool>() };
+                    foreach (Permission permission in Enum.GetValues(typeof(Permission)))
+                    {
+                        newRole.Permissions.Add(permission, false);
+                    }
+                }
+                else
+                {
+                    Snackbar.Add("Failed to create role.", Severity.Error);
+                }
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("An error occurred while saving the role.", Severity.Error);
+            Console.Error.WriteLine($"Exception: {ex}");
+        }
+    }
+}
+
+@if (isLoading)
+{
+    <MudProgressCircular Indeterminate="true" Class="my-4" />
+}
+else if (organizationData?.OrganizationDetails == null)
+{
+    <MudText Color="Color.Error">Failed to load organization roles.</MudText>
+}
+else
+{
+    <MudPaper Class="pa-4">
+        <MudText Typo="Typo.h6">Roles</MudText>
+        <MudTable Items="organizationRoles">
+            <HeaderContent>
+                <MudTh>Role Name</MudTh>
+                <MudTh>Description</MudTh>
+                <MudTh>Permissions</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>@context.Description</MudTd>
+                <MudTd>
+                    @foreach (var permission in context.Permissions)
+                    {
+                        <MudChip T="string" Color="@(permission.Value ? Color.Success : Color.Default)" Variant="Variant.Outlined" >@permission.Key.ToString()</MudChip>
+                    }
+                </MudTd>
+                <MudTd>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => StartEditing(context)">
+                        Edit
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+
+        <MudDivider Class="my-4" />
+
+        @if (isEditing)
+        {
+            <MudText Typo="Typo.h6">Edit Role</MudText>
+            <MudTextField @bind-Value="editingRole.Name" Label="Role Name" Variant="Variant.Outlined" Required="true" />
+            <MudTextField @bind-Value="editingRole.Description" Label="Description" Variant="Variant.Outlined" Class="mt-3" />
+
+            <MudText Typo="Typo.subtitle1" Class="mt-4">Permissions</MudText>
+            <MudGrid>
+                @foreach (var permission in editingRole.Permissions.Keys.ToList())
+                {
+                    <MudItem xs="12" sm="6">
+                        <MudCheckBox @bind-Checked="editingRole.Permissions[permission]" Label="@permission.ToString()" />
+                    </MudItem>
+                }
+            </MudGrid>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveRole" Class="mt-4">
+                Save Role
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="CancelEditing" Class="mt-4">
+                Cancel
+            </MudButton>
+        }
+        else
+        {
+            <MudText Typo="Typo.h6">Create New Role</MudText>
+            <MudTextField @bind-Value="newRole.Name" Label="Role Name" Variant="Variant.Outlined" Required="true" />
+            <MudTextField @bind-Value="newRole.Description" Label="Description" Variant="Variant.Outlined" Class="mt-3" />
+
+            <MudText Typo="Typo.subtitle1" Class="mt-4">Permissions</MudText>
+            <MudGrid>
+                @foreach (var permission in newRole.Permissions.Keys.ToList())
+                {
+                    <MudItem xs="12" sm="6">
+                        <MudCheckBox @bind-Checked="newRole.Permissions[permission]" Label="@permission.ToString()" />
+                    </MudItem>
+                }
+            </MudGrid>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveRole" Class="mt-4">
+                Create Role
+            </MudButton>
+        }
+    </MudPaper>
+}

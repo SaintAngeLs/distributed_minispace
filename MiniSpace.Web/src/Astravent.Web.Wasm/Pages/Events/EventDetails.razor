@@ -1,0 +1,201 @@
+@page "/events/event/{eventId:guid}"
+@inject IEventsService EventsService
+@inject IStudentsService StudentsService
+@inject IOrganizationsService OrganizationsService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+@using MudBlazor
+@using Astravent.Web.Wasm.DTO.Events
+@using Astravent.Web.Wasm.DTO.Organizations
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.Areas.Events.CommandsDto
+@using Astravent.Web.Wasm.DTO.Enums
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+    @if (eventDetails != null)
+    {
+        <MudCard Class="mud-card-hover" Style="border-radius: 15px;">
+            <MudCardMedia Image="@GetBannerUrl(eventDetails)" Alt="@eventDetails.Name" Style="height: 300px;" />
+            <MudCardContent>
+                <MudText Typo="Typo.h4" Class="mb-2">@eventDetails.Name</MudText>
+                <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-2">
+                    Organized by: @organizerName
+                </MudText>
+                <MudText Typo="Typo.body1" Class="mb-4">@eventDetails.Description</MudText>
+
+                <MudText Typo="Typo.h6" Class="mb-2">Details</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Category: @eventDetails.Category</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Starts: @eventDetails.StartDate.ToString("MMMM dd, yyyy h:mm tt")</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Ends: @eventDetails.EndDate.ToString("MMMM dd, yyyy h:mm tt")</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Location: @FormatAddress(eventDetails.Location)</MudText>
+
+                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-4">
+                    <MudIcon Icon="@Icons.Material.Rounded.ThumbUp" Style="font-size: 1em;" /> 
+                    Interested: @eventDetails.InterestedStudents
+                </MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    <MudIcon Icon="@Icons.Material.Filled.HowToReg" Style="font-size: 1rem;" /> 
+                    Signed Up: @eventDetails.SignedUpStudents
+                </MudText>
+
+                @if (eventDetails.StudentRating.HasValue)
+                {
+                    <MudRating MaxValue="5" ReadOnly="true" Value="@eventDetails.StudentRating.Value" />
+                }
+            </MudCardContent>
+            <MudCardActions Class="justify-end">
+                @if (eventDetails.IsSignedUp)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true" StartIcon="@Icons.Material.Filled.CheckCircleOutline">
+                        Signed Up
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="() => SignUpToEvent(eventDetails.Id)" StartIcon="@Icons.Material.Filled.HowToReg">
+                        Sign Up
+                    </MudButton>
+                }
+                @if (eventDetails.IsInterested)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true" StartIcon="@Icons.Material.Filled.ThumbUpAlt">
+                        Interested
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="() => ShowInterestInEvent(eventDetails.Id)" StartIcon="@Icons.Material.Rounded.ThumbUp">
+                        Show Interest
+                    </MudButton>
+                }
+            </MudCardActions>
+        </MudCard>
+    }
+    else
+    {
+        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center" Class="mt-6">Loading event details...</MudText>
+    }
+</MudContainer>
+
+<MudSnackbarProvider />
+
+@code {
+    [Parameter] public Guid eventId { get; set; }
+    private EventDto eventDetails;
+    private string organizerName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEventDetails();
+    }
+
+    private async Task LoadEventDetails()
+    {
+        try
+        {
+            eventDetails = await EventsService.GetEventAsync(eventId);
+            if (eventDetails == null)
+            {
+                Snackbar.Add("Event not found.", Severity.Error);
+                NavigationManager.NavigateTo("/events/search");
+                return;
+            }
+
+            organizerName = await GetOrganizerName(eventDetails.Organizer);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+            NavigationManager.NavigateTo("/events/search");
+        }
+    }
+
+    private async Task<string> GetOrganizerName(OrganizerDto organizer)
+    {
+        try
+        {
+            if (organizer.OrganizerType == OrganizerType.User && organizer.UserId.HasValue)
+            {
+                var user = await StudentsService.GetStudentAsync(organizer.UserId.Value);
+                return $"{user.FirstName} {user.LastName}";
+            }
+            else if (organizer.OrganizerType == OrganizerType.Organization && organizer.OrganizationId.HasValue)
+            {
+                var organization = await OrganizationsService.GetOrganizationAsync(organizer.OrganizationId.Value);
+                return organization.Name;
+            }
+            return "Unknown Organizer";
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading organizer details: {ex.Message}", Severity.Error);
+            return "Unknown Organizer";
+        }
+    }
+
+    private string FormatAddress(AddressDto address)
+    {
+        // Format the address as a single string
+        return $"{address.Street}, {address.City}, {address.Country}, {address.ZipCode}";
+    }
+
+    private async Task SignUpToEvent(Guid eventId)
+    {
+        if (!IdentityService.IsAuthenticated)
+        {
+            Snackbar.Add("Please sign in to sign up for events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new SignUpToEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.SignUpToEventAsync(command);
+            Snackbar.Add("Successfully signed up for the event.", Severity.Success);
+            await LoadEventDetails(); // Refresh the event details to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while signing up: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ShowInterestInEvent(Guid eventId)
+    {
+        if (!IdentityService.IsAuthenticated)
+        {
+            Snackbar.Add("Please sign in to show interest in events.", Severity.Warning);
+            NavigationManager.NavigateTo("/signin");
+            return;
+        }
+
+        try
+        {
+            var command = new ShowInterestInEventCommand
+            {
+                EventId = eventId,
+                StudentId = IdentityService.GetCurrentUserId()
+            };
+
+            await EventsService.ShowInterestInEventAsync(command);
+            Snackbar.Add("Your interest in the event has been noted.", Severity.Info);
+            await LoadEventDetails(); // Refresh the event details to reflect the updated status
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred while showing interest: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string GetBannerUrl(EventDto eventDto)
+    {
+        return eventDto != null && !string.IsNullOrWhiteSpace(eventDto.BannerUrl) ? eventDto.BannerUrl : "/images/default_media_file_image.png";
+    }
+}

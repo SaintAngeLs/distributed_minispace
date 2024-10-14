@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Comments.Application.Events;
 using MiniSpace.Services.Comments.Application.Exceptions;
 using MiniSpace.Services.Comments.Application.Services.Clients;
 using MiniSpace.Services.Comments.Core.Entities;
 using MiniSpace.Services.Comments.Core.Repositories;
-using MiniSpace.Services.Comments.Core.Exceptions;
 using MiniSpace.Services.Comments.Application.Services;
 using System.Text.Json;
 
@@ -43,8 +42,9 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
 
         public async Task HandleAsync(AddLike command, CancellationToken cancellationToken = default)
         {
-             var commandJson = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
+            var commandJson = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
             Console.WriteLine($"Received AddLike command: {commandJson}");
+
             var identity = _appContext.Identity;
 
             if (!identity.IsAuthenticated || identity.Id != command.UserId)
@@ -72,7 +72,14 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             comment.Like(command.UserId);
             await UpdateCommentAsync(comment, commentContext);
 
-            await _messageBroker.PublishAsync(new CommentUpdated(command.CommentId));
+            await _messageBroker.PublishAsync(new LikeAdded(
+                commentId: command.CommentId,
+                userId: command.UserId,
+                commentContext: command.CommentContext,
+                likedAt: DateTime.UtcNow,
+                userName: $"{user.FirstName} {user.LastName}",  
+                profileImageUrl: user.ProfileImageUrl 
+            ));
         }
 
         private async Task<Comment> GetCommentAsync(Guid commentId, CommentContext context)

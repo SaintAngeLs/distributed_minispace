@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using Jaeger.Propagation;
 using Microsoft.AspNetCore.Components.Forms;
 using MiniSpace.Services.Reactions.Core.Entities;

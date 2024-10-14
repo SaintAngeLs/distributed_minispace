@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MiniSpace.Services.Email.Email.Commands

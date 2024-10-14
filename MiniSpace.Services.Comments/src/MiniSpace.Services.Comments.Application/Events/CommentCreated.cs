@@ -1,4 +1,4 @@
-using Convey.CQRS.Events;
+using Paralax.CQRS.Events;
 using System;
 
 namespace MiniSpace.Services.Comments.Application.Events
@@ -14,11 +14,14 @@ namespace MiniSpace.Services.Comments.Application.Events
         public DateTime CreatedAt { get; }
         public DateTime LastUpdatedAt { get; }
         public int RepliesCount { get; }
-        public bool IsDeleted { get; }
+        public bool IsDeleted { get; }        
+        public string UserName { get; }
+        public string ProfileImageUrl { get; }
 
         public CommentCreated(Guid commentId, Guid contextId, string commentContext, Guid userId, 
                               Guid parentId, string textContent, DateTime createdAt, 
-                              DateTime lastUpdatedAt, int repliesCount, bool isDeleted)
+                              DateTime lastUpdatedAt, int repliesCount, bool isDeleted, 
+                              string userName, string profileImageUrl)
         {
             CommentId = commentId;
             ContextId = contextId;
@@ -30,6 +33,8 @@ namespace MiniSpace.Services.Comments.Application.Events
             LastUpdatedAt = lastUpdatedAt;
             RepliesCount = repliesCount;
             IsDeleted = isDeleted;
+            UserName = userName;
+            ProfileImageUrl = profileImageUrl;
         }
     }
 }

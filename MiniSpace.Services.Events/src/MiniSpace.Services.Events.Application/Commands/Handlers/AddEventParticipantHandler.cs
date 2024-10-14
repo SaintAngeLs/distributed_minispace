@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             @event.AddParticipant(new Participant(command.StudentId));
             await _eventRepository.UpdateAsync(@event);
             await _messageBroker.PublishAsync(new EventParticipantAdded(@event.Id, 
-                command.StudentId, command.StudentName));
+                command.StudentId));
         }
     }
 }

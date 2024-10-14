@@ -2,8 +2,8 @@
 
 namespace MiniSpace.Services.Events.Core.Entities
 {
-    public class Participant(Guid studentId)
+    public class Participant(Guid userId)
     {
-        public Guid StudentId { get; set; } = studentId;
+        public Guid UserId { get; set; } = userId;
     }
 }

@@ -1,4 +1,4 @@
-﻿using Convey.Types;
+﻿using Paralax.Types;
 using MiniSpace.Services.MediaFiles.Core.Entities;
 using MongoDB.Bson;
 using System;

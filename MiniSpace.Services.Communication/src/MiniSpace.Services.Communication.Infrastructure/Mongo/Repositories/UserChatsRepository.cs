@@ -2,7 +2,7 @@ using MiniSpace.Services.Communication.Core.Entities;
 using MiniSpace.Services.Communication.Core.Repositories;
 using MiniSpace.Services.Communication.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
-using Convey.Persistence.MongoDB;
+using Paralax.Persistence.MongoDB;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

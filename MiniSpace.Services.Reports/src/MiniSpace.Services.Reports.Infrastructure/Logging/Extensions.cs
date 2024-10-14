@@ -1,13 +1,13 @@
-using Convey;
-using Convey.Logging.CQRS;
+using Paralax;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSpace.Services.Reports.Application.Commands;
+using Paralax.CQRS.Logging;
 
 namespace MiniSpace.Services.Reports.Infrastructure.Logging
 {
     internal static class Extensions
     {
-        public static IConveyBuilder AddHandlersLogging(this IConveyBuilder builder)
+        public static IParalaxBuilder AddHandlersLogging(this IParalaxBuilder builder)
         {
             var assembly = typeof(CreateReport).Assembly;
             

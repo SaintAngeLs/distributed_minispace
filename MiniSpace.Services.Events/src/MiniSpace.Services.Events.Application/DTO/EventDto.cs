@@ -60,9 +60,9 @@ namespace MiniSpace.Services.Events.Application.DTO
             UpdatedAt = @event.UpdatedAt; 
             Visibility = @event.Visibility; 
             Settings = new EventSettingsDto(@event.Settings);
-            IsSignedUp = @event.SignedUpParticipants.Any(x => x.StudentId == studentId);
-            IsInterested = @event.InterestedParticipants.Any(x => x.StudentId == studentId);
-            StudentRating = @event.Ratings.FirstOrDefault(x => x.StudentId == studentId)?.Value;
+            IsSignedUp = @event.SignedUpParticipants.Any(x => x.UserId == studentId);
+            IsInterested = @event.InterestedParticipants.Any(x => x.UserId == studentId);
+            StudentRating = @event.Ratings.FirstOrDefault(x => x.UserId == studentId)?.Value;
             FriendsInterestedIn = Enumerable.Empty<ParticipantDto>();
             FriendsSignedUp = Enumerable.Empty<ParticipantDto>();
         }

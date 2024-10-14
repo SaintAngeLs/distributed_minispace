@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using Convey.Logging.CQRS;
 using MiniSpace.Services.Reactions.Application.Commands;
 using MiniSpace.Services.Reactions.Application.Events;
+using Paralax.CQRS.Logging;
 
 namespace MiniSpace.Services.Reactions.Infrastructure.Logging
 {

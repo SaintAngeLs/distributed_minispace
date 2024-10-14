@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Notifications.Core.Entities
         public string Details { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-          public FriendEvent(Guid id, Guid eventId, Guid userId, Guid friendId, string eventType, string details, DateTime createdAt)
+        public FriendEvent(Guid id, Guid eventId, Guid userId, Guid friendId, string eventType, string details, DateTime createdAt)
         {
             Id = id;
             EventId = eventId;

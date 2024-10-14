@@ -1,4 +1,4 @@
-using Convey.MessageBrokers;
+using Paralax.MessageBrokers;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using MiniSpace.Services.Posts.Application;

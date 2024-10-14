@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Logging;
-using Convey.Types;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
+using Paralax;
+using Paralax.Logging;
+using Paralax.Types;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +14,9 @@ using MiniSpace.Services.Email.Application.Commands;
 using MiniSpace.Services.Email.Application.Dto;
 using MiniSpace.Services.Email.Application.Queries;
 using MiniSpace.Services.Email.Infrastructure;
+using Paralax.Types;
+using Paralax.Core;
+
 
 namespace MiniSpace.Services.Email.Api
 {
@@ -22,7 +25,7 @@ namespace MiniSpace.Services.Email.Api
         public static async Task Main(string[] args)
             => await WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(services => services
-                    .AddConvey()
+                    .AddParalax()
                     .AddWebApi()
                     .AddApplication()
                     .AddInfrastructure()

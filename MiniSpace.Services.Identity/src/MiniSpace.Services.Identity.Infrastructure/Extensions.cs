@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Convey;
-using Convey.Auth;
-using Convey.CQRS.Commands;
-using Convey.CQRS.Events;
-using Convey.CQRS.Queries;
-using Convey.Discovery.Consul;
-using Convey.Docs.Swagger;
-using Convey.HTTP;
-using Convey.LoadBalancing.Fabio;
-using Convey.MessageBrokers;
-using Convey.MessageBrokers.CQRS;
-using Convey.MessageBrokers.Outbox;
-using Convey.MessageBrokers.Outbox.Mongo;
-using Convey.MessageBrokers.RabbitMQ;
-using Convey.Metrics.AppMetrics;
-using Convey.Persistence.MongoDB;
-using Convey.Persistence.Redis;
-using Convey.Security;
-using Convey.Tracing.Jaeger;
-using Convey.Tracing.Jaeger.RabbitMQ;
-using Convey.WebApi;
-using Convey.WebApi.CQRS;
-using Convey.WebApi.Swagger;
+using Paralax;
+using Paralax.Auth;
+using Paralax.CQRS.Commands;
+using Paralax.CQRS.Events;
+using Paralax.CQRS.Queries;
+using Paralax.Discovery.Consul;
+using Paralax.Docs.Swagger;
+using Paralax.HTTP;
+using Paralax.LoadBalancing.Fabio;
+using Paralax.MessageBrokers;
+using Paralax.MessageBrokers.CQRS;
+using Paralax.MessageBrokers.Outbox;
+using Paralax.MessageBrokers.Outbox.Mongo;
+using Paralax.MessageBrokers.RabbitMQ;
+using Paralax.Metrics.AppMetrics;
+using Paralax.Persistence.MongoDB;
+using Paralax.Persistence.Redis;
+using Paralax.Security;
+using Paralax.Tracing.Jaeger;
+using Paralax.Tracing.Jaeger.RabbitMQ;
+using Paralax.WebApi;
+using Paralax.CQRS.WebApi;
+using Paralax.WebApi.Swagger;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -47,13 +47,15 @@ using MiniSpace.Services.Identity.Infrastructure.Mongo.Documents;
 using MiniSpace.Services.Identity.Infrastructure.Mongo.Repositories;
 using MiniSpace.Services.Identity.Infrastructure.Services;
 using System.Diagnostics.CodeAnalysis;
+using Paralax.CQRS.WebApi;
+using Paralax;
 
 namespace MiniSpace.Services.Identity.Infrastructure
 {
     [ExcludeFromCodeCoverage]
     public static class Extensions
     {
-        public static IConveyBuilder AddInfrastructure(this IConveyBuilder builder)
+        public static IParalaxBuilder AddInfrastructure(this IParalaxBuilder builder)
         {
             builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
             builder.Services.AddSingleton<IPasswordService, PasswordService>();
@@ -62,6 +64,7 @@ namespace MiniSpace.Services.Identity.Infrastructure
             builder.Services.AddTransient<IRefreshTokenService, RefreshTokenService>();
             builder.Services.AddScoped<ITwoFactorCodeService, TwoFactorCodeService>();
             builder.Services.AddSingleton<ITwoFactorSecretTokenService, TwoFactorSecretTokenService>();
+            builder.Services.AddScoped<IIPAddressService, IPAddressService>();
             builder.Services.AddSingleton<IPasswordHasher<IVerificationTokenService>, PasswordHasher<IVerificationTokenService>>();
             builder.Services.AddSingleton<IVerificationTokenService, VerificationTokenService>();
             builder.Services.AddSingleton<IRng, Rng>();
@@ -75,6 +78,7 @@ namespace MiniSpace.Services.Identity.Infrastructure
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));
 
             return builder
+
                 .AddErrorHandler<ExceptionToResponseMapper>()
                 .AddQueryHandlers()
                 .AddInMemoryQueryDispatcher()
@@ -100,14 +104,15 @@ namespace MiniSpace.Services.Identity.Infrastructure
         {
             app.UseErrorHandler()
                 .UseSwaggerDocs()
-                .UseJaeger()
-                .UseConvey()
+                .UseParalax()
+                // .UseJaegerTracing()
                 .UseAccessTokenValidator()
                 .UseMongo()
                 .UsePublicContracts<ContractAttribute>()
                 .UseMetrics()
                 .UseAuthentication()
                 .UseRabbitMq()
+                .SubscribeCommand<SignIn>()
                 .SubscribeCommand<SignUp>();
 
             return app;

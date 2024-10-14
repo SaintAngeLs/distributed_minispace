@@ -1,4 +1,4 @@
-﻿using Convey.Persistence.MongoDB;
+﻿using Paralax.Persistence.MongoDB;
 using MiniSpace.Services.Reports.Core.Entities;
 using MiniSpace.Services.Reports.Core.Repositories;
 using MiniSpace.Services.Reports.Infrastructure.Mongo.Documents;
@@ -22,9 +22,9 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
             return report?.AsEntity();
         }
         
-        public async Task<IEnumerable<Report>> GetStudentActiveReportsAsync(Guid studentId)
+        public async Task<IEnumerable<Report>> GetUserActiveReportsAsync(Guid userId)
         {
-            var reports = await _repository.FindAsync(r => r.IssuerId == studentId 
+            var reports = await _repository.FindAsync(r => r.IssuerId == userId 
                 && (r.State == ReportState.Submitted || r.State == ReportState.UnderReview));
 
             return reports.Select(r => r.AsEntity());
@@ -54,7 +54,7 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
         
         public async Task<(IEnumerable<Report> reports, int pageNumber,int pageSize, int totalPages, int totalElements)> BrowseReportsAsync(int pageNumber, int pageSize, 
             IEnumerable<ContextType> contextTypes, IEnumerable<ReportState> states, Guid reviewerId,
-            IEnumerable<string> sortBy, string direction)
+            string sortBy, string direction)
         {
             var filterDefinition = Extensions.ToFilterDefinition()
                 .AddContextTypesFilter(contextTypes)
@@ -68,8 +68,8 @@ namespace MiniSpace.Services.Reports.Infrastructure.Mongo.Repositories
                 pagedEvents.totalPages, pagedEvents.totalElements);
         }
         
-        public async Task<(IEnumerable<Report> reports, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseStudentReportsAsync(int pageNumber, int pageSize,
-                Guid studentId, IEnumerable<string> sortBy, string direction)
+        public async Task<(IEnumerable<Report> reports, int pageNumber, int pageSize, int totalPages, int totalElements)> BrowseUserReportsAsync(int pageNumber, int pageSize,
+                Guid studentId, string sortBy, string direction)
         {
             var filterDefinition = Extensions.ToFilterDefinition()
                 .AddStudentIdFilter(studentId);

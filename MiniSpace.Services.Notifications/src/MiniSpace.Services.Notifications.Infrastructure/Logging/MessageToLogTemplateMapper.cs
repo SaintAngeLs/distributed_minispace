@@ -1,7 +1,8 @@
-using Convey.Logging.CQRS;
+using Paralax.CQRS.Logging;
 using Microsoft.Extensions.Logging;
 using MiniSpace.Services.Notifications.Application.Commands;
 using MiniSpace.Services.Notifications.Application.Events.External;
+using MiniSpace.Services.Notifications.Application.Events.External.Friends;
 
 namespace MiniSpace.Services.Notifications.Infrastructure.Logging
 {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
-using Convey.Persistence.MongoDB;
+using Paralax.CQRS.Commands;
+using Paralax.Persistence.MongoDB;
 using Microsoft.Extensions.Hosting;
 using MiniSpace.Services.MediaFiles.Application.Commands;
 using MiniSpace.Services.MediaFiles.Application.Events;

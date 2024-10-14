@@ -1,4 +1,4 @@
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using Microsoft.Extensions.Hosting;
 using MiniSpace.Services.Posts.Application.Commands;
 using MiniSpace.Services.Posts.Application.Events;

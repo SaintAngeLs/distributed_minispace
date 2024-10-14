@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Convey.CQRS.Commands;
+using Paralax.CQRS.Commands;
 using MiniSpace.Services.Events.Application.Events;
 using MiniSpace.Services.Events.Application.Exceptions;
 using MiniSpace.Services.Events.Application.Services;
@@ -42,7 +42,18 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             }
             
             await _eventRepository.DeleteAsync(command.EventId);
-            await _messageBroker.PublishAsync(new EventDeleted(command.EventId));
+            
+            var organizerId = @event.Organizer.OrganizerType == OrganizerType.User 
+                ? @event.Organizer.UserId.GetValueOrDefault()  
+                : @event.Organizer.OrganizationId.GetValueOrDefault(); 
+
+            await _messageBroker.PublishAsync(new EventDeleted(
+                command.EventId,
+                @event.Name,
+                organizerId, 
+                @event.StartDate,
+                @event.EndDate
+            ));
         }
     }
 }
