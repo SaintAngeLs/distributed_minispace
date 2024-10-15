@@ -332,5 +332,24 @@ namespace MiniSpace.Services.Students.Core.Entities
             LastActive = DateTime.UtcNow;
             AddEvent(new StudentLastActiveUpdated(this));
         }
+
+        public void RemoveEvent(Guid eventId)
+        {
+            if (_interestedInEvents.Contains(eventId))
+            {
+                RemoveInterestedInEvent(eventId);
+            }
+
+            if (_signedUpEvents.Contains(eventId))
+            {
+                RemoveSignedUpEvent(eventId);
+            }
+
+            if (!_interestedInEvents.Contains(eventId) && !_signedUpEvents.Contains(eventId))
+            {
+                throw new InvalidOperationException($"Event with ID {eventId} is not associated with this student.");
+            }
+        }
+
     }
 }
