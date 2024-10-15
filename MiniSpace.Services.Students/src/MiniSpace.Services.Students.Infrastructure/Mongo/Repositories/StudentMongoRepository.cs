@@ -56,5 +56,19 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
         {
             return await _repository.Collection.CountDocumentsAsync(filter).ConfigureAwait(false);
         }
+
+        public async Task<List<Student>> GetStudentsByEventIdAsync(Guid eventId)
+        {
+            var filter = Builders<StudentDocument>.Filter.Or(
+                Builders<StudentDocument>.Filter.AnyEq(x => x.InterestedInEvents, eventId),
+                Builders<StudentDocument>.Filter.AnyEq(x => x.SignedUpEvents, eventId)
+            );
+
+            // Find the matching student documents
+            var studentDocuments = await _repository.Collection.Find(filter).ToListAsync();
+
+            // Convert the documents to entities
+            return studentDocuments?.ConvertAll(doc => doc.AsEntity());
+        }
     }    
 }
