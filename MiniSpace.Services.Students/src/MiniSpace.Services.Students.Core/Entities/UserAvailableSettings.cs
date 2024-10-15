@@ -29,6 +29,13 @@ namespace MiniSpace.Services.Students.Core.Entities
         public Visibility OrganizationIAmCreatorVisibility { get; private set; }
         public Visibility OrganizationIFollowVisibility { get; private set; }
 
+        public Visibility IsOnlineVisibility { get; private set; }
+        public Visibility DeviceTypeVisibility { get; private set; }
+        public Visibility LastActiveVisibility { get; private set; }
+        
+        public Visibility CountryVisibility { get; private set; }
+        public Visibility CityVisibility { get; private set; }
+
         public FrontendVersion FrontendVersion { get; private set; }
         public PreferredLanguage PreferredLanguage { get; private set; }
 
@@ -58,6 +65,13 @@ namespace MiniSpace.Services.Students.Core.Entities
             OrganizationIAmCreatorVisibility = Visibility.Everyone;
             OrganizationIFollowVisibility = Visibility.Everyone;
 
+            IsOnlineVisibility = Visibility.Everyone;
+            DeviceTypeVisibility = Visibility.Everyone;
+            LastActiveVisibility = Visibility.Everyone;
+
+            CountryVisibility = Visibility.Everyone;
+            CityVisibility = Visibility.Everyone;
+
             FrontendVersion = FrontendVersion.Default;
             PreferredLanguage = PreferredLanguage.English;
         }
@@ -70,7 +84,8 @@ namespace MiniSpace.Services.Students.Core.Entities
                                      Visibility connectionVisibility, Visibility followersVisibility, Visibility followingVisibility,
                                      Visibility myPostsVisibility, Visibility connectionsPostsVisibility, Visibility myRepostsVisibility,
                                      Visibility repostsOfMyConnectionsVisibility, Visibility organizationIAmCreatorVisibility,
-                                     Visibility organizationIFollowVisibility)
+                                     Visibility organizationIFollowVisibility, Visibility isOnlineVisibility, Visibility deviceTypeVisibility, 
+                                     Visibility lastActiveVisibility, Visibility countryVisibility, Visibility cityVisibility)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -95,6 +110,13 @@ namespace MiniSpace.Services.Students.Core.Entities
             RepostsOfMyConnectionsVisibility = repostsOfMyConnectionsVisibility;
             OrganizationIAmCreatorVisibility = organizationIAmCreatorVisibility;
             OrganizationIFollowVisibility = organizationIFollowVisibility;
+
+            IsOnlineVisibility = isOnlineVisibility;
+            DeviceTypeVisibility = deviceTypeVisibility;
+            LastActiveVisibility = lastActiveVisibility;
+
+            CountryVisibility = countryVisibility;
+            CityVisibility = cityVisibility;
 
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
@@ -108,7 +130,8 @@ namespace MiniSpace.Services.Students.Core.Entities
                                    Visibility connectionVisibility, Visibility followersVisibility, Visibility followingVisibility,
                                    Visibility myPostsVisibility, Visibility connectionsPostsVisibility, Visibility myRepostsVisibility,
                                    Visibility repostsOfMyConnectionsVisibility, Visibility organizationIAmCreatorVisibility,
-                                   Visibility organizationIFollowVisibility)
+                                   Visibility organizationIFollowVisibility, Visibility isOnlineVisibility, Visibility deviceTypeVisibility,
+                                   Visibility lastActiveVisibility, Visibility countryVisibility, Visibility cityVisibility)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -133,6 +156,13 @@ namespace MiniSpace.Services.Students.Core.Entities
             RepostsOfMyConnectionsVisibility = repostsOfMyConnectionsVisibility;
             OrganizationIAmCreatorVisibility = organizationIAmCreatorVisibility;
             OrganizationIFollowVisibility = organizationIFollowVisibility;
+
+            IsOnlineVisibility = isOnlineVisibility;
+            DeviceTypeVisibility = deviceTypeVisibility;
+            LastActiveVisibility = lastActiveVisibility;
+
+            CountryVisibility = countryVisibility;
+            CityVisibility = cityVisibility;
 
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
