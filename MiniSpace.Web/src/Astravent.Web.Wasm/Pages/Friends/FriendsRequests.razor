@@ -228,7 +228,8 @@
     {
         try
         {
-            var result = await FriendsService.GetIncomingFriendRequestsAsync(currentPage, pageSize);
+            // Use the correct paginated method to get incoming friend requests
+            var result = await FriendsService.GetIncomingFriendRequestsPaginatedAsync(currentPage, pageSize);
             if (result != null)
             {
                 incomingRequests.AddRange(result.Items);
@@ -241,6 +242,7 @@
             NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Requests", $"An error occurred: {ex.Message}", 5000);
         }
     }
+
 
     private async Task LoadMoreRequests()
     {

@@ -26,8 +26,8 @@ namespace Astravent.Web.Wasm.DTO
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
         public int? StudentRating { get; set; }
-        public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
-        public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
+        public IEnumerable<ParticipantDto> InterestedParticipants { get; set; }
+        public IEnumerable<ParticipantDto> SignedUpParticipants { get; set; }
         public string BannerUrl { get; set; }
         public EventSettings Settings { get; set; }
         public EventDto() { }

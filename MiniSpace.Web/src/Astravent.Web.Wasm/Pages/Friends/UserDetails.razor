@@ -9,6 +9,7 @@
 @inject ISnackbar Snackbar
 @inject IIdentityService IdentityService
 @inject IStudentsService StudentsService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @using Astravent.Web.Wasm.DTO
 @using MudBlazor
 
@@ -39,9 +40,43 @@
                     <MudItem xs="12" md="10" Class="action-buttons">
                         @if (currentUserId != Guid.Empty && currentUserId != student.Id)
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@AddFriend" Class="action-button">
-                                Add Friend
-                            </MudButton>
+
+                             // Check if the current user and student are friends
+                            if (friends.Any(f => f.StudentDetails.Id == student.Id))
+                            {
+                                // Display the message button if they are already friends
+                                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@SendMessage" Class="action-button">
+                                    Message
+                                </MudButton>
+                                
+                            }
+                            else if (sentFriendRequests.Any(r => r.InviteeId == student.Id))
+                            {
+                                // If a friend request has been sent to the student, show a "Cancel Request" button
+                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@CancelFriendRequest" Class="action-button">
+                                    Cancel Friend Request
+                                </MudButton>
+                            }
+                            else if (incomingFriendRequests.Any(r => r.InviterId == student.Id))
+                            {
+                                // If the current user has received a friend request from the student, show "Accept" and "Decline" buttons
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@AcceptFriendRequest" Class="action-button">
+                                    Accept Friend Request
+                                </MudButton>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="@DeclineFriendRequest" Class="action-button">
+                                    Decline Friend Request
+                                </MudButton>
+                            }
+                            else
+                            {
+                                // Otherwise, show the "Add Friend" button
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@AddFriend" Class="action-button">
+                                    Add Friend
+                                </MudButton>
+                            }
+
+
+
                             <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@BlockUser" Class="action-button">
                                 Message
                             </MudButton>
@@ -526,10 +561,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await IdentityService.InitializeAuthenticationState();
-        if (IdentityService.IsAuthenticated)
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
         {
-            currentUserId = IdentityService.GetCurrentUserId();
+            currentUserId = await IdentityService.GetCurrentUserIdFromJwtAsync();
             student = await FriendsService.GetStudentAsync(Id);
             if (student == null)
             {
@@ -551,20 +588,22 @@
         var pagedEvents = await EventsService.GetUserEventsAsync(Id, 1, 10, "signed_up");
         userEvents = pagedEvents?.Items?.ToList() ?? new List<EventDto>();
 
-        friends = (await FriendsService.GetAllFriendsAsync(Id, 1, 10))?.Items?.ToList() ?? new List<FriendDto>(); 
+        friends = (await FriendsService.GetAllFriendsAsync(Id, 1, 10))?.Items?.ToList() ?? new List<FriendDto>();
         followers = (await FriendsService.GetPagedFollowersAsync(Id, 1, 10))?.Items?.ToList() ?? new List<FriendDto>();
         following = (await FriendsService.GetPagedFollowingAsync(Id, 1, 10))?.Items?.ToList() ?? new List<FriendDto>();
 
-        var sentRequestsPaged = await FriendsService.GetSentFriendRequestsAsync(1, 10);
+        // Corrected calls to the friend requests methods
+        var sentRequestsPaged = await FriendsService.GetSentFriendRequestsPaginatedAsync(1, 10);
         sentFriendRequests = sentRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();
 
-        var incomingRequestsPaged = await FriendsService.GetIncomingFriendRequestsAsync(1, 10);
+        var incomingRequestsPaged = await FriendsService.GetIncomingFriendRequestsPaginatedAsync(1, 10);
         incomingFriendRequests = incomingRequestsPaged?.Items?.ToList() ?? new List<FriendRequestDto>();
 
         await LoadInterestedAndSignedUpEventsAsync();
         await LoadUserOrganizationsAsync();
         await LoadFollowedOrganizationsAsync();
     }
+
 
     private async Task LoadInterestedAndSignedUpEventsAsync()
     {
@@ -662,10 +701,20 @@
     {
         if (student != null)
         {
-            await FriendsService.AddFriendAsync(student.Id);
-            Snackbar.Add("Friend request sent.", Severity.Success);
+            try
+            {
+                await FriendsService.InviteStudent(currentUserId, student.Id);
+                Snackbar.Add("Friend request sent successfully.", Severity.Success);
+                await LoadUserData();
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error sending friend request: {ex.Message}", Severity.Error);
+            }
         }
     }
+
 
     private async Task BlockUser()
     {
@@ -680,5 +729,59 @@
     {
         // Implement the logic to report the user here
         Snackbar.Add("User reported.", Severity.Info);
+    }
+
+    private async Task CancelFriendRequest()
+    {
+        if (student != null)
+        {
+            await FriendsService.WithdrawFriendRequestAsync(new WithdrawFriendRequestDto
+            {
+                InviterId = currentUserId,
+                InviteeId = student.Id
+            });
+            await LoadUserData();
+            StateHasChanged();
+            Snackbar.Add("Friend request cancelled.", Severity.Info);
+        }
+    }
+
+    private async Task AcceptFriendRequest()
+    {
+        var request = incomingFriendRequests.FirstOrDefault(r => r.InviterId == student.Id);
+        if (request != null)
+        {
+            await FriendsService.AcceptFriendRequestAsync(new FriendRequestActionDto
+            {
+                RequestId = request.Id,
+                RequesterId = request.InviterId,
+                FriendId = request.InviteeId
+            });
+            await LoadUserData();
+            StateHasChanged();
+            Snackbar.Add("Friend request accepted.", Severity.Success);
+        }
+    }
+
+    private async Task DeclineFriendRequest()
+    {
+        var request = incomingFriendRequests.FirstOrDefault(r => r.InviterId == student.Id);
+        if (request != null)
+        {
+            await FriendsService.DeclineFriendRequestAsync(new FriendRequestActionDto
+            {
+                RequestId = request.Id,
+                RequesterId = request.InviterId,
+                FriendId = request.InviteeId
+            });
+            await LoadUserData();
+            StateHasChanged();
+            Snackbar.Add("Friend request declined.", Severity.Warning);
+        }
+    }
+
+    private void SendMessage()
+    {
+        Snackbar.Add("Navigate to messaging functionality.", Severity.Info);
     }
 }

@@ -225,7 +225,7 @@
     {
         try
         {
-            var result = await FriendsService.GetSentFriendRequestsAsync(currentPage, pageSize);
+            var result = await FriendsService.GetSentFriendRequestsPaginatedAsync(currentPage, pageSize);
             if (result != null)
             {
                 sentRequests.AddRange(result.Items);
@@ -238,6 +238,7 @@
             NotificationService.Notify(Radzen.NotificationSeverity.Error, "Failed to Load Requests", $"An error occurred: {ex.Message}", 5000);
         }
     }
+
 
     private async Task LoadMoreSentRequests()
     {
@@ -268,8 +269,8 @@
                 InviteeId = inviteeId
             });
 
-            sentRequests = new List<FriendRequestDto>((await FriendsService.GetSentFriendRequestsAsync(currentPage, pageSize)).Items);
-            SearchSentRequests(); // Reapply search filter to update the UI
+            sentRequests = new List<FriendRequestDto>((await FriendsService.GetSentFriendRequestsPaginatedAsync(currentPage, pageSize)).Items);
+            SearchSentRequests(); 
             NotificationService.Notify(Radzen.NotificationSeverity.Warning, "Request Withdrawn", "You have successfully withdrawn the friend request.", 5000);
         }
         else
@@ -277,4 +278,5 @@
             NotificationService.Notify(Radzen.NotificationSeverity.Error, "Error", "Invalid user ID.");
         }
     }
+
 }

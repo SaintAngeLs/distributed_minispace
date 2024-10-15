@@ -117,51 +117,51 @@ namespace Astravent.Web.Wasm.Areas.Friends
             await _httpClient.PostAsync<object, HttpResponse<object>>($"friends/{inviteeId}/invite", payload);
         }
 
-        public async Task<PagedResult<FriendRequestDto>> GetSentFriendRequestsAsync(int page = 1, int pageSize = 10)
+        public async Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync()
         {
             var studentId = _identityService.GetCurrentUserId();
-            if (studentId == Guid.Empty) return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+            if (studentId == Guid.Empty) return Enumerable.Empty<FriendRequestDto>();
 
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
 
-            string url = $"friends/requests/sent/{studentId}?page={page}&pageSize={pageSize}";
-            var studentRequests = await _httpClient.GetAsync<PagedResult<UserRequestsDto>>(url);
+            string url = $"friends/requests/sent/{studentId}";
+            var userRequests = await _httpClient.GetAsync<IEnumerable<UserRequestsDto>>(url);
 
-            if (studentRequests == null || !studentRequests.Items.Any())
+            if (userRequests == null || !userRequests.Any())
             {
-                return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+                return Enumerable.Empty<FriendRequestDto>();
             }
 
-            var friendRequests = studentRequests.Items.SelectMany(request => request.FriendRequests).ToList();
+            var sentRequests = userRequests.SelectMany(request => request.FriendRequests).ToList();
 
-            foreach (var request in friendRequests)
+            foreach (var request in sentRequests)
             {
                 var userDetails = await GetStudentAsync(request.InviteeId);
                 request.InviteeName = $"{userDetails.FirstName} {userDetails.LastName}";
                 request.InviteeEmail = userDetails.Email;
             }
 
-            return new PagedResult<FriendRequestDto>(friendRequests, studentRequests.Page, studentRequests.PageSize, studentRequests.TotalItems);
+            return sentRequests;
         }
 
-        public async Task<PagedResult<FriendRequestDto>> GetIncomingFriendRequestsAsync(int page = 1, int pageSize = 10)
+        public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
         {
             var userId = _identityService.GetCurrentUserId();
-            if (userId == Guid.Empty) return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+            if (userId == Guid.Empty) return Enumerable.Empty<FriendRequestDto>();
 
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
 
-            string url = $"friends/requests/{userId}?page={page}&pageSize={pageSize}";
-            var studentRequests = await _httpClient.GetAsync<PagedResult<UserRequestsDto>>(url);
+            string url = $"friends/requests/incoming/{userId}";
+            var userRequests = await _httpClient.GetAsync<IEnumerable<UserRequestsDto>>(url);
 
-            if (studentRequests == null || !studentRequests.Items.Any())
+            if (userRequests == null || !userRequests.Any())
             {
-                return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+                return Enumerable.Empty<FriendRequestDto>();
             }
 
-            var incomingRequests = studentRequests.Items.SelectMany(request => request.FriendRequests).ToList();
+            var incomingRequests = userRequests.SelectMany(request => request.FriendRequests).ToList();
 
             foreach (var request in incomingRequests)
             {
@@ -170,7 +170,63 @@ namespace Astravent.Web.Wasm.Areas.Friends
                 request.InviterEmail = userDetails.Email;
             }
 
-            return new PagedResult<FriendRequestDto>(incomingRequests, studentRequests.Page, studentRequests.PageSize, studentRequests.TotalItems);
+            return incomingRequests;
+        }
+
+        public async Task<PagedResult<FriendRequestDto>> GetSentFriendRequestsPaginatedAsync(int page = 1, int pageSize = 10)
+        {
+            var userId = _identityService.GetCurrentUserId();
+            if (userId == Guid.Empty) return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            string url = $"friends/requests/sent/{userId}/paginated?page={page}&pageSize={pageSize}";
+            var sentRequestsResponse = await _httpClient.GetAsync<PagedResult<UserRequestsDto>>(url);
+
+            if (sentRequestsResponse == null || !sentRequestsResponse.Items.Any())
+            {
+                return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+            }
+
+            var sentRequests = sentRequestsResponse.Items.SelectMany(request => request.FriendRequests).ToList();
+
+            foreach (var request in sentRequests)
+            {
+                var userDetails = await GetStudentAsync(request.InviteeId);
+                request.InviteeName = $"{userDetails.FirstName} {userDetails.LastName}";
+                request.InviteeEmail = userDetails.Email;
+            }
+
+            return new PagedResult<FriendRequestDto>(sentRequests, page, pageSize, sentRequestsResponse.TotalItems);
+        }
+
+        public async Task<PagedResult<FriendRequestDto>> GetIncomingFriendRequestsPaginatedAsync(int page = 1, int pageSize = 10)
+        {
+            var userId = _identityService.GetCurrentUserId();
+            if (userId == Guid.Empty) return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+
+            string accessToken = await _identityService.GetAccessTokenAsync();
+            _httpClient.SetAccessToken(accessToken);
+
+            string url = $"friends/requests/{userId}/paginated?page={page}&pageSize={pageSize}";
+            var incomingRequestsResponse = await _httpClient.GetAsync<PagedResult<UserRequestsDto>>(url);
+
+            if (incomingRequestsResponse == null || !incomingRequestsResponse.Items.Any())
+            {
+                return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
+            }
+
+            var incomingRequests = incomingRequestsResponse.Items.SelectMany(request => request.FriendRequests).ToList();
+
+            foreach (var request in incomingRequests)
+            {
+                var userDetails = await GetStudentAsync(request.InviterId);
+                request.InviterName = $"{userDetails.FirstName} {userDetails.LastName}";
+                request.InviterEmail = userDetails.Email;
+            }
+
+            return new PagedResult<FriendRequestDto>(incomingRequests, page, pageSize, incomingRequestsResponse.TotalItems);
         }
 
         public async Task<PagedResult<FriendDto>> GetPagedFollowersAsync(Guid userId, int page = 1, int pageSize = 10)

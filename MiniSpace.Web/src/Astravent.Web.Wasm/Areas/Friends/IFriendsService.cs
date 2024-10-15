@@ -37,9 +37,13 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
         Task InviteStudent(Guid inviterId, Guid inviteeId);
 
-        Task<PagedResult<FriendRequestDto>> GetSentFriendRequestsAsync(int page = 1, int pageSize = 10);
+        Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync();
 
-        Task<PagedResult<FriendRequestDto>> GetIncomingFriendRequestsAsync(int page = 1, int pageSize = 10);
+        Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync();
+
+        Task<PagedResult<FriendRequestDto>> GetSentFriendRequestsPaginatedAsync(int page = 1, int pageSize = 10);
+        
+        Task<PagedResult<FriendRequestDto>> GetIncomingFriendRequestsPaginatedAsync(int page = 1, int pageSize = 10);
 
         Task AcceptFriendRequestAsync(FriendRequestActionDto requestAction);
 

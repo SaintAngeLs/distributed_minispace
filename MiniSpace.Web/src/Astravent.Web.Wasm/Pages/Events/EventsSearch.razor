@@ -72,7 +72,7 @@
     private DateTime? endDate;
     private readonly int[] pageSizeOptions = { 6, 9, 12 };
     private bool _isAuthenticated;
-    private bool isLoading = false;  // Loading indicator flag
+    private bool isLoading = false;  
 
     protected override async Task OnInitializedAsync()
     {
@@ -183,6 +183,15 @@
 
             await EventsService.SignUpToEventAsync(command);
             Snackbar.Add("Successfully signed up for the event.", Severity.Success);
+
+            var eventToUpdate = events.FirstOrDefault(e => e.Id == eventId);
+            if (eventToUpdate != null)
+            {
+                eventToUpdate.IsSignedUp = true;
+            }
+
+            StateHasChanged();
+
             await LoadEvents(); 
         }
         catch (Exception ex)
@@ -210,6 +219,15 @@
 
             await EventsService.ShowInterestInEventAsync(command);
             Snackbar.Add("Your interest in the event has been noted.", Severity.Info);
+
+            var eventToUpdate = events.FirstOrDefault(e => e.Id == eventId);
+            if (eventToUpdate != null)
+            {
+                eventToUpdate.IsInterested = true;
+            }
+
+            StateHasChanged();
+
             await LoadEvents(); // Refresh events to reflect the updated status
         }
         catch (Exception ex)
