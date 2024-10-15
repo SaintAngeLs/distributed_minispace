@@ -889,6 +889,22 @@ modules:
             - userId: {userId}
           auth: true
 
+        - upstream: /requests/{userId}/paginated
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/requests/{userId}/paginated
+          bind:
+            - userId: {userId}
+          auth: true
+
+        - upstream: /requests/sent/{userId}/paginated
+          method: GET
+          use: downstream
+          downstream: friends-service/friends/requests/sent/{userId}/paginated
+          bind:
+            - userId: {userId}
+          auth: true
+
         - upstream: /requests/{userId}/accept
           method: POST
           use: downstream
