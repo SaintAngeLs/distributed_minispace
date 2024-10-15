@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace MiniSpace.Services.Friends.Application.Queries
 {
-    public class GetIncomingFriendRequests : IQuery<PagedResponse<UserRequestsDto>>
+    public class GetIncomingFriendRequests : IQuery<IEnumerable<UserRequestsDto>>
     {
         public Guid UserId { get; set; }
         public int Page { get; set; }

@@ -5,13 +5,13 @@ using System;
 
 namespace MiniSpace.Services.Friends.Application.Queries
 {
-    public class GetSentFriendRequests : IQuery<IEnumerable<UserRequestsDto>>
+    public class GetSentFriendRequestsPaginated : IQuery<PagedResponse<UserRequestsDto>>
     {
         public Guid UserId { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
 
-        public GetSentFriendRequests(Guid userId, int page = 1, int pageSize = 10)
+        public GetSentFriendRequestsPaginated(Guid userId, int page = 1, int pageSize = 10)
         {
             UserId = userId;
             Page = page;
