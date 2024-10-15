@@ -74,7 +74,13 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 Enum.Parse<Visibility>(command.MyRepostsVisibility, true),
                 Enum.Parse<Visibility>(command.RepostsOfMyConnectionsVisibility, true),
                 Enum.Parse<Visibility>(command.OrganizationIAmCreatorVisibility, true),
-                Enum.Parse<Visibility>(command.OrganizationIFollowVisibility, true)
+                Enum.Parse<Visibility>(command.OrganizationIFollowVisibility, true),
+                
+                Enum.Parse<Visibility>(command.IsOnlineVisibility, true),
+                Enum.Parse<Visibility>(command.DeviceTypeVisibility, true),
+                Enum.Parse<Visibility>(command.LastActiveVisibility, true),
+                Enum.Parse<Visibility>(command.CountryVisibility, true),
+                Enum.Parse<Visibility>(command.CityVisibility, true)
             );
 
             userSettings.UpdateSettings(availableSettings);
