@@ -30,8 +30,8 @@ namespace MiniSpace.Services.Events.Application.DTO
         public bool IsSignedUp { get; set; }
         public bool IsInterested { get; set; }
         public int? StudentRating { get; set; }
-        public IEnumerable<ParticipantDto> FriendsInterestedIn { get; set; }
-        public IEnumerable<ParticipantDto> FriendsSignedUp { get; set; }
+        public IEnumerable<ParticipantDto> InterestedParticipants { get; set; }
+        public IEnumerable<ParticipantDto> SignedUpParticipants { get; set; }
         public Visibility Visibility { get; set; } 
         public EventSettingsDto Settings { get; set; } 
 
@@ -63,8 +63,8 @@ namespace MiniSpace.Services.Events.Application.DTO
             IsSignedUp = @event.SignedUpParticipants.Any(x => x.UserId == studentId);
             IsInterested = @event.InterestedParticipants.Any(x => x.UserId == studentId);
             StudentRating = @event.Ratings.FirstOrDefault(x => x.UserId == studentId)?.Value;
-            FriendsInterestedIn = Enumerable.Empty<ParticipantDto>();
-            FriendsSignedUp = Enumerable.Empty<ParticipantDto>();
+            InterestedParticipants = Enumerable.Empty<ParticipantDto>();
+            SignedUpParticipants = Enumerable.Empty<ParticipantDto>();
         }
 
         
