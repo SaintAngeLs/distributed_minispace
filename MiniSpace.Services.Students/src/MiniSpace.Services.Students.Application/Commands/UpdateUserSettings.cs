@@ -30,6 +30,13 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string OrganizationIAmCreatorVisibility { get; set; }
         public string OrganizationIFollowVisibility { get; set; }
 
+        public string IsOnlineVisibility { get; set; }
+        public string DeviceTypeVisibility { get; set; }
+        public string LastActiveVisibility { get; set; }
+
+        public string CountryVisibility { get; set; }
+        public string CityVisibility { get; set; }
+
         public string PreferredLanguage { get; set; }
         public string FrontendVersion { get; set; }
 
@@ -44,7 +51,9 @@ namespace MiniSpace.Services.Students.Application.Commands
                                   string followingVisibility, string myPostsVisibility, 
                                   string connectionsPostsVisibility, string myRepostsVisibility, 
                                   string repostsOfMyConnectionsVisibility, 
-                                  string organizationIAmCreatorVisibility, string organizationIFollowVisibility)
+                                  string organizationIAmCreatorVisibility, string organizationIFollowVisibility,
+                                  string isOnlineVisibility, string deviceTypeVisibility, string lastActiveVisibility,
+                                  string countryVisibility, string cityVisibility) 
         {
             StudentId = studentId;
             CreatedAtVisibility = createdAtVisibility;
@@ -70,6 +79,13 @@ namespace MiniSpace.Services.Students.Application.Commands
             RepostsOfMyConnectionsVisibility = repostsOfMyConnectionsVisibility;
             OrganizationIAmCreatorVisibility = organizationIAmCreatorVisibility;
             OrganizationIFollowVisibility = organizationIFollowVisibility;
+
+            IsOnlineVisibility = isOnlineVisibility;
+            DeviceTypeVisibility = deviceTypeVisibility;
+            LastActiveVisibility = lastActiveVisibility;
+
+            CountryVisibility = countryVisibility;
+            CityVisibility = cityVisibility;
 
             PreferredLanguage = preferredLanguage;
             FrontendVersion = frontendVersion;
