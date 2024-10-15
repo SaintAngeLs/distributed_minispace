@@ -35,15 +35,21 @@
             <MudGrid>
                 @foreach (var student in students)
                 {
-                    <MudItem xs="12">
-                        <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
-                            <MudGrid>
-                                <MudItem xs="1" md="1" Class="d-flex justify-content-center align-items-center">
-                                    <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Alt="Student Image" Size="Size.Large" Class="border border-primary" />
-                                </MudItem>
-                                <MudItem xs="8" md="8">
-                                    <MudText Typo="Typo.h6" Class="mb-0" Style="font-weight: bold;">@($"{student.FirstName} {student.LastName}")</MudText>
-                                      @if (student.LastWorkExperience != null)
+                    if (visibilityChecker.ShouldShowProfile(student))
+                    {
+                        <MudItem xs="12">
+                            <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
+                                <MudGrid>
+                                    <MudItem xs="1" md="1" Class="d-flex justify-content-center align-items-center">
+                                        <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Alt="Student Image" Size="Size.Large" Class="border border-primary" />
+                                    </MudItem>
+                                    <MudItem xs="8" md="8">
+                                        @if (visibilityChecker.ShouldShowName(student))
+                                        {
+                                            <MudText Typo="Typo.h6" Class="mb-0" Style="font-weight: bold;">@($"{student.FirstName} {student.LastName}")</MudText>
+                                        }
+
+                                        @if (visibilityChecker.ShouldShowWorkPosition(student) && student.LastWorkExperience != null)
                                         {
                                             <MudText Typo="Typo.subtitle2">
                                                 @($"{student.LastWorkExperience.Position} in {student.LastWorkExperience.Company}")
@@ -53,49 +59,51 @@
                                         {
                                             <MudText Typo="Typo.subtitle2"> </MudText>
                                         }
-                                </MudItem>
-                                <MudItem xs="2" md="2">
-                                    <MudButtonGroup>
-                                        @if (student.Id != currentUserId && !(sentRequests?.Any(r => r.InviteeId == student.Id) ?? false) && !(allFriends?.Any(f => f.FriendId == student.Id) ?? false))
-                                        {
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(e => ConnectWithStudent(student.Id, e))">
-                                                <MudIcon Icon="@Icons.Material.Filled.PersonAdd" />
-                                                <span class="ml-2">Connect</span>
-                                            </MudButton>
-                                        }
-                                        else if (allFriends?.Any(f => f.FriendId == student.Id) == true)
-                                        {
-                                            <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Success">
-                                                <MudIcon Icon="@Icons.Material.Filled.Check" />
-                                                <span class="ml-2">Connected</span>
-                                            </MudButton>
-                                        }
-                                        else if (sentRequests?.Any(r => r.InviteeId == student.Id) == true)
-                                        {
-                                            <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Warning">
-                                                <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty" />
-                                                <span class="ml-2">Pending</span>
-                                            </MudButton>
-                                        }
-                                        else if (incomingRequests?.Any(r => r.InviterId == student.Id) == true)
-                                        {
-                                            <MudButton Variant="Variant.Outlined" Color="Color.Info">
-                                                <MudIcon Icon="@Icons.Material.Filled.QuestionAnswer" />
-                                                <span class="ml-2">Respond</span>
-                                            </MudButton>
-                                        }
-                                        else if (student.Id == currentUserId)
-                                        {
-                                            <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Secondary">
-                                                <MudIcon Icon="@Icons.Material.Filled.Person" />
-                                                <span class="ml-2">It's You</span>
-                                            </MudButton>
-                                        }
-                                    </MudButtonGroup>
-                                </MudItem>
-                            </MudGrid>
-                        </MudPaper>
-                    </MudItem>
+                                    </MudItem>
+
+                                    <MudItem xs="2" md="2">
+                                        <MudButtonGroup>
+                                            @if (student.Id != currentUserId && !(sentRequests?.Any(r => r.InviteeId == student.Id) ?? false) && !(allFriends?.Any(f => f.FriendId == student.Id) ?? false))
+                                            {
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(e => ConnectWithStudent(student.Id, e))">
+                                                    <MudIcon Icon="@Icons.Material.Filled.PersonAdd" />
+                                                    <span class="ml-2">Connect</span>
+                                                </MudButton>
+                                            }
+                                            else if (allFriends?.Any(f => f.FriendId == student.Id) == true)
+                                            {
+                                                <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Success">
+                                                    <MudIcon Icon="@Icons.Material.Filled.Check" />
+                                                    <span class="ml-2">Connected</span>
+                                                </MudButton>
+                                            }
+                                            else if (sentRequests?.Any(r => r.InviteeId == student.Id) == true)
+                                            {
+                                                <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Warning">
+                                                    <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty" />
+                                                    <span class="ml-2">Pending</span>
+                                                </MudButton>
+                                            }
+                                            else if (incomingRequests?.Any(r => r.InviterId == student.Id) == true)
+                                            {
+                                                <MudButton Variant="Variant.Outlined" Color="Color.Info">
+                                                    <MudIcon Icon="@Icons.Material.Filled.QuestionAnswer" />
+                                                    <span class="ml-2">Respond</span>
+                                                </MudButton>
+                                            }
+                                            else if (student.Id == currentUserId)
+                                            {
+                                                <MudButton Disabled="true" Variant="Variant.Text" Color="Color.Secondary">
+                                                    <MudIcon Icon="@Icons.Material.Filled.Person" />
+                                                    <span class="ml-2">It's You</span>
+                                                </MudButton>
+                                            }
+                                        </MudButtonGroup>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudPaper>
+                        </MudItem>
+                    }
                 }
             </MudGrid>
         }
@@ -225,6 +233,7 @@
     private int pageSize = 10;
     private int totalStudents;
     private Guid currentUserId;
+    private VisibilityChecker visibilityChecker;
 
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
@@ -244,6 +253,8 @@
                 currentUserId = await IdentityService.GetCurrentUserIdFromJwtAsync();
                 await LoadFriendRequests();
                 await LoadStudents();
+
+                visibilityChecker = new VisibilityChecker(currentUserId, allFriends);
             }
             catch (Exception ex)
             {
