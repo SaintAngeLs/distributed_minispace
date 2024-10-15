@@ -35,8 +35,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 IsSignedUp = document.SignedUpStudents.Any(x => x.UserId == studentId),
                 IsInterested = document.InterestedStudents.Any(x => x.UserId == studentId),
                 StudentRating = document.Ratings.FirstOrDefault(x => x.UserId == studentId)?.Value,
-                FriendsInterestedIn = Enumerable.Empty<ParticipantDto>(),
-                FriendsSignedUp = Enumerable.Empty<ParticipantDto>()
+                InterestedParticipants = Enumerable.Empty<ParticipantDto>(),
+                SignedUpParticipants = Enumerable.Empty<ParticipantDto>()
             };
 
         public static EventDto AsDto(this Event @event, Guid studentId)
@@ -65,8 +65,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 IsSignedUp = @event.SignedUpParticipants.Any(x => x.UserId == studentId),
                 IsInterested = @event.InterestedParticipants.Any(x => x.UserId == studentId),
                 StudentRating = @event.Ratings.FirstOrDefault(x => x.UserId == studentId)?.Value,
-                FriendsInterestedIn = Enumerable.Empty<ParticipantDto>(), 
-                FriendsSignedUp = Enumerable.Empty<ParticipantDto>()  
+                InterestedParticipants = Enumerable.Empty<ParticipantDto>(), 
+                SignedUpParticipants = Enumerable.Empty<ParticipantDto>()  
             };
         }
 
@@ -102,10 +102,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public static EventDto AsDtoWithFriends(this EventDocument document, Guid studentId, IEnumerable<FriendDto> friends)
         {
             var eventDto = document.AsDto(studentId);
-            eventDto.FriendsInterestedIn = document.InterestedStudents
+            eventDto.InterestedParticipants = document.InterestedStudents
                 .Where(x => friends.Any(f => f.FriendId == x.UserId))
                 .Select(p => p.AsDto());
-            eventDto.FriendsSignedUp = document.SignedUpStudents
+            eventDto.SignedUpParticipants = document.SignedUpStudents
                 .Where(x => friends.Any(f => f.FriendId == x.UserId))
                 .Select(p => p.AsDto());
             return eventDto;
