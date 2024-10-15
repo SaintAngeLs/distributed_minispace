@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, PagedResponse<UserRequestsDto>>
+    public class GetSentFriendRequestsHandler : IQueryHandler<GetSentFriendRequests, IEnumerable<UserRequestsDto>>
     {
         private readonly IMongoRepository<UserRequestsDocument, Guid> _userRequestsRepository;
 
@@ -22,19 +22,17 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
             _userRequestsRepository = userRequestsRepository;
         }
 
-        public async Task<PagedResponse<UserRequestsDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserRequestsDto>> HandleAsync(GetSentFriendRequests query, CancellationToken cancellationToken)
         {
-            // Fetch user requests from the database
             var userRequests = await _userRequestsRepository.Collection
                 .Find(doc => doc.UserId == query.UserId)
                 .ToListAsync(cancellationToken);
 
             if (userRequests == null || !userRequests.Any())
             {
-                return new PagedResponse<UserRequestsDto>(Enumerable.Empty<UserRequestsDto>(), query.Page, query.PageSize, 0);
+                return Enumerable.Empty<UserRequestsDto>();
             }
 
-            // Filter sent friend requests and map them to DTOs
             var sentRequests = userRequests
                 .Select(doc => new UserRequestsDto
                 {
@@ -55,15 +53,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
                 .Where(dto => dto.FriendRequests.Any())
                 .ToList();
 
-            // Implement pagination
-            var totalItems = sentRequests.Count;
-            var paginatedRequests = sentRequests
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .ToList();
-
-            // Return the paginated response
-            return new PagedResponse<UserRequestsDto>(paginatedRequests, query.Page, query.PageSize, totalItems);
+            return sentRequests;
         }
     }
 }

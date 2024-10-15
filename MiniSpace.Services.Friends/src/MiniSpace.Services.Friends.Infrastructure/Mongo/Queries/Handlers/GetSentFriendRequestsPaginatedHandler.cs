@@ -6,42 +6,45 @@ using MiniSpace.Services.Friends.Core.Wrappers;
 using MiniSpace.Services.Friends.Infrastructure.Mongo.Documents;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetIncomingFriendRequestsHandler : IQueryHandler<GetIncomingFriendRequests, IEnumerable<UserRequestsDto>>
+    public class GetSentFriendRequestsPaginatedHandler : IQueryHandler<GetSentFriendRequestsPaginated, PagedResponse<UserRequestsDto>>
     {
         private readonly IMongoRepository<UserRequestsDocument, Guid> _userRequestsRepository;
 
-        public GetIncomingFriendRequestsHandler(IMongoRepository<UserRequestsDocument, Guid> userRequestsRepository)
+        public GetSentFriendRequestsPaginatedHandler(IMongoRepository<UserRequestsDocument, Guid> userRequestsRepository)
         {
             _userRequestsRepository = userRequestsRepository;
         }
 
-        public async Task<IEnumerable<UserRequestsDto>> HandleAsync(GetIncomingFriendRequests query, CancellationToken cancellationToken)
+        public async Task<PagedResponse<UserRequestsDto>> HandleAsync(GetSentFriendRequestsPaginated query, CancellationToken cancellationToken)
         {
             var filter = Builders<UserRequestsDocument>.Filter.Eq(doc => doc.UserId, query.UserId);
 
+            var totalItems = (int)await _userRequestsRepository.Collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+
             var userRequests = await _userRequestsRepository.Collection
                 .Find(filter)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Limit(query.PageSize)
                 .ToListAsync(cancellationToken);
 
-            if (userRequests == null || !userRequests.Any())
+            if (!userRequests.Any())
             {
-                return Enumerable.Empty<UserRequestsDto>();
+                return new PagedResponse<UserRequestsDto>(Enumerable.Empty<UserRequestsDto>(), query.Page, query.PageSize, 0);
             }
 
-            var incomingRequests = userRequests
+            var sentRequests = userRequests
                 .Select(doc => new UserRequestsDto
                 {
                     Id = doc.Id,
                     UserId = doc.UserId,
                     FriendRequests = doc.FriendRequests
-                        .Where(request => request.InviteeId == query.UserId && request.State != Core.Entities.FriendState.Accepted)
+                        .Where(request => request.InviterId == query.UserId && request.State == Core.Entities.FriendState.Requested)
                         .Select(request => new FriendRequestDto
                         {
                             Id = request.Id,
@@ -55,7 +58,7 @@ namespace MiniSpace.Services.Friends.Infrastructure.Mongo.Queries.Handlers
                 .Where(dto => dto.FriendRequests.Any())
                 .ToList();
 
-            return incomingRequests;
+            return new PagedResponse<UserRequestsDto>(sentRequests, query.Page, query.PageSize, totalItems);
         }
     }
 }
