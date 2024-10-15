@@ -194,6 +194,11 @@ namespace Astravent.Web.Wasm.Areas.Students
                 RepostsOfMyConnectionsVisibility = availableSettings.RepostsOfMyConnectionsVisibility.ToString(),
                 OrganizationIAmCreatorVisibility = availableSettings.OrganizationIAmCreatorVisibility.ToString(),
                 OrganizationIFollowVisibility = availableSettings.OrganizationIFollowVisibility.ToString(),
+                IsOnlineVisibility = availableSettings.IsOnlineVisibility.ToString(),
+                DeviceTypeVisibility = availableSettings.DeviceTypeVisibility.ToString(),
+                LastActiveVisibility = availableSettings.LastActiveVisibility.ToString(),
+                CountryVisibility = availableSettings.CountryVisibility.ToString(),
+                CityVisibility = availableSettings.CityVisibility.ToString(),
                 PreferredLanguage = availableSettings.PreferredLanguage.ToString(),
                 FrontendVersion = availableSettings.FrontendVersion.ToString()
             };

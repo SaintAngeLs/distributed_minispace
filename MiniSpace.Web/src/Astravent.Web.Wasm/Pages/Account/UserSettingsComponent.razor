@@ -51,6 +51,24 @@ else
                         }
                     </MudSelect>
                 </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.CountryVisibility" Label="Country Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.CityVisibility" Label="City Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
             </MudGrid>
         </MudExpansionPanel>
 
@@ -165,11 +183,11 @@ else
             </MudGrid>
         </MudExpansionPanel>
 
-        <!-- Organizations Settings -->
-        <MudExpansionPanel IsInitiallyExpanded="false" Text="Organization Settings">
+        <!-- Online Status and Device Settings -->
+        <MudExpansionPanel IsInitiallyExpanded="false" Text="Online Status and Device Settings">
             <MudGrid>
                 <MudItem xs="12" sm="6">
-                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.OrganizationIAmCreatorVisibility" Label="Organizations I Am Creator Of Visibility"
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.IsOnlineVisibility" Label="Is Online Visibility"
                         Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
                         @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                         {
@@ -178,7 +196,16 @@ else
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" sm="6">
-                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.OrganizationIFollowVisibility" Label="Organizations I Follow Visibility"
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.DeviceTypeVisibility" Label="Device Type Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.LastActiveVisibility" Label="Last Active Visibility"
                         Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
                         @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                         {
@@ -215,10 +242,7 @@ else
         </MudExpansionPanel>
     </MudExpansionPanels>
 
-    @* <div style="height: 200px; display: flex; justify-content: flex-end; align-items: flex-end; padding: 10px;"> *@
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveUserSettingsAsync">Save Settings</MudButton>
-    @* </div> *@
-
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@SaveUserSettingsAsync">Save Settings</MudButton>
 }
 
 @code {
