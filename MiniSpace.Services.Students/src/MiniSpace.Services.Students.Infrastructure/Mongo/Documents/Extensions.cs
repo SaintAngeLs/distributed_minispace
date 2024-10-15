@@ -246,7 +246,13 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     document.AvailableSettings.MyRepostsVisibility,
                     document.AvailableSettings.RepostsOfMyConnectionsVisibility,
                     document.AvailableSettings.OrganizationIAmCreatorVisibility,
-                    document.AvailableSettings.OrganizationIFollowVisibility
+                    document.AvailableSettings.OrganizationIFollowVisibility,
+                    
+                    document.AvailableSettings.IsOnlineVisibility,
+                    document.AvailableSettings.DeviceTypeVisibility,
+                    document.AvailableSettings.LastActiveVisibility,
+                    document.AvailableSettings.CountryVisibility,
+                    document.AvailableSettings.CityVisibility
                 )
             );
 
@@ -280,6 +286,13 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     RepostsOfMyConnectionsVisibility = entity.AvailableSettings.RepostsOfMyConnectionsVisibility,
                     OrganizationIAmCreatorVisibility = entity.AvailableSettings.OrganizationIAmCreatorVisibility,
                     OrganizationIFollowVisibility = entity.AvailableSettings.OrganizationIFollowVisibility,
+
+                    IsOnlineVisibility = entity.AvailableSettings.IsOnlineVisibility,
+                    DeviceTypeVisibility = entity.AvailableSettings.DeviceTypeVisibility,
+                    LastActiveVisibility = entity.AvailableSettings.LastActiveVisibility,
+                    CountryVisibility = entity.AvailableSettings.CountryVisibility,
+                    CityVisibility = entity.AvailableSettings.CityVisibility,
+
 
                     FrontendVersion = entity.AvailableSettings.FrontendVersion,
                     PreferredLanguage = entity.AvailableSettings.PreferredLanguage
