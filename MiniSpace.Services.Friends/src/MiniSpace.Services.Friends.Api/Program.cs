@@ -16,7 +16,6 @@ using MiniSpace.Services.Friends.Application;
 using MiniSpace.Services.Friends.Core.Wrappers;
 using MiniSpace.Services.Friends.Application.Commands;
 using MiniSpace.Services.Friends.Application.Dto;
-// using MiniSpace.Services.Friends.Application.Events;
 using MiniSpace.Services.Friends.Application.Queries;
 using MiniSpace.Services.Friends.Infrastructure;
 using Paralax.Types;
@@ -44,9 +43,15 @@ namespace MiniSpace.Services.Friends.Api
                         .Post<InviteFriend>("friends/{userId}/invite", afterDispatch: (cmd, ctx) => ctx.Response.Created($"friends/{ctx.Request.RouteValues["userId"]}/invite"))
 
                         .Get<GetFriends, PagedResponse<UserFriendsDto>>("friends/{userId}")
-                        .Get<GetIncomingFriendRequests, PagedResponse<UserRequestsDto>>("friends/requests/{userId}")
+                        .Get<GetIncomingFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/{userId}")
+                        .Get<GetSentFriendRequests, IEnumerable<UserRequestsDto>>("friends/requests/sent/{userId}")
+
+                        .Get<GetIncomingFriendRequestsPaginated, PagedResponse<UserRequestsDto>>("friends/requests/{userId}/paginated")
+                        .Get<GetSentFriendRequestsPaginated, PagedResponse<UserRequestsDto>>("friends/requests/sent/{userId}/paginated")
+
+
                         .Get<GetFriendRequests, PagedResponse<FriendRequestDto>>("friends/pending/all")
-                        .Get<GetSentFriendRequests, PagedResponse<UserRequestsDto>>("friends/requests/sent/{userId}")
+                        
 
                         .Get<GetFollowers, PagedResponse<UserFriendsDto>>("friends/{userId}/followers")
                         .Get<GetFollowing, PagedResponse<UserFriendsDto>>("friends/{userId}/following")
