@@ -26,6 +26,12 @@ namespace Astravent.Web.Wasm.DTO
         public Visibility OrganizationIAmCreatorVisibility { get; set; }
         public Visibility OrganizationIFollowVisibility { get; set; }
 
+        public Visibility IsOnlineVisibility { get; set; }
+        public Visibility DeviceTypeVisibility { get; set; }
+        public Visibility LastActiveVisibility { get; set; }
+        public Visibility CountryVisibility { get; set; }
+        public Visibility CityVisibility { get; set; }
+
         public PreferredLanguage PreferredLanguage { get; set; }
         public FrontendVersion FrontendVersion { get; set; }
     }
