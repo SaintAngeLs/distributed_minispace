@@ -7,6 +7,7 @@
 @using Astravent.Web.Wasm.DTO.Events
 @using System.Threading.Tasks
 @using Astravent.Web.Wasm.Areas.Events.CommandsDto
+@using Astravent.Web.Wasm.Pages.Events.Components
 
 <AuthWrapper>
     <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
@@ -15,88 +16,70 @@
         <MudTabs>
             <MudTab Label="Signed Up">
                 <MudGrid Spacing="3" Class="mt-4">
-                    @if (signedUpEvents?.Any() ?? false)
+                    @if (isLoading)
                     {
-                        @foreach (var eventDto in signedUpEvents)
+                        <!-- Show Skeletons while loading -->
+                        @for (int i = 0; i < 6; i++)
                         {
                             <MudItem xs="12" sm="6" md="4">
-                                <MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px;">
-                                    <MudCardMedia Image="@GetBannerUrl(eventDto)" Alt="@eventDto.Name" Style="height: 180px;" />
+                                <MudCard Class="my-2" Style="position:relative;">
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
                                     <MudCardContent>
-                                        <MudText Typo="Typo.h6">@eventDto.Name</MudText>
-                                        <MudText Typo="Typo.body2" Color="Color.Secondary">@eventDto.Category</MudText>
-                                        <MudText Typo="Typo.body2">Starts: @eventDto.StartDate.ToString("MMMM dd, yyyy")</MudText>
-                                        <MudText Typo="Typo.body2">Ends: @eventDto.EndDate.ToString("MMMM dd, yyyy")</MudText>
-                                        <MudText Typo="Typo.body2">
-                                            <MudIcon Icon="@Icons.Material.Filled.HowToReg"  Style="font-size: 1rem;" />
-                                            Signed Up: @eventDto.SignedUpStudents
-                                        </MudText>
-                                        <MudText Typo="Typo.body2">
-                                            <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"  Style="font-size: 1rem;" />
-                                            Interested: @eventDto.InterestedStudents
-                                        </MudText>
+                                        <MudSkeleton Width="30%" Height="42px;" />
+                                        <MudSkeleton Width="80%" />
+                                        <MudSkeleton Width="100%" />
                                     </MudCardContent>
                                     <MudCardActions>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
-                                            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" /> 
-                                            View Details
-                                        </MudButton>
-                                        <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
-                                            <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" Style="font-size: 1rem;" />
-                                            Signed Up
-                                        </MudButton>
+                                        <MudSkeleton Width="64px" Height="40px" />
+                                        <MudSkeleton Width="105px" Height="40px" />
                                     </MudCardActions>
                                 </MudCard>
                             </MudItem>
                         }
                     }
+                    else if (signedUpEvents?.Any() ?? false)
+                    {
+                        <!-- Use EventList component for signed-up events -->
+                        <EventList Events="signedUpEvents" OnViewEvent="ViewEvent" OnSignUpToEvent="SignUpToEvent" OnShowInterestInEvent="ShowInterestInEvent" />
+                    }
                     else
                     {
-                        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center" Class="mt-6">You haven't signed up for any events yet.</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center" Class="mt-6">No signed-up events found.</MudText>
                     }
                 </MudGrid>
             </MudTab>
 
             <MudTab Label="Interested">
                 <MudGrid Spacing="3" Class="mt-4">
-                    @if (interestedEvents?.Any() ?? false)
+                    @if (isLoading)
                     {
-                        @foreach (var eventDto in interestedEvents)
+                        <!-- Show Skeletons while loading -->
+                        @for (int i = 0; i < 6; i++)
                         {
                             <MudItem xs="12" sm="6" md="4">
-                                <MudCard Class="mud-card-hover" Style="height: 100%; border-radius: 15px;">
-                                    <MudCardMedia Image="@GetBannerUrl(eventDto)" Alt="@eventDto.Name" Style="height: 180px;" />
+                                <MudCard Class="my-2" Style="position:relative;">
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
                                     <MudCardContent>
-                                        <MudText Typo="Typo.h6">@eventDto.Name</MudText>
-                                        <MudText Typo="Typo.body2" Color="Color.Secondary">@eventDto.Category</MudText>
-                                        <MudText Typo="Typo.body2">Starts: @eventDto.StartDate.ToString("MMMM dd, yyyy")</MudText>
-                                        <MudText Typo="Typo.body2">Ends: @eventDto.EndDate.ToString("MMMM dd, yyyy")</MudText>
-                                        <MudText Typo="Typo.body2">
-                                            <MudIcon Icon="@Icons.Material.Filled.HowToReg"  Style="font-size: 1rem;" />
-                                            Signed Up: @eventDto.SignedUpStudents
-                                        </MudText>
-                                        <MudText Typo="Typo.body2">
-                                            <MudIcon Icon="@Icons.Material.Rounded.ThumbUp"  Style="font-size: 1rem;" />
-                                            Interested: @eventDto.InterestedStudents
-                                        </MudText>
+                                        <MudSkeleton Width="30%" Height="42px;" />
+                                        <MudSkeleton Width="80%" />
+                                        <MudSkeleton Width="100%" />
                                     </MudCardContent>
                                     <MudCardActions>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ViewEvent(eventDto.Id)">
-                                            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="font-size: 1rem;" /> 
-                                            View Details
-                                        </MudButton>
-                                        <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="true">
-                                            <MudIcon Icon="@Icons.Material.Filled.ThumbUpAlt" Style="font-size: 1rem;" />
-                                            Interested
-                                        </MudButton>
+                                        <MudSkeleton Width="64px" Height="40px" />
+                                        <MudSkeleton Width="105px" Height="40px" />
                                     </MudCardActions>
                                 </MudCard>
                             </MudItem>
                         }
                     }
+                    else if (interestedEvents?.Any() ?? false)
+                    {
+                        <!-- Use EventList component for interested events -->
+                        <EventList Events="interestedEvents" OnViewEvent="ViewEvent" OnSignUpToEvent="SignUpToEvent" OnShowInterestInEvent="ShowInterestInEvent" />
+                    }
                     else
                     {
-                        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center" Class="mt-6">You haven't marked interest in any events yet.</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center" Class="mt-6">No events of interest found.</MudText>
                     }
                 </MudGrid>
             </MudTab>
@@ -107,42 +90,82 @@
 @code {
     private List<EventDto> signedUpEvents = new();
     private List<EventDto> interestedEvents = new();
+    private bool isLoading = true;  // Loading indicator
     private bool _isAuthenticated;
 
     protected override async Task OnInitializedAsync()
     {
-        await IdentityService.InitializeAuthenticationState();
-
-        _isAuthenticated = IdentityService.IsAuthenticated;
-        if (_isAuthenticated)
-        {
-            await LoadUserEvents();
-        }
-        else
-        {
-            NavigationManager.NavigateTo("/signin", forceLoad: true);
-        }
-    }
-
-    private async Task LoadUserEvents()
-    {
         try
         {
-            var userId = IdentityService.GetCurrentUserId();
+            // Ensure the user is authenticated
+            await IdentityService.InitializeAuthenticationState();
+            _isAuthenticated = IdentityService.IsAuthenticated;
 
-            // Load signed-up events
-            var signedUpEventsResult = await EventsService.GetUserEventsAsync(userId, 1, int.MaxValue, "SignedUp");
-            signedUpEvents = signedUpEventsResult.Items.ToList();
-
-            // Load interested events
-            var interestedEventsResult = await EventsService.GetUserEventsAsync(userId, 1, int.MaxValue, "InterestedIn");
-            interestedEvents = interestedEventsResult.Items.ToList();
+            if (_isAuthenticated)
+            {
+                await LoadUserEvents();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/signin", forceLoad: true);
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading user events: {ex.Message}");
+            Console.WriteLine($"Error during initialization: {ex.Message}");
+            Snackbar.Add($"Initialization error: {ex.Message}", Severity.Error);
+            isLoading = false;
         }
     }
+
+   private async Task LoadUserEvents()
+{
+    try
+    {
+        isLoading = true;  // Start loading
+        var userId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+
+        if (userId == Guid.Empty)
+        {
+            throw new InvalidOperationException("User ID could not be retrieved.");
+        }
+
+        // Load signed-up events
+        var signedUpEventsResult = await EventsService.GetUserEventsAsync(userId, 1, int.MaxValue, "SignedUp");
+        signedUpEvents = signedUpEventsResult?.Items?.ToList() ?? new List<EventDto>();
+
+        Console.WriteLine("Signed Up Events:");
+        foreach (var evt in signedUpEvents)
+        {
+            Console.WriteLine(evt.Name);  // Print event names to see if data is being assigned
+        }
+
+        // Load interested events
+        var interestedEventsResult = await EventsService.GetUserEventsAsync(userId, 1, int.MaxValue, "InterestedIn");
+        interestedEvents = interestedEventsResult?.Items?.ToList() ?? new List<EventDto>();
+
+        Console.WriteLine("Interested Events:");
+        foreach (var evt in interestedEvents)
+        {
+            Console.WriteLine(evt.Name);  // Print event names to see if data is being assigned
+        }
+
+        if (!signedUpEvents.Any() && !interestedEvents.Any())
+        {
+            Snackbar.Add("No events found that match your criteria.", Severity.Info);
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error loading user events: {ex.Message}");
+        Snackbar.Add($"Error loading your events: {ex.Message}", Severity.Error);
+    }
+    finally
+    {
+        isLoading = false;  // Stop loading
+    }
+}
+
 
     private void ViewEvent(Guid eventId)
     {
@@ -163,7 +186,7 @@
             var command = new SignUpToEventCommand
             {
                 EventId = eventId,
-                StudentId = IdentityService.GetCurrentUserId()
+                StudentId = await IdentityService.GetCurrentUserIdFromJwtAsync()
             };
 
             await EventsService.SignUpToEventAsync(command);
@@ -190,7 +213,7 @@
             var command = new ShowInterestInEventCommand
             {
                 EventId = eventId,
-                StudentId = IdentityService.GetCurrentUserId()
+                StudentId = await IdentityService.GetCurrentUserIdFromJwtAsync()
             };
 
             await EventsService.ShowInterestInEventAsync(command);
