@@ -61,33 +61,29 @@
 
                                         @if (visibilityChecker.ShouldShowOnlineStatus(student))
                                         {
-                                            @if (student.IsOnline)
-                                            {
-                                                <MudText Typo="Typo.body2" Style="color: green;">
-                                                    Status: Online
-                                                </MudText>
-                                            }
-                                            else
+                                            <MudText Typo="Typo.body2" Color="GetStatusColor(student.IsOnline)">
+                                                <MudIcon Icon="@GetStatusIcon(student.IsOnline)" />
+                                                Status: @(student.IsOnline ? "Online" : "Offline")
+                                            </MudText>
+
+                                            @if (!student.IsOnline && visibilityChecker.ShouldShowLastActive(student) && student.LastActive.HasValue)
                                             {
                                                 <MudText Typo="Typo.body2" Style="color: gray;">
-                                                    Status: Offline
+                                                    <MudIcon Icon="@Icons.Material.Filled.AccessTime" />
+                                                    Last active: @student.LastActive.Value.ToString("g")
                                                 </MudText>
-                                                
-                                                @if (visibilityChecker.ShouldShowLastActive(student) && student.LastActive.HasValue)
-                                                {
-                                                    <MudText Typo="Typo.body2">
-                                                        Last active: @student.LastActive.Value.ToString("g")
-                                                    </MudText>
-                                                }
                                             }
                                         }
 
                                         @if (visibilityChecker.ShouldShowDeviceType(student))
                                         {
                                             <MudText Typo="Typo.body2">
-                                                Device: @student.DeviceType
+                                                <MudIcon Icon="@GetDeviceIcon(student.DeviceType)" />
+                                                Device: @(student.DeviceType == "Mobile" ? "Mobile" : "Desktop")
                                             </MudText>
                                         }
+
+
                                     </MudItem>
 
 
@@ -383,4 +379,21 @@
     {
         NavigationManager.NavigateTo($"/user-details/{studentId}");
     }
+
+    private string statusColor;
+    private string statusIcon;
+    private string deviceIcon;
+    private string deviceText;
+
+    private void SetStudentStatus(StudentDto student)
+    {
+        statusColor = student.IsOnline ? "green" : "gray";
+        statusIcon = student.IsOnline ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel;
+        deviceIcon = student.DeviceType == "Mobile" ? Icons.Material.Filled.Smartphone : Icons.Material.Filled.Computer;
+        deviceText = student.DeviceType == "Mobile" ? "Mobile" : "Desktop";
+    }
+
+    private MudBlazor.Color GetStatusColor(bool isOnline) => isOnline ? Color.Success : Color.Tertiary;
+    private string GetStatusIcon(bool isOnline) => isOnline ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel;
+    private string GetDeviceIcon(string deviceType) => deviceType == "Mobile" ? Icons.Material.Filled.Smartphone : Icons.Material.Filled.Computer;
 }
