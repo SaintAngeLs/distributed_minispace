@@ -8,6 +8,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Astravent.Web.Wasm.DTO;
 using Astravent.Web.Wasm.HttpClients;
+using Astravent.Web.Wasm.Areas.Identity.CommandsDto;
 
 namespace Astravent.Web.Wasm.Areas.Identity
 {
@@ -94,18 +95,44 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
         public async Task Logout()
         {
-            if (JwtDto != null && !string.IsNullOrEmpty(JwtDto.RefreshToken))
+            try
             {
-                await RevokeRefreshToken(JwtDto.RefreshToken);
+                // Check if the JWT exists and retrieve the user ID from the JWT
+                if (JwtDto != null && !string.IsNullOrEmpty(JwtDto.RefreshToken))
+                {
+                    var userId = await GetCurrentUserIdFromJwtAsync();
+
+                    var updateUserStatusCommand = new UpdateUserStatus
+                    {
+                        UserId = userId,
+                        IsOnline = false, 
+                        DeviceType = "Web" 
+                    };
+
+                    string accessToken = await GetAccessTokenAsync();
+                    _httpClient.SetAccessToken(accessToken);
+
+                    await _httpClient.PutAsync("identity/users/status", updateUserStatusCommand);
+
+                    await RevokeRefreshToken(JwtDto.RefreshToken);
+                }
+
+                await _localStorage.RemoveItemAsync("jwtDto");
+                JwtDto = null;
+                UserDto = null;
+                Name = null;
+                Email = null;
+                IsAuthenticated = false;
+
+                _navigationManager.NavigateTo("signin", forceLoad: true);
             }
-            await _localStorage.RemoveItemAsync("jwtDto");
-            JwtDto = null;
-            UserDto = null;
-            Name = null;
-            Email = null;
-            IsAuthenticated = false;
-            _navigationManager.NavigateTo("signin", forceLoad: true);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during logout: {ex.Message}");
+            }
         }
+
+
         
         public async Task<JwtDto> RefreshAccessToken(string refreshToken)
         {
