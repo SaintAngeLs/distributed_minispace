@@ -33,6 +33,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
         private readonly ITwoFactorCodeService _twoFactorCodeService;
         private readonly ILogger<IdentityService> _logger;
         private readonly IIPAddressService _ipAddressService;
+        private readonly IDeviceInfoService _deviceInfoService;
 
         public IdentityService(
             IUserRepository userRepository, 
@@ -45,6 +46,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             ITwoFactorSecretTokenService twoFactorSecretTokenService,
             ITwoFactorCodeService twoFactorCodeService,
             IIPAddressService ipAddressService,
+            IDeviceInfoService deviceInfoService,
             ILogger<IdentityService> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -57,6 +59,7 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             _twoFactorSecretTokenService = twoFactorSecretTokenService ?? throw new ArgumentNullException(nameof(twoFactorSecretTokenService));
             _twoFactorCodeService = twoFactorCodeService ?? throw new ArgumentNullException(nameof(twoFactorCodeService));
             _ipAddressService = ipAddressService ?? throw new ArgumentNullException(nameof(ipAddressService)); 
+            _deviceInfoService = deviceInfoService ?? throw new ArgumentNullException(nameof(deviceInfoService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -344,16 +347,27 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
             
             if (user == null)
             {
-                _logger.LogError($"User with id {command.UserId} not found.");
                 throw new UserNotFoundException(command.UserId);
             }
 
             try
             {
-                user.SetOnlineStatus(command.IsOnline, command.DeviceType);
+                var ipAddress = _ipAddressService.GetIPAddress();
+                var deviceInfo = _deviceInfoService.GetDeviceInfo();
+
+                user.SetOnlineStatus(command.IsOnline, command.DeviceType, ipAddress);
                 user.UpdateLastActive();
 
                 await _userRepository.UpdateAsync(user);
+
+                var userStatusChangedEvent = new UserStatusChanged(
+                    user.Id, 
+                    user.IsOnline, 
+                    deviceInfo.DeviceType,
+                    ipAddress  
+                );
+
+                await _messageBroker.PublishAsync(userStatusChangedEvent); 
             }
             catch (Exception ex)
             {
@@ -361,5 +375,6 @@ namespace MiniSpace.Services.Identity.Application.Services.Identity
                 throw;
             }
         }
+
     }
 }
