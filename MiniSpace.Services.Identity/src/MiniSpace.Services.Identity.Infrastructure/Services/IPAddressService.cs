@@ -1,7 +1,8 @@
 using System;
 using Microsoft.AspNetCore.Http;
+using MiniSpace.Services.Identity.Application.Services;
 
-namespace MiniSpace.Services.Identity.Application.Services
+namespace MiniSpace.Services.Identity.Infrastructure.Services
 {
     public class IPAddressService : IIPAddressService
     {

@@ -64,7 +64,11 @@ namespace MiniSpace.Services.Identity.Infrastructure
             builder.Services.AddTransient<IRefreshTokenService, RefreshTokenService>();
             builder.Services.AddScoped<ITwoFactorCodeService, TwoFactorCodeService>();
             builder.Services.AddSingleton<ITwoFactorSecretTokenService, TwoFactorSecretTokenService>();
+
             builder.Services.AddScoped<IIPAddressService, IPAddressService>();
+            builder.Services.AddSingleton<IDeviceInfoService, DeviceInfoService>();
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             builder.Services.AddSingleton<IPasswordHasher<IVerificationTokenService>, PasswordHasher<IVerificationTokenService>>();
             builder.Services.AddSingleton<IVerificationTokenService, VerificationTokenService>();
             builder.Services.AddSingleton<IRng, Rng>();

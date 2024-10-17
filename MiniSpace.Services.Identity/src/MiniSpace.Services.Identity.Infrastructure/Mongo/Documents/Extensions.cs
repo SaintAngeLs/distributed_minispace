@@ -30,7 +30,8 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
 
         // Convert User Entity to UserDocument
         public static UserDocument AsDocument(this User entity)
-            => new UserDocument
+        {
+            return new UserDocument
             {
                 Id = entity.Id,
                 Name = entity.Name,
@@ -44,12 +45,13 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 EmailVerifiedAt = entity.EmailVerifiedAt,
                 IsTwoFactorEnabled = entity.IsTwoFactorEnabled,
                 TwoFactorSecret = entity.TwoFactorSecret,
-                IsOnline = entity.IsOnline,                     
-                DeviceType = entity.DeviceType,                 
+                IsOnline = entity.IsOnline,  
+                DeviceType = entity.DeviceType,  
                 LastActive = entity.LastActive,
-
                 IpAddress = entity.IpAddress
             };
+        }
+
 
         public static UserDto AsDto(this UserDocument document)
             => new UserDto
@@ -57,19 +59,19 @@ namespace MiniSpace.Services.Identity.Infrastructure.Mongo.Documents
                 Id = document.Id,
                 Name = document.Name,
                 Email = document.Email,
-                Role = Enum.Parse<Role>(document.Role, true),
+                Role = Enum.Parse<Role>(document.Role, true), 
                 CreatedAt = document.CreatedAt,
                 Permissions = document.Permissions ?? Enumerable.Empty<string>(),
                 IsEmailVerified = document.IsEmailVerified,
                 EmailVerifiedAt = document.EmailVerifiedAt,
                 IsTwoFactorEnabled = document.IsTwoFactorEnabled,
                 TwoFactorSecret = document.TwoFactorSecret,
-                IsOnline = document.IsOnline,                     
-                DeviceType = document.DeviceType,                 
+                IsOnline = document.IsOnline,  
+                DeviceType = document.DeviceType,  
                 LastActive = document.LastActive,
-
                 IpAddress = document.IpAddress
             };
+
 
         // Convert RefreshTokenDocument to RefreshToken Entity
         public static RefreshToken AsEntity(this RefreshTokenDocument document)
