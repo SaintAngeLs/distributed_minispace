@@ -11,6 +11,8 @@
 @inject ISnackbar Snackbar
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using Astravent.Web.Wasm.Utilities
+@inject VisibilityChecker visibilityChecker
+
 
 <AuthWrapper>
     <MudContainer>
@@ -261,7 +263,6 @@
     private int pageSize = 10;
     private int totalStudents;
     private Guid currentUserId;
-    private VisibilityChecker visibilityChecker;
 
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
@@ -284,10 +285,10 @@
                 {
                     // Initialize the visibilityChecker after ensuring currentUserId is set
                     
+                    visibilityChecker = new VisibilityChecker();
                     await LoadFriendRequests();
                     await LoadStudents();
 
-                    visibilityChecker = new VisibilityChecker();
                 }
                 else
                 {

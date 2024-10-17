@@ -282,7 +282,7 @@
     {
         try
         {
-            var studentId = IdentityService.GetCurrentUserId();
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
             var result = await FriendsService.GetAllFriendsAsync(studentId, currentPage, pageSize);
             if (result != null)
             {

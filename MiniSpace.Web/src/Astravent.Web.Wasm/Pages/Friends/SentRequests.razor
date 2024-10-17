@@ -260,7 +260,7 @@
 
     private async Task WithdrawRequest(Guid inviteeId)
     {
-        var inviterId = IdentityService.GetCurrentUserId();
+        var inviterId = await IdentityService.GetCurrentUserIdFromJwtAsync();
         if (inviterId != Guid.Empty)
         {
             await FriendsService.WithdrawFriendRequestAsync(new WithdrawFriendRequestDto

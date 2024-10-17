@@ -71,7 +71,8 @@ namespace Astravent.Web.Wasm.Areas.Friends
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            var requesterId = _identityService.GetCurrentUserId();
+            var requesterId = await _identityService.GetCurrentUserIdFromJwtAsync();
+
 
             if (requesterId == Guid.Empty)
             {
@@ -119,8 +120,9 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
         public async Task<IEnumerable<FriendRequestDto>> GetSentFriendRequestsAsync()
         {
-            var studentId = _identityService.GetCurrentUserId();
-            if (studentId == Guid.Empty) return Enumerable.Empty<FriendRequestDto>();
+            var studentId = await _identityService.GetCurrentUserIdFromJwtAsync();
+            if (studentId == Guid.Empty) 
+                return Enumerable.Empty<FriendRequestDto>();
 
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
@@ -147,7 +149,7 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
         public async Task<IEnumerable<FriendRequestDto>> GetIncomingFriendRequestsAsync()
         {
-            var userId = _identityService.GetCurrentUserId();
+            var userId = await _identityService.GetCurrentUserIdFromJwtAsync();
             if (userId == Guid.Empty) return Enumerable.Empty<FriendRequestDto>();
 
             string accessToken = await _identityService.GetAccessTokenAsync();
@@ -175,7 +177,7 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
         public async Task<PagedResult<FriendRequestDto>> GetSentFriendRequestsPaginatedAsync(int page = 1, int pageSize = 10)
         {
-            var userId = _identityService.GetCurrentUserId();
+            var userId = await _identityService.GetCurrentUserIdFromJwtAsync();
             if (userId == Guid.Empty) return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
 
             string accessToken = await _identityService.GetAccessTokenAsync();
@@ -203,7 +205,7 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
         public async Task<PagedResult<FriendRequestDto>> GetIncomingFriendRequestsPaginatedAsync(int page = 1, int pageSize = 10)
         {
-            var userId = _identityService.GetCurrentUserId();
+            var userId = await _identityService.GetCurrentUserIdFromJwtAsync();
             if (userId == Guid.Empty) return new PagedResult<FriendRequestDto>(Enumerable.Empty<FriendRequestDto>(), page, pageSize, 0);
 
             string accessToken = await _identityService.GetAccessTokenAsync();

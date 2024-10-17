@@ -77,6 +77,7 @@ builder.Services.AddScoped<ICommentsService, CommentsService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 builder.Services.AddScoped<ICommunicationService, CommunicationService>();
 builder.Services.AddScoped<IIPAddressService, IPAddressService>();
+builder.Services.AddScoped<VisibilityChecker>();
 
 builder.Services.AddScoped<SignalRService>();
 builder.Services.AddScoped<ChatSignalRService>();

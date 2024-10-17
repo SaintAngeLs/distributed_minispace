@@ -126,7 +126,7 @@
     {
         try
         {
-            var currentUserId = IdentityService.GetCurrentUserId();
+            var currentUserId = await IdentityService.GetCurrentUserIdFromJwtAsync();
             await StudentsService.UnblockUserAsync(currentUserId, blockedUserId);
             blockedUsers.RemoveAll(u => u.BlockedUserId == blockedUserId);
             Snackbar.Add("User has been unblocked successfully.", Severity.Success);
