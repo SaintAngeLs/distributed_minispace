@@ -10,6 +10,7 @@
 @inject IJSRuntime JSRuntime
 @inject ISnackbar Snackbar
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@using Astravent.Web.Wasm.Utilities
 
 <AuthWrapper>
     <MudContainer>
@@ -35,8 +36,8 @@
             <MudGrid>
                 @foreach (var student in students)
                 {
-                    if (visibilityChecker.ShouldShowProfile(student))
-                    {
+                    @* if (visibilityChecker.ShouldShowProfile(student))
+                    { *@
                         <MudItem xs="12">
                             <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
                                 <MudGrid>
@@ -55,11 +56,38 @@
                                                 @($"{student.LastWorkExperience.Position} in {student.LastWorkExperience.Company}")
                                             </MudText>
                                         }
-                                        else
+
+                                        @if (visibilityChecker.ShouldShowOnlineStatus(student))
                                         {
-                                            <MudText Typo="Typo.subtitle2"> </MudText>
+                                            @if (student.IsOnline)
+                                            {
+                                                <MudText Typo="Typo.body2" Style="color: green;">
+                                                    Status: Online
+                                                </MudText>
+                                            }
+                                            else
+                                            {
+                                                <MudText Typo="Typo.body2" Style="color: gray;">
+                                                    Status: Offline
+                                                </MudText>
+                                                
+                                                @if (visibilityChecker.ShouldShowLastActive(student) && student.LastActive.HasValue)
+                                                {
+                                                    <MudText Typo="Typo.body2">
+                                                        Last active: @student.LastActive.Value.ToString("g")
+                                                    </MudText>
+                                                }
+                                            }
+                                        }
+
+                                        @if (visibilityChecker.ShouldShowDeviceType(student))
+                                        {
+                                            <MudText Typo="Typo.body2">
+                                                Device: @student.DeviceType
+                                            </MudText>
                                         }
                                     </MudItem>
+
 
                                     <MudItem xs="2" md="2">
                                         <MudButtonGroup>
@@ -103,7 +131,7 @@
                                 </MudGrid>
                             </MudPaper>
                         </MudItem>
-                    }
+                    @* } *@
                 }
             </MudGrid>
         }
@@ -250,15 +278,37 @@
         {
             try
             {
-                currentUserId = await IdentityService.GetCurrentUserIdFromJwtAsync();
-                await LoadFriendRequests();
-                await LoadStudents();
+                 currentUserId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+                // Only proceed if currentUserId is successfully fetched
+                if (currentUserId != Guid.Empty)
+                {
+                    // Initialize the visibilityChecker after ensuring currentUserId is set
+                    
+                    await LoadFriendRequests();
+                    await LoadStudents();
 
-                visibilityChecker = new VisibilityChecker(currentUserId, allFriends);
+                    visibilityChecker = new VisibilityChecker();
+                }
+                else
+                {
+                    Snackbar.Add("Failed to get user ID", Severity.Error);
+                }
+
+                
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Failed to Load Data: {ex.Message}", Severity.Error);
+               var errorMessage = $"Failed to Load Data: {ex.Message}\nStackTrace: {ex.StackTrace}";
+            if (ex.InnerException != null)
+            {
+                errorMessage += $"\nInnerException: {ex.InnerException.Message}\nInner StackTrace: {ex.InnerException.StackTrace}";
+            }
+
+            // Show a friendly message in the UI via Snackbar
+            Snackbar.Add("Failed to load data. Please check the logs for more details.", Severity.Error);
+
+            // Log the full error details to the console (or potentially a logging service in production)
+            Console.WriteLine(errorMessage);
             }
             finally
             {
@@ -270,6 +320,7 @@
             NavigationManager.NavigateTo("/login");
         }
     }
+
 
     private string GetProfileImageUrl(string profileImageUrl)
     {
