@@ -50,8 +50,8 @@ namespace MiniSpace.Services.Students.Core.Entities
         public Visibility TaggedPostVisibility { get; private set; }  // Who can see posts the user is tagged in
         public Visibility StoryVisibility { get; private set; }  // Who can view stories
         public Visibility GroupMembershipVisibility { get; private set; }  // Who can see user's group memberships
-        public bool BlockedUsersVisibility { get; private set; }  // Control visibility settings around blocked users
 
+        // Default constructor
         public UserAvailableSettings()
         {
             CreatedAtVisibility = Visibility.Everyone;
@@ -71,9 +71,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             ConnectionVisibility = Visibility.Everyone;
             FollowersVisibility = Visibility.Everyone;
             FollowingVisibility = Visibility.Everyone;
-            FriendListVisibility = Visibility.Everyone;  // Default friend list visibility
-            FollowersListVisibility = Visibility.Everyone;  // Default followers list visibility
-            FollowingListVisibility = Visibility.Everyone;  // Default following list visibility
+            FriendListVisibility = Visibility.Everyone;
+            FollowersListVisibility = Visibility.Everyone;
+            FollowingListVisibility = Visibility.Everyone;
             MyPostsVisibility = Visibility.Everyone;
             ConnectionsPostsVisibility = Visibility.Everyone;
             MyRepostsVisibility = Visibility.Everyone;
@@ -99,9 +99,9 @@ namespace MiniSpace.Services.Students.Core.Entities
             TaggedPostVisibility = Visibility.Everyone;
             StoryVisibility = Visibility.Everyone;
             GroupMembershipVisibility = Visibility.Everyone;
-            BlockedUsersVisibility = false;  // Default blocked users visibility
         }
 
+        // Constructor with all parameters
         public UserAvailableSettings(Visibility createdAtVisibility, Visibility dateOfBirthVisibility, Visibility interestedInEventsVisibility,
                                      Visibility signedUpEventsVisibility, Visibility educationVisibility, Visibility workPositionVisibility,
                                      Visibility languagesVisibility, Visibility interestsVisibility, Visibility contactEmailVisibility,
@@ -112,7 +112,10 @@ namespace MiniSpace.Services.Students.Core.Entities
                                      Visibility myPostsVisibility, Visibility connectionsPostsVisibility, Visibility myRepostsVisibility,
                                      Visibility repostsOfMyConnectionsVisibility, Visibility organizationIAmCreatorVisibility,
                                      Visibility organizationIFollowVisibility, Visibility isOnlineVisibility, Visibility deviceTypeVisibility,
-                                     Visibility lastActiveVisibility, Visibility countryVisibility, Visibility cityVisibility)
+                                     Visibility lastActiveVisibility, Visibility countryVisibility, Visibility cityVisibility,
+                                     Visibility messageVisibility, Visibility profileVisibility, Visibility postCommentVisibility,
+                                     Visibility postLikeVisibility, Visibility friendRequestVisibility, Visibility taggedPostVisibility,
+                                     Visibility storyVisibility, Visibility groupMembershipVisibility)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -151,17 +154,17 @@ namespace MiniSpace.Services.Students.Core.Entities
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
 
-            MessageVisibility = Visibility.Everyone;
-            ProfileVisibility = Visibility.Everyone;
-            PostCommentVisibility = Visibility.Everyone;
-            PostLikeVisibility = Visibility.Everyone;
-            FriendRequestVisibility = Visibility.Everyone;
-            TaggedPostVisibility = Visibility.Everyone;
-            StoryVisibility = Visibility.Everyone;
-            GroupMembershipVisibility = Visibility.Everyone;
-            BlockedUsersVisibility = false;  // Default blocked users visibility
+            MessageVisibility = messageVisibility;
+            ProfileVisibility = profileVisibility;
+            PostCommentVisibility = postCommentVisibility;
+            PostLikeVisibility = postLikeVisibility;
+            FriendRequestVisibility = friendRequestVisibility;
+            TaggedPostVisibility = taggedPostVisibility;
+            StoryVisibility = storyVisibility;
+            GroupMembershipVisibility = groupMembershipVisibility;
         }
 
+        // Method to update settings
         public void UpdateSettings(Visibility createdAtVisibility, Visibility dateOfBirthVisibility, Visibility interestedInEventsVisibility,
                                    Visibility signedUpEventsVisibility, Visibility educationVisibility, Visibility workPositionVisibility,
                                    Visibility languagesVisibility, Visibility interestsVisibility, Visibility contactEmailVisibility,
@@ -172,7 +175,10 @@ namespace MiniSpace.Services.Students.Core.Entities
                                    Visibility myPostsVisibility, Visibility connectionsPostsVisibility, Visibility myRepostsVisibility,
                                    Visibility repostsOfMyConnectionsVisibility, Visibility organizationIAmCreatorVisibility,
                                    Visibility organizationIFollowVisibility, Visibility isOnlineVisibility, Visibility deviceTypeVisibility,
-                                   Visibility lastActiveVisibility, Visibility countryVisibility, Visibility cityVisibility)
+                                   Visibility lastActiveVisibility, Visibility countryVisibility, Visibility cityVisibility,
+                                   Visibility messageVisibility, Visibility profileVisibility, Visibility postCommentVisibility,
+                                   Visibility postLikeVisibility, Visibility friendRequestVisibility, Visibility taggedPostVisibility,
+                                   Visibility storyVisibility, Visibility groupMembershipVisibility)
         {
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
@@ -210,6 +216,15 @@ namespace MiniSpace.Services.Students.Core.Entities
 
             FrontendVersion = frontendVersion;
             PreferredLanguage = preferredLanguage;
+
+            MessageVisibility = messageVisibility;
+            ProfileVisibility = profileVisibility;
+            PostCommentVisibility = postCommentVisibility;
+            PostLikeVisibility = postLikeVisibility;
+            FriendRequestVisibility = friendRequestVisibility;
+            TaggedPostVisibility = taggedPostVisibility;
+            StoryVisibility = storyVisibility;
+            GroupMembershipVisibility = groupMembershipVisibility;
         }
     }
 }
