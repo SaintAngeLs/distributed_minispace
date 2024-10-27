@@ -69,18 +69,28 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                 Enum.Parse<Visibility>(command.ConnectionVisibility, true),
                 Enum.Parse<Visibility>(command.FollowersVisibility, true),
                 Enum.Parse<Visibility>(command.FollowingVisibility, true),
+                Enum.Parse<Visibility>(command.FriendListVisibility, true),
+                Enum.Parse<Visibility>(command.FollowersListVisibility, true),
+                Enum.Parse<Visibility>(command.FollowingListVisibility, true), 
                 Enum.Parse<Visibility>(command.MyPostsVisibility, true),
                 Enum.Parse<Visibility>(command.ConnectionsPostsVisibility, true),
                 Enum.Parse<Visibility>(command.MyRepostsVisibility, true),
                 Enum.Parse<Visibility>(command.RepostsOfMyConnectionsVisibility, true),
                 Enum.Parse<Visibility>(command.OrganizationIAmCreatorVisibility, true),
                 Enum.Parse<Visibility>(command.OrganizationIFollowVisibility, true),
-                
                 Enum.Parse<Visibility>(command.IsOnlineVisibility, true),
                 Enum.Parse<Visibility>(command.DeviceTypeVisibility, true),
                 Enum.Parse<Visibility>(command.LastActiveVisibility, true),
                 Enum.Parse<Visibility>(command.CountryVisibility, true),
-                Enum.Parse<Visibility>(command.CityVisibility, true)
+                Enum.Parse<Visibility>(command.CityVisibility, true),
+                Enum.Parse<Visibility>(command.MessageVisibility, true), 
+                Enum.Parse<Visibility>(command.ProfileVisibility, true),
+                Enum.Parse<Visibility>(command.PostCommentVisibility, true),
+                Enum.Parse<Visibility>(command.PostLikeVisibility, true),
+                Enum.Parse<Visibility>(command.FriendRequestVisibility, true),
+                Enum.Parse<Visibility>(command.TaggedPostVisibility, true),
+                Enum.Parse<Visibility>(command.StoryVisibility, true),
+                Enum.Parse<Visibility>(command.GroupMembershipVisibility, true)
             );
 
             userSettings.UpdateSettings(availableSettings);

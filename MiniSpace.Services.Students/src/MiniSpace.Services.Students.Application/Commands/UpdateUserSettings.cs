@@ -19,10 +19,13 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string ProfileImageVisibility { get; set; }
         public string BannerImageVisibility { get; set; }
         public string GalleryVisibility { get; set; }
-
+        
         public string ConnectionVisibility { get; set; }
         public string FollowersVisibility { get; set; }
         public string FollowingVisibility { get; set; }
+        public string FriendListVisibility { get; set; } 
+        public string FollowersListVisibility { get; set; }
+        public string FollowingListVisibility { get; set; }
         public string MyPostsVisibility { get; set; }
         public string ConnectionsPostsVisibility { get; set; }
         public string MyRepostsVisibility { get; set; }
@@ -40,20 +43,30 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string PreferredLanguage { get; set; }
         public string FrontendVersion { get; set; }
 
-        public UpdateUserSettings(Guid studentId, string createdAtVisibility, string dateOfBirthVisibility,
-                                  string interestedInEventsVisibility, string signedUpEventsVisibility,
-                                  string educationVisibility, string workPositionVisibility, 
-                                  string languagesVisibility, string interestsVisibility, 
-                                  string contactEmailVisibility, string phoneNumberVisibility, 
-                                  string profileImageVisibility, string bannerImageVisibility, 
-                                  string galleryVisibility, string preferredLanguage, string frontendVersion,
-                                  string connectionVisibility, string followersVisibility, 
-                                  string followingVisibility, string myPostsVisibility, 
-                                  string connectionsPostsVisibility, string myRepostsVisibility, 
-                                  string repostsOfMyConnectionsVisibility, 
-                                  string organizationIAmCreatorVisibility, string organizationIFollowVisibility,
-                                  string isOnlineVisibility, string deviceTypeVisibility, string lastActiveVisibility,
-                                  string countryVisibility, string cityVisibility) 
+        public string MessageVisibility { get; set; }
+        public string ProfileVisibility { get; set; }
+        public string PostCommentVisibility { get; set; }
+        public string PostLikeVisibility { get; set; }
+        public string FriendRequestVisibility { get; set; }
+        public string TaggedPostVisibility { get; set; }
+        public string StoryVisibility { get; set; }
+        public string GroupMembershipVisibility { get; set; }
+
+        public UpdateUserSettings(
+            Guid studentId, string createdAtVisibility, string dateOfBirthVisibility, string interestedInEventsVisibility, 
+            string signedUpEventsVisibility, string educationVisibility, string workPositionVisibility, 
+            string languagesVisibility, string interestsVisibility, string contactEmailVisibility, 
+            string phoneNumberVisibility, string profileImageVisibility, string bannerImageVisibility, 
+            string galleryVisibility, string preferredLanguage, string frontendVersion, 
+            string connectionVisibility, string followersVisibility, string followingVisibility, 
+            string friendListVisibility, string followersListVisibility, string followingListVisibility, 
+            string myPostsVisibility, string connectionsPostsVisibility, string myRepostsVisibility, 
+            string repostsOfMyConnectionsVisibility, string organizationIAmCreatorVisibility, 
+            string organizationIFollowVisibility, string isOnlineVisibility, string deviceTypeVisibility, 
+            string lastActiveVisibility, string countryVisibility, string cityVisibility, 
+            string messageVisibility, string profileVisibility, string postCommentVisibility, 
+            string postLikeVisibility, string friendRequestVisibility, string taggedPostVisibility, 
+            string storyVisibility, string groupMembershipVisibility)
         {
             StudentId = studentId;
             CreatedAtVisibility = createdAtVisibility;
@@ -73,6 +86,9 @@ namespace MiniSpace.Services.Students.Application.Commands
             ConnectionVisibility = connectionVisibility;
             FollowersVisibility = followersVisibility;
             FollowingVisibility = followingVisibility;
+            FriendListVisibility = friendListVisibility;
+            FollowersListVisibility = followersListVisibility;
+            FollowingListVisibility = followingListVisibility;
             MyPostsVisibility = myPostsVisibility;
             ConnectionsPostsVisibility = connectionsPostsVisibility;
             MyRepostsVisibility = myRepostsVisibility;
@@ -89,6 +105,15 @@ namespace MiniSpace.Services.Students.Application.Commands
 
             PreferredLanguage = preferredLanguage;
             FrontendVersion = frontendVersion;
+
+            MessageVisibility = messageVisibility;
+            ProfileVisibility = profileVisibility;
+            PostCommentVisibility = postCommentVisibility;
+            PostLikeVisibility = postLikeVisibility;
+            FriendRequestVisibility = friendRequestVisibility;
+            TaggedPostVisibility = taggedPostVisibility;
+            StoryVisibility = storyVisibility;
+            GroupMembershipVisibility = groupMembershipVisibility;
         }
     }
 }
