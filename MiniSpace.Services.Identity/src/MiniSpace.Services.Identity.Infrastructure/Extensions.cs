@@ -91,6 +91,7 @@ namespace MiniSpace.Services.Identity.Infrastructure
                 .AddConsul()
                 .AddFabio()
                 .AddExceptionToMessageMapper<ExceptionToMessageMapper>()
+                .AddRabbitMq()
                 .AddRabbitMq(plugins: p => p.AddJaegerRabbitMqPlugin())
                 .AddMessageOutbox(o => o.AddMongo())
                 .AddMongo()

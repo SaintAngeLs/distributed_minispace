@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Paralax.CQRS.Events;
 using Paralax.MessageBrokers;
@@ -11,9 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
 using MiniSpace.Services.Identity.Application.Services;
-using System.Diagnostics.CodeAnalysis;
 
-[assembly: InternalsVisibleTo("MiniSpace.Services.Identity.Infrastructure.UnitTests")]
 namespace MiniSpace.Services.Identity.Infrastructure.Services
 {
     internal sealed class MessageBroker : IMessageBroker

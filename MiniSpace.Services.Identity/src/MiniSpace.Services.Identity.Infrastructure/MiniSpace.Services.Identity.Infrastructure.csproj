@@ -67,4 +67,9 @@
         <ProjectReference Include="..\MiniSpace.Services.Identity.Application\MiniSpace.Services.Identity.Application.csproj" />
     </ItemGroup>
 
+    <!-- <ItemGroup>
+        <ProjectReference Include="../../../Paralax/src/Paralax.MessageBrokers.RabbitMQ/src/Paralax.MessageBrokers.RabbitMQ/Paralax.MessageBrokers.RabbitMQ.csproj" />
+        <ProjectReference Include="../../../Paralax/src/Paralax.MessageBrokers/src/Paralax.MessageBrokers/Paralax.MessageBrokers.csproj" />
+    </ItemGroup> -->
+
 </Project>
