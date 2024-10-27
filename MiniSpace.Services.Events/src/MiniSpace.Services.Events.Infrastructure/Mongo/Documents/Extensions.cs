@@ -91,9 +91,12 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 ApartmentNumber = address.ApartmentNumber,
                 City = address.City,
                 ZipCode = address.ZipCode,
-                Country = address.Country
+                Country = address.Country,
+                Latitude = address.Latitude,    
+                Longitude = address.Longitude   
             };
         }
+
 
          public static EventSettingsDto AsDto(this EventSettings settings)
         {
@@ -181,8 +184,18 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
             };
 
         public static Address AsEntity(this AddressDocument document)
-            => new (document.BuildingName, document.Street, document.BuildingNumber, 
-                document.ApartmentNumber, document.City, document.ZipCode, document.Country);
+            => new Address(
+                document.BuildingName, 
+                document.Street, 
+                document.BuildingNumber, 
+                document.ApartmentNumber, 
+                document.City, 
+                document.ZipCode, 
+                document.Country, 
+                document.Latitude,     
+                document.Longitude     
+            );
+
 
         public static OrganizerDto AsDto(this OrganizerDocument document)
             => new ()

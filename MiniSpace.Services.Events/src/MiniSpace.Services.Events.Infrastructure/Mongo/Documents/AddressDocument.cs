@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -17,6 +17,8 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
         public string City { get; set; }
         public string ZipCode { get; set; }
         public string Country { get; set; }
+        public double Latitude { get; set; }   
+        public double Longitude { get; set; }  
 
         public static AddressDocument FromEntity(Address address)
         {
@@ -28,13 +30,15 @@ namespace MiniSpace.Services.Events.Infrastructure.Mongo.Documents
                 ApartmentNumber = address.ApartmentNumber,
                 City = address.City,
                 ZipCode = address.ZipCode,
-                Country = address.Country
+                Country = address.Country,
+                Latitude = address.Latitude,   
+                Longitude = address.Longitude  
             };
         }
 
         public Address ToEntity()
         {
-            return new Address(BuildingName, Street, BuildingNumber, ApartmentNumber, City, ZipCode, Country);
+            return new Address(BuildingName, Street, BuildingNumber, ApartmentNumber, City, ZipCode, Country, Latitude, Longitude);
         }
     }
 }
