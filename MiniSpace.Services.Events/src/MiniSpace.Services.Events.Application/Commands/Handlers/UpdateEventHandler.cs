@@ -55,8 +55,9 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator.ValidateDates(now, startDate, "now", "event_start_date");
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
             
-            var address = @event.Location.Update(command.BuildingName, command.Street, command.BuildingNumber, 
-                command.ApartmentNumber, command.City, command.ZipCode, command.Country);
+             var address = @event.Location.Update(command.BuildingName, command.Street, command.BuildingNumber, 
+                command.ApartmentNumber, command.City, command.ZipCode, command.Country, command.Latitude, command.Longitude);
+
             _eventValidator.ValidateCapacity(command.Capacity);
             _eventValidator.ValidateFee(command.Fee);
             var category = _eventValidator.ParseCategory(command.Category);

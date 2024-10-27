@@ -6,6 +6,7 @@ namespace MiniSpace.Services.Events.Application.DTO
     [ExcludeFromCodeCoverage]
     public class AddressDto
     {
+        // Properties
         public string BuildingName { get; set; }
         public string Street { get; set; }
         public string BuildingNumber { get; set; }
@@ -13,12 +14,14 @@ namespace MiniSpace.Services.Events.Application.DTO
         public string City { get; set; }
         public string ZipCode { get; set; }
         public string Country { get; set; }
+        public double Latitude { get; set; }   
+        public double Longitude { get; set; }  
 
-        
+        // Default constructor
         public AddressDto()
         {
         }
-        
+
         public AddressDto(Address address)
         {
             BuildingName = address.BuildingName;
@@ -28,6 +31,8 @@ namespace MiniSpace.Services.Events.Application.DTO
             City = address.City;
             ZipCode = address.ZipCode;
             Country = address.Country;
+            Latitude = address.Latitude;
+            Longitude = address.Longitude;
         }
     }
 }

@@ -78,7 +78,16 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             _eventValidator.ValidateDates(startDate, endDate, "event_start_date", "event_end_date");
 
             // Create Address object
-            var address = new Address(command.BuildingName, command.Street, command.BuildingNumber, command.ApartmentNumber, command.City, command.ZipCode, command.Country);
+            var address = new Address(
+                command.BuildingName, 
+                command.Street, 
+                command.BuildingNumber, 
+                command.ApartmentNumber, 
+                command.City, 
+                command.ZipCode, 
+                command.Country, 
+                command.Latitude,
+                command.Longitude);  
             
             // Validate Capacity and Fee
             _eventValidator.ValidateCapacity(command.Capacity);

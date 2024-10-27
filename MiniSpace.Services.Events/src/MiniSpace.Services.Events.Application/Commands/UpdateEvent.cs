@@ -23,6 +23,8 @@ namespace MiniSpace.Services.Events.Application.Commands
         public string City { get; }
         public string ZipCode { get; }
         public string Country { get; }  
+        public double Latitude { get; }   
+        public double Longitude { get; }
         public IEnumerable<string> MediaFilesUrl { get; }
         public string BannerUrl { get; } 
         public string Description { get; }
@@ -35,9 +37,9 @@ namespace MiniSpace.Services.Events.Application.Commands
 
         public UpdateEvent(Guid eventId, string name, OrganizerType organizerType, Guid organizerId, Guid organizationId, 
             Guid rootOrganizationId, string startDate, string endDate, string buildingName, string street, 
-            string buildingNumber, string apartmentNumber, string city, string zipCode, string country, IEnumerable<string> mediaFiles, 
-            string bannerUrl, string description, int capacity, decimal fee, string category, string publishDate, 
-            Visibility visibility, EventSettings settings)
+            string buildingNumber, string apartmentNumber, string city, string zipCode, string country, double latitude, 
+            double longitude, IEnumerable<string> mediaFiles, string bannerUrl, string description, int capacity, 
+            decimal fee, string category, string publishDate, Visibility visibility, EventSettings settings)
         {
             EventId = eventId;
             Name = name;
@@ -54,6 +56,8 @@ namespace MiniSpace.Services.Events.Application.Commands
             City = city;
             ZipCode = zipCode;
             Country = country; 
+            Latitude = latitude;    
+            Longitude = longitude; 
             MediaFilesUrl = mediaFiles;
             BannerUrl = bannerUrl; 
             Description = description;

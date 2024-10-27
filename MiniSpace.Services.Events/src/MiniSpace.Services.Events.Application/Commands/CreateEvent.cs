@@ -23,6 +23,8 @@ namespace MiniSpace.Services.Events.Application.Commands
         public string City { get; set; }
         public string ZipCode { get; set; }
         public string Country { get; set; }  
+        public double Latitude { get; set; }  
+        public double Longitude { get; set; } 
         public IEnumerable<string> MediaFilesUrl { get; set; }
         public string BannerUrl { get; set; } 
         public string Description { get; set; }
