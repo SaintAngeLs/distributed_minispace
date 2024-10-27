@@ -32,6 +32,18 @@ namespace Astravent.Web.Wasm.DTO
         public Visibility CountryVisibility { get; set; }
         public Visibility CityVisibility { get; set; }
 
+        public Visibility FriendListVisibility { get; set; }
+        public Visibility FollowersListVisibility { get; set; }
+        public Visibility FollowingListVisibility { get; set; }
+        public Visibility MessageVisibility { get; set; }
+        public Visibility ProfileVisibility { get; set; }
+        public Visibility PostCommentVisibility { get; set; }
+        public Visibility PostLikeVisibility { get; set; }
+        public Visibility FriendRequestVisibility { get; set; }
+        public Visibility TaggedPostVisibility { get; set; }
+        public Visibility StoryVisibility { get; set; }
+        public Visibility GroupMembershipVisibility { get; set; }
+
         public PreferredLanguage PreferredLanguage { get; set; }
         public FrontendVersion FrontendVersion { get; set; }
     }

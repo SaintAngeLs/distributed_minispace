@@ -27,11 +27,9 @@
         <div class="d-flex align-items-center">
             @if (_isUserAuthenticated)
             {
-                <!-- Drawer Menu for Authenticated User -->
-                @* @if(!isPC)
-                { *@
-                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
-                @* } *@
+            
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
+             
                 <MudText Typo="Typo.h4" Class="ms-2" Color="Color.Primary">Astravent</MudText>
             }
             else
@@ -63,13 +61,22 @@
         </div>
 
         <MudSpacer />
-         @if (_isUserAuthenticated)
+        @if (_isUserAuthenticated)
         {
-            <MudSpacer />
+            <div class="d-flex align-items-center">
+                <MudSpacer />
             <MudTextField T="string" @bind-Value="_searchQuery" Placeholder="Search here..." Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"  />
-            <MudSpacer />
+                <MudSpacer />
+            </div>
         }
-
+        else
+        {
+            <div class="d-flex align-items-center">
+                <MudSpacer />
+            </div>
+        }
+         <MudSpacer />
+ 
         <div class="d-flex align-items-center">
             @if (_isUserAuthenticated)
             {
@@ -79,6 +86,7 @@
             else
             {
                 <!-- More Menu for Unauthenticated User -->
+                <MudSpacer />
                 <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open user menu">
                     <MudMenuItem Href="signin">Sign In</MudMenuItem>
                     <MudMenuItem Href="signup">Sign Up</MudMenuItem>

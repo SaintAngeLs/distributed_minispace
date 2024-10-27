@@ -7,7 +7,8 @@ public static class MiniSpaceTheme
         Palette = new PaletteLight()
         {
             Primary = "#0A66C2",  // LinkedIn blue for primary actions, giving a professional tone
-            Secondary = "#005A9E", // Darker shade of blue for secondary actions, serious and clean
+            // Secondary = "#005A9E", // Darker shade of blue for secondary actions, serious and clean
+            Secondary = "#FF5722", // A rich orange for secondary actions (bold yet professional)
             Tertiary = "#FF8C00",  // A muted orange for accent and call-to-action elements
             AppbarText = Colors.Shades.White, // Clear white text for app bar
             AppbarBackground = "#F0F1F3", // LinkedIn blue for app bar background for uniformity
@@ -37,7 +38,8 @@ public static class MiniSpaceTheme
         {
             // Dark Mode Colors
             Primary = "#8AB4F8",  // Soft blue for dark mode
-            Secondary = "#6C757D", // Greyish blue for secondary elements in dark mode
+            // Secondary = "#6C757D", // Greyish blue for secondary elements in dark mode
+            Secondary = "#FF7043",  // A rich orange hue for secondary in dark mode (stands out against dark surfaces)
             AppbarBackground = "#212121", // Dark app bar for dark mode
             Background = "#121212", // Very dark background to ease the eyes
             Surface = "#1E1E1E", // Darker surface color to contrast with the background

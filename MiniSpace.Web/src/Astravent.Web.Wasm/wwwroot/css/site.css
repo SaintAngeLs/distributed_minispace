@@ -263,7 +263,7 @@ html, body {
   
     .left-side, .right-side {
         width: 100%;
-        /* flex: none !important; */
+        flex: none !important;
     }
 
     .left-side {
@@ -358,6 +358,11 @@ html, body {
     background-color: #30445F;
 }
 
+@media (max-width: 768px) {
+    .mud-appbar {
+        display: unset;
+    }
+}
 .header-services .rz-sidebar-toggle {
     background-color: #30445F;
     color: white;                
@@ -1017,4 +1022,5 @@ div.connectionRejected {
         opacity: 0.5;
     }
 }
+
 

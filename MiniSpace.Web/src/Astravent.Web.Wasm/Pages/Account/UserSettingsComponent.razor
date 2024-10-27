@@ -9,7 +9,6 @@
 }
 else
 {
-    
     <MudExpansionPanels>
 
         <!-- Personal Information Settings -->
@@ -104,6 +103,24 @@ else
                 </MudItem>
                 <MudItem xs="12" sm="6">
                     <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.WorkPositionVisibility" Label="Work Position Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.LanguagesVisibility" Label="Languages Visibility"
+                        Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
+                        @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
+                        {
+                            <MudSelectItem Value="@visibility">@visibility</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Visibility" @bind-Value="AvailableSettingsDto.InterestsVisibility" Label="Interests Visibility"
                         Margin="Margin.Dense" AdornmentIcon="@Icons.Material.Filled.KeyboardArrowDown" AdornmentColor="Color.Primary">
                         @foreach (Visibility visibility in Enum.GetValues(typeof(Visibility)))
                         {
