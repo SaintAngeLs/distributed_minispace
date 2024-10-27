@@ -46,5 +46,10 @@
      <ProjectReference Include="../../../Paralax/src/Paralax.CQRS.WebApi/src/Paralax.CQRS.WebApi/Paralax.CQRS.WebApi.csproj" AdditionalProperties="TargetFramework=net8.0" />
   </ItemGroup> -->
 
+  <!-- <ItemGroup>
+        <ProjectReference Include="../../../Paralax/src/Paralax.MessageBrokers.RabbitMQ/src/Paralax.MessageBrokers.RabbitMQ/Paralax.MessageBrokers.RabbitMQ.csproj" />
+        <ProjectReference Include="../../../Paralax/src/Paralax.MessageBrokers/src/Paralax.MessageBrokers/Paralax.MessageBrokers.csproj" />
+    </ItemGroup> -->
+
 
 </Project>

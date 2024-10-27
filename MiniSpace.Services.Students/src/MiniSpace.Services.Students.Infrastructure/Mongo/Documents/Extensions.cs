@@ -241,6 +241,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     document.AvailableSettings.ConnectionVisibility,
                     document.AvailableSettings.FollowersVisibility,
                     document.AvailableSettings.FollowingVisibility,
+                    document.AvailableSettings.FriendListVisibility,
+                    document.AvailableSettings.FollowersListVisibility,
+                    document.AvailableSettings.FollowingListVisibility,
                     document.AvailableSettings.MyPostsVisibility,
                     document.AvailableSettings.ConnectionsPostsVisibility,
                     document.AvailableSettings.MyRepostsVisibility,
@@ -252,51 +255,73 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                     document.AvailableSettings.DeviceTypeVisibility,
                     document.AvailableSettings.LastActiveVisibility,
                     document.AvailableSettings.CountryVisibility,
-                    document.AvailableSettings.CityVisibility
+                    document.AvailableSettings.CityVisibility,
+
+                    document.AvailableSettings.MessageVisibility,
+                    document.AvailableSettings.ProfileVisibility,
+                    document.AvailableSettings.PostCommentVisibility,
+                    document.AvailableSettings.PostLikeVisibility,
+                    document.AvailableSettings.FriendRequestVisibility,
+                    document.AvailableSettings.TaggedPostVisibility,
+                    document.AvailableSettings.StoryVisibility,
+                    document.AvailableSettings.GroupMembershipVisibility
                 )
             );
 
+
        public static UserSettingsDocument AsDocument(this UserSettings entity)
-            => new UserSettingsDocument
+        => new UserSettingsDocument
+        {
+            Id = Guid.NewGuid(), 
+            UserId = entity.UserId,
+            AvailableSettings = new UserAvailableSettingsDocument
             {
-                Id = Guid.NewGuid(), 
-                UserId = entity.UserId,
-                AvailableSettings = new UserAvailableSettingsDocument
-                {
-                    CreatedAtVisibility = entity.AvailableSettings.CreatedAtVisibility,
-                    DateOfBirthVisibility = entity.AvailableSettings.DateOfBirthVisibility,
-                    InterestedInEventsVisibility = entity.AvailableSettings.InterestedInEventsVisibility,
-                    SignedUpEventsVisibility = entity.AvailableSettings.SignedUpEventsVisibility,
-                    EducationVisibility = entity.AvailableSettings.EducationVisibility,
-                    WorkPositionVisibility = entity.AvailableSettings.WorkPositionVisibility,
-                    LanguagesVisibility = entity.AvailableSettings.LanguagesVisibility,
-                    InterestsVisibility = entity.AvailableSettings.InterestsVisibility,
-                    ContactEmailVisibility = entity.AvailableSettings.ContactEmailVisibility,
-                    PhoneNumberVisibility = entity.AvailableSettings.PhoneNumberVisibility,
-                    ProfileImageVisibility = entity.AvailableSettings.ProfileImageVisibility, 
-                    BannerImageVisibility = entity.AvailableSettings.BannerImageVisibility,   
-                    GalleryVisibility = entity.AvailableSettings.GalleryVisibility,           
+                CreatedAtVisibility = entity.AvailableSettings.CreatedAtVisibility,
+                DateOfBirthVisibility = entity.AvailableSettings.DateOfBirthVisibility,
+                InterestedInEventsVisibility = entity.AvailableSettings.InterestedInEventsVisibility,
+                SignedUpEventsVisibility = entity.AvailableSettings.SignedUpEventsVisibility,
+                EducationVisibility = entity.AvailableSettings.EducationVisibility,
+                WorkPositionVisibility = entity.AvailableSettings.WorkPositionVisibility,
+                LanguagesVisibility = entity.AvailableSettings.LanguagesVisibility,
+                InterestsVisibility = entity.AvailableSettings.InterestsVisibility,
+                ContactEmailVisibility = entity.AvailableSettings.ContactEmailVisibility,
+                PhoneNumberVisibility = entity.AvailableSettings.PhoneNumberVisibility,
+                ProfileImageVisibility = entity.AvailableSettings.ProfileImageVisibility, 
+                BannerImageVisibility = entity.AvailableSettings.BannerImageVisibility,   
+                GalleryVisibility = entity.AvailableSettings.GalleryVisibility,           
 
-                    ConnectionVisibility = entity.AvailableSettings.ConnectionVisibility,
-                    FollowersVisibility = entity.AvailableSettings.FollowersVisibility,
-                    FollowingVisibility = entity.AvailableSettings.FollowingVisibility,
-                    MyPostsVisibility = entity.AvailableSettings.MyPostsVisibility,
-                    ConnectionsPostsVisibility = entity.AvailableSettings.ConnectionsPostsVisibility,
-                    MyRepostsVisibility = entity.AvailableSettings.MyRepostsVisibility,
-                    RepostsOfMyConnectionsVisibility = entity.AvailableSettings.RepostsOfMyConnectionsVisibility,
-                    OrganizationIAmCreatorVisibility = entity.AvailableSettings.OrganizationIAmCreatorVisibility,
-                    OrganizationIFollowVisibility = entity.AvailableSettings.OrganizationIFollowVisibility,
+                ConnectionVisibility = entity.AvailableSettings.ConnectionVisibility,
+                FollowersVisibility = entity.AvailableSettings.FollowersVisibility,
+                FollowingVisibility = entity.AvailableSettings.FollowingVisibility,
+                FriendListVisibility = entity.AvailableSettings.FriendListVisibility,
+                FollowersListVisibility = entity.AvailableSettings.FollowersListVisibility,
+                FollowingListVisibility = entity.AvailableSettings.FollowingListVisibility,
+                MyPostsVisibility = entity.AvailableSettings.MyPostsVisibility,
+                ConnectionsPostsVisibility = entity.AvailableSettings.ConnectionsPostsVisibility,
+                MyRepostsVisibility = entity.AvailableSettings.MyRepostsVisibility,
+                RepostsOfMyConnectionsVisibility = entity.AvailableSettings.RepostsOfMyConnectionsVisibility,
+                OrganizationIAmCreatorVisibility = entity.AvailableSettings.OrganizationIAmCreatorVisibility,
+                OrganizationIFollowVisibility = entity.AvailableSettings.OrganizationIFollowVisibility,
 
-                    IsOnlineVisibility = entity.AvailableSettings.IsOnlineVisibility,
-                    DeviceTypeVisibility = entity.AvailableSettings.DeviceTypeVisibility,
-                    LastActiveVisibility = entity.AvailableSettings.LastActiveVisibility,
-                    CountryVisibility = entity.AvailableSettings.CountryVisibility,
-                    CityVisibility = entity.AvailableSettings.CityVisibility,
+                IsOnlineVisibility = entity.AvailableSettings.IsOnlineVisibility,
+                DeviceTypeVisibility = entity.AvailableSettings.DeviceTypeVisibility,
+                LastActiveVisibility = entity.AvailableSettings.LastActiveVisibility,
+                CountryVisibility = entity.AvailableSettings.CountryVisibility,
+                CityVisibility = entity.AvailableSettings.CityVisibility,
 
+                FrontendVersion = entity.AvailableSettings.FrontendVersion,
+                PreferredLanguage = entity.AvailableSettings.PreferredLanguage,
 
-                    FrontendVersion = entity.AvailableSettings.FrontendVersion,
-                    PreferredLanguage = entity.AvailableSettings.PreferredLanguage
-                }
-            };
+                MessageVisibility = entity.AvailableSettings.MessageVisibility,
+                ProfileVisibility = entity.AvailableSettings.ProfileVisibility,
+                PostCommentVisibility = entity.AvailableSettings.PostCommentVisibility,
+                PostLikeVisibility = entity.AvailableSettings.PostLikeVisibility,
+                FriendRequestVisibility = entity.AvailableSettings.FriendRequestVisibility,
+                TaggedPostVisibility = entity.AvailableSettings.TaggedPostVisibility,
+                StoryVisibility = entity.AvailableSettings.StoryVisibility,
+                GroupMembershipVisibility = entity.AvailableSettings.GroupMembershipVisibility
+            }
+    };
+
     }
 }

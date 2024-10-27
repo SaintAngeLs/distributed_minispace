@@ -23,6 +23,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
         public Visibility ConnectionVisibility { get; set; }
         public Visibility FollowersVisibility { get; set; }
         public Visibility FollowingVisibility { get; set; }
+        public Visibility FriendListVisibility { get; set; }  // Who can see the user's friend list
+        public Visibility FollowersListVisibility { get; set; }  // Who can see the user's followers list
+        public Visibility FollowingListVisibility { get; set; }  // Who can see the user's following list
         public Visibility MyPostsVisibility { get; set; }
         public Visibility ConnectionsPostsVisibility { get; set; }
         public Visibility MyRepostsVisibility { get; set; }
@@ -38,5 +41,14 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 
         public FrontendVersion FrontendVersion { get; set; }
         public PreferredLanguage PreferredLanguage { get; set; }
+
+        public Visibility MessageVisibility { get; set; }  // Who can message the user
+        public Visibility ProfileVisibility { get; set; }  // Overall profile visibility
+        public Visibility PostCommentVisibility { get; set; }  // Who can comment on posts
+        public Visibility PostLikeVisibility { get; set; }  // Who can like posts
+        public Visibility FriendRequestVisibility { get; set; }  // Who can send friend requests
+        public Visibility TaggedPostVisibility { get; set; }  // Who can see posts the user is tagged in
+        public Visibility StoryVisibility { get; set; }  // Who can view stories
+        public Visibility GroupMembershipVisibility { get; set; }  // Who can see user's group memberships
     }
 }
