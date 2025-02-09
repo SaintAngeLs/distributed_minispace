@@ -19,6 +19,7 @@ DIR_MAP["Services.Posts"]="MiniSpace.Services.Posts/src/MiniSpace.Services.Posts
 DIR_MAP["Services.Reactions"]="MiniSpace.Services.Reactions/src/MiniSpace.Services.Reactions.Api"
 DIR_MAP["Services.Reports"]="MiniSpace.Services.Reports/src/MiniSpace.Services.Reports.Api"
 DIR_MAP["Services.Students"]="MiniSpace.Services.Students/src/MiniSpace.Services.Students.Api"
+DIR_MAP["Services.Communication"]="MiniSpace.Services.Communication/src/MiniSpace.Services.Communication.Api"
 DIR_MAP["Web"]="MiniSpace.Web/src/MiniSpace.Web"
 
 
