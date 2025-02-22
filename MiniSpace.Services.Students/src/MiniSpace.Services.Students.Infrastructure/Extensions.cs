@@ -90,6 +90,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMongoRepository<UserProfileViewsDocument, Guid>("user_profile_views")
                 .AddMongoRepository<UserViewingProfilesDocument, Guid>("user_viewing_profiles")
                 .AddMongoRepository<BlockedUsersDocument, Guid>("blocked_users")
+                .AddSignalRInfrastructure()
                 .AddWebApiSwaggerDocs()
                 .AddCertificateAuthentication()
                 .AddSecurity();
@@ -130,6 +131,23 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .SubscribeEvent<TwoFactorAuthenticationDisabled>();
 
             return app;
+        }
+        
+        public static IParalaxBuilder AddSignalRInfrastructure(this IParalaxBuilder builder)
+        {
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .SetIsOriginAllowed((host) => true)); 
+            });
+
+            builder.Services.AddSignalR();
+
+            return builder;
         }
 
         internal static CorrelationContext GetCorrelationContext(this IHttpContextAccessor accessor)
