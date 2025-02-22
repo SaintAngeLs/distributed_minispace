@@ -35,9 +35,28 @@ namespace MiniSpace.Services.Students.Api
                             .AddInfrastructure();
                     
                     services.AddGrpc();
+                    
+                    services.AddCors(options =>
+                    {
+                        options.AddPolicy("CorsPolicy",
+                            builder => builder
+                                .AllowAnyMethod()
+                                .AllowAnyHeader()
+                                .AllowCredentials()
+                                .SetIsOriginAllowed(host => true));
+                    });
+                    
+                    services.AddSignalR();
                 })
                 .Configure(app => app
                     .UseInfrastructure()
+                    .UseCors("CorsPolicy")
+                    .UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapGrpcService<StudentServiceGrpc>();
+                        endpoints.MapHub<MiniSpace.Services.Students.Application.Hubs.PresenceHub>("/presenceHub")
+                            .RequireCors("CorsPolicy");
+                    })
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetStudents, Application.Queries.PagedResult<StudentDto>>("students")
