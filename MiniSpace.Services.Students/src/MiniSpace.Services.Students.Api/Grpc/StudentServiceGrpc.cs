@@ -18,17 +18,17 @@ namespace MiniSpace.Services.Students.Api.Grpc
             _queryDispatcher = queryDispatcher;
         }
 
-        // Implement the GetStudent gRPC method
+        // Implement the GetUser gRPC method
         public override async Task<StudentResponse> GetStudent(GetStudentRequest request, ServerCallContext context)
         {
-            var studentDto = await _queryDispatcher.QueryAsync<GetStudent, StudentDto>(new GetStudent
+            var studentDto = await _queryDispatcher.QueryAsync<GetUser, UserDto>(new GetUser
             {
                 StudentId = Guid.Parse(request.StudentId)
             });
 
             if (studentDto == null)
             {
-                throw new RpcException(new Status(StatusCode.NotFound, "Student not found"));
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
             }
 
             return new StudentResponse
@@ -46,7 +46,7 @@ namespace MiniSpace.Services.Students.Api.Grpc
         public override async Task<GetPaginatedStudentsResponse> GetPaginatedStudents(GetPaginatedStudentsRequest request, ServerCallContext context)
         {
             // Fetch paginated students using the dispatcher
-            var paginatedStudents = await _queryDispatcher.QueryAsync<GetStudents, MiniSpace.Services.Students.Application.Queries.PagedResult<StudentDto>>(new GetStudents
+            var paginatedStudents = await _queryDispatcher.QueryAsync<GetUsers, MiniSpace.Services.Students.Application.Queries.PagedResult<UserDto>>(new GetUsers
             {
                 Page = request.Page,
                 ResultsPerPage = request.PageSize // Use ResultsPerPage instead of PageSize

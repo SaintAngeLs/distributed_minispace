@@ -50,40 +50,41 @@ namespace MiniSpace.Services.Students.Api
                 })
                 .Configure(app => app
                     .UseInfrastructure()
+                    .UseRouting()
                     .UseCors("CorsPolicy")
                     .UseEndpoints(endpoints =>
                     {
-                        endpoints.MapGrpcService<StudentServiceGrpc>();
+                        // endpoints.MapGrpcService<StudentServiceGrpc>();
                         endpoints.MapHub<MiniSpace.Services.Students.Application.Hubs.PresenceHub>("/presenceHub")
                             .RequireCors("CorsPolicy");
                     })
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
-                        .Get<GetStudents, Application.Queries.PagedResult<StudentDto>>("students")
-                        .Get<GetStudent, StudentDto>("students/{studentId}")
+                        .Get<GetUsers, Application.Queries.PagedResult<UserDto>>("students")
+                        .Get<GetUser, UserDto>("students/{studentId}")
                         .Get<GetUserSettings, UserSettingsDto>("students/{studentId}/settings")
-                        .Get<GetStudentWithGalleryImages, StudentWithGalleryImagesDto>("students/{studentId}/gallery")
-                        .Get<GetStudentWithVisibilitySettings, StudentWithVisibilitySettingsDto>("students/{studentId}/visibility-settings")
-                        .Get<GetStudentEvents, StudentEventsDto>("students/{studentId}/events")
+                        .Get<GetUserWithGalleryImages, StudentWithGalleryImagesDto>("students/{studentId}/gallery")
+                        .Get<GetUserWithVisibilitySettings, StudentWithVisibilitySettingsDto>("students/{studentId}/visibility-settings")
+                        .Get<GetUserEvents, UserEventsDto>("students/{studentId}/events")
                         .Get<GetUserNotificationPreferences, NotificationPreferencesDto>("students/{studentId}/notifications")
                         .Get<GetUserProfileViews, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/paginated")
                         .Get<GetProfilesViewedByUser, PagedResponse<UserProfileViewDto>>("students/profiles/users/{userId}/views/viewed")
                         .Get<GetBlockedUsers, PagedResponse<BlockedUserDto>>("students/{blockerId}/blocked-users")
 
-                        .Put<UpdateStudent>("students/{studentId}")
+                        .Put<UpdateUser>("students/{studentId}")
                         .Put<UpdateUserSettings>("students/{studentId}/settings")
-                        .Put<ChangeStudentState>("students/{studentId}/state/{state}",
+                        .Put<ChangeUserState>("students/{studentId}/state/{state}",
                             afterDispatch: (cmd, ctx) => ctx.Response.NoContent())
-                        .Put<UpdateStudentLanguagesAndInterests>("students/{studentId}/languages-and-interests")
+                        .Put<UpdateUserLanguagesAndInterests>("students/{studentId}/languages-and-interests")
 
-                        .Delete<DeleteStudent>("students/{studentId}")
+                        .Delete<DeleteUser>("students/{studentId}")
 
                         .Post<BlockUser>("students/{blockerId}/block-user/{blockedUserId}",
                             afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                         .Post<UnblockUser>("students/{blockerId}/unblock-user/{blockedUserId}",
                             afterDispatch: (cmd, ctx) => ctx.Response.Ok())
 
-                        .Post<CompleteStudentRegistration>("students",
+                        .Post<CompleteUserRegistration>("students",
                             afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))
                         .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")
                         .Post<ViewUserProfile>("students/profiles/users/{userProfileId}/view", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
