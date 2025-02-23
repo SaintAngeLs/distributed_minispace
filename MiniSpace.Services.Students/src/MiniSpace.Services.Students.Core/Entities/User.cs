@@ -142,7 +142,7 @@ public class User : AggregateRoot
     {
         var previousState = State;
         State = state;
-        AddEvent(new StudentStateChanged(this, previousState));
+        AddEvent(new UserStateChanged(this, previousState));
     }
 
     public void CompleteRegistration(string profileImageUrl, string description,
@@ -153,7 +153,7 @@ public class User : AggregateRoot
 
         if (State != State.Incomplete && State != State.Unverified)
         {
-            throw new CannotChangeStudentStateException(Id, State);
+            throw new CannotChangeUserStateException(Id, State);
         }
 
         ProfileImageUrl = profileImageUrl;
@@ -162,7 +162,7 @@ public class User : AggregateRoot
         EmailNotifications = emailNotifications;
 
         State = State.Valid;
-        AddEvent(new StudentRegistrationCompleted(this));
+        AddEvent(new UserRegistrationCompleted(this));
     }
 
     public void Update(string firstName, string lastName, string description,
@@ -173,7 +173,7 @@ public class User : AggregateRoot
 
         if (State != State.Valid)
         {
-            throw new CannotUpdateStudentException(Id);
+            throw new CannotUpdateUserException(Id);
         }
 
         FirstName = firstName;
@@ -186,61 +186,61 @@ public class User : AggregateRoot
         City = city;
         DateOfBirth = dateOfBirth;
 
-        AddEvent(new StudentUpdated(this));
+        AddEvent(new UserUpdated(this));
     }
 
     public void UpdateProfileImageUrl(string profileImageUrl)
     {
         ProfileImageUrl = profileImageUrl;
-        AddEvent(new StudentUpdated(this));
+        AddEvent(new UserUpdated(this));
     }
 
     public void UpdateBannerUrl(string bannerUrl)
     {
         BannerUrl = bannerUrl;
-        AddEvent(new StudentBannerUpdated(this));
+        AddEvent(new UserBannerUpdated(this));
     }
 
     public void UpdateEducation(IEnumerable<Education> education)
     {
         Education = new HashSet<Education>(education ?? Enumerable.Empty<Education>());
-        AddEvent(new StudentEducationUpdated(this));
+        AddEvent(new UserEducationUpdated(this));
     }
 
     public void UpdateWork(IEnumerable<Work> work)
     {
         Work = new HashSet<Work>(work ?? Enumerable.Empty<Work>());
-        AddEvent(new StudentWorkUpdated(this));
+        AddEvent(new UserWorkUpdated(this));
     }
 
     public void UpdateLanguages(IEnumerable<Language> languages)
     {
         Languages = new HashSet<Language>(languages ?? Enumerable.Empty<Language>());
-        AddEvent(new StudentLanguagesUpdated(this));
+        AddEvent(new UserLanguagesUpdated(this));
     }
 
     public void UpdateInterests(IEnumerable<Interest> interests)
     {
         Interests = new HashSet<Interest>(interests ?? Enumerable.Empty<Interest>());
-        AddEvent(new StudentInterestsUpdated(this));
+        AddEvent(new UserInterestsUpdated(this));
     }
 
     public void UpdateContactEmail(string contactEmail)
     {
         ContactEmail = contactEmail;
-        AddEvent(new StudentUpdated(this));
+        AddEvent(new UserUpdated(this));
     }
 
     public void RemoveProfileImage()
     {
         ProfileImageUrl = string.Empty;
-        AddEvent(new StudentProfileImageRemoved(this));
+        AddEvent(new UserProfileImageRemoved(this));
     }
 
     public void RemoveBannerImage()
     {
         BannerUrl = string.Empty;
-        AddEvent(new StudentBannerImageRemoved(this));
+        AddEvent(new UserBannerImageRemoved(this));
     }
 
     public void EnableTwoFactorAuthentication(string twoFactorSecret)
@@ -252,14 +252,14 @@ public class User : AggregateRoot
 
         IsTwoFactorEnabled = true;
         TwoFactorSecret = twoFactorSecret;
-        AddEvent(new StudentTwoFactorEnabled(this));
+        AddEvent(new UserTwoFactorEnabled(this));
     }
 
     public void DisableTwoFactorAuthentication()
     {
         IsTwoFactorEnabled = false;
         TwoFactorSecret = null;
-        AddEvent(new StudentTwoFactorDisabled(this));
+        AddEvent(new UserTwoFactorDisabled(this));
     }
 
     private void CheckFullName(string firstName, string lastName)
@@ -288,7 +288,7 @@ public class User : AggregateRoot
     {
         if (dateOfBirth >= now)
         {
-            throw new InvalidStudentDateOfBirthException(Id, dateOfBirth, now);
+            throw new InvalidUserDateOfBirthException(Id, dateOfBirth, now);
         }
     }
 
@@ -301,7 +301,7 @@ public class User : AggregateRoot
 
         if (!_interestedInEvents.Add(eventId))
         {
-            throw new StudentAlreadyInterestedInException(Id, eventId);
+            throw new UserAlreadyInterestedInException(Id, eventId);
         }
     }
 
@@ -309,7 +309,7 @@ public class User : AggregateRoot
     {
         if (!_interestedInEvents.Remove(eventId))
         {
-            throw new StudentIsNotInterestedException(Id, eventId);
+            throw new UserIsNotInterestedException(Id, eventId);
         }
     }
 
@@ -322,7 +322,7 @@ public class User : AggregateRoot
 
         if (!_signedUpEvents.Add(eventId))
         {
-            throw new StudentAlreadySignedUpException(Id, eventId);
+            throw new UserAlreadySignedUpException(Id, eventId);
         }
     }
 
@@ -330,7 +330,7 @@ public class User : AggregateRoot
     {
         if (!_signedUpEvents.Remove(eventId))
         {
-            throw new StudentIsNotSignedUpException(Id, eventId);
+            throw new UserIsNotSignedUpException(Id, eventId);
         }
     }
 
@@ -340,7 +340,7 @@ public class User : AggregateRoot
     public void SetEmailNotifications(bool emailNotifications)
     {
         EmailNotifications = emailNotifications;
-        AddEvent(new StudentUpdated(this));
+        AddEvent(new UserUpdated(this));
     }
 
     public void SetOnlineStatus(bool isOnline, string deviceType)
@@ -348,13 +348,13 @@ public class User : AggregateRoot
         IsOnline = isOnline;
         DeviceType = isOnline ? deviceType : null;
         LastActive = DateTime.UtcNow;
-        AddEvent(new StudentOnlineStatusChanged(this));
+        AddEvent(new UserOnlineStatusChanged(this));
     }
 
     public void UpdateLastActive()
     {
         LastActive = DateTime.UtcNow;
-        AddEvent(new StudentLastActiveUpdated(this));
+        AddEvent(new UserLastActiveUpdated(this));
     }
 
     public void RemoveEvent(Guid eventId)
@@ -373,5 +373,16 @@ public class User : AggregateRoot
         {
             throw new InvalidOperationException($"Event with ID {eventId} is not associated with this user.");
         }
+    }
+    
+    public void UpdateUserName(string userName)
+    {
+        if (string.IsNullOrWhiteSpace(userName))
+        {
+            throw new ArgumentException("User name cannot be empty.", nameof(userName));
+        }
+        UserName = userName;
+        // Optionally, raise a domain event for username change.
+        AddEvent(new UserUpdated(this));
     }
 }

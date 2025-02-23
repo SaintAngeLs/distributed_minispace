@@ -8,18 +8,18 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
     public class TokenRefreshedHandler : IEventHandler<TokenRefreshed>
     {
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<TokenRefreshedHandler> _logger;
 
-        public TokenRefreshedHandler(IStudentRepository studentRepository, ILogger<TokenRefreshedHandler> logger)
+        public TokenRefreshedHandler(IUserRepository userRepository, ILogger<TokenRefreshedHandler> logger)
         {
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
             _logger = logger;
         }
 
         public async Task HandleAsync(TokenRefreshed @event, CancellationToken cancellationToken = default)
         {
-            var student = await _studentRepository.GetAsync(@event.UserId);
+            var student = await _userRepository.GetAsync(@event.UserId);
             if (student is null)
             {
                 _logger.LogWarning($"Student with ID '{@event.UserId}' not found.");
@@ -28,7 +28,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 
             student.SetOnlineStatus(true, @event.DeviceType);
             student.UpdateLastActive();
-            await _studentRepository.UpdateAsync(student);
+            await _userRepository.UpdateAsync(student);
 
             _logger.LogInformation($"Student '{@event.UserId}' refreshed token. Device: {@event.DeviceType}, IP: {@event.IpAddress}");
         }

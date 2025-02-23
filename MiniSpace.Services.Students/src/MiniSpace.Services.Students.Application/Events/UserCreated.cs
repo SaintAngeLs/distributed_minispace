@@ -1,0 +1,20 @@
+using Paralax.CQRS.Events;
+using System.Diagnostics.CodeAnalysis;
+
+namespace MiniSpace.Services.Students.Application.Events
+{
+    [ExcludeFromCodeCoverage]
+    public class UserCreated : IEvent
+    {
+        public Guid StudentId { get; }
+        public string FullName { get; }
+        public string ProfileImageUrl { get; }
+
+        public UserCreated(Guid studentId, string fullName, string profileImageUrl)
+        {
+            StudentId = studentId;
+            FullName = fullName;
+            ProfileImageUrl = profileImageUrl;
+        }
+    }
+}

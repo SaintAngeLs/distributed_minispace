@@ -11,12 +11,12 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
     public class UpdateUserNotificationPreferencesHandler : ICommandHandler<UpdateUserNotificationPreferences>
     {
         private readonly IUserNotificationPreferencesRepository _userNotificationPreferencesRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
 
-        public UpdateUserNotificationPreferencesHandler(IUserNotificationPreferencesRepository userNotificationPreferencesRepository, IStudentRepository studentRepository)
+        public UpdateUserNotificationPreferencesHandler(IUserNotificationPreferencesRepository userNotificationPreferencesRepository, IUserRepository userRepository)
         {
             _userNotificationPreferencesRepository = userNotificationPreferencesRepository;
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
         }
 
         public async Task HandleAsync(UpdateUserNotificationPreferences command, CancellationToken cancellationToken = default)
@@ -45,11 +45,11 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
             await _userNotificationPreferencesRepository.UpdateNotificationPreferencesAsync(command.UserId, notificationPreferences);
 
-            var student = await _studentRepository.GetAsync(command.UserId);
+            var student = await _userRepository.GetAsync(command.UserId);
             if (student != null)
             {
                 student.SetEmailNotifications(command.EmailNotifications);
-                await _studentRepository.UpdateAsync(student);
+                await _userRepository.UpdateAsync(student);
             }
         }
     }

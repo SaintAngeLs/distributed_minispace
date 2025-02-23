@@ -13,20 +13,20 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
     public class UpdateUserSettingsHandler : ICommandHandler<UpdateUserSettings>
     {
         private readonly IUserSettingsRepository _userSettingsRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IAppContext _appContext;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
         public UpdateUserSettingsHandler(
             IUserSettingsRepository userSettingsRepository,
-            IStudentRepository studentRepository,
+            IUserRepository userRepository,
             IAppContext appContext,
             IEventMapper eventMapper,
             IMessageBroker messageBroker)
         {
             _userSettingsRepository = userSettingsRepository;
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
             _appContext = appContext;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
@@ -38,7 +38,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             Console.WriteLine("Received UpdateUserSettings command:");
             Console.WriteLine(commandJson);
 
-            var student = await _studentRepository.GetAsync(command.StudentId);
+            var student = await _userRepository.GetAsync(command.StudentId);
             if (student == null)
             {
                 throw new StudentNotFoundException(command.StudentId);

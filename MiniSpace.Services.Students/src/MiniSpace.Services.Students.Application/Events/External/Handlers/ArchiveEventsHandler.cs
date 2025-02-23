@@ -12,18 +12,18 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
 {
     public class EventArchivedHandler : IEventHandler<EventArchived>
     {
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMessageBroker _messageBroker;
 
-        public EventArchivedHandler(IStudentRepository studentRepository, IMessageBroker messageBroker)
+        public EventArchivedHandler(IUserRepository userRepository, IMessageBroker messageBroker)
         {
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
             _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(EventArchived @event, CancellationToken cancellationToken)
         {
-            var students = await _studentRepository.GetStudentsByEventIdAsync(@event.EventId);
+            var students = await _userRepository.GetUsersByEventIdAsync(@event.EventId);
 
             if (students is null || students.Count == 0)
             {
@@ -34,7 +34,7 @@ namespace MiniSpace.Services.Events.Application.Commands.Handlers
             {
                 student.RemoveEvent(@event.EventId);
 
-                await _studentRepository.UpdateAsync(student);
+                await _userRepository.UpdateAsync(student);
             }
 
         }

@@ -12,14 +12,14 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
     public class BlockUserHandler : ICommandHandler<BlockUser>
     {
         private readonly IBlockedUsersRepository _blockedUsersRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public BlockUserHandler(IBlockedUsersRepository blockedUsersRepository, IStudentRepository studentRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public BlockUserHandler(IBlockedUsersRepository blockedUsersRepository, IUserRepository userRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _blockedUsersRepository = blockedUsersRepository;
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
         }
@@ -27,14 +27,14 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
         public async Task HandleAsync(BlockUser command, CancellationToken cancellationToken = default)
         {
             // Ensure the blocker exists
-            var blocker = await _studentRepository.GetAsync(command.BlockerId);
+            var blocker = await _userRepository.GetAsync(command.BlockerId);
             if (blocker is null)
             {
                 throw new StudentNotFoundException(command.BlockerId);
             }
 
             // Ensure the user to be blocked exists
-            var blockedUser = await _studentRepository.GetAsync(command.BlockedUserId);
+            var blockedUser = await _userRepository.GetAsync(command.BlockedUserId);
             if (blockedUser is null)
             {
                 throw new StudentNotFoundException(command.BlockedUserId);

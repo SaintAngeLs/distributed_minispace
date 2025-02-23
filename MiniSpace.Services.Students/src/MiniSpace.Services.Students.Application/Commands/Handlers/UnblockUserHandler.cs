@@ -13,22 +13,22 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
     public class UnblockUserHandler : ICommandHandler<UnblockUser>
     {
         private readonly IBlockedUsersRepository _blockedUsersRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public UnblockUserHandler(IBlockedUsersRepository blockedUsersRepository, IStudentRepository studentRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
+        public UnblockUserHandler(IBlockedUsersRepository blockedUsersRepository, IUserRepository userRepository, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _blockedUsersRepository = blockedUsersRepository;
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
             _eventMapper = eventMapper;
             _messageBroker = messageBroker;
         }
 
         public async Task HandleAsync(UnblockUser command, CancellationToken cancellationToken = default)
         {
-            var blocker = await _studentRepository.GetAsync(command.BlockerId);
-            var blockedUser = await _studentRepository.GetAsync(command.BlockedUserId);
+            var blocker = await _userRepository.GetAsync(command.BlockerId);
+            var blockedUser = await _userRepository.GetAsync(command.BlockedUserId);
 
             if (blocker is null)
             {

@@ -10,12 +10,12 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
     public class MediaFileDeletedHandler : IEventHandler<MediaFileDeleted>
     {
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IUserGalleryRepository _userGalleryRepository;
 
-        public MediaFileDeletedHandler(IStudentRepository studentRepository, IUserGalleryRepository userGalleryRepository)
+        public MediaFileDeletedHandler(IUserRepository userRepository, IUserGalleryRepository userGalleryRepository)
         {
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
             _userGalleryRepository = userGalleryRepository;
         }
 
@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             Console.WriteLine($"Received MediaFileDeleted event: {@event.MediaFileUrl}");
 
             // Fetch the student data
-            var student = await _studentRepository.GetAsync(@event.UploaderId);
+            var student = await _userRepository.GetAsync(@event.UploaderId);
             if (student == null)
             {
                 Console.WriteLine($"Student with ID {@event.UploaderId} not found.");
@@ -71,7 +71,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             // Update the student repository if necessary
             if (studentUpdated)
             {
-                await _studentRepository.UpdateAsync(student);
+                await _userRepository.UpdateAsync(student);
                 Console.WriteLine("Updated student repository.");
             }
 

@@ -17,7 +17,7 @@ namespace MiniSpace.Services.Students.Core.Entities
         public void UpdatePreferences(NotificationPreferences notificationPreferences)
         {
             NotificationPreferences = notificationPreferences ?? new NotificationPreferences();
-            AddEvent(new StudentNotificationPreferencesUpdated(this));
+            AddEvent(new UserNotificationPreferencesUpdated(this));
         }
     }
 }

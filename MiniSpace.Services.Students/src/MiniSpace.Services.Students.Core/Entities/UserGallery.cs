@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Students.Core.Entities
             var image = _galleryOfImages.FirstOrDefault(img => img.ImageId == imageId);
             if (image == null)
             {
-                throw new StudentGalleryImageNotFoundException(UserId, imageId.ToString());
+                throw new UserGalleryImageNotFoundException(UserId, imageId.ToString());
             }
 
             _galleryOfImages.Remove(image);
