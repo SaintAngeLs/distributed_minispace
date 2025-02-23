@@ -11,6 +11,6 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Repositories
 {
     public interface IExtendeduserRepository : IUserRepository
     {
-       Task<PagedResult<StudentDocument>> FindAsync(FilterDefinition<StudentDocument> filter, int page, int pageSize, CancellationToken cancellationToken);
+       Task<PagedResult<UserDocument>> FindAsync(FilterDefinition<UserDocument> filter, int page, int pageSize, CancellationToken cancellationToken);
     }
 }

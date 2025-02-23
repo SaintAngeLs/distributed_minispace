@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetStudentHandler : IQueryHandler<GetUser, UserDto>
+    public class GetUserHandler : IQueryHandler<GetUser, UserDto>
     {
         private readonly IMongoRepository<UserDocument, Guid> _userRepository;
         private readonly IUserSettingsRepository _userSettingsRepository;
         private readonly IUserGalleryRepository _userGalleryRepository;
 
-        public GetStudentHandler(
+        public GetUserHandler(
             IMongoRepository<UserDocument, Guid> userRepository,
             IUserSettingsRepository userSettingsRepository,
             IUserGalleryRepository userGalleryRepository)

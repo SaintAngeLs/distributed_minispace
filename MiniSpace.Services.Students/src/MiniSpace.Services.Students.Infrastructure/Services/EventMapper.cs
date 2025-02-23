@@ -18,14 +18,15 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
         {
             switch (@event)
             {
-                case StudentRegistrationCompleted e:
-                    return new Application.Events.StudentCreated(e.Student.Id, e.Student.FullName, e.Student.ProfileImageUrl);
-                case StudentUpdated e:
-                    return new Application.Events.StudentUpdated(
-                        e.Student.Id, 
-                        e.Student.FullName, 
-                        e.Student.Description,
-                        e.Student.Education.Select(ed => new Application.Dto.EducationDto 
+                case UserRegistrationCompleted e:
+                    return new Application.Events.UserCreated(e.User.Id, e.User.FullName, e.User.ProfileImageUrl);
+                case UserUpdated e:
+                    return new Application.Events.UserUpdated(
+                        e.User.Id, 
+                        e.User.FullName, 
+                        e.User.UserName,
+                        e.User.Description,
+                        e.User.Education.Select(ed => new Application.Dto.EducationDto 
                         {
                             InstitutionName = ed.InstitutionName,
                             Degree = ed.Degree,
@@ -33,7 +34,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
                             EndDate = ed.EndDate,
                             Description = ed.Description
                         }),
-                        e.Student.Work.Select(w => new Application.Dto.WorkDto
+                        e.User.Work.Select(w => new Application.Dto.WorkDto
                         {
                             Company = w.Company,
                             Position = w.Position,
@@ -41,17 +42,17 @@ namespace MiniSpace.Services.Students.Infrastructure.Services
                             EndDate = w.EndDate,
                             Description = w.Description
                         }),
-                        e.Student.Languages.Select(i => i.ToString()),
-                        e.Student.Interests.Select(i => i.ToString()),
-                        e.Student.ContactEmail,
-                        e.Student.Country,
-                        e.Student.City,
-                        e.Student.DateOfBirth);
-                case StudentStateChanged e:
-                    return new Application.Events.StudentStateChanged(
-                        e.Student.Id, 
-                        e.Student.FullName,
-                        e.Student.State.ToString().ToLowerInvariant(), 
+                        e.User.Languages.Select(i => i.ToString()),
+                        e.User.Interests.Select(i => i.ToString()),
+                        e.User.ContactEmail,
+                        e.User.Country,
+                        e.User.City,
+                        e.User.DateOfBirth);
+                case UserStateChanged e:
+                    return new Application.Events.UserStateChanged(
+                        e.User.Id, 
+                        e.User.FullName,
+                        e.User.State.ToString().ToLowerInvariant(), 
                         e.PreviousState.ToString().ToLowerInvariant());
             }
 

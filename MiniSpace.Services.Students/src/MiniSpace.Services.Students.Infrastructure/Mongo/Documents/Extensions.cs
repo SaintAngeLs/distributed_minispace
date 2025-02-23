@@ -8,10 +8,11 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
 {
     public static class Extensions
     {
-        public static Student AsEntity(this StudentDocument document)
-            => new Student(
+        public static User AsEntity(this UserDocument document)
+            => new User(
                 document.Id,
                 document.Email,
+                document.UserName,
                 document.CreatedAt,
                 document.FirstName,
                 document.LastName,
@@ -39,11 +40,12 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 document.LastActive  
             );
 
-        public static StudentDocument AsDocument(this Student entity)
-            => new StudentDocument()
+        public static UserDocument AsDocument(this User entity)
+            => new UserDocument()
             {
                 Id = entity.Id,
                 Email = entity.Email,
+                UserName = entity.UserName,
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
                 ProfileImageUrl = entity.ProfileImageUrl,
@@ -87,11 +89,12 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 LastActive = entity.LastActive
             };
 
-        public static StudentDto AsDto(this StudentDocument document)
-            => new StudentDto()
+        public static UserDto AsDto(this UserDocument document)
+            => new UserDto()
             {
                 Id = document.Id,
                 Email = document.Email,
+                UserName = document.UserName,
                 FirstName = document.FirstName,
                 LastName = document.LastName,
                 ProfileImageUrl = document.ProfileImageUrl,

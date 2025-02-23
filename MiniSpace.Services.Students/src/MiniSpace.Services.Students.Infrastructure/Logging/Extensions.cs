@@ -11,7 +11,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
     {
         public static IParalaxBuilder AddHandlersLogging(this IParalaxBuilder builder)
         {
-            var assembly = typeof(UpdateStudent).Assembly;
+            var assembly = typeof(UpdateUser).Assembly;
             
             builder.Services.AddSingleton<IMessageToLogTemplateMapper>(new MessageToLogTemplateMapper());
             

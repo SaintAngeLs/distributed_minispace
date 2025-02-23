@@ -12,13 +12,13 @@ using MiniSpace.Services.Students.Core.Repositories;
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
     [ExcludeFromCodeCoverage]
-    public class GetStudentsHandler : IQueryHandler<GetUsers, Application.Queries.PagedResult<UserDto>>
+    public class GetUsersHandler : IQueryHandler<GetUsers, Application.Queries.PagedResult<UserDto>>
     {
         private readonly IMongoRepository<UserDocument, Guid> _userRepository;
         private readonly IUserSettingsRepository _userSettingsRepository;
         private const string BaseUrl = "students"; 
 
-        public GetStudentsHandler(
+        public GetUsersHandler(
             IMongoRepository<UserDocument, Guid> userRepository,
             IUserSettingsRepository userSettingsRepository)
         {

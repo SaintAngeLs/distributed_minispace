@@ -11,10 +11,10 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
     public class GetUserWithVisibilitySettingsHandler : IQueryHandler<GetUserWithVisibilitySettings, StudentWithVisibilitySettingsDto>
     {
-        private readonly IMongoRepository<StudentDocument, Guid> _userRepository;
+        private readonly IMongoRepository<UserDocument, Guid> _userRepository;
         private readonly IMongoRepository<UserSettingsDocument, Guid> _settingsRepository;
 
-        public GetUserWithVisibilitySettingsHandler(IMongoRepository<StudentDocument, Guid> userRepository, IMongoRepository<UserSettingsDocument, Guid> settingsRepository)
+        public GetUserWithVisibilitySettingsHandler(IMongoRepository<UserDocument, Guid> userRepository, IMongoRepository<UserSettingsDocument, Guid> settingsRepository)
         {
             _userRepository = userRepository;
             _settingsRepository = settingsRepository;

@@ -12,27 +12,27 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
             => new Dictionary<Type, HandlerLogTemplate>
             {
                 {
-                    typeof(UpdateStudent),  new HandlerLogTemplate
+                    typeof(UpdateUser),  new HandlerLogTemplate
                     {
-                        After = "Updated the student with id: {StudentId}."
+                        After = "Updated the student with id: {UserId}."
                     }
                 },
                 {
-                    typeof(DeleteStudent), new HandlerLogTemplate
+                    typeof(DeleteUser), new HandlerLogTemplate
                     {
-                        After = "Deleted the student with id: {StudentId}."
+                        After = "Deleted the student with id: {UserId}."
                     }
                 },
                 {
-                    typeof(CompleteStudentRegistration), new HandlerLogTemplate
+                    typeof(CompleteUserRegistration), new HandlerLogTemplate
                     {
-                        After = "Completed a registration for the student with id: {StudentId}."
+                        After = "Completed a registration for the student with id: {UserId}."
                     }
                 },
                 {
-                    typeof(ChangeStudentState), new HandlerLogTemplate
+                    typeof(ChangeUserState), new HandlerLogTemplate
                     {
-                        After = "Changed a student with id: {StudentId} state to: {State}."
+                        After = "Changed a student with id: {UserId} state to: {State}."
                     }
                 },
                 {
@@ -42,27 +42,27 @@ namespace MiniSpace.Services.Students.Infrastructure.Logging
                     }
                 },
                 {
-                    typeof(StudentShowedInterestInEvent), new HandlerLogTemplate
+                    typeof(UserShowedInterestInEvent), new HandlerLogTemplate
                     {
-                        After = "A student with id: {StudentId} has been interested in the event with id: {EventId}."
+                        After = "A student with id: {UserId} has been interested in the event with id: {EventId}."
                     }
                 },
                 {
-                    typeof(StudentCancelledInterestInEvent), new HandlerLogTemplate
+                    typeof(UserCancelledInterestInEvent), new HandlerLogTemplate
                     {
-                        After = "A student with id: {StudentId} has cancelled interest in the event with id: {EventId}."
+                        After = "A student with id: {UserId} has cancelled interest in the event with id: {EventId}."
                     }
                 },
                 {
-                    typeof(StudentSignedUpToEvent), new HandlerLogTemplate
+                    typeof(UserSignedUpToEvent), new HandlerLogTemplate
                     {
-                        After = "A student with id: {StudentId} has signed up for the event with id: {EventId}."
+                        After = "A student with id: {UserId} has signed up for the event with id: {EventId}."
                     }
                 },
                 {
-                    typeof(StudentCancelledSignUpToEvent), new HandlerLogTemplate
+                    typeof(UserCancelledSignUpToEvent), new HandlerLogTemplate
                     {
-                        After = "A student with id: {StudentId} has cancelled sign up for the event with id: {EventId}."
+                        After = "A student with id: {UserId} has cancelled sign up for the event with id: {EventId}."
                     }
                 },
                 {

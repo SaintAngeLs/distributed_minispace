@@ -11,12 +11,12 @@ using System.Linq;
 
 namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 {
-    public class GetStudentWithGalleryImagesHandler : IQueryHandler<GetUserWithGalleryImages, StudentWithGalleryImagesDto>
+    public class GetUserWithGalleryImagesHandler : IQueryHandler<GetUserWithGalleryImages, StudentWithGalleryImagesDto>
     {
-        private readonly IMongoRepository<StudentDocument, Guid> _userRepository;
+        private readonly IMongoRepository<UserDocument, Guid> _userRepository;
         private readonly IMongoRepository<UserGalleryDocument, Guid> _galleryRepository;
 
-        public GetStudentWithGalleryImagesHandler(IMongoRepository<StudentDocument, Guid> userRepository, IMongoRepository<UserGalleryDocument, Guid> galleryRepository)
+        public GetUserWithGalleryImagesHandler(IMongoRepository<UserDocument, Guid> userRepository, IMongoRepository<UserGalleryDocument, Guid> galleryRepository)
         {
             _userRepository = userRepository;
             _galleryRepository = galleryRepository;

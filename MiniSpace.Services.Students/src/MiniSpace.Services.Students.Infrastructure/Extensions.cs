@@ -51,7 +51,7 @@ namespace MiniSpace.Services.Students.Infrastructure
     {
         public static IParalaxBuilder AddInfrastructure(this IParalaxBuilder builder)
         {
-            builder.Services.AddTransient<IStudentRepository, StudentMongoRepository>();
+            builder.Services.AddTransient<IUserRepository, UserMongoRepository>();
             builder.Services.AddTransient<IUserNotificationPreferencesRepository, UserNotificationPreferencesRepository>();
             builder.Services.AddTransient<IUserSettingsRepository, UserSettingsRepository>();
             builder.Services.AddTransient<IUserGalleryRepository, UserGalleryRepository>();
@@ -83,7 +83,7 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .AddMetrics()
                 .AddJaeger()
                 .AddHandlersLogging()
-                .AddMongoRepository<StudentDocument, Guid>("students")
+                .AddMongoRepository<UserDocument, Guid>("students")
                 .AddMongoRepository<UserNotificationsDocument, Guid>("user-notifications")
                 .AddMongoRepository<UserSettingsDocument, Guid>("user-settings")
                 .AddMongoRepository<UserGalleryDocument, Guid>("user-gellery")
@@ -106,26 +106,26 @@ namespace MiniSpace.Services.Students.Infrastructure
                 .UseMetrics()
                 .UseCertificateAuthentication()
                 .UseRabbitMq()
-                .SubscribeCommand<UpdateStudent>()
-                .SubscribeCommand<DeleteStudent>()
-                .SubscribeCommand<CompleteStudentRegistration>()
-                .SubscribeCommand<ChangeStudentState>()
+                .SubscribeCommand<UpdateUser>()
+                .SubscribeCommand<DeleteUser>()
+                .SubscribeCommand<CompleteUserRegistration>()
+                .SubscribeCommand<ChangeUserState>()
                 .SubscribeCommand<UpdateUserSettings>()
-                .SubscribeCommand<UpdateStudentLanguagesAndInterests>()
+                .SubscribeCommand<UpdateUserLanguagesAndInterests>()
                 .SubscribeEvent<SignedUp>()
                 .SubscribeEvent<EmailVerified>()
                 .SubscribeEvent<SignedIn>()
                 .SubscribeEvent<SignedOut>()
                 .SubscribeEvent<TokenRefreshed>()
                 .SubscribeEvent<UserStatusChanged>()
-                .SubscribeEvent<StudentShowedInterestInEvent>()
-                .SubscribeEvent<StudentCancelledInterestInEvent>()
-                .SubscribeEvent<StudentSignedUpToEvent>()
-                .SubscribeEvent<StudentCancelledSignUpToEvent>()
+                .SubscribeEvent<UserShowedInterestInEvent>()
+                .SubscribeEvent<UserCancelledInterestInEvent>()
+                .SubscribeEvent<UserSignedUpToEvent>()
+                .SubscribeEvent<UserCancelledSignUpToEvent>()
                 .SubscribeEvent<UserBanned>()
                 .SubscribeEvent<EventArchived>()
                 .SubscribeEvent<UserUnbanned>()
-                .SubscribeEvent<StudentImageUploaded>()
+                .SubscribeEvent<UserImageUploaded>()
                 .SubscribeEvent<MediaFileDeleted>()
                 .SubscribeEvent<TwoFactorAuthenticationEnabled>()
                 .SubscribeEvent<TwoFactorAuthenticationDisabled>();

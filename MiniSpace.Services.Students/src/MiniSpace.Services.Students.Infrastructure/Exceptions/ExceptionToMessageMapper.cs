@@ -15,78 +15,78 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
             => exception switch
     
             {
-                CannotChangeStudentStateException ex => message switch
+                CannotChangeUserStateException ex => message switch
                 {
-                    ChangeStudentState _ => new ChangeStudentStateRejected(ex.Id,
+                    ChangeUserState _ => new ChangeUserStateRejected(ex.Id,
                         ex.State.ToString().ToLowerInvariant(), ex.Message, ex.Code),
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
+                    CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
                     _ => null
                 },
-                CannotUpdateStudentException ex => message switch
+                CannotUpdateUserException ex => message switch
                 {
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
-                InvalidStudentDateOfBirthException ex => message switch
+                InvalidUserDateOfBirthException ex => message switch
                 {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
+                    CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
                     _ => null,
                 },
                 InvalidStudentDescriptionException ex => message switch
                 {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
+                    CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
                 InvalidStudentFullNameException ex => message switch
                 {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
+                    CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
                     _ => null,
                 },
                 InvalidStudentProfileImageException ex => message switch
                 {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
+                    CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
                 InvalidRoleException ex => message switch
                 {
-                    SignedUp ev => new CreateStudentRejected(ev.UserId, ex.Message, ex.Code),
+                    SignedUp ev => new CreateUserRejected(ev.UserId, ex.Message, ex.Code),
                     _ => null,
                 },
-                StudentAlreadyCreatedException ex => message switch
+                UserAlreadyCreatedException ex => message switch
                 {
-                    SignedUp ev => new CreateStudentRejected(ev.UserId, ex.Message, ex.Code),
+                    SignedUp ev => new CreateUserRejected(ev.UserId, ex.Message, ex.Code),
                     _ => null,
                 },
-                StudentAlreadyRegisteredException ex => message switch
+                UserAlreadyRegisteredException ex => message switch
                 {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
+                    CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
                     _ => null,
                 },
-                StudentNotFoundException ex => message switch
+                UserNotFoundException ex => message switch
                 {
-                    CompleteStudentRegistration _ => new CompleteStudentRegistrationRejected(ex.Id, ex.Message,
+                    CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
-                    DeleteStudent command => new DeleteStudentRejected(command.StudentId, ex.Message, ex.Code),
-                    UpdateStudent command => new UpdateStudentRejected(command.StudentId, ex.Message, ex.Code),
+                    DeleteUser command => new DeleteUserRejected(command.StudentId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
-                StudentStateAlreadySetException ex => message switch
+                UserStateAlreadySetException ex => message switch
                 {
-                    ChangeStudentState _ => new ChangeStudentStateRejected(ex.Id,
+                    ChangeUserState _ => new ChangeUserStateRejected(ex.Id,
                         ex.State.ToString().ToLowerInvariant(), ex.Message, ex.Code),
                     _ => null
                 },
-                UnauthorizedStudentAccessException ex => message switch
+                AnauthorizedUserAccessException ex => message switch
                 {
-                    DeleteStudent command => new DeleteStudentRejected(command.StudentId, ex.Message, ex.Code),
+                    DeleteUser command => new DeleteUserRejected(command.StudentId, ex.Message, ex.Code),
                     _ => null,
                 },
                 _ => null
