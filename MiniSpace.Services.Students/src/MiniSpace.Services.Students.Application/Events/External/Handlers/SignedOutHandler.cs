@@ -22,14 +22,14 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             var student = await _userRepository.GetAsync(@event.UserId);
             if (student is null)
             {
-                _logger.LogWarning($"Student with ID '{@event.UserId}' not found.");
+                _logger.LogWarning($"User with ID '{@event.UserId}' not found.");
                 return;
             }
 
             student.SetOnlineStatus(false, null);
             await _userRepository.UpdateAsync(student);
 
-            _logger.LogInformation($"Student '{@event.UserId}' is now offline. Device: {@event.DeviceType}");
+            _logger.LogInformation($"User '{@event.UserId}' is now offline. Device: {@event.DeviceType}");
         }
     }
 }

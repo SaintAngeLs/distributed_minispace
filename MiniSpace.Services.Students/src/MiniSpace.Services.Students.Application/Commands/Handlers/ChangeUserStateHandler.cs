@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
-    public class ChangeStudentStateHandler : ICommandHandler<ChangeUserState>
+    public class ChangeUserStateHandler : ICommandHandler<ChangeUserState>
     {
         private readonly IUserRepository _userRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
         
-        public ChangeStudentStateHandler(IUserRepository userRepository, IEventMapper eventMapper,
+        public ChangeUserStateHandler(IUserRepository userRepository, IEventMapper eventMapper,
             IMessageBroker messageBroker)
         {
             _userRepository = userRepository;
@@ -29,17 +29,17 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var student = await _userRepository.GetAsync(command.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(command.StudentId);
+                throw new UserNotFoundException(command.StudentId);
             }
 
             if (!Enum.TryParse<State>(command.State, true, out var state))
             {
-                throw new CannotChangeStudentStateException(student.Id, State.Unknown);
+                throw new CannotChangeUserStateException(student.Id, State.Unknown);
             }
 
             if (student.State == state)
             {
-                throw new StudentStateAlreadySetException(student.Id, state);
+                throw new UserStateAlreadySetException(student.Id, state);
             }
 
             switch (state)
@@ -57,7 +57,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
                     student.SetUnverified();
                     break;
                 default:
-                    throw new CannotChangeStudentStateException(student.Id, state);
+                    throw new CannotChangeUserStateException(student.Id, state);
             }
             
             await _userRepository.UpdateAsync(student);

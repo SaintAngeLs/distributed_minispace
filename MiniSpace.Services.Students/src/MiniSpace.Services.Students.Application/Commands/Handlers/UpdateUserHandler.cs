@@ -40,7 +40,7 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
         var user = await _userRepository.GetAsync(command.StudentId);
         if (user == null)
         {
-            throw new StudentNotFoundException(command.StudentId);
+            throw new UserNotFoundException(command.StudentId);
         }
 
         user.UpdateUserName(command.UserName);
@@ -70,7 +70,7 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
 
         await _userRepository.UpdateAsync(user);
 
-        var studentUpdatedEvent = new StudentUpdated(
+        var studentUpdatedEvent = new UserUpdated(
             user.Id,
             user.UserName,
             user.FullName,

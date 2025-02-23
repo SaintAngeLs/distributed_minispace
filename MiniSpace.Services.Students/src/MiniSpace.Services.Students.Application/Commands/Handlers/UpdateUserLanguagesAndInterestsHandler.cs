@@ -40,13 +40,13 @@ public class UpdateUserLanguagesAndInterestsHandler : ICommandHandler<UpdateUser
         var user = await _userRepository.GetAsync(command.UserId);
         if (user is null)
         {
-            throw new StudentNotFoundException(command.UserId);
+            throw new UserNotFoundException(command.UserId);
         }
 
         var identity = _appContext.Identity;
         if (identity.IsAuthenticated && identity.Id != user.Id && !identity.IsAdmin)
         {
-            throw new UnauthorizedStudentAccessException(command.UserId, identity.Id);
+            throw new AnauthorizedUserAccessException(command.UserId, identity.Id);
         }
 
         user.UpdateLanguages(command.Languages.Select(l => (Language)Enum.Parse(typeof(Language), l)));
@@ -54,7 +54,7 @@ public class UpdateUserLanguagesAndInterestsHandler : ICommandHandler<UpdateUser
 
         await _userRepository.UpdateAsync(user);
 
-        var studentUpdatedEvent = new StudentUpdated(
+        var studentUpdatedEvent = new UserUpdated(
             user.Id,
             user.UserName, 
             user.FullName,

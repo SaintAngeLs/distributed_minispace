@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             var student = await _userRepository.GetAsync(@event.UserId);
             if (student == null)
             {
-                _logger.LogWarning($"Student with ID: {@event.UserId} not found.");
+                _logger.LogWarning($"User with ID: {@event.UserId} not found.");
                 return;
             }
 

@@ -6,7 +6,7 @@ namespace MiniSpace.Services.Students.Application.Exceptions
         public Guid StudentId { get; }
 
         public UserAlreadyCreatedException(Guid studentId)
-            : base($"Student with id: {studentId} was already created.")
+            : base($"User with id: {studentId} was already created.")
         {
             StudentId = studentId;
         }

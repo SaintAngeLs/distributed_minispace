@@ -24,7 +24,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             var student = await _userRepository.GetAsync(@event.UserId);
             if (student is null)
             {
-                throw new StudentNotFoundException(@event.UserId);
+                throw new UserNotFoundException(@event.UserId);
             }
             
             student.Ban();

@@ -43,7 +43,7 @@ public class SignedUpHandler : IEventHandler<SignedUp>
         var existingUser = await _userRepository.GetAsync(@event.UserId);
         if (existingUser is not null)
         {
-            throw new StudentAlreadyCreatedException(existingUser.Id);
+            throw new UserAlreadyCreatedException(existingUser.Id);
         }
 
         // Generate a username based on first and last name (or use @event.UserName if available)

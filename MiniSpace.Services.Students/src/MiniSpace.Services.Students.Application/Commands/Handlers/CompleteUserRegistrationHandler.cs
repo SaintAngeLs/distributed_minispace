@@ -6,14 +6,14 @@ using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
-    public class CompleteStudentRegistrationHandler : ICommandHandler<CompleteUserRegistration>
+    public class CompleteUserRegistrationHandler : ICommandHandler<CompleteUserRegistration>
     {
         private readonly IUserRepository _userRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public CompleteStudentRegistrationHandler(IUserRepository userRepository, 
+        public CompleteUserRegistrationHandler(IUserRepository userRepository, 
             IDateTimeProvider dateTimeProvider, IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _userRepository = userRepository;
@@ -27,12 +27,12 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var student = await _userRepository.GetAsync(command.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(command.StudentId);
+                throw new UserNotFoundException(command.StudentId);
             }
 
             if (student.State is Core.Entities.State.Valid)
             {
-                throw new StudentAlreadyRegisteredException(command.StudentId);
+                throw new UserAlreadyRegisteredException(command.StudentId);
             }
             
             student.CompleteRegistration(command.ProfileImage, command.Description,

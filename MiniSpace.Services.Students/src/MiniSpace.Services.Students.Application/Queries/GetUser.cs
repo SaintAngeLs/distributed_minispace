@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MiniSpace.Services.Students.Application.Queries
 {
     [ExcludeFromCodeCoverage]
-    public class GetUser : IQuery<StudentDto>
+    public class GetUser : IQuery<UserDto>
     {
         public Guid StudentId { get; set; }
     }    

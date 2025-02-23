@@ -6,13 +6,13 @@ using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Application.Commands.Handlers
 {
-    public class DeleteStudentHandler : ICommandHandler<DeleteUser>
+    public class DeleteUserHandler : ICommandHandler<DeleteUser>
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
         
-        public DeleteStudentHandler(IUserRepository userRepository, IAppContext appContext,
+        public DeleteUserHandler(IUserRepository userRepository, IAppContext appContext,
             IMessageBroker messageBroker)
         {
             _userRepository = userRepository;
@@ -25,18 +25,18 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var student = await _userRepository.GetAsync(command.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(command.StudentId);
+                throw new UserNotFoundException(command.StudentId);
             }
 
             var identity = _appContext.Identity;
             if (identity.IsAuthenticated && identity.Id != student.Id && !identity.IsAdmin)
             {
-                throw new UnauthorizedStudentAccessException(command.StudentId, identity.Id);
+                throw new AnauthorizedUserAccessException(command.StudentId, identity.Id);
             }
 
             await _userRepository.DeleteAsync(command.StudentId);
 
-            await _messageBroker.PublishAsync(new StudentDeleted(command.StudentId, student.FullName));
+            await _messageBroker.PublishAsync(new UserDeleted(command.StudentId, student.FullName));
         }
     }    
 }

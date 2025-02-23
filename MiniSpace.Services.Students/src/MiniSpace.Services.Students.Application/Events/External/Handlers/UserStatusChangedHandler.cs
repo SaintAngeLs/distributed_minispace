@@ -22,7 +22,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             var student = await _userRepository.GetAsync(@event.UserId);
             if (student is null)
             {
-                _logger.LogWarning($"Student with ID '{@event.UserId}' not found.");
+                _logger.LogWarning($"User with ID '{@event.UserId}' not found.");
                 return;
             }
 
@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             student.UpdateLastActive();
             await _userRepository.UpdateAsync(student);
 
-            _logger.LogInformation($"Student '{@event.UserId}' status changed. Online: {@event.IsOnline}, Device: {@event.DeviceType}, IP: {@event.IpAddress}");
+            _logger.LogInformation($"User '{@event.UserId}' status changed. Online: {@event.IsOnline}, Device: {@event.DeviceType}, IP: {@event.IpAddress}");
         }
     }
 }

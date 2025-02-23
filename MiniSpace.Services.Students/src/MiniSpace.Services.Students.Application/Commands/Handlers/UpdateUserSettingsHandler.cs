@@ -41,7 +41,7 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var student = await _userRepository.GetAsync(command.StudentId);
             if (student == null)
             {
-                throw new StudentNotFoundException(command.StudentId);
+                throw new UserNotFoundException(command.StudentId);
             }
 
             var userSettings = await _userSettingsRepository.GetUserSettingsAsync(command.StudentId);

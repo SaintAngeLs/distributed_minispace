@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace MiniSpace.Services.Students.Application.Commands;
 
-public class UpdateStudent : ICommand
+public class UpdateUser : ICommand
 {
     public Guid StudentId { get; }
     public string UserName { get; }            
@@ -27,7 +27,7 @@ public class UpdateStudent : ICommand
     public string City { get; }
     public DateTime? DateOfBirth { get; }
 
-    public UpdateStudent(
+    public UpdateUser(
         Guid studentId,
         string userName,              
         string firstName,

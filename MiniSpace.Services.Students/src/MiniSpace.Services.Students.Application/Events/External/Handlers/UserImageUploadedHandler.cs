@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
-    public class UserImageUploadedHandler : IEventHandler<StudentImageUploaded>
+    public class UserImageUploadedHandler : IEventHandler<UserImageUploaded>
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserGalleryRepository _userGalleryRepository;
@@ -19,12 +19,12 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             _userGalleryRepository = userGalleryRepository;
         }
 
-        public async Task HandleAsync(StudentImageUploaded @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(UserImageUploaded @event, CancellationToken cancellationToken)
         {
             var student = await _userRepository.GetAsync(@event.StudentId);
             if (student == null)
             {
-                throw new StudentNotFoundException(@event.StudentId);
+                throw new UserNotFoundException(@event.StudentId);
             }
 
             switch (@event.ImageType)

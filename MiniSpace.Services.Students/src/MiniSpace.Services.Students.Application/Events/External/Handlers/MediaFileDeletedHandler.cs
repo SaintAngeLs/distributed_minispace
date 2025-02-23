@@ -27,7 +27,7 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             var student = await _userRepository.GetAsync(@event.UploaderId);
             if (student == null)
             {
-                Console.WriteLine($"Student with ID {@event.UploaderId} not found.");
+                Console.WriteLine($"User with ID {@event.UploaderId} not found.");
                 return;
             }
 

@@ -25,14 +25,14 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             var student = await _userRepository.GetAsync(@event.UserId);
             if (student == null)
             {
-                _logger.LogError($"Student with ID {@event.UserId} not found.");
-                throw new StudentNotFoundException(@event.UserId);
+                _logger.LogError($"User with ID {@event.UserId} not found.");
+                throw new UserNotFoundException(@event.UserId);
             }
 
             student.SetValid();
             await _userRepository.UpdateAsync(student);
 
-            _logger.LogInformation($"Student with ID {@event.UserId} email verified and state set to valid.");
+            _logger.LogInformation($"User with ID {@event.UserId} email verified and state set to valid.");
         }
     }
 }

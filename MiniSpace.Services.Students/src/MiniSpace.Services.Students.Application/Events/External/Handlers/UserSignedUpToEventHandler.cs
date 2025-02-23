@@ -5,7 +5,7 @@ using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
-    public class UserSignedUpToEventHandler : IEventHandler<StudentSignedUpToEvent>
+    public class UserSignedUpToEventHandler : IEventHandler<UserSignedUpToEvent>
     {
         private readonly IUserRepository _userRepository;
         private readonly IEventMapper _eventMapper;
@@ -19,15 +19,15 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(StudentSignedUpToEvent studentSignedUpToEvent, CancellationToken cancellationToken)
+        public async Task HandleAsync(UserSignedUpToEvent userSignedUpToEvent, CancellationToken cancellationToken)
         {
-            var student = await _userRepository.GetAsync(studentSignedUpToEvent.StudentId);
+            var student = await _userRepository.GetAsync(userSignedUpToEvent.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(studentSignedUpToEvent.StudentId);
+                throw new UserNotFoundException(userSignedUpToEvent.StudentId);
             }
             
-            student.AddSignedUpEvent(studentSignedUpToEvent.EventId);
+            student.AddSignedUpEvent(userSignedUpToEvent.EventId);
             await _userRepository.UpdateAsync(student);
             
             var events = _eventMapper.MapAll(student.Events);

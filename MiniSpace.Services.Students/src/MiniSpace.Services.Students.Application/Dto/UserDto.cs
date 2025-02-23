@@ -6,7 +6,7 @@ using MiniSpace.Services.Students.Core.Entities;
 namespace MiniSpace.Services.Students.Application.Dto
 {
     [ExcludeFromCodeCoverage]
-    public class StudentDto
+    public class UserDto
     {
         public Guid Id { get; set; }
         public string Email { get; set; }

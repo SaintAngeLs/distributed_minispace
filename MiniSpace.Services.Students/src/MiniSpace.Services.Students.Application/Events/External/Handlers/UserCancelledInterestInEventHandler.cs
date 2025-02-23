@@ -5,13 +5,13 @@ using MiniSpace.Services.Students.Core.Repositories;
 
 namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 {
-    public class StudentCancelledInterestInEventHandler : IEventHandler<StudentCancelledInterestInEvent>
+    public class UserCancelledInterestInEventHandler : IEventHandler<UserCancelledInterestInEvent>
     {
         private readonly IUserRepository _userRepository;
         private readonly IEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
-        public StudentCancelledInterestInEventHandler(IUserRepository userRepository,
+        public UserCancelledInterestInEventHandler(IUserRepository userRepository,
             IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _userRepository = userRepository;
@@ -19,12 +19,12 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
             _messageBroker = messageBroker;
         }
         
-        public async Task HandleAsync(StudentCancelledInterestInEvent @event, CancellationToken cancellationToken)
+        public async Task HandleAsync(UserCancelledInterestInEvent @event, CancellationToken cancellationToken)
         {
             var student = await _userRepository.GetAsync(@event.StudentId);
             if (student is null)
             {
-                throw new StudentNotFoundException(@event.StudentId);
+                throw new UserNotFoundException(@event.StudentId);
             }
             
             student.RemoveInterestedInEvent(@event.EventId);

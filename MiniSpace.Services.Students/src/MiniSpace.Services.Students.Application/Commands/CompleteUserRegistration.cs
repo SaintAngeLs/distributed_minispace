@@ -2,7 +2,7 @@ using Paralax.CQRS.Commands;
 
 namespace MiniSpace.Services.Students.Application.Commands
 {
-    public class CompleteStudentRegistration : ICommand
+    public class CompleteUserRegistration : ICommand
     {
         public Guid StudentId { get; }
         public string ProfileImage { get; }
@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Students.Application.Commands
         public DateTime DateOfBirth { get; }
         public bool EmailNotifications { get; }
 
-        public CompleteStudentRegistration(Guid studentId, string profileImage,
+        public CompleteUserRegistration(Guid studentId, string profileImage,
             string description, DateTime dateOfBirth, bool emailNotifications)
         {
             StudentId = studentId;

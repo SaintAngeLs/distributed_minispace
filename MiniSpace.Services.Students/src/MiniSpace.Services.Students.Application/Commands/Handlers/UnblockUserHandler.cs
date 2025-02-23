@@ -32,12 +32,12 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
 
             if (blocker is null)
             {
-                throw new StudentNotFoundException(command.BlockerId);
+                throw new UserNotFoundException(command.BlockerId);
             }
 
             if (blockedUser is null)
             {
-                throw new StudentNotFoundException(command.BlockedUserId);
+                throw new UserNotFoundException(command.BlockedUserId);
             }
 
             var blockedUsersAggregate = await _blockedUsersRepository.GetAsync(command.BlockerId);

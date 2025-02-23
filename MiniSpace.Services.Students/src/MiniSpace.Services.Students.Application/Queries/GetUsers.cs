@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MiniSpace.Services.Students.Application.Queries
 {
     [ExcludeFromCodeCoverage]
-    public class GetUsers : IQuery<PagedResult<StudentDto>>, IPagedGetStudentsQuery
+    public class GetUsers : IQuery<PagedResult<UserDto>>, IPagedGetStudentsQuery
     {
         public int Page { get; set; }
         public int ResultsPerPage { get; set; }
