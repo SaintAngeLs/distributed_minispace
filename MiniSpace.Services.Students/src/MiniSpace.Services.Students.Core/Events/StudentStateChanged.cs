@@ -6,12 +6,12 @@ namespace MiniSpace.Services.Students.Core.Events
     [ExcludeFromCodeCoverage]
     public class StudentStateChanged : IDomainEvent
     {
-        public Student Student { get; }
+        public User User { get; }
         public State PreviousState { get; }
 
-        public StudentStateChanged(Student student, State previousState)
+        public StudentStateChanged(User student, State previousState)
         {
-            Student = student;
+            User = student;
             PreviousState = previousState;
         }
     }    

@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Students.Core.Events
         public Guid UserId { get; }
         public DateTime LastActive { get; }
 
-        public StudentLastActiveUpdated(Student student)
+        public StudentLastActiveUpdated(User student)
         {
             UserId = student.Id;
             LastActive = student.LastActive ?? DateTime.UtcNow; 

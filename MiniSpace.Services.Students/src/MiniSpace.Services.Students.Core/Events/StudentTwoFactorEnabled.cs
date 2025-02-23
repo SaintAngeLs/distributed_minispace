@@ -7,11 +7,11 @@ namespace MiniSpace.Services.Students.Core.Events
     [ExcludeFromCodeCoverage]
     public class StudentTwoFactorEnabled : IDomainEvent
     {
-        public Student Student { get; }
+        public User User { get; }
 
-        public StudentTwoFactorEnabled(Student student)
+        public StudentTwoFactorEnabled(User student)
         {
-            Student = student;
+            User = student;
         }
     }
 }

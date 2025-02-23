@@ -6,11 +6,11 @@ namespace MiniSpace.Services.Students.Core.Events
     [ExcludeFromCodeCoverage]
     public class StudentBannerImageRemoved : IDomainEvent
     {
-        public Student Student { get; }
+        public User User { get; }
 
-        public StudentBannerImageRemoved(Student student)
+        public StudentBannerImageRemoved(User user)
         {
-            Student = student;
+            User = user;
         }
     }
 }

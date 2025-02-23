@@ -2,12 +2,12 @@ using MiniSpace.Services.Students.Core.Entities;
 
 namespace MiniSpace.Services.Students.Core.Repositories
 {
-    public interface IStudentRepository
+    public interface IUserRepository
     {
-        Task<Student> GetAsync(Guid id);
-        Task<List<Student>> GetStudentsByEventIdAsync(Guid eventId);
-        Task AddAsync(Student student);
-        Task UpdateAsync(Student student);
+        Task<User> GetAsync(Guid id);
+        Task<List<User>> GetUsersByEventIdAsync(Guid eventId);
+        Task AddAsync(User student);
+        Task UpdateAsync(User student);
         Task DeleteAsync(Guid id);
     }
 }

@@ -6,6 +6,6 @@ namespace MiniSpace.Services.Students.Core.Repositories
 {
     public interface IReadUserRepository
     {
-        Task<Student> GetAsync(Guid id);
+        Task<User> GetAsync(Guid id);
     }
 }

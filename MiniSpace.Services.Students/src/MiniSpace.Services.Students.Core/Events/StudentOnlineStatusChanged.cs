@@ -10,7 +10,7 @@ namespace MiniSpace.Services.Students.Core.Events
         public string DeviceType { get; }
         public DateTime? LastActive { get; }
 
-        public StudentOnlineStatusChanged(Student student)
+        public StudentOnlineStatusChanged(User student)
         {
             StudentId = student.Id;
             IsOnline = student.IsOnline;

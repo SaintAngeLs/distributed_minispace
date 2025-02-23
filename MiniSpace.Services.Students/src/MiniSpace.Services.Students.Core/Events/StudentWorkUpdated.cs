@@ -6,11 +6,11 @@ namespace MiniSpace.Services.Students.Core.Events
     [ExcludeFromCodeCoverage]
     public class StudentWorkUpdated : IDomainEvent
     {
-        public Student Student { get; }
+        public User User { get; }
 
-        public StudentWorkUpdated(Student student)
+        public StudentWorkUpdated(User student)
         {
-            Student = student;
+            User = student;
         }
     }
 }
