@@ -76,7 +76,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
 
             // Act & Assert
             Func<Task> act = async () => await _deleteUserHandler.HandleAsync(command, cancelationToken);
-            await act.Should().ThrowAsync<StudentNotFoundException>();
+            await act.Should().ThrowAsync<UserNotFoundException>();
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
 
             // Act & Assert
             Func<Task> act = async () => await _deleteUserHandler.HandleAsync(command, cancelationToken);
-            await act.Should().ThrowAsync<UnauthorizedStudentAccessException>();
+            await act.Should().ThrowAsync<AnauthorizedUserAccessException>();
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
 
             // Act & Assert
             Func<Task> act = async () => await _deleteUserHandler.HandleAsync(command, cancelationToken);
-            await act.Should().NotThrowAsync<UnauthorizedStudentAccessException>();
+            await act.Should().NotThrowAsync<AnauthorizedUserAccessException>();
         }
     }
 }

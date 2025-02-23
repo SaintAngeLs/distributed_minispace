@@ -19,17 +19,17 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
     public class UserUnbannedHandlerTest
     {
         private readonly UserUnbannedHandler _userUnbannedHandler;
-        private readonly Mock<IStudentRepository> _studentRepositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IEventMapper> _eventMapperMock;
         private readonly Mock<IMessageBroker> _messageBrokerMock;
 
         public UserUnbannedHandlerTest()
         {
-            _studentRepositoryMock = new Mock<IStudentRepository>();
+            _userRepositoryMock = new Mock<IUserRepository>();
             _eventMapperMock = new Mock<IEventMapper>();
             _messageBrokerMock = new Mock<IMessageBroker>();
             _userUnbannedHandler = new UserUnbannedHandler(
-                _studentRepositoryMock.Object,
+                _userRepositoryMock.Object,
                 _eventMapperMock.Object,
                 _messageBrokerMock.Object
             );
@@ -43,7 +43,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(studentId, "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new UserUnbanned(studentId);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);
 
             var cancelationToken = new CancellationToken();
 
@@ -60,13 +60,13 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(studentId, "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new UserUnbanned(studentId);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync((Student)null);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync((Student)null);
 
             var cancelationToken = new CancellationToken();
 
             // Act & Assert
             Func<Task> act = async () => await _userUnbannedHandler.HandleAsync(@event, cancelationToken);
-            await act.Should().ThrowAsync<StudentNotFoundException>();
+            await act.Should().ThrowAsync<UserNotFoundException>();
         }
     }
 }

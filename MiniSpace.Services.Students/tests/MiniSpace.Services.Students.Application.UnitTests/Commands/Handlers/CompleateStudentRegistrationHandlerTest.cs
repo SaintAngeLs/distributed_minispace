@@ -16,20 +16,20 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
 {
     public class CompleateStudentRegistrationHandlerTest
     {
-        private readonly CompleteStudentRegistrationHandler _completeStudentRegistrationHandler;
-        private readonly Mock<IStudentRepository> _studentRepositoryMock;
+        private readonly CompleteUserRegistrationHandler _completeUserRegistrationHandler;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IEventMapper> _eventMapperMock;
         private readonly Mock<IMessageBroker> _messageBrokerMock;
         private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
 
         public CompleateStudentRegistrationHandlerTest()
         {
-            _studentRepositoryMock = new Mock<IStudentRepository>();
+            _userRepositoryMock = new Mock<IUserRepository>();
             _eventMapperMock = new Mock<IEventMapper>();
             _messageBrokerMock = new Mock<IMessageBroker>();
             _dateTimeProviderMock = new Mock<IDateTimeProvider>();
-            _completeStudentRegistrationHandler = new CompleteStudentRegistrationHandler(
-                _studentRepositoryMock.Object,
+            _completeUserRegistrationHandler = new CompleteUserRegistrationHandler(
+                _userRepositoryMock.Object,
                 _dateTimeProviderMock.Object,
                 _eventMapperMock.Object,
                 _messageBrokerMock.Object);
@@ -40,20 +40,20 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
         {
             // Arrange
             var studentId = Guid.NewGuid();
-            var command = new CompleteStudentRegistration(studentId, Guid.NewGuid(), "dec", new DateTime(2000, 1, 1), false);
+            var command = new CompleteUserRegistration(studentId, Guid.NewGuid(), "dec", new DateTime(2000, 1, 1), false);
 
             var student = new Student(studentId, "Adam", "Nowak", "an@meail.com", DateTime.Now);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);
             _dateTimeProviderMock.Setup(dtp => dtp.Now).Returns(DateTime.Now);
 
             var cancelationToken = new CancellationToken();
 
             // Act
-            await _completeStudentRegistrationHandler.HandleAsync(command, cancelationToken);
+            await _completeUserRegistrationHandler.HandleAsync(command, cancelationToken);
 
             // Assert
-            _studentRepositoryMock.Verify(repo => repo.UpdateAsync(student), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.UpdateAsync(student), Times.Once);
         }
 
         [Fact]
@@ -61,17 +61,17 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
         {
             // Arrange
             var studentId = Guid.NewGuid();
-            var command = new CompleteStudentRegistration(studentId, Guid.NewGuid(), "dec", DateTime.Now, false);
+            var command = new CompleteUserRegistration(studentId, Guid.NewGuid(), "dec", DateTime.Now, false);
 
             var student = new Student(studentId, "Adam", "Nowak", "an@meail.com", DateTime.Now);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync((Student)null);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync((Student)null);
 
             var cancelationToken = new CancellationToken();
 
             // Act & Assert
-            Func<Task> act = async () => await _completeStudentRegistrationHandler.HandleAsync(command, cancelationToken);
-            await act.Should().ThrowAsync<StudentNotFoundException>();
+            Func<Task> act = async () => await _completeUserRegistrationHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<UserNotFoundException>();
         }
 
         [Fact]
@@ -79,18 +79,18 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
         {
             // Arrange
             var studentId = Guid.NewGuid();
-            var command = new CompleteStudentRegistration(studentId, Guid.NewGuid(), "dec", DateTime.Now, false);
+            var command = new CompleteUserRegistration(studentId, Guid.NewGuid(), "dec", DateTime.Now, false);
 
             var student = new Student(studentId, "Adam", "Nowak", "an@meail.com", DateTime.Now);
             student.SetValid();
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);
 
             var cancelationToken = new CancellationToken();
 
             // Act & Assert
-            Func<Task> act = async () => await _completeStudentRegistrationHandler.HandleAsync(command, cancelationToken);
-            await act.Should().ThrowAsync<StudentAlreadyRegisteredException>();
+            Func<Task> act = async () => await _completeUserRegistrationHandler.HandleAsync(command, cancelationToken);
+            await act.Should().ThrowAsync<UserAlreadyRegisteredException>();
         }
     }
 }

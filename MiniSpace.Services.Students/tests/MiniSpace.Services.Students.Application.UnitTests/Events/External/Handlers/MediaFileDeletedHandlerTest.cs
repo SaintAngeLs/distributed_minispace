@@ -19,12 +19,12 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
     public class MediaFileDeletedHandlerTest
     {
         private readonly MediaFileDeletedHandler _mediaFileDeletedHandler;
-        private readonly Mock<IStudentRepository> _studentRepositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
 
         public MediaFileDeletedHandlerTest()
         {
-            _studentRepositoryMock = new Mock<IStudentRepository>();
-            _mediaFileDeletedHandler = new MediaFileDeletedHandler(_studentRepositoryMock.Object);
+            _userRepositoryMock = new Mock<IUserRepository>();
+            _mediaFileDeletedHandler = new MediaFileDeletedHandler(_userRepositoryMock.Object);
 
         }
 
@@ -36,7 +36,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new MediaFileDeleted(mediaFileId, Guid.NewGuid(), "studentprofile");
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(mediaFileId)).ReturnsAsync(student);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(mediaFileId)).ReturnsAsync(student);
 
             var cancelationToken = new CancellationToken();
 
@@ -53,7 +53,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new MediaFileDeleted(mediaFileId, Guid.NewGuid(), "");
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(mediaFileId)).ReturnsAsync(student);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(mediaFileId)).ReturnsAsync(student);
 
             var cancelationToken = new CancellationToken();
 
@@ -62,8 +62,8 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
 
             // Assert
             await act.Should().NotThrowAsync();
-            _studentRepositoryMock.Verify(x => x.GetAsync(It.IsAny<Guid>()), Times.Never);
-            _studentRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Student>()), Times.Never);
+            _userRepositoryMock.Verify(x => x.GetAsync(It.IsAny<Guid>()), Times.Never);
+            _userRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Student>()), Times.Never);
         }
     }
 }

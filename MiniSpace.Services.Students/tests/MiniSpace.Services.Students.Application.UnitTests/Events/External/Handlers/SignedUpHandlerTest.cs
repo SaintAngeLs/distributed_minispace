@@ -21,17 +21,17 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
     {
         private readonly SignedUpHandler _signedUpHandler;
         private const string RequiredRole = "user";
-        private readonly Mock<IStudentRepository> _studentRepositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
         private readonly Mock<ILogger<SignedUpHandler>> _loggerMock;
 
         public SignedUpHandlerTest()
         {
-            _studentRepositoryMock = new Mock<IStudentRepository>();
+            _userRepositoryMock = new Mock<IUserRepository>();
             _dateTimeProviderMock = new Mock<IDateTimeProvider>();
             _loggerMock = new Mock<ILogger<SignedUpHandler>>();
             _signedUpHandler = new SignedUpHandler(
-                _studentRepositoryMock.Object,
+                _userRepositoryMock.Object,
                 _dateTimeProviderMock.Object,
                 _loggerMock.Object
                 );
@@ -45,7 +45,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new SignedUp(userId, "Adam", "Nowak", "an@email.com", RequiredRole);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync((Student)null);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync((Student)null);
 
             var cancelationToken = new CancellationToken();
 
@@ -62,7 +62,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new SignedUp(userId, "Adam", "Nowak", "an@email.com", "");
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync((Student)null);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync((Student)null);
 
             var cancelationToken = new CancellationToken();
 
@@ -79,13 +79,13 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new SignedUp(userId, "Adam", "Nowak", "an@email.com", RequiredRole);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync(student);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync(student);
 
             var cancelationToken = new CancellationToken();
 
             // Act & Assert
             Func<Task> act = async () => await _signedUpHandler.HandleAsync(@event, cancelationToken);
-            await act.Should().ThrowAsync<StudentAlreadyCreatedException>();
+            await act.Should().ThrowAsync<UserAlreadyCreatedException>();
         }
     }
 }

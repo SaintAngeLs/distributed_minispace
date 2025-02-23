@@ -71,7 +71,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
 
             // Act & Assert
             Func<Task> act = async () => await _changeUserStateHandler.HandleAsync(command, cancelationToken);
-            await act.Should().ThrowAsync<StudentNotFoundException>();
+            await act.Should().ThrowAsync<UserNotFoundException>();
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
 
             // Act & Assert
             Func<Task> act = async () => await _changeUserStateHandler.HandleAsync(command, cancelationToken);
-            await act.Should().ThrowAsync<CannotChangeStudentStateException>();
+            await act.Should().ThrowAsync<CannotChangeUserStateException>();
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
 
             // Act & Assert
             Func<Task> act = async () => await _changeUserStateHandler.HandleAsync(command, cancelationToken);
-            await act.Should().ThrowAsync<StudentStateAlreadySetException>();
+            await act.Should().ThrowAsync<UserStateAlreadySetException>();
         }
     }
 }

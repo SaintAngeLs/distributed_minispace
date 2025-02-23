@@ -43,7 +43,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var studentId = Guid.NewGuid();
             var student = new Student(studentId, "Adam", "Nowak", "an@email.com", DateTime.Now);
             student.SignedUpEvents = new List<Guid> { eventId };
-            var @event = new StudentCancelledSignUpToEvent(eventId, studentId);
+            var @event = new UserCancelledSignUpToEvent(eventId, studentId);
 
             _userRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync(student);
 
@@ -61,7 +61,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var eventId = Guid.NewGuid();
             var studentId = Guid.NewGuid();
             var student = new Student(studentId, "Adam", "Nowak", "an@email.com", DateTime.Now);
-            var @event = new StudentCancelledSignUpToEvent(eventId, studentId);
+            var @event = new UserCancelledSignUpToEvent(eventId, studentId);
 
             _userRepositoryMock.Setup(repo => repo.GetAsync(studentId)).ReturnsAsync((Student)null);
 
@@ -69,7 +69,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
 
             // Act & Assert
             Func<Task> act = async () => await _userCancelledSignUpToEventHandler.HandleAsync(@event, cancelationToken);
-            await act.Should().ThrowAsync<StudentNotFoundException>();
+            await act.Should().ThrowAsync<UserNotFoundException>();
         }
     }
 }

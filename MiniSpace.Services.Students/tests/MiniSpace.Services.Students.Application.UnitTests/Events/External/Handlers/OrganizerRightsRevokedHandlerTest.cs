@@ -19,17 +19,17 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
     public class OrganizerRightsRevokedHandlerTest
     {
         private readonly OrganizerRightsRevokedHandler _organizerRightsRevokedHandler;
-        private readonly Mock<IStudentRepository> _studentRepositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IEventMapper> _eventMapperMock;
         private readonly Mock<IMessageBroker> _messageBrokerMock;
 
         public OrganizerRightsRevokedHandlerTest()
         {
-            _studentRepositoryMock = new Mock<IStudentRepository>();
+            _userRepositoryMock = new Mock<IUserRepository>();
             _eventMapperMock = new Mock<IEventMapper>();
             _messageBrokerMock = new Mock<IMessageBroker>();
             _organizerRightsRevokedHandler = new OrganizerRightsRevokedHandler(
-                _studentRepositoryMock.Object,
+                _userRepositoryMock.Object,
                 _eventMapperMock.Object,
                 _messageBrokerMock.Object
             );
@@ -43,7 +43,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new OrganizerRightsRevoked(userId);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync(student);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync(student);
 
             var cancelationToken = new CancellationToken();
 
@@ -60,13 +60,13 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Events.External.Hand
             var student = new Student(Guid.NewGuid(), "Adam", "Nowak", "an@email.com", DateTime.Now);
             var @event = new OrganizerRightsRevoked(userId);
 
-            _studentRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync((Student)null);
+            _userRepositoryMock.Setup(repo => repo.GetAsync(userId)).ReturnsAsync((Student)null);
 
             var cancelationToken = new CancellationToken();
 
             // Act & Assert
             Func<Task> act = async () => await _organizerRightsRevokedHandler.HandleAsync(@event, cancelationToken);
-            await act.Should().ThrowAsync<StudentNotFoundException>();
+            await act.Should().ThrowAsync<UserNotFoundException>();
         }
     }
 }

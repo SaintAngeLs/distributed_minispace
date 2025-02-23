@@ -49,7 +49,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             Func<bool> fun = () => { student.CompleteRegistration(Guid.NewGuid(), description, dOB, DateTime.Now, true); return true; };
 
             // Assert
-            Assert.Throws<CannotChangeStudentStateException>(() => fun());
+            Assert.Throws<CannotChangeUserStateException>(() => fun());
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             Func<bool> fun = () => { student.CompleteRegistration(Guid.NewGuid(), description, dOB, DateTime.Now, true); return true; };
 
             // Assert
-            Assert.Throws<InvalidStudentDateOfBirthException>(() => fun());
+            Assert.Throws<InvalidUserDateOfBirthException>(() => fun());
         }
 
         [Fact]
@@ -93,7 +93,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             Func<bool> fun = () => { student.Update(Guid.NewGuid(), description, true); return true; };
 
             // Assert
-            Assert.Throws<CannotUpdateStudentException>(() => fun());
+            Assert.Throws<CannotUpdateUserException>(() => fun());
         }
 
         [Fact]
@@ -184,7 +184,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             Func<bool> fun = () => { student.AddSignedUpEvent(eventId); return true; };
 
             // Assert
-            Assert.Throws<StudentAlreadySignedUpException>(() => fun());
+            Assert.Throws<UserAlreadySignedUpException>(() => fun());
         }
 
         [Fact]
@@ -198,7 +198,7 @@ namespace MiniSpace.Services.Students.Core.UnitTests.Entities
             Func<bool> fun = () => { student.RemoveSignedUpEvent(eventId); return true; };
 
             // Assert
-            Assert.Throws<StudentIsNotSignedUpException>(() => fun());
+            Assert.Throws<UserIsNotSignedUpException>(() => fun());
         }
         [Fact]
         public void RemoveProfileImage_CorrectMediaFileId_ShouldSetMediaImageEmpty()
