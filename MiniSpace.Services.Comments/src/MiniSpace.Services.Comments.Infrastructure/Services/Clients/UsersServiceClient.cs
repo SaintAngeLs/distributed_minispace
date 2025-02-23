@@ -10,19 +10,18 @@ using MiniSpace.Services.Comments.Application.Services.Clients;
 namespace MiniSpace.Services.Comments.Infrastructure.Services.Clients
 {
     [ExcludeFromCodeCoverage]
-    public class StudentsServiceClient : IStudentsServiceClient
+    public class UsersServiceClient : IUsersServiceClient
     {
         private readonly IHttpClient _httpClient;
         private readonly string _url;
 
-        public StudentsServiceClient(IHttpClient httpClient, HttpClientOptions options)
+        public UsersServiceClient(IHttpClient httpClient, HttpClientOptions options)
         {
             _httpClient = httpClient;
-            _url = options.Services["students"];
+            _url = options.Services["users"];
         }
 
          public Task<UserDto> GetAsync(Guid id)
             => _httpClient.GetAsync<UserDto>($"{_url}/students/{id}");
-
     }
 }

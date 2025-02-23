@@ -20,7 +20,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         private readonly IAppContext _appContext;
         private readonly IMessageBroker _messageBroker;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IStudentsServiceClient _userServiceClient;
+        private readonly IUsersServiceClient _userServiceClient;
 
         public UpdateCommentHandler(
             IOrganizationEventsCommentRepository organizationEventsCommentRepository,
@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             IAppContext appContext,
             IMessageBroker messageBroker,
             IDateTimeProvider dateTimeProvider,
-            IStudentsServiceClient userServiceClient)
+            IUsersServiceClient userServiceClient)
         {
             _organizationEventsCommentRepository = organizationEventsCommentRepository;
             _organizationPostsCommentRepository = organizationPostsCommentRepository;

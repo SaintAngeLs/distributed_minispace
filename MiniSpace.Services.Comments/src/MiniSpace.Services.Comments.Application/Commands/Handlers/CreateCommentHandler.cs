@@ -23,14 +23,14 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
-        private readonly IStudentsServiceClient _userServiceClient;
+        private readonly IUsersServiceClient _userServiceClient;
 
         public CreateCommentHandler(
             IOrganizationEventsCommentRepository organizationEventsCommentRepository,
             IOrganizationPostsCommentRepository organizationPostsCommentRepository,
             IUserEventsCommentRepository userEventsCommentRepository,
             IUserPostsCommentRepository userPostsCommentRepository,
-            IStudentsServiceClient userServiceClient,
+            IUsersServiceClient userServiceClient,
             IDateTimeProvider dateTimeProvider,
             IMessageBroker messageBroker,
             IAppContext appContext)

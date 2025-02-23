@@ -55,7 +55,7 @@ namespace MiniSpace.Services.Comments.Infrastructure
             builder.Services.AddTransient<IUserEventsCommentRepository, UserEventsCommentRepository>();
             builder.Services.AddTransient<IUserPostsCommentRepository, UserPostsCommentRepository>();
 
-            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
+            builder.Services.AddTransient<IUsersServiceClient, UsersServiceClient>();
 
             builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             builder.Services.AddSingleton<IEventMapper, EventMapper>();

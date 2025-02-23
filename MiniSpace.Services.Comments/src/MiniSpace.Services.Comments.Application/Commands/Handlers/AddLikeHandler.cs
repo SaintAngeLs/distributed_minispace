@@ -20,7 +20,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
         private readonly IUserPostsCommentRepository _userPostsCommentRepository;
         private readonly IMessageBroker _messageBroker;
         private readonly IAppContext _appContext;
-        private readonly IStudentsServiceClient _userServiceClient;
+        private readonly IUsersServiceClient _userServiceClient;
 
         public AddLikeHandler(
             IOrganizationEventsCommentRepository organizationEventsCommentRepository,
@@ -29,7 +29,7 @@ namespace MiniSpace.Services.Comments.Application.Commands.Handlers
             IUserPostsCommentRepository userPostsCommentRepository,
             IMessageBroker messageBroker,
             IAppContext appContext,
-            IStudentsServiceClient userServiceClient)
+            IUsersServiceClient userServiceClient)
         {
             _organizationEventsCommentRepository = organizationEventsCommentRepository;
             _organizationPostsCommentRepository = organizationPostsCommentRepository;
