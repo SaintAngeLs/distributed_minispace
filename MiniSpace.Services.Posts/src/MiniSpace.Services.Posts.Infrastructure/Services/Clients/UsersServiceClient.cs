@@ -19,10 +19,10 @@ namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
             _url = options.Services["students"];
         }
 
-        public Task<StudentEventsDto> GetAsync(Guid id)
-            => _httpClient.GetAsync<StudentEventsDto>($"{_url}/students/{id}/events");
+        public Task<UserEventsDto> GetAsync(Guid id)
+            => _httpClient.GetAsync<UserEventsDto>($"{_url}/students/{id}/events");
 
-        public Task<UserDto> GetStudentByIdAsync(Guid studentId)
+        public Task<UserDto> GetUserByIdAsync(Guid studentId)
             => _httpClient.GetAsync<UserDto>($"{_url}/students/{studentId}");
     }
 }

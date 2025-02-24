@@ -71,7 +71,7 @@ namespace MiniSpace.Services.Posts.Infrastructure
             builder.Services.AddSingleton<MLContext>(new MLContext());
             builder.Services.AddTransient<IPostRecommendationService, PostRecommendationService>();
 
-            builder.Services.AddTransient<IStudentsServiceClient, StudentsServiceClient>();
+            builder.Services.AddTransient<IUsersServiceClient, UsersServiceClient>();
             builder.Services.AddTransient(ctx => ctx.GetRequiredService<IAppContextFactory>().Create());
             builder.Services.TryDecorate(typeof(ICommandHandler<>), typeof(OutboxCommandHandlerDecorator<>));
             builder.Services.TryDecorate(typeof(IEventHandler<>), typeof(OutboxEventHandlerDecorator<>));

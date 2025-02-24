@@ -23,7 +23,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
         private readonly IUserCommentsHistoryRepository _userCommentsHistoryRepository;
         private readonly IUserReactionsHistoryRepository _userReactionsHistoryRepository;
         private readonly IPostRecommendationService _postRecommendationService;
-        private readonly IStudentsServiceClient _studentsServiceClient;
+        private readonly IUsersServiceClient _usersServiceClient;
         private readonly ILogger<GetUserFeedHandler> _logger;
 
         public GetUserFeedHandler(
@@ -31,14 +31,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
             IUserCommentsHistoryRepository userCommentsHistoryRepository,
             IUserReactionsHistoryRepository userReactionsHistoryRepository,
             IPostRecommendationService postRecommendationService,
-            IStudentsServiceClient studentsServiceClient,
+            IUsersServiceClient usersServiceClient,
             ILogger<GetUserFeedHandler> logger)
         {
             _postsService = postsService;
             _userCommentsHistoryRepository = userCommentsHistoryRepository;
             _userReactionsHistoryRepository = userReactionsHistoryRepository;
             _postRecommendationService = postRecommendationService;
-            _studentsServiceClient = studentsServiceClient;
+            _usersServiceClient = usersServiceClient;
             _logger = logger;
         }
 
@@ -48,7 +48,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.Mongo.Queries.Handlers
     
 
 
-            var user = await _studentsServiceClient.GetStudentByIdAsync(query.UserId);
+            var user = await _usersServiceClient.GetUserByIdAsync(query.UserId);
 
     //         var serializedUser = JsonConvert.SerializeObject(user, Formatting.Indented);
     // Console.WriteLine($"Retrieved User Object: {serializedUser}");
