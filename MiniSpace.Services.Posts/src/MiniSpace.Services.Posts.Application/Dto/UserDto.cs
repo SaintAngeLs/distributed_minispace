@@ -10,6 +10,7 @@ namespace MiniSpace.Services.Posts.Application.Dto
     {
         public Guid Id { get; set; }
         public string Email { get; set; }
+        public string UsenName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ProfileImageUrl { get; set; }
@@ -32,6 +33,7 @@ namespace MiniSpace.Services.Posts.Application.Dto
         public IEnumerable<Guid> SignedUpEvents { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
+        public bool IsVerified { get; set; }
 
         public bool IsOnline { get; set; }           
         public string DeviceType { get; set; }
