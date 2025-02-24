@@ -10,6 +10,8 @@ namespace MiniSpace.Services.Email.Application.Events.External
         public Guid UserId { get; }
         public string NewStatus { get; }
 
+        public UserStatusChanged() {}
+
         public UserStatusChanged(Guid userId, string newStatus)
         {
             UserId = userId;
