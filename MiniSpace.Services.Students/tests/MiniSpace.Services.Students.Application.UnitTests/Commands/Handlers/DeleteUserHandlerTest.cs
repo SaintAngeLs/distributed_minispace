@@ -56,7 +56,7 @@ namespace MiniSpace.Services.Students.Application.UnitTests.Commands.Handlers
             await _deleteUserHandler.HandleAsync(command, cancelationToken);
 
             // Assert
-            _userRepositoryMock.Verify(repo => repo.DeleteAsync(command.StudentId), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.DeleteAsync(command.UserId), Times.Once);
 
         }
 
