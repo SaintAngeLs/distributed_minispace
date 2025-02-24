@@ -84,6 +84,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 PhoneNumber = entity.PhoneNumber,
                 Country = entity.Country,
                 City = entity.City,
+                IsVerified = entity.IsVerified,
                 IsOnline = entity.IsOnline,
                 DeviceType = entity.DeviceType,
                 LastActive = entity.LastActive
@@ -133,6 +134,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 PhoneNumber = document.PhoneNumber,
                 Country = document.Country,
                 City = document.City,
+                IsVerified = document.IsVerified,
                 IsOnline = document.IsOnline,
                 DeviceType = document.DeviceType,
                 LastActive = document.LastActive

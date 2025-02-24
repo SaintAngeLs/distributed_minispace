@@ -22,13 +22,13 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<StudentWithVisibilitySettingsDto> HandleAsync(GetUserWithVisibilitySettings query, CancellationToken cancellationToken)
         {
-            var studentDocument = await _userRepository.GetAsync(p => p.Id == query.StudentId);
+            var studentDocument = await _userRepository.GetAsync(p => p.Id == query.UserId);
             if (studentDocument == null)
             {
                 return null;
             }
 
-            var settingsDocument = await _settingsRepository.GetAsync(s => s.UserId == query.StudentId);
+            var settingsDocument = await _settingsRepository.GetAsync(s => s.UserId == query.UserId);
             if (settingsDocument == null)
             {
                 return null;

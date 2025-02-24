@@ -20,7 +20,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<UserSettingsDto> HandleAsync(GetUserSettings query, CancellationToken cancellationToken)
         {
-            var userSettings = await _userSettingsRepository.GetUserSettingsAsync(query.StudentId);
+            var userSettings = await _userSettingsRepository.GetUserSettingsAsync(query.UserId);
             if (userSettings == null)
             {
                 return null;

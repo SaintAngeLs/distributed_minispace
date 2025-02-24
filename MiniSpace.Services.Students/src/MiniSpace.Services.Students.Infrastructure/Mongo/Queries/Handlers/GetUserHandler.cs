@@ -30,7 +30,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
         public async Task<UserDto> HandleAsync(GetUser query, CancellationToken cancellationToken)
         {
             // Fetch the student document from the repository
-            var studentDocument = await _userRepository.GetAsync(p => p.Id == query.StudentId);
+            var studentDocument = await _userRepository.GetAsync(p => p.Id == query.UserId);
             if (studentDocument == null)
             {
                 return null;
@@ -40,7 +40,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
             var studentDto = studentDocument.AsDto();
 
             // Fetch the user settings from the repository
-            var userSettings = await _userSettingsRepository.GetUserSettingsAsync(query.StudentId);
+            var userSettings = await _userSettingsRepository.GetUserSettingsAsync(query.UserId);
             if (userSettings != null)
             {
                 // Map user settings to UserSettingsDto and include them in the UserDto
@@ -66,7 +66,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
             }
 
             // Fetch the gallery images from the repository
-            var userGallery = await _userGalleryRepository.GetAsync(query.StudentId);
+            var userGallery = await _userGalleryRepository.GetAsync(query.UserId);
             if (userGallery != null)
             {
                 studentDto.GalleryOfImageUrls = userGallery.GalleryOfImages

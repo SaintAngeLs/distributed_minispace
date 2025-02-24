@@ -19,10 +19,10 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
 
         public async Task<UserEventsDto> HandleAsync(GetUserEvents query, CancellationToken cancellationToken)
         {
-            var document = await _userRepository.GetAsync(p => p.Id == query.StudentId);
+            var document = await _userRepository.GetAsync(p => p.Id == query.UserId);
             if(document is null)
             {
-                throw new UserNotFoundException(query.StudentId);
+                throw new UserNotFoundException(query.UserId);
             }
             
             var studentEvents = new UserEventsDto()

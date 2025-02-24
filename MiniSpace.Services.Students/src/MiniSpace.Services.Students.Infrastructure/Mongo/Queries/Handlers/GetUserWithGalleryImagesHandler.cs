@@ -24,13 +24,13 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
         
         public async Task<StudentWithGalleryImagesDto> HandleAsync(GetUserWithGalleryImages query, CancellationToken cancellationToken)
         {
-            var studentDocument = await _userRepository.GetAsync(p => p.Id == query.StudentId);
+            var studentDocument = await _userRepository.GetAsync(p => p.Id == query.UserId);
             if (studentDocument == null)
             {
                 return null;
             }
 
-            var galleryDocument = await _galleryRepository.GetAsync(g => g.UserId == query.StudentId);
+            var galleryDocument = await _galleryRepository.GetAsync(g => g.UserId == query.UserId);
             var galleryImages = galleryDocument?.GalleryOfImages.Select(i => new GalleryImageDto(i.ImageId, i.ImageUrl, i.DateAdded)).ToList() ?? new List<GalleryImageDto>();
 
             return new StudentWithGalleryImagesDto
