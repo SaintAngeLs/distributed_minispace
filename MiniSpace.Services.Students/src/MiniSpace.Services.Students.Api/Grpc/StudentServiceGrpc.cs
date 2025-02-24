@@ -23,7 +23,7 @@ namespace MiniSpace.Services.Students.Api.Grpc
         {
             var studentDto = await _queryDispatcher.QueryAsync<GetUser, UserDto>(new GetUser
             {
-                StudentId = Guid.Parse(request.StudentId)
+                UserId = Guid.Parse(request.StudentId)
             });
 
             if (studentDto == null)

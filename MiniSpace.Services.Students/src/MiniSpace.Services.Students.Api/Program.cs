@@ -61,7 +61,7 @@ namespace MiniSpace.Services.Students.Api
                     .UseDispatcherEndpoints(endpoints => endpoints
                         .Get("", ctx => ctx.Response.WriteAsync(ctx.RequestServices.GetService<AppOptions>().Name))
                         .Get<GetUsers, Application.Queries.PagedResult<UserDto>>("students")
-                        .Get<GetUser, UserDto>("students/{studentId}")
+                        .Get<GetUser, UserDto>("students/{userId}")
                         .Get<GetUserSettings, UserSettingsDto>("students/{studentId}/settings")
                         .Get<GetUserWithGalleryImages, StudentWithGalleryImagesDto>("students/{studentId}/gallery")
                         .Get<GetUserWithVisibilitySettings, StudentWithVisibilitySettingsDto>("students/{studentId}/visibility-settings")
@@ -85,7 +85,7 @@ namespace MiniSpace.Services.Students.Api
                             afterDispatch: (cmd, ctx) => ctx.Response.Ok())
 
                         .Post<CompleteUserRegistration>("students",
-                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.StudentId}"))
+                            afterDispatch: (cmd, ctx) => ctx.Response.Created($"students/{cmd.UserId}"))
                         .Post<UpdateUserNotificationPreferences>("students/{studentId}/notifications")
                         .Post<ViewUserProfile>("students/profiles/users/{userProfileId}/view", afterDispatch: (cmd, ctx) => ctx.Response.Ok())
                     )
