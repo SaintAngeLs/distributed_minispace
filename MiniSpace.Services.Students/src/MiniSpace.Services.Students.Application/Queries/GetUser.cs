@@ -7,6 +7,6 @@ namespace MiniSpace.Services.Students.Application.Queries
     [ExcludeFromCodeCoverage]
     public class GetUser : IQuery<UserDto>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
     }    
 }

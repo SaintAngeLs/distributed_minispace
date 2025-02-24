@@ -7,13 +7,13 @@ namespace MiniSpace.Services.Students.Application.Events.Rejected
     [ExcludeFromCodeCoverage]
     public class CompleteUserRegistrationRejected : IRejectedEvent
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public string Reason { get; }
         public string Code { get; }
 
-        public CompleteUserRegistrationRejected(Guid studentId, string reason, string code)
+        public CompleteUserRegistrationRejected(Guid userId, string reason, string code)
         {
-            StudentId = studentId;
+            UserId = userId;
             Reason = reason;
             Code = code;
         }

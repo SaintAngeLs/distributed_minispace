@@ -7,12 +7,12 @@ namespace MiniSpace.Services.Students.Application.Events.External
     public class UserCancelledInterestInEvent : IEvent
     {
         public Guid EventId { get; }
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
 
-        public UserCancelledInterestInEvent(Guid eventId, Guid studentId)
+        public UserCancelledInterestInEvent(Guid eventId, Guid userId)
         {
             EventId = eventId;
-            StudentId = studentId;
+            UserId = userId;
         }
     } 
 }

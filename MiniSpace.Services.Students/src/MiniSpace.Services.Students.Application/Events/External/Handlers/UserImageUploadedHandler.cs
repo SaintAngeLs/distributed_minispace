@@ -21,10 +21,10 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
 
         public async Task HandleAsync(UserImageUploaded @event, CancellationToken cancellationToken)
         {
-            var student = await _userRepository.GetAsync(@event.StudentId);
+            var student = await _userRepository.GetAsync(@event.UserId);
             if (student == null)
             {
-                throw new UserNotFoundException(@event.StudentId);
+                throw new UserNotFoundException(@event.UserId);
             }
 
             switch (@event.ImageType)
@@ -39,10 +39,10 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
                     break;
 
                 case nameof(ContextType.StudentGalleryImage):
-                    var userGallery = await _userGalleryRepository.GetAsync(@event.StudentId);
+                    var userGallery = await _userGalleryRepository.GetAsync(@event.UserId);
                     if (userGallery == null)
                     {
-                        userGallery = new UserGallery(@event.StudentId);
+                        userGallery = new UserGallery(@event.UserId);
                     }
                     userGallery.AddGalleryImage(Guid.NewGuid(), @event.ImageUrl);
                     await _userGalleryRepository.UpdateAsync(userGallery);

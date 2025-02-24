@@ -4,12 +4,12 @@ namespace MiniSpace.Services.Students.Application.Commands
 {
     public class ChangeUserState : ICommand
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public string State { get; }
 
-        public ChangeUserState(Guid studentId, string state)
+        public ChangeUserState(Guid userId, string state)
         {
-            StudentId = studentId;
+            UserId = userId;
             State = state;
         }
     }    

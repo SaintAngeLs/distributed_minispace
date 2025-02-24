@@ -7,14 +7,14 @@ namespace MiniSpace.Services.Students.Application.Events.External
     [Message("mediafiles")]
     public class UserImageUploaded : IEvent
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public string ImageUrl { get; }
         public string ImageType { get; }
         public DateTime UploadDate { get; }
 
-        public UserImageUploaded(Guid studentId, string imageUrl, string imageType, DateTime uploadDate)
+        public UserImageUploaded(Guid userId, string imageUrl, string imageType, DateTime uploadDate)
         {
-            StudentId = studentId;
+            UserId = userId;
             ImageUrl = imageUrl;
             ImageType = imageType;
             UploadDate = uploadDate;

@@ -8,11 +8,11 @@ namespace MiniSpace.Services.Students.Application.Queries
     [ExcludeFromCodeCoverage]
     public class GetUserWithVisibilitySettings : IQuery<StudentWithVisibilitySettingsDto>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
 
-        public GetUserWithVisibilitySettings(Guid studentId)
+        public GetUserWithVisibilitySettings(Guid userId)
         {
-            StudentId = studentId;
+            UserId = userId;
         }
     }
 }

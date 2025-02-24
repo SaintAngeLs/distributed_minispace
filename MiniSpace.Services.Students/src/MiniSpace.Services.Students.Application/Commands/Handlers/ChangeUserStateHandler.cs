@@ -26,10 +26,10 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
         
         public async Task HandleAsync(ChangeUserState command, CancellationToken cancellationToken = default)
         {
-            var student = await _userRepository.GetAsync(command.StudentId);
+            var student = await _userRepository.GetAsync(command.UserId);
             if (student is null)
             {
-                throw new UserNotFoundException(command.StudentId);
+                throw new UserNotFoundException(command.UserId);
             }
 
             if (!Enum.TryParse<State>(command.State, true, out var state))

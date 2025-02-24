@@ -4,8 +4,8 @@ namespace MiniSpace.Services.Students.Application.Commands
 {
     public class DeleteUser : ICommand
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
 
-        public DeleteUser(Guid studentId) => StudentId = studentId;
+        public DeleteUser(Guid userId) => UserId = userId;
     }    
 }

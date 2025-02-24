@@ -6,11 +6,11 @@ namespace MiniSpace.Services.Students.Application.Queries
 {
     public class GetUserNotificationPreferences : IQuery<NotificationPreferencesDto>
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
 
-        public GetUserNotificationPreferences(Guid studentId)
+        public GetUserNotificationPreferences(Guid userId)
         {
-            StudentId = studentId;
+            UserId = userId;
         }
     }
 }

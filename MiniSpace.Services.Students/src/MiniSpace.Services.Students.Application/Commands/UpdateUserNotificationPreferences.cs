@@ -23,7 +23,6 @@ namespace MiniSpace.Services.Students.Application.Commands
         public bool PostsOfPeopleIFollowNotification { get; set; }
         public bool EventNotificationForPeopleIFollow { get; set; }
 
-        // New properties for friend requests and post notifications
         public bool NewFriendsRequests { get; set; }
         public bool MyRequestsAccepted { get; set; }
         public bool FriendsPostsNotifications { get; set; }

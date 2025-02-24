@@ -5,7 +5,7 @@ namespace MiniSpace.Services.Students.Application.Commands
 {
     public class UpdateUserSettings : ICommand
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
         public string CreatedAtVisibility { get; set; }
         public string DateOfBirthVisibility { get; set; }
         public string InterestedInEventsVisibility { get; set; }
@@ -53,7 +53,7 @@ namespace MiniSpace.Services.Students.Application.Commands
         public string GroupMembershipVisibility { get; set; }
 
         public UpdateUserSettings(
-            Guid studentId, string createdAtVisibility, string dateOfBirthVisibility, string interestedInEventsVisibility, 
+            Guid userId, string createdAtVisibility, string dateOfBirthVisibility, string interestedInEventsVisibility, 
             string signedUpEventsVisibility, string educationVisibility, string workPositionVisibility, 
             string languagesVisibility, string interestsVisibility, string contactEmailVisibility, 
             string phoneNumberVisibility, string profileImageVisibility, string bannerImageVisibility, 
@@ -68,7 +68,7 @@ namespace MiniSpace.Services.Students.Application.Commands
             string postLikeVisibility, string friendRequestVisibility, string taggedPostVisibility, 
             string storyVisibility, string groupMembershipVisibility)
         {
-            StudentId = studentId;
+            UserId = userId;
             CreatedAtVisibility = createdAtVisibility;
             DateOfBirthVisibility = dateOfBirthVisibility;
             InterestedInEventsVisibility = interestedInEventsVisibility;

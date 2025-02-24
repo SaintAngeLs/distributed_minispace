@@ -8,6 +8,6 @@ namespace MiniSpace.Services.Students.Application.Queries
     [ExcludeFromCodeCoverage]
     public class GetUserWithGalleryImages : IQuery<StudentWithGalleryImagesDto>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

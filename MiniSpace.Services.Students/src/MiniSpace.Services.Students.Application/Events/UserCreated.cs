@@ -6,13 +6,13 @@ namespace MiniSpace.Services.Students.Application.Events
     [ExcludeFromCodeCoverage]
     public class UserCreated : IEvent
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public string FullName { get; }
         public string ProfileImageUrl { get; }
 
-        public UserCreated(Guid studentId, string fullName, string profileImageUrl)
+        public UserCreated(Guid userId, string fullName, string profileImageUrl)
         {
-            StudentId = studentId;
+            UserId = userId;
             FullName = fullName;
             ProfileImageUrl = profileImageUrl;
         }

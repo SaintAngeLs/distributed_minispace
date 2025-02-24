@@ -21,10 +21,10 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
         
         public async Task HandleAsync(UserSignedUpToEvent userSignedUpToEvent, CancellationToken cancellationToken)
         {
-            var student = await _userRepository.GetAsync(userSignedUpToEvent.StudentId);
+            var student = await _userRepository.GetAsync(userSignedUpToEvent.UserId);
             if (student is null)
             {
-                throw new UserNotFoundException(userSignedUpToEvent.StudentId);
+                throw new UserNotFoundException(userSignedUpToEvent.UserId);
             }
             
             student.AddSignedUpEvent(userSignedUpToEvent.EventId);

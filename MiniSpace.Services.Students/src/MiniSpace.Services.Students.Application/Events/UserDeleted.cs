@@ -6,12 +6,12 @@ namespace MiniSpace.Services.Students.Application.Events
     [ExcludeFromCodeCoverage]
     public class UserDeleted : IEvent
     {
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public string FullName { get; }
 
-        public UserDeleted(Guid studentId, string fullName)
+        public UserDeleted(Guid userId, string fullName)
         {
-            StudentId = studentId;
+            UserId = userId;
             FullName = fullName;
         }
     }

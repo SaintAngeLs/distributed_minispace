@@ -7,6 +7,6 @@ namespace MiniSpace.Services.Students.Application.Queries
     [ExcludeFromCodeCoverage]
     public class GetUserEvents: IQuery<UserEventsDto>
     {
-        public Guid StudentId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

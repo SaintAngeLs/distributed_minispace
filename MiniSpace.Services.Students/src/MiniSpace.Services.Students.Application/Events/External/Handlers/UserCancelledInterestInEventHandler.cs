@@ -21,10 +21,10 @@ namespace MiniSpace.Services.Students.Application.Events.External.Handlers
         
         public async Task HandleAsync(UserCancelledInterestInEvent @event, CancellationToken cancellationToken)
         {
-            var student = await _userRepository.GetAsync(@event.StudentId);
+            var student = await _userRepository.GetAsync(@event.UserId);
             if (student is null)
             {
-                throw new UserNotFoundException(@event.StudentId);
+                throw new UserNotFoundException(@event.UserId);
             }
             
             student.RemoveInterestedInEvent(@event.EventId);

@@ -9,7 +9,7 @@ namespace MiniSpace.Services.Students.Application.Events;
 [ExcludeFromCodeCoverage]
 public class UserUpdated : IEvent
 {
-    public Guid StudentId { get; }
+    public Guid UserId { get; }
     public string UserName { get; }          
     public string FullName { get; }
     public string Description { get; }
@@ -23,7 +23,7 @@ public class UserUpdated : IEvent
     public DateTime? DateOfBirth { get; }
 
     public UserUpdated(
-        Guid studentId,
+        Guid userId,
         string userName,             
         string fullName,
         string description,
@@ -36,7 +36,7 @@ public class UserUpdated : IEvent
         string city,
         DateTime? dateOfBirth)
     {
-        StudentId = studentId;
+        UserId = userId;
         UserName = userName;
         FullName = fullName;
         Description = description;

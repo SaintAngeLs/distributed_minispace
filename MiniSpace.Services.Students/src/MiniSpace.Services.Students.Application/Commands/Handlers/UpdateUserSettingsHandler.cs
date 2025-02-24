@@ -38,16 +38,16 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             Console.WriteLine("Received UpdateUserSettings command:");
             Console.WriteLine(commandJson);
 
-            var student = await _userRepository.GetAsync(command.StudentId);
+            var student = await _userRepository.GetAsync(command.UserId);
             if (student == null)
             {
-                throw new UserNotFoundException(command.StudentId);
+                throw new UserNotFoundException(command.UserId);
             }
 
-            var userSettings = await _userSettingsRepository.GetUserSettingsAsync(command.StudentId);
+            var userSettings = await _userSettingsRepository.GetUserSettingsAsync(command.UserId);
             if (userSettings == null)
             {
-                throw new UserSettingsNotFoundException(command.StudentId);
+                throw new UserSettingsNotFoundException(command.UserId);
             }
 
             var availableSettings = new UserAvailableSettings(

@@ -6,13 +6,13 @@ namespace MiniSpace.Services.Students.Application.Events.Rejected
     public class UpdateUserRejected : IRejectedEvent
     {
         [ExcludeFromCodeCoverage]
-        public Guid StudentId { get; }
+        public Guid UserId { get; }
         public string Reason { get; }
         public string Code { get; }
         
-        public UpdateUserRejected(Guid studentId, string reason, string code)
+        public UpdateUserRejected(Guid userId, string reason, string code)
         {
-            StudentId = studentId;
+            UserId = userId;
             Reason = reason;
             Code = code;
         }
