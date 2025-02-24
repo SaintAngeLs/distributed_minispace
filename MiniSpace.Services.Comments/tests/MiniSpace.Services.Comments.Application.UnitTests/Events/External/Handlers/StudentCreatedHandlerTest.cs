@@ -57,7 +57,7 @@ namespace MiniSpace.Services.Comments.Application.UnitTests.Events.External.Hand
 
             // Act & Assert
             Func<Task> act = async () => await _studentCreatedHandler.HandleAsync(@event);
-            await act.Should().ThrowAsync<StudentAlreadyExistsException>();
+            await act.Should().ThrowAsync<UserAlreadyExistsException>();
         }
     }
 }

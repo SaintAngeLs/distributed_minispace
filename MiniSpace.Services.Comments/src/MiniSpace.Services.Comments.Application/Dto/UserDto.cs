@@ -10,6 +10,7 @@ namespace MiniSpace.Services.Comments.Application.Dto
     {
         public Guid Id { get; set; }
         public string Email { get; set; }
+        public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ProfileImageUrl { get; set; }
@@ -30,6 +31,7 @@ namespace MiniSpace.Services.Comments.Application.Dto
         public string TwoFactorSecret { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }
         public IEnumerable<Guid> SignedUpEvents { get; set; }
+        public bool IsVerified { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
 
