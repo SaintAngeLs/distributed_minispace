@@ -3,7 +3,7 @@
 namespace MiniSpace.Services.Posts.Application.Dto
 {
     [ExcludeFromCodeCoverage]
-    public class StudentEventsDto
+    public class UserEventsDto
     {
         public Guid StudentId { get; set; }
         public IEnumerable<Guid> InterestedInEvents { get; set; }

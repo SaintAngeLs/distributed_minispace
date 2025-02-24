@@ -4,7 +4,7 @@ using MiniSpace.Services.Posts.Application.Dto;
 
 namespace MiniSpace.Services.Posts.Application.Services.Clients
 {
-    public interface IStudentsServiceClient
+    public interface IUsersServiceClient
     {
         Task<StudentEventsDto> GetAsync(Guid id);
         Task<UserDto> GetStudentByIdAsync(Guid studentId); 

@@ -8,12 +8,12 @@ using MiniSpace.Services.Posts.Application.Services.Clients;
 namespace MiniSpace.Services.Events.Infrastructure.Services.Clients
 {
     [ExcludeFromCodeCoverage]
-    public class StudentsServiceClient : IStudentsServiceClient
+    public class UsersServiceClient : IUsersServiceClient
     {
         private readonly IHttpClient _httpClient;
         private readonly string _url;
 
-        public StudentsServiceClient(IHttpClient httpClient, HttpClientOptions options)
+        public UsersServiceClient(IHttpClient httpClient, HttpClientOptions options)
         {
             _httpClient = httpClient;
             _url = options.Services["students"];
