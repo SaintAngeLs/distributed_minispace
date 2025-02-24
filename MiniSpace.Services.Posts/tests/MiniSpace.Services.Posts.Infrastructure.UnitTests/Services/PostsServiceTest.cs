@@ -31,7 +31,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.UnitTests.Services
     {
         private readonly PostsService _postService;
         private readonly Mock<IPostRepository> _postRepositoryMock;
-        private readonly Mock<IStudentsServiceClient> _studentsServiceClientMock;
+        private readonly Mock<IUsersServiceClient> _studentsServiceClientMock;
         private readonly Mock<IAppContext> _appContextMock;
 
         public PostServiceTest()
@@ -64,7 +64,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.UnitTests.Services
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
 
-            var studentEventsDto = new StudentEventsDto
+            var studentEventsDto = new UserEventsDto
             {
                 InterestedInEvents = [Guid.NewGuid(), Guid.NewGuid()],
                 SignedUpEvents = [Guid.NewGuid(), Guid.NewGuid()]
@@ -110,7 +110,7 @@ namespace MiniSpace.Services.Posts.Infrastructure.UnitTests.Services
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
 
-            var studentEventsDto = new StudentEventsDto
+            var studentEventsDto = new UserEventsDto
             {
                 InterestedInEvents = [Guid.NewGuid(), Guid.NewGuid()],
                 SignedUpEvents = [Guid.NewGuid(), Guid.NewGuid()]
@@ -145,14 +145,14 @@ namespace MiniSpace.Services.Posts.Infrastructure.UnitTests.Services
 
             var identityContext = new IdentityContext(contextId.ToString(), "", true, default);
 
-            var studentEventsDto = new StudentEventsDto
+            var studentEventsDto = new UserEventsDto
             {
                 InterestedInEvents = [Guid.NewGuid(), Guid.NewGuid()],
                 SignedUpEvents = [Guid.NewGuid(), Guid.NewGuid()]
             };
 
             _appContextMock.Setup(ctx => ctx.Identity).Returns(identityContext);
-            _studentsServiceClientMock.Setup(cl => cl.GetAsync(studentId)).ReturnsAsync((StudentEventsDto)null);
+            _studentsServiceClientMock.Setup(cl => cl.GetAsync(studentId)).ReturnsAsync((UserEventsDto)null);
 
             // Act
             Func<Task<PagedResponse<IEnumerable<PostDto>>>> act =
