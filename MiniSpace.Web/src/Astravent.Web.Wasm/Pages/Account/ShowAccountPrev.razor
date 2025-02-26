@@ -1,0 +1,448 @@
+@page "/account"
+@using System.Globalization
+@using Astravent.Web.Wasm.Shared
+@using Astravent.Web.Wasm.Areas.Students
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.Areas.MediaFiles
+@using Astravent.Web.Wasm.DTO.Types
+@using MudBlazor
+@using System.IO
+@using System.Text.Json
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject IMediaFilesService MediaFilesService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+
+<AuthWrapper>
+    <MudContainer Class="account-container">
+
+         @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Loading, please wait...</MudText>
+            </div>
+        }
+        else
+        {
+    <div class="breadcrumbs-container">
+        <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+    </div>
+
+    
+        <MudGrid>
+            <MudItem xs="12" sm="4" md="3">
+                <MudNavMenu Elevation="1">
+                    <MudNavLink Class="@GetNavLinkClass(0)" OnClick="() => SetActiveTabIndex(0)" Icon="@Icons.Material.Filled.Person" DisableRipple="true">Profile</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(1)" OnClick="() => SetActiveTabIndex(1)" Icon="@Icons.Material.Filled.Security" DisableRipple="true">Security</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(2)" OnClick="() => SetActiveTabIndex(2)" Icon="@Icons.Material.Filled.Notifications" DisableRipple="true">Notifications</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(3)" OnClick="() => SetActiveTabIndex(3)" Icon="@Icons.Material.Filled.PrivacyTip" DisableRipple="true">Privacy</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(4)" OnClick="() => SetActiveTabIndex(4)" Icon="@Icons.Material.Filled.Language" DisableRipple="true">Languages & Interests</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(5)" OnClick="() => SetActiveTabIndex(5)" Icon="@Icons.Material.Filled.PhotoLibrary" DisableRipple="true">Gallery</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(6)" OnClick="() => SetActiveTabIndex(6)" Icon="@Icons.Material.Filled.Settings" DisableRipple="true">User Settings</MudNavLink>
+                    <MudNavLink Class="@GetNavLinkClass(7)" OnClick="() => SetActiveTabIndex(7)" Icon="@Icons.Material.Filled.Block" DisableRipple="true">Blocked Users</MudNavLink> 
+                </MudNavMenu>
+            </MudItem>
+            <MudItem xs="12" sm="8" md="9">
+                <MudPaper Elevation="1" Class="content-panel">
+                    @if (activeTabIndex == 0)
+                    {
+                        <ProfileComponent IsLoading="isLoading" File="file" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync"  IsUploading="isUploading" />
+                    }
+                    else if (activeTabIndex == 1)
+                    {
+                        <SecurityComponent IsLoading="isLoading" IsTwoFactorEnabled="isTwoFactorEnabled" TwoFactorSecret="@(string.IsNullOrEmpty(twoFactorSecret) || twoFactorSecret == "twoFactorSecret" ? null : twoFactorSecret)" ToggleTwoFactor="ToggleTwoFactor" />
+                    }
+                    else if (activeTabIndex == 2)
+                    {
+                        <NotificationsSettingsComponent IsLoading="isLoading" NotificationPreferencesDto="notificationPreferencesDto" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" />
+                    }
+                    else if (activeTabIndex == 3)
+                    {
+                        <PrivacyComponent IsLoading="isLoading" StudentWithGalleryImagesDto="studentWithGalleryImagesDto" SaveChangesAsync="SaveChangesAsync" />
+                    }
+                    else if (activeTabIndex == 4)
+                    {
+                        <MudText Typo="Typo.h6" GutterBottom="true">Languages & Interests</MudText>
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
+                                    <MudSelect T="string" Label="Select Languages" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedLanguages" SelectedValuesChanged="OnSelectedLanguagesChanged">
+                                        @foreach (var language in Enum.GetValues(typeof(Language)).Cast<Language>())
+                                        {
+                                            <MudSelectItem Value="@language.ToString()">@language.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
+                                    <MudSelect T="string" Label="Select Interests" Variant="Variant.Outlined" MultiSelection="true" SelectedValues="selectedInterests" SelectedValuesChanged="OnSelectedInterestsChanged">
+                                        @foreach (var interest in Enum.GetValues(typeof(Interest)).Cast<Interest>())
+                                        {
+                                            <MudSelectItem Value="@interest.ToString()">@interest.ToString()</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">Save Changes</MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    }
+                    else if (activeTabIndex == 5)
+                    {
+                        <GalleryComponent IsLoading="@isLoading" StudentWithGalleryImagesDto="@studentWithGalleryImagesDto" />
+                    }
+                    else if (activeTabIndex == 6)
+                    {
+                        <UserSettingsComponent IsLoading="isLoading" AvailableSettingsDto="availableSettingsDto" SaveUserSettingsAsync="SaveUserSettingsAsync" />
+                    }
+                    else if (activeTabIndex == 7) 
+                    {
+                        <BlockedListComponent />
+                    }
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
+    }
+
+    .navigation-panel {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .content-panel {
+        padding: 20px;
+        min-height: 80vh;
+    }
+
+    .mud-tabs {
+        margin-top: 20px;
+    }
+
+    .mud-tabpanel {
+        padding: 20px;
+    }
+
+    .mud-text-field {
+        margin-bottom: 10px;
+    }
+
+    .mud-switch {
+        margin-bottom: 10px;
+    }
+
+    .image-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .profile-image {
+        height: 150px;
+        width: 150px;
+    }
+
+    textarea.mud-input-slot.mud-input-root.mud-input-root-outlined {
+        padding: 10px !important;
+    }
+    .mud-input>input.mud-input-root {
+        padding: 10px !important;
+    }
+
+    .button-margins {
+        margin: 10px 0 !important;
+    }
+
+     .mud-nav-link.active {
+        background-color: #e0e0e0; 
+        font-weight: bold; 
+        color: #3f51b5;
+    }
+</style>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/events/follow", disabled: true, icon: @Icons.Material.Filled.ManageAccounts),
+    };
+
+    private int activeTabIndex = 0;
+    private bool isTwoFactorEnabled;
+    private string twoFactorSecret;
+    private bool isLoading = true;
+    private bool isUploading = false;
+    private IBrowserFile file;
+    private bool pageInitialized = false;
+    private long maxFileSize = 10 * 1024 * 1024;
+    private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
+    private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();
+    private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
+
+    private HashSet<string> selectedLanguages = new HashSet<string>();
+    private HashSet<string> selectedInterests = new HashSet<string>(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+       var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine($"User authenticated for the account component: {user.Identity.IsAuthenticated}");
+            
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+
+            studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+            notificationPreferencesDto = await StudentsService.GetUserNotificationPreferencesAsync(studentId);
+            availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
+            
+            if (studentWithGalleryImagesDto?.User?.Languages != null)
+            {
+                selectedLanguages = new HashSet<string>(studentWithGalleryImagesDto.User.Languages);
+            }
+            else
+            {
+                selectedLanguages = new HashSet<string>();
+            }
+            
+            if (studentWithGalleryImagesDto?.User?.Interests != null)
+            {
+                selectedInterests = new HashSet<string>(studentWithGalleryImagesDto.User.Interests);
+            }
+            else
+            {
+                selectedInterests = new HashSet<string>();
+            }
+
+            pageInitialized = true;
+            isLoading = false;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
+
+    private void OnSelectedLanguagesChanged(IEnumerable<string> languages)
+    {
+        selectedLanguages = new HashSet<string>(languages);
+    }
+
+    private void OnSelectedInterestsChanged(IEnumerable<string> interests) 
+    {
+        selectedInterests = new HashSet<string>(interests);
+    }
+
+    private async Task SaveChanges()
+    {
+        try
+        {
+            var studentDto = studentWithGalleryImagesDto.User;
+            studentDto.Languages = selectedLanguages.ToList(); 
+            studentDto.Interests = selectedInterests.ToList();
+
+            await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
+                studentDto.Id,
+                studentDto.Languages,
+                studentDto.Interests
+            );
+
+            await StudentsService.UpdateStudentDto(studentDto.Id);
+            Snackbar.Add("Changes saved successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to save changes: {ex.Message}", Severity.Error);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task SaveChangesAsync()
+    {
+        try
+        {
+            var studentDto = studentWithGalleryImagesDto.User;
+            Console.WriteLine("Studnet dto id pof te user", studentDto.Id);
+            
+
+            // Handle dates for Education and Work
+            foreach (var education in studentDto.Education)
+            {
+                education.StartDate = education.StartDate != DateTime.MinValue ? education.StartDate : null;
+                education.EndDate = education.EndDate != DateTime.MinValue ? education.EndDate : null;
+            }
+
+            foreach (var work in studentDto.Work)
+            {
+                work.StartDate = work.StartDate != DateTime.MinValue ? work.StartDate : null;
+                work.EndDate = work.EndDate != DateTime.MinValue ? work.EndDate : null;
+            }
+
+            // Update _user details
+            await StudentsService.UpdateStudentAsync(
+                studentDto.Id,
+                studentDto.FirstName,
+                studentDto.LastName,
+                studentDto.ProfileImageUrl,
+                studentDto.Description,
+                studentDto.EmailNotifications,
+                studentDto.ContactEmail,
+                studentDto.Languages,
+                studentDto.Interests,
+                isTwoFactorEnabled,
+                !isTwoFactorEnabled,
+                isTwoFactorEnabled ? twoFactorSecret : null,
+                studentDto.Education,
+                studentDto.Work,
+                studentDto.PhoneNumber,
+                studentDto.Country,
+                studentDto.City,
+                studentDto.DateOfBirth
+            );
+
+            // Update notification preferences
+            if (studentDto.EmailNotifications)
+            {
+                await StudentsService.UpdateUserNotificationPreferencesAsync(studentDto.Id, notificationPreferencesDto, studentDto.EmailNotifications);
+            }
+
+            await StudentsService.UpdateUserSettingsAsync(studentDto.Id, availableSettingsDto);
+
+            Snackbar.Add("Profile updated successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update profile: {ex.Message}", Severity.Error);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task SaveTwoFactorSettingsAsync()
+    {
+        try
+        {
+            if (isTwoFactorEnabled)
+            {
+                if (string.IsNullOrEmpty(twoFactorSecret))
+                {
+                    throw new InvalidOperationException("Secret token must be generated before enabling 2FA.");
+                }
+
+                await IdentityService.EnableTwoFactorAsync(IdentityService.GetCurrentUserId(), twoFactorSecret);
+            }
+            else
+            {
+                await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
+            }
+
+            Snackbar.Add("Two-factor authentication settings updated successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update two-factor authentication settings: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ToggleTwoFactor(bool enabled)
+    {
+        try
+        {
+            isTwoFactorEnabled = enabled;
+            if (!enabled)
+            {
+                await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
+                twoFactorSecret = null;
+            }
+            else
+            {
+                twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
+            }
+
+            Snackbar.Add("Two-factor authentication toggled successfully.", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to toggle two-factor authentication: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task SaveNotificationPreferencesAsync()
+    {
+        try
+        {
+            var studentId = IdentityService.GetCurrentUserId();
+            await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, notificationPreferencesDto, studentWithGalleryImagesDto.User.EmailNotifications);
+            Snackbar.Add("Notification preferences updated successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update notification preferences: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task SaveUserSettingsAsync()
+    {
+        try
+        {
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            if (studentId == Guid.Empty)
+            {
+                throw new InvalidOperationException("Unable to retrieve the current user's ID.");
+            }
+
+            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
+            Snackbar.Add("User settings updated successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update user settings: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
+    }
+
+    private static async Task<byte[]> ReadFully(Stream input)
+    {
+        byte[] buffer = new byte[16 * 1024];
+        using (MemoryStream ms = new MemoryStream())
+        {
+            int read;
+            while ((read = await input.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, read);
+            }
+            return ms.ToArray();
+        }
+    }
+
+    private string GetNavLinkClass(int index)
+    {
+        return activeTabIndex == index ? "mud-nav-link active" : "mud-nav-link";
+    }
+}
