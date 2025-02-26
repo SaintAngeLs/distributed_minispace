@@ -22,7 +22,9 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Queries.Handlers
         public async Task<NotificationPreferencesDto> HandleAsync(GetUserNotificationPreferences query, CancellationToken cancellationToken)
         {
             var userNotificationsDocument = await _repository.GetAsync(x => x.UserId == query.UserId);
-            return userNotificationsDocument?.NotificationPreferences.AsDto();
+            return userNotificationsDocument != null
+                ? userNotificationsDocument.NotificationPreferences.AsDto(userNotificationsDocument.UserId)
+                : null;
         }
     }
 }

@@ -154,9 +154,10 @@ namespace MiniSpace.Services.Students.Infrastructure.Mongo.Documents
                 NotificationPreferences = entity.NotificationPreferences
             };
 
-        public static NotificationPreferencesDto AsDto(this NotificationPreferences notificationPreferences)
+        public static NotificationPreferencesDto AsDto(this NotificationPreferences notificationPreferences, Guid userId)
         => new NotificationPreferencesDto
         {
+            UserId = userId,
             SystemLogin = notificationPreferences.SystemLogin,
             InterestBasedEvents = notificationPreferences.InterestBasedEvents,
             EventNotifications = notificationPreferences.EventNotifications,

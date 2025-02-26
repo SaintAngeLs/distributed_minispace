@@ -25,7 +25,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
                 },
                 CannotUpdateUserException ex => message switch
                 {
-                    UpdateUser command => new UpdateUserRejected(command.UserId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.Id, ex.Message, ex.Code),
                     _ => null,
                 },
                 InvalidUserDateOfBirthException ex => message switch
@@ -38,7 +38,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
                 {
                     CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
-                    UpdateUser command => new UpdateUserRejected(command.UserId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.Id, ex.Message, ex.Code),
                     _ => null,
                 },
                 InvalidStudentFullNameException ex => message switch
@@ -51,7 +51,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
                 {
                     CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
-                    UpdateUser command => new UpdateUserRejected(command.UserId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.Id, ex.Message, ex.Code),
                     _ => null,
                 },
                 InvalidRoleException ex => message switch
@@ -75,7 +75,7 @@ namespace MiniSpace.Services.Students.Infrastructure.Exceptions
                     CompleteUserRegistration _ => new CompleteUserRegistrationRejected(ex.Id, ex.Message,
                         ex.Code),
                     DeleteUser command => new DeleteUserRejected(command.UserId, ex.Message, ex.Code),
-                    UpdateUser command => new UpdateUserRejected(command.UserId, ex.Message, ex.Code),
+                    UpdateUser command => new UpdateUserRejected(command.Id, ex.Message, ex.Code),
                     _ => null,
                 },
                 UserStateAlreadySetException ex => message switch
