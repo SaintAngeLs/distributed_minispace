@@ -8,7 +8,7 @@ namespace MiniSpace.Services.Students.Application.Commands;
 
 public class UpdateUser : ICommand
 {
-    public Guid UserId { get; }
+    public Guid Id { get; }
     public string UserName { get; }            
     public string FirstName { get; }
     public string LastName { get; }
@@ -28,7 +28,7 @@ public class UpdateUser : ICommand
     public DateTime? DateOfBirth { get; }
 
     public UpdateUser(
-        Guid userId,
+        Guid id,
         string userName,              
         string firstName,
         string lastName,
@@ -47,7 +47,7 @@ public class UpdateUser : ICommand
         string city,
         DateTime? dateOfBirth)
     {
-        UserId = userId;
+        Id = id;
         UserName = userName;
         FirstName = firstName;
         LastName = lastName;

@@ -37,10 +37,10 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
         var commandJson = JsonSerializer.Serialize(command);
         Console.WriteLine($"Received UpdateStudent command: {commandJson}");
 
-        var user = await _userRepository.GetAsync(command.UserId);
+        var user = await _userRepository.GetAsync(command.Id);
         if (user == null)
         {
-            throw new UserNotFoundException(command.UserId);
+            throw new UserNotFoundException(command.Id);
         }
 
         user.UpdateUserName(command.UserName);

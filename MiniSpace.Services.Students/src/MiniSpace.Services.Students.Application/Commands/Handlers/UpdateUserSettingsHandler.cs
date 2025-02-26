@@ -51,47 +51,49 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             }
 
             var availableSettings = new UserAvailableSettings(
-                Enum.Parse<Visibility>(command.CreatedAtVisibility, true),
-                Enum.Parse<Visibility>(command.DateOfBirthVisibility, true),
-                Enum.Parse<Visibility>(command.InterestedInEventsVisibility, true),
-                Enum.Parse<Visibility>(command.SignedUpEventsVisibility, true),
-                Enum.Parse<Visibility>(command.EducationVisibility, true),
-                Enum.Parse<Visibility>(command.WorkPositionVisibility, true),
-                Enum.Parse<Visibility>(command.LanguagesVisibility, true),
-                Enum.Parse<Visibility>(command.InterestsVisibility, true),
-                Enum.Parse<Visibility>(command.ContactEmailVisibility, true),
-                Enum.Parse<Visibility>(command.PhoneNumberVisibility, true),
-                Enum.Parse<Visibility>(command.ProfileImageVisibility, true),
-                Enum.Parse<Visibility>(command.BannerImageVisibility, true),
-                Enum.Parse<Visibility>(command.GalleryVisibility, true),
-                Enum.Parse<FrontendVersion>(command.FrontendVersion, true),
-                Enum.Parse<PreferredLanguage>(command.PreferredLanguage, true),
-                Enum.Parse<Visibility>(command.ConnectionVisibility, true),
-                Enum.Parse<Visibility>(command.FollowersVisibility, true),
-                Enum.Parse<Visibility>(command.FollowingVisibility, true),
-                Enum.Parse<Visibility>(command.FriendListVisibility, true),
-                Enum.Parse<Visibility>(command.FollowersListVisibility, true),
-                Enum.Parse<Visibility>(command.FollowingListVisibility, true), 
-                Enum.Parse<Visibility>(command.MyPostsVisibility, true),
-                Enum.Parse<Visibility>(command.ConnectionsPostsVisibility, true),
-                Enum.Parse<Visibility>(command.MyRepostsVisibility, true),
-                Enum.Parse<Visibility>(command.RepostsOfMyConnectionsVisibility, true),
-                Enum.Parse<Visibility>(command.OrganizationIAmCreatorVisibility, true),
-                Enum.Parse<Visibility>(command.OrganizationIFollowVisibility, true),
-                Enum.Parse<Visibility>(command.IsOnlineVisibility, true),
-                Enum.Parse<Visibility>(command.DeviceTypeVisibility, true),
-                Enum.Parse<Visibility>(command.LastActiveVisibility, true),
-                Enum.Parse<Visibility>(command.CountryVisibility, true),
-                Enum.Parse<Visibility>(command.CityVisibility, true),
-                Enum.Parse<Visibility>(command.MessageVisibility, true), 
-                Enum.Parse<Visibility>(command.ProfileVisibility, true),
-                Enum.Parse<Visibility>(command.PostCommentVisibility, true),
-                Enum.Parse<Visibility>(command.PostLikeVisibility, true),
-                Enum.Parse<Visibility>(command.FriendRequestVisibility, true),
-                Enum.Parse<Visibility>(command.TaggedPostVisibility, true),
-                Enum.Parse<Visibility>(command.StoryVisibility, true),
-                Enum.Parse<Visibility>(command.GroupMembershipVisibility, true)
+                Enum.Parse<Visibility>(EnsureValue(command.CreatedAtVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.DateOfBirthVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.InterestedInEventsVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.SignedUpEventsVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.EducationVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.WorkPositionVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.LanguagesVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.InterestsVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.ContactEmailVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.PhoneNumberVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.ProfileImageVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.BannerImageVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.GalleryVisibility, "Everyone"), true),
+                // Here we use non-visibility values directly since the UI should supply these:
+                Enum.Parse<FrontendVersion>(EnsureValue(command.FrontendVersion, "Default"), true),
+                Enum.Parse<PreferredLanguage>(EnsureValue(command.PreferredLanguage, "English"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.ConnectionVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.FollowersVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.FollowingVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.FriendListVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.FollowersListVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.FollowingListVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.MyPostsVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.ConnectionsPostsVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.MyRepostsVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.RepostsOfMyConnectionsVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.OrganizationIAmCreatorVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.OrganizationIFollowVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.IsOnlineVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.DeviceTypeVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.LastActiveVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.CountryVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.CityVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.MessageVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.ProfileVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.PostCommentVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.PostLikeVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.FriendRequestVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.TaggedPostVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.StoryVisibility, "Everyone"), true),
+                Enum.Parse<Visibility>(EnsureValue(command.GroupMembershipVisibility, "Everyone"), true)
             );
+
 
             userSettings.UpdateSettings(availableSettings);
             await _userSettingsRepository.UpdateUserSettingsAsync(userSettings);
@@ -99,5 +101,11 @@ namespace MiniSpace.Services.Students.Application.Commands.Handlers
             var events = _eventMapper.MapAll(userSettings.Events);
             await _messageBroker.PublishAsync(events);
         }
+        
+        private string EnsureValue(string value, string defaultValue)
+        {
+            return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+        }
+
     }
 }
