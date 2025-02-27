@@ -20,13 +20,13 @@
                     {
                         <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load user profile. Please try again later.</MudText>
                     }
-                    else if (student != null)
+                    else if (_user != null)
                     {
                         <div class="profile-header">
                             <MudAvatar Image="@GetProfileImage()" Style="height:150px; width:150px;" Class="profile-avatar" />
                             <div class="profile-info">
-                                <MudText Typo="Typo.h4" Class="profile-name">@($"{student.FirstName} {student.LastName}")</MudText>
-                                <MudText Typo="Typo.subtitle1" Class="profile-description">@student.Description</MudText>
+                                <MudText Typo="Typo.h4" Class="profile-name">@($"{_user.FirstName} {_user.LastName}")</MudText>
+                                <MudText Typo="Typo.subtitle1" Class="profile-description">@_user.Description</MudText>
                                 <MudButton Variant="MudBlazor.Variant.Filled" Color="MudBlazor.Color.Primary" OnClick="@NavigateToProfileSettings">Edit Profile</MudButton>
                                 <MudButton Variant="MudBlazor.Variant.Outlined" Color="MudBlazor.Color.Primary" OnClick="@NavigateToPublicProfile">Public Profile</MudButton>
                             </div>
@@ -47,7 +47,7 @@
                 <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load education details.</MudText>
             </MudItem>
         }
-        else if (student?.Education != null && student.Education.Any())
+        else if (_user?.Education != null && _user.Education.Any())
         {
             <MudItem xs="12">
                 <MudCard Class="info-card modern-card">
@@ -56,7 +56,7 @@
                         <MudText Typo="Typo.h6">Education</MudText>
                     </MudCardHeader>
                     <MudCardContent>
-                        @foreach (var education in student.Education)
+                        @foreach (var education in _user.Education)
                         {
                             <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.School" /> @education.Degree at @education.InstitutionName</MudText>
                             <MudText Typo="Typo.caption" Class="text-muted">@education.StartDate?.ToString("MMMM yyyy") - @education.EndDate?.ToString("MMMM yyyy")</MudText>
@@ -79,7 +79,7 @@
                 <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load work experience.</MudText>
             </MudItem>
         }
-        else if (student?.Work != null && student.Work.Any())
+        else if (_user?.Work != null && _user.Work.Any())
         {
             <MudItem xs="12">
                 <MudCard Class="info-card modern-card">
@@ -88,7 +88,7 @@
                         <MudText Typo="Typo.h6">Work Experience</MudText>
                     </MudCardHeader>
                     <MudCardContent>
-                        @foreach (var work in student.Work)
+                        @foreach (var work in _user.Work)
                         {
                             <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.BusinessCenter" /> @work.Position at @work.Company</MudText>
                             <MudText Typo="Typo.caption" Class="text-muted">@work.StartDate?.ToString("MMMM yyyy") - @work.EndDate?.ToString("MMMM yyyy")</MudText>
@@ -111,7 +111,7 @@
                 <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Error">Failed to load languages and interests.</MudText>
             </MudItem>
         }
-        else if ((student?.Languages != null && student.Languages.Any()) || (student?.Interests != null && student.Interests.Any()))
+        else if ((_user?.Languages != null && _user.Languages.Any()) || (_user?.Interests != null && _user.Interests.Any()))
         {
             <MudItem xs="12">
                 <MudCard Class="info-card modern-card">
@@ -120,21 +120,21 @@
                         <MudText Typo="Typo.h6">Skills and Interests</MudText>
                     </MudCardHeader>
                     <MudCardContent>
-                        @if (student.Languages != null && student.Languages.Any())
+                        @if (_user.Languages != null && _user.Languages.Any())
                         {
                             <MudText Typo="Typo.body2" Class="skill-interest-text">
                                 <MudIcon Icon="@Icons.Material.Filled.Language" /> Languages:
-                                    @foreach (var language in student.Languages)
+                                    @foreach (var language in _user.Languages)
                                     {
                                         <MudChip Color="Color.Primary">@language</MudChip>
                                     }
                             </MudText>
                         }
-                        @if (student.Interests != null && student.Interests.Any())
+                        @if (_user.Interests != null && _user.Interests.Any())
                         {
                             <MudText Typo="Typo.body2" Class="skill-interest-text">
                                 <MudIcon Icon="@Icons.Material.Filled.Star" /> Interests:
-                                    @foreach (var interest in student.Interests)
+                                    @foreach (var interest in _user.Interests)
                                     {
                                         <MudChip Color="Color.Secondary">@interest</MudChip>
                                     }
@@ -204,7 +204,7 @@
     [Parameter]
     public Guid UserId { get; set; }
 
-    private StudentDto student;
+    private UserDto _user;
     private List<EventDto> InterestedInEventsDetails = new List<EventDto>();
     private List<EventDto> SignedUpEventsDetails = new List<EventDto>();
 
@@ -247,7 +247,7 @@
     {
         try
         {
-            student = await StudentsService.GetStudentAsync(UserId);
+            _user = await StudentsService.GetStudentAsync(UserId);
         }
         catch (Exception ex)
         {
@@ -260,7 +260,7 @@
     {
         try
         {
-            // Assume the education details are part of the student data
+            // Assume the education details are part of the _user data
         }
         catch (Exception ex)
         {
@@ -273,7 +273,7 @@
     {
         try
         {
-            // Assume work details are part of the student data
+            // Assume work details are part of the _user data
         }
         catch (Exception ex)
         {
@@ -286,7 +286,7 @@
     {
         try
         {
-            // Assume languages and interests are part of the student data
+            // Assume languages and interests are part of the _user data
         }
         catch (Exception ex)
         {
@@ -299,18 +299,18 @@
     {
         try
         {
-            if (student?.InterestedInEvents != null)
+            if (_user?.InterestedInEvents != null)
             {
-                foreach (var eventId in student.InterestedInEvents)
+                foreach (var eventId in _user.InterestedInEvents)
                 {
                     var eventDetail = await EventsService.GetEventAsync(eventId);
                     InterestedInEventsDetails.Add(eventDetail);
                 }
             }
 
-            if (student?.SignedUpEvents != null)
+            if (_user?.SignedUpEvents != null)
             {
-                foreach (var eventId in student.SignedUpEvents)
+                foreach (var eventId in _user.SignedUpEvents)
                 {
                     var eventDetail = await EventsService.GetEventAsync(eventId);
                     SignedUpEventsDetails.Add(eventDetail);
@@ -331,7 +331,7 @@
     private string GetProfileImage()
     {
         var defaultImage = "images/default_profile_image.webp";
-        return !string.IsNullOrEmpty(student?.ProfileImageUrl) ? student.ProfileImageUrl : defaultImage;
+        return !string.IsNullOrEmpty(_user?.ProfileImageUrl) ? _user.ProfileImageUrl : defaultImage;
     }
 
     private void NavigateToProfileSettings()
@@ -422,10 +422,6 @@
     a {
         color: #1e88e5;
         text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
     }
 
     .text-muted {

@@ -49,7 +49,7 @@
     [Parameter]
     public Guid OrganizationId { get; set; }
 
-    private List<StudentDto> members;
+    private List<UserDto> members;
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
@@ -60,7 +60,7 @@
             var organizationDetails = await OrganizationsService.GetOrganizationWithGalleryAndUsersAsync(OrganizationId);
             if (organizationDetails?.Users != null)
             {
-                members = new List<StudentDto>();
+                members = new List<UserDto>();
                 foreach (var user in organizationDetails.Users)
                 {
                     var student = await StudentsService.GetStudentAsync(user.Id);

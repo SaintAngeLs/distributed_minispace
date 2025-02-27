@@ -1,115 +1,192 @@
-@page "/gallery"
+@page "/account/gallery"
+@using Astravent.Web.Wasm.Shared
+@using MudBlazor
+@using Astravent.Web.Wasm.DTO
+@using System.IO
 @inject IIdentityService IdentityService
 @inject IMediaFilesService MediaFilesService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
-@using Astravent.Web.Wasm.Utilities
-@using MudBlazor
-@using System.IO
+@inject ISnackbar Snackbar
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudText Typo="Typo.h4" GutterBottom="true">Gallery</MudText>
-@if (IsLoading)
-{
-    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-}
-else
-{
-    <!-- Button to upload new images -->
-    <div class="upload-button-container">
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   Class="upload-button"
-                   for="file-input">
-            Upload New Image
-        </MudButton>
-        <InputFile id="file-input" OnChange="@(async e => await OpenCropper(e, Guid.NewGuid()))" style="display: none;" accept=".jpeg,.png,.jpg" />
-    </div>
-
-    @if (StudentWithGalleryImagesDto.GalleryImages == null || !StudentWithGalleryImagesDto.GalleryImages.Any())
-    {
-        <MudText Color="Color.Error">No images found in the gallery.</MudText>
-    }
-    else
-    {
-        <!-- Responsive grid for displaying gallery images with spotlight functionality -->
-        <MudGrid class="spotlight-group" Spacing="3">
-            @foreach (var image in StudentWithGalleryImagesDto.GalleryImages)
-            {
+<AuthWrapper>
+    <MudContainer Class="account-container">
+        @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">
+                    Loading, please wait...
+                </MudText>
+            </div>
+        }
+        else
+        {
+            <div class="breadcrumbs-container">
+                <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+            </div>
+            
+            <MudGrid>
+                <!-- Left Navigation Panel -->
                 <MudItem xs="12" sm="4" md="3">
-                    <div class="gallery-item" style="position: relative;">
-                        <a class="spotlight" href="@image.ImageUrl">
-                            <MudCard>
-                                <MudCardMedia Image="@image.ImageUrl" Alt="Gallery image" />
-                            </MudCard>
-                        </a>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                       Color="Color.Secondary"
-                                       Size="Size.Small"
-                                       Style="position: absolute; top: 8px; right: 8px; background-color: rgba(255, 255, 255, 0.8); border-radius: 50%;"
-                                       OnClick="@(async () => await RemoveImage(image.ImageId))"
-                                       Title="Remove Image" />
-                    </div>
+                    <AccountNavigation ActiveTabIndex="@activeTabIndex" TabChanged="SetActiveTabIndex" />
                 </MudItem>
-            }
-        </MudGrid>
+                <!-- Right Content Panel: Gallery -->
+                <MudItem xs="12" sm="8" md="9">
+                    <MudPaper Elevation="1" Class="content-panel">
+                        <MudText Typo="Typo.h4" GutterBottom="true">Gallery</MudText>
+                        @if (IsLoading)
+                        {
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <div class="upload-button-container">
+                                <MudButton HtmlTag="label"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                                           Class="upload-button"
+                                           for="file-input">
+                                    Upload New Image
+                                </MudButton>
+                                <InputFile id="file-input" OnChange="@(async e => await OpenCropper(e, Guid.NewGuid()))" style="display: none;" accept=".jpeg,.png,.jpg" />
+                            </div>
+
+                            @if (StudentWithGalleryImagesDto.GalleryImages == null || !StudentWithGalleryImagesDto.GalleryImages.Any())
+                            {
+                                <MudText Color="Color.Error">No images found in the gallery.</MudText>
+                            }
+                            else
+                            {
+                                <MudGrid class="spotlight-group" Spacing="3">
+                                    @foreach (var image in StudentWithGalleryImagesDto.GalleryImages)
+                                    {
+                                        <MudItem xs="12" sm="4" md="3">
+                                            <div class="gallery-item" style="position: relative;">
+                                                <a class="spotlight" href="@image.ImageUrl">
+                                                    <MudCard>
+                                                        <MudCardMedia Image="@image.ImageUrl" Alt="Gallery image" />
+                                                    </MudCard>
+                                                </a>
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                               Color="Color.Secondary"
+                                                               Size="Size.Small"
+                                                               Style="position: absolute; top: 8px; right: 8px; background-color: rgba(255, 255, 255, 0.8); border-radius: 50%;"
+                                                               OnClick="@(async () => await RemoveImage(image.ImageId))"
+                                                               Title="Remove Image" />
+                                            </div>
+                                        </MudItem>
+                                    }
+                                </MudGrid>
+                            }
+                        }
+
+                        <!-- Modal for image cropping -->
+                        <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="cropper-container" class="img-container"></div>
+                                        @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                                        {
+                                            <div id="cropped-image-container" class="img-container">
+                                                <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="modal-footer">
+                                        <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(CroppedImageBase64))
+                        {
+                            <div class="cropped-image-preview">
+                                <MudText Typo="Typo.subtitle1">Cropped Image Preview:</MudText>
+                                <img src="@CroppedImageBase64" style="max-width: 100%;" />
+                            </div>
+                        }
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
     }
-}
-
-<!-- Modal for image cropping -->
-<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="cropper-container" class="img-container"></div>
-                @if (!string.IsNullOrEmpty(CroppedImageBase64))
-                {
-                    <div id="cropped-image-container" class="img-container">
-                        <img src="@CroppedImageBase64" style="max-width: 100%;" />
-                    </div>
-                }
-            </div>
-            <div class="modal-footer">
-                <MudButton Variant="Variant.Text" OnClick="CloseCropper">Cancel</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await SaveCroppedImage()">Save</MudButton>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Display cropped image -->
-@if (!string.IsNullOrEmpty(CroppedImageBase64))
-{
-    <div class="cropped-image-preview">
-        <MudText Typo="Typo.subtitle1">Cropped Image Preview:</MudText>
-        <img src="@CroppedImageBase64" style="max-width: 100%;" />
-    </div>
-}
-
+    .content-panel {
+        padding: 20px;
+        min-height: 80vh;
+    }
+    .loading-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+    }
+    .upload-button-container {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .gallery-item {
+        position: relative;
+    }
+    .spotlight-group {
+        margin-top: 20px;
+    }
+    .cropped-image-preview {
+        margin-top: 20px;
+    }
+    .mud-nav-link.active {
+        background-color: #e0e0e0;
+        font-weight: bold;
+        color: #3f51b5;
+    }
+</style>
 
 @code {
     [Parameter] public bool IsLoading { get; set; }
-    [Parameter] public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; }  
+    [Parameter] public StudentWithGalleryImagesDto StudentWithGalleryImagesDto { get; set; } = new();
     [Parameter] public EventCallback SaveImageAsync { get; set; }
     [Parameter] public bool IsUploading { get; set; }
+    
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/account", disabled: true, icon: Icons.Material.Filled.ManageAccounts),
+    };
+    
 
     private string CroppedImageBase64 { get; set; }
     private IBrowserFile croppedImageFile;
     private Guid currentImageId;
+
+    private bool pageInitialized = false;
+    private int activeTabIndex = 5; // Assuming Gallery is the 6th tab.
 
     protected override async Task OnInitializedAsync()
     {
         IsLoading = true;
         try
         {
-            // Load student's gallery images here (if not already loaded in the parent component)
+            // Optionally load gallery images here if not loaded already.
+            // For example:
+            // StudentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(...);
         }
         catch (Exception ex)
         {
@@ -119,6 +196,7 @@ else
         finally
         {
             IsLoading = false;
+            pageInitialized = true;
         }
     }
 
@@ -196,11 +274,7 @@ else
                     croppedImageFile.ContentType,
                     fileData);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    // Refresh gallery images after successful upload
-                }
-
+                // Optionally, refresh the gallery images after upload here.
                 StateHasChanged();
                 NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             }
@@ -238,5 +312,10 @@ else
 
         IsUploading = false;
         StateHasChanged();
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
     }
 }

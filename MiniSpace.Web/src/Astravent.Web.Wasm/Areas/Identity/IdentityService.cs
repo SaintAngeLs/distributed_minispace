@@ -20,7 +20,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
         private readonly NavigationManager _navigationManager;
         
         public JwtDto JwtDto { get; set; }
-        public UserDto UserDto { get; set; }
+        public AuthUserDto AuthUserDto { get; set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
         public bool IsAuthenticated { get; set; }
@@ -33,13 +33,13 @@ namespace Astravent.Web.Wasm.Areas.Identity
             _navigationManager = navigationManager;
         }
         
-        public async Task<UserDto> GetAccountAsync(JwtDto jwtDto)
+        public async Task<AuthUserDto> GetAccountAsync(JwtDto jwtDto)
         {
             if (jwtDto == null || string.IsNullOrEmpty(jwtDto.AccessToken))
                 throw new ArgumentNullException(nameof(jwtDto), "JWT DTO or Access Token is null");
 
             _httpClient.SetAccessToken(jwtDto.AccessToken);
-            var response = await _httpClient.GetAsync<UserDto>("identity/me");
+            var response = await _httpClient.GetAsync<AuthUserDto>("identity/me");
             Console.WriteLine($"User fetched successfully: {JsonSerializer.Serialize(response)}");
             return response;
         }
@@ -74,7 +74,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
                 var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
                 var payload = jwtToken.Payload;
-                UserDto = await GetAccountAsync(JwtDto);
+                AuthUserDto = await GetAccountAsync(JwtDto);
                 Name = payload.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
                 Email = payload.Claims.FirstOrDefault(c => c.Type == "e-mail")?.Value;
                 IsAuthenticated = true;
@@ -119,7 +119,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
                 await _localStorage.RemoveItemAsync("jwtDto");
                 JwtDto = null;
-                UserDto = null;
+                AuthUserDto = null;
                 Name = null;
                 Email = null;
                 IsAuthenticated = false;
@@ -233,8 +233,8 @@ namespace Astravent.Web.Wasm.Areas.Identity
                 var tokenExpirationDateTime = DateTimeOffset.FromUnixTimeSeconds(JwtDto.Expires).UtcDateTime;
                 if (JwtDto != null && DateTime.UtcNow < tokenExpirationDateTime)
                 {
-                    UserDto = await GetAccountAsync(JwtDto); 
-                    IsAuthenticated = UserDto != null;
+                    AuthUserDto = await GetAccountAsync(JwtDto); 
+                    IsAuthenticated = AuthUserDto != null;
                 }
                 else if (JwtDto != null && !string.IsNullOrEmpty(JwtDto.RefreshToken))
                 {
@@ -243,8 +243,8 @@ namespace Astravent.Web.Wasm.Areas.Identity
                     {
                         jwtDtoJson = JsonSerializer.Serialize(JwtDto);
                         await _localStorage.SetItemAsStringAsync("jwtDto", jwtDtoJson);
-                        UserDto = await GetAccountAsync(JwtDto);
-                        IsAuthenticated = UserDto != null;
+                        AuthUserDto = await GetAccountAsync(JwtDto);
+                        IsAuthenticated = AuthUserDto != null;
                     }
                 }
             }
@@ -343,10 +343,10 @@ namespace Astravent.Web.Wasm.Areas.Identity
         
         public Guid GetCurrentUserId()
         {
-            if (UserDto != null && UserDto.Id != Guid.Empty)
+            if (AuthUserDto != null && AuthUserDto.Id != Guid.Empty)
             {
-                Console.WriteLine($"User ID: {UserDto.Id}");
-                return UserDto.Id;
+                Console.WriteLine($"User ID: {AuthUserDto.Id}");
+                return AuthUserDto.Id;
             }
             else
             {
@@ -384,9 +384,9 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
         public string GetCurrentUserRole()
         {
-            if (UserDto != null && UserDto.Id != Guid.Empty)
+            if (AuthUserDto != null && AuthUserDto.Id != Guid.Empty)
             {
-                return UserDto.Role;
+                return AuthUserDto.Role;
             }
             return string.Empty;
         }
@@ -490,7 +490,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
 
                 var jwtToken = _jwtHandler.ReadJwtToken(JwtDto.AccessToken);
                 var payloadClaims = jwtToken.Payload;
-                UserDto = await GetAccountAsync(JwtDto);
+                AuthUserDto = await GetAccountAsync(JwtDto);
                 Name = payloadClaims.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
                 Email = payloadClaims.Claims.FirstOrDefault(c => c.Type == "e-mail")?.Value;
                 IsAuthenticated = true;

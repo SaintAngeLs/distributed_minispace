@@ -48,7 +48,7 @@ else
         </MudItem>
 
         <!-- Profile Image Section -->
-        <MudItem xs="12" md="4">
+        <MudItem xs="12" md="5" lg="4">
             <div class="image-upload-container" style="text-align: center;">
                 <MudAvatar Class="profile-image" Square="true" Image="@GetImage()" Alt="Profile image" 
                            Style="height:200px; width: 200px; font-size:2rem; margin:auto;" />
@@ -73,25 +73,25 @@ else
         </MudItem>
 
         <!-- Form Section -->
-        <MudItem xs="12" md="8">
+        <MudItem xs="12" md="6" lg="8">
             <MudGrid>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.FirstName" 
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.User.FirstName" 
                                   Label="First Name" HelperText="Your first name" 
                                   Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.LastName" 
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.User.LastName" 
                                   Label="Last Name" HelperText="Your last name" 
                                   Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Email" 
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.User.Email" 
                                   Label="Email" HelperText="Your email address" 
                                   Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.Student.Description" 
+                    <MudTextField @bind-Value="StudentWithGalleryImagesDto.User.Description" 
                                   Label="Description" HelperText="A brief description about yourself" 
                                   Variant="Variant.Outlined" Lines="5" />
                 </MudItem>
@@ -100,7 +100,7 @@ else
             <!-- Education Section -->
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Education</MudText>
-                @foreach (var education in StudentWithGalleryImagesDto.Student.Education)
+                @foreach (var education in StudentWithGalleryImagesDto.User.Education)
                 {
                     <MudPaper Elevation="3" Class="pa-3 mb-3 rounded-lg" Style="border-left: 4px solid #3f51b5;">
                         <MudGrid GutterSize="2">
@@ -156,7 +156,7 @@ else
             <!-- Work Experience Section -->
             <MudItem xs="12">
                 <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-4">Work Experience</MudText>
-                @foreach (var work in StudentWithGalleryImagesDto.Student.Work)
+                @foreach (var work in StudentWithGalleryImagesDto.User.Work)
                 {
                     <MudPaper Elevation="3" Class="pa-3 mb-3 rounded-lg" Style="border-left: 4px solid #ff9800;">
                         <MudGrid GutterSize="2">
@@ -290,7 +290,7 @@ else
 
     private async Task LoadOrganizationImagesAsync()
     {
-        foreach (var education in StudentWithGalleryImagesDto.Student.Education)
+        foreach (var education in StudentWithGalleryImagesDto.User.Education)
         {
             if (education.OrganizationId != Guid.Empty)
             {
@@ -298,7 +298,7 @@ else
             }
         }
 
-        foreach (var work in StudentWithGalleryImagesDto.Student.Work)
+        foreach (var work in StudentWithGalleryImagesDto.User.Work)
         {
             if (work.OrganizationId != Guid.Empty)
             {
@@ -311,15 +311,15 @@ else
 
     private string GetImage()
     {
-        return !string.IsNullOrEmpty(StudentWithGalleryImagesDto.Student.ProfileImageUrl) 
-            ? StudentWithGalleryImagesDto.Student.ProfileImageUrl 
+        return !string.IsNullOrEmpty(StudentWithGalleryImagesDto.User.ProfileImageUrl) 
+            ? StudentWithGalleryImagesDto.User.ProfileImageUrl 
             : "images/default_profile_image.webp";
     }
 
     private string GetBanner()
     {
-        return !string.IsNullOrEmpty(StudentWithGalleryImagesDto.Student.BannerUrl) 
-            ? StudentWithGalleryImagesDto.Student.BannerUrl 
+        return !string.IsNullOrEmpty(StudentWithGalleryImagesDto.User.BannerUrl) 
+            ? StudentWithGalleryImagesDto.User.BannerUrl 
             : "images/default_banner_image.png";
     }
 
@@ -383,10 +383,10 @@ else
 
                 string imageType = currentImageType == "profile" ? "StudentProfileImage" : "StudentBannerImage";
                 var response = await MediaFilesService.UploadMediaFileAsync(
-                    StudentWithGalleryImagesDto.Student.Id,
+                    StudentWithGalleryImagesDto.User.Id,
                     imageType,
                     IdentityService.GetCurrentUserId(),
-                    $"{StudentWithGalleryImagesDto.Student.FirstName}_{StudentWithGalleryImagesDto.Student.LastName}_{currentImageType}.png",
+                    $"{StudentWithGalleryImagesDto.User.FirstName}_{StudentWithGalleryImagesDto.User.LastName}_{currentImageType}.png",
                     croppedImageFile.ContentType,
                     fileData);
 
@@ -413,15 +413,15 @@ else
 
         try
         {
-            string imageUrl = imageType == "profile" ? StudentWithGalleryImagesDto.Student.ProfileImageUrl : StudentWithGalleryImagesDto.Student.BannerUrl;
+            string imageUrl = imageType == "profile" ? StudentWithGalleryImagesDto.User.ProfileImageUrl : StudentWithGalleryImagesDto.User.BannerUrl;
             await MediaFilesService.DeleteMediaFileAsync(imageUrl);
             if (imageType == "profile")
             {
-                StudentWithGalleryImagesDto.Student.ProfileImageUrl = null;
+                StudentWithGalleryImagesDto.User.ProfileImageUrl = null;
             }
             else
             {
-                StudentWithGalleryImagesDto.Student.BannerUrl = null;
+                StudentWithGalleryImagesDto.User.BannerUrl = null;
             }
             await SaveImageAsync.InvokeAsync(null);
 
@@ -438,7 +438,7 @@ else
 
     private void AddEducation()
     {
-        var educationList = StudentWithGalleryImagesDto.Student.Education.ToList();
+        var educationList = StudentWithGalleryImagesDto.User.Education.ToList();
         educationList.Add(new EducationDto
         {
             OrganizationId = Guid.Empty,
@@ -448,21 +448,21 @@ else
             EndDate = null,
             Description = string.Empty
         });
-        StudentWithGalleryImagesDto.Student.Education = educationList;
+        StudentWithGalleryImagesDto.User.Education = educationList;
         StateHasChanged();
     }
 
     private void RemoveEducation(EducationDto education)
     {
-        var educationList = StudentWithGalleryImagesDto.Student.Education.ToList();
+        var educationList = StudentWithGalleryImagesDto.User.Education.ToList();
         educationList.Remove(education);
-        StudentWithGalleryImagesDto.Student.Education = educationList;
+        StudentWithGalleryImagesDto.User.Education = educationList;
         StateHasChanged();
     }
 
     private void AddWorkExperience()
     {
-        var workList = StudentWithGalleryImagesDto.Student.Work.ToList();
+        var workList = StudentWithGalleryImagesDto.User.Work.ToList();
         workList.Add(new WorkDto
         {
             OrganizationId = Guid.Empty,
@@ -473,21 +473,21 @@ else
             Description = string.Empty
         });
 
-        StudentWithGalleryImagesDto.Student.Work = workList;
+        StudentWithGalleryImagesDto.User.Work = workList;
         StateHasChanged();
     }
 
     private void RemoveWorkExperience(WorkDto work)
     {
-        var workList = StudentWithGalleryImagesDto.Student.Work.ToList();
+        var workList = StudentWithGalleryImagesDto.User.Work.ToList();
         workList.Remove(work);
-        StudentWithGalleryImagesDto.Student.Work = workList;
+        StudentWithGalleryImagesDto.User.Work = workList;
         StateHasChanged();
     }
 
     private async Task SaveProfile()
     {
-        var studentDto = StudentWithGalleryImagesDto.Student;
+        var studentDto = StudentWithGalleryImagesDto.User;
 
         try
         {

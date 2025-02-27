@@ -24,6 +24,5 @@ namespace Astravent.Web.Wasm.DTO
         public bool NewFriendsRequests { get; set; }
         public bool MyRequestsAccepted { get; set; }
         public bool FriendsPostsNotifications { get; set; }
-
     }
 }

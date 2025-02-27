@@ -1,0 +1,82 @@
+@using MudBlazor
+@using Astravent.Web.Wasm.Areas.Students
+@using Blazored.LocalStorage
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudAppBar Elevation="4">
+    <!-- Left side: Menu button and title -->
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" OnClick="@ToggleDrawer" />
+    <MudText Typo="Typo.h4" Class="ms-2" Color="Color.Primary">Astravent</MudText>
+    <MudSpacer />
+
+    <!-- Center: Search field -->
+    <MudAutocomplete T="string" @bind-Value="_searchQuery" Placeholder="Search here..."
+                     Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"
+                     AdornmentColor="Color.Primary" />
+
+    <MudSpacer />
+
+    <!-- Right side: User Avatar/Menu -->
+    <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@ToggleUserDrawer" />
+</MudAppBar>
+
+<!-- User Drawer -->
+<MudDrawer @bind-Open="_userDrawerOpen" Elevation="1" Anchor="Anchor.Right" Variant="DrawerVariant.Temporary">
+    <MudDrawerHeader>
+        <div class="d-flex flex-column align-items-center">
+            <MudAvatar Image="@_userAvatar" Size="Size.Large" />
+            <MudText Typo="Typo.h6" Class="mt-2">@_userName</MudText>
+        </div>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Href="/home" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+        <MudNavLink Href="/account" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
+        <MudNavLink Href="/notifications/all" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+        <MudNavLink OnClick="SignOut" Icon="@Icons.Material.Filled.ExitToApp">Sign Out</MudNavLink>
+        <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode" />
+    </MudNavMenu>
+</MudDrawer>
+
+@code {
+private bool _sidebarExpanded = false;
+private bool _userDrawerOpen = false;
+private string _searchQuery;
+private bool _isDarkMode;
+private string _userName = "User Name";
+private string _userAvatar = "default-avatar.png";
+private Guid _userId;
+
+protected override async Task OnInitializedAsync()
+{
+var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+if (authState.User.Identity.IsAuthenticated)
+{
+_userId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+var studentDto = await StudentsService.GetStudentAsync(_userId);
+_userName = $"{studentDto.FirstName} {studentDto.LastName}";
+_userAvatar = studentDto.ProfileImageUrl;
+}
+}
+
+private void ToggleDrawer() => _sidebarExpanded = !_sidebarExpanded;
+private void ToggleUserDrawer() => _userDrawerOpen = !_userDrawerOpen;
+
+private async Task SignOut()
+{
+try
+{
+await IdentityService.UpdateStatus(_userId, isOnline: false, deviceType: "web");
+}
+catch (Exception ex)
+{
+Console.WriteLine($"Error updating status: {ex.Message}");
+}
+await IdentityService.Logout();
+await LocalStorage.ClearAsync();
+NavigationManager.NavigateTo("signin", forceLoad: true);
+}
+}

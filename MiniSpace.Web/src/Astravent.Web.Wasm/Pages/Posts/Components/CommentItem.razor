@@ -53,7 +53,7 @@
     private bool isReplySectionVisible = false;
     private bool isLoadingReplies = false;
     private List<CommentDto> replies = new();  // Use CommentDto instead of ReplyDto
-    private Dictionary<Guid, StudentDto> studentsCache = new();
+    private Dictionary<Guid, UserDto> studentsCache = new();
 
     protected override async Task OnInitializedAsync()
     {

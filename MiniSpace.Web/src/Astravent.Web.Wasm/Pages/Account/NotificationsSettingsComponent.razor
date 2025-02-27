@@ -16,9 +16,9 @@
 else
 {
     <MudStack>
-        <MudSwitch @bind-Checked="StudentWithGalleryImagesDto.Student.EmailNotifications" Label="Enable Email Notifications" Color="Color.Primary" />
+        <MudSwitch @bind-Checked="StudentWithGalleryImagesDto.User.EmailNotifications" Label="Enable Email Notifications" Color="Color.Primary" />
 
-        @if (StudentWithGalleryImagesDto.Student.EmailNotifications)
+        @if (StudentWithGalleryImagesDto.User.EmailNotifications)
         {
             <MudPaper Class="p-3">
                 <MudText Typo="Typo.h5" GutterBottom="true">Account & Security</MudText>
@@ -95,7 +95,7 @@ else
         try
         {
             var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
-            await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, NotificationPreferencesDto, StudentWithGalleryImagesDto.Student.EmailNotifications);
+            await StudentsService.UpdateUserNotificationPreferencesAsync(studentId, NotificationPreferencesDto, StudentWithGalleryImagesDto.User.EmailNotifications);
             Snackbar.Add("Notification preferences updated successfully.", Severity.Success);
         }
         catch (Exception ex)

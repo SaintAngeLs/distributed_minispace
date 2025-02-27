@@ -1,0 +1,136 @@
+@using Astravent.Web.Wasm.Areas.Notifications
+@using Astravent.Web.Wasm.DTO.Notifications
+@using Microsoft.Extensions.Logging
+@using System.Globalization
+@inject INotificationsService NotificationsService
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject ILogger<SignalRService> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudTooltip Text="Notifications">
+    <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="@hasNewNotification">
+        <MudMenu Icon="@Icons.Material.Outlined.Notifications"
+                 Color="Color.Inherit"
+                 AnchorOrigin="Origin.BottomLeft"
+                 TransformOrigin="Origin.TopCenter"
+                 PopoverClass="docs-layout-menu-shadow"
+                 ListClass="pa-2 docs-menu-list"
+                 LockScroll="true"
+                 AriaLabel="Notifications">
+            <div class="d-flex justify-space-between align-center px-2">
+                <MudText Typo="Typo.subtitle2">Notifications</MudText>
+                <MudButton Disabled="@(hasNewNotification == false)"
+                           OnClick="MarkNotificationsAsRead"
+                           StartIcon="@Icons.Material.Filled.DoneAll"
+                           Variant="Variant.Text"
+                           Color="Color.Primary"
+                           Class="ml-16 mr-n2">
+                    Mark as read
+                </MudButton>
+            </div>
+            @if (notifications != null && notifications.Any())
+            {
+                @foreach (var notification in notifications.Take(5))
+                {
+                    <MudMenuItem Class="px-2 py-0 rounded" 
+                                 OnClick="@(() => NavigateToNotificationDetail(notification.NotificationId))">
+                        <MudText Typo="Typo.subtitle2">@notification.Message</MudText>
+                        <MudText Typo="Typo.body2">
+                            @($"{notification.CreatedAt.ToLocalTime().ToString("MM/dd/yyyy", CultureInfo.CurrentCulture)}")
+                        </MudText>
+                    </MudMenuItem>
+                    <MudDivider Class="my-2" />
+                }
+            }
+            else
+            {
+                <div class="d-flex justify-center align-center px-2 py-8 relative">
+                    <MudText Class="mud-text-secondary my-12">No new notifications.</MudText>
+                    <MudBlazorLogo Class="docs-logo-filter mx-16 absolute" />
+                </div>
+            }
+        </MudMenu>
+    </MudBadge>
+</MudTooltip>
+
+@code {
+    // List to hold notifications received from the server.
+    private List<NotificationDto> notifications = new();
+    private SignalRService SignalRService;
+    private bool hasNewNotification = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            // Extract the current user's Guid from the claims.
+            var userId = GetUserId(authState.User);
+            // Initialize SignalR service to receive live notifications.
+            SignalRService = new SignalRService(NavigationManager, IdentityService);
+            SignalRService.NotificationReceived += OnNotificationReceived;
+            await SignalRService.StartAsync(userId);
+
+            await LoadNotifications(userId);
+        }
+    }
+
+    private async Task LoadNotifications(Guid userId)
+    {
+        try
+        {
+            // Call your notification service to retrieve notifications.
+            var paginatedResponse = await NotificationsService.GetNotificationsByUserAsync(userId, pageSize: 15, sortOrder: "desc", status: "Unread");
+            notifications = paginatedResponse.Results;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error loading notifications: {ex.Message}");
+        }
+    }
+
+    private void OnNotificationReceived(NotificationDto notification)
+    {
+        // Insert the received notification at the top of the list.
+        notifications.Insert(0, notification);
+        hasNewNotification = true;
+        InvokeAsync(StateHasChanged);
+
+        // Play a notification sound via JavaScript.
+        JSRuntime.InvokeVoidAsync("playNotificationSound");
+    }
+
+    private void MarkNotificationsAsRead()
+    {
+        // Optionally, mark notifications as read via your service.
+        // Here we simply reset the new notification indicator.
+        hasNewNotification = false;
+    }
+
+    private void NavigateToNotificationDetail(Guid notificationId)
+    {
+        // Navigate to a detailed view for the selected notification.
+        NavigationManager.NavigateTo($"/notification/{notificationId}", true);
+    }
+
+    // Helper method to extract the user ID from the claims.
+    private Guid GetUserId(System.Security.Claims.ClaimsPrincipal user)
+    {
+        var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == "sub" || c.Type == "userid");
+        return userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId)
+            ? userId
+            : Guid.Empty;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated && SignalRService != null)
+        {
+            SignalRService.NotificationReceived -= OnNotificationReceived;
+            await SignalRService.StopAsync();
+        }
+    }
+}

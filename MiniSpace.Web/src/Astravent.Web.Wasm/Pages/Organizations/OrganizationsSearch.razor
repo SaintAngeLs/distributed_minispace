@@ -153,7 +153,7 @@
 
     private bool IsUserMemberOfOrganization(OrganizationDto organization)
     {
-        return organization.Users.Any(user => user.Id == IdentityService.UserDto.Id);
+        return organization.Users.Any(user => user.Id == IdentityService.AuthUserDto.Id);
     }
 
     private string GetOrganizationImage(string imageUrl)

@@ -1,0 +1,22 @@
+@using MudBlazor
+@inject NavigationManager NavigationManager
+
+<MudAppBar Elevation="4">
+    <div class="d-flex align-items-center">
+        <MudText Typo="Typo.h4" Class="me-3">Astravent</MudText>
+        <MudButton Variant="Variant.Text" Href="/home">Home</MudButton>
+        <MudButton Variant="Variant.Text" Href="/about">About</MudButton>
+        <MudMenu Label="Menu">
+            <MudMenuItem Href="/connect">Connect</MudMenuItem>
+            <MudMenuItem Href="/signin">Sign In</MudMenuItem>
+            <MudMenuItem Href="/signup">Sign Up</MudMenuItem>
+        </MudMenu>
+    </div>
+    <MudSpacer />
+    <div class="d-flex align-items-center">
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="More options">
+            <MudMenuItem Href="/signin">Sign In</MudMenuItem>
+            <MudMenuItem Href="/signup">Sign Up</MudMenuItem>
+        </MudMenu>
+    </div>
+</MudAppBar>

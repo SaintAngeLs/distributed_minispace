@@ -8,7 +8,7 @@
     --primary-btn-border: #1861ac;
 }
 html, body {
-    font-family: "Nunito Sans", sans-serif;
+    
 }
 .mud-input-label-outlined {
     /* background-color: inherit; */
@@ -16,6 +16,11 @@ html, body {
 
 * {
     
+}
+
+
+a {
+    text-decoration: none !important;
 }
 
 a, .btn-link {
@@ -374,16 +379,6 @@ html, body {
     transition: background-color 0.3s, transform 0.3s; 
 }
 
-.header-services .rz-sidebar-toggle:hover, .header-services .rz-sidebar-toggle:focus {
-    background-color: #102338;   
-    transform: scale(1.05);      
-    outline: none;               
-}
-
-.header-services .rz-sidebar-toggle:active {
-    background-color: #30445F;  
-    transform: scale(0.95);      
-}
 
 .notification-item {
     padding: 8px 12px;

@@ -38,13 +38,13 @@
             <MudGrid>
                 @foreach (var student in students)
                 {
-                    @* if (visibilityChecker.ShouldShowProfile(student))
+                    @* if (visibilityChecker.ShouldShowProfile(_user))
                     { *@
                         <MudItem xs="12">
                             <MudPaper Class="p-3 mb-2" Elevation="2" Style="border-radius: 10px; cursor: pointer;" @onclick="() => ViewDetails(student.Id)">
                                 <MudGrid>
                                     <MudItem xs="1" md="1" Class="d-flex justify-content-center align-items-center">
-                                        <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Alt="Student Image" Size="Size.Large" Class="border border-primary" />
+                                        <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Alt="User Image" Size="Size.Large" Class="border border-primary" />
                                     </MudItem>
                                     <MudItem xs="8" md="8">
                                         @if (visibilityChecker.ShouldShowName(student))
@@ -136,7 +136,7 @@
         }
         else
         {
-            <MudText Typo="Typo.subtitle1" Align="Align.Center">No students found. Try searching with a different term.</MudText>
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">No _users found. Try searching with a different term.</MudText>
         }
     </MudContainer>
 </AuthWrapper>
@@ -251,7 +251,7 @@
 
 @code {
     private string searchTerm;
-    private List<StudentDto> students = new List<StudentDto>();
+    private List<UserDto> students = new List<UserDto>();
     private IEnumerable<FriendRequestDto> sentRequests = Enumerable.Empty<FriendRequestDto>();
     private IEnumerable<FriendRequestDto> incomingRequests = Enumerable.Empty<FriendRequestDto>();
     private IEnumerable<FriendDto> allFriends = Enumerable.Empty<FriendDto>();
@@ -386,12 +386,12 @@
     private string deviceIcon;
     private string deviceText;
 
-    private void SetStudentStatus(StudentDto student)
+    private void SetStudentStatus(UserDto user)
     {
-        statusColor = student.IsOnline ? "green" : "gray";
-        statusIcon = student.IsOnline ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel;
-        deviceIcon = student.DeviceType == "Mobile" ? Icons.Material.Filled.Smartphone : Icons.Material.Filled.Computer;
-        deviceText = student.DeviceType == "Mobile" ? "Mobile" : "Desktop";
+        statusColor = user.IsOnline ? "green" : "gray";
+        statusIcon = user.IsOnline ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel;
+        deviceIcon = user.DeviceType == "Mobile" ? Icons.Material.Filled.Smartphone : Icons.Material.Filled.Computer;
+        deviceText = user.DeviceType == "Mobile" ? "Mobile" : "Desktop";
     }
 
     private MudBlazor.Color GetStatusColor(bool isOnline) => isOnline ? Color.Success : Color.Tertiary;

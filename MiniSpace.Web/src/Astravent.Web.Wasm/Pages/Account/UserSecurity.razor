@@ -1,0 +1,121 @@
+@page "/account/security"
+@using Astravent.Web.Wasm.Shared
+@using MudBlazor
+@using Astravent.Web.Wasm.DTO
+@inject IIdentityService IdentityService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+
+<AuthWrapper>
+    <MudContainer Class="account-container">
+        @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">
+                    Loading, please wait...
+                </MudText>
+            </div>
+        }
+        else
+        {
+            <div class="breadcrumbs-container">
+                <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+            </div>
+            
+            <MudGrid>
+                <!-- Left Navigation Panel -->
+                <MudItem xs="12" sm="4" md="3">
+                    <AccountNavigation ActiveTabIndex="@activeTabIndex" TabChanged="SetActiveTabIndex" />
+                </MudItem>
+                <!-- Right Content Panel: Security Component -->
+                <MudItem xs="12" sm="8" md="9">
+                    <MudPaper Elevation="1" Class="content-panel">
+                        <SecurityComponent IsLoading="isLoading"
+                                           IsTwoFactorEnabled="isTwoFactorEnabled"
+                                           TwoFactorSecret="twoFactorSecret"
+                                           ToggleTwoFactor="ToggleTwoFactor" />
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
+    }
+    .content-panel {
+        padding: 20px;
+        min-height: 80vh;
+    }
+    .loading-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+    }
+</style>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/account", disabled: true, icon: Icons.Material.Filled.ManageAccounts),
+    };
+    
+    private bool isLoading = false;
+    private bool isTwoFactorEnabled = false;
+    private string twoFactorSecret;
+    private bool pageInitialized = false;
+    private int activeTabIndex = 1; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            // Optionally, load the current 2FA state if your IdentityService provides it.
+            // For this example we default to disabled.
+            isTwoFactorEnabled = false;
+            twoFactorSecret = string.Empty;
+            pageInitialized = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
+
+    private async Task ToggleTwoFactor(bool enabled)
+    {
+        try
+        {
+            isTwoFactorEnabled = enabled;
+            if (!enabled)
+            {
+                await IdentityService.DisableTwoFactorAsync(IdentityService.GetCurrentUserId());
+                twoFactorSecret = string.Empty;
+            }
+            else
+            {
+                twoFactorSecret = await IdentityService.GenerateTwoFactorSecretAsync(IdentityService.GetCurrentUserId());
+            }
+            Snackbar.Add("Two-Factor Authentication toggled successfully.", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to toggle 2FA: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
+    }
+}

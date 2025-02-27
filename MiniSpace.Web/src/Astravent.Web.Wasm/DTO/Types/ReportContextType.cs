@@ -19,7 +19,7 @@ namespace Astravent.Web.Wasm.DTO.Types
                 ReportContextType.Event => "Event",
                 ReportContextType.Post => "Post",
                 ReportContextType.Comment => "Comment",
-                ReportContextType.StudentProfile => "Student Profile",
+                ReportContextType.StudentProfile => "User Profile",
                 _ => throw new ArgumentOutOfRangeException(nameof(reportContextType), reportContextType, null)
             };
         }

@@ -206,7 +206,7 @@
 
 @code {
     private List<PostDto> posts = new();
-    private Dictionary<Guid, StudentDto> studentsCache = new();
+    private Dictionary<Guid, UserDto> studentsCache = new();
     private Dictionary<Guid, ReactionsSummaryDto> reactionsSummaries = new();
     private Dictionary<Guid, List<CommentDto>> postComments = new();
     private int currentPage = 1;
@@ -348,7 +348,7 @@
             var updateReaction = new UpdateReactionDto
             {
                 ReactionId = existingReaction.Id,
-                UserId = IdentityService.UserDto.Id,
+                UserId = IdentityService.AuthUserDto.Id,
                 NewReactionType = reactionType.ToString(),
                 ContentType = "Post",
                 TargetType = targetType
@@ -369,7 +369,7 @@
         {
             var createReaction = new CreateReactionDto
             {
-                UserId = IdentityService.UserDto.Id,
+                UserId = IdentityService.AuthUserDto.Id,
                 ContentId = post.Id,
                 ContentType = "Post",
                 ReactionType = reactionType.ToString(),
@@ -394,7 +394,7 @@
     private async Task<ReactionDto> GetExistingReactionAsync(Guid postId)
     {
         var reactions = await ReactionsService.GetReactionsAsync(postId, ReactionContentType.Post);
-        return reactions.FirstOrDefault(r => r.UserId == IdentityService.UserDto.Id);
+        return reactions.FirstOrDefault(r => r.UserId == IdentityService.AuthUserDto.Id);
     }
 
     private void ToggleCommentSection(Guid postId)
@@ -558,7 +558,7 @@
 
     private async Task AddLikeToCommentAsync(CommentDto comment, PostDto post)
     {
-        var command = new AddLikeDto(comment.Id, IdentityService.UserDto.Id, DetermineCommentContext(post).ToString());
+        var command = new AddLikeDto(comment.Id, IdentityService.AuthUserDto.Id, DetermineCommentContext(post).ToString());
 
         var response = await CommentsService.AddLikeAsync(command);
 
@@ -575,7 +575,7 @@
 
     private async Task AddLikeToReplyAsync(ReplyDto reply, PostDto post)
     {
-        var command = new AddLikeDto(reply.Id, IdentityService.UserDto.Id, DetermineCommentContext(post).ToString());
+        var command = new AddLikeDto(reply.Id, IdentityService.AuthUserDto.Id, DetermineCommentContext(post).ToString());
 
         var response = await CommentsService.AddLikeAsync(command);
 

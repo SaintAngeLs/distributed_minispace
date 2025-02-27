@@ -1,8 +1,8 @@
 ﻿@using MudBlazor
 @using Astravent.Web.Wasm.Areas.Students
 @inherits LayoutComponentBase
-@inject IIdentityService IdentityService
-@inject IStudentsService StudentsService
+@inject IIdentityService? IdentityService
+@inject IStudentsService? StudentsService
 @inject NavigationManager NavigationManager
 @using Blazored.LocalStorage
 @inject ILocalStorageService localStorage
@@ -22,7 +22,7 @@
     else
     {
     <MudAppBar Elevation="4">
-    <div class="d-flex align-items-center justify-content-between w-100">
+    @* <div class="d-flex align-items-center justify-content-between w-100"> *@
         <!-- Left Side of AppBar -->
         <div class="d-flex align-items-center">
             @if (_isUserAuthenticated)
@@ -44,10 +44,10 @@
                 else
                 {
                     <MudText Typo="Typo.h4" Class="me-3">Astravent</MudText>
-                    <MudButton Variant="Variant.Text" OnClick="ScrollToHome" Class="me-2">
+                    <MudButton Variant="Variant.Text" Href="#home">
                         Home
                     </MudButton>
-                    <MudButton Variant="Variant.Text" OnClick="ScrollToAbout" Class="me-2">
+                    <MudButton Variant="Variant.Text" Href="#about">
                         About App
                     </MudButton>
 
@@ -93,8 +93,8 @@
                 </MudMenu>
             }
         </div>
-    </div>
-</MudAppBar>
+    @* </div> *@
+    </MudAppBar>
 
 
     @if (!_isUserAuthenticated && !isPC)
@@ -190,7 +190,7 @@
                 @if (IdentityService.GetCurrentUserRole() == "admin")
                 {
                     <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.Build" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore" CollapseIcon="@Icons.Material.Filled.ExpandLess">
-                        <MudNavLink Href="admin/students" Icon="@Icons.Material.Filled.AccountCircle">Students</MudNavLink>
+                        <MudNavLink Href="admin/_users" Icon="@Icons.Material.Filled.AccountCircle">Users</MudNavLink>
                         <MudNavLink Href="admin/organizations" Icon="@Icons.Material.Filled.Assignment">Organizations</MudNavLink>
                         <MudNavLink Href="admin/reports" Icon="@Icons.Material.Filled.AssignmentLate">Reports</MudNavLink>
                     </MudNavGroup>
@@ -224,7 +224,7 @@
     private bool _userDrawerOpen = false;
     private bool isPC = true;
     private bool _isUserAuthenticated;
-     private Guid _userId;
+    private Guid _userId;
     private string _userName;
     private string _userEmail;
     private Guid _studentId;
@@ -237,8 +237,9 @@
 
      protected override async Task OnInitializedAsync()
     {
-        _isLoading = true;
+        @* _isLoading = true;
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        
         _isUserAuthenticated = authState.User.Identity.IsAuthenticated;
 
         if (_isUserAuthenticated)
@@ -247,9 +248,9 @@
             {
                 _userId = await IdentityService.GetCurrentUserIdFromJwtAsync();
 
-                var studentDto = await StudentsService.GetStudentAsync(_userId);
-                _userName = $"{studentDto.FirstName} {studentDto.LastName}";
-                _userAvatar = studentDto.ProfileImageUrl; 
+                var _userDto = await UsersService.GetUserAsync(_userId);
+                _userName = $"{_userDto.FirstName} {_userDto.LastName}";
+                _userAvatar = _userDto.ProfileImageUrl; 
             }
             catch (Exception ex)
             {
@@ -258,26 +259,53 @@
         }
 
         _isLoading = false;
+        StateHasChanged(); *@
+
+        _isLoading = false;
+        await UpdateScreenSize();
         StateHasChanged();
+    
+        _ = Task.Run(async () =>
+        {
+            
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _isUserAuthenticated = authState.User.Identity.IsAuthenticated;
+            if (_isUserAuthenticated)
+            {
+                try
+                {
+                    _userId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+                    var studentDto = await StudentsService.GetStudentAsync(_userId);
+                    _userName = $"{studentDto.FirstName} {studentDto.LastName}";
+                    _userAvatar = studentDto.ProfileImageUrl; 
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error initializing user data: {ex.Message}");
+                }
+            }
+            InvokeAsync(StateHasChanged);
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _isLoading = true;
+            @* _isLoading = true;
         
             _isUserAuthenticated = IdentityService.IsAuthenticated;
 
             if (_isUserAuthenticated)
             {
                 StateHasChanged(); 
-            }
+            } 
 
             await UpdateScreenSize();
-            _isLoading = false; // Finish loading
-            StateHasChanged(); // Trigger UI update
+            _isLoading = false; 
+            StateHasChanged();  *@
         }
+        
     }
 
 
@@ -383,8 +411,8 @@
     
 }
 
-<style>
-    .mud-nav-link {
-        padding: 8px 8px 8px 8px;
-    }
-</style>
+@* <style> *@
+@*     .mud-nav-link { *@
+@*         padding: 8px 8px 8px 8px; *@
+@*     } *@
+@* </style> *@

@@ -22,8 +22,12 @@ using Astravent.Web.Wasm.Areas.Comments;
 using Astravent.Web.Wasm.Areas.Reports;
 using MudBlazor;
 using Astravent.Web.Wasm.Areas.Identity;
+using Astravent.Web.Wasm.Areas.Operations.Maintenance;
 using Astravent.Web.Wasm.HttpClients;
 using Astravent.Web.Wasm.Utilities;
+using Astravent.Web.Wasm.Areas.ApiLinkService;
+using Astravent.Web.Wasm.Areas.Layout;
+using Astravent.Web.Wasm.Areas.Menu;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -77,6 +81,12 @@ builder.Services.AddScoped<ICommentsService, CommentsService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 builder.Services.AddScoped<ICommunicationService, CommunicationService>();
 builder.Services.AddScoped<IIPAddressService, IPAddressService>();
+builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
+builder.Services.AddScoped<IApiLinkService, ApiLinkService>();
+
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<ILayoutService, LayoutService>();
+
 builder.Services.AddScoped<VisibilityChecker>();
 
 builder.Services.AddScoped<SignalRService>();

@@ -161,7 +161,7 @@
     private string newReplyText { get; set; } = string.Empty;
     private Guid? activeReplyCommentId { get; set; } = null;
 
-    private Dictionary<Guid, StudentDto> studentsCache = new();
+    private Dictionary<Guid, UserDto> studentsCache = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -328,14 +328,14 @@
     private async Task HandleReactionAsync(ReactionType reactionType)
     {
         var reactions = await ReactionsService.GetReactionsAsync(Post.Id, ReactionContentType.Post);
-        var existingReaction = reactions.FirstOrDefault(r => r.UserId == IdentityService.UserDto.Id);
+        var existingReaction = reactions.FirstOrDefault(r => r.UserId == IdentityService.AuthUserDto.Id);
 
         if (existingReaction != null)
         {
             var updateReaction = new UpdateReactionDto
             {
                 ReactionId = existingReaction.Id,
-                UserId = IdentityService.UserDto.Id,
+                UserId = IdentityService.AuthUserDto.Id,
                 NewReactionType = reactionType.ToString(),
                 ContentType = "Post",
                 TargetType = Post.OrganizationId.HasValue ? "Organization" : "User"
@@ -356,7 +356,7 @@
         {
             var createReaction = new CreateReactionDto
             {
-                UserId = IdentityService.UserDto.Id,
+                UserId = IdentityService.AuthUserDto.Id,
                 ContentId = Post.Id,
                 ContentType = "Post",
                 ReactionType = reactionType.ToString(),

@@ -13,11 +13,11 @@ namespace Astravent.Web.Wasm.Areas.Students
 {
     public interface IStudentsService
     {
-        StudentDto StudentDto { get; }
+        UserDto UserDto { get; }
         Task UpdateStudentDto(Guid studentId);
         void ClearStudentDto();
-        Task<StudentDto> GetStudentAsync(Guid studentId);
-        Task<PaginatedResponseDto<StudentDto>> GetStudentsAsync();
+        Task<UserDto> GetStudentAsync(Guid studentId);
+        Task<PaginatedResponseDto<UserDto>> GetStudentsAsync();
         Task UpdateStudentAsync(
             Guid studentId, 
             string firstName, 

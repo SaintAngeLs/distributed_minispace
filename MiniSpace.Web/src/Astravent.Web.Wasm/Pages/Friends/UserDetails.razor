@@ -18,11 +18,11 @@
         @if (studentNotFound)
         {
             <MudAlert Severity="Severity.Warning">
-                <MudText Typo="Typo.h5">Student profile not found!</MudText>
+                <MudText Typo="Typo.h5">User profile not found!</MudText>
                 <MudText>It may have been deleted or is inaccessible.</MudText>
             </MudAlert>
         }
-        else if (student == null)
+        else if (_user == null)
         {
             <MudProgressCircular Indeterminate="true" Size="Size.Large" Class="center-loader" />
         }
@@ -30,19 +30,19 @@
         {
             <MudPaper Class="profile-banner" Elevation="4">
                 <!-- Banner Section -->
-                <MudImage Src="@GetBannerImageUrl(student.BannerUrl)" Alt="Banner" Class="banner-image" />
+                <MudImage Src="@GetBannerImageUrl(_user.BannerUrl)" Alt="Banner" Class="banner-image" />
 
                 <!-- Avatar and Action Buttons Section -->
                 <MudGrid Container Class="avatar-action-container">
                     <MudItem xs="12" md="2" Class="avatar-container">
-                        <MudAvatar Image="@GetProfileImageUrl(student.ProfileImageUrl)" Class="user-profile-avatar" />
+                        <MudAvatar Image="@GetProfileImageUrl(_user.ProfileImageUrl)" Class="user-profile-avatar" />
                     </MudItem>
                     <MudItem xs="12" md="10" Class="action-buttons">
-                        @if (currentUserId != Guid.Empty && currentUserId != student.Id)
+                        @if (currentUserId != Guid.Empty && currentUserId != _user.Id)
                         {
 
-                             // Check if the current user and student are friends
-                            if (friends.Any(f => f.StudentDetails.Id == student.Id))
+                             // Check if the current user and _user are friends
+                            if (friends.Any(f => f.UserDetails.Id == _user.Id))
                             {
                                 // Display the message button if they are already friends
                                 <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@SendMessage" Class="action-button">
@@ -50,16 +50,16 @@
                                 </MudButton>
                                 
                             }
-                            else if (sentFriendRequests.Any(r => r.InviteeId == student.Id))
+                            else if (sentFriendRequests.Any(r => r.InviteeId == _user.Id))
                             {
-                                // If a friend request has been sent to the student, show a "Cancel Request" button
+                                // If a friend request has been sent to the _user, show a "Cancel Request" button
                                 <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@CancelFriendRequest" Class="action-button">
                                     Cancel Friend Request
                                 </MudButton>
                             }
-                            else if (incomingFriendRequests.Any(r => r.InviterId == student.Id))
+                            else if (incomingFriendRequests.Any(r => r.InviterId == _user.Id))
                             {
-                                // If the current user has received a friend request from the student, show "Accept" and "Decline" buttons
+                                // If the current user has received a friend request from the _user, show "Accept" and "Decline" buttons
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@AcceptFriendRequest" Class="action-button">
                                     Accept Friend Request
                                 </MudButton>
@@ -94,39 +94,39 @@
             <MudGrid Class="profile-content">
                 <MudItem xs="12" sm="8">
                     <MudDivider />
-                    <MudText Typo="Typo.h3">@student.FirstName @student.LastName</MudText>
+                    <MudText Typo="Typo.h3">@_user.FirstName @_user.LastName</MudText>
 
-                    @if (!string.IsNullOrWhiteSpace(student.Description))
+                    @if (!string.IsNullOrWhiteSpace(_user.Description))
                     {
-                        <MudText Typo="Typo.subtitle1" Color="Color.Secondary">@student.Description</MudText>
+                        <MudText Typo="Typo.subtitle1" Color="Color.Secondary">@_user.Description</MudText>
                     }
 
                     <MudDivider Class="divider" />
 
-                    @if (student.DateOfBirth.HasValue)
+                    @if (_user.DateOfBirth.HasValue)
                     {
-                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-calendar-alt" /> Date of Birth: @student.DateOfBirth?.ToLocalTime().ToString("yyyy-MM-dd")</MudText>
+                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-calendar-alt" /> Date of Birth: @_user.DateOfBirth?.ToLocalTime().ToString("yyyy-MM-dd")</MudText>
                     }
 
-                    @if (!string.IsNullOrWhiteSpace(student.City) || !string.IsNullOrWhiteSpace(student.Country))
+                    @if (!string.IsNullOrWhiteSpace(_user.City) || !string.IsNullOrWhiteSpace(_user.Country))
                     {
-                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-map-marker-alt" /> Location: @student.City, @student.Country</MudText>
+                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-map-marker-alt" /> Location: @_user.City, @_user.Country</MudText>
                     }
 
-                    @if (!string.IsNullOrWhiteSpace(student.State))
+                    @if (!string.IsNullOrWhiteSpace(_user.State))
                     {
-                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-flag" /> State: @student.State</MudText>
+                        <MudText Typo="Typo.body1"><MudIcon Icon="fas fa-flag" /> State: @_user.State</MudText>
                     }
 
                     <MudText Typo="Typo.body1">
-                        <MudIcon Icon="fas fa-calendar-check" /> Joined: @student.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")
+                        <MudIcon Icon="fas fa-calendar-check" /> Joined: @_user.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")
                     </MudText>
                 </MudItem>
             </MudGrid>
 
             <MudGrid Container Class="gallery-and-friends">
                 <MudItem xs="12" sm="6">
-                    @if (ShouldDisplayGallery(student.UserSettings.GalleryVisibility) && student.GalleryOfImageUrls?.Any(img => IsValidImageUrl(img.ImageUrl)) == true)
+                    @if (ShouldDisplayGallery(_user.UserSettings.GalleryVisibility) && _user.GalleryOfImageUrls?.Any(img => IsValidImageUrl(img.ImageUrl)) == true)
                     {
                         <MudCard Class="gallery-card">
                             <MudCardHeader>
@@ -134,7 +134,7 @@
                             </MudCardHeader>
                             <MudCardContent>
                                 <MudGrid Spacing="3" Class="spotlight-group">
-                                    @foreach (var galleryImage in student.GalleryOfImageUrls.Where(img => IsValidImageUrl(img.ImageUrl)))
+                                    @foreach (var galleryImage in _user.GalleryOfImageUrls.Where(img => IsValidImageUrl(img.ImageUrl)))
                                     {
                                         <MudItem xs="5">
                                             <a class="spotlight" href="@galleryImage.ImageUrl">
@@ -161,9 +161,9 @@
                                     {
                                         <MudListItem>
                                             <MudAvatar>
-                                                <MudImage Src="@GetProfileImageUrl(follower.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
+                                                <MudImage Src="@GetProfileImageUrl(follower.UserDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
                                             </MudAvatar>
-                                            <MudText>@follower.StudentDetails.FirstName @follower.StudentDetails.LastName</MudText>
+                                            <MudText>@follower.UserDetails.FirstName @follower.UserDetails.LastName</MudText>
                                         </MudListItem>
                                     }
                                 </MudList>
@@ -185,9 +185,9 @@
                                     {
                                         <MudListItem>
                                             <MudAvatar>
-                                                <MudImage Src="@GetProfileImageUrl(follow.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
+                                                <MudImage Src="@GetProfileImageUrl(follow.UserDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
                                             </MudAvatar>
-                                            <MudText>@follow.StudentDetails.FirstName @follow.StudentDetails.LastName</MudText>
+                                            <MudText>@follow.UserDetails.FirstName @follow.UserDetails.LastName</MudText>
                                         </MudListItem>
                                     }
                                 </MudList>
@@ -209,9 +209,9 @@
                                     {
                                         <MudListItem>
                                              <MudAvatar>
-                                                <MudImage Src="@GetProfileImageUrl(friend.StudentDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
+                                                <MudImage Src="@GetProfileImageUrl(friend.UserDetails.ProfileImageUrl)" Size="Size.Small"></MudImage>
                                             </MudAvatar>
-                                            <MudText>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</MudText>
+                                            <MudText>@friend.UserDetails.FirstName @friend.UserDetails.LastName</MudText>
                                         </MudListItem>
                                     }
                                 </MudList>
@@ -546,7 +546,7 @@
 
 @code {
     [Parameter] public Guid Id { get; set; }
-    private StudentDto student;
+    private UserDto _user;
     private Guid currentUserId;
     private bool studentNotFound;
     private List<EventDto> userEvents = new List<EventDto>();
@@ -567,8 +567,8 @@
         if (user.Identity.IsAuthenticated)
         {
             currentUserId = await IdentityService.GetCurrentUserIdFromJwtAsync();
-            student = await FriendsService.GetStudentAsync(Id);
-            if (student == null)
+            _user = await FriendsService.GetStudentAsync(Id);
+            if (_user == null)
             {
                 studentNotFound = true;
             }
@@ -610,9 +610,9 @@
         try
         {
             // Load interested events
-            if (student.InterestedInEvents != null && student.InterestedInEvents.Any())
+            if (_user.InterestedInEvents != null && _user.InterestedInEvents.Any())
             {
-                foreach (var eventId in student.InterestedInEvents)
+                foreach (var eventId in _user.InterestedInEvents)
                 {
                     var eventDetail = await EventsService.GetEventAsync(eventId);
                     if (eventDetail != null)
@@ -623,9 +623,9 @@
             }
 
             // Load signed-up events
-            if (student.SignedUpEvents != null && student.SignedUpEvents.Any())
+            if (_user.SignedUpEvents != null && _user.SignedUpEvents.Any())
             {
-                foreach (var eventId in student.SignedUpEvents)
+                foreach (var eventId in _user.SignedUpEvents)
                 {
                     var eventDetail = await EventsService.GetEventAsync(eventId);
                     if (eventDetail != null)
@@ -699,11 +699,11 @@
 
     private async Task AddFriend()
     {
-        if (student != null)
+        if (_user != null)
         {
             try
             {
-                await FriendsService.InviteStudent(currentUserId, student.Id);
+                await FriendsService.InviteStudent(currentUserId, _user.Id);
                 Snackbar.Add("Friend request sent successfully.", Severity.Success);
                 await LoadUserData();
                 StateHasChanged();
@@ -718,9 +718,9 @@
 
     private async Task BlockUser()
     {
-        if (student != null)
+        if (_user != null)
         {
-            await StudentsService.BlockUserAsync(currentUserId, student.Id);
+            await StudentsService.BlockUserAsync(currentUserId, _user.Id);
             Snackbar.Add("User blocked.", Severity.Warning);
         }
     }
@@ -733,12 +733,12 @@
 
     private async Task CancelFriendRequest()
     {
-        if (student != null)
+        if (_user != null)
         {
             await FriendsService.WithdrawFriendRequestAsync(new WithdrawFriendRequestDto
             {
                 InviterId = currentUserId,
-                InviteeId = student.Id
+                InviteeId = _user.Id
             });
             await LoadUserData();
             StateHasChanged();
@@ -748,7 +748,7 @@
 
     private async Task AcceptFriendRequest()
     {
-        var request = incomingFriendRequests.FirstOrDefault(r => r.InviterId == student.Id);
+        var request = incomingFriendRequests.FirstOrDefault(r => r.InviterId == _user.Id);
         if (request != null)
         {
             await FriendsService.AcceptFriendRequestAsync(new FriendRequestActionDto
@@ -765,7 +765,7 @@
 
     private async Task DeclineFriendRequest()
     {
-        var request = incomingFriendRequests.FirstOrDefault(r => r.InviterId == student.Id);
+        var request = incomingFriendRequests.FirstOrDefault(r => r.InviterId == _user.Id);
         if (request != null)
         {
             await FriendsService.DeclineFriendRequestAsync(new FriendRequestActionDto

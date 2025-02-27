@@ -1,6 +1,6 @@
 namespace Astravent.Web.Wasm.Areas.Operations.Maintenance;
 
-public class IMaintenanceService
+public interface IMaintenanceService
 {
-    
+    Task<bool> IsUnderMaintenanceAsync();
 }

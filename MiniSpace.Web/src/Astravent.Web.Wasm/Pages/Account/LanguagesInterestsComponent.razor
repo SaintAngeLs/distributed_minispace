@@ -1,5 +1,105 @@
-<h3>LanguagesInterestsComponent</h3>
+@page "/account/languages"
+@inject IStudentsService StudentsService
+@inject IIdentityService IdentityService
+@inject ISnackbar Snackbar
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.DTO.Types
+@using MudBlazor
+
+<MudText Typo="Typo.h4" GutterBottom="true">Languages & Interests</MudText>
+
+@if (isLoading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h5" GutterBottom="true">Languages</MudText>
+            <MudSelect T="string"
+                       Label="Select Languages"
+                       Variant="Variant.Outlined"
+                       MultiSelection="true"
+                       SelectedValues="selectedLanguages"
+                       SelectedValuesChanged="OnSelectedLanguagesChanged">
+                @foreach (var language in Enum.GetValues(typeof(Language)).Cast<Language>())
+                {
+                    <MudSelectItem Value="@language.ToString()">@language.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h5" GutterBottom="true">Interests</MudText>
+            <MudSelect T="string"
+                       Label="Select Interests"
+                       Variant="Variant.Outlined"
+                       MultiSelection="true"
+                       SelectedValues="selectedInterests"
+                       SelectedValuesChanged="OnSelectedInterestsChanged">
+                @foreach (var interest in Enum.GetValues(typeof(Interest)).Cast<Interest>())
+                {
+                    <MudSelectItem Value="@interest.ToString()">@interest.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveLanguagesAndInterests">
+                Save Changes
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+}
 
 @code {
-    
+    private bool isLoading = true;
+    private StudentWithGalleryImagesDto studentDto = new();
+    private HashSet<string> selectedLanguages = new();
+    private HashSet<string> selectedInterests = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            studentDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+            selectedLanguages = new HashSet<string>(studentDto.User.Languages ?? new List<string>());
+            selectedInterests = new HashSet<string>(studentDto.User.Interests ?? new List<string>());
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading data: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void OnSelectedLanguagesChanged(IEnumerable<string> langs)
+    {
+        selectedLanguages = new HashSet<string>(langs);
+    }
+
+    private void OnSelectedInterestsChanged(IEnumerable<string> interests)
+    {
+        selectedInterests = new HashSet<string>(interests);
+    }
+
+    private async Task SaveLanguagesAndInterests()
+    {
+        try
+        {
+            await StudentsService.UpdateStudentLanguagesAndInterestsAsync(
+                studentDto.User.Id,
+                selectedLanguages.ToList(),
+                selectedInterests.ToList());
+            Snackbar.Add("Languages and interests saved.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error saving changes: {ex.Message}", Severity.Error);
+        }
+    }
 }

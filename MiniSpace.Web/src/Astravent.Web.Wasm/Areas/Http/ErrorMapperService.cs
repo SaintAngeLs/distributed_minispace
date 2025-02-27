@@ -15,7 +15,7 @@ namespace Astravent.Web.Wasm.Areas.Http
                 case "invalid_event_date_time":
                     return "Please review the selected dates. They should be in chronological order.";
                 case "invalid_student_date_of_birth":
-                    return "Please review the student's date of birth. It should be in the past.";
+                    return "Please review the _user's date of birth. It should be in the past.";
                 default:
                     return "Something went wrong. Please try again later.";
             }

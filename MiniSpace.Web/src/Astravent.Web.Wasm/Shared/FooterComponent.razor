@@ -1,59 +1,87 @@
-@page "/footer"
 @using MudBlazor
 @inherits LayoutComponentBase
 
-<!-- Footer Start -->
+<MudPaper Elevation="0" Style="background-color:#343a40; color:#adb5bd; padding:2rem 0;">
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudGrid GutterSize="3">
+            <!-- Left Column -->
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.h4" Class="mb-2" Color="Color.Primary">
+                    Astra<MudText Color="Color.Surface" Inline="true">vent</MudText>
+                </MudText>
+                <MudText Typo="Typo.body1" Class="mb-4">
+                    Astravent is a dynamic social platform designed to connect people and communities. Discover, share, and interact with content that drives innovation and engagement.
+                </MudText>
+                <MudText Typo="Typo.body2" Class="mb-2">
+                    <MudIcon Icon="@Icons.Material.Filled.Email" /> info@itsharppro.com
+                </MudText>
+                <MudStack Direction="Row" Spacing="2">
+                    <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Primary" Target="_blank" Href="https://linkedin.com/yourhandle" />
+                    <MudIconButton Icon="@Icons.Custom.Brands.Facebook" Color="Color.Primary" Target="_blank" Href="https://facebook.com/yourhandle" />
+                    <MudIconButton Icon="@Icons.Custom.Brands.Instagram" Color="Color.Primary" Target="_blank" Href="https://instagram.com/yourhandle" />
+                </MudStack>
+            </MudItem>
 
-<div class="container-fluid footer position-relative bg-dark text-white-50 py-5">
-    <div class="container">
-        <div class="row g-5 py-5">
-            <div class="col-lg-6 pe-lg-5">
-                <a href="/" class="navbar-brand">
-                    <h1 class="h1 text-primary mb-0">Astra<span class="text-white">vent</span></h1>
-                </a>
-                <p class="fs-5 mb-4">Astravent is a dynamic social platform designed to connect people and communities. Discover, share, and interact with content that drives innovation and engagement.</p>
-                <p><i class="fa fa-envelope me-2"></i>info@itsharppro.com</p>
-                <div class="d-flex mt-4">
-                    <a class="btn btn-lg-square btn-primary me-2" href="https://twitter.com/yourhandle" target="_blank">
-                        <MudIcon Icon="@Icons.Custom.Brands.LinkedIn" />
-                    </a>
-                    <a class="btn btn-lg-square btn-primary me-2" href="https://facebook.com/yourhandle" target="_blank">
-                        <MudIcon Icon="@Icons.Custom.Brands.Facebook" />
-                    </a>
-                    <a class="btn btn-lg-square btn-primary me-2" href="https://instagram.com/yourhandle" target="_blank">
-                        <MudIcon Icon="@Icons.Custom.Brands.Instagram" />
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-6 ps-lg-5">
-                <div class="row g-5">
-                    <div class="col-sm-6">
-                        <h4 class="text-light mb-4">Quick Links</h4>
-                        <a class="btn btn-link" href="/terms">Terms of Use</a>
-                        <a class="btn btn-link" href="/privacy">Privacy Policy</a>
-                        <a class="btn btn-link" href="/support">Support</a>
-                    </div>
-                    <div class="col-sm-6">
-                        <h4 class="text-light mb-4">Popular Links</h4>
-                        <a class="btn btn-link" href="/about">About Us</a>
-                        <a class="btn btn-link" href="/contact">Contact Us</a>
-                        <a class="btn btn-link" href="/services">Our Services</a>
-                        <a class="btn btn-link" href="/terms">Terms & Conditions</a>
-                        <a class="btn btn-link" href="/support">Support</a>
-                    </div>
-                    <div class="col-sm-12">
-                        <h4 class="text-light mb-4">Newsletter</h4>
-                        <div class="w-100">
-                            <div class="input-group">
-                                <input type="text" class="form-control border-0 py-3 px-4" style="background: rgba(255, 255, 255, .1);" placeholder="Your Email Address">
-                                <button class="btn btn-primary px-4">Sign Up</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+            <!-- Right Column -->
+            <MudItem xs="12" sm="6">
+                <MudGrid>
+                    <!-- Quick Links -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.h6" Class="mb-2" Color="Color.Surface">Quick Links</MudText>
+                        <MudList Dense="true">
+                            <MudListItem>
+                                <MudLink Href="/terms" Class="text-white">Terms of Use</MudLink>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudLink Href="/privacy" Class="text-white">Privacy Policy</MudLink>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudLink Href="/support" Class="text-white">Support</MudLink>
+                            </MudListItem>
+                        </MudList>
+                    </MudItem>
 
-<!-- Footer End -->
+                    <!-- Popular Links -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.h6" Class="mb-2" Color="Color.Surface">Popular Links</MudText>
+                        <MudList Dense="true">
+                            <MudListItem>
+                                <MudLink Href="/about" Class="text-white">About Us</MudLink>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudLink Href="/contact" Class="text-white">Contact Us</MudLink>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudLink Href="/services" Class="text-white">Our Services</MudLink>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudLink Href="/terms" Class="text-white">Terms &amp; Conditions</MudLink>
+                            </MudListItem>
+                            <MudListItem>
+                                <MudLink Href="/support" Class="text-white">Support</MudLink>
+                            </MudListItem>
+                        </MudList>
+                    </MudItem>
+
+                    <!-- Newsletter -->
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h6" Class="mb-2" Color="Color.Surface">Newsletter</MudText>
+                        <MudStack Direction="Row" Spacing="1">
+                            <MudTextField @bind-Value="_newsletterEmail" Placeholder="Your Email Address" Variant="Variant.Filled" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" />
+                            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="SubscribeNewsletter">Sign Up</MudButton>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    private string _newsletterEmail;
+
+    private void SubscribeNewsletter()
+    {
+        // TODO: Implement your subscription logic here.
+    }
+}

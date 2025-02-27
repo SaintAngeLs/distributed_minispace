@@ -1,0 +1,110 @@
+@page "/account/user-settings"
+@using Astravent.Web.Wasm.Shared
+@using MudBlazor
+@using Astravent.Web.Wasm.DTO
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+
+<AuthWrapper>
+    <MudContainer Class="account-container">
+        @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">
+                    Loading, please wait...
+                </MudText>
+            </div>
+        }
+        else
+        {
+            <div class="breadcrumbs-container">
+                <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+            </div>
+            
+            <MudGrid>
+                <!-- Left Navigation Panel -->
+                <MudItem xs="12" sm="4" md="3">
+                    <AccountNavigation ActiveTabIndex="@activeTabIndex" TabChanged="SetActiveTabIndex" />
+                </MudItem>
+                <!-- Right Content Panel: User Settings Component -->
+                <MudItem xs="12" sm="8" md="9">
+                    <MudPaper Elevation="1" Class="content-panel">
+                        <UserSettingsComponent IsLoading="isSettingsLoading" 
+                                               AvailableSettingsDto="availableSettingsDto" 
+                                               SaveUserSettingsAsync="SaveUserSettingsAsync" />
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
+    }
+    .content-panel {
+        padding: 20px;
+        min-height: 80vh;
+    }
+    .loading-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+    }
+</style>
+
+@code {
+    private int activeTabIndex = 6; 
+    private bool pageInitialized = true;
+    private bool isSettingsLoading = true;
+    private AvailableSettingsDto availableSettingsDto = new AvailableSettingsDto();
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/user-settings", disabled: true, icon: Icons.Material.Filled.ManageAccounts)
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            availableSettingsDto = await StudentsService.GetUserSettingsAsync(studentId);
+            pageInitialized = true;
+            isSettingsLoading = false;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
+
+    private async Task SaveUserSettingsAsync()
+    {
+        try
+        {
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            await StudentsService.UpdateUserSettingsAsync(studentId, availableSettingsDto);
+            Snackbar.Add("User settings updated successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update user settings: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
+    }
+}

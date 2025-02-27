@@ -14,6 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.6.1" />
     <PackageReference Include="Blazorise.Markdown" Version="1.6.1" />
+    <PackageReference Include="FuzzySharp" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.6" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.6" />

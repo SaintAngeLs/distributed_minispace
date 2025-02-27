@@ -1,6 +1,123 @@
-@page "/UnauthenticatedLayout"
-<h3>UnauthenticatedLayout</h3>
+@using MudBlazor
+@using Astravent.Web.Wasm.Areas.Students
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="@MiniSpaceTheme.MiniSpaceCustomTheme" @bind-IsDarkMode="@_isDarkMode" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudAppBar Elevation="4">
+        <!-- Left Side of AppBar for unauthenticated users -->
+        <div class="d-flex align-items-center">
+            @if (!isPC)
+            {
+                <MudButton Variant="Variant.Text" OnClick="@ToggleDrawer">
+                    <img src="icons/menu-left.svg" alt="Menu" style="height: 24px; width: 24px;" />
+                </MudButton>
+                <MudText Typo="Typo.h4" Class="ms-2">Astravent</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h4" Class="me-3">Astravent</MudText>
+                <MudButton Variant="Variant.Text" Href="#home">Home</MudButton>
+                <MudButton Variant="Variant.Text" Href="#about">About App</MudButton>
+                <MudMenu Label="Open Menu">
+                    <MudMenuItem OnClick="ScrollToConnect">Connect</MudMenuItem>
+                    <MudMenuItem Href="signin">Sign In</MudMenuItem>
+                    <MudMenuItem Href="signup">Sign Up</MudMenuItem>
+                </MudMenu>
+            }
+        </div>
+        <MudSpacer />
+        <div class="d-flex align-items-center">
+            <MudSpacer />
+        </div>
+        <MudSpacer />
+        <div class="d-flex align-items-center">
+            <MudSpacer />
+            <!-- More Menu for unauthenticated users -->
+            <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open user menu">
+                <MudMenuItem Href="signin">Sign In</MudMenuItem>
+                <MudMenuItem Href="signup">Sign Up</MudMenuItem>
+            </MudMenu>
+        </div>
+    </MudAppBar>
+
+    @if (!isPC)
+    {
+        <MudDrawer @bind-Open="_sidebarExpanded" Elevation="1" Anchor="Anchor.Left" Variant="DrawerVariant.Temporary" OpenMiniOnHover="false">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Menu</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Href="#home" OnClick="ScrollToHome" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+                <MudNavLink Href="#about" OnClick="ScrollToAbout" Icon="@Icons.Material.Filled.Info">About App</MudNavLink>
+                <MudNavLink Href="#connect" OnClick="ScrollToConnect" Icon="@Icons.Material.Filled.ConnectWithoutContact">Connect</MudNavLink>
+                <MudNavLink Href="signin" Icon="@Icons.Material.Filled.Login">Sign In</MudNavLink>
+                <MudNavLink Href="signup" Icon="@Icons.Material.Filled.HowToReg">Sign Up</MudNavLink>
+                <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode" />
+            </MudNavMenu>
+        </MudDrawer>
+    }
+
+    <MudMainContent>
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            @Body
+        </div>
+        <FooterComponent />
+    </MudMainContent>
+</MudLayout>
+
+<MudDialog />
 
 @code {
+    private bool _sidebarExpanded = false;
+    private bool isPC = true;
+    private bool _isDarkMode;
+    private string _searchQuery;
     
+    [Inject] IJSRuntime JSRuntime { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateScreenSize();
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public async Task UpdateScreenSize()
+    {
+        var screenSize = await JSRuntime.InvokeAsync<ScreenSize>("getScreenSize");
+        isPC = screenSize.Width > 868;
+        StateHasChanged();
+    }
+
+    private class ScreenSize
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+
+    private void ToggleDrawer() => _sidebarExpanded = !_sidebarExpanded;
+
+    private async Task ScrollToHome(MouseEventArgs e) => await ScrollToSection("home");
+    private async Task ScrollToAbout(MouseEventArgs e) => await ScrollToSection("about");
+    private async Task ScrollToConnect(MouseEventArgs e) => await ScrollToSection("connect");
+
+    async Task ScrollToSection(string sectionId)
+    {
+        if (NavigationManager.Uri != NavigationManager.BaseUri)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+        while (NavigationManager.Uri != NavigationManager.BaseUri)
+        {
+            await Task.Delay(100);
+        }
+        await JSRuntime.InvokeVoidAsync("scrollToSection", sectionId);
+    }
+
+    private NavigationManager _navigationManager;
+    private IJSRuntime _jsRuntime;
 }

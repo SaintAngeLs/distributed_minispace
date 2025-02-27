@@ -177,7 +177,7 @@ namespace Astravent.Web.Wasm.Areas.Organizations
             _httpClient.SetAccessToken(accessToken);
             var command = new FollowOrganizationDto
             {
-                UserId = _identityService.UserDto.Id,
+                UserId = _identityService.AuthUserDto.Id,
                 OrganizationId = organizationId
             };
             await _httpClient.PostAsync($"organizations/{organizationId}/follow", command);

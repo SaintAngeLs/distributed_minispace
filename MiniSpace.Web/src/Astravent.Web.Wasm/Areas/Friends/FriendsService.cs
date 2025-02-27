@@ -53,7 +53,7 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
             foreach (var friend in allFriends)
             {
-                friend.StudentDetails = await GetStudentAsync(friend.FriendId);
+                friend.UserDetails = await GetStudentAsync(friend.FriendId);
             }
 
             return new PagedResult<FriendDto>(allFriends, userFriends.Page, userFriends.PageSize, userFriends.TotalItems);
@@ -82,7 +82,7 @@ namespace Astravent.Web.Wasm.Areas.Friends
             await _httpClient.DeleteAsync($"friends/{requesterId}/{friendId}/remove");
         }
 
-        public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
+        public async Task<IEnumerable<UserDto>> GetAllStudentsAsync()
         {
             if (_httpClient == null) throw new InvalidOperationException("HTTP client is not initialized.");
             string accessToken = await _identityService.GetAccessTokenAsync();
@@ -90,23 +90,23 @@ namespace Astravent.Web.Wasm.Areas.Friends
                 throw new InvalidOperationException("Invalid or missing access token.");
 
             _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<IEnumerable<StudentDto>>("students");
+            return await _httpClient.GetAsync<IEnumerable<UserDto>>("students");
         }
 
-        public async Task<PaginatedResponseDto<StudentDto>> GetAllStudentsAsync(int page = 1, int pageSize = 10, string searchTerm = null)
+        public async Task<PaginatedResponseDto<UserDto>> GetAllStudentsAsync(int page = 1, int pageSize = 10, string searchTerm = null)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
 
             string url = $"students?page={page}&pageSize={pageSize}&searchTerm={searchTerm}";
-            return await _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>(url);
+            return await _httpClient.GetAsync<PaginatedResponseDto<UserDto>>(url);
         }
 
-        public async Task<StudentDto> GetStudentAsync(Guid studentId)
+        public async Task<UserDto> GetStudentAsync(Guid studentId)
         {
             string accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+            return await _httpClient.GetAsync<UserDto>($"students/{studentId}");
         }
 
         public async Task InviteStudent(Guid inviterId, Guid inviteeId)
@@ -243,7 +243,7 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
             foreach (var follower in allFollowers)
             {
-                follower.StudentDetails = await GetStudentAsync(follower.UserId);
+                follower.UserDetails = await GetStudentAsync(follower.UserId);
             }
 
             return new PagedResult<FriendDto>(allFollowers, userFollowers.Page, userFollowers.PageSize, userFollowers.TotalItems);
@@ -261,7 +261,7 @@ namespace Astravent.Web.Wasm.Areas.Friends
 
             foreach (var following in allFollowing)
             {
-                following.StudentDetails = await GetStudentAsync(following.FriendId);
+                following.UserDetails = await GetStudentAsync(following.FriendId);
             }
 
             return new PagedResult<FriendDto>(allFollowing, userFollowing.Page, userFollowing.PageSize, userFollowing.TotalItems);

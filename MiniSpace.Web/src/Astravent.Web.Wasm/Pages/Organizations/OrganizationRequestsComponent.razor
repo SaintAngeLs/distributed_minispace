@@ -9,7 +9,7 @@
     public Guid OrganizationId { get; set; }
 
     private List<OrganizationRequestDto> requests = new List<OrganizationRequestDto>();
-    private Dictionary<Guid, StudentDto> users = new Dictionary<Guid, StudentDto>();
+    private Dictionary<Guid, UserDto> users = new Dictionary<Guid, UserDto>();
     private bool isLoading = true;
     private int page = 1;
     private int pageSize = 10;

@@ -1,0 +1,94 @@
+@page "/account/languages-and-interests"
+@using Astravent.Web.Wasm.Shared
+@using MudBlazor
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.DTO.Types
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthWrapper>
+    <MudContainer Class="account-container">
+        @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">
+                    Loading, please wait...
+                </MudText>
+            </div>
+        }
+        else
+        {
+            <div class="breadcrumbs-container">
+                <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+            </div>
+            
+            <MudGrid>
+                <!-- Left Navigation Panel -->
+                <MudItem xs="12" sm="4" md="3">
+                    <AccountNavigation ActiveTabIndex="@activeTabIndex" TabChanged="SetActiveTabIndex" />
+                </MudItem>
+                <!-- Right Content Panel: Languages & Interests Component -->
+                <MudItem xs="12" sm="8" md="9">
+                    <MudPaper Elevation="1" Class="content-panel">
+                        <LanguagesInterestsComponent />
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
+    }
+    .content-panel {
+        padding: 20px;
+        min-height: 80vh;
+    }
+    .loading-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+    }
+    .mud-nav-link.active {
+        background-color: #e0e0e0;
+        font-weight: bold;
+        color: #3f51b5;
+    }
+</style>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/account", disabled: true, icon: Icons.Material.Filled.ManageAccounts),
+    };
+    
+    private int activeTabIndex = 4; 
+    private bool pageInitialized = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            pageInitialized = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
+    }
+}

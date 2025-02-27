@@ -1,0 +1,107 @@
+@page "/account/privacy"
+@using Astravent.Web.Wasm.Shared
+@using MudBlazor
+@using Astravent.Web.Wasm.DTO
+@using Astravent.Web.Wasm.Areas.Students
+@inject IIdentityService IdentityService
+@inject IStudentsService StudentsService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+
+<AuthWrapper>
+    <MudContainer Class="account-container">
+        @if (!pageInitialized)
+        {
+            <div class="loading-overlay">
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Loading, please wait...</MudText>
+            </div>
+        }
+        else
+        {
+            <div class="breadcrumbs-container">
+                <MudBreadcrumbs Class="custom-breadcrumbs" Items="_items"></MudBreadcrumbs>
+            </div>
+            
+            <MudGrid>
+                <MudItem xs="12" sm="4" md="3">
+                    <AccountNavigation ActiveTabIndex="@activeTabIndex" TabChanged="SetActiveTabIndex" />
+                </MudItem>
+
+                <MudItem xs="12" sm="8" md="9">
+                    <MudPaper Elevation="1" Class="content-panel">
+                        <PrivacyComponent IsLoading="isPrivacyLoading" 
+                                          StudentWithGalleryImagesDto="studentWithGalleryImagesDto" 
+                                          SaveChangesAsync="SaveChangesAsync" />
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
+</AuthWrapper>
+
+<style>
+    .account-container {
+        margin-top: 20px;
+    }
+    .content-panel {
+        padding: 20px;
+        min-height: 80vh;
+    }
+    .loading-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+    }
+   
+</style>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "/home", icon: Icons.Material.Filled.Home),
+        new BreadcrumbItem("Account settings", href: "/account", disabled: true, icon: Icons.Material.Filled.ManageAccounts),
+    };
+    
+    private int activeTabIndex = 3; 
+    private bool pageInitialized = true;
+    private bool isPrivacyLoading = true;
+    private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new StudentWithGalleryImagesDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var studentId = await IdentityService.GetCurrentUserIdFromJwtAsync();
+            studentWithGalleryImagesDto = await StudentsService.GetStudentWithGalleryImagesAsync(studentId);
+            pageInitialized = true;
+            isPrivacyLoading = false;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/signin");
+        }
+    }
+
+    private async Task SaveChangesAsync()
+    {
+        try
+        {
+            await StudentsService.UpdateStudentDto(studentWithGalleryImagesDto.User.Id);
+            Snackbar.Add("Privacy settings updated successfully.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update privacy settings: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void SetActiveTabIndex(int index)
+    {
+        activeTabIndex = index;
+    }
+}

@@ -1,4 +1,4 @@
-@page "/account"
+@page "/accountprev"
 @using System.Globalization
 @using Astravent.Web.Wasm.Shared
 @using Astravent.Web.Wasm.Areas.Students
@@ -107,7 +107,7 @@
                     }
                     else if (activeTabIndex == 7) 
                     {
-                        <BlockedListComponent />
+                        <BlockedList />
                     }
                 </MudPaper>
             </MudItem>
@@ -119,12 +119,6 @@
 <style>
     .account-container {
         margin-top: 20px;
-    }
-
-    .navigation-panel {
-        background-color: #f5f5f5;
-        padding: 10px;
-        border-radius: 5px;
     }
 
     .content-panel {
@@ -192,7 +186,7 @@
     private bool isLoading = true;
     private bool isUploading = false;
     private IBrowserFile file;
-    private bool pageInitialized = false;
+    private bool pageInitialized = true;
     private long maxFileSize = 10 * 1024 * 1024;
     private StudentWithGalleryImagesDto studentWithGalleryImagesDto = new();
     private NotificationPreferencesDto notificationPreferencesDto = new NotificationPreferencesDto();

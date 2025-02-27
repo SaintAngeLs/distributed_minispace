@@ -9,17 +9,17 @@
     [Parameter] public List<FilePreview> MediaFiles { get; set; } = new();
     [Parameter] public Guid UserId { get; set; }
 
-    private StudentDto student;
+    private UserDto _user;
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch the student data based on the user ID
-        student = await StudentsService.GetStudentAsync(UserId);
+        // Fetch the _user data based on the user ID
+        _user = await StudentsService.GetStudentAsync(UserId);
     }
 
-    // Helper methods to return student information (in case it's useful for multiple posts)
-    private string GetUserAvatar(Guid userId) => student?.ProfileImageUrl;
-    private string GetUserName(Guid userId) => $"{student?.FirstName} {student?.LastName}";
+    // Helper methods to return _user information (in case it's useful for multiple posts)
+    private string GetUserAvatar(Guid userId) => _user?.ProfileImageUrl;
+    private string GetUserName(Guid userId) => $"{_user?.FirstName} {_user?.LastName}";
 }
 
 <MudPaper Class="pa-4">

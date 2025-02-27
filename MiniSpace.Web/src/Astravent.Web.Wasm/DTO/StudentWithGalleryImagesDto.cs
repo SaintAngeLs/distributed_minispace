@@ -5,7 +5,7 @@ namespace Astravent.Web.Wasm.DTO
 {
     public class StudentWithGalleryImagesDto
     {
-        public StudentDto Student { get; set; }
+        public UserDto User { get; set; }
         public List<GalleryImageDto> GalleryImages { get; set; }
     }
 }

@@ -39,10 +39,10 @@
                     {
                         <div class="friend-card">
                             <div class="friend-row">
-                                <img src="@GetProfileImageUrl(friend.StudentDetails.ProfileImageUrl)" alt="Friend Image" class="friend-img" onerror="this.onerror=null;this.src='images/default_profile_image.webp';">
+                                <img src="@GetProfileImageUrl(friend.UserDetails.ProfileImageUrl)" alt="Friend Image" class="friend-img" onerror="this.onerror=null;this.src='images/default_profile_image.webp';">
                                 <div class="friend-info">
-                                    <h5>@friend.StudentDetails.FirstName @friend.StudentDetails.LastName</h5>
-                                    <p>@friend.StudentDetails.Email</p>
+                                    <h5>@friend.UserDetails.FirstName @friend.UserDetails.LastName</h5>
+                                    <p>@friend.UserDetails.Email</p>
                                 </div>
                                 <div class="buttons">
                                     <MudButton Variant="MudBlazor.Variant.Outlined" OnClick="@(() => ViewDetails(friend.FriendId))" Class="action-button">
@@ -262,7 +262,7 @@
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             searchTerm = searchTerm.Trim();
-            friends = friends.Where(f => f.StudentDetails.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || f.StudentDetails.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            friends = friends.Where(f => f.UserDetails.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || f.UserDetails.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
         }
         else
         {

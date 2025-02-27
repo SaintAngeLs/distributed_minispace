@@ -1,0 +1,242 @@
+@using Astravent.Web.Wasm.Areas.ApiLinkService
+@using Astravent.Web.Wasm.Areas.Layout
+@using Astravent.Web.Wasm.Models.Layout
+@using MudBlazor
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="d-flex align-center flex-grow-1 d-md-none">
+    <MudTooltip Text="Drawer">
+        <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" aria-label="Open drawer" />
+    </MudTooltip>
+    <MudSpacer />
+    <NavLink ActiveClass="d-flex align-center" href="/">
+        <MudBlazorLogo Class="docs-mudblazor-logo" />
+        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
+    </NavLink>
+    <MudSpacer />
+    <MudTooltip Text="Search">
+        <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())" aria-label="Open search dialog" />
+    </MudTooltip>
+</div>
+
+<div class="d-none d-md-flex align-center flex-grow-1">
+    <NavLink ActiveClass="d-flex align-center me-4" href="/">
+        <MudBlazorLogo Class="docs-mudblazor-logo" />
+        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
+    </NavLink>
+    <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Projects" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+        <MudList T="string">
+            <MudListSubheader>
+                Official
+            </MudListSubheader>
+            <MudListItem Href="https://mudblazor.com/">
+                <div class="d-flex">
+                    <MudText Color="Color.Primary">MudBlazor</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Blazor component library</MudText>
+            </MudListItem>
+            <MudListItem Href="https://try.mudblazor.com/">
+                <div class="d-flex">
+                    <MudText Color="Color.Primary">Try</MudText><MudText>MudBlazor</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Online code editor with Blazor</MudText>
+            </MudListItem>
+            <MudListItem Href="https://github.com/MudBlazor/ThemeManager">
+                <div class="d-flex">
+                    <MudText>Theme</MudText><MudText Color="Color.Secondary">Manager</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Manage your theme live in your app</MudText>
+            </MudListItem>
+            <MudListItem Href="https://github.com/MudBlazor/Templates">
+                <div class="d-flex">
+                    <MudText>Templates</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Blazor templates loaded with MudBlazor</MudText>
+            </MudListItem>
+        </MudList>
+        <MudList T="string" Class="relative">
+            <MudListSubheader>
+                Community
+            </MudListSubheader>
+            <MudListItem Href="/mud/community/extensions">
+                <div class="d-flex">
+                    <MudText>Community</MudText> <MudText Color="Color.Warning">Extensions</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Links and Github Repositories</MudText>
+            </MudListItem>
+        </MudList>
+    </MudMenu>
+    <MudSpacer />
+    @if (DisplaySearchBar)
+    {
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar mx-4"
+                         AutoFocus="false" Placeholder="Search" Variant="Variant.Outlined" MaxHeight="480"
+                         SearchFunc="(string text) => Search(text)" DebounceInterval="0"
+                         ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentAriaLabel="Search adornment">
+            <ItemTemplate Context="result">
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
+        <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4" />
+    }
+    else
+    {
+        <MudTooltip Text="Search">
+            <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" OnClick="@(() => OpenSearchDialog())" aria-label="Open search dialog" />
+        </MudTooltip>
+    }
+    <AppbarButtons />
+    <MudTooltip Text="GitHub">
+        <MudIconButton Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End" aria-label="Open GitHub repository" />
+    </MudTooltip>
+</div>
+
+<MudDialog @bind-Visible="IsSearchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ContentClass="docs-mobile-dialog-search d-flex flex-column" DefaultFocus="DefaultFocus.FirstChild">
+    <DialogContent>
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" 
+                         AutoFocus="true" Placeholder="Search" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                         SearchFunc="(string text) => Search(text)" DebounceInterval="0"
+                         ValueChanged="OnSearchResult" OpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
+            <ItemTemplate Context="result">
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
+        <MudText Typo="Typo.body2" Class="flex-grow-1 mud-text-secondary" Align="Align.Center">
+            @if (!_searchDialogAutocompleteOpen)
+            {
+                @("Use the box above to search the docs")
+            }
+            else if (_searchDialogReturnedItemsCount == 0)
+            {
+                @("No results found")
+            }
+        </MudText>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    private bool _searchDialogOpen;
+    private bool _searchDialogAutocompleteOpen;
+    private int _searchDialogReturnedItemsCount;
+    private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
+    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
+    
+    private readonly List<ApiLinkServiceEntry> _apiLinkServiceEntries = new()
+    {
+        new ApiLinkServiceEntry
+        {
+            Title = "Installation",
+            Link = "getting-started/installation",
+            SubTitle = "Get started with MudBlazor fast and easy."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "Wireframes",
+            Link = "getting-started/wireframes",
+            SubTitle = "These small templates can be copied directly or just be used for inspiration."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "Table",
+            Link = "components/table",
+            // Use a concrete type for the generic parameter; adjust as needed.
+            ComponentType = typeof(MudTable<object>),
+            SubTitle = "A sortable, filterable table with multiselection and pagination."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "Grid",
+            Link = "components/grid",
+            ComponentType = typeof(MudGrid),
+            SubTitle = "The grid component helps keeping layout consistent across various screen resolutions and sizes."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "Button",
+            Link = "components/button",
+            ComponentType = typeof(MudButton),
+            SubTitle = "A Material Design button for triggering an action or navigating to a link."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "Card",
+            Link = "components/card",
+            ComponentType = typeof(MudCard),
+            SubTitle = "Cards can contain actions, text, or media like images or graphics."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "Dialog",
+            Link = "components/dialog",
+            ComponentType = typeof(MudDialog),
+            SubTitle = "A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "App Bar",
+            Link = "components/appbar",
+            ComponentType = typeof(MudAppBar),
+            SubTitle = "App bar is used to display actions, branding, navigation and screen titles."
+        },
+        new ApiLinkServiceEntry
+        {
+            Title = "Navigation Menu",
+            Link = "components/navmenu",
+            ComponentType = typeof(MudNavMenu),
+            SubTitle = "Nav menu provides a tree-like menu linking to the content on your site."
+        }
+    };
+
+    public bool IsSearchDialogOpen
+    {
+        get => _searchDialogOpen;
+        set
+        {
+            _searchDialogAutocompleteOpen = default;
+            _searchDialogReturnedItemsCount = default;
+            _searchDialogOpen = value;
+        }
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = null!;
+
+    [Inject]
+    private IApiLinkService ApiLinkService { get; set; } = null!;
+
+    [Inject]
+    private ILayoutService LayoutService { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
+
+    [Parameter]
+    public bool DisplaySearchBar { get; set; } = true;
+
+    private async void OnSearchResult(ApiLinkServiceEntry? entry)
+    {
+        if (entry is null)
+        {
+            return;
+        }
+
+        NavigationManager.NavigateTo(entry.Link);
+        await Task.Delay(1000);
+        // Use Clear() method since ClearAsync() is not available.
+        _searchAutocomplete.Clear();
+    }
+    
+    private async Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return _apiLinkServiceEntries;
+        }
+        
+        IReadOnlyCollection<ApiLinkServiceEntry> results = await ApiLinkService.Search(text);
+        return results;
+    }
+
+
+    private void OpenSearchDialog() => IsSearchDialogOpen = true;
+}

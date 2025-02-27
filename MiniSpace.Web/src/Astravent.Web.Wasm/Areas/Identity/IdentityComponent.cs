@@ -24,7 +24,7 @@ namespace Astravent.Web.Wasm.Areas.Identity
         public Task<HttpResponse<JwtDto>> SignInAsync(string email, string password, string deviceType, string ipAddress)
             => _identityService.SignInAsync(email, password, deviceType); 
 
-        public Task<UserDto> GetAccount(JwtDto jwtDto)
+        public Task<AuthUserDto> GetAccount(JwtDto jwtDto)
             => _identityService.GetAccountAsync(jwtDto);
     }
 }

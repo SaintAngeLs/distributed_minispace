@@ -11,6 +11,6 @@ namespace Astravent.Web.Wasm.DTO.Friends
         public Guid FriendId { get; set; }
         public DateTime CreatedAt { get; set; }
         public FriendState State { get; set; }
-        public StudentDto StudentDetails { get; set; }
+        public UserDto UserDetails { get; set; }
     }
 }

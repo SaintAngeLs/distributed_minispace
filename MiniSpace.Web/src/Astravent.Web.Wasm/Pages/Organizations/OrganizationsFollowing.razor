@@ -86,7 +86,7 @@
         try
         {
             _isLoading = true;
-            var followedOrganizations = await OrganizationsService.GetUserFollowedOrganizationsAsync(IdentityService.UserDto.Id);
+            var followedOrganizations = await OrganizationsService.GetUserFollowedOrganizationsAsync(IdentityService.AuthUserDto.Id);
 
             if (!string.IsNullOrEmpty(_searchQuery))
             {

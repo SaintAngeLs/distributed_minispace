@@ -1,0 +1,71 @@
+@using MudBlazor
+<div class="navigation-panel">
+    <MudNavMenu Elevation="1">
+        <MudNavLink Href="/account"
+                    Icon="@Icons.Material.Filled.Person"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            Profile
+        </MudNavLink>
+        <MudNavLink Href="/account/security"
+                    Icon="@Icons.Material.Filled.Security"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            Security
+        </MudNavLink>
+        <MudNavLink Href="/account/notifications-preferences"
+                    Icon="@Icons.Material.Filled.Notifications"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            Notifications
+        </MudNavLink>
+        <MudNavLink Href="/account/privacy"
+                    Icon="@Icons.Material.Filled.PrivacyTip"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            Privacy
+        </MudNavLink>
+        <MudNavLink Href="/account/languages-and-interests"
+                    Icon="@Icons.Material.Filled.Language"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            Languages & Interests
+        </MudNavLink>
+        <MudNavLink Href="/account/gallery"
+                    Icon="@Icons.Material.Filled.PhotoLibrary"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            Gallery
+        </MudNavLink>
+        <MudNavLink Href="/account/user-settings"
+                    Icon="@Icons.Material.Filled.Settings"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            User Settings
+        </MudNavLink>
+        <MudNavLink Href="/account/blocked-users"
+                    Icon="@Icons.Material.Filled.Block"
+                    Match="NavLinkMatch.All"
+                    DisableRipple="true">
+            Blocked Users
+        </MudNavLink>
+    </MudNavMenu>
+</div>
+
+@code {
+    [Parameter] public int ActiveTabIndex { get; set; }
+    [Parameter] public EventCallback<int> TabChanged { get; set; }
+
+    private void OnTabSelected(int index)
+    {
+        if (ActiveTabIndex != index)
+        {
+            TabChanged.InvokeAsync(index);
+        }
+    }
+
+    private string GetNavLinkClass(int index)
+    {
+        return ActiveTabIndex == index ? " active" : " ";
+    }
+}

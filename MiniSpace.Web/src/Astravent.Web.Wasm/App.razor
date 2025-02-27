@@ -1,12 +1,96 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿@* @using Astravent.Web.Wasm.Pages.Operations.Maintenance *@
+@* @inject IMaintenanceService MaintenanceService *@
+@* *@
+@* @code { *@
+@*     private bool isMaintenanceMode; *@
+@* *@
+@*     protected override async Task OnInitializedAsync() *@
+@*     { *@
+@*         isMaintenanceMode = await MaintenanceService.IsUnderMaintenanceAsync(); *@
+@*     } *@
+@* } *@
+@* *@
+@* @if (isMaintenanceMode) *@
+@* { *@
+@*     <Maintenance /> *@
+@* } *@
+@* else *@
+@* { *@
+@*     <Router AppAssembly="@typeof(App).Assembly"> *@
+@*         <Found Context="routeData"> *@
+@*             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" /> *@
+@*             <FocusOnNavigate RouteData="@routeData" Selector="h1" /> *@
+@*         </Found> *@
+@*         <NotFound> *@
+@*             <PageTitle>Not found</PageTitle> *@
+@*             <LayoutView Layout="@typeof(MainLayout)"> *@
+@*                 <p role="alert">Sorry, there's nothing at this address.</p> *@
+@*             </LayoutView> *@
+@*         </NotFound> *@
+@*     </Router> *@
+@* } *@
+
+@using Astravent.Web.Wasm.Pages.Operations.Maintenance
+@inject IMaintenanceService MaintenanceService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@implements IDisposable
+
+<PageTitle>Astravent</PageTitle>
+
+@code {
+    private bool isMaintenanceMode;
+    private bool _isAuthenticated;
+    // Use your custom layout types directly.
+    private Type _layout => _isAuthenticated ? typeof(AuthenticatedLayout) : typeof(UnauthenticatedLayout);
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the app is under maintenance
+        isMaintenanceMode = await MaintenanceService.IsUnderMaintenanceAsync();
+
+        if (!isMaintenanceMode)
+        {
+            // Get the current authentication state
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+
+            // Subscribe to authentication state changes
+            AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        }
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var authState = await task;
+        _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}
+
+@if (isMaintenanceMode)
+{
+    <!-- When under maintenance, show the maintenance component -->
+    <Maintenance />
+}
+else
+{
+    <!-- Otherwise, use the router with the default layout based on auth state -->
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@_layout" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@_layout">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+}

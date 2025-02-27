@@ -1,4 +1,5 @@
 @page "/signin"
+<PageTitle>Astravent | Sign in</PageTitle>
 @using Astravent.Web.Wasm.Models.Identity
 @using Astravent.Web.Wasm.Areas.Identity
 @using Astravent.Web.Wasm.Areas.Students
@@ -193,8 +194,8 @@
                 }
                 else if (!string.IsNullOrEmpty(response.Content.AccessToken))
                 {
-                    await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-                    var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
+                    await StudentsService.UpdateStudentDto(IdentityService.AuthUserDto.Id);
+                    var nextPage = StudentsService.UserDto.State == "incomplete" ? "/signin/first" : "/home";
                     NavigationManager.NavigateTo(nextPage, forceLoad: true);
                 }
                 else
@@ -229,8 +230,8 @@
 
             if (response != null && response.Content != null && !string.IsNullOrEmpty(response.Content.AccessToken))
             {
-                await StudentsService.UpdateStudentDto(IdentityService.UserDto.Id);
-                var nextPage = StudentsService.StudentDto.State == "incomplete" ? "/signin/first" : "/home";
+                await StudentsService.UpdateStudentDto(IdentityService.AuthUserDto.Id);
+                var nextPage = StudentsService.UserDto.State == "incomplete" ? "/signin/first" : "/home";
                 NavigationManager.NavigateTo(nextPage, true);
             }
             else

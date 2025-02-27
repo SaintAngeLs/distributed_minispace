@@ -24,7 +24,7 @@ namespace Astravent.Web.Wasm.Areas.Students
 
         private readonly INotificationsService _notificationsService;
 
-        public StudentDto StudentDto { get; private set; }
+        public UserDto UserDto { get; private set; }
         
         public StudentsService(IHttpClient httpClient, IIdentityService identityService)
         {
@@ -32,30 +32,30 @@ namespace Astravent.Web.Wasm.Areas.Students
             _identityService = identityService;
         }
 
-        public async Task UpdateStudentDto(Guid studentId)
+        public async Task UpdateStudentDto(Guid userId)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            StudentDto = await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+            UserDto = await _httpClient.GetAsync<UserDto>($"students/{userId}");
         }
 
         public void ClearStudentDto()
         {
-            StudentDto = null;
+            UserDto = null;
         }
         
-        public async Task<StudentDto> GetStudentAsync(Guid studentId)
+        public async Task<UserDto> GetStudentAsync(Guid userId)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<StudentDto>($"students/{studentId}");
+            return await _httpClient.GetAsync<UserDto>($"students/{userId}");
         }
 
-        public async Task<PaginatedResponseDto<StudentDto>> GetStudentsAsync()
+        public async Task<PaginatedResponseDto<UserDto>> GetStudentsAsync()
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<PaginatedResponseDto<StudentDto>>("students");
+            return await _httpClient.GetAsync<PaginatedResponseDto<UserDto>>("students");
         }
 
          public async Task UpdateStudentAsync(
@@ -109,11 +109,11 @@ namespace Astravent.Web.Wasm.Areas.Students
             await _httpClient.PutAsync($"students/{studentId}", updateStudentData);
         }
 
-        public async Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid studentId)
+        public async Task<NotificationPreferencesDto> GetUserNotificationPreferencesAsync(Guid userId)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<NotificationPreferencesDto>($"students/{studentId}/notifications");
+            return await _httpClient.GetAsync<NotificationPreferencesDto>($"students/{userId}/notifications");
         }
 
         public Task<HttpResponse<object>> CompleteStudentRegistrationAsync(Guid studentId, string profileImageUrl, string description, DateTime dateOfBirth, bool emailNotifications, string contactEmail)
@@ -157,60 +157,76 @@ namespace Astravent.Web.Wasm.Areas.Students
 
 
 
-        public async Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid studentId)
+        public async Task<StudentWithGalleryImagesDto> GetStudentWithGalleryImagesAsync(Guid userId)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<StudentWithGalleryImagesDto>($"students/{studentId}/gallery");
+            return await _httpClient.GetAsync<StudentWithGalleryImagesDto>($"students/{userId}/gallery");
         }
 
-        public async Task UpdateUserSettingsAsync(Guid studentId, AvailableSettingsDto availableSettings)
+        public async Task UpdateUserSettingsAsync(Guid userId, AvailableSettingsDto availableSettings)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
 
             var updateUserSettingsData = new
             {
-                studentId,
-                CreatedAtVisibility = availableSettings.CreatedAtVisibility.ToString(),
-                DateOfBirthVisibility = availableSettings.DateOfBirthVisibility.ToString(),
-                InterestedInEventsVisibility = availableSettings.InterestedInEventsVisibility.ToString(),
-                SignedUpEventsVisibility = availableSettings.SignedUpEventsVisibility.ToString(),
-                EducationVisibility = availableSettings.EducationVisibility.ToString(),
-                WorkPositionVisibility = availableSettings.WorkPositionVisibility.ToString(),
-                LanguagesVisibility = availableSettings.LanguagesVisibility.ToString(),
-                InterestsVisibility = availableSettings.InterestsVisibility.ToString(),
-                ContactEmailVisibility = availableSettings.ContactEmailVisibility.ToString(),
-                PhoneNumberVisibility = availableSettings.PhoneNumberVisibility.ToString(),
-                ProfileImageVisibility = availableSettings.ProfileImageVisibility.ToString(),
-                BannerImageVisibility = availableSettings.BannerImageVisibility.ToString(),
-                GalleryVisibility = availableSettings.GalleryVisibility.ToString(),
-                ConnectionVisibility = availableSettings.ConnectionVisibility.ToString(),
-                FollowersVisibility = availableSettings.FollowersVisibility.ToString(),
-                FollowingVisibility = availableSettings.FollowingVisibility.ToString(),
-                MyPostsVisibility = availableSettings.MyPostsVisibility.ToString(),
-                ConnectionsPostsVisibility = availableSettings.ConnectionsPostsVisibility.ToString(),
-                MyRepostsVisibility = availableSettings.MyRepostsVisibility.ToString(),
-                RepostsOfMyConnectionsVisibility = availableSettings.RepostsOfMyConnectionsVisibility.ToString(),
-                OrganizationIAmCreatorVisibility = availableSettings.OrganizationIAmCreatorVisibility.ToString(),
-                OrganizationIFollowVisibility = availableSettings.OrganizationIFollowVisibility.ToString(),
-                IsOnlineVisibility = availableSettings.IsOnlineVisibility.ToString(),
-                DeviceTypeVisibility = availableSettings.DeviceTypeVisibility.ToString(),
-                LastActiveVisibility = availableSettings.LastActiveVisibility.ToString(),
-                CountryVisibility = availableSettings.CountryVisibility.ToString(),
-                CityVisibility = availableSettings.CityVisibility.ToString(),
-                PreferredLanguage = availableSettings.PreferredLanguage.ToString(),
-                FrontendVersion = availableSettings.FrontendVersion.ToString()
+                UserId = userId,
+                CreatedAtVisibility = GetSettingValue(availableSettings.CreatedAtVisibility, "Everyone"),
+                DateOfBirthVisibility = GetSettingValue(availableSettings.DateOfBirthVisibility, "Everyone"),
+                InterestedInEventsVisibility = GetSettingValue(availableSettings.InterestedInEventsVisibility, "Everyone"),
+                SignedUpEventsVisibility = GetSettingValue(availableSettings.SignedUpEventsVisibility, "Everyone"),
+                EducationVisibility = GetSettingValue(availableSettings.EducationVisibility, "Everyone"),
+                WorkPositionVisibility = GetSettingValue(availableSettings.WorkPositionVisibility, "Everyone"),
+                LanguagesVisibility = GetSettingValue(availableSettings.LanguagesVisibility, "Everyone"),
+                InterestsVisibility = GetSettingValue(availableSettings.InterestsVisibility, "Everyone"),
+                ContactEmailVisibility = GetSettingValue(availableSettings.ContactEmailVisibility, "Everyone"),
+                PhoneNumberVisibility = GetSettingValue(availableSettings.PhoneNumberVisibility, "Everyone"),
+                ProfileImageVisibility = GetSettingValue(availableSettings.ProfileImageVisibility, "Everyone"),
+                BannerImageVisibility = GetSettingValue(availableSettings.BannerImageVisibility, "Everyone"),
+                GalleryVisibility = GetSettingValue(availableSettings.GalleryVisibility, "Everyone"),
+                ConnectionVisibility = GetSettingValue(availableSettings.ConnectionVisibility, "Everyone"),
+                FollowersVisibility = GetSettingValue(availableSettings.FollowersVisibility, "Everyone"),
+                FollowingVisibility = GetSettingValue(availableSettings.FollowingVisibility, "Everyone"),
+                MyPostsVisibility = GetSettingValue(availableSettings.MyPostsVisibility, "Everyone"),
+                ConnectionsPostsVisibility = GetSettingValue(availableSettings.ConnectionsPostsVisibility, "Everyone"),
+                MyRepostsVisibility = GetSettingValue(availableSettings.MyRepostsVisibility, "Everyone"),
+                RepostsOfMyConnectionsVisibility = GetSettingValue(availableSettings.RepostsOfMyConnectionsVisibility, "Everyone"),
+                OrganizationIAmCreatorVisibility = GetSettingValue(availableSettings.OrganizationIAmCreatorVisibility, "Everyone"),
+                OrganizationIFollowVisibility = GetSettingValue(availableSettings.OrganizationIFollowVisibility, "Everyone"),
+                IsOnlineVisibility = GetSettingValue(availableSettings.IsOnlineVisibility, "Everyone"),
+                DeviceTypeVisibility = GetSettingValue(availableSettings.DeviceTypeVisibility, "Everyone"),
+                LastActiveVisibility = GetSettingValue(availableSettings.LastActiveVisibility, "Everyone"),
+                CountryVisibility = GetSettingValue(availableSettings.CountryVisibility, "Everyone"),
+                CityVisibility = GetSettingValue(availableSettings.CityVisibility, "Everyone"),
+                PreferredLanguage = GetSettingValue(availableSettings.PreferredLanguage, "English"),
+                FrontendVersion = GetSettingValue(availableSettings.FrontendVersion, "Default"),
+                FriendListVisibility = GetSettingValue(availableSettings.FriendListVisibility, "Everyone"),
+                FollowersListVisibility = GetSettingValue(availableSettings.FollowersListVisibility, "Everyone"),
+                FollowingListVisibility = GetSettingValue(availableSettings.FollowingListVisibility, "Everyone"),
+                MessageVisibility = GetSettingValue(availableSettings.MessageVisibility, "Everyone"),
+                ProfileVisibility = GetSettingValue(availableSettings.ProfileVisibility, "Everyone"),
+                PostCommentVisibility = GetSettingValue(availableSettings.PostCommentVisibility, "Everyone"),
+                PostLikeVisibility = GetSettingValue(availableSettings.PostLikeVisibility, "Everyone"),
+                FriendRequestVisibility = GetSettingValue(availableSettings.FriendRequestVisibility, "Everyone"),
+                TaggedPostVisibility = GetSettingValue(availableSettings.TaggedPostVisibility, "Everyone"),
+                StoryVisibility = GetSettingValue(availableSettings.StoryVisibility, "Everyone"),
+                GroupMembershipVisibility = GetSettingValue(availableSettings.GroupMembershipVisibility, "Everyone")
             };
 
-            await _httpClient.PutAsync($"students/{studentId}/settings", updateUserSettingsData);
+            await _httpClient.PutAsync($"students/{userId}/settings", updateUserSettingsData);
+        }
+        private string GetSettingValue(object setting, string defaultValue)
+        {
+            return setting?.ToString() ?? defaultValue;
         }
 
-        public async Task<AvailableSettingsDto> GetUserSettingsAsync(Guid studentId)
+
+        public async Task<AvailableSettingsDto> GetUserSettingsAsync(Guid userId)
         {
             var accessToken = await _identityService.GetAccessTokenAsync();
             _httpClient.SetAccessToken(accessToken);
-            return await _httpClient.GetAsync<AvailableSettingsDto>($"students/{studentId}/settings");
+            return await _httpClient.GetAsync<AvailableSettingsDto>($"students/{userId}/settings");
         }
 
         public async Task UpdateStudentLanguagesAndInterestsAsync(
